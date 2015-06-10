@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Registration;
 using Microsoft.Owin;
 using Owin;
 
@@ -11,8 +14,13 @@ namespace GDO
     {
         public void Configuration(IAppBuilder app)
         {
+            var directoryPath = "Dll folder path"; //fill in
+            var directoryCatalog = new DirectoryCatalog(directoryPath, "*.dll");
+            var aggregateCatalog = new AggregateCatalog();
+            aggregateCatalog.Catalogs.Add(directoryCatalog);
+            var container = new CompositionContainer(aggregateCatalog);
+            container.ComposeParts(this);
             app.MapSignalR();
-            // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
         }
     }
 }

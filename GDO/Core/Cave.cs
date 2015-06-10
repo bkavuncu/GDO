@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Registration;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 
@@ -15,8 +18,11 @@ namespace GDO
         public int rows { get; set; } = int.Parse(System.Configuration.ConfigurationManager.AppSettings["numRows"]);
         public int nodeWidth { get; set; } = int.Parse(System.Configuration.ConfigurationManager.AppSettings["nodeWidth"]);
         public int nodeHeight { get; set; } = int.Parse(System.Configuration.ConfigurationManager.AppSettings["nodeheight"]);
+        [ImportMany]
+        private static ConcurrentDictionary<int, IApp> apps;
         private static ConcurrentDictionary<int, Node> nodes;
         private static ConcurrentDictionary<int, Section> sections;
+
 
         public Cave()
         {
@@ -182,7 +188,7 @@ namespace GDO
             Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(getSectionMap(sectionID)));
         }
 
-        public void getNeighbourMap(int nodeID)
+        public int[,] getNeighbourMap(int nodeID)
         {
             Node node;
             nodes.TryGetValue(nodeID, out node);
@@ -199,6 +205,11 @@ namespace GDO
                     }
                 }
             }
+            return neighbours;
+        }
+        public void requestNeighbourMap(int nodeID)
+        {
+            Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(getNeighbourMap(nodeID)));
         }
 
         public void broadcastNodeUpdate(int nodeID)
@@ -206,6 +217,20 @@ namespace GDO
             Node node;
             nodes.TryGetValue(nodeID, out node);
             Clients.All.receiveNodeUpdate(node.serialize());
+        }
+
+        public List<string> getAppList()
+        {
+            List<string> appList = new List<string>();
+            foreach (KeyValuePair<int, IApp> appEntry in apps)
+            {
+                appList.Add(appEntry.Value.name);
+            }
+            return appList;
+        }
+        public void requestAppList()
+        {
+            Clients.Caller.receiveAppList(Newtonsoft.Json.JsonConvert.SerializeObject(getAppList()));
         }
     }
 }
