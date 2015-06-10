@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>GDO Management Client</title>
+</head>
+<body>
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.0.2.min.js"></script>
+    <script src="signalr/hubs"></script>
+    <script>
+        $(function () {
+
+        });
+    </script>
+
+    <style>
+    </style>
+
+    <table id="browser_table" style="width:100%">
+        <tr>
+            <td>(1,1)</td>
+            <td>(1,2)</td>
+        </tr>
+        <tr>
+            <td>(2,1)</td>
+            <td>(2,2)</td>
+        </tr>
+    </table>
+    <br />
+    <select id="message_to">
+        <option>Loading..</option>
+    </select>
+    <input type="text" id="test_txt" />
+    <input type="button" id="test_btn" value="Send" />
+    <input type="button" id="test_json_btn" value="SendJSON" />
+    <br /><br />
+    <div id="message_log"></div>
+</body>
+</html>
