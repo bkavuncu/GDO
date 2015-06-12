@@ -93,7 +93,7 @@ namespace GDO
             return base.OnConnected();
         }
 
-        public override System.Threading.Tasks.Task OnDisconnected()
+        /*public override System.Threading.Tasks.Task OnDisconnected()
         {
             BrowserInfo info;
             browserInfo.TryRemove(Context.ConnectionId, out info);
@@ -102,7 +102,8 @@ namespace GDO
             Clients.All.receiveBrowserInfo(browserInfoJson);
 
             return base.OnDisconnected();
-        }
+        }*/
+
         /*public void sendBrowserUpdate(BrowserUpdate senderBrowserUpdate)
         {
             System.Diagnostics.Debug.WriteLine("CHECKPOINT");

@@ -5,7 +5,9 @@ VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4A27F694-1D9A-420A-A3A6-62521EAA047E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDOTests", "GDOTests\GDOTests.csproj", "{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Tests", "GDO.Tests\GDO.Tests.csproj", "{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.App", "GDO.App\GDO.App.csproj", "{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

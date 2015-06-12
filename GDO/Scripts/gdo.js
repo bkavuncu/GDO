@@ -1,18 +1,20 @@
 ﻿///<reference path="~/jasmine.js"/>
 
-$(function () {
+$(function() {
     loadModule("net");
     loadModule("fs");
     this.id = getUrlVar("clientID");
-    $.connection.hub.start().done(function () {
-        gdo.net = initNet(gdo.id);
-    })
-    this.net.server.requestAppList();
-    this.net.listener.receiveAppList = function (serializedAppList) {
-        deserializedAppList = JSON.parse(serializedAppList);
-        foreach(app in deserializedAppList)
-        {
-            loadModule(app);
+    if (this.id > 0) {
+        $.connection.hub.start().done(function() {
+            gdo.net = initNet(gdo.id);
+        })
+        this.net.server.requestAppList();
+        this.net.listener.receiveAppList = function(serializedAppList) {
+            deserializedAppList = JSON.parse(serializedAppList);
+            foreach(app in deserializedAppList)
+            {
+                loadModule(app);
+            }
         }
     }
     //TODO node close connections

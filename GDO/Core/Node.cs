@@ -6,6 +6,12 @@ using Newtonsoft.Json;
 
 namespace GDO.Core
 {
+    enum PEERMODE  {
+        NONE = -1,
+        CAVE = 1,
+        SECTION = 2,
+        NEIGHBOURS= 3
+    };
     public class Node
     {
         public int id { get; set; }
@@ -15,6 +21,7 @@ namespace GDO.Core
         public int sectionRow { get; set; }
         public int sectionID { get; set; }
         public int appID { get; set; }
+        public int peerMode { get; set; }
         public bool isConnected { get; set; }
         public bool isDeployed { get; set; }
         [JsonIgnore]
@@ -28,7 +35,7 @@ namespace GDO.Core
         [JsonIgnore]
         public Section section;
         [JsonIgnore]
-        public App app;
+        public IApp app;
 
         public Node(int id, int col, int row, int width, int height, int numNodes)
         {
@@ -43,6 +50,7 @@ namespace GDO.Core
             this.height = height;
             this.sectionID = 0;
             this.appID = -1;
+            this.peerMode = (int)PEERMODE.NONE;
             this.connected= new Dictionary<int,bool>();
             for (int i = 0; i < numNodes; i++)
             {

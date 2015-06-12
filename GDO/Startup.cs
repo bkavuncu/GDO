@@ -25,11 +25,15 @@ namespace GDO
         public void Configuration(IAppBuilder app)
         {
             Cave.initCave();
-            _caveapps.ToList().ForEach( caveapp => Cave.addApp(caveapp.id, caveapp));
             var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new DirectoryCatalog(@"./Apps"));
+            string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
+            foreach (String appDir in appDirs)
+            {
+                catalog.Catalogs.Add(new DirectoryCatalog(@appDir));
+            }
             var container = new CompositionContainer(catalog);
             container.ComposeParts(this);
+            _caveapps.ToList().ForEach(caveapp => Cave.addApp(caveapp.id, caveapp));
             //var activator = new GDOHubActivator(container);
             //GlobalHost.DependencyResolver.Register(typeof(IHubActivator), () => activator);
             app.MapSignalR();

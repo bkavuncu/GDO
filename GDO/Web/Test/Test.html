@@ -1,10 +1,29 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>GDO Test Node</title>
 	<meta charset="utf-8" />
 </head>
 <body>
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.0.2.min.js"></script>
+    <script src="Scripts/peer.js"></script>
+    <script src="Scripts/gdo.js"></script>
+    <script src="signalr/hubs"></script>
+    <script>
+        $(function() {
 
+            drawCaveTable(gdo.net.cols, gdo.net.rows);
+        });
+        function drawCaveTable(maxRow, maxCol) {
+            $("#cave_table").empty();
+            for (var i = 0; i < maxRow; i++) {
+                $("#cave_table").append("<tr></tr>");
+                for (var j = 0; j < maxCol; j++) {
+                    $("#cave_table tr:last").append("<td>(" + (i + 1) + "," + (j + 1) + ")</td>");
+                }
+            }
+        }
+    </script>
 </body>
 </html>
