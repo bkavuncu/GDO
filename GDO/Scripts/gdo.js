@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿///<reference path="~/jasmine.js"/>
+
+$(function () {
     loadModule("net");
     loadModule("fs");
     this.id = getUrlVar("clientID");
@@ -27,3 +29,4 @@ function loadModule(js) {
     var $head = $("head");
     $head.append("<script src=\"scripts/gdo." + js + "\" type=\"text/javascript\"></scr" + "ipt>");
 }
+

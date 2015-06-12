@@ -86,6 +86,11 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\gdo.tests.js" />
+    <Content Include="Scripts\jasmine\boot.js" />
+    <Content Include="Scripts\jasmine\console.js" />
+    <Content Include="Scripts\jasmine\jasmine-html.js" />
+    <Content Include="Scripts\jasmine\jasmine.js" />
     <Content Include="Web\Node.html" />
     <Content Include="Web\Base\Control.html" />
     <Content Include="Web\Base\App.html" />
@@ -103,6 +108,8 @@
     <Content Include="Scripts\ol.fullscreen.js" />
     <Content Include="Scripts\ol.loader.js" />
     <Content Include="Scripts\peer.js" />
+    <Content Include="app.config" />
+    <Content Include="Web\Test\Test.html" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -111,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Apps\App.cs" />
+    <Compile Include="CaveHub.cs" />
     <Compile Include="Core\IApp.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
@@ -132,7 +140,9 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensibility\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

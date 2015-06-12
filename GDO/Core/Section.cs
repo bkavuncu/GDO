@@ -16,11 +16,13 @@ namespace GDO.Core
         public int cols { get; set; }
         public int rows { get; set; }
 
-        public Section(int cols, int rows)
+        public Section(int id, int cols, int rows)
         {
+            this.id = id;
             this.cols = cols;
             this.rows = rows;
             this.numNodes = cols * rows;
+            this.nodes = new Node[cols,rows];
         }
 
         public bool isConnected()
@@ -59,6 +61,8 @@ namespace GDO.Core
                 width += node.width;
                 height += node.height;
             }
+            width = width/rows;
+            height = height/cols;
         }
         //Nodes connected
         //Control node connected, and info

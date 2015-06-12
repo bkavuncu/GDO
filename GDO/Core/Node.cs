@@ -37,17 +37,18 @@ namespace GDO.Core
             this.id = id;
             this.col = col;
             this.row = row;
-            this.sectionCol = -1;
-            this.sectionRow = -1;
+            this.sectionCol = col;
+            this.sectionRow = row;
             this.width = width;
             this.height = height;
-            this.sectionID = -1;
+            this.sectionID = 0;
             this.appID = -1;
             this.connected= new Dictionary<int,bool>();
             for (int i = 0; i < numNodes; i++)
             {
                  connected.Add(i,false);
             }
+            Cave.sections.TryGetValue(0, out this.section);
         }
 
         public void deploy(Section section, int col, int row)
@@ -56,15 +57,18 @@ namespace GDO.Core
             this.sectionRow = row;
             this.section = section;
             this.sectionID = section.id;
-            this.isDeployed = true;
-            this.section.nodes[col, row] = this;
+            if (sectionID > 0)
+            {
+                this.isDeployed = true;
+            }
         }
 
         public void free()
         {
             this.isDeployed = false;
-            this.sectionID = -1;
+            this.sectionID = 0;
             this.appID = -1;
+            Cave.sections.TryGetValue(0,out this.section);
         }
 
         public string serialize()

@@ -28,8 +28,10 @@ function initNet() {
     net.node = [];
     net.mode = mode;
     initHub(gdoHub);
-    net.apphubs = ;
-    //get apphub list
+    net.listener.getAppHubList = function(serializedAppList) {
+        net.apps = JSON.parse(serializedAppList);
+    }
+    net.server.requestAppList();
     net.getConnectedNodes = function() {
         var i = 0;
         var connectedNodes = [];
@@ -217,3 +219,7 @@ function receiveData(nodeID,data) {
     //parse
 
 }
+
+var test = function() {
+
+};
