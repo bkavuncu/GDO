@@ -40,7 +40,7 @@ namespace GDO
                 int row = int.Parse(s[1]);
                 createNode(id, col, row);
             }
-            createSection(0, 0, cols-1, rows-1); //Free Nodes Section , id=0
+            createSection(0, 0, cols-1, rows-1); //Free Nodes Pool , id=0
         }
 
         public static void createNode(int nodeID, int col, int row)

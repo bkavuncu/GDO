@@ -15,5 +15,12 @@ namespace GDO.Core
     {
         public int id { get; set; }
         public string name { get; set; }
+        
+        // TEST APP TODO
+        // ----------------
+        // some variables
+        // some methods to update variables
+        // each node displays a cave table
+        // select node to send message, and message is displayed in the table on that node
     }
 }

@@ -80,12 +80,13 @@ namespace GDO
             //they deploy base app
         }
 
-        public void uploadNodeInfo(int nodeID, string connectionID, string connectedNodes)
+        public void uploadNodeInfo(int nodeID, string connectionID, string connectedNodes, string peerID)
         {
             Node node;
             Cave.nodes.TryGetValue(nodeID, out node);
             node.isConnected = true;
             node.connectionID = connectionID;
+            node.peerID = peerID;
             int[] deserializedConnectedNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(connectedNodes);
             foreach (int connectedNode in deserializedConnectedNodes)
             {
