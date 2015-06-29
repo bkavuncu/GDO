@@ -1,5 +1,5 @@
 ﻿var gdo;
-
+var module = 'GDO';
 
 $(function() {
     //Registering Event Handlers on load
@@ -12,7 +12,7 @@ $(function() {
     }
 });
 function initGDO() {
-    consoleOut('GDO', 'INFO', 'Initializing GDO');
+    consoleOut(module, 1, 'Initializing GDO');
     //loadModule('net');
     //loadModule('fs');
     gdo = {};
@@ -24,7 +24,7 @@ function initGDO() {
         }
         $.connection.hub.start().done(function () {
             gdo.net = initNet();
-            consoleOut('GDO', 'INFO', 'GDO Initialized');
+            consoleOut(module, 1, 'GDO Initialized');
             //gdo.net.server.requestAppList();
         });
     }
@@ -35,13 +35,20 @@ function initGDO() {
 }
 
 function consoleOut(module, type, msg) {
-    console.log('GDO.' + module + ' - '+type+' : ' + msg);
+    if (type == 1) {
+        console.log('GDO.' + module + ': ' + msg);
+    } else if (type == 2) {
+        console.warn('GDO.' + module + ': ' + msg);
+    } else if (type == 3) {
+        console.error('GDO.' + module + ': ' + msg);
+    }
+
 }
 
 function loadModule(js) {
     var $head = $('head');
     $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
-    consoleOut('MAIN', 'INFO', 'Loaded Module ' + js);
+    consoleOut('MAIN', 1, 'Loaded Module ' + js);
 }
 
 function getUrlVar(variable) {
