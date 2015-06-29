@@ -99,39 +99,100 @@ namespace GDO
 
         public void requestCaveMap()
         {
-            Clients.Caller.receiveCaveMap(Cave.cols, Cave.rows, Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getCaveMap()));
+            try
+            { 
+                Clients.Caller.receiveCaveMap(Cave.cols, Cave.rows, Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getCaveMap()));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void requestSectionMap(int sectionID)
         {
-            Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getSectionMap(sectionID)));
+            try
+            { 
+                Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getSectionMap(sectionID)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void requestNeighbourMap(int nodeID)
         {
-            Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getNeighbourMap(nodeID)));
+            try
+            {
+                Clients.Caller.receiveNeighbourMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getNeighbourMap(nodeID)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void requestAppList()
         {
-            Clients.Caller.receiveAppList(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getAppList()));
+            try
+            { 
+                Clients.Caller.receiveAppList(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getAppList()));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void broadcastNodeUpdate(int nodeID)
         {
-            Node node;
-            Cave.nodes.TryGetValue(nodeID, out node);
-            Clients.All.receiveNodeUpdate(node.serialize());
+            try
+            {
+                Node node;
+                Cave.nodes.TryGetValue(nodeID, out node);
+                Clients.Others.receiveNodeUpdate(node.serialize());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void sendData(int senderID, int receiverID, string data)
         {
-            Clients.Client(Cave.nodes[receiverID].connectionID).receiveData(senderID, data);
+            try
+            { 
+                Clients.Client(Cave.nodes[receiverID].connectionID).receiveData(senderID, data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void broadcastData(int senderID, string data)
         {
-            Clients.Others.receiveBroadcast(senderID, data);
+            try
+            { 
+                Clients.Others.receiveBroadcast(senderID, data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void requestTest()
+        {
+            try
+            {
+                Clients.Caller.receiveTest("test");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

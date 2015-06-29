@@ -1,24 +1,31 @@
 ﻿var gdo;
 
+
+$(function() {
+    //Registering Event Handlers on load
+    $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
+        deserializedAppList = JSON.parse(serializedAppList);
+        for(app in deserializedAppList)
+        {
+            loadModule(app);
+        }
+    }
+});
 function initGDO() {
     consoleOut('GDO', 'INFO', 'Initializing GDO');
-    loadModule('net');
+    //loadModule('net');
     //loadModule('fs');
     gdo = {};
     gdo.net = {};
     gdo.id = getUrlVar('clientID');
     if (gdo.id > 0) {
-        $.connection.hub.start().done(function() {
+        $.connection.caveHub.client.receiveTest = function (str) {
+            console.log(str);
+        }
+        $.connection.hub.start().done(function () {
             gdo.net = initNet();
             consoleOut('GDO', 'INFO', 'GDO Initialized');
-            gdo.net.server.requestAppList();
-            gdo.net.listener.receiveAppList = function (serializedAppList) {
-                deserializedAppList = JSON.parse(serializedAppList);
-                foreach(app in deserializedAppList)
-                {
-                    loadModule(app);
-                }
-            }
+            //gdo.net.server.requestAppList();
         });
     }
     //TODO node close connections
@@ -28,7 +35,7 @@ function initGDO() {
 }
 
 function consoleOut(module, type, msg) {
-    console.log('[GDO|' + module + '] '+type+' : ' + msg);
+    console.log('GDO.' + module + ' - '+type+' : ' + msg);
 }
 
 function loadModule(js) {

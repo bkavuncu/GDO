@@ -1,5 +1,4 @@
-﻿<!DOCTYPE html>
-<html>
+﻿<html>
 <head>
     <title>GDO Test Node</title>
 	<meta charset="utf-8" />
@@ -7,21 +6,16 @@
 <body>
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script type="text/javascript" src="../../Scripts/peer.js"></script>
     <script type="text/javascript" src="../../Scripts/gdo.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.net.js"></script>
     <script src="../../signalr/hubs"></script>
+    <script type="text/javascript" src="../../Scripts/peer.js"></script>
     <script>
-        //<![CDATA[
         $(function () {
             loadModule('test');
             initGDO();
-            gdo.net.node[4].sendData()
             drawCaveTable(gdo.net.cols, gdo.net.rows);
         });
-
-
-        //]]>
-
         //TESTS TODO
         //------------
         //connect

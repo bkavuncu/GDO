@@ -28,9 +28,7 @@
             var networkHub = $.connection.networkHub;
 
             // ** Receive browser information from server
-            var nh = networkHub.client;
-
-            nh.receiveBrowserInfo = function (browserInfo) {
+            networkHub.client.receiveBrowserInfo = function (browserInfo) {
                 // browser dropdown menu
                 $("#message_to").empty();
 

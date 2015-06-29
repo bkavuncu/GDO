@@ -113,6 +113,7 @@ namespace GDO.Tests
             Assert.AreEqual(16, sectionMap[1, 1]);
             Assert.AreEqual(1, neighbourMap[0, 0]);
             Assert.AreEqual(11, neighbourMap[2, 2]);
+            Assert.AreEqual(9, neighbourMap[0, 2]);
 
             neighbourMap = Cave.getNeighbourMap(16);
 
