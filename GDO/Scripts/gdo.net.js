@@ -1,6 +1,5 @@
 ﻿var peer;
 var net;
-var module = 'NET';
 
 var COMM_MODE = {
     P2P: 1,
@@ -40,6 +39,7 @@ $(function() {
                 net.node[id].row = j;
                 net.node[id].id = id;
                 net.node[id].connectedToPeer = false;
+                net.node[id].isNeighbour = false;
                 net.node[id].sendData = function (type, command, data, mode) {
                     var dataObj = {};
                     dataObj.type = type;
@@ -59,8 +59,10 @@ $(function() {
                 }
             }
         }
+        consoleOut('.NET', 1, 'Received the map of the Cave');
         updateNodes();
-        consoleOut(module, 1, 'Received the map of the Cave');
+        consoleOut('.NET', 1, 'Requesting the map of Neighbours');
+        net.server.requestNeighbourMap(gdo.id);
     };
     $.connection.caveHub.client.receiveNeighbourMap = function (serializedNeighbourMap) {
         deserializedNeighbourMap = JSON.parse(serializedNeighbourMap);
@@ -70,12 +72,12 @@ $(function() {
                 var id = deserializedNeighbourMap[i][j];
                 net.neighbour[k];
                 net.neighbour[k] = id;
-                consoleOut(module, 1, 'Neighbour ' + k + ' is node ' + id);
+                consoleOut('.NET', 1, 'Neighbour ' + k + ' is node ' + id);
                 k++;
             }
         }
         updateNodes();
-        consoleOut(module, 1, 'Received the map of Neighbours');
+        consoleOut('.NET', 1, 'Received the map of Neighbours');
     }
     $.connection.caveHub.client.ReceiveNodeUpdate = function (serializedNode) {
         var node = JSON.parse(serializedNode);
@@ -103,21 +105,21 @@ $(function() {
             net.self.p2pmode = node.p2pmode;
         }
         updateSelf();
-        consoleOut(module, 1, 'Received Update : (id:'+ node.id + '),(col,row:' + node.col + ','+node.row+'),(peerID:' + node.peerID + ')');
+        consoleOut('.NET', 1, 'Received Update : (id:'+ node.id + '),(col,row:' + node.col + ','+node.row+'),(peerID:' + node.peerID + ')');
     }
 });
 
 
 function initHub() {
-    consoleOut(module, 1, 'Initializing Hub');
+    consoleOut('.NET', 1, 'Initializing Hub');
     net.connection = $.connection;
     net.server = $.connection.caveHub.server;
     net.listener = $.connection.caveHub.client;
-    consoleOut(module, 1, 'Connected to Hub');
+    consoleOut('.NET', 1, 'Connected to Hub');
 }
 
 function initNet() {
-    consoleOut(module, 1, 'Initializing Net');
+    consoleOut('.NET', 1, 'Initializing Net');
     net = {};
     net.peer = peer;
     net.node = [];
@@ -160,25 +162,25 @@ function initNet() {
         }
     }
     initPeer(P2P_MODE.NEIGHBOURS);
-    consoleOut(module, 1, 'Net Initialized');
+    consoleOut('.NET', 1, 'Net Initialized');
     return net;
 }
 
 
 
 function initPeer(p2pmode) {
-    consoleOut(module, 1, 'Initializing Peer Connections');
+    consoleOut('.NET', 1, 'Initializing Peer Connections');
     net.self.p2pmode = p2pmode;
     net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); //our own server will replace here
     net.peer.on('open', function(peerID) {
-        consoleOut(module, 1, 'Connected to PeerServer with ID:' + peerID);
+        consoleOut('.NET', 1, 'Connected to PeerServer with ID:' + peerID);
         net.self.peerID = peerID;
         uploadNodeInfo();
         setTimeout(updatePeerConnections(p2pmode), 1000 + Math.floor((Math.random() * 1000) + 1));
     });
-    net.peer.on('close', function (err) { consoleOut(module, 3, err); });
+    net.peer.on('close', function (err) { consoleOut('.NET', 3, err); });
     net.peer.on('connection', receiveConn);
-    consoleOut(module, 1, 'Peer Connections Initialized');
+    consoleOut('.NET', 1, 'Peer Connections Initialized');
 }
 
 function receiveConn(conn) {
@@ -187,51 +189,49 @@ function receiveConn(conn) {
         if (!net.node.hasOwnProperty((index))) {
             continue;
         }
-        if (net.node[index].peerId == conn.peer) {
-            nodeID = conn.peer;
+        if (net.node[index].peerID == conn.peer) {
+            nodeID = index;
         }
     }
-    consoleOut(module, 1, 'Receiving Connection from Node ' + nodeID + ' - ' + conn.peer);
+    consoleOut('.NET', 1, 'Receiving Connection from Node ' + nodeID + ' - ' + conn.peer);
     if (nodeID > 0) {
         conn.on('open', function () {
             conn.send('hi!');
             net.node[nodeID].connectedToPeer = true;
             uploadNodeInfo();
-            consoleOut(module, 1, 'Connected to Node ' + nodeID);
+            consoleOut('.NET', 1, 'Connected to Node ' + nodeID);
         });
         conn.on('close', function (err) {
             net.node[nodeID].connectedToPeer = false;
             uploadNodeInfo();
-            consoleOut(module, 3, 'nodeID : ' + nodeID + ' - ' + err);
+            consoleOut('.NET', 3, 'nodeID : ' + nodeID + ' - ' + err);
         });
         conn.on('data', receiveData);
-        conn.on('error', function (err) { consoleOut(module, 3, 'nodeID : ' + nodeID + ' - ' + err) });
+        conn.on('error', function (err) { consoleOut('.NET', 3, 'Connection Error - nodeID : ' + nodeID + ' - ' + err) });
     }
 }
 
 function initConn(conn, nodeID) {
-    consoleOut(module, 1, 'Opening Connection to Node ' + nodeID);
+    consoleOut('.NET', 1, 'Opening Connection to Node ' + nodeID);
     conn.on('open', function(){
         conn.send('hi!');
         net.node[nodeID].connectedToPeer = true;
         uploadNodeInfo();
-        consoleOut(module, 1, 'Connected to Node ' + nodeID);
+        consoleOut('.NET', 1, 'Connected to Node ' + nodeID);
     });
     conn.on('close', function(err) {
         net.node[nodeID].connectedToPeer = false;
         uploadNodeInfo();
-        consoleOut(module, 3, 'nodeID : ' + nodeID + ' - ' + err);
+        consoleOut('.NET', 3, 'Node Connection Cloased - nodeID : ' + nodeID + ' - ' + err);
     });
     conn.on('data', receiveData);
-    conn.on('error', function(err) { consoleOut(module, 3, 'nodeID : ' + nodeID + ' - ' + err) });
+    conn.on('error', function(err) { consoleOut('.NET', 3, 'nodeID : ' + nodeID + ' - ' + err) });
 }
 
 function initNodes() {
-    consoleOut(module, 1, 'Initializing Nodes');
-    consoleOut(module, 1, 'Requesting the map of the Cave');
+    consoleOut('.NET', 1, 'Initializing Nodes');
+    consoleOut('.NET', 1, 'Requesting the map of the Cave');
     net.server.requestCaveMap();
-    consoleOut(module, 1, 'Requesting the map of Neighbours');
-    net.server.requestNeighbourMap(gdo.id);
 }
 
 function uploadNodeInfo() {
@@ -241,14 +241,14 @@ function uploadNodeInfo() {
 
 function connectToPeer(nodeID) {
     if (net.node[nodeID].peerID != null && !net.node[nodeID].connectedToPeer) {
-        consoleOut(module, 1, 'Connecting to Node ' + nodeID + ' - ' + net.node[nodeID].peerID + ' - Connection Status :' + net.node[nodeID].connectedToPeer);
+        consoleOut('.NET', 1, 'Connecting to Node ' + nodeID + ' - ' + net.node[nodeID].peerID + ' - Connection Status :' + net.node[nodeID].connectedToPeer);
         var c = net.peer.connect(net.node[nodeID].peerID);
         initConn(c, nodeID);
     }
 }
 
 function disconnectFromPeer(nodeID) {
-    consoleOut(module, 1, 'Disconnecting from Node ' + nodeID);
+    consoleOut('.NET', 1, 'Disconnecting from Node ' + nodeID);
     var conn = peer.connections[net.node[nodeID].peerId][0];
     net.node[nodeID].connectedToPeer = false;
     conn.close();
@@ -260,8 +260,7 @@ function updateNodes() {
             continue;
         }
         if (net.neighbour[index] != gdo.id && net.neighbour[index] > 0) {
-            net.node[net.neighbour[index]].isNeighbour = true;
-            consoleOut(module, 2, 'Neighbour ' + index + ' - node ' + net.neighbour[index]);
+           net.node[net.neighbour[index]].isNeighbour = true;
         }
     }
     //more to come
@@ -299,7 +298,7 @@ function updatePeerConnections(p2pmode) {
 }
 
 function receiveData(data) {
-    consoleOut(module, 2, 'RECEIVED DATA');
+    consoleOut('.NET', 2, 'RECEIVED DATA');
     //dataObj = JSON.parse(data);
 
     //var type = dataObj.type;

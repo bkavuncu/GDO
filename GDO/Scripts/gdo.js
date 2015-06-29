@@ -1,5 +1,4 @@
 ﻿var gdo;
-var module = 'GDO';
 
 $(function() {
     //Registering Event Handlers on load
@@ -7,14 +6,14 @@ $(function() {
         deserializedAppList = JSON.parse(serializedAppList);
         for(app in deserializedAppList)
         {
-            loadModule(app);
+            loadthis.module(app);
         }
     }
 });
 function initGDO() {
-    consoleOut(module, 1, 'Initializing GDO');
-    //loadModule('net');
-    //loadModule('fs');
+    consoleOut('', 1, 'Initializing GDO');
+    //loadthis.module('net');
+    //loadthis.module('fs');
     gdo = {};
     gdo.net = {};
     gdo.id = getUrlVar('clientID');
@@ -24,7 +23,7 @@ function initGDO() {
         }
         $.connection.hub.start().done(function () {
             gdo.net = initNet();
-            consoleOut(module, 1, 'GDO Initialized');
+            consoleOut('', 1, 'GDO Initialized');
             //gdo.net.server.requestAppList();
         });
     }
@@ -36,11 +35,11 @@ function initGDO() {
 
 function consoleOut(module, type, msg) {
     if (type == 1) {
-        console.log('GDO.' + module + ': ' + msg);
+        console.log('GDO' + module + ': ' + msg);
     } else if (type == 2) {
-        console.warn('GDO.' + module + ': ' + msg);
+        console.warn('GDO' + module + ': ' + msg);
     } else if (type == 3) {
-        console.error('GDO.' + module + ': ' + msg);
+        console.error('GDO' + module + ': ' + msg);
     }
 
 }
@@ -48,7 +47,7 @@ function consoleOut(module, type, msg) {
 function loadModule(js) {
     var $head = $('head');
     $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
-    consoleOut('MAIN', 1, 'Loaded Module ' + js);
+    consoleOut('MAIN', 1, 'Loaded this.module ' + js);
 }
 
 function getUrlVar(variable) {

@@ -1,12 +1,11 @@
-﻿var module = 'TEST';
-
+﻿
 function initTest() {
     //create a section
     //
 }
 
 function drawCaveTable(maxRow, maxCol) {
-    consoleOut(module, 1, 'Drawing Cave Table');
+    consoleOut('.TEST', 1, 'Drawing Cave Table');
     $("#browser_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#browser_table").append("<tr></tr>");
@@ -17,7 +16,7 @@ function drawCaveTable(maxRow, maxCol) {
 }
 
 function updateCanvas() {
-    consoleOut(module, 1, 'Updating Canvas');
+    consoleOut('.TEST', 1, 'Updating Canvas');
     for (var node in gdo.net.node) {
         if (!gdo.net.node.hasOwnProperty((node))) {
             continue;
@@ -49,5 +48,5 @@ function updateCanvas() {
             $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("background", "white");
         }
     }
-    consoleOut(module, 1, 'Canvas Updated');
+    consoleOut('.TEST', 1, 'Canvas Updated');
 }
