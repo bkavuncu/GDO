@@ -1,7 +1,13 @@
 ﻿<html>
 <head>
     <title>GDO Test Node</title>
-	<meta charset="utf-8" />
+    <meta charset="utf-8"/>
+    <style> body {
+      background: darkgray;
+      font-family:helvetica;
+      font-size:70%;
+      }
+    </style>
 </head>
 <body>
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
@@ -11,11 +17,15 @@
     <script src="../../signalr/hubs"></script>
     <script type="text/javascript" src="../../Scripts/peer.js"></script>
     <script>
-        $(function () {
+        $(function() {
             loadModule('test');
             initGDO();
-            drawCaveTable(gdo.net.cols, gdo.net.rows);
         });
+        function initApp() {
+            consoleOut('', 1, 'GDO Initialized');
+            drawCaveTable(gdo.net.cols, gdo.net.rows);
+            updateSelf();
+        }
         //TESTS TODO
         //------------
         //connect

@@ -1,5 +1,6 @@
 ﻿var gdo;
 
+
 $(function() {
     //Registering Event Handlers on load
     $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
@@ -23,7 +24,9 @@ function initGDO() {
         }
         $.connection.hub.start().done(function () {
             gdo.net = initNet();
-            consoleOut('', 1, 'GDO Initialized');
+            waitForResponse(initApp,isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
+            setInterval(uploadNodeInfo, 7000);
+            //set intervl and 
             //gdo.net.server.requestAppList();
         });
     }
@@ -33,6 +36,10 @@ function initGDO() {
     // send data (data, mode)
 }
 
+
+
+
+
 function consoleOut(module, type, msg) {
     if (type == 1) {
         console.log('GDO' + module + ': ' + msg);
@@ -41,7 +48,6 @@ function consoleOut(module, type, msg) {
     } else if (type == 3) {
         console.error('GDO' + module + ': ' + msg);
     }
-
 }
 
 function loadModule(js) {
@@ -58,4 +64,18 @@ function getUrlVar(variable) {
         if (pair[0] === variable) { return pair[1]; }
     }
     return (false);
+}
+
+function waitForResponse(func, check, delay, repeat, msg) {
+    if (!check()) {
+        if (repeat > 0) {
+            setTimeout(function() { waitForResponse(func, check, delay, repeat - 1, msg); },delay);
+            return;
+        } else {
+            consoleOut('', 3, msg);
+            return;
+        }
+    } else {
+        func();
+    }
 }

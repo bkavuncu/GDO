@@ -5,47 +5,45 @@ function initTest() {
 }
 
 function drawCaveTable(maxRow, maxCol) {
-    consoleOut('.TEST', 1, 'Drawing Cave Table');
+    consoleOut('.TEST', 1, 'Drawing Cave Table with ' + maxRow + ',' +maxCol);
     $("#browser_table").empty();
-    for (var i = 0; i < maxRow; i++) {
+    for (var i = 0; i < maxCol; i++) {
         $("#browser_table").append("<tr></tr>");
-        for (var j = 0; j < maxCol; j++) {
-            $("#browser_table tr:last").append("<td>(" + (i + 1) + "," + (j + 1) + ")</td>");
+        for (var j = 0; j < maxRow; j++) {
+            $("#browser_table tr:last").append("<td>(" + (j + 1) + "," + (i + 1) + ")</td>");
         }
     }
 }
 
-function updateCanvas() {
-    consoleOut('.TEST', 1, 'Updating Canvas');
-    for (var node in gdo.net.node) {
-        if (!gdo.net.node.hasOwnProperty((node))) {
-            continue;
-        }
-        $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")")
+function updateGDOCanvas() {
+    consoleOut('.TEST', 1, 'Updating Canvas for ' + (gdo.net.node.length -1) + ' nodes');
+    for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+        var node = gdo.net.node[i];
+       $("#browser_table tr:nth-child(" + (node.row+1) + ") td:nth-child(" + (node.col+1) + ")")
             .empty()
-            .append("<br/>Col: " + node.col + " | Row: " + node.row)
-            .append("<br/><div id='" + node.id + "'> ID: " + node.id + "</div>")
-            .append("<br/><div peerid='" + node.peerID + "'> PeerID: " + node.peerID + "</div>")
-            .append("<br/><div connectionid='" + node.connectionID + "'> ConnectionID: " + node.connectionID + "</div>");
+            .append("<div id='" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
+            .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+            .append("<div id='" + node.id + "p'> <b>PeerID:</b> " + node.peerID + "</div>")
+            .append("<div id='" + node.id + "s'> <b>ConnectionID:</b> " + node.connectionID + "</div>");
         if (node.connectedToPeer) {
-            $("#" + node.peerID).css("background", "lightgreen");
+            $("#" + node.id + 'p').css("background", "lightgreen");
         } else {
-            $("#" + node.peerID).css("background", "lightcoral");
+            $("#" + node.id + 'p').css("background", "lightcoral");
         }
         if (node.connectedToServer) {
-            $("#" + node.connectionID).css("background", "lightgreen");
+            $("#" + node.id + 's').css("background", "lightgreen");
         } else {
-            $("#" + node.connectionID).css("background", "lightcoral");
+            $("#" + node.id + 's').css("background", "lightcoral");
         }
         if (node.id == gdo.id) {
-            $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("border", "3px solid black");
-            $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("background", "lightseagreen");
-        } else if (node.sectionID != 0 && node.sectionID == this.self.sectionID) {
-            $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("border", "2px solid black");
-            $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("background", "lightskyblue");
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("border", "4px solid #555");
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightskyblue");
+        } else if (node.sectionID > 0 && node.sectionID == gdo.net.self.sectionID) {
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("border", "4px solid #555");
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightsalmon");
         } else {
-            $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("border", "1px solid black");
-            $("#browser_table tr:nth-child(" + node.row + ") td:nth-child(" + node.col + ")").css("background", "white");
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("border", "4px solid #555");
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightgray");
         }
     }
     consoleOut('.TEST', 1, 'Canvas Updated');
