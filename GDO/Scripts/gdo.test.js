@@ -16,35 +16,41 @@ function drawCaveTable(maxRow, maxCol) {
 }
 
 function updateGDOCanvas() {
-    consoleOut('.TEST', 1, 'Updating Canvas for ' + (gdo.net.node.length -1) + ' nodes');
-    for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+   for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
        $("#browser_table tr:nth-child(" + (node.row+1) + ") td:nth-child(" + (node.col+1) + ")")
             .empty()
             .append("<div id='" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
             .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+            .append("<div id='" + node.id + "s'> <b>SectionID:</b> " + node.sectionID + "</div>")
             .append("<div id='" + node.id + "p'> <b>PeerID:</b> " + node.peerID + "</div>")
-            .append("<div id='" + node.id + "s'> <b>ConnectionID:</b> " + node.connectionID + "</div>");
+            .append("<div id='" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionID + "</div>");
         if (node.connectedToPeer) {
             $("#" + node.id + 'p').css("background", "lightgreen");
         } else {
             $("#" + node.id + 'p').css("background", "lightcoral");
         }
         if (node.connectedToServer) {
+            $("#" + node.id + 'c').css("background", "lightgreen");
+        } else {
+            $("#" + node.id + 'c').css("background", "lightcoral");
+        }
+        if (node.sectionID > 0 && node.sectionID == gdo.net.self.sectionID) {
             $("#" + node.id + 's').css("background", "lightgreen");
+        } else if (node.sectionID > 0) {
+            $("#" + node.id + 's').css("background", "lightsalmon");
         } else {
             $("#" + node.id + 's').css("background", "lightcoral");
         }
         if (node.id == gdo.id) {
             $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("border", "4px solid #555");
             $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightskyblue");
-        } else if (node.sectionID > 0 && node.sectionID == gdo.net.self.sectionID) {
+        }  else if(node.isNeighbour){
             $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("border", "4px solid #555");
-            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightsalmon");
-        } else {
+            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightblue");
+        }else {
             $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("border", "4px solid #555");
-            $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightgray");
-        }
+        $("#browser_table tr:nth-child(" + (node.row + 1) + ") td:nth-child(" + (node.col + 1) + ")").css("background", "lightgray");
     }
-    consoleOut('.TEST', 1, 'Canvas Updated');
+    }
 }

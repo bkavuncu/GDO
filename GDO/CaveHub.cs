@@ -151,7 +151,7 @@ namespace GDO
             {
                 Node node;
                 Cave.nodes.TryGetValue(nodeID, out node);
-                Clients.Others.receiveNodeUpdate(node.serialize());
+                Clients.All.receiveNodeUpdate(node.serialize());
             }
             catch (Exception e)
             {

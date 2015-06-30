@@ -126,7 +126,7 @@ $(function() {
             net.self.connectedToServer = node.isConnected;
             net.self.appID = node.appID;
             net.self.peerID = node.peerID;
-            net.self.p2pmode = node.p2pmode;
+            //net.self.p2pmode = node.p2pmode;
         }
         updateSelf();
         consoleOut('.NET', 1, 'Received Update : (id:'+ node.id + '),(col,row:' + node.col + ','+node.row+'),(peerID:' + node.peerID + ')');
