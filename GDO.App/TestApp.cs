@@ -16,7 +16,7 @@ namespace GDO.Core
         public int Id { get; set; }
         public string Name { get; set; }
         
-        // TEST APP TODO
+        // TEST APP
         // ----------------
         // some variables
         // some methods to update variables

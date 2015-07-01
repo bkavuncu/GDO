@@ -107,6 +107,20 @@ namespace GDO
         }
 
         /// <summary>
+        /// Sets the node P2P mode.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <param name="p2pmode">The p2pmode.</param>
+        /// <returns></returns>
+        public static Node SetNodeP2PMode(int nodeId, int p2pmode)
+        {
+            Node node;
+            Nodes.TryGetValue(nodeId, out node);
+            node.P2PMode = p2pmode;
+            return node;
+        }
+
+        /// <summary>
         /// Creates a section.
         /// </summary>
         /// <param name="colStart">The col start.</param>
@@ -150,6 +164,20 @@ namespace GDO
             return freedNodes;
         }
 
+        public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)
+        {
+            //close app
+            Section section;
+            List<Node> affectedNodes = new List<Node>();
+            Sections.TryGetValue(sectionId, out section);
+            foreach (Node node in section.Nodes)
+            {
+                affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
+            }
+            return affectedNodes;
+        }
+
+
         /// <summary>
         /// Gets the cave map (Matrix of NodeIds in the Cave).
         /// </summary>
@@ -164,7 +192,6 @@ namespace GDO
             return caveMap;
         }
 
-        //TODO install GhostDOc and use it to document the return types
         /// <summary>
         /// Gets the section map (Matrix of NodeIds in the Section).
         /// </summary>
@@ -241,7 +268,7 @@ namespace GDO
         /// <param name="sectionId">The section identifier.</param>
         public static void AssignApp(int appId, int sectionId)
         {
-            //TODO
+
         }
     }
 }

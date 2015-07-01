@@ -18,6 +18,7 @@ namespace GDO.Core
         public int Height { get; set; }
         public int Cols { get; set; }
         public int Rows { get; set; }
+        public int P2PMode { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Section"/> class.
@@ -48,8 +49,6 @@ namespace GDO.Core
                     check = false;
                 }
             }
-                        
-
             return check;
         }
         /// <summary>

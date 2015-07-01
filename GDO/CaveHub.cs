@@ -66,6 +66,20 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Sets the section P2P mode.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="p2pmode">The p2pmode.</param>
+        public void SetSectionP2PMode(int sectionId, int p2pmode)
+        {
+            List<Node> affectedNodes = Cave.SetSectionP2PMode(sectionId,p2pmode);
+            foreach (Node node in affectedNodes)
+            {
+                BroadcastNodeUpdate(node.Id);
+            }
+        }
+
         public void DeployApp()
         {
             //create a app instance

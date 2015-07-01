@@ -69,7 +69,7 @@ $(function() {
         }
         net.node[gdo.id].connectionId = net.connection.hub.id;
         net.node[gdo.id].connectedToServer = true;
-        net.node[gdo.id].p2pmode = P2P_MODE.NEIGHBOURS;
+        net.node[gdo.id].p2pmode = P2P_MODE.NONE;
         consoleOut('.NET', 1, 'Received the map of the Cave');
         updateNodes();
         consoleOut('.NET', 1, 'Requesting the map of Neighbours');
@@ -232,7 +232,7 @@ function receiveConn(conn) {
         conn.on('close', function (err) {
             net.node[nodeId].connectedToPeer = false;
             uploadNodeInfo();
-            consoleOut('.NET', 3, 'nodeId : ' + nodeId + ' - ' + err);
+            consoleOut('.NET', 3, 'Node Connection Closed : nodeId : ' + nodeId);
         });
         conn.on('data', receiveData);
         conn.on('error', function (err) { consoleOut('.NET', 3, 'Connection Error - nodeId : ' + nodeId + ' - ' + err) });
@@ -256,7 +256,7 @@ function initConn(conn, nodeId) {
     conn.on('close', function(err) {
         net.node[nodeId].connectedToPeer = false;
         uploadNodeInfo();
-        consoleOut('.NET', 3, 'Node Connection Closed - nodeId : ' + nodeId + ' - ' + err);
+        consoleOut('.NET', 3, 'Node Connection Closed - nodeId : ' + nodeId);
     });
     conn.on('data', receiveData);
     conn.on('error', function(err) { consoleOut('.NET', 3, 'nodeId : ' + nodeId + ' - ' + err) });
@@ -301,7 +301,7 @@ function disconnectFromPeer(nodeId) {
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
     consoleOut('.NET', 1, 'Disconnecting from Node ' + nodeId);
-    var conn = peer.connections[net.node[nodeId].peerId][0];
+    var conn = net.peer.connections[net.node[nodeId].peerId][0];
     net.node[nodeId].connectedToPeer = false;
     conn.close();
 }
@@ -355,10 +355,14 @@ function updatePeerConnections(p2pmode) {
         } else if (p2pmode == P2P_MODE.NEIGHBOURS) {
             if (!net.node[index].connectedToPeer && net.node[index].isNeighbour) {
                 connectToPeer(net.node[index].id);
-            }else if (net.node[index].connectedToPeer && !net.node[index].isNeighbour && net.node[index].id != gdo.id) {
+            } else if (net.node[index].connectedToPeer && !net.node[index].isNeighbour && net.node[index].id != gdo.id) {
                 disconnectFromPeer(net.node[index].id);
             }
-        } 
+        } else {
+            if (net.node[index].connectedToPeer && index != gdo.id) {
+                disconnectFromPeer(net.node[index].id);
+            }
+        }
     }
 }
 
