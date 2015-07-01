@@ -5,6 +5,9 @@ using System.Web;
 
 namespace GDO.Core
 {
+    /// <summary>
+    /// Section Object Class
+    /// </summary>
     public class Section
     {
         public int Id { get; set; }
@@ -16,6 +19,12 @@ namespace GDO.Core
         public int Cols { get; set; }
         public int Rows { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Section"/> class.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="cols">The cols.</param>
+        /// <param name="rows">The rows.</param>
         public Section(int id, int cols, int rows)
         {
             this.Id = id;
@@ -25,6 +34,10 @@ namespace GDO.Core
             this.Nodes = new Node[cols,rows];
         }
 
+        /// <summary>
+        /// Determines whether this instance is connected.
+        /// </summary>
+        /// <returns></returns>
         public bool IsConnected()
         {
             bool check = true;
@@ -39,7 +52,10 @@ namespace GDO.Core
 
             return check;
         }
-        //TODO doc with whats in return type
+        /// <summary>
+        /// Gets the node map (Matrix of NodeIds within the section).
+        /// </summary>
+        /// <returns></returns>
         public int[,] GetNodeMap()
         {
             int[,] map = new int[Cols,Rows];
@@ -54,6 +70,9 @@ namespace GDO.Core
             return map;
         }
 
+        /// <summary>
+        /// Calculates the dimensions.
+        /// </summary>
         public void CalculateDimensions()
         {
             Width = 0;

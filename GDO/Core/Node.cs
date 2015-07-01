@@ -12,6 +12,9 @@ namespace GDO.Core
         Section = 2,
         Neighbours= 3
     };
+    /// <summary>
+    /// Node Object Class
+    /// </summary>
     public class Node
     {
         public int Id { get; set; }
@@ -37,6 +40,15 @@ namespace GDO.Core
         [JsonIgnore]
         public IApp App;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Node"/> class.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="numNodes">The number nodes.</param>
         public Node(int id, int col, int row, int width, int height, int numNodes)
         {
             this.IsConnected = false;
@@ -59,6 +71,12 @@ namespace GDO.Core
             Cave.Sections.TryGetValue(0, out this.Section); //When a node is created it deploys it to section 0 (pool of free nodes)
         }
 
+        /// <summary>
+        /// Deploys node to specified section
+        /// </summary>
+        /// <param name="section">The section.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
         public void Deploy(Section section, int col, int row)
         {
             this.SectionCol = col;
@@ -71,6 +89,9 @@ namespace GDO.Core
             }
         }
 
+        /// <summary>
+        /// Frees the node.
+        /// </summary>
         public void Free()
         {
             this.IsDeployed = false;
@@ -79,6 +100,10 @@ namespace GDO.Core
             Cave.Sections.TryGetValue(0,out this.Section);
         }
 
+        /// <summary>
+        /// Serializes this as a JSON
+        /// </summary>
+        /// <returns></returns>
         public string SerializeJSON()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);

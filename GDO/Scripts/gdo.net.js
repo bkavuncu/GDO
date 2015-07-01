@@ -30,6 +30,10 @@ $(function() {
     // TODO document this method better
     //todo document why everything is happening on load within this method inc stackoverlfow links 
     $.connection.caveHub.client.receiveCaveMap = function (cols, rows, serializedCaveMap) {
+        /// <summary>
+        /// Receives Serialized Cave Map from Server and creates Node Object structure matching it at gdo.node[]
+        /// </summary>
+        /// <returns></returns>
         net.cols = cols;
         net.rows = rows;
         net.node = new Array(cols * rows);
@@ -72,6 +76,11 @@ $(function() {
         net.server.requestNeighbourMap(gdo.id);
     };
     $.connection.caveHub.client.receiveNeighbourMap = function (serializedNeighbourMap) {
+        /// <summary>
+        ///  Receives Serialized Neighbour Map from Server and flags neighbour nodes with isNeighbour and fills this in neighbourhood matrix at gdo.net.neighbour[]
+        /// </summary>
+        /// <param name="serializedNeighbourMap">The serialized neighbour map.</param>
+        /// <returns></returns>
         deserializedNeighbourMap = JSON.parse(serializedNeighbourMap);
         var k = 0;
         for (j = 0; j < 3; j++) {
@@ -107,6 +116,11 @@ $(function() {
         consoleOut('.NET', 1, 'Received the map of Neighbours');
     }
     $.connection.caveHub.client.receiveNodeUpdate = function (serializedNode) {
+        /// <summary>
+        /// Receives a Node Update and update the local node representaiton and updates self
+        /// </summary>
+        /// <param name="serializedNode">The serialized node.</param>
+        /// <returns></returns>
         var node = JSON.parse(serializedNode);
         net.node[node.Id].col = node.Col;
         net.node[node.Id].row = node.Row;
@@ -127,6 +141,10 @@ $(function() {
 
 
 function initHub() {
+    /// <summary>
+    /// Assigns hub references to our object structure (Hub initialized on load)
+    /// </summary>
+    /// <returns></returns>
     consoleOut('.NET', 1, 'Initializing Hub');
     net.connection = $.connection;
     net.server = $.connection.caveHub.server;
@@ -135,6 +153,10 @@ function initHub() {
 }
 
 function initNet() {//todo comment
+    /// <summary>
+    /// Initializes the gdo.net.
+    /// </summary>
+    /// <returns></returns>
     consoleOut('.NET', 1, 'Initializing Net');
     net = {};
     net.peer = peer;
@@ -166,6 +188,10 @@ function initNet() {//todo comment
 
 
 function initPeer() {
+    /// <summary>
+    /// Initializes the peerjs.
+    /// </summary>
+    /// <returns></returns>
     consoleOut('.NET', 1, 'Initializing Peer Connections');
     net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); //our own server will replace here
     net.peer.on('open', function(peerId) {
@@ -181,6 +207,11 @@ function initPeer() {
 }
 
 function receiveConn(conn) {
+    /// <summary>
+    /// Initializes a connection opened by remote node.
+    /// </summary>
+    /// <param name="conn">The connection.</param>
+    /// <returns></returns>
     var nodeId = -1;
     for (var index in net.node) {
         if (!net.node.hasOwnProperty((index))) {
@@ -209,6 +240,12 @@ function receiveConn(conn) {
 }
 
 function initConn(conn, nodeId) {
+    /// <summary>
+    /// Initializes a connection opened by this node.
+    /// </summary>
+    /// <param name="conn">The connection.</param>
+    /// <param name="nodeId">The node identifier.</param>
+    /// <returns></returns>
     consoleOut('.NET', 1, 'Opening Connection to Node ' + nodeId);
     conn.on('open', function(){
         conn.send('hi!');//todo send node id's in init messages
@@ -226,17 +263,30 @@ function initConn(conn, nodeId) {
 }
 
 function initNodes() {
+    /// <summary>
+    /// Initializes the nodes.
+    /// </summary>
+    /// <returns></returns>
     consoleOut('.NET', 1, 'Initializing Nodes');
     consoleOut('.NET', 1, 'Requesting the map of the Cave');
     net.server.requestCaveMap();
 }
 
 function uploadNodeInfo() {
+    /// <summary>
+    /// Uploads the node information to server.
+    /// </summary>
+    /// <returns></returns>
     var connectedNodes = JSON.stringify(net.nodes.getConnected())
     net.server.uploadNodeInfo(gdo.id, net.connection.hub.id, connectedNodes, net.node[gdo.id].peerId);
 }
 
 function connectToPeer(nodeId) {
+    /// <summary>
+    /// Connects to peer.
+    /// </summary>
+    /// <param name="nodeId">The node identifier.</param>
+    /// <returns></returns>
     if (net.node[nodeId].peerId != null && !net.node[nodeId].connectedToPeer) {
         consoleOut('.NET', 1, 'Connecting to Node ' + nodeId + ' - ' + net.node[nodeId].peerId + ' - Connection Status :' + net.node[nodeId].connectedToPeer);
         var c = net.peer.connect(net.node[nodeId].peerId);
@@ -245,6 +295,11 @@ function connectToPeer(nodeId) {
 }
 
 function disconnectFromPeer(nodeId) {
+    /// <summary>
+    /// Disconnects from peer.
+    /// </summary>
+    /// <param name="nodeId">The node identifier.</param>
+    /// <returns></returns>
     consoleOut('.NET', 1, 'Disconnecting from Node ' + nodeId);
     var conn = peer.connections[net.node[nodeId].peerId][0];
     net.node[nodeId].connectedToPeer = false;
@@ -252,6 +307,10 @@ function disconnectFromPeer(nodeId) {
 }
 
 function updateNodes() {
+    /// <summary>
+    /// Updates the nodes.
+    /// </summary>
+    /// <returns></returns>
     for (var index in net.neighbour) {
         if (!net.neighbour.hasOwnProperty((index))) {
             continue;
@@ -264,12 +323,21 @@ function updateNodes() {
 }
 
 function updateSelf() {
+    /// <summary>
+    /// Updates the self.
+    /// </summary>
+    /// <returns></returns>
     updateNodes();
     updatePeerConnections(net.node[gdo.id].p2pmode);
     updateGDOCanvas();
 }
 
 function updatePeerConnections(p2pmode) {
+    /// <summary>
+    /// Updates the peer connections.
+    /// </summary>
+    /// <param name="p2pmode">The p2pmode.</param>
+    /// <returns></returns>
     for (var index in net.node) {
         if (!net.node.hasOwnProperty((index))) {
             continue;
@@ -295,6 +363,11 @@ function updatePeerConnections(p2pmode) {
 }
 
 function receiveData(data) {
+    /// <summary>
+    /// Receives the data.
+    /// </summary>
+    /// <param name="data">The data.</param>
+    /// <returns></returns>
     consoleOut('.NET', 2, 'RECEIVED DATA');
     //dataObj = JSON.parse(data);
 

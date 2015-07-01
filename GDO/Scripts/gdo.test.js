@@ -5,6 +5,12 @@ function initTest() {
 }
 
 function drawCaveTable(maxRow, maxCol) {
+    /// <summary>
+    /// Draws the cave table.
+    /// </summary>
+    /// <param name="maxRow">The maximum row.</param>
+    /// <param name="maxCol">The maximum col.</param>
+    /// <returns></returns>
     consoleOut('.TEST', 1, 'Drawing Cave Table with ' + maxRow + ',' +maxCol);
     $("#browser_table").empty();
     for (var i = 0; i < maxCol; i++) {
@@ -16,6 +22,10 @@ function drawCaveTable(maxRow, maxCol) {
 }
 
 function updateGDOCanvas() {
+   /// <summary>
+   /// Updates the gdo canvas.
+   /// </summary>
+   /// <returns></returns>
    for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
        $("#browser_table tr:nth-child(" + (node.row+1) + ") td:nth-child(" + (node.col+1) + ")")

@@ -7,6 +7,9 @@ namespace GDO
 {
     //TODO look up the properway to do a singleton pattern  http://www.yoda.arachsys.com/csharp/singleton.html 
     // TODO also check how static controls are recycled during the asp.net lifecycle 
+    /// <summary>
+    /// Cave Object Class
+    /// </summary>
     public class Cave
     {
         public static int Cols { get; set; }
@@ -17,6 +20,9 @@ namespace GDO
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
 
+        /// <summary>
+        /// Initializes the cave.
+        /// </summary>
         public static void InitCave()
         {
             Apps = new ConcurrentDictionary<int, IApp>();
@@ -37,12 +43,23 @@ namespace GDO
             CreateSection(0, 0, Cols-1, Rows-1); //Free Nodes Pool , id=0
         }
 
+        /// <summary>
+        /// Creates the node.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
         public static void CreateNode(int nodeId, int col, int row)
         {
             Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows*Cols);
             Nodes.TryAdd(nodeId, node);
         }
 
+        /// <summary>
+        /// Gets the node with connectionId.
+        /// </summary>
+        /// <param name="connectionId">The connection identifier.</param>
+        /// <returns></returns>
         public static Node GetNode(string connectionId)
         {
             foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
@@ -54,6 +71,14 @@ namespace GDO
             return null;
         }
 
+        /// <summary>
+        /// Deploys the node to a section.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
+        /// <returns></returns>
         public static Node DeployNode(int sectionId, int nodeId, int col, int row)
         {
             Node node;
@@ -68,6 +93,11 @@ namespace GDO
             return node;
         }
 
+        /// <summary>
+        /// Frees the node.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <returns></returns>
         public static Node FreeNode(int nodeId)
         {
             Node node;
@@ -76,6 +106,14 @@ namespace GDO
             return node;
         }
 
+        /// <summary>
+        /// Creates a section.
+        /// </summary>
+        /// <param name="colStart">The col start.</param>
+        /// <param name="rowStart">The row start.</param>
+        /// <param name="colEnd">The col end.</param>
+        /// <param name="rowEnd">The row end.</param>
+        /// <returns></returns>
         public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
             int sectionId = Sections.Count;
@@ -93,6 +131,11 @@ namespace GDO
             section.CalculateDimensions();
             return deployedNodes;
         }
+        /// <summary>
+        /// Disposes the section.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <returns></returns>
         public static List<Node> DisposeSection(int sectionId)
         {
             //close app
@@ -107,6 +150,10 @@ namespace GDO
             return freedNodes;
         }
 
+        /// <summary>
+        /// Gets the cave map (Matrix of NodeIds in the Cave).
+        /// </summary>
+        /// <returns></returns>
         public static int[,] GetCaveMap()
         {
             int[,] caveMap = new int[Cols, Rows];
@@ -118,6 +165,11 @@ namespace GDO
         }
 
         //TODO install GhostDOc and use it to document the return types
+        /// <summary>
+        /// Gets the section map (Matrix of NodeIds in the Section).
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <returns></returns>
         public static int[,] GetSectionMap(int sectionId)
         {
             Section section;
@@ -133,6 +185,11 @@ namespace GDO
             return sectionMap;
         }
 
+        /// <summary>
+        /// Gets the neighbour map (Matrix 3x3 of NodeIds in the Neighbourhood of the Node).
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <returns></returns>
         public static int[,] GetNeighbourMap(int nodeId)
         {
             Node node;
@@ -153,11 +210,20 @@ namespace GDO
             return neighbours;
         }
 
+        /// <summary>
+        /// Adds an application
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="app">The application.</param>
         public static void AddApp(int id, IApp app)
         {
             Apps.TryAdd(id, app);
         }
 
+        /// <summary>
+        /// Gets the application list.
+        /// </summary>
+        /// <returns></returns>
         public static List<string> GetAppList()
         {
             List<string> appList = new List<string>();
@@ -168,6 +234,11 @@ namespace GDO
             return appList;
         }
 
+        /// <summary>
+        /// Assigns the application.
+        /// </summary>
+        /// <param name="appId">The application identifier.</param>
+        /// <param name="sectionId">The section identifier.</param>
         public static void AssignApp(int appId, int sectionId)
         {
             //TODO
