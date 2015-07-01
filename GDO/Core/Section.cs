@@ -7,62 +7,64 @@ namespace GDO.Core
 {
     public class Section
     {
-        public int id { get; set; }
-        public Node[,] nodes;
-        public int numNodes { get; set; }
-        public IApp app;
-        public int width { get; set; }
-        public int height { get; set; }
-        public int cols { get; set; }
-        public int rows { get; set; }
+        public int Id { get; set; }
+        public Node[,] Nodes;
+        public int NumNodes { get; set; }
+        public IApp App;
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Cols { get; set; }
+        public int Rows { get; set; }
 
         public Section(int id, int cols, int rows)
         {
-            this.id = id;
-            this.cols = cols;
-            this.rows = rows;
-            this.numNodes = cols * rows;
-            this.nodes = new Node[cols,rows];
+            this.Id = id;
+            this.Cols = cols;
+            this.Rows = rows;
+            this.NumNodes = cols * rows;
+            this.Nodes = new Node[cols,rows];
         }
 
-        public bool isConnected()
+        public bool IsConnected()
         {
             bool check = true;
-            foreach(Node node in nodes)
+            foreach(Node node in Nodes)
             {
-                if (node.isConnected == false)
+                if (node.IsConnected == false)
                 {
                     check = false;
                 }
             }
+                        
+
             return check;
         }
-
-        public int[,] getNodeMap()
+        //TODO doc with whats in return type
+        public int[,] GetNodeMap()
         {
-            int[,] map = new int[cols,rows];
+            int[,] map = new int[Cols,Rows];
 
-            for (int i = 0; i < cols; i++)
+            for (int i = 0; i < Cols; i++)
             {
-                for (int j = 0; j < rows; j++)
+                for (int j = 0; j < Rows; j++)
                 {
-                    map[i,j] = nodes[i, j].id;
+                    map[i,j] = Nodes[i, j].Id;
                 }
             }
             return map;
         }
 
-        public void calculateDimensions()
+        public void CalculateDimensions()
         {
-            width = 0;
-            height = 0;
-            foreach (Node node in nodes)
+            Width = 0;
+            Height = 0;
+            foreach (Node node in Nodes)
             {
-                width += node.width;
-                height += node.height;
+                Width += node.Width;
+                Height += node.Height;
             }
-            width = width/rows;
-            height = height/cols;
+            Width = Width/Rows;
+            Height = Height/Cols;
         }
         //Nodes connected
         //Control node connected, and info

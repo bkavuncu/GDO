@@ -1,154 +1,149 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
 using System.Configuration;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using Microsoft.AspNet.SignalR;
 using GDO.Core;
 
 namespace GDO
 {
+    //TODO look up the properway to do a singleton pattern  http://www.yoda.arachsys.com/csharp/singleton.html 
+    // TODO also check how static controls are recycled during the asp.net lifecycle 
     public class Cave
     {
-        public static int cols { get; set; }
-        public static int rows { get; set; }
-        public static int nodeWidth { get; set; }
-        public static int nodeHeight { get; set; }
-        public static ConcurrentDictionary<int, IApp> apps;
-        public static ConcurrentDictionary<int, Node> nodes;
-        public static ConcurrentDictionary<int, Section> sections;
+        public static int Cols { get; set; }
+        public static int Rows { get; set; }
+        public static int NodeWidth { get; set; }
+        public static int NodeHeight { get; set; }
+        public static ConcurrentDictionary<int, IApp> Apps { get; set; }
+        public static ConcurrentDictionary<int, Node> Nodes { get; set; }
+        public static ConcurrentDictionary<int, Section> Sections { get; set; }
 
-        public static void initCave()
+        public static void InitCave()
         {
-            apps = new ConcurrentDictionary<int, IApp>();
-            nodes = new ConcurrentDictionary<int, Node>();
-            sections = new ConcurrentDictionary<int, Section>();
-            cols = int.Parse(System.Configuration.ConfigurationManager.AppSettings["numCols"]);
-            rows = int.Parse(System.Configuration.ConfigurationManager.AppSettings["numRows"]);
-            nodeWidth = int.Parse(System.Configuration.ConfigurationManager.AppSettings["nodeWidth"]);
-            nodeHeight = int.Parse(System.Configuration.ConfigurationManager.AppSettings["nodeheight"]);
+            Apps = new ConcurrentDictionary<int, IApp>();
+            Nodes = new ConcurrentDictionary<int, Node>();
+            Sections = new ConcurrentDictionary<int, Section>();
+            Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
+            Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
+            NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
+            NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
 
-            for (int id = 1; id <= cols * rows; id++)
+            for (int id = 1; id <= Cols * Rows; id++)
             {
-                string[] s = System.Configuration.ConfigurationManager.AppSettings["node" + id].Split(',');
+                string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
                 int col = int.Parse(s[0]);
                 int row = int.Parse(s[1]);
-                createNode(id, col, row);
+                CreateNode(id, col, row);
             }
-            createSection(0, 0, cols-1, rows-1); //Free Nodes Pool , id=0
+            CreateSection(0, 0, Cols-1, Rows-1); //Free Nodes Pool , id=0
         }
 
-        public static void createNode(int nodeID, int col, int row)
+        public static void CreateNode(int nodeId, int col, int row)
         {
-            Node node = new Node(nodeID, col, row, nodeWidth, nodeHeight, rows*cols);
-            nodes.TryAdd(nodeID, node);
+            Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows*Cols);
+            Nodes.TryAdd(nodeId, node);
         }
 
-        public static Node getNode(string connectionID)
+        public static Node GetNode(string connectionId)
         {
-            foreach (KeyValuePair<int, Node> nodeEntry in nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
-               if (connectionID == nodeEntry.Value.connectionID){
+               if (connectionId == nodeEntry.Value.ConnectionId){
                    return nodeEntry.Value;
                 }
             }
             return null;
         }
 
-        public static Node deployNode(int sectionID, int nodeID, int col, int row)
+        public static Node DeployNode(int sectionId, int nodeId, int col, int row)
         {
             Node node;
-            Cave.nodes.TryGetValue(nodeID, out node);
-            if (!node.isDeployed)
+            Nodes.TryGetValue(nodeId, out node);
+            if (!node.IsDeployed)
             {
                 Section section;
-                Cave.sections.TryGetValue(sectionID, out section);
-                node.deploy(section, col, row);
-                section.nodes[col, row] = node;
+                Sections.TryGetValue(sectionId, out section);
+                node.Deploy(section, col, row);
+                section.Nodes[col, row] = node;
             }
             return node;
         }
 
-        public static Node freeNode(int nodeID)
+        public static Node FreeNode(int nodeId)
         {
             Node node;
-            Cave.nodes.TryGetValue(nodeID, out node);
-            node.free();
+            Nodes.TryGetValue(nodeId, out node);
+            node.Free();
             return node;
         }
 
-        public static List<Node> createSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            int sectionID = Cave.sections.Count;
-            Section section = new Section(sectionID, colEnd - colStart + 1, rowEnd - rowStart + 1);
-            Cave.sections.TryAdd(sectionID, section);
+            int sectionId = Sections.Count;
+            Section section = new Section(sectionId, colEnd - colStart + 1, rowEnd - rowStart + 1);
+            Sections.TryAdd(sectionId, section);
             List<Node> deployedNodes = new List<Node>();
-            foreach (KeyValuePair<int, Node> nodeEntry in Cave.nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
                 Node node = nodeEntry.Value;
-                if (node.col <= colEnd && node.col >= colStart && node.row <= rowEnd && node.row >= rowStart)
+                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
                 {
-                    deployedNodes.Add(deployNode(section.id, node.id, node.col - colStart, node.row - rowStart));
+                    deployedNodes.Add(DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
                 }
             }
-            section.calculateDimensions();
+            section.CalculateDimensions();
             return deployedNodes;
         }
-        public static List<Node> disposeSection(int sectionID)
+        public static List<Node> DisposeSection(int sectionId)
         {
             //close app
             Section section;
             List<Node> freedNodes = new List<Node>();
-            Cave.sections.TryGetValue(sectionID, out section);
-            foreach (Node node in section.nodes)
+            Sections.TryGetValue(sectionId, out section);
+            foreach (Node node in section.Nodes)
             {
-                freedNodes.Add(freeNode(node.id));
+                freedNodes.Add(FreeNode(node.Id));
             }
-            Cave.sections.TryRemove(sectionID, out section);
+            Sections.TryRemove(sectionId, out section);
             return freedNodes;
         }
 
-        public static int[,] getCaveMap()
+        public static int[,] GetCaveMap()
         {
-            int[,] caveMap = new int[cols, rows];
-            foreach (KeyValuePair<int,Node> nodeEntry in nodes)
+            int[,] caveMap = new int[Cols, Rows];
+            foreach (KeyValuePair<int,Node> nodeEntry in Nodes)
             {
-                caveMap[nodeEntry.Value.col, nodeEntry.Value.row] = nodeEntry.Value.id;
+                caveMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
             }
             return caveMap;
         }
 
-        public static int[,] getSectionMap(int sectionID)
+        //TODO install GhostDOc and use it to document the return types
+        public static int[,] GetSectionMap(int sectionId)
         {
             Section section;
-            sections.TryGetValue(sectionID, out section);
-            int[,] sectionMap = new int[section.cols, section.rows];
-            foreach (KeyValuePair<int, Node> nodeEntry in nodes)
+            Sections.TryGetValue(sectionId, out section);
+            int[,] sectionMap = new int[section.Cols, section.Rows];
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
-                if (nodeEntry.Value.sectionID == sectionID)
+                if (nodeEntry.Value.SectionId == sectionId)
                 {
-                    sectionMap[nodeEntry.Value.sectionCol, nodeEntry.Value.sectionRow] = nodeEntry.Value.id;
+                    sectionMap[nodeEntry.Value.SectionCol, nodeEntry.Value.SectionRow] = nodeEntry.Value.Id;
                 }
             }
             return sectionMap;
         }
 
-        public static int[,] getNeighbourMap(int nodeID)
+        public static int[,] GetNeighbourMap(int nodeId)
         {
             Node node;
-            nodes.TryGetValue(nodeID, out node);
-            int[,] caveMap = getCaveMap();
+            Nodes.TryGetValue(nodeId, out node);
+            int[,] caveMap = GetCaveMap();
             int[,] neighbours = new int[3, 3];
             for (int i = -1; i<2; i++){
                 for (int j = -1; j<2; j++){
-                    int col = node.col + i ;
-                    int row = node.row + j;
-                    if(col >=0 && row>=0 && col <cols && row<rows){
+                    int col = node.Col + i ;
+                    int row = node.Row + j;
+                    if(col >=0 && row>=0 && col <Cols && row<Rows){
                         neighbours[i+1,j+1] = caveMap[col,row];
                     }else{
                         neighbours[i+1,j+1] = -1;
@@ -158,22 +153,22 @@ namespace GDO
             return neighbours;
         }
 
-        public static void addApp(int id, IApp app)
+        public static void AddApp(int id, IApp app)
         {
-            apps.TryAdd(id, app);
+            Apps.TryAdd(id, app);
         }
 
-        public static List<string> getAppList()
+        public static List<string> GetAppList()
         {
             List<string> appList = new List<string>();
-            foreach (KeyValuePair<int, IApp> appEntry in apps)
+            foreach (KeyValuePair<int, IApp> appEntry in Apps)
             {
-                appList.Add(appEntry.Value.name);
+                appList.Add(appEntry.Value.Name);
             }
             return appList;
         }
 
-        public static void assignApp(int appID, int sectionID)
+        public static void AssignApp(int appId, int sectionId)
         {
             //TODO
         }

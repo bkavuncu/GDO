@@ -14,11 +14,11 @@ namespace GDO
 
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
-            Node node = Cave.getNode(Context.ConnectionId);
+            Node node = Cave.GetNode(Context.ConnectionId);
             if (node != null)
             {
-                node.isConnected = false;
-                broadcastNodeUpdate(node.id);
+                node.IsConnected = false;
+                BroadcastNodeUpdate(node.Id);
             }
 
             if (stopCalled)
@@ -36,43 +36,43 @@ namespace GDO
             return base.OnDisconnected(stopCalled);
 
         }
-        public void deployNode(int sectionID, int nodeID, int col, int row)
+        public void DeployNode(int sectionId, int nodeId, int col, int row)
         {
-            Cave.deployNode(sectionID,nodeID,col,row);
-            broadcastNodeUpdate(nodeID);
+            Cave.DeployNode(sectionId,nodeId,col,row);
+            BroadcastNodeUpdate(nodeId);
         }
 
-        public void freeNode(int nodeID)
+        public void FreeNode(int nodeId)
         {
-            Cave.freeNode(nodeID);
-            broadcastNodeUpdate(nodeID);
+            Cave.FreeNode(nodeId);
+            BroadcastNodeUpdate(nodeId);
         }
 
-        public void createSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            List<Node> deployedNodes = Cave.createSection(colStart, rowStart, colEnd, rowEnd);
+            List<Node> deployedNodes = Cave.CreateSection(colStart, rowStart, colEnd, rowEnd);
             foreach (Node node in deployedNodes)
             {
-                broadcastNodeUpdate(node.id);
+                BroadcastNodeUpdate(node.Id);
             }
         }
 
-        public void disposeSection(int sectionID)
+        public void DisposeSection(int sectionId)
         {
-            List<Node> freedNodes = Cave.disposeSection(sectionID);
+            List<Node> freedNodes = Cave.DisposeSection(sectionId);
             foreach (Node node in freedNodes)
             {
-                broadcastNodeUpdate(node.id);
+                BroadcastNodeUpdate(node.Id);
             }
         }
 
-        public void deployApp()
+        public void DeployApp()
         {
             //create a app instance
             //tell browser what part to use
         }
 
-        public void disposeApp()
+        public void DisposeApp()
         {
             //close app instance
             //send info to browsers, 
@@ -80,28 +80,28 @@ namespace GDO
             //they deploy base app
         }
 
-        public void uploadNodeInfo(int nodeID, string connectionID, string connectedNodes, string peerID)
+        public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId)
         {
             Node node;
-            Cave.nodes.TryGetValue(nodeID, out node);
-            node.isConnected = true;
-            node.connectionID = connectionID;
-            node.peerID = peerID;
+            Cave.Nodes.TryGetValue(nodeId, out node);
+            node.IsConnected = true;
+            node.ConnectionId = connectionId;
+            node.PeerId = peerId;
             int[] deserializedConnectedNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(connectedNodes);
             foreach (int connectedNode in deserializedConnectedNodes)
             {
-                node.connected[connectedNode] = true;
+                node.Connected[connectedNode] = true;
             }
 
-            broadcastNodeUpdate(nodeID);
+            BroadcastNodeUpdate(nodeId);
             //concurrency problem?
         }
 
-        public void requestCaveMap()
+        public void RequestCaveMap()
         {
             try
             { 
-                Clients.Caller.receiveCaveMap(Cave.cols, Cave.rows, Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getCaveMap()));
+                Clients.Caller.receiveCaveMap(Cave.Cols, Cave.Rows, Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetCaveMap()));
             }
             catch (Exception e)
             {
@@ -109,11 +109,11 @@ namespace GDO
             }
         }
 
-        public void requestSectionMap(int sectionID)
+        public void RequestSectionMap(int sectionId)
         {
             try
             { 
-                Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getSectionMap(sectionID)));
+                Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetSectionMap(sectionId)));
             }
             catch (Exception e)
             {
@@ -121,11 +121,11 @@ namespace GDO
             }
         }
 
-        public void requestNeighbourMap(int nodeID)
+        public void RequestNeighbourMap(int nodeId)
         {
             try
             {
-                Clients.Caller.receiveNeighbourMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getNeighbourMap(nodeID)));
+                Clients.Caller.receiveNeighbourMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId)));
             }
             catch (Exception e)
             {
@@ -133,11 +133,11 @@ namespace GDO
             }
         }
 
-        public void requestAppList()
+        public void RequestAppList()
         {
             try
             { 
-                Clients.Caller.receiveAppList(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.getAppList()));
+                Clients.Caller.receiveAppList(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetAppList()));
             }
             catch (Exception e)
             {
@@ -145,13 +145,13 @@ namespace GDO
             }
         }
 
-        public void broadcastNodeUpdate(int nodeID)
+        public void BroadcastNodeUpdate(int nodeId)
         {
             try
             {
                 Node node;
-                Cave.nodes.TryGetValue(nodeID, out node);
-                Clients.All.receiveNodeUpdate(node.serialize());
+                Cave.Nodes.TryGetValue(nodeId, out node);
+                Clients.All.receiveNodeUpdate(node.SerializeJSON());
             }
             catch (Exception e)
             {
@@ -159,11 +159,11 @@ namespace GDO
             }
         }
 
-        public void sendData(int senderID, int receiverID, string data)
+        public void SendData(int senderId, int receiverId, string data)
         {
             try
             { 
-                Clients.Client(Cave.nodes[receiverID].connectionID).receiveData(senderID, data);
+                Clients.Client(Cave.Nodes[receiverId].ConnectionId).receiveData(senderId, data);
             }
             catch (Exception e)
             {
@@ -171,23 +171,11 @@ namespace GDO
             }
         }
 
-        public void broadcastData(int senderID, string data)
+        public void BroadcastData(int senderID, string data)
         {
             try
             { 
                 Clients.Others.receiveBroadcast(senderID, data);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        public void requestTest()
-        {
-            try
-            {
-                Clients.Caller.receiveTest("test");
             }
             catch (Exception e)
             {

@@ -22,9 +22,9 @@ function updateGDOCanvas() {
             .empty()
             .append("<div id='" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
             .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-            .append("<div id='" + node.id + "s'> <b>SectionID:</b> " + node.sectionID + "</div>")
-            .append("<div id='" + node.id + "p'> <b>PeerID:</b> " + node.peerID + "</div>")
-            .append("<div id='" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionID + "</div>");
+            .append("<div id='" + node.id + "s'> <b>SectionID:</b> " + node.sectionId + "</div>")
+            .append("<div id='" + node.id + "p'> <b>PeerID:</b> " + node.peerId + "</div>")
+            .append("<div id='" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionId + "</div>");
         if (node.connectedToPeer) {
             $("#" + node.id + 'p').css("background", "lightgreen");
         } else {
@@ -35,9 +35,9 @@ function updateGDOCanvas() {
         } else {
             $("#" + node.id + 'c').css("background", "lightcoral");
         }
-        if (node.sectionID > 0 && node.sectionID == gdo.net.self.sectionID) {
+        if (node.sectionId > 0 && node.sectionId == gdo.net.node[gdo.id].sectionId) {
             $("#" + node.id + 's').css("background", "lightgreen");
-        } else if (node.sectionID > 0) {
+        } else if (node.sectionId > 0) {
             $("#" + node.id + 's').css("background", "lightsalmon");
         } else {
             $("#" + node.id + 's').css("background", "lightcoral");

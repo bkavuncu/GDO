@@ -7,22 +7,21 @@ $(function() {
         deserializedAppList = JSON.parse(serializedAppList);
         for(app in deserializedAppList)
         {
-            loadthis.module(app);
+            loadModule(app);
         }
     }
 });
 function initGDO() {
     consoleOut('', 1, 'Initializing GDO');
-    //loadthis.module('net');
-    //loadthis.module('fs');
+    //loadModule('net');
+    //loadModule('fs');
     gdo = {};
     gdo.net = {};
-    gdo.id = getUrlVar('clientID');
+    gdo.id = getUrlVar('clientId');
     if (gdo.id > 0) {
-        $.connection.caveHub.client.receiveTest = function (str) {
-            console.log(str);
-        }
+        consoleOut('', 1, 'Hub Started');
         $.connection.hub.start().done(function () {
+            consoleOut('', 1, 'Hub Started');
             gdo.net = initNet();
             waitForResponse(initApp,isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
             setInterval(uploadNodeInfo, 7000);
@@ -53,7 +52,7 @@ function consoleOut(module, type, msg) {
 function loadModule(js) {
     var $head = $('head');
     $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
-    consoleOut('MAIN', 1, 'Loaded this.module ' + js);
+    consoleOut('MAIN', 1, 'Loaded module ' + js);
 }
 
 function getUrlVar(variable) {

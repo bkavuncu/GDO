@@ -16,8 +16,8 @@ namespace GDO.Core
     [InheritedExport]
     public interface IApp
     {
-        int id { get; set; }
-        string name { get; set; }
+        int Id { get; set; }
+        string Name { get; set; }
         //App interface
     }
 }

@@ -13,41 +13,41 @@ namespace GDO.Tests
     [TestClass()]
     public class CaveTests
     {
-        private int[,] caveMap;
-        private int[,] sectionMap;
-        private int[,] neighbourMap;
+        private int[,] _caveMap;
+        private int[,] _sectionMap;
+        private int[,] _neighbourMap;
 
         [TestMethod()]
-        public void initTest()
+        public void InitTest()
         {
-            Cave.initCave();
-            if (Cave.cols <= 0 && Cave.rows <= 0 && Cave.nodeWidth <= 0 && Cave.nodeHeight <= 0)
+            Cave.InitCave();
+            if (Cave.Cols <= 0 && Cave.Rows <= 0 && Cave.NodeWidth <= 0 && Cave.NodeHeight <= 0)
             {
                 Assert.Fail();
             }
-            Assert.AreNotEqual(true, Cave.nodes.IsEmpty);
-            if (Cave.nodes.Count < Cave.cols*Cave.rows)
+            Assert.AreNotEqual(true, Cave.Nodes.IsEmpty);
+            if (Cave.Nodes.Count < Cave.Cols*Cave.Rows)
             {
                 Assert.Fail();
             }
             Node node;
-            Cave.nodes.TryGetValue(Cave.cols*Cave.rows, out node);
+            Cave.Nodes.TryGetValue(Cave.Cols*Cave.Rows, out node);
             Assert.AreNotEqual(null, node);
-            Assert.AreEqual(16, node.id);
-            Assert.AreEqual(3, node.col);
-            Assert.AreEqual(3, node.row);
+            Assert.AreEqual(16, node.Id);
+            Assert.AreEqual(3, node.Col);
+            Assert.AreEqual(3, node.Row);
         }
 
         [TestMethod()]
-        public void sectionTest()
+        public void SectionTest()
         {
-            Cave.initCave();
+            Cave.InitCave();
             Section section;
-            if (Cave.nodes.Count <= 0)
+            if (Cave.Nodes.Count <= 0)
             {
-                Assert.Fail("Cave.nodes.Count:" + Cave.nodes.Count);
+                Assert.Fail("Cave.nodes.Count:" + Cave.Nodes.Count);
             }
-            List<Node> deployedNodes = Cave.createSection(2, 2, 3, 3);
+            List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
             if (deployedNodes.Count < 4)
             {
                 Assert.Fail("deployedNodes.Count:" + deployedNodes.Count);
@@ -55,79 +55,79 @@ namespace GDO.Tests
 
             foreach (Node node in deployedNodes)
             {
-                if (node.col < 2 || node.col > 3)
+                if (node.Col < 2 || node.Col > 3)
                 {
-                    Assert.Fail("node.col:" + node.col);
+                    Assert.Fail("node.col:" + node.Col);
                 }
-                if (node.row < 2 || node.row > 3)
+                if (node.Row < 2 || node.Row > 3)
                 {
-                    Assert.Fail("node.row:" + node.row);
+                    Assert.Fail("node.row:" + node.Row);
                 }
-                Cave.sections.TryGetValue(node.sectionID, out section);
-                if (!Cave.sections.ContainsKey(node.sectionID))
+                Cave.Sections.TryGetValue(node.SectionId, out section);
+                if (!Cave.Sections.ContainsKey(node.SectionId))
                 {
-                    Assert.Fail("node.sectionID:" + node.sectionID);
+                    Assert.Fail("node.sectionID:" + node.SectionId);
                 }
-                if (section.nodes[node.sectionCol, node.sectionRow].id != node.id)
+                if (section.Nodes[node.SectionCol, node.SectionRow].Id != node.Id)
                 {
                     Assert.Fail();
                 }
             }
-            Cave.sections.TryGetValue(1, out section);
-            Cave.disposeSection(1);
-            if (Cave.sections.ContainsKey(1))
+            Cave.Sections.TryGetValue(1, out section);
+            Cave.DisposeSection(1);
+            if (Cave.Sections.ContainsKey(1))
             {
                 Assert.Fail();
             }
-            foreach (KeyValuePair<int, Node> nodeEntry in Cave.nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
             {
-                if (nodeEntry.Value.sectionID > 0)
+                if (nodeEntry.Value.SectionId > 0)
                 {
                     Assert.Fail();
                 }
-                if (nodeEntry.Value.isDeployed)
+                if (nodeEntry.Value.IsDeployed)
                 {
                     Assert.Fail();
                 }
             }
-            Cave.createSection(1, 2, 3, 3);
-            Cave.sections.TryGetValue(1, out section);
-            Assert.AreEqual(1920 + 1920 + 1920, section.width);
-            Assert.AreEqual(1080 + 1080, section.height);
+            Cave.CreateSection(1, 2, 3, 3);
+            Cave.Sections.TryGetValue(1, out section);
+            Assert.AreEqual(1920 + 1920 + 1920, section.Width);
+            Assert.AreEqual(1080 + 1080, section.Height);
         }
 
         [TestMethod()]
-        public void getMapTests()
+        public void GetMapTests()
         {
-            Cave.initCave();
-            List<Node> deployedNodes = Cave.createSection(2, 2, 3, 3);
+            Cave.InitCave();
+            List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
 
-            caveMap = Cave.getCaveMap();
-            sectionMap = Cave.getSectionMap(1);
+            _caveMap = Cave.GetCaveMap();
+            _sectionMap = Cave.GetSectionMap(1);
 
-            neighbourMap = Cave.getNeighbourMap(6);
+            _neighbourMap = Cave.GetNeighbourMap(6);
 
-            Assert.AreEqual(11, caveMap[2, 2]);
-            Assert.AreEqual(16, caveMap[3, 3]);
-            Assert.AreEqual(11, sectionMap[0, 0]);
-            Assert.AreEqual(16, sectionMap[1, 1]);
-            Assert.AreEqual(1, neighbourMap[0, 0]);
-            Assert.AreEqual(11, neighbourMap[2, 2]);
-            Assert.AreEqual(9, neighbourMap[0, 2]);
+            Assert.AreEqual(11, _caveMap[2, 2]);
+            Assert.AreEqual(16, _caveMap[3, 3]);
+            Assert.AreEqual(11, _sectionMap[0, 0]);
+            Assert.AreEqual(16, _sectionMap[1, 1]);
+            Assert.AreEqual(1, _neighbourMap[0, 0]);
+            Assert.AreEqual(11, _neighbourMap[2, 2]);
+            Assert.AreEqual(9, _neighbourMap[0, 2]);
 
-            neighbourMap = Cave.getNeighbourMap(16);
+            _neighbourMap = Cave.GetNeighbourMap(16);
 
-            Assert.AreEqual(11, neighbourMap[0, 0]);
-            Assert.AreEqual(-1, neighbourMap[2, 2]);
+            Assert.AreEqual(11, _neighbourMap[0, 0]);
+            Assert.AreEqual(-1, _neighbourMap[2, 2]);
 
-            neighbourMap = Cave.getNeighbourMap(1);
+            _neighbourMap = Cave.GetNeighbourMap(1);
 
-            Assert.AreEqual(-1, neighbourMap[0, 0]);
-            Assert.AreEqual(1, neighbourMap[1, 1]);
+            Assert.AreEqual(-1, _neighbourMap[0, 0]);
+            Assert.AreEqual(1, _neighbourMap[1, 1]);
         }
 
         [TestMethod()]
-        public void JSONTests()
+        public void JsonTests()
         {
             //TODO
         }

@@ -6,80 +6,80 @@ using Newtonsoft.Json;
 
 namespace GDO.Core
 {
-    enum P2P_MODE  {
-        NONE = -1,
-        CAVE = 1,
-        SECTION = 2,
-        NEIGHBOURS= 3
+    enum P2PModes  {
+        None = -1,
+        Cave = 1,
+        Section = 2,
+        Neighbours= 3
     };
     public class Node
     {
-        public int id { get; set; }
-        public int col { get; set; }
-        public int row { get; set; }
-        public int sectionCol { get; set; }
-        public int sectionRow { get; set; }
-        public int sectionID { get; set; }
-        public int appID { get; set; }
-        public string peerID { get; set; }
-        public string connectionID { get; set; }
-        public int p2pMode { get; set; }
-        public bool isConnected { get; set; }
-        public bool isDeployed { get; set; }
+        public int Id { get; set; }
+        public int Col { get; set; }
+        public int Row { get; set; }
+        public int SectionCol { get; set; }
+        public int SectionRow { get; set; }
+        public int SectionId { get; set; }
+        public int AppId { get; set; }
+        public string PeerId { get; set; }
+        public string ConnectionId { get; set; }
+        public int P2PMode { get; set; }
+        public bool IsConnected { get; set; }
+        public bool IsDeployed { get; set; }
         [JsonIgnore]
-        public int width { get; set; }
+        public int Width { get; set; }
         [JsonIgnore]
-        public int height { get; set; }
+        public int Height { get; set; }
         [JsonIgnore]
-        public Dictionary<int, bool> connected;
+        public Dictionary<int, bool> Connected;
         [JsonIgnore]
-        public Section section;
+        public Section Section;
         [JsonIgnore]
-        public IApp app;
+        public IApp App;
 
         public Node(int id, int col, int row, int width, int height, int numNodes)
         {
-            this.isConnected = false;
-            this.isDeployed = false;
-            this.id = id;
-            this.col = col;
-            this.row = row;
-            this.sectionCol = col;
-            this.sectionRow = row;
-            this.width = width;
-            this.height = height;
-            this.sectionID = 0;
-            this.appID = -1;
-            this.p2pMode = (int)P2P_MODE.NONE;
-            this.connected= new Dictionary<int,bool>();
+            this.IsConnected = false;
+            this.IsDeployed = false;
+            this.Id = id;
+            this.Col = col;
+            this.Row = row;
+            this.SectionCol = col;
+            this.SectionRow = row;
+            this.Width = width;
+            this.Height = height;
+            this.SectionId = 0;
+            this.AppId = -1;
+            this.P2PMode = (int)P2PModes.None;
+            this.Connected= new Dictionary<int,bool>();
             for (int i = 0; i < numNodes; i++)
             {
-                 connected.Add(i,false);
+                 Connected.Add(i,false);
             }
-            Cave.sections.TryGetValue(0, out this.section);
+            Cave.Sections.TryGetValue(0, out this.Section); //When a node is created it deploys it to section 0 (pool of free nodes)
         }
 
-        public void deploy(Section section, int col, int row)
+        public void Deploy(Section section, int col, int row)
         {
-            this.sectionCol = col;
-            this.sectionRow = row;
-            this.section = section;
-            this.sectionID = section.id;
-            if (sectionID > 0)
+            this.SectionCol = col;
+            this.SectionRow = row;
+            this.Section = section;
+            this.SectionId = section.Id;
+            if (SectionId > 0)
             {
-                this.isDeployed = true;
+                this.IsDeployed = true;
             }
         }
 
-        public void free()
+        public void Free()
         {
-            this.isDeployed = false;
-            this.sectionID = 0;
-            this.appID = -1;
-            Cave.sections.TryGetValue(0,out this.section);
+            this.IsDeployed = false;
+            this.SectionId = 0;
+            this.AppId = -1;
+            Cave.Sections.TryGetValue(0,out this.Section);
         }
 
-        public string serialize()
+        public string SerializeJSON()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
