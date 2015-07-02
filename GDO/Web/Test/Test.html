@@ -19,11 +19,11 @@
     <script>
         $(function() {
             loadModule('test');
-            initGDO();
+            initGDO(CLIENT_MODE.NODE);
         });
         function initApp() {
             consoleOut('', 1, 'GDO Initialized');
-            drawCaveTable(gdo.net.cols, gdo.net.rows);
+            drawEmptyTable(gdo.net.cols, gdo.net.rows);
             updateSelf();
         }
         //TESTS

@@ -17,7 +17,7 @@ namespace GDO
             Node node = Cave.GetNode(Context.ConnectionId);
             if (node != null)
             {
-                node.IsConnected = false;
+                node.IsConnectedToCaveServer = false;
                 BroadcastNodeUpdate(node.Id);
             }
 
@@ -79,13 +79,27 @@ namespace GDO
                 BroadcastNodeUpdate(node.Id);
             }
         }
+        /// <summary>
+        /// Sets the default P2P mode.
+        /// </summary>
+        /// <param name="p2pmode">The p2pmode.</param>
+        public void SetDefaultP2PMode(int p2pmode)
+        {
+            Cave.DefaultP2PMode = p2pmode;
+        }
 
+        /// <summary>
+        /// Deploys the application.
+        /// </summary>
         public void DeployApp()
         {
             //create a app instance
             //tell browser what part to use
         }
 
+        /// <summary>
+        /// Disposes the application.
+        /// </summary>
         public void DisposeApp()
         {
             //close app instance
@@ -94,23 +108,35 @@ namespace GDO
             //they deploy base app
         }
 
-        public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId)
+        /// <summary>
+        /// Uploads the node information.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <param name="connectionId">The connection identifier.</param>
+        /// <param name="connectedNodes">The connected nodes.</param>
+        /// <param name="peerId">The peer identifier.</param>
+        public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId, bool isConnectedToPeerServer)
         {
             Node node;
             Cave.Nodes.TryGetValue(nodeId, out node);
-            node.IsConnected = true;
+            node.IsConnectedToCaveServer = true;
             node.ConnectionId = connectionId;
             node.PeerId = peerId;
+            node.IsConnectedToPeerServer = isConnectedToPeerServer;
             int[] deserializedConnectedNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(connectedNodes);
+            node.ConnectedNodeList.Clear();
             foreach (int connectedNode in deserializedConnectedNodes)
             {
-                node.Connected[connectedNode] = true;
+                node.ConnectedNodeList.Add(connectedNode);
             }
-
+            node.aggregateConnectionHealth();
             BroadcastNodeUpdate(nodeId);
             //concurrency problem?
         }
 
+        /// <summary>
+        /// Requests the cave map.
+        /// </summary>
         public void RequestCaveMap()
         {
             try
@@ -123,6 +149,10 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Requests the section map.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
         public void RequestSectionMap(int sectionId)
         {
             try
@@ -135,6 +165,10 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Requests the neighbour map.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
         public void RequestNeighbourMap(int nodeId)
         {
             try
@@ -147,6 +181,9 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Requests the application list.
+        /// </summary>
         public void RequestAppList()
         {
             try
@@ -159,12 +196,17 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Broadcasts the node update.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
         public void BroadcastNodeUpdate(int nodeId)
         {
             try
             {
                 Node node;
                 Cave.Nodes.TryGetValue(nodeId, out node);
+                node.aggregateConnectionHealth();
                 Clients.All.receiveNodeUpdate(node.SerializeJSON());
             }
             catch (Exception e)
@@ -173,6 +215,12 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Sends the data.
+        /// </summary>
+        /// <param name="senderId">The sender identifier.</param>
+        /// <param name="receiverId">The receiver identifier.</param>
+        /// <param name="data">The data.</param>
         public void SendData(int senderId, int receiverId, string data)
         {
             try
@@ -185,6 +233,11 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Broadcasts the data.
+        /// </summary>
+        /// <param name="senderID">The sender identifier.</param>
+        /// <param name="data">The data.</param>
         public void BroadcastData(int senderID, string data)
         {
             try

@@ -1,5 +1,9 @@
 ﻿var gdo;
 
+var CLIENT_MODE = {
+    NODE: 1,
+    CONTROL: 2
+};
 
 $(function() {
     /// <summary>
@@ -14,7 +18,7 @@ $(function() {
         }
     }
 });
-function initGDO() {
+function initGDO(clientMode) {
     /// <summary>
     /// Initializes the gdo.
     /// </summary>
@@ -24,14 +28,22 @@ function initGDO() {
     //loadModule('fs');
     gdo = {};
     gdo.net = {};
-    gdo.id = getUrlVar('clientId');
-    if (gdo.id > 0) {
-        consoleOut('', 1, 'Hub Started');
-        $.connection.hub.start().done(function () {
+    gdo.clientMode = clientMode;
+    gdo.clientId = getUrlVar('clientId');
+    if (gdo.clientMode == CLIENT_MODE.CONTROL) {
+        gdo.nodeId = 1;
+    }
+    if (gdo.clientId > 0) {
+        $.connection.hub.start().done(function() {
             consoleOut('', 1, 'Hub Started');
-            gdo.net = initNet();
-            waitForResponse(initApp,isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
-            setInterval(uploadNodeInfo, 7000);
+            gdo.net = initNet(clientMode);
+            if (gdo.clientMode == CLIENT_MODE.NODE) {
+                waitForResponse(initApp, isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
+                setInterval(uploadNodeInfo, 7000);
+            } else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
+                waitForResponse(initApp, isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
+            }
+            
             //set intervl and 
             //gdo.net.server.requestAppList();
         });
@@ -110,4 +122,14 @@ function waitForResponse(func, check, delay, repeat, msg) {
     } else {
         func();
     }
+}
+
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+
 }

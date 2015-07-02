@@ -1,10 +1,44 @@
-﻿<!DOCTYPE html>
-<html>
+﻿<html>
 <head>
-    <title></title>
-	<meta charset="utf-8" />
+    <title>GDO Management - Node</title>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            background: darkgray;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+    </style>
 </head>
 <body>
-
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.net.js"></script>
+    <script src="../../signalr/hubs"></script>
+    <script type="text/javascript" src="../../Scripts/peer.js"></script>
+    <script>
+        $(function() {
+            loadModule('test');
+            initGDO(CLIENT_MODE.CONTROL);
+        });
+        function initApp() {
+            consoleOut('', 1, 'GDO Initialized');
+            drawEmptyTable(gdo.net.cols, gdo.net.rows);
+            updateSelf();
+        }
+        //TESTS
+        //------------
+        //connect
+        //init js tests
+        //section live tests
+        //create a section
+        //deploy test app in different p2p modes
+        //test app will test data sharing
+        //give some time for tests to complete or check through a boolean
+        //close app test
+        //redeploy live test?
+    </script>
+    <table id="browser_table" style="width:100%"></table>
 </body>
 </html>

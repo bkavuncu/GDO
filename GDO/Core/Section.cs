@@ -44,7 +44,7 @@ namespace GDO.Core
             bool check = true;
             foreach(Node node in Nodes)
             {
-                if (node.IsConnected == false)
+                if (node.IsConnectedToCaveServer == false)
                 {
                     check = false;
                 }

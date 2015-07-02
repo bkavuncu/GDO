@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
 using Newtonsoft.Json;
 
@@ -27,14 +28,16 @@ namespace GDO.Core
         public string PeerId { get; set; }
         public string ConnectionId { get; set; }
         public int P2PMode { get; set; }
-        public bool IsConnected { get; set; }
+        public bool IsConnectedToCaveServer { get; set; }
+        public bool IsConnectedToPeerServer { get; set; }
+        public bool AggregatedConnectionHealth { get; set; }
         public bool IsDeployed { get; set; }
         [JsonIgnore]
         public int Width { get; set; }
         [JsonIgnore]
         public int Height { get; set; }
-        [JsonIgnore]
-        public Dictionary<int, bool> Connected;
+        //[JsonIgnore]
+        public List<int> ConnectedNodeList;
         [JsonIgnore]
         public Section Section;
         [JsonIgnore]
@@ -51,7 +54,8 @@ namespace GDO.Core
         /// <param name="numNodes">The number nodes.</param>
         public Node(int id, int col, int row, int width, int height, int numNodes)
         {
-            this.IsConnected = false;
+            this.IsConnectedToCaveServer = false;
+            this.IsConnectedToPeerServer = false;
             this.IsDeployed = false;
             this.Id = id;
             this.Col = col;
@@ -62,12 +66,9 @@ namespace GDO.Core
             this.Height = height;
             this.SectionId = 0;
             this.AppId = -1;
-            this.P2PMode = (int)P2PModes.None;
-            this.Connected= new Dictionary<int,bool>();
-            for (int i = 0; i < numNodes; i++)
-            {
-                 Connected.Add(i,false);
-            }
+            this.AggregatedConnectionHealth = false;
+            this.P2PMode = Cave.DefaultP2PMode;
+            this.ConnectedNodeList = new List<int>();
             Cave.Sections.TryGetValue(0, out this.Section); //When a node is created it deploys it to section 0 (pool of free nodes)
         }
 
@@ -97,6 +98,7 @@ namespace GDO.Core
             this.IsDeployed = false;
             this.SectionId = 0;
             this.AppId = -1;
+            this.P2PMode = Cave.DefaultP2PMode;
             Cave.Sections.TryGetValue(0,out this.Section);
         }
 
@@ -107,6 +109,52 @@ namespace GDO.Core
         public string SerializeJSON()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+
+        public void aggregateConnectionHealth()
+        {
+            if (!IsConnectedToCaveServer)
+            {
+                AggregatedConnectionHealth = false; return;
+
+            }
+            if (!IsConnectedToPeerServer)
+            {
+                AggregatedConnectionHealth = false; return;
+            }
+            if (P2PMode == (int)P2PModes.Cave)
+            {
+                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
+                {
+                    if (!ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)
+                    {
+                        AggregatedConnectionHealth = false; return;
+                    }
+                }
+            }
+            else if (P2PMode == (int) P2PModes.Section)
+            {
+                foreach (Node node in Section.Nodes)
+                {
+                    if (!ConnectedNodeList.Contains(node.Id) && node.Id != Id)
+                    {
+                        AggregatedConnectionHealth = false; return;
+                    }
+                }
+            }
+            else if (P2PMode == (int)P2PModes.Neighbours)
+            {
+                int[,] neighbours = Cave.GetNeighbourMap(Id);
+                foreach (int neighbourId in neighbours)
+                {
+                    if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id)
+                    {
+                        AggregatedConnectionHealth = false; return;
+                    }
+                }
+            }
+            AggregatedConnectionHealth = true;
+
         }
     }
 

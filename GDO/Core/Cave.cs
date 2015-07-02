@@ -16,6 +16,7 @@ namespace GDO
         public static int Rows { get; set; }
         public static int NodeWidth { get; set; }
         public static int NodeHeight { get; set; }
+        public static int DefaultP2PMode { get; set; }
         public static ConcurrentDictionary<int, IApp> Apps { get; set; }
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
@@ -32,7 +33,7 @@ namespace GDO
             Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
             NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
             NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
-
+            DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
             for (int id = 1; id <= Cols * Rows; id++)
             {
                 string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
