@@ -30,7 +30,7 @@ namespace GDO.Core
         public int P2PMode { get; set; }
         public bool IsConnectedToCaveServer { get; set; }
         public bool IsConnectedToPeerServer { get; set; }
-        public bool AggregatedConnectionHealth { get; set; }
+        public int AggregatedConnectionHealth { get; set; }
         public bool IsDeployed { get; set; }
         [JsonIgnore]
         public int Width { get; set; }
@@ -66,7 +66,7 @@ namespace GDO.Core
             this.Height = height;
             this.SectionId = 0;
             this.AppId = -1;
-            this.AggregatedConnectionHealth = false;
+            this.AggregatedConnectionHealth = 0;
             this.P2PMode = Cave.DefaultP2PMode;
             this.ConnectedNodeList = new List<int>();
             Cave.Sections.TryGetValue(0, out this.Section); //When a node is created it deploys it to section 0 (pool of free nodes)
@@ -115,12 +115,12 @@ namespace GDO.Core
         {
             if (!IsConnectedToCaveServer)
             {
-                AggregatedConnectionHealth = false; return;
+                AggregatedConnectionHealth = 1; return;
 
             }
             if (!IsConnectedToPeerServer)
             {
-                AggregatedConnectionHealth = false; return;
+                AggregatedConnectionHealth = 2; return;
             }
             if (P2PMode == (int)P2PModes.Cave)
             {
@@ -128,7 +128,7 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)
                     {
-                        AggregatedConnectionHealth = false; return;
+                        AggregatedConnectionHealth = 3; return;
                     }
                 }
             }
@@ -138,7 +138,7 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(node.Id) && node.Id != Id)
                     {
-                        AggregatedConnectionHealth = false; return;
+                        AggregatedConnectionHealth = 3; return;
                     }
                 }
             }
@@ -149,11 +149,11 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id)
                     {
-                        AggregatedConnectionHealth = false; return;
+                        AggregatedConnectionHealth = 3; return;
                     }
                 }
             }
-            AggregatedConnectionHealth = true;
+            AggregatedConnectionHealth = 4;
 
         }
     }

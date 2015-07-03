@@ -47,6 +47,7 @@ $(function() {
                 net.node[id].id = id;
                 net.node[id].connectedToPeer = false;
                 net.node[id].isNeighbour = false;
+                net.node[id].sectionId = 0;
                 net.node[id].sendData = function(id, type, command, data, mode) {
                     var dataObj = {};
                     dataObj.type = type;
@@ -64,6 +65,9 @@ $(function() {
                         net.server.sendData(gdo.clientId, id, msg);
                     }
                 }
+                net.section[id] = {};
+                net.section[id].id = id;
+                net.section[id].exists = false;
             }
         }
         consoleOut('.NET', 1, 'Received the map of the Cave');
@@ -114,9 +118,41 @@ $(function() {
         net.signalRServerResponded = true;
         consoleOut('.NET', 1, 'Received the map of Neighbours');
     }
+    $.connection.caveHub.client.receiveSectionUpdate = function (exists, id, col, row, cols, rows, p2pMode, nodeMap) {
+        /// <summary>
+        /// Receives a Section Update and update the local section representation and updates self
+        /// </summary>
+        /// <param name="exists">If exists.</param>
+        /// <param name="id">The identifier.</param>
+        /// <param name="col">The start col.</param>
+        /// <param name="row">The start row.</param>
+        /// <param name="cols">The number of cols.</param>
+        /// <param name="rows">The number of rows.</param>
+        /// <param name="p2pMode">The P2P mode.</param>
+        /// <param name="nodeMap">The node map.</param>
+        /// <returns></returns>
+        if (exists) {
+            net.section[id] = {};
+            net.section[id].id = id;
+            net.section[id].exists = true;
+            net.section[id].col = col;
+            net.section[id].row = row;
+            net.section[id].cols = cols;
+            net.section[id].rows = rows;
+            net.section[id].p2pmode = p2pMode;
+            net.section[id].nodeMap = nodeMap;
+        } else {
+            net.section[id] = {};
+            net.section[id].id = id;
+            net.section[id].exists = false;
+        }
+        updateSelf();
+        consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: '+exists+')');
+
+    }
     $.connection.caveHub.client.receiveNodeUpdate = function (serializedNode) {
         /// <summary>
-        /// Receives a Node Update and update the local node representaiton and updates self
+        /// Receives a Node Update and update the local node representation and updates self
         /// </summary>
         /// <param name="serializedNode">The serialized node.</param>
         /// <returns></returns>
@@ -137,7 +173,7 @@ $(function() {
         net.node[node.Id].id = node.Id;
         net.node[node.Id].connectedNodeList = node.ConnectedNodeList;
         updateSelf();
-        consoleOut('.NET', 1, 'Received Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
+        consoleOut('.NET', 1, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
     }
 });
 
@@ -163,6 +199,7 @@ function initNet(clientMode) {//todo comment
     net = {};
     net.peer = peer;
     net.node = [];
+    net.section = [];
     initHub();
     net.nodes = {};
     net.neighbour = {};

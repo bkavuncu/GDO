@@ -132,7 +132,7 @@ namespace GDO
         public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
             int sectionId = Sections.Count;
-            Section section = new Section(sectionId, colEnd - colStart + 1, rowEnd - rowStart + 1);
+            Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
             Sections.TryAdd(sectionId, section);
             List<Node> deployedNodes = new List<Node>();
             foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
@@ -163,6 +163,35 @@ namespace GDO
             }
             Sections.TryRemove(sectionId, out section);
             return freedNodes;
+        }
+
+        /// <summary>
+        /// Gets the section identifier.
+        /// </summary>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
+        /// <returns></returns>
+        public static int GetSectionId(int col, int row)
+        {
+            return Cave.Nodes[GetNodeId(col,row)].SectionId;
+        }
+        /// <summary>
+        /// Gets the node identifier.
+        /// </summary>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
+        /// <returns></returns>
+        public static int GetNodeId(int col, int row)
+        {
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            {
+                Node node = nodeEntry.Value;
+                if (node.Col == col && node.Row == row)
+                {
+                    return node.Id;
+                }
+            }
+            return -1;
         }
 
         public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)

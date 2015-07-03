@@ -55,6 +55,7 @@ namespace GDO
             {
                 BroadcastNodeUpdate(node.Id);
             }
+            BroadcastSectionUpdate(Cave.GetSectionId(colStart,rowStart),true);
         }
 
         public void DisposeSection(int sectionId)
@@ -64,6 +65,7 @@ namespace GDO
             {
                 BroadcastNodeUpdate(node.Id);
             }
+            BroadcastSectionUpdate(sectionId,false);
         }
 
         /// <summary>
@@ -78,6 +80,7 @@ namespace GDO
             {
                 BroadcastNodeUpdate(node.Id);
             }
+            BroadcastSectionUpdate(sectionId, true);
         }
         /// <summary>
         /// Sets the default P2P mode.
@@ -208,6 +211,26 @@ namespace GDO
                 Cave.Nodes.TryGetValue(nodeId, out node);
                 node.aggregateConnectionHealth();
                 Clients.All.receiveNodeUpdate(node.SerializeJSON());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        public void BroadcastSectionUpdate(int sectionId, bool exists)
+        {
+            try
+            {
+                if (exists)
+                {
+                    Section section;
+                    Cave.Sections.TryGetValue(sectionId, out section);
+                    Clients.All.receiveSectionUpdate(true, sectionId, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.GetNodeMap());
+                }
+                else
+                {
+                    Clients.All.receiveSectionUpdate(false, sectionId, -1, -1, -1, -1, -1, -1);
+                }
             }
             catch (Exception e)
             {

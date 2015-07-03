@@ -16,6 +16,8 @@ namespace GDO.Core
         public IApp App;
         public int Width { get; set; }
         public int Height { get; set; }
+        public int Col { get; set; }
+        public int Row { get; set; }
         public int Cols { get; set; }
         public int Rows { get; set; }
         public int P2PMode { get; set; }
@@ -26,9 +28,11 @@ namespace GDO.Core
         /// <param name="id">The identifier.</param>
         /// <param name="cols">The cols.</param>
         /// <param name="rows">The rows.</param>
-        public Section(int id, int cols, int rows)
+        public Section(int id, int col, int row, int cols, int rows)
         {
             this.Id = id;
+            this.Col = col;
+            this.Row = row;
             this.Cols = cols;
             this.Rows = rows;
             this.NumNodes = cols * rows;
