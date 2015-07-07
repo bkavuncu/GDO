@@ -131,7 +131,15 @@ namespace GDO
         /// <returns></returns>
         public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            int sectionId = Sections.Count;
+            int sectionId = -1;
+            for(int i = 0; i < Cols * Rows; i++)
+            {
+                if (!Sections.ContainsKey(i))
+                {
+                    sectionId = i;
+                    break;
+                }
+            }
             Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
             Sections.TryAdd(sectionId, section);
             List<Node> deployedNodes = new List<Node>();
@@ -161,8 +169,52 @@ namespace GDO
             {
                 freedNodes.Add(FreeNode(node.Id));
             }
+            section.Nodes = null;
             Sections.TryRemove(sectionId, out section);
             return freedNodes;
+        }
+        public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd)
+        {
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            {
+                Node node = nodeEntry.Value;
+                if(colStart > colEnd || rowStart > rowEnd)
+                {
+                    return false;
+                }
+                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
+                {
+                    if (node.IsDeployed)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        public static bool SectionExists(int sectionId)
+        {
+            if (Sections.ContainsKey(sectionId))
+            {
+                return true;
+            }else
+            {
+                return false;
+            }
+
+        }
+
+        public static bool NodeExists(int NodeId)
+        {
+            if (Nodes.ContainsKey(NodeId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         /// <summary>
@@ -300,5 +352,7 @@ namespace GDO
         {
 
         }
+
+
     }
 }

@@ -21,6 +21,7 @@ namespace GDO.Core
         public int Cols { get; set; }
         public int Rows { get; set; }
         public int P2PMode { get; set; }
+        public int AggregatedConnectionHealth { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Section"/> class.
@@ -36,7 +37,7 @@ namespace GDO.Core
             this.Cols = cols;
             this.Rows = rows;
             this.NumNodes = cols * rows;
-            this.Nodes = new Node[cols,rows];
+            this.Nodes = new Node[cols, rows];
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace GDO.Core
         public bool IsConnected()
         {
             bool check = true;
-            foreach(Node node in Nodes)
+            foreach (Node node in Nodes)
             {
                 if (node.IsConnectedToCaveServer == false)
                 {
@@ -61,13 +62,13 @@ namespace GDO.Core
         /// <returns></returns>
         public int[,] GetNodeMap()
         {
-            int[,] map = new int[Cols,Rows];
+            int[,] map = new int[Cols, Rows];
 
             for (int i = 0; i < Cols; i++)
             {
                 for (int j = 0; j < Rows; j++)
                 {
-                    map[i,j] = Nodes[i, j].Id;
+                    map[i, j] = Nodes[i, j].Id;
                 }
             }
             return map;
@@ -85,10 +86,21 @@ namespace GDO.Core
                 Width += node.Width;
                 Height += node.Height;
             }
-            Width = Width/Rows;
-            Height = Height/Cols;
+            Width = Width / Rows;
+            Height = Height / Cols;
         }
-        //Nodes connected
-        //Control node connected, and info
+        public void aggregateConnectionHealth()
+        {
+            int agg = 0;
+            foreach (Node node in Nodes)
+            {
+                if (node.IsConnectedToCaveServer == false)
+                {
+                    agg += node.AggregatedConnectionHealth;
+                }
+            }
+            AggregatedConnectionHealth = agg / NumNodes;
+
+        }
     }
 }

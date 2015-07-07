@@ -24,7 +24,8 @@
         });
         function initApp() {
             consoleOut('', 1, 'GDO Initialized');
-            drawEmptyTable(gdo.net.cols, gdo.net.rows);
+            drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+            drawEmptyButtonTable(4, 1);
             updateSelf();
         }
         //TESTS
@@ -39,6 +40,7 @@
         //close app test
         //redeploy live test?
     </script>
-    <table id="browser_table" style="width:100%"></table>
+    <table id="node_table" style="width:100%"></table>
+    <table id="button_table" style="width:100%"></table>
 </body>
 </html>

@@ -48,24 +48,42 @@ namespace GDO
             BroadcastNodeUpdate(nodeId);
         }
 
-        public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        public bool CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            List<Node> deployedNodes = Cave.CreateSection(colStart, rowStart, colEnd, rowEnd);
-            foreach (Node node in deployedNodes)
+            if(Cave.IsSectionFree(colStart, rowStart, colEnd, rowEnd))
             {
-                BroadcastNodeUpdate(node.Id);
+                List<Node> deployedNodes = Cave.CreateSection(colStart, rowStart, colEnd, rowEnd);
+                foreach (Node node in deployedNodes)
+                {
+                    BroadcastNodeUpdate(node.Id);
+                }
+                BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
+                return true;
             }
-            BroadcastSectionUpdate(Cave.GetSectionId(colStart,rowStart),true);
+            else
+            {
+                return false;
+            }
+
         }
 
-        public void DisposeSection(int sectionId)
+        public bool DisposeSection(int sectionId)
         {
-            List<Node> freedNodes = Cave.DisposeSection(sectionId);
-            foreach (Node node in freedNodes)
+            if (Cave.SectionExists(sectionId))
             {
-                BroadcastNodeUpdate(node.Id);
+                List<Node> freedNodes = Cave.DisposeSection(sectionId);
+                foreach (Node node in freedNodes)
+                {
+                    BroadcastNodeUpdate(node.Id);
+                }
+                BroadcastSectionUpdate(sectionId, false);
+                return true;
             }
-            BroadcastSectionUpdate(sectionId,false);
+            else
+            {
+                return false;
+            }
+
         }
 
         /// <summary>
@@ -73,14 +91,22 @@ namespace GDO
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <param name="p2pmode">The p2pmode.</param>
-        public void SetSectionP2PMode(int sectionId, int p2pmode)
+        public bool SetSectionP2PMode(int sectionId, int p2pmode)
         {
-            List<Node> affectedNodes = Cave.SetSectionP2PMode(sectionId,p2pmode);
-            foreach (Node node in affectedNodes)
+            if (Cave.SectionExists(sectionId))
             {
-                BroadcastNodeUpdate(node.Id);
+                List<Node> affectedNodes = Cave.SetSectionP2PMode(sectionId, p2pmode);
+                foreach (Node node in affectedNodes)
+                {
+                    BroadcastNodeUpdate(node.Id);
+                }
+                BroadcastSectionUpdate(sectionId, true);
+                return true;
             }
-            BroadcastSectionUpdate(sectionId, true);
+            else
+            {
+                return false;
+            }
         }
         /// <summary>
         /// Sets the default P2P mode.
@@ -136,7 +162,21 @@ namespace GDO
             BroadcastNodeUpdate(nodeId);
             //concurrency problem?
         }
-
+        public void RequestAllUpdates()
+        {
+            foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
+            {
+                Clients.Caller.receiveNodeUpdate(nodeEntry.Value.SerializeJSON());
+            }
+            foreach (KeyValuePair<int, Section> sectionEntry in Cave.Sections)
+            {
+                Section section = sectionEntry.Value;
+                if (section.Id > 0)
+                {
+                    Clients.Caller.receiveSectionUpdate(true, section.Id, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.GetNodeMap());
+                }
+            }
+        }
         /// <summary>
         /// Requests the cave map.
         /// </summary>
@@ -156,15 +196,24 @@ namespace GDO
         /// Requests the section map.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
-        public void RequestSectionMap(int sectionId)
+        public bool RequestSectionMap(int sectionId)
         {
-            try
-            { 
-                Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetSectionMap(sectionId)));
-            }
-            catch (Exception e)
+            if (Cave.SectionExists(sectionId))
             {
-                Console.WriteLine(e);
+                try
+                {
+                    Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetSectionMap(sectionId)));
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -172,16 +221,25 @@ namespace GDO
         /// Requests the neighbour map.
         /// </summary>
         /// <param name="nodeId">The node identifier.</param>
-        public void RequestNeighbourMap(int nodeId)
+        public bool RequestNeighbourMap(int nodeId)
         {
-            try
+            if (Cave.NodeExists(nodeId))
             {
-                Clients.Caller.receiveNeighbourMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId)));
+                try
+                {
+                    Clients.Caller.receiveNeighbourMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId)));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                return true;
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e);
+                return false;
             }
+
         }
 
         /// <summary>
@@ -203,38 +261,65 @@ namespace GDO
         /// Broadcasts the node update.
         /// </summary>
         /// <param name="nodeId">The node identifier.</param>
-        public void BroadcastNodeUpdate(int nodeId)
+        public bool BroadcastNodeUpdate(int nodeId)
         {
-            try
+            if (Cave.NodeExists(nodeId))
             {
-                Node node;
-                Cave.Nodes.TryGetValue(nodeId, out node);
-                node.aggregateConnectionHealth();
-                Clients.All.receiveNodeUpdate(node.SerializeJSON());
+                try
+                {
+                    Node node;
+                    Cave.Nodes.TryGetValue(nodeId, out node);
+                    node.aggregateConnectionHealth();
+                    Clients.All.receiveNodeUpdate(node.SerializeJSON());
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                } 
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e);
+                return false;
             }
+
         }
-        public void BroadcastSectionUpdate(int sectionId, bool exists)
+        /// <summary>
+        /// Broadcasts the section update.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="exists">if set to <c>true</c> [exists].</param>
+        /// <returns></returns>
+        public bool BroadcastSectionUpdate(int sectionId, bool exists)
         {
+
             try
             {
                 if (exists)
                 {
-                    Section section;
-                    Cave.Sections.TryGetValue(sectionId, out section);
-                    Clients.All.receiveSectionUpdate(true, sectionId, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.GetNodeMap());
+                    if (Cave.SectionExists(sectionId))
+                    {
+                        Section section;
+                        Cave.Sections.TryGetValue(sectionId, out section);
+                        Clients.All.receiveSectionUpdate(true, sectionId, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.GetNodeMap());
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
                     Clients.All.receiveSectionUpdate(false, sectionId, -1, -1, -1, -1, -1, -1);
+                    return true;
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return false;
             }
         }
 

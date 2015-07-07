@@ -47,6 +47,7 @@ $(function() {
                 net.node[id].id = id;
                 net.node[id].connectedToPeer = false;
                 net.node[id].isNeighbour = false;
+                net.node[id].isSelected = false;
                 net.node[id].sectionId = 0;
                 net.node[id].sendData = function(id, type, command, data, mode) {
                     var dataObj = {};
@@ -68,6 +69,8 @@ $(function() {
                 net.section[id] = {};
                 net.section[id].id = id;
                 net.section[id].exists = false;
+                net.section[id].health = 0;
+                net.section[id].isSelected = false;
             }
         }
         consoleOut('.NET', 1, 'Received the map of the Cave');
@@ -132,7 +135,6 @@ $(function() {
         /// <param name="nodeMap">The node map.</param>
         /// <returns></returns>
         if (exists) {
-            net.section[id] = {};
             net.section[id].id = id;
             net.section[id].exists = true;
             net.section[id].col = col;
@@ -141,8 +143,13 @@ $(function() {
             net.section[id].rows = rows;
             net.section[id].p2pmode = p2pMode;
             net.section[id].nodeMap = nodeMap;
+            for(var i=1; i<cols; i++){
+                for(var j=1; j<rows; j++){
+                    net.section[id].health = net.section[id].health + net.node[net.section[id].nodeMap[i][j]].aggregatedConnectionHealth;
+                } 
+            }
+            net.section[id].health = net.section[id].health / (cols * rows);
         } else {
-            net.section[id] = {};
             net.section[id].id = id;
             net.section[id].exists = false;
         }
@@ -157,6 +164,8 @@ $(function() {
         /// <param name="serializedNode">The serialized node.</param>
         /// <returns></returns>
         var node = JSON.parse(serializedNode);
+        consoleOut('.NET', 1, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
+
         net.node[node.Id].col = node.Col;
         net.node[node.Id].row = node.Row;
         net.node[node.Id].sectionCol = node.SectionCol;
@@ -172,6 +181,15 @@ $(function() {
         net.node[node.Id].p2pmode = node.P2PMode;
         net.node[node.Id].id = node.Id;
         net.node[node.Id].connectedNodeList = node.ConnectedNodeList;
+        if (net.node[node.Id].sectionId > 0) {
+            net.section[net.node[node.Id].sectionId].health = 0;
+            for (var i = 0; i < net.section[net.node[node.Id].sectionId].cols; i++) {
+                for (var j = 0; j < net.section[net.node[node.Id].sectionId].rows; j++) {
+                    net.section[net.node[node.Id].sectionId].health = net.section[net.node[node.Id].sectionId].health + net.node[net.section[net.node[node.Id].sectionId].nodeMap[i][j]].aggregatedConnectionHealth;
+                }
+            }
+            net.section[net.node[node.Id].sectionId].health = net.section[net.node[node.Id].sectionId].health / (net.section[net.node[node.Id].sectionId].cols * net.section[net.node[node.Id].sectionId].rows);
+        }
         updateSelf();
         consoleOut('.NET', 1, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
     }
@@ -224,6 +242,7 @@ function initNet(clientMode) {//todo comment
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         waitForResponse(initPeer, isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     }
+    net.server.requestAllUpdates();
     return net;
 }
 
