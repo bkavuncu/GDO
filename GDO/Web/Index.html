@@ -1,39 +1,116 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+﻿<html>
 <head>
-    <title>GDO Management Client</title>
+    <title>GDO Management</title>
+    <meta charset="utf-8" />
+    <style>
+        #page td {
+           padding:0; margin:0;
+        }
+
+        #page {
+           border-collapse: collapse;
+        }
+        body {
+            margin: 0 auto;
+            padding: 0;
+            border: 0;
+            background-color: #555;
+            color: #222;
+            font-family: helvetica;
+            font-size: 100%;
+            width: 100%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+        .cell{
+            margin:10;
+        }
+        #header {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            width: 100%;
+            background-color: #555;
+            color: #AAA;
+            z-index: 10;
+            font-size: 140%;
+            height: 49px;
+            width: 100%;
+        }
+        #title-text {
+            margin: 25;
+            padding: 0;
+            border: 0;
+            width: 100%;
+            background-color: #555;
+            color: #AAA;
+            z-index: 10;
+            font-size: 140%;
+            height: 49px;
+            width: 100%;
+        }
+        #content {
+            margin: 15 auto;
+            padding: 15;
+            border: 0;
+            background-color: #999;
+            color: #222;
+            font-family: helvetica;
+            font-size: 100%;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <script src="Scripts/jquery-1.10.2.min.js"></script>
-    <script src="Scripts/jquery.signalR-2.0.2.min.js"></script>
-    <script src="signalr/hubs"></script>
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.net.js"></script>
+    <script src="../../signalr/hubs"></script>
+    <script type="text/javascript" src="../../Scripts/peer.js"></script>
     <script>
         $(function () {
-
+            loadModule('management');
+            initGDO(CLIENT_MODE.CONTROL);
         });
+        function initApp() {
+            consoleOut('', 1, 'GDO Initialized');
+            drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+            drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+            drawEmptyButtonTable(4, 1);
+            updateSelf();
+        }
+        //TESTS
+        //------------
+        //connect
+        //init js tests
+        //section live tests
+        //create a section
+        //deploy test app in different p2p modes
+        //test app will test data sharing
+        //give some time for tests to complete or check through a boolean
+        //close app test
+        //redeploy live test?
     </script>
-
-    <style>
-    </style>
-
-    <table id="browser_table" style="width:100%">
-        <tr>
-            <td>(1,1)</td>
-            <td>(1,2)</td>
-        </tr>
-        <tr>
-            <td>(2,1)</td>
-            <td>(2,2)</td>
-        </tr>
-    </table>
-    <br />
-    <select id="message_to">
-        <option>Loading..</option>
-    </select>
-    <input type="text" id="test_txt" />
-    <input type="button" id="test_btn" value="Send" />
-    <input type="button" id="test_json_btn" value="SendJSON" />
-    <br /><br />
-    <div id="message_log"></div>
+    <div id="header">
+        <div id="title-text">
+            GDO Management
+        </div>
+    </div>
+    <div id="content" style="align:center">
+        <b>Node Table:</b>
+        <table id="node_table" unselectable="on" class="unselectable" style="width:97%"></table>
+        <br></br>
+        <b>Section Table:</b>
+        <table id="section_table" unselectable="on" class="unselectable" style="width:97%"></table>
+        <br></br>
+        <table id="button_table" unselectable="on" class="unselectable" style="width:97%"></table>
+    </div>
 </body>
 </html>

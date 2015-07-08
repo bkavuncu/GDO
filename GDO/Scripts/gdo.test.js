@@ -109,35 +109,36 @@ function drawSectionTable() {
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
         var sectionId = node.sectionId;
-        $("#node_table_row" + node.row + "_col" + node.col)
-                .empty()
-                .append("<div id='node" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
-                .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-                .append("<div id='node" + node.id + "p'> <b>PeerID:</b> " + node.peerId + "</div>")
-                .append("<div id='node" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionId + "</div>")
-                .css("height", (table_height / gdo.net.rows) + "")
-                .css("width", (100 / gdo.net.cols) + "%")
-                .css("border", "2px solid #555")
-                .css("background", "lightgray")
-                .click(function () {
-                    var id = getNodeId( $(this).attr('col'), $(this).attr('row'))
-                    if (net.node[id].isSelected) {
-                        net.node[id].isSelected = false;
-                    } else {
-                        net.node[id].isSelected = true;
-                    }
-                    updateDisplayCanvas();
-                });
-        if (node.isSelected) {
-            $("#node_table_row" + node.row + "_col" + node.col).css("background-color", "gray");
-        }
-        if ((node.sectionCol == 0 && node.sectionRow == 0) && node.sectionId > 0) {
+        if (sectionId == 0) {
+            $("#node_table_row" + node.row + "_col" + node.col)
+                    .empty()
+                    .unbind()
+                    .append("<div id='node" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
+                    .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+                    .append("<div id='node" + node.id + "p'> <b>PeerID:</b> " + node.peerId + "</div>")
+                    .append("<div id='node" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionId + "</div>")
+                    .css("height", (table_height / gdo.net.rows) + "")
+                    .css("width", (100 / gdo.net.cols) + "%")
+                    .css("border", "2px solid #555")
+                    .css("background", "lightgray")
+                    .click(function () {
+                        var id = getNodeId($(this).attr('col'), $(this).attr('row'))
+                        if (net.node[id].isSelected) {
+                            net.node[id].isSelected = false;
+                        } else {
+                            net.node[id].isSelected = true;
+                        }
+                        updateDisplayCanvas();
+                    });
+
+        } else if ((node.sectionCol == 0 && node.sectionRow == 0) && node.sectionId > 0) {
             $("#node_table_row" + node.row + "_col" + node.col)
                 .empty()
+                .unbind()
                 .attr('colspan', gdo.net.section[sectionId].cols)
                 .attr('rowspan', gdo.net.section[sectionId].rows)
                 .css("height", ((table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
-                .css("width", (100 / gdo.net.cols) + "%")
+                .css("width", ((100 / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
                 .css("border", "4px solid #333")
                 .css("background", "lightskyblue")
                 .append("<div id='section" + sectionId + "s'> <b>Section ID:</b> " + sectionId + "</div>")
@@ -167,10 +168,12 @@ function drawSectionTable() {
             } else {
                 $("#section" + sectionId + 'h').css("background", "lightcoral");
             }
-        }
-        if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
+        }else if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
             $("#node_table_row" + node.row + "_col" + node.col).remove();
-            }
+        }
+        if (node.isSelected) {
+            $("#node_table_row" + node.row + "_col" + node.col).css("background-color", "gray");
+        }
     }
 }
 
@@ -217,6 +220,7 @@ function drawSectionButtonTable() {
             }
         }
     }
+    $("#button_table_row0_col0").unbind();
     $("#button_table_row0_col0").click(function () {
         if (isRectangle && isStarted){
             gdo.net.server.createSection(colStart, rowStart, colEnd, rowEnd);

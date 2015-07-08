@@ -7,6 +7,13 @@
       font-family:helvetica;
       font-size:70%;
       }
+      .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +45,7 @@
         //close app test
         //redeploy live test?
     </script>
-    <table id="node_table" style="width:100%">
+    <table id="node_table" unselectable="on" class="unselectable" style="width:100%">
     </table>
 </body>
 </html>
