@@ -1,4 +1,4 @@
-﻿var table_font_size = 77;
+﻿var table_font_size = 70;
 var button_font_size = 90;
 var table_height = 340;
 var table_width = 100;
@@ -37,7 +37,7 @@ function drawEmptyNodeTable(maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.TEST', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
+    //consoleOut('.MAN', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
     $("#node_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#node_table").append("<tr id='node_table_row_" + i + "' row='"+i+"'></tr>");
@@ -54,7 +54,7 @@ function drawEmptyButtonTable(maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.TEST', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
+    //consoleOut('.MAN', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
     $("#button_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#button_table").append("<tr id='button_table_row_" + i + "' row='" + i + "'></tr>");
@@ -105,19 +105,54 @@ function drawNodeTable(nodeId) {
              .empty()
              .append("<div id='node_table_node_" + node.id + "_i'> <b>ID:</b> " + node.id + "</div>")
              .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-             .append("<div id='node_table_node_" + node.id + "_s'> <b>SectionID:</b> " + node.sectionId + "</div>")
-             .append("<div id='node_table_node_" + node.id + "_p'> <b>PeerID:</b> " + node.peerId + "</div>")
-             .append("<div id='node_table_node_" + node.id + "_c'> <b>ConnectionID:</b> " + node.connectionId + "</div>")
+             .append("<div id='node_table_node_" + node.id + "_s'> <b>Section ID:</b> " + node.sectionId + "</div>")
+             //.append("<div id='node_table_node_" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
+             //.append("<div id='node_table_node_" + node.id + "_c'> <b>Conn ID:</b> " + node.connectionId + "</div>")
+             .append("<div id='node_table_node_" + node.id + "_p'> <b>Peer Conn</b></div>")
+             .append("<div id='node_table_node_" + node.id + "_c'> <b>Server Conn</b></div>")
+             .append("<div id='node_table_node_" + node.id + "_h'> <b>Node Health</b></div>")
              .css("height", (table_height / gdo.net.rows) + "")
              .css("width", (table_width / gdo.net.cols) + "%")
              .css("font-size", table_font_size + "%")
              .css('padding', cell_padding);
-        if (node.connectedNodeList != null) {
-            if (contains(node.connectedNodeList, nodeId) || nodeId == node.id) {
-                $("#node_table_node_" + node.id + '_p').css("background", "lightgreen");
-            } else {
-                $("#node_table_node_" + node.id + '_p').css("background", "lightcoral");
+        if(node.id == gdo.nodeId){
+            $("#selected_node_id").empty().append("<b>Node Id:</b> " + node.id).css("width",7+"%");
+            $("#selected_node_col").empty().append("<b>Col:</b> " + node.col).css("width", 5 + "%");
+            $("#selected_node_row").empty().append("<b>Row:</b> " + node.row).css("width", 5 + "%");
+            $("#selected_node_sid").empty().append("<b>Section Id:</b> " + node.sectionId).css("width", 7 + "%");
+            $("#selected_node_scol").empty().append("<b>Section Col:</b> " + node.sectionCol).css("width", 10 + "%");
+            $("#selected_node_srow").empty().append("<b>Section Row:</b> " + node.sectionRow).css("width", 10 + "%");
+            $("#selected_node_cid").empty().append("<b>Connection Id:</b> " + node.connectionId).css("width", 20 + "%");
+            $("#selected_node_pid").empty().append("<b>Peer Id:</b> " + node.peerId).css("width", 10 + "%");
+            $("#selected_node_h").empty().append("<b>Node Health:</b> " + (node.aggregatedConnectionHealth * 25) + "%").css("width", 10 + "%");
+        }
+        var forward = false;
+        var reverse = false;
+        if (gdo.net.node[nodeId].connectedNodeList != null) {
+            if(contains(gdo.net.node[nodeId].connectedNodeList, node.id)){
+                forward = true;
             }
+        } 
+        if (node.connectedNodeList != null) {
+            if(contains(node.connectedNodeList, nodeId)){
+                reverse = true;
+            }
+        }
+        if (node.aggregatedConnectionHealth == 4) {
+            $("#node_table_node_" + node.id + '_h').css("background", "lightgreen");
+        } else if (node.aggregatedConnectionHealth == 3) {
+            $("#node_table_node_" + node.id + '_h').css("background", "yellow");
+        } else if (node.aggregatedConnectionHealth == 2) {
+            $("#node_table_node_" + node.id + '_h').css("background", "lightsalmon");
+        } else if (node.aggregatedConnectionHealth == 1) {
+            $("#node_table_node_" + node.id + '_h').css("background", "lightcoral");
+        } else {
+            $("#node_table_node_" + node.id + '_h').css("background", "lightcoral");
+        }
+        if (forward && reverse || (nodeId == node.id && node.peerId != null)) {
+            $("#node_table_node_" + node.id + '_p').css("background", "lightgreen");
+        } else if (forward || reverse ) {
+            $("#node_table_node_" + node.id + '_p').css("background", "lightsalmon");
         } else {
             $("#node_table_node_" + node.id + '_p').css("background", "lightcoral");
         }
@@ -152,10 +187,11 @@ function drawSectionTable() {
     /// </summary>
     /// <returns></returns>
     drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-
+    
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
         var sectionId = node.sectionId;
+
         if (sectionId == 0) {
             $("#section_table_row_" + node.row + "_col_" + node.col)
                     .empty()
@@ -164,7 +200,7 @@ function drawSectionTable() {
                     .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
                     .css("height", (table_height / gdo.net.rows) + "")
                     .css("width", (table_width / gdo.net.cols) + "%")
-                    .css("border", "2px solid #555")
+                    .css("border", "4px solid #555")
                     .css("background", "lightgray")
                     .css("font-size", table_font_size + "%")
                     .css('padding', cell_padding)
@@ -192,7 +228,7 @@ function drawSectionTable() {
                 .append("<div id='section_table_section_" + sectionId + "_s'> <b>Section ID:</b> " + sectionId + "</div>")
                 .append("<b>Start Col:</b> " + gdo.net.section[sectionId].col + " | <b>Start Row:</b> " + gdo.net.section[sectionId].row)
                 .append("</br><b>End Col:</b> " + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + " | <b>End Row:</b> " + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1))
-                .append("<div id='section_table_section_" + sectionId + "_h'> <b> Overall Connection Health</b></div>")
+                .append("<div id='section_table_section_" + sectionId + "_h'> <b>Section Health</b></div>")
                 .css("font-size", table_font_size + "%")
                 .click(function () {
                     var id = net.node[getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
@@ -217,7 +253,7 @@ function drawSectionTable() {
             } else {
                 $("#section_table_section_" + sectionId + '_h').css("background", "lightcoral");
             }
-        }else if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
+        } else if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
             $("#section_table_row_" + node.row + "_col_" + node.col).hide();
         }
         if (node.isSelected) {
@@ -287,7 +323,7 @@ function drawButtonTable() {
                     node.isSelected = false;
                 }
             }
-            consoleOut('.TEST', 1, 'Requested Creation of Section at (' + colStart + ',' + rowStart + '),(' + colEnd + ',' + rowEnd + ')');
+            consoleOut('.MAN', 1, 'Requested Creation of Section at (' + colStart + ',' + rowStart + '),(' + colEnd + ',' + rowEnd + ')');
         } else {
             
         }
@@ -328,7 +364,7 @@ function drawButtonTable() {
                         }
                     }
                     gdo.net.server.disposeSection(i);
-                    consoleOut('.TEST', 1, 'Requested Disposal of Section ' + i);
+                    consoleOut('.MAN', 1, 'Requested Disposal of Section ' + i);
                 }
             }
         });
@@ -345,49 +381,6 @@ function drawButtonTable() {
 
 ////////
 /*
-function drawTestTable() {
-    for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-        var node = gdo.net.node[i];
-        $("#node_table_row_" + node.row + "_col_" + node.col)
-            .empty()
-            .append("")
-            .append("<div id='node" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
-            .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-            .append("<div id='node" + node.id + "s'> <b>SectionID:</b> " + node.sectionId + "</div>")
-            .append("<div id='node" + node.id + "p'> <b>PeerID:</b> " + node.peerId + "</div>")
-            .append("<div id='node" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionId + "</div>")
-            .css("height", (table_height / gdo.net.rows) + "")
-            .css("width", (100 / gdo.net.cols) + "%");
-
-        if (node.connectedToPeer || node.id == gdo.clientId) {
-            $("#node" + node.id + 'p').css("background", "lightgreen");
-        } else {
-            $("#node" + node.id + 'p').css("background", "lightcoral");
-        }
-        if (node.isConnectedToCaveServer) {
-            $("#node" + node.id + 'c').css("background", "lightgreen");
-        } else {
-            $("#node" + node.id + 'c').css("background", "lightcoral");
-        }
-        if (node.sectionId > 0 && node.sectionId == gdo.net.node[gdo.clientId].sectionId) {
-            $("#node" + node.id + 's').css("background", "lightgreen");
-        } else if (node.sectionId > 0) {
-            $("#node" + node.id + 's').css("background", "lightsalmon");
-        } else {
-            $("#node" + node.id + 's').css("background", "lightcoral");
-        }
-        if (node.id == gdo.clientId) {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightskyblue");
-        } else if (node.isNeighbour) {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightblue");
-        } else {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightgray");
-        }
-    }
-}
 
 function drawCaveTable() {
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
