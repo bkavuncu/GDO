@@ -39,7 +39,7 @@ function updateDisplayCanvas() {
 
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         drawTestTable();
-        $("#test_node").empty().css("font-size", "140").css("color", "~777").append("GDO Test Node <b>" + gdo.clientId + "</b>")
+        $("#test_node").empty().css("font-size", "140").css("color", "#333").append("GDO Test Node <b>" + gdo.clientId + "</b>")
     }else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
        // drawNodeTable(gdo.nodeId);
         drawSectionTable();
@@ -88,6 +88,58 @@ function drawTestTable() {
         } else {
             $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #555");
             $("#node_table_row" + node.row + "_col" + node.col).css("background", "lightgray");
+        }
+        if (node.id == gdo.clientId) {
+            $("#status_table_col").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_row").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_sid").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_scol").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_srow").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_cid").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_pid").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_h").css("background", "lightgray").css("border", "4px solid #555");
+
+            $("#status_table_col_content").empty().css("font-size", "49").append(node.col);
+            $("#status_table_row_content").empty().css("font-size", "49").append(node.row);
+            $("#status_table_sid_content").empty().css("font-size", "49").append(node.sectionId);
+            $("#status_table_scol_content").empty().css("font-size", "49").append(node.sectionCol);
+            $("#status_table_srow_content").empty().css("font-size", "49").append(node.sectionRow);
+            $("#status_table_cid_content").empty().css("font-size", "35").append(node.connectionId);
+            $("#status_table_pid_content").empty().css("font-size", "35").append(node.peerId);
+            $("#status_table_h_content").empty().css("font-size", "49").append((node.aggregatedConnectionHealth * 25) + "%");
+
+            if (node.sectionId > 0) {
+                $("#status_table_sid").css("background", "lightskyblue");
+                $("#status_table_scol").css("background", "lightskyblue");
+                $("#status_table_srow").css("background", "lightskyblue");
+            } else {
+                $("#status_table_sid").css("background", "lightgray");
+                $("#status_table_scol").css("background", "lightgray");
+                $("#status_table_srow").css("background", "lightgray");
+            }
+            if (node.isConnectedToCaveServer) {
+                $("#status_table_cid").css("background", "lightgreen");
+            } else {
+                $("#status_table_cid").css("background", "lightcoral");
+            }
+            if (node.isConnectedToPeerServer) {
+                $("#status_table_pid").css("background", "lightgreen");
+            } else {
+                $("#status_table_pid").css("background", "lightcoral");
+            }
+
+            if (node.aggregatedConnectionHealth == 4) {
+                $("#status_table_h").css("background", "lightgreen");
+            } else if (node.aggregatedConnectionHealth == 3) {
+                $("#status_table_h").css("background", "yellow");
+            } else if (node.aggregatedConnectionHealth == 2) {
+                $("#status_table_h").css("background", "lightsalmon");
+            } else if (node.aggregatedConnectionHealth == 1) {
+                $("#status_table_h").css("background", "lightcoral");
+            } else {
+                $("#status_table_h").css("background", "lightcoral");
+            }
+            $("#status_table").css("font-size", "21");
         }
     }
 }

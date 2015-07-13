@@ -125,6 +125,27 @@ function drawNodeTable(nodeId) {
             $("#selected_node_cid").empty().append("<b>Connection Id:</b> " + node.connectionId).css("width", 20 + "%");
             $("#selected_node_pid").empty().append("<b>Peer Id:</b> " + node.peerId).css("width", 10 + "%");
             $("#selected_node_h").empty().append("<b>Node Health:</b> " + (node.aggregatedConnectionHealth * 25) + "%").css("width", 10 + "%");
+            if (node.isConnectedToCaveServer) {
+                $("#selected_node_cid").css("background", "lightgreen");
+            } else {
+                $("#selected_node_cid").css("background", "lightcoral");
+            }
+            if (node.isConnectedToPeerServer) {
+                $("#selected_node_pid").css("background", "lightgreen");
+            } else {
+                $("#selected_node_pid").css("background", "lightcoral");
+            }
+            if (node.aggregatedConnectionHealth == 4) {
+                $("#selected_node_h").css("background", "lightgreen");
+            } else if (node.aggregatedConnectionHealth == 3) {
+                $("#selected_node_h").css("background", "yellow");
+            } else if (node.aggregatedConnectionHealth == 2) {
+                $("#selected_node_h").css("background", "lightsalmon");
+            } else if (node.aggregatedConnectionHealth == 1) {
+                $("#selected_node_h").css("background", "lightcoral");
+            } else {
+                $("#selected_node_h").css("background", "lightcoral");
+            }
         }
         var forward = false;
         var reverse = false;
