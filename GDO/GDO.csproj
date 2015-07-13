@@ -88,6 +88,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\gdo.app.tile.js" />
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.test.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
@@ -109,8 +110,12 @@
     <Content Include="Scripts\ol.loader.js" />
     <Content Include="Scripts\peer.js" />
     <Content Include="Web\Test\Test.html" />
+    <Content Include="Web\Tile\App.html" />
+    <Content Include="Web\Tile\Control.html" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apps\TileApp.cs" />
+    <Compile Include="Apps\TileHub.cs" />
     <Compile Include="CaveHub.cs" />
     <Compile Include="Core\IApp.cs" />
     <Compile Include="Core\Node.cs" />

@@ -5,13 +5,15 @@ using GDO.Core;
 
 namespace GDO
 {
-    //TODO look up the properway to do a singleton pattern  http://www.yoda.arachsys.com/csharp/singleton.html 
     // TODO also check how static controls are recycled during the asp.net lifecycle 
     /// <summary>
     /// Cave Object Class
     /// </summary>
-    public class Cave
+    public sealed class Cave
     {
+        static Cave instance = null;
+        public static readonly object serverLock = new object();
+
         public static int Cols { get; set; }
         public static int Rows { get; set; }
         public static int NodeWidth { get; set; }
@@ -22,9 +24,9 @@ namespace GDO
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
 
         /// <summary>
-        /// Initializes the cave.
+        /// Initializes a new instance of the <see cref="Cave"/> class.
         /// </summary>
-        public static void InitCave()
+        public Cave()
         {
             Apps = new ConcurrentDictionary<int, IApp>();
             Nodes = new ConcurrentDictionary<int, Node>();
@@ -41,7 +43,36 @@ namespace GDO
                 int row = int.Parse(s[1]);
                 CreateNode(id, col, row);
             }
-            CreateSection(0, 0, Cols-1, Rows-1); //Free Nodes Pool , id=0
+            CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
+        }
+
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
+        public static Cave Instance
+        {
+            get
+            {
+                lock (serverLock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new Cave();
+                    }
+                    return instance;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initializes the cave.
+        /// </summary>
+        public static void InitCave()
+        {
+            instance = new Cave();
         }
 
         /// <summary>
@@ -52,7 +83,7 @@ namespace GDO
         /// <param name="row">The row.</param>
         public static void CreateNode(int nodeId, int col, int row)
         {
-            Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows*Cols);
+            Node node = new Node(nodeId, col, row, NodeWidth, NodeHeight, Rows * Cols);
             Nodes.TryAdd(nodeId, node);
         }
 
@@ -65,12 +96,14 @@ namespace GDO
         {
             foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
-               if (connectionId == nodeEntry.Value.ConnectionId){
-                   return nodeEntry.Value;
+                if (connectionId == nodeEntry.Value.ConnectionId)
+                {
+                    return nodeEntry.Value;
                 }
             }
             return null;
         }
+
 
         /// <summary>
         /// Deploys the node to a section.
@@ -131,27 +164,31 @@ namespace GDO
         /// <returns></returns>
         public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            int sectionId = -1;
-            for(int i = 0; i < Cols * Rows; i++)
-            {
-                if (!Sections.ContainsKey(i))
-                {
-                    sectionId = i;
-                    break;
-                }
-            }
-            Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
-            Sections.TryAdd(sectionId, section);
             List<Node> deployedNodes = new List<Node>();
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            if (Cave.IsSectionFree(colStart, rowStart, colEnd, rowEnd))
             {
-                Node node = nodeEntry.Value;
-                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
+                int sectionId = -1;
+                for (int i = 0; i < Cols * Rows; i++)
                 {
-                    deployedNodes.Add(DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
+                    if (!Sections.ContainsKey(i))
+                    {
+                        sectionId = i;
+                        break;
+                    }
                 }
+                Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
+                Sections.TryAdd(sectionId, section);
+                    
+                foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+                {
+                    Node node = nodeEntry.Value;
+                    if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
+                    {
+                        deployedNodes.Add(DeployNode(section.Id, node.Id, node.Col - colStart, node.Row - rowStart));
+                    }
+                }
+                section.CalculateDimensions();
             }
-            section.CalculateDimensions();
             return deployedNodes;
         }
         /// <summary>
@@ -161,24 +198,35 @@ namespace GDO
         /// <returns></returns>
         public static List<Node> DisposeSection(int sectionId)
         {
-            //close app
-            Section section;
             List<Node> freedNodes = new List<Node>();
-            Sections.TryGetValue(sectionId, out section);
-            foreach (Node node in section.Nodes)
+            if (Cave.ContainsSection(sectionId))
             {
-                freedNodes.Add(FreeNode(node.Id));
+                Section section;
+                Sections.TryGetValue(sectionId, out section);
+                foreach (Node node in section.Nodes)
+                {
+                    freedNodes.Add(FreeNode(node.Id));
+                }
+                section.Nodes = null;
+                Sections.TryRemove(sectionId, out section);
+                    
             }
-            section.Nodes = null;
-            Sections.TryRemove(sectionId, out section);
             return freedNodes;
         }
+        /// <summary>
+        /// Determines whether [is section free] [the specified col start].
+        /// </summary>
+        /// <param name="colStart">The col start.</param>
+        /// <param name="rowStart">The row start.</param>
+        /// <param name="colEnd">The col end.</param>
+        /// <param name="rowEnd">The row end.</param>
+        /// <returns></returns>
         public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd)
         {
             foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
                 Node node = nodeEntry.Value;
-                if(colStart > colEnd || rowStart > rowEnd)
+                if (colStart > colEnd || rowStart > rowEnd)
                 {
                     return false;
                 }
@@ -192,19 +240,31 @@ namespace GDO
             }
             return true;
         }
-        public static bool SectionExists(int sectionId)
+
+        /// <summary>
+        /// Determines whether the specified section identifier contains section.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <returns></returns>
+        public static bool ContainsSection(int sectionId)
         {
             if (Sections.ContainsKey(sectionId))
             {
                 return true;
-            }else
+            }
+            else
             {
                 return false;
             }
-
         }
 
-        public static bool NodeExists(int NodeId)
+
+        /// <summary>
+        /// Determines whether the specified node identifier contains node.
+        /// </summary>
+        /// <param name="NodeId">The node identifier.</param>
+        /// <returns></returns>
+        public static bool ContainsNode(int NodeId)
         {
             if (Nodes.ContainsKey(NodeId))
             {
@@ -214,7 +274,6 @@ namespace GDO
             {
                 return false;
             }
-
         }
 
         /// <summary>
@@ -225,7 +284,7 @@ namespace GDO
         /// <returns></returns>
         public static int GetSectionId(int col, int row)
         {
-            return Cave.Nodes[GetNodeId(col,row)].SectionId;
+            return Cave.Nodes[GetNodeId(col, row)].SectionId;
         }
         /// <summary>
         /// Gets the node identifier.
@@ -248,17 +307,19 @@ namespace GDO
 
         public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)
         {
-            //close app
-            Section section;
             List<Node> affectedNodes = new List<Node>();
-            Sections.TryGetValue(sectionId, out section);
-            foreach (Node node in section.Nodes)
+            if (Cave.ContainsSection(sectionId))
             {
-                affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
+                //close app
+                Section section;
+                Sections.TryGetValue(sectionId, out section);
+                foreach (Node node in section.Nodes)
+                {
+                    affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
+                }
             }
             return affectedNodes;
         }
-
 
         /// <summary>
         /// Gets the cave map (Matrix of NodeIds in the Cave).
@@ -267,7 +328,7 @@ namespace GDO
         public static int[,] GetCaveMap()
         {
             int[,] caveMap = new int[Cols, Rows];
-            foreach (KeyValuePair<int,Node> nodeEntry in Nodes)
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
                 caveMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
             }
@@ -281,14 +342,18 @@ namespace GDO
         /// <returns></returns>
         public static int[,] GetSectionMap(int sectionId)
         {
-            Section section;
-            Sections.TryGetValue(sectionId, out section);
-            int[,] sectionMap = new int[section.Cols, section.Rows];
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
+            int[,] sectionMap = null;
+            if (Cave.ContainsSection(sectionId))
             {
-                if (nodeEntry.Value.SectionId == sectionId)
+                Section section;
+                Sections.TryGetValue(sectionId, out section);
+                sectionMap = new int[section.Cols, section.Rows];
+                foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
                 {
-                    sectionMap[nodeEntry.Value.SectionCol, nodeEntry.Value.SectionRow] = nodeEntry.Value.Id;
+                    if (nodeEntry.Value.SectionId == sectionId)
+                    {
+                        sectionMap[nodeEntry.Value.SectionCol, nodeEntry.Value.SectionRow] = nodeEntry.Value.Id;
+                    }
                 }
             }
             return sectionMap;
@@ -301,18 +366,27 @@ namespace GDO
         /// <returns></returns>
         public static int[,] GetNeighbourMap(int nodeId)
         {
-            Node node;
-            Nodes.TryGetValue(nodeId, out node);
-            int[,] caveMap = GetCaveMap();
-            int[,] neighbours = new int[3, 3];
-            for (int i = -1; i<2; i++){
-                for (int j = -1; j<2; j++){
-                    int col = node.Col + i ;
-                    int row = node.Row + j;
-                    if(col >=0 && row>=0 && col <Cols && row<Rows){
-                        neighbours[i+1,j+1] = caveMap[col,row];
-                    }else{
-                        neighbours[i+1,j+1] = -1;
+            int[,] neighbours = null;
+            if (Cave.ContainsNode(nodeId))
+            {
+                Node node;
+                Nodes.TryGetValue(nodeId, out node);
+                int[,] caveMap = GetCaveMap();
+                neighbours = new int[3, 3];
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = -1; j < 2; j++)
+                    {
+                        int col = node.Col + i;
+                        int row = node.Row + j;
+                        if (col >= 0 && row >= 0 && col < Cols && row < Rows)
+                        {
+                            neighbours[i + 1, j + 1] = caveMap[col, row];
+                        }
+                        else
+                        {
+                            neighbours[i + 1, j + 1] = -1;
+                        }
                     }
                 }
             }
@@ -352,7 +426,5 @@ namespace GDO
         {
 
         }
-
-
     }
 }
