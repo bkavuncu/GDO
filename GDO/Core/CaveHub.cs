@@ -14,7 +14,7 @@ namespace GDO
 
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 Node node = Cave.GetNode(Context.ConnectionId);
                 if (node != null)
@@ -40,7 +40,7 @@ namespace GDO
         }
         public void DeployNode(int sectionId, int nodeId, int col, int row)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 Cave.DeployNode(sectionId, nodeId, col, row);
                 BroadcastNodeUpdate(nodeId);
@@ -49,7 +49,7 @@ namespace GDO
 
         public void FreeNode(int nodeId)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 Cave.FreeNode(nodeId);
                 BroadcastNodeUpdate(nodeId);
@@ -58,16 +58,16 @@ namespace GDO
 
         public bool CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 List<Node> deployedNodes = Cave.CreateSection(colStart, rowStart, colEnd, rowEnd);
                 if (deployedNodes.Capacity > 0)
                 {
+                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
                     foreach (Node node in deployedNodes)
                     {
                         BroadcastNodeUpdate(node.Id);
                     }
-                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
                     return true;
                 }
                 else
@@ -79,16 +79,16 @@ namespace GDO
 
         public bool DisposeSection(int sectionId)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 List<Node> freedNodes = Cave.DisposeSection(sectionId);
                 if (freedNodes.Capacity > 0)
                 {
+                    BroadcastSectionUpdate(sectionId, false);
                     foreach (Node node in freedNodes)
                     {
                         BroadcastNodeUpdate(node.Id);
                     }
-                    BroadcastSectionUpdate(sectionId, false);
                     return true;
                 }
                 else
@@ -105,16 +105,16 @@ namespace GDO
         /// <param name="p2pmode">The p2pmode.</param>
         public bool SetSectionP2PMode(int sectionId, int p2pmode)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 List<Node> affectedNodes = Cave.SetSectionP2PMode(sectionId, p2pmode);
                 if (affectedNodes.Capacity > 0)
                 {
+                    BroadcastSectionUpdate(sectionId, true);
                     foreach (Node node in affectedNodes)
                     {
                         BroadcastNodeUpdate(node.Id);
                     }
-                    BroadcastSectionUpdate(sectionId, true);
                     return true;
                 }
                 else
@@ -129,9 +129,17 @@ namespace GDO
         /// <param name="p2pmode">The p2pmode.</param>
         public void SetDefaultP2PMode(int p2pmode)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 Cave.DefaultP2PMode = p2pmode;
+            }
+        }
+
+        public void RequestDefaultP2PMode()
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.Caller.receiveDefaultP2PMode(Cave.DefaultP2PMode);
             }
         }
 
@@ -140,7 +148,7 @@ namespace GDO
         /// </summary>
         public void DeployApp()
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 //create a app instance
                 //tell browser what part to use
@@ -151,7 +159,7 @@ namespace GDO
         /// </summary>
         public void DisposeApp()
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 //close app instance
                 //send info to browsers, 
@@ -168,7 +176,7 @@ namespace GDO
         /// <param name="peerId">The peer identifier.</param>
         public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId, bool isConnectedToPeerServer)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 Node node;
                 Cave.Nodes.TryGetValue(nodeId, out node);
@@ -188,7 +196,7 @@ namespace GDO
         }
         public void RequestAllUpdates()
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
                 {
@@ -209,7 +217,7 @@ namespace GDO
         /// </summary>
         public void RequestCaveMap()
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 try
                 {
@@ -227,7 +235,7 @@ namespace GDO
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         public bool RequestSectionMap(int sectionId) {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 if (Cave.ContainsSection(sectionId))
                 {
@@ -255,7 +263,7 @@ namespace GDO
         /// <param name="nodeId">The node identifier.</param>
         public bool RequestNeighbourMap(int nodeId)
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 if (Cave.ContainsNode(nodeId))
                 {
@@ -282,7 +290,7 @@ namespace GDO
         /// </summary>
         public void RequestAppList()
         {
-            lock (Cave.serverLock)
+            lock (Cave.ServerLock)
             {
                 try
                 {

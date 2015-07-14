@@ -28,6 +28,10 @@ var NEIGHBOUR = {
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
     // that is why they are on load
+    $.connection.caveHub.client.receiveDefaultP2PMode = function(defaultP2PMode) {
+        net.p2pmode = defaultP2PMode;
+    }
+
     $.connection.caveHub.client.receiveCaveMap = function(cols, rows, serializedCaveMap) {
         /// <summary>
         /// Receives Serialized Cave Map from Server and creates Node Object structure matching it at gdo.node[]
@@ -145,17 +149,29 @@ $(function() {
                 net.section[id].p2pmode = p2pMode;
                 net.section[id].nodeMap = nodeMap;
                 for(var i=1; i<cols; i++){
-                    for(var j=1; j<rows; j++){
-                        net.section[id].health = net.section[id].health + net.node[net.section[id].nodeMap[i][j]].aggregatedConnectionHealth;
+                    for (var j = 1; j < rows; j++) {
+                        // TODO section update simplification
+                        /*net.section[id].health = net.section[id].health + net.node[net.section[id].nodeMap[i][j]].aggregatedConnectionHealth;
+                        net.node[getNodeId(col + i, row + j)].sectionId = id;
+                        net.node[getNodeId(col + i, row + j)].deployed = true;
+                        net.node[getNodeId(col + i, row + j)].p2pmode = p2pMode;
+                        consoleOut('.NET', 1, 'Updating Node : (id:' + getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');*/
                     } 
                 }
                 net.section[id].health = net.section[id].health / (cols * rows);
             } else {
                 net.section[id].id = id;
                 net.section[id].exists = false;
+                for (var i = 1; i < cols; i++) {
+                    for (var j = 1; j < rows; j++) {
+                        /*net.node[getNodeId(col + i, row + j)].sectionId = 0;
+                        net.node[getNodeId(col + i, row + j)].deployed = false;
+                        net.node[getNodeId(col + i, row + j)].p2pmode = net.p2pmode;*/
+                    }
+                }
             }
             updateSelf();
-            consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: ' + exists);
+            consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: ' + exists + ")");
         }
 
     }
@@ -228,6 +244,7 @@ function initNet(clientMode) {//todo comment
     net.clientMode = clientMode;
     net.signalRServerResponded = false;
     net.peerJSServerResponded = false;
+    net.server.requestDefaultP2PMode();
     net.nodes.getConnected = function() {
         var i = 0;
         var connectedNodes = [];

@@ -11,8 +11,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GDO.App</RootNamespace>
-    <AssemblyName>GDO.App</AssemblyName>
+    <RootNamespace>GDO.Apps.Tile</RootNamespace>
+    <AssemblyName>GDO.Apps.Tile</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -95,8 +95,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Web\Tile\App.html" />
+    <Content Include="Web\Tile\Control.html" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\gdo.test.app.js" />
+    <Content Include="Scripts\gdo.app.tile.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
@@ -104,8 +106,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TileAppInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestApp.cs" />
+    <Compile Include="TileAppHub.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">

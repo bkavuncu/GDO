@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using GDO.Core;
+using GDO.Utility;
 
 namespace GDO
 {
@@ -11,15 +12,15 @@ namespace GDO
     /// </summary>
     public sealed class Cave
     {
-        static Cave instance = null;
-        public static readonly object serverLock = new object();
+        static Cave Self = null;
+        public static readonly object ServerLock = new object();
 
         public static int Cols { get; set; }
         public static int Rows { get; set; }
         public static int NodeWidth { get; set; }
         public static int NodeHeight { get; set; }
         public static int DefaultP2PMode { get; set; }
-        public static ConcurrentDictionary<int, IApp> Apps { get; set; }
+        public static ConcurrentDictionary<string, App> Apps { get; set; }
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
 
@@ -28,7 +29,7 @@ namespace GDO
         /// </summary>
         public Cave()
         {
-            Apps = new ConcurrentDictionary<int, IApp>();
+            Apps = new ConcurrentDictionary<string, App>();
             Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
@@ -56,13 +57,13 @@ namespace GDO
         {
             get
             {
-                lock (serverLock)
+                lock (ServerLock)
                 {
-                    if (instance == null)
+                    if (Self == null)
                     {
-                        instance = new Cave();
+                        Self = new Cave();
                     }
-                    return instance;
+                    return Self;
                 }
             }
         }
@@ -70,9 +71,15 @@ namespace GDO
         /// <summary>
         /// Initializes the cave.
         /// </summary>
-        public static void InitCave()
+        public static void Init()
         {
-            instance = new Cave();
+            lock (ServerLock)
+            {
+                if (Self == null)
+                {
+                    Self = new Cave();
+                }
+            }
         }
 
         /// <summary>
@@ -167,15 +174,7 @@ namespace GDO
             List<Node> deployedNodes = new List<Node>();
             if (Cave.IsSectionFree(colStart, rowStart, colEnd, rowEnd))
             {
-                int sectionId = -1;
-                for (int i = 0; i < Cols * Rows; i++)
-                {
-                    if (!Sections.ContainsKey(i))
-                    {
-                        sectionId = i;
-                        break;
-                    }
-                }
+                int sectionId = Utilities.getAvailableSlot<Section>(Sections);
                 Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
                 Sections.TryAdd(sectionId, section);
                     
@@ -394,13 +393,23 @@ namespace GDO
         }
 
         /// <summary>
-        /// Adds an application
+        /// Registers an application
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="app">The application.</param>
-        public static void AddApp(int id, IApp app)
+        public static bool RegisterApp(string name)
         {
-            Apps.TryAdd(id, app);
+            if (!Apps.ContainsKey(name))
+            {
+                App app = new App();
+                app.Init(name);
+                Apps.TryAdd(name, app);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -410,7 +419,7 @@ namespace GDO
         public static List<string> GetAppList()
         {
             List<string> appList = new List<string>();
-            foreach (KeyValuePair<int, IApp> appEntry in Apps)
+            foreach (KeyValuePair<string, App> appEntry in Apps)
             {
                 appList.Add(appEntry.Value.Name);
             }
@@ -426,5 +435,16 @@ namespace GDO
         {
 
         }
+
+        public static int CreateAppInstance(string appName)
+        {
+            return -1;
+        }
+        public static int DisposeAppInstance(string appName, int instanceId)
+        {
+            return -1;
+        }
+
+
     }
 }

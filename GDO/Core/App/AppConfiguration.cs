@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace GDO.Apps
+namespace GDO.Core
 {
-    public class TileHub
+    public class AppConfiguration
     {
     }
 }

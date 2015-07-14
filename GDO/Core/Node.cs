@@ -41,7 +41,7 @@ namespace GDO.Core
         [JsonIgnore]
         public Section Section;
         [JsonIgnore]
-        public IApp App;
+        public IAppInstance App;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Node"/> class.

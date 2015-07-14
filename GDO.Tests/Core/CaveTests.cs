@@ -20,7 +20,7 @@ namespace GDO.Tests
         [TestMethod()]
         public void InitTest()
         {
-            Cave.InitCave();
+            Cave.Init();
             if (Cave.Cols <= 0 && Cave.Rows <= 0 && Cave.NodeWidth <= 0 && Cave.NodeHeight <= 0)
             {
                 Assert.Fail();
@@ -41,7 +41,7 @@ namespace GDO.Tests
         [TestMethod()]
         public void SectionTest()
         {
-            Cave.InitCave();
+            Cave.Init();
             Section section;
             if (Cave.Nodes.Count <= 0)
             {
@@ -99,7 +99,7 @@ namespace GDO.Tests
         [TestMethod()]
         public void GetMapTests()
         {
-            Cave.InitCave();
+            Cave.Init();
             List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
 
             _caveMap = Cave.GetCaveMap();

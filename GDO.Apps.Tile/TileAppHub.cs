@@ -9,18 +9,13 @@ using Microsoft.AspNet.SignalR;
 using GDO.Core;
 
 
-namespace GDO.Core
+namespace GDO.Apps.Tile
 {
-    public class App : Hub, IApp
+    public class TileAppHub : Hub, IAppHub
     {
         public int Id { get; set; }
         public string Name { get; set; }
         
-        // TEST APP
-        // ----------------
-        // some variables
-        // some methods to update variables
-        // each node displays a cave table
-        // select node to send message, and message is displayed in the table on that node
+        //TODO upload Image
     }
 }

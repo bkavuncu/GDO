@@ -13,14 +13,9 @@ using GDO.Core;
 
 namespace GDO.Core
 {
-    /// <summary>
-    /// App Interface
-    /// </summary>
     [InheritedExport]
-    public interface IApp
+    public interface IAppHub
     {
-        int Id { get; set; }
         string Name { get; set; }
-        //App interface
     }
 }

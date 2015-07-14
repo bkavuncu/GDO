@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Tests", "GDO.Tests\GDO.Tests.csproj", "{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.App", "GDO.App\GDO.App.csproj", "{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Tile", "GDO.Apps.Tile\GDO.Apps.Tile.csproj", "{FCE2A4D5-F068-4DDB-8B6C-9119C16AD49B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

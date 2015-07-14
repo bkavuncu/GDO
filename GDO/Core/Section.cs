@@ -13,7 +13,7 @@ namespace GDO.Core
         public int Id { get; set; }
         public Node[,] Nodes;
         public int NumNodes { get; set; }
-        public IApp App;
+        public IAppInstance App;
         public int Width { get; set; }
         public int Height { get; set; }
         public int Col { get; set; }

@@ -1,4 +1,5 @@
 ﻿var gdo;
+var updateInterval = 14000;
 
 var CLIENT_MODE = {
     NODE: 1,
@@ -39,7 +40,7 @@ function initGDO(clientMode) {
             gdo.net = initNet(clientMode);
             if (gdo.clientMode == CLIENT_MODE.NODE) {
                 waitForResponse(initApp, isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
-                setInterval(uploadNodeInfo, 7000);
+                setInterval(uploadNodeInfo, updateInterval);
             } else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
             }
