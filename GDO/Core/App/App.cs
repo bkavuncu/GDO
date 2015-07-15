@@ -14,7 +14,6 @@ using GDO.Utility;
 
 namespace GDO.Core
 {
-    [InheritedExport]
     public class App
     {
         //public int Id { get; set; }

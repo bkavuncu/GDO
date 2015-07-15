@@ -21,11 +21,11 @@ namespace GDO
     public class Startup
     {
         [ImportMany(typeof(IAppHub))]
-        private IEnumerable<IAppHub> _caveapps { get; set; }
+        private List<IAppHub> _caveapps { get; set; }
         public void Configuration(IAppBuilder app)
         {
             Cave.Init();
-            /*var catalog = new AggregateCatalog();
+            var catalog = new AggregateCatalog();
             string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
             foreach (String appDir in appDirs)
             {
@@ -33,8 +33,7 @@ namespace GDO
             }
             var container = new CompositionContainer(catalog);
             container.ComposeParts(this);
-            _caveapps.ToList().ForEach(caveapp => Console.WriteLine(caveapp.Name));
-            _caveapps.ToList().ForEach(caveapp => Cave.RegisterApp(caveapp.Name));*/
+            _caveapps.ToList().ForEach(caveapp => Cave.RegisterApp(caveapp.Name));
             //var activator = new GDOHubActivator(container);
             //GlobalHost.DependencyResolver.Register(typeof(IHubActivator), () => activator);
             app.MapSignalR();

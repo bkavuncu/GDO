@@ -184,7 +184,6 @@ $(function() {
         if (isSignalRServerResponded()){
             var node = JSON.parse(serializedNode);
             consoleOut('.NET', 1, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
-
             net.node[node.Id].col = node.Col;
             net.node[node.Id].row = node.Row;
             net.node[node.Id].sectionCol = node.SectionCol;
@@ -212,6 +211,18 @@ $(function() {
             updateSelf();
             consoleOut('.NET', 1, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
         }
+    }
+    $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
+        var appList = JSON.parse(serializedAppList);
+        gdo.app = new Array(appList.length);
+        consoleOut('.NET', 1, 'Received App List');
+        for (var i = 0; i < appList.length; i++) {
+            gdo.app[i] = {};
+            gdo.app[i].name = appList[i];
+            consoleOut('.NET', 1, 'App ' + i + ' : ' + gdo.app[i].name);
+        }
+        
+
     }
 });
 
@@ -245,6 +256,7 @@ function initNet(clientMode) {//todo comment
     net.signalRServerResponded = false;
     net.peerJSServerResponded = false;
     net.server.requestDefaultP2PMode();
+    net.server.requestAppList();
     net.nodes.getConnected = function() {
         var i = 0;
         var connectedNodes = [];

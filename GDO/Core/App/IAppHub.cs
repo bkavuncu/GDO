@@ -13,7 +13,7 @@ using GDO.Core;
 
 namespace GDO.Core
 {
-    [InheritedExport]
+    //[InheritedExport]
     public interface IAppHub
     {
         string Name { get; set; }
