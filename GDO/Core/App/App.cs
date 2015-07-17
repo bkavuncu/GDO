@@ -49,8 +49,6 @@ namespace GDO.Core
             }
         }
 
-
-
         public bool DisposeAppInstance(int instanceId)
         {
             if (Instances.ContainsKey(instanceId))
