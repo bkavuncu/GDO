@@ -12,8 +12,8 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 
-[assembly: System.Web.UI.WebResource("GDO.Apps.Tile.Scripts.gdo.app.tile.js", "application/x-javascript")]
-
+[assembly: System.Web.UI.WebResource("GDO.Apps.Tile.test.js", "text/x-javascript")]
+//[assembly: System.Web.UI.WebResource("GDO.Scripts.gdo.app.tile.js", "text/x-javascript")]
 
 namespace GDO.Apps.Tile
 {

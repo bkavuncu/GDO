@@ -1,5 +1,7 @@
-﻿<html>
-<head>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Index.aspx.cs" Inherits="GDO.Cave" ValidateRequest="False" %>
+
+<html>
+<head id="headindex" runat="server">
     <title>GDO Management</title>
     <meta charset="utf-8" />
     <style>

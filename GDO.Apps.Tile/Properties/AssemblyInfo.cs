@@ -13,7 +13,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © CSG 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: System.Web.UI.WebResource("GDO.Apps.Tile.Scripts.gdo.app.tile.js", "application/x-javascript")]
+
+[assembly: System.Web.UI.WebResource("GDO.Apps.Tile.test.js", "text/x-javascript")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
