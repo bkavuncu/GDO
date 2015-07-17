@@ -31,7 +31,7 @@ namespace GDO.Core
             //load configs
         }
 
-        public int CreateAppInstance(int confId)
+        public int CreateAppInstance(int confId, int sectionId)
         {
             if (Configurations.ContainsKey(confId))
             {
@@ -39,7 +39,7 @@ namespace GDO.Core
                 IAppInstance instance = (IAppInstance) System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(Name + "Instance");
                 AppConfiguration conf;
                 Configurations.TryGetValue(confId, out conf);
-                instance.init(instanceId, conf);
+                instance.init(instanceId, Cave.Sections[sectionId], conf);
                 Instances.TryAdd(instanceId,instance);
                 return instanceId;
             }

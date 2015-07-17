@@ -29,9 +29,6 @@ namespace GDO
 {
     public class Startup
     {
-        private IHubContext context;
-        private AssemblyName assemblyName;
-        private Type type;
         public void Configuration(IAppBuilder app)
         {
             Cave.Init();

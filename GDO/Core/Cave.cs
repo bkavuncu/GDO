@@ -14,6 +14,8 @@ namespace GDO
     {
         static Cave Self = null;
         public static readonly object ServerLock = new object();
+        public static readonly List<object> AppLocks = new List<object>();
+
 
         public static int Cols { get; set; }
         public static int Rows { get; set; }
@@ -43,6 +45,7 @@ namespace GDO
                 int col = int.Parse(s[0]);
                 int row = int.Parse(s[1]);
                 CreateNode(id, col, row);
+                AppLocks.Add(new object());
             }
             CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
         }
@@ -122,16 +125,12 @@ namespace GDO
         /// <returns></returns>
         public static Node DeployNode(int sectionId, int nodeId, int col, int row)
         {
-            Node node;
-            Nodes.TryGetValue(nodeId, out node);
-            if (!node.IsDeployed)
+            if (!Nodes[nodeId].IsDeployed)
             {
-                Section section;
-                Sections.TryGetValue(sectionId, out section);
-                node.Deploy(section, col, row);
-                section.Nodes[col, row] = node;
+                Nodes[nodeId].Deploy(Sections[sectionId], col, row);
+                Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
             }
-            return node;
+            return Nodes[nodeId];
         }
 
         /// <summary>
@@ -141,10 +140,8 @@ namespace GDO
         /// <returns></returns>
         public static Node FreeNode(int nodeId)
         {
-            Node node;
-            Nodes.TryGetValue(nodeId, out node);
-            node.Free();
-            return node;
+            Nodes[nodeId].Free();
+            return Nodes[nodeId];
         }
 
         /// <summary>
@@ -155,10 +152,8 @@ namespace GDO
         /// <returns></returns>
         public static Node SetNodeP2PMode(int nodeId, int p2pmode)
         {
-            Node node;
-            Nodes.TryGetValue(nodeId, out node);
-            node.P2PMode = p2pmode;
-            return node;
+            Nodes[nodeId].P2PMode = p2pmode;
+            return Nodes[nodeId];
         }
 
         /// <summary>
@@ -200,13 +195,12 @@ namespace GDO
             List<Node> freedNodes = new List<Node>();
             if (Cave.ContainsSection(sectionId))
             {
-                Section section;
-                Sections.TryGetValue(sectionId, out section);
-                foreach (Node node in section.Nodes)
+                foreach (Node node in Sections[sectionId].Nodes)
                 {
                     freedNodes.Add(FreeNode(node.Id));
                 }
-                section.Nodes = null;
+                Sections[sectionId].Nodes = null;
+                Section section;
                 Sections.TryRemove(sectionId, out section);
                     
             }
@@ -310,9 +304,7 @@ namespace GDO
             if (Cave.ContainsSection(sectionId))
             {
                 //close app
-                Section section;
-                Sections.TryGetValue(sectionId, out section);
-                foreach (Node node in section.Nodes)
+                foreach (Node node in Sections[sectionId].Nodes)
                 {
                     affectedNodes.Add(SetNodeP2PMode(node.Id, p2pmode));
                 }
@@ -344,9 +336,7 @@ namespace GDO
             int[,] sectionMap = null;
             if (Cave.ContainsSection(sectionId))
             {
-                Section section;
-                Sections.TryGetValue(sectionId, out section);
-                sectionMap = new int[section.Cols, section.Rows];
+                sectionMap = new int[Sections[sectionId].Cols, Sections[sectionId].Rows];
                 foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
                 {
                     if (nodeEntry.Value.SectionId == sectionId)
@@ -368,16 +358,14 @@ namespace GDO
             int[,] neighbours = null;
             if (Cave.ContainsNode(nodeId))
             {
-                Node node;
-                Nodes.TryGetValue(nodeId, out node);
                 int[,] caveMap = GetCaveMap();
                 neighbours = new int[3, 3];
                 for (int i = -1; i < 2; i++)
                 {
                     for (int j = -1; j < 2; j++)
                     {
-                        int col = node.Col + i;
-                        int row = node.Row + j;
+                        int col = Nodes[nodeId].Col + i;
+                        int row = Nodes[nodeId].Row + j;
                         if (col >= 0 && row >= 0 && col < Cols && row < Rows)
                         {
                             neighbours[i + 1, j + 1] = caveMap[col, row];

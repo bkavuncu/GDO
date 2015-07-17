@@ -8,8 +8,9 @@ namespace GDO.Core
     public interface IAppInstance
     {
         int Id { get; set; }
+        Section Section { get; set; }
         AppConfiguration Configuration { get; set; }
 
-        void init(int instanceId, AppConfiguration Configuration);
+        void init(int instanceId, Section section, AppConfiguration configuration);
     }
 }

@@ -5,16 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GDO.App")]
+[assembly: AssemblyTitle("GDO.Apps.ImageTiles")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CSG")]
-[assembly: AssemblyProduct("GDO.App")]
+[assembly: AssemblyProduct("GDO.Apps.ImageTiles")]
 [assembly: AssemblyCopyright("Copyright © CSG 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
-[assembly: System.Web.UI.WebResource("GDO.Apps.Tile.test.js", "text/x-javascript")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -22,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("fce2a4d5-f068-4ddb-8b6c-9119c16ad49b")]
+[assembly: Guid("77bc15a4-e55b-46f5-bf97-ca91708661da")]
 
 // Version information for an assembly consists of the following four values:
 //
