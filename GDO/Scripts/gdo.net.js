@@ -213,17 +213,21 @@ $(function() {
         }
     }
     $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
-        var appList = JSON.parse(serializedAppList);
-        gdo.app = new Array(appList.length);
+        var deserializedAppList = JSON.parse(serializedAppList);
+        gdo.app = new Array(deserializedAppList.length);
         consoleOut('.NET', 1, 'Received App List');
-        for (var i = 0; i < appList.length; i++) {
+        for (var i = 0; i < deserializedAppList.length; i++) {
             gdo.app[i] = {};
-            gdo.app[i].name = appList[i];
+            gdo.app[i].name = deserializedAppList[i];
             consoleOut('.NET', 1, 'App ' + i + ' : ' + gdo.app[i].name);
+            loadModule(deserializedAppList[i], MODULE_TYPE.APP);
+            //gdo.app[i].server = $.connection.deserializedAppList[i].server;
         }
-        
-
     }
+
+
+    //net.tileAppHub = tileAppHub;
+
 });
 
 
@@ -235,7 +239,7 @@ function initHub() {
     consoleOut('.NET', 1, 'Initializing Hub');
     net.connection = $.connection;
     net.server = $.connection.caveHub.server;
-    net.listener = $.connection.caveHub.client;
+    //net.listener = $.connection.caveHub.client;
     consoleOut('.NET', 1, 'Connected to Hub');
 }
 
@@ -255,8 +259,6 @@ function initNet(clientMode) {//todo comment
     net.clientMode = clientMode;
     net.signalRServerResponded = false;
     net.peerJSServerResponded = false;
-    net.server.requestDefaultP2PMode();
-    net.server.requestAppList();
     net.nodes.getConnected = function() {
         var i = 0;
         var connectedNodes = [];
@@ -275,6 +277,16 @@ function initNet(clientMode) {//todo comment
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         waitForResponse(initPeer, isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     }
+    consoleOut('.NET', 1, 'Requesting Default P2P Mode');
+    net.server.requestDefaultP2PMode();
+    consoleOut('.NET', 1, 'Requesting App List');
+    net.server.requestAppList();
+    consoleOut('.NET', 1, 'Requesting Nodes');
+    var connection = $.hubConnection();
+    net.tileAppHub = connection.createHubProxy('tileAppHub');
+    net.tileAppHub.on('receiveTest', function (test) {
+        consoleOut('.APP.TILE', 2, 'Test ' + test);
+    });
     net.server.requestAllUpdates();
     return net;
 }

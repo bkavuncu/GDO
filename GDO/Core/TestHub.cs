@@ -12,16 +12,16 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 
-[assembly: System.Web.UI.WebResource("GDO.Apps.Tile.Scripts.gdo.app.tile.js", "application/x-javascript")]
 
 
-namespace GDO.Apps.Tile
+namespace GDO.Core
 {
-    [Export(typeof(IAppHub))]
-    public class TileAppHub : Hub, IAppHub
+    //[Export(typeof(IAppHub))]
+    //[HubName("TileAppHub")]
+    public class TestHub : Hub
     {
         //public int Id { get; set; }
-        public string Name { get; set; } = "Tile";
+        public string Name { get; set; } = "Test";
         //TODO upload Image
 
         public void RequestTest()

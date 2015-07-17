@@ -6,18 +6,17 @@ var CLIENT_MODE = {
     CONTROL: 2
 };
 
+var MODULE_TYPE = {
+    CORE: 1,
+    APP: 2
+};
+
 $(function() {
     /// <summary>
     /// Registering Event Handlers on load
+    loadModule('net', MODULE_TYPE.CORE);
     /// </summary>
     /// <returns></returns>
-    $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
-        deserializedAppList = JSON.parse(serializedAppList);
-        for(app in deserializedAppList)
-        {
-            loadModule(app);
-        }
-    }
 });
 function initGDO(clientMode) {
     /// <summary>
@@ -25,7 +24,6 @@ function initGDO(clientMode) {
     /// </summary>
     /// <returns></returns>
     consoleOut('', 1, 'Initializing GDO');
-    //loadModule('net');
     //loadModule('fs');
     gdo = {};
     gdo.net = {};
@@ -85,15 +83,20 @@ function consoleOut(module, type, msg) {
     }
 }
 
-function loadModule(js) {
+function loadModule(js,moduleType) {
     /// <summary>
     /// Loads the JS module.
     /// </summary>
     /// <param name="js">The js.</param>
     /// <returns></returns>
     var $head = $('head');
-    $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
-    consoleOut('MAIN', 1, 'Loaded module ' + js);
+    if (moduleType == MODULE_TYPE.CORE) {
+        consoleOut('', 1, 'Loading core module ' + js + ' at ' + '../../scripts/gdo.' + js + '.js\'');
+        $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
+    } else if (moduleType == MODULE_TYPE.APP) {
+        consoleOut('', 1, 'Loading app module ' + js + ' at ' + '../../scripts/gdo.app.' + js + '.js\'');
+        $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.app.' + js + '.js\'></script>');
+    }
 }
 
 function getUrlVar(variable) {

@@ -9,12 +9,13 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Registration;
 using GDO.Core;
+using Microsoft.AspNet.SignalR.Hubs;
 
 
 namespace GDO.Core
 {
     //[InheritedExport]
-    public interface IAppHub
+    public interface IAppHub : IHub
     {
         string Name { get; set; }
     }
