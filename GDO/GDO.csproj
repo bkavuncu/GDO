@@ -106,6 +106,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Apps\App DLLs should go here.html" />
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.test.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
@@ -162,7 +163,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Apps\" />
     <Folder Include="Extensibility\" />
   </ItemGroup>
   <PropertyGroup>

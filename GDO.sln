@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Tests", "GDO.Tests\GDO.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.ImageTiles", "GDO.Apps.ImageTiles\GDO.Apps.ImageTiles.csproj", "{77BC15A4-E55B-46F5-BF97-CA91708661DA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD4152F1-C1E9-4528-92F7-44112DF11A57}"
+	ProjectSection(SolutionItems) = preProject
+		appdllcopy.bat = appdllcopy.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
