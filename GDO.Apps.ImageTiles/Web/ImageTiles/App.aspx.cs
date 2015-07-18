@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace GDO.Apps.ImageTiles.Web.ImageTiles
+namespace GDO.Apps.ImageTiles.Web
 {
-    public partial class WebForm1 : System.Web.UI.Page
+    public partial class App : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

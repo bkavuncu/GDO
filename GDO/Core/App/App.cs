@@ -16,7 +16,6 @@ namespace GDO.Core
 {
     public class App
     {
-        //public int Id { get; set; }
         public string Name { get; set; }
         public ConcurrentDictionary<int,AppConfiguration> Configurations { get; set; }
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }

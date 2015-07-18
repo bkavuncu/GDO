@@ -12,7 +12,8 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 
-[assembly: System.Web.UI.WebResource("GDO.Apps.ImageTiles.Scripts.gdo.apps.imagetiles.js", "application/x-javascript")]
+[assembly: System.Web.UI.WebResource("GDO.Apps.ImageTiles.Scripts.imagetiles.js", "application/x-javascript")]
+[assembly: System.Web.UI.WebResource("GDO.Apps.ImageTiles.Configurations.sample.js", "application/json")]
 
 namespace GDO.Apps.ImageTiles
 {
@@ -20,7 +21,6 @@ namespace GDO.Apps.ImageTiles
     public class ImageTilesAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "ImageTiles";
-        //TODO upload Image
 
         public void RequestTile(int instanceId, int sectionCol, int sectionRow)
         {

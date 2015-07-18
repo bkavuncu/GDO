@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GDO.Apps.ImageTiles.Web.ImageTiles
+namespace GDO.Apps.ImageTiles.Web
 {
 
 

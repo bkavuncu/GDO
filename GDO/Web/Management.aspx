@@ -129,11 +129,6 @@
             </div>
     <form id="form1" runat="server">
     <div>
-            <asp:ScriptManager ID="ScriptManager1" runat="server">
-                 <scripts>
-                    <asp:scriptreference assembly="GDO.Apps.ImageTiles" name="GDO.Apps.ImageTiles.Scripts.gdo.apps.imagetiles.js" />
-                </scripts>
-            </asp:ScriptManager>
     </div>
     </form>
 </body>
