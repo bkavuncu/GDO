@@ -97,6 +97,7 @@ function loadModule(js,moduleType) {
     } else if (moduleType == MODULE_TYPE.APP) {
         consoleOut('', 1, 'Loading app module ' + js + ' at ' + '../../scripts/gdo.app.' + js + '.js\'');
         $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.app.' + js + '.js\'></script>');
+        $.head.append('');
     }
 }
 

@@ -12,6 +12,8 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 
+[assembly: System.Web.UI.WebResource("GDO.Apps.ImageTiles.Scripts.gdo.apps.imagetiles.js", "application/x-javascript")]
+
 namespace GDO.Apps.ImageTiles
 {
     [Export(typeof(IAppHub))]

@@ -220,7 +220,7 @@ $(function() {
             gdo.app[i] = {};
             gdo.app[i].name = deserializedAppList[i];
             consoleOut('.NET', 1, 'App ' + i + ' : ' + gdo.app[i].name);
-            loadModule(deserializedAppList[i], MODULE_TYPE.APP);
+            //loadModule(deserializedAppList[i], MODULE_TYPE.APP);
             //gdo.app[i].server = $.connection.deserializedAppList[i].server;
         }
     }
