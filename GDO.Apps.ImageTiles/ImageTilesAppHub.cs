@@ -26,7 +26,7 @@ namespace GDO.Apps.ImageTiles
             {
                 try
                 {
-                    Clients.Caller.receiveTile(((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).getTile(sectionCol, sectionRow));
+                    //Clients.Caller.receiveTile(((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).getTile(sectionCol, sectionRow));
                 }
                 catch (Exception e)
                 {
