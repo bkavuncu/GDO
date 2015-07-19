@@ -15,6 +15,9 @@ using Microsoft.AspNet.SignalR.Hubs;
 namespace GDO.Core
 {
     //[InheritedExport]
+    /// <summary>
+    /// App Hub Interface
+    /// </summary>
     public interface IAppHub : IHub
     {
         string Name { get; set; }

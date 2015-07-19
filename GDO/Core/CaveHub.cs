@@ -38,6 +38,13 @@ namespace GDO
             return base.OnDisconnected(stopCalled);
 
         }
+        /// <summary>
+        /// Deploys the node.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="nodeId">The node identifier.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="row">The row.</param>
         public void DeployNode(int sectionId, int nodeId, int col, int row)
         {
             lock (Cave.ServerLock)
@@ -47,6 +54,10 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Frees the node.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
         public void FreeNode(int nodeId)
         {
             lock (Cave.ServerLock)
@@ -56,6 +67,14 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Creates a section.
+        /// </summary>
+        /// <param name="colStart">The col start.</param>
+        /// <param name="rowStart">The row start.</param>
+        /// <param name="colEnd">The col end.</param>
+        /// <param name="rowEnd">The row end.</param>
+        /// <returns></returns>
         public bool CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
             lock (Cave.ServerLock)
@@ -77,6 +96,11 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Disposes a section.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <returns></returns>
         public bool DisposeSection(int sectionId)
         {
             lock (Cave.ServerLock)
@@ -135,6 +159,9 @@ namespace GDO
             }
         }
 
+        /// <summary>
+        /// Requests the default p2p mode.
+        /// </summary>
         public void RequestDefaultP2PMode()
         {
             lock (Cave.ServerLock)
@@ -194,6 +221,9 @@ namespace GDO
                 BroadcastNodeUpdate(nodeId);
             }
         }
+        /// <summary>
+        /// Requests all updates.
+        /// </summary>
         public void RequestAllUpdates()
         {
             lock (Cave.ServerLock)

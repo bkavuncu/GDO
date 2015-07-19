@@ -17,7 +17,7 @@ namespace GDO.Core
     public class App
     {
         public string Name { get; set; }
-        public ConcurrentDictionary<int,AppConfiguration> Configurations { get; set; }
+        public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
 
         public App()
@@ -30,14 +30,14 @@ namespace GDO.Core
             //load configs
         }
 
-        public int CreateAppInstance(int confId, int sectionId)
+        public int CreateAppInstance(string configName, int sectionId)
         {
-            if (Configurations.ContainsKey(confId))
+            if (Configurations.ContainsKey(configName))
             {
                 int instanceId = Utilities.getAvailableSlot<IAppInstance>(Instances);
                 IAppInstance instance = (IAppInstance) System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(Name + "Instance");
                 AppConfiguration conf;
-                Configurations.TryGetValue(confId, out conf);
+                Configurations.TryGetValue(configName, out conf);
                 instance.init(instanceId, Cave.Sections[sectionId], conf);
                 Instances.TryAdd(instanceId,instance);
                 return instanceId;

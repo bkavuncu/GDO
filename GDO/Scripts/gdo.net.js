@@ -475,6 +475,12 @@ function updatePeerConnections(p2pmode) {
 }
 
 function isNeighbourOf(id1, id2) {
+    /// <summary>
+    /// Determines whether two nodes are neighbours.
+    /// </summary>
+    /// <param name="id1">The id1.</param>
+    /// <param name="id2">The id2.</param>
+    /// <returns></returns>
     if ((net.node[id1].col - 1) <= net.node[id2].col && net.node[id2].col <= (net.node[id1].col + 1) && (net.node[id1].row - 1) <= net.node[id2].row && net.node[id2].row <= (net.node[id1].row + 1)) {
         return true;
     }
@@ -482,6 +488,12 @@ function isNeighbourOf(id1, id2) {
 }
 
 function getNodeId(col, row) {
+    /// <summary>
+    /// Gets the node identifier.
+    /// </summary>
+    /// <param name="col">The col.</param>
+    /// <param name="row">The row.</param>
+    /// <returns></returns>
     for (var index in net.node) {
         if (!net.node.hasOwnProperty((index))) {
             continue;
@@ -526,9 +538,17 @@ function receiveFile(path,name,data){
 }*/
 
 function isSignalRServerResponded() {
+    /// <summary>
+    /// Determines whether [is signal r server responded].
+    /// </summary>
+    /// <returns></returns>
     return net.signalRServerResponded;
 }
 
 function isPeerJSServerResponded(){
+    /// <summary>
+    /// Determines whether [is peer js server responded].
+    /// </summary>
+    /// <returns></returns>
     return net.peerJSServerResponded;
 }

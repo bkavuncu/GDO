@@ -89,6 +89,9 @@ namespace GDO.Core
             Width = Width / Rows;
             Height = Height / Cols;
         }
+        /// <summary>
+        /// Aggregates the connection health.
+        /// </summary>
         public void aggregateConnectionHealth()
         {
             int agg = 0;

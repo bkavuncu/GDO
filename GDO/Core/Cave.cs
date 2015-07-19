@@ -298,6 +298,12 @@ namespace GDO
             return -1;
         }
 
+        /// <summary>
+        /// Sets the section p2p mode.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="p2pmode">The p2pmode.</param>
+        /// <returns></returns>
         public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)
         {
             List<Node> affectedNodes = new List<Node>();
@@ -392,12 +398,29 @@ namespace GDO
                 App app = new App();
                 app.Init(name);
                 Apps.TryAdd(name, app);
+                List<AppConfiguration> configurations = LoadAppConfigurations(name);
+                foreach (var configuration in configurations)
+                {
+                    Apps[name].Configurations.TryAdd(configuration.Name, configuration);
+                }
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Loads the application configurations.
+        /// </summary>
+        /// <param name="AppName">Name of the application.</param>
+        /// <returns></returns>
+        public static List<AppConfiguration> LoadAppConfigurations(string AppName)
+        {
+            List <AppConfiguration> configurations = new List<AppConfiguration>();
+            //TODO Load app configurations from /Configurations/AppName directory
+            return configurations;
         }
 
         /// <summary>

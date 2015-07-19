@@ -111,6 +111,9 @@ namespace GDO.Core
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
 
+        /// <summary>
+        /// Aggregates the connection health.
+        /// </summary>
         public void aggregateConnectionHealth()
         {
             if (!IsConnectedToCaveServer)
