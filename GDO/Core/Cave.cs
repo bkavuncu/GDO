@@ -447,13 +447,13 @@ namespace GDO
 
         }
 
-        public static int CreateAppInstance(string appName)
+        public static int CreateAppInstance(string appName, string configName)
         {
             return -1;
         }
-        public static int DisposeAppInstance(string appName, int instanceId)
+        public static bool DisposeAppInstance(string appName, int instanceId)
         {
-            return -1;
+            return false;
         }
 
 
