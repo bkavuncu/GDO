@@ -95,7 +95,7 @@
     <Content Include="Web\ImageTiles\Control.aspx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Configurations\sample.json" />
+    <EmbeddedResource Include="Configurations\ImageTiles\sample.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

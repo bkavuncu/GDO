@@ -96,8 +96,7 @@ function loadModule(js,moduleType) {
         $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
     } else if (moduleType == MODULE_TYPE.APP) {
         consoleOut('', 1, 'Loading app module ' + js + ' at ' + '../../scripts/gdo.app.' + js + '.js\'');
-        $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.app.' + js + '.js\'></script>');
-        $.head.append('');
+        $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.apps.' + js + '.js\'></script>');
     }
 }
 
@@ -147,4 +146,12 @@ function contains(a, obj) {
     }
     return false;
 
+}
+
+function upperCaseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function lowerCaseFirstLetter(string) {
+    return string.charAt(0).toLowerCase() + string.slice(1);
 }

@@ -162,6 +162,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Configurations\" />
     <Folder Include="Extensibility\" />
   </ItemGroup>
   <PropertyGroup>

@@ -220,14 +220,11 @@ $(function() {
             gdo.app[i] = {};
             gdo.app[i].name = deserializedAppList[i];
             consoleOut('.NET', 1, 'App ' + i + ' : ' + gdo.app[i].name);
-            //loadModule(deserializedAppList[i], MODULE_TYPE.APP);
-            //gdo.app[i].server = $.connection.deserializedAppList[i].server;
+            loadModule(deserializedAppList[i], MODULE_TYPE.APP);
+            var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
+            gdo.app[i].server = $.connection[hubName].server;
         }
     }
-
-
-    //net.tileAppHub = tileAppHub;
-
 });
 
 

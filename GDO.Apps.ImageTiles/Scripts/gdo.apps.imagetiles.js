@@ -1,4 +1,4 @@
 ﻿
 $(function() {
-    consoleOut('.IMAGETILES', 2, 'Loaded Embedded JS');
+    consoleOut('.IMAGETILES', 1, 'Loaded Image Tiles JS');
 });
