@@ -37,6 +37,7 @@ $(function() {
         /// Receives Serialized Cave Map from Server and creates Node Object structure matching it at gdo.node[]
         /// </summary>
         /// <returns></returns>
+        consoleOut('.NET', 1, 'Received the map of the Cave');
         net.cols = cols;
         net.rows = rows;
         net.node = new Array(cols * rows);
@@ -77,7 +78,6 @@ $(function() {
                 net.section[id].isSelected = false;
             }
         }
-        consoleOut('.NET', 1, 'Received the map of the Cave');
         if (gdo.clientMode == CLIENT_MODE.NODE) {
             net.node[gdo.clientId].connectionId = net.connection.hub.id;
             net.node[gdo.clientId].isConnectedToCaveServer = true;
@@ -95,6 +95,7 @@ $(function() {
         /// </summary>
         /// <param name="serializedNeighbourMap">The serialized neighbour map.</param>
         /// <returns></returns>
+        consoleOut('.NET', 1, 'Received the map of Neighbours');
         deserializedNeighbourMap = JSON.parse(serializedNeighbourMap);
         var k = 0;
         for (j = 0; j < 3; j++) {
@@ -123,7 +124,6 @@ $(function() {
         }
         updateSelf();
         net.signalRServerResponded = true;
-        consoleOut('.NET', 1, 'Received the map of Neighbours');
     }
     $.connection.caveHub.client.receiveSectionUpdate = function (exists, id, col, row, cols, rows, p2pMode, nodeMap) {
         /// <summary>
@@ -140,6 +140,7 @@ $(function() {
         /// <returns></returns>
         if (isSignalRServerResponded()){
             if (exists) {
+                consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: ' + exists + ")");
                 net.section[id].id = id;
                 net.section[id].exists = true;
                 net.section[id].col = col;
@@ -148,30 +149,32 @@ $(function() {
                 net.section[id].rows = rows;
                 net.section[id].p2pmode = p2pMode;
                 net.section[id].nodeMap = nodeMap;
-                for(var i=1; i<cols; i++){
-                    for (var j = 1; j < rows; j++) {
+                for(var i=0; i<cols; i++){
+                    for (var j = 0; j < rows; j++) {
                         // TODO section update simplification
-                        /*net.section[id].health = net.section[id].health + net.node[net.section[id].nodeMap[i][j]].aggregatedConnectionHealth;
+                        net.section[id].health = net.section[id].health + net.node[net.section[id].nodeMap[i][j]].aggregatedConnectionHealth;
                         net.node[getNodeId(col + i, row + j)].sectionId = id;
+                        net.node[getNodeId(col + i, row + j)].sectionCol = i;
+                        net.node[getNodeId(col + i, row + j)].sectionRow = j;
                         net.node[getNodeId(col + i, row + j)].deployed = true;
                         net.node[getNodeId(col + i, row + j)].p2pmode = p2pMode;
-                        consoleOut('.NET', 1, 'Updating Node : (id:' + getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');*/
+                        consoleOut('.NET', 1, 'Updating Node : (id:' + getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');
                     } 
                 }
                 net.section[id].health = net.section[id].health / (cols * rows);
             } else {
                 net.section[id].id = id;
                 net.section[id].exists = false;
-                for (var i = 1; i < cols; i++) {
-                    for (var j = 1; j < rows; j++) {
-                        /*net.node[getNodeId(col + i, row + j)].sectionId = 0;
-                        net.node[getNodeId(col + i, row + j)].deployed = false;
-                        net.node[getNodeId(col + i, row + j)].p2pmode = net.p2pmode;*/
+                for (var i = 0; i < net.section[id].cols; i++) {
+                    for (var j = 0; j < net.section[id].rows; j++) {
+                        net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].sectionId = 0;
+                        net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].deployed = false;
+                        net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].p2pmode = net.p2pmode;
+                        consoleOut('.NET', 1, 'Updating Node : (id:' + getNodeId(net.section[id].col + i, net.section[id].row + j) + '),(col,row:' + net.section[id].col + i + ',' + net.section[id].row + j + ')');
                     }
                 }
             }
             updateSelf();
-            consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: ' + exists + ")");
         }
 
     }

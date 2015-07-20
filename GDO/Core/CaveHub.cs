@@ -83,10 +83,10 @@ namespace GDO
                 if (deployedNodes.Capacity > 0)
                 {
                     BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
-                    foreach (Node node in deployedNodes)
+                    /*foreach (Node node in deployedNodes)
                     {
                         BroadcastNodeUpdate(node.Id);
-                    }
+                    }*/
                     return true;
                 }
                 else
@@ -109,10 +109,10 @@ namespace GDO
                 if (freedNodes.Capacity > 0)
                 {
                     BroadcastSectionUpdate(sectionId, false);
-                    foreach (Node node in freedNodes)
+                    /*foreach (Node node in freedNodes)
                     {
                         BroadcastNodeUpdate(node.Id);
-                    }
+                    }*/
                     return true;
                 }
                 else

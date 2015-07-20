@@ -72,7 +72,29 @@ function loadModule(js,moduleType) {
     }
 }
 
-
-
-
+function consoleOut(module, type, msg) {
+    /// <summary>
+    /// JS Console Output.
+    /// </summary>
+    /// <param name="module">The module.</param>
+    /// <param name="type">The type.</param>
+    /// <param name="msg">The MSG.</param>
+    /// <returns></returns>
+    if (type == 1) {
+        if ($("#message_log").length > 0) {
+            $("#message_log").append('GDO' + module + '- INFO: ' + msg + "&#10;").scrollTop($("#message_log")[0].scrollHeight);
+        }
+        console.log('GDO' + module + ': ' + msg);
+    } else if (type == 2) {
+        if ($("#message_log").length > 0) {
+            $("#message_log").append('<b>GDO' + module + '- WARN: ' + msg + "</b>&#10;").scrollTop($("#message_log")[0].scrollHeight);
+        }
+        console.warn('GDO' + module + ': ' + msg);
+    } else if (type == 3) {
+        if ($("#message_log").length > 0) {
+            $("#message_log").append('<b>GDO' + module + '- ERROR: ' + msg + "</b>&#10;").scrollTop($("#message_log")[0].scrollHeight);
+        }
+        console.error('GDO' + module + ': ' + msg);
+    }
+}
 

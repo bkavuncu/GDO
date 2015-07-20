@@ -1,6 +1,6 @@
 ﻿var table_font_size = 70;
 var button_font_size = 90;
-var table_height = 210;
+var table_height = 280;
 var table_width = 100;
 var button_height = 49;
 var button_cols = 4;
