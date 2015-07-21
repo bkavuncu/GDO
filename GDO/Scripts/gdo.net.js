@@ -545,7 +545,13 @@ function isSignalRServerResponded() {
     /// Determines whether [is signal r server responded].
     /// </summary>
     /// <returns></returns>
-    return net.signalRServerResponded;
+    if (net != null && net != undefined) {
+    if (net.signalRServerResponded != null && net.signalRServerResponded != undefined) {
+            return net.signalRServerResponded;
+        } else {
+            return false;
+        }
+    }
 }
 
 function isPeerJSServerResponded(){
@@ -553,5 +559,11 @@ function isPeerJSServerResponded(){
     /// Determines whether [is peer js server responded].
     /// </summary>
     /// <returns></returns>
-    return net.peerJSServerResponded;
+    if (net != null && net != undefined) {
+        if (net.peerJSServerResponded != null && net.peerJSServerResponded != undefined) {
+            return net.peerJSServerResponded;
+        } else {
+            return false;
+        }
+    }
 }
