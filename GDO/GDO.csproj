@@ -183,6 +183,8 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="JSLintNet.json" />
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\GDO Test Server.pubxml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

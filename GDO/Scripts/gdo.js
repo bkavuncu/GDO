@@ -29,6 +29,7 @@ function initGDO(clientMode) {
     gdo.net = {};
     gdo.clientMode = clientMode;
     gdo.clientId = getUrlVar('clientId');
+    $("title").append(" :" + gdo.clientId);
     gdo.updateInterval = 14000;
 
     if (gdo.clientMode == CLIENT_MODE.CONTROL) {
