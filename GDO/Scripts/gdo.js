@@ -65,11 +65,11 @@ function loadModule(js,moduleType) {
     /// <returns></returns>
     var $head = $('head');
     if (moduleType == MODULE_TYPE.CORE) {
-        consoleOut('', 1, 'Loading core module ' + js + ' at ' + '../../scripts/gdo.' + js + '.js\'');
-        $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.' + js + '.js\'></script>');
+        consoleOut('', 1, 'Loading core module ' + js + ' at ' + '../scripts/gdo.' + js + '.js\'');
+        $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + js + '.js\'></script>');
     } else if (moduleType == MODULE_TYPE.APP) {
-        consoleOut('', 1, 'Loading app module ' + js + ' at ' + '../../scripts/gdo.app.' + js + '.js\'');
-        $head.append('<script type=\'text/javascript\' src=\'../../scripts/gdo.apps.' + js + '.js\'></script>');
+        consoleOut('', 1, 'Loading app module ' + js + ' at ' + '../scripts/gdo.app.' + js + '.js\'');
+        $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.apps.' + js + '.js\'></script>');
     }
 }
 

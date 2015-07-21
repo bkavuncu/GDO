@@ -1,5 +1,6 @@
-﻿var table_font_size = 70;
-var button_font_size = 90;
+﻿var table_font_size = 11;
+var section_font_size = 12;
+var button_font_size = 17;
 var table_height = 280;
 var table_width = 100;
 var button_height = 49;
@@ -113,7 +114,7 @@ function drawNodeTable(nodeId) {
              .append("<div id='node_table_node_" + node.id + "_h'> <b>Node Health</b></div>")
              .css("height", (table_height / gdo.net.rows) + "")
              .css("width", (table_width / gdo.net.cols) + "%")
-             .css("font-size", table_font_size + "%")
+             .css({ fontSize: table_font_size })
              .css('padding', cell_padding);
         if(node.id == gdo.nodeId){
             $("#selected_node_id").empty().append("<b>Node Id:</b> " + node.id).css("width",7+"%");
@@ -223,7 +224,7 @@ function drawSectionTable() {
                     .css("width", (table_width / gdo.net.cols) + "%")
                     .css("border", "4px solid #555")
                     .css("background", "lightgray")
-                    .css("font-size", table_font_size + "%")
+                    .css({ fontSize: section_font_size })
                     .css('padding', cell_padding)
                     .click(function () {
                         var id = getNodeId($(this).attr('col'), $(this).attr('row'))
@@ -250,7 +251,7 @@ function drawSectionTable() {
                 .append("<b>Start Col:</b> " + gdo.net.section[sectionId].col + " | <b>Start Row:</b> " + gdo.net.section[sectionId].row)
                 .append("</br><b>End Col:</b> " + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + " | <b>End Row:</b> " + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1))
                 .append("<div id='section_table_section_" + sectionId + "_h'> <b>Section Health</b></div>")
-                .css("font-size", table_font_size + "%")
+                .css({ fontSize: section_font_size })
                 .click(function () {
                     var id = net.node[getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
                     if (net.section[id].isSelected) {
@@ -300,7 +301,7 @@ function drawButtonTable() {
         .css("background", "lightskyblue")
         .css('padding', cell_padding)
         .attr("align", "center")
-        .css("font-size", button_font_size + "%");
+        .css({ fontSize: button_font_size });
         
     isRectangle = true;
     isStarted = false;
@@ -373,7 +374,7 @@ function drawButtonTable() {
         .css("background", "lightblue")
         .css('padding', cell_padding)
         .attr("align", "center")
-        .css("font-size", button_font_size + "%")
+        .css({ fontSize: button_font_size})
         .click(function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
                 if (gdo.net.section[i].isSelected) {

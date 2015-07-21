@@ -71,11 +71,11 @@
     </style>
 </head>
 <body>
- <script src="../../Scripts/jquery-1.11.3.min.js"></script>
-            <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-            <script type="text/javascript" src="../../Scripts/gdo.js"></script>
-            <script src="../../signalr/hubs"></script>
-            <script type="text/javascript" src="../../Scripts/peer.js"></script>
+ <script src="../Scripts/jquery-1.11.3.min.js"></script>
+            <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+            <script type="text/javascript" src="../Scripts/gdo.js"></script>
+            <script src="../signalr/hubs"></script>
+            <script type="text/javascript" src="../Scripts/peer.js"></script>
 
             <script>
                 $(function () {

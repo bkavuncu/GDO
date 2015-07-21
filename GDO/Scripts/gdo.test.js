@@ -1,5 +1,5 @@
 ﻿var table_height = 400;
-var table_font_size = 70;
+var table_font_size = 11;
 var button_height = 100;
 var button_cols = 4;
 var isRectangle = true;
@@ -39,7 +39,7 @@ function updateDisplayCanvas() {
 
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         drawTestTable();
-        $("#test_node").empty().css("font-size", "140").css("color", "#333").append("GDO Test Node <b>" + gdo.clientId + "</b>")
+        $("#test_node").empty().css({fontSize: 140}).css("color", "#333").append("GDO Node <b>" + gdo.clientId + "</b>")
     }else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
        // drawNodeTable(gdo.nodeId);
         drawSectionTable();
@@ -58,7 +58,7 @@ function drawTestTable() {
             .append("<div id='node" + node.id + "s'> <b>SectionID:</b> " + node.sectionId + "</div>")
             .append("<div id='node" + node.id + "p'> <b>PeerID:</b> " + node.peerId + "</div>")
             .append("<div id='node" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionId + "</div>")
-            .css("font-size", table_font_size + "%")
+            .css({fontSize: table_font_size})
             .css("height", (table_height / gdo.net.rows) + "")
             .css("width", (100 / gdo.net.cols) + "%");
             
@@ -99,14 +99,14 @@ function drawTestTable() {
             $("#status_table_pid").css("background", "lightgray").css("border", "4px solid #555");
             $("#status_table_h").css("background", "lightgray").css("border", "4px solid #555");
 
-            $("#status_table_col_content").empty().css("font-size", "49").append(node.col);
-            $("#status_table_row_content").empty().css("font-size", "49").append(node.row);
-            $("#status_table_sid_content").empty().css("font-size", "49").append(node.sectionId);
-            $("#status_table_scol_content").empty().css("font-size", "49").append(node.sectionCol);
-            $("#status_table_srow_content").empty().css("font-size", "49").append(node.sectionRow);
-            $("#status_table_cid_content").empty().css("font-size", "35").append(node.connectionId);
-            $("#status_table_pid_content").empty().css("font-size", "35").append(node.peerId);
-            $("#status_table_h_content").empty().css("font-size", "49").append((node.aggregatedConnectionHealth * 25) + "%");
+            $("#status_table_col_content").empty().css({ fontSize: 49 }).append(node.col);
+            $("#status_table_row_content").empty().css({ fontSize: 49 }).append(node.row);
+            $("#status_table_sid_content").empty().css({ fontSize: 49 }).append(node.sectionId);
+            $("#status_table_scol_content").empty().css({ fontSize: 49 }).append(node.sectionCol);
+            $("#status_table_srow_content").empty().css({ fontSize: 49 }).append(node.sectionRow);
+            $("#status_table_cid_content").empty().css({ fontSize: 35 }).append(node.connectionId);
+            $("#status_table_pid_content").empty().css({ fontSize: 35 }).append(node.peerId);
+            $("#status_table_h_content").empty().css({ fontSize: 49 }).append((node.aggregatedConnectionHealth * 25) + "%");
 
             if (node.sectionId > 0) {
                 $("#status_table_sid").css("background", "lightskyblue");
@@ -139,7 +139,7 @@ function drawTestTable() {
             } else {
                 $("#status_table_h").css("background", "lightcoral");
             }
-            $("#status_table").css("font-size", "21");
+            $("#status_table").css({fontSize: 21});
         }
     }
 }

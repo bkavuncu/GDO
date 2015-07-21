@@ -92,6 +92,7 @@
     <Content Include="Web\ImageTiles\App.aspx" />
     <Content Include="Web\ImageTiles\Control.aspx" />
     <Content Include="Configurations\ImageTiles\sample.json" />
+    <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

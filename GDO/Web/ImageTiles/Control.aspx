@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="App.aspx.cs" Inherits="GDO.Apps.ImageTiles.Web.App" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Control.aspx.cs" Inherits="GDO.Apps.ImageTiles.Web.Control" %>
 
 <!DOCTYPE html>
 
@@ -7,11 +7,10 @@
     <title></title>
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="form2" runat="server">
     <div>
     
     </div>
     </form>
-
 </body>
 </html>
