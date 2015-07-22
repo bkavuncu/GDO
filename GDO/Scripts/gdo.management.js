@@ -1,10 +1,12 @@
 ﻿var table_font_size = 11;
 var section_font_size = 12;
 var button_font_size = 17;
-var table_height = 280;
+var header_font_size = 17;
+var table_height = 300;
 var table_width = 100;
-var button_height = 49;
-var button_cols = 4;
+var button_height = 61;
+var button_cols = 5;
+var header_cols = 10;
 var cell_padding = 7;
 var isRectangle = true;
 var isStarted = false;
@@ -13,6 +15,22 @@ var colEnd = -1;
 var rowStart = 1000;
 var rowEnd = -1;
 
+function drawEmptyHeaderTable(maxCol, maxRow) {
+    /// <summary>
+    /// Draws the button table.
+    /// </summary>
+    /// <param name="maxRow">The maximum row.</param>
+    /// <param name="maxCol">The maximum col.</param>
+    /// <returns></returns>
+    //consoleOut('.MAN', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
+    $("#header_table").empty().css("background-color","#222");
+    for (var i = 0; i < maxRow; i++) {
+        $("#header_table").append("<tr id='header_table_row_" + i + "' row='" + i + "'></tr>");
+        for (var j = 0; j < maxCol; j++) {
+            $("#header_table tr:last").append("<td id='header_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>");
+        }
+    }
+}
 
 function drawEmptySectionTable(maxCol, maxRow) {
     /// <summary>
@@ -74,6 +92,7 @@ function updateDisplayCanvas() {
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         drawTestTable();
     }else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
+        drawHeaderTable();
         drawNodeTable(gdo.nodeId);
         drawSectionTable();
         drawButtonTable();
@@ -192,7 +211,7 @@ function drawNodeTable(nodeId) {
         }
         if (node.id == nodeId) {
             $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#3F607B");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#527088");
         } else if (isNeighbourOf(node.id, nodeId)) {
             $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
             $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#2A4E6C");
@@ -248,8 +267,9 @@ function drawSectionTable() {
                 .css("background", "#2A4E6C")
                 .css('padding', cell_padding)
                 .append("<div id='section_table_section_" + sectionId + "_s'> <b>Section ID:</b> " + sectionId + "</div>")
-                .append("<b>Start Col:</b> " + gdo.net.section[sectionId].col + " | <b>Start Row:</b> " + gdo.net.section[sectionId].row)
-                .append("</br><b>End Col:</b> " + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + " | <b>End Row:</b> " + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1))
+                .append("<b>Start: </b> (" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")")
+                .append("<br><b>End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
+                //.append("</br>(" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")->(" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
                 .append("<div id='section_table_section_" + sectionId + "_h'> <b>Section Health</b></div>")
                 .css({ fontSize: section_font_size })
                 .click(function () {
@@ -262,7 +282,7 @@ function drawSectionTable() {
                     updateDisplayCanvas();
                 });
             if (gdo.net.section[sectionId].isSelected) {
-                $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#3F607B");
+                $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#527088");
             }
             if (gdo.net.section[sectionId].health >= 4) {
                 $("#section_table_section_" + sectionId + '_h').css("background", "darkgreen");
@@ -366,11 +386,11 @@ function drawButtonTable() {
             .css("background", "#222");
     }
 
-    //Dispose Section
+    //Close Section
 
     $("#button_table_row_0_col_1")
         .empty()
-        .append("<div id='button_dispose_section'> <b>Dispose Section</b></div>")
+        .append("<div id='button_close_section'> <b>Close Section</b></div>")
         .css("height", button_height)
         .css("width", (100 / button_cols) + "%")
         .css("border", "3px solid #444")
@@ -383,13 +403,7 @@ function drawButtonTable() {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
                 if (gdo.net.section[i].isSelected) {
                     gdo.net.section[i].isSelected = false;
-                    for (var j = 1; j <= gdo.net.cols * gdo.net.rows; j++) {
-                        var node = gdo.net.node[j];
-                        if (node.sectionId == i) {
-                            node.isSelected = false;
-                        }
-                    }
-                    gdo.net.server.disposeSection(i);
+                    gdo.net.server.closeSection(i);
                     consoleOut('.MAN', 1, 'Requested Disposal of Section ' + i);
                 }
             }
@@ -397,13 +411,210 @@ function drawButtonTable() {
 
     for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
         if (gdo.net.section[i].isSelected) {
-            $("#button_table_row_0_col_1").css("background", "darkgreen").css("color", "#FFF");
+            $("#button_table_row_0_col_1").css("background", "darkred").css("color", "#FFF");
         }
     }
+    $("#button_table_row_0_col_2")
+        .empty()
+        .append("<div id='button_deploy_app'> <b>Deploy App</b></div>")
+        .css("height", button_height)
+        .css("width", (100 / button_cols) + "%")
+        .css("border", "3px solid #444")
+        .css("color", "#777")
+        .css("background", "#222")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: button_font_size })
+        .click(function () {
+            for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
+                if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
+                    gdo.net.section[i].isSelected = false;
+                    //TODO Deploy App
+                    consoleOut('.MAN', 1, 'Requested Deployment of App' + i);
+                }
+            }
+        });
 
+    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
+        if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
+            $("#button_table_row_0_col_2").css("background", "darkgreen").css("color", "#FFF");
+        }
+    }
+    $("#button_table_row_0_col_3")
+        .empty()
+        .append("<div id='button_close_app'> <b>Control App</b></div>")
+        .css("height", button_height)
+        .css("width", (100 / button_cols) + "%")
+        .css("border", "3px solid #444")
+        .css("color", "#777")
+        .css("background", "#222")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: button_font_size })
+        .click(function () {
+            for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
+                if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
+                    gdo.net.section[i].isSelected = false;
+                    //TODO Control App
+                }
+            }
+        });
+
+    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
+        if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
+            $("#button_table_row_0_col_2").css("background", "darkgreen").css("color", "#FFF");
+        }
+    }
+    $("#button_table_row_0_col_4")
+    .empty()
+    .append("<div id='button_close_app'> <b>Close App</b></div>")
+    .css("height", button_height)
+    .css("width", (100 / button_cols) + "%")
+    .css("border", "3px solid #444")
+    .css("color", "#777")
+    .css("background", "#222")
+    .css('padding', cell_padding)
+    .attr("align", "center")
+    .css({ fontSize: button_font_size })
+    .click(function () {
+        for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
+            if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
+                gdo.net.section[i].isSelected = false;
+                //TODO Dispose App
+                consoleOut('.MAN', 1, 'Requested Disposal of App' + i);
+            }
+        }
+    });
+
+    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
+        if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
+            $("#button_table_row_0_col_2").css("background", "darkred").css("color", "#FFF");
+        }
+    }
 }
 
-
+function drawHeaderTable() {
+    drawEmptyHeaderTable(13, 1);
+    $("#header_table_row_0_col_0")
+        .empty()
+        .append("<div id='header-text'> <b> GDO </b>Control Panel</div>")
+        .css("height", button_height)
+        .css("width", (4*(table_width / header_cols)) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_1")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_2")
+        .empty()
+        .append("<div id='header-text'> Nodes </div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_3")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_4")
+        .empty()
+        .append("<div id='header-text'> Sections </div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_5")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_6")
+        .empty()
+        .append("<div id='header-text'> Apps </div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_7")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_8")
+        .empty()
+        .append("<div id='header-text'> Instances </div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_9")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_10")
+        .empty()
+        .append("<div id='header-text'> Console </div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_11")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_12")
+        .empty()
+        .append("<div id='header-text'> Maintenance </div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_13")
+        .empty()
+        .css("height", button_height)
+        .css("width", "0px")
+        .css("background-color", "#444")
+        .css("border", "1px solid #444")
+        .css({ fontSize: header_font_size });
+    $("#header_table_row_0_col_14")
+        .empty()
+        .append("<div id='header-text'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>")
+        .css("height", button_height)
+        .css("width", (table_width / header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', cell_padding)
+        .css({ fontSize: header_font_size });
+}
 
 ////////
 /*

@@ -185,11 +185,11 @@ namespace GDO.Core
             return deployedNodes;
         }
         /// <summary>
-        /// Disposes the section.
+        /// Closes the section.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <returns></returns>
-        public static List<Node> DisposeSection(int sectionId)
+        public static List<Node> CloseSection(int sectionId)
         {
             List<Node> freedNodes = new List<Node>();
             if (Cave.ContainsSection(sectionId))
@@ -450,7 +450,7 @@ namespace GDO.Core
         {
             return -1;
         }
-        public static bool DisposeAppInstance(string appName, int instanceId)
+        public static bool CloseAppInstance(string appName, int instanceId)
         {
             return false;
         }

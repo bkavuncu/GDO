@@ -43,20 +43,17 @@
             color: #DDD;
             z-index: 10;
             font-size: 140%;
-            height: 43px;
             width: 100%;
         }
-        #title-text {
-            margin: 25;
-            padding: 0;
-            border: 0;
+        #header-text {
             width: 100%;
-            background-color: #333;
+            background-color: #222;
             color: #DDD;
-            z-index: 10;
             font-size: 140%;
-            height: 43px;
-            width: 100%;
+        }             
+        #divider {
+            border: 2px solid #444;
+            background-color: #444;
         }
         #content {
             margin: 15 auto;
@@ -70,7 +67,7 @@
         }
     </style>
 </head>
-<body>
+<body unselectable="on" class="unselectable">
  <script src="../Scripts/jquery-1.11.3.min.js"></script>
             <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
             <script type="text/javascript" src="../Scripts/gdo.js"></script>
@@ -86,29 +83,17 @@
                     consoleOut('', 1, 'GDO Initialized');
                     drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
                     drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-                    drawEmptyButtonTable(4, 1);
+                    drawEmptyButtonTable(5, 1);
                     updateSelf();
                 }
-                //TESTS
-                //------------
-                //connect
-                //init js tests
-                //section live tests
-                //create a section
-                //deploy test app in different p2p modes
-                //test app will test data sharing
-                //give some time for tests to complete or check through a boolean
-                //close app test
-                //redeploy live test?
             </script>
-            <!--<div id="header">
-                <div id="title-text">
-                    GDO Management
-                </div>
-            </div>-->
-            <div id="content" style="align: center">
+            <div id="header" unselectable="on" class="unselectable">
+                <table id="header_table" unselectable="on" class="unselectable" style="width: 100%; "></table>
+            </div>
+            <div id="divider"></div>
+            <div id="content" style="align: center" unselectable="on" class="unselectable">
                 <br>
-                <table id="selected_node" style="width: 97%">
+                <table id="selected_node" style="width: 99%">
                     <tr>
                         <td id="selected_node_id"><b>Node Id:</b></td>
                         <td id="selected_node_col"><b>Col:</b></td>
@@ -121,12 +106,13 @@
                         <td id="selected_node_h"><b>Node Health:</b></td>
                     </tr>
                 </table>
-                <table id="node_table" unselectable="on" class="unselectable" style="width: 97%"></table>
+
+                <table id="node_table" unselectable="on" class="unselectable" style="width: 100%"></table>
                 <br>
-                <b>Section Table:</b>
-                <table id="section_table" unselectable="on" class="unselectable" style="width: 97%"></table>
                 <br>
-                <table id="button_table" unselectable="on" class="unselectable" style="width: 97%"></table>
+                <table id="section_table" unselectable="on" class="unselectable" style="width: 100%"></table>
+                <br>
+                <table id="button_table" unselectable="on" class="unselectable" style="width: 100%"></table>
             </div>
     <form id="form1" runat="server">
     <div>

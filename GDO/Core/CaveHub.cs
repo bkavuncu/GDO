@@ -96,15 +96,15 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Disposes a section.
+        /// Closes a section.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <returns></returns>
-        public bool DisposeSection(int sectionId)
+        public bool CloseSection(int sectionId)
         {
             lock (Cave.ServerLock)
             {
-                List<Node> freedNodes = Cave.DisposeSection(sectionId);
+                List<Node> freedNodes = Cave.CloseSection(sectionId);
                 if (freedNodes.Capacity > 0)
                 {
                     BroadcastSectionUpdate(sectionId, false);
@@ -181,9 +181,9 @@ namespace GDO.Core
             }
         }
         /// <summary>
-        /// Disposes the application.
+        /// Closes the application.
         /// </summary>
-        public void DisposeApp()
+        public void CloseApp()
         {
             lock (Cave.ServerLock)
             {

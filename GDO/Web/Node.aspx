@@ -23,7 +23,7 @@
         }
     </style>
 </head>
-<body>
+<body unselectable="on" class="unselectable">
     <form id="form1" runat="server">
     <div>
     
@@ -44,17 +44,6 @@
             drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
             updateSelf();
         }
-        //TESTS
-        //------------
-        //connect
-        //init js tests
-        //section live tests
-        //create a section
-        //deploy test app in different p2p modes
-        //test app will test data sharing
-        //give some time for tests to complete or check through a boolean
-        //close app test
-        //redeploy live test?
     </script>
     <div id="test_node" style="text-align:center">Test Node</div>
     <br>

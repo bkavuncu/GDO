@@ -81,7 +81,7 @@ function drawTestTable() {
         }
         if (node.id == gdo.clientId) {
             $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#3F607B");
+            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#527088");
         } else if (node.isNeighbour) {
             $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
             $("#node_table_row" + node.row + "_col" + node.col).css("background", "#2A4E6C");
