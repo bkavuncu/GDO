@@ -130,10 +130,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CaveHub.cs" />
-    <Compile Include="Core\App\AppConfiguration.cs" />
-    <Compile Include="Core\App\App.cs" />
-    <Compile Include="Core\App\IAppHub.cs" />
-    <Compile Include="Core\App\IAppInstance.cs" />
+    <Compile Include="Core\AppConfiguration.cs" />
+    <Compile Include="Core\App.cs" />
+    <Compile Include="Core\IAppHub.cs" />
+    <Compile Include="Core\IAppInstance.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />

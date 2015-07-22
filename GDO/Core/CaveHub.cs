@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
-using GDO.Core;
 
-namespace GDO
+namespace GDO.Core
 {
     public class CaveHub : Hub
     {

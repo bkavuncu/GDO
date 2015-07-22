@@ -1,10 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
-using GDO.Core;
 using GDO.Utility;
 
-namespace GDO
+namespace GDO.Core
 {
     // TODO also check how static controls are recycled during the asp.net lifecycle 
     /// <summary>

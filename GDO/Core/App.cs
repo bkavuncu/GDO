@@ -8,7 +8,6 @@ using Microsoft.AspNet.SignalR;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Registration;
-using GDO.Core;
 using GDO.Utility;
 
 
