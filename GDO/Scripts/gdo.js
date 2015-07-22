@@ -81,42 +81,44 @@ function consoleOut(module, type, msg) {
     /// <param name="type">The type.</param>
     /// <param name="msg">The MSG.</param>
     /// <returns></returns>
-
+    var moduleBrowser = module;
+    var moduleConsole = module;
     if (module.length < 14) {
         for (var i = module.length; i < 14; i++) {
-            module = module + "&nbsp;";
+           moduleBrowser = moduleBrowser + "&nbsp;";
+           moduleConsole = moduleConsole+ " ";
         }
     }
     if (type == 0) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<div style="color:green; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:green; font-size:11; font-family:Courier New, Courier, monospace;">GDO' +moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
-        console.log('GDO' + module + ': ' + msg);
+        console.log('GDO' +moduleConsole+ ': ' + msg);
     } if (type == 1) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<div style="color:lightskyblue; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:lightskyblue; font-size:11; font-family:Courier New, Courier, monospace;">GDO' +moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
-        console.log('GDO' + module + ': ' + msg);
+        console.log('GDO' +moduleConsole+ ': ' + msg);
     } if (type == 2) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<div style="color:#FFF; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:#FFF; font-size:11; font-family:Courier New, Courier, monospace;">GDO' +moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
-        console.log('GDO' + module + ': ' + msg);
+        console.log('GDO' +moduleConsole+ ': ' + msg);
     } if (type == 3) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<div style="color:gray; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:gray; font-size:11; font-family:Courier New, Courier, monospace;">GDO' +moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
-        console.log('GDO' + module + ': ' + msg);
+        console.log('GDO' +moduleConsole+ ': ' + msg);
     } else if (type == 4) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<div style="color:yellow; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:yellow; font-size:11; font-family:Courier New, Courier, monospace;">GDO' +moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
-        console.warn('GDO' + module + ': ' + msg);
+        console.warn('GDO' +moduleConsole+ ': ' + msg);
     } else if (type == 5) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<div style="color:#coral; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:coral; font-size:11; font-family:Courier New, Courier, monospace;">GDO' +moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
-        console.error('GDO' + module + ': ' + msg);
+        console.error('GDO' +moduleConsole+ ': ' + msg);
     }
 }
 

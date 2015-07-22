@@ -129,15 +129,15 @@ function drawTestTable() {
             }
 
             if (node.aggregatedConnectionHealth == 4) {
-                $("#status_table_h").css("background", "darkgreen");
+                $("#status_table_h").css("background", "darkgreen").css("color", "white");
             } else if (node.aggregatedConnectionHealth == 3) {
-                $("#status_table_h").css("background", "yellow");
+                $("#status_table_h").css("background", "yellow").css("color","black");
             } else if (node.aggregatedConnectionHealth == 2) {
-                $("#status_table_h").css("background", "lightsalmon");
+                $("#status_table_h").css("background", "lightsalmon").css("color", "black");
             } else if (node.aggregatedConnectionHealth == 1) {
-                $("#status_table_h").css("background", "darkred");
+                $("#status_table_h").css("background", "darkred").css("color", "white");
             } else {
-                $("#status_table_h").css("background", "darkred");
+                $("#status_table_h").css("background", "darkred").css("color", "white");
             }
             $("#status_table").css({fontSize: 21});
         }

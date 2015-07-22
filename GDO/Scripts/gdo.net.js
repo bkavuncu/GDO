@@ -387,7 +387,14 @@ function uploadNodeInfo() {
     /// </summary>
     /// <returns></returns>
     var connectedNodes = JSON.stringify(net.nodes.getConnected());
-    net.server.uploadNodeInfo(gdo.clientId, net.connection.hub.id, connectedNodes, net.node[gdo.clientId].peerId, net.node[gdo.clientId].isConnectedToPeerServer);
+    net.server.uploadNodeInfo(gdo.clientId, net.connection.hub.id, connectedNodes, net.node[gdo.clientId].peerId, net.node[gdo.clientId].isConnectedToPeerServer)
+        .done(function (result) { net.node[gdo.clientId].isConnectedToCaveServer = true; })
+        .fail(function(result) {
+            consoleOut(".NET", 5, "Failed to Upload Node Info");
+            net.node[gdo.clientId].isConnectedToCaveServer = false;
+            net.node[gdo.clientId].aggregatedConnectionHealth = 0;
+            updateSelf();
+        });
 }
 
 function connectToPeer(nodeId) {
