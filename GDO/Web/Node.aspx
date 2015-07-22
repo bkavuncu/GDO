@@ -9,7 +9,8 @@
     <style> 
 
         body {
-      background: darkgray;
+      background: #000;
+      color: #FFF;
       font-family:helvetica;
       font-size:70%;
       }
@@ -145,7 +146,7 @@
     <table id="node_table" unselectable="on" class="unselectable" style="width:100%"></table>
     <br>
     <br>
-    <textarea style="width: 100%; border:4px solid #555;background-color: lightgray" rows="14" id="message_log"></textarea>
+    <div style="width: 99.5%; height: 234px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF" id="message_log"></div>
 
 </body>
 </html>

@@ -17,7 +17,7 @@
             margin: 0 auto;
             padding: 0;
             border: 0;
-            background-color: #555;
+            background-color: #000;
             color: #222;
             font-family: helvetica;
             font-size: 100%;
@@ -39,8 +39,8 @@
             padding: 0;
             border: 0;
             width: 100%;
-            background-color: #555;
-            color: #AAA;
+            background-color: #000;
+            color: #DDD;
             z-index: 10;
             font-size: 140%;
             height: 43px;
@@ -51,8 +51,8 @@
             padding: 0;
             border: 0;
             width: 100%;
-            background-color: #555;
-            color: #AAA;
+            background-color: #333;
+            color: #DDD;
             z-index: 10;
             font-size: 140%;
             height: 43px;
@@ -62,8 +62,8 @@
             margin: 15 auto;
             padding: 15;
             border: 0;
-            background-color: #999;
-            color: #333;
+            background-color: #000;
+            color: #FFF;
             font-family: helvetica;
             font-size: 100%;
             width: 100%;
@@ -101,12 +101,13 @@
                 //close app test
                 //redeploy live test?
             </script>
-            <div id="header">
+            <!--<div id="header">
                 <div id="title-text">
                     GDO Management
                 </div>
-            </div>
+            </div>-->
             <div id="content" style="align: center">
+                <br>
                 <table id="selected_node" style="width: 97%">
                     <tr>
                         <td id="selected_node_id"><b>Node Id:</b></td>

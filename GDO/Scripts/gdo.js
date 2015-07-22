@@ -37,7 +37,7 @@ function initGDO(clientMode) {
     }
     if (gdo.clientId > 0) {
         $.connection.hub.start().done(function() {
-            consoleOut('', 1, 'Hub Started');
+            consoleOut('', 0, 'Hub Started');
             gdo.net = initNet(clientMode);
             if (gdo.clientMode == CLIENT_MODE.NODE) {
                 waitForResponse(initApp, isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
@@ -81,19 +81,40 @@ function consoleOut(module, type, msg) {
     /// <param name="type">The type.</param>
     /// <param name="msg">The MSG.</param>
     /// <returns></returns>
-    if (type == 1) {
+
+    if (module.length < 14) {
+        for (var i = module.length; i < 14; i++) {
+            module = module + "&nbsp;";
+        }
+    }
+    if (type == 0) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('GDO' + module + '- INFO: ' + msg + "&#10;").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:green; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
         console.log('GDO' + module + ': ' + msg);
-    } else if (type == 2) {
+    } if (type == 1) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<b>GDO' + module + '- WARN: ' + msg + "</b>&#10;").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:lightskyblue; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+        }
+        console.log('GDO' + module + ': ' + msg);
+    } if (type == 2) {
+        if ($("#message_log").length > 0) {
+            $("#message_log").append('<div style="color:#FFF; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+        }
+        console.log('GDO' + module + ': ' + msg);
+    } if (type == 3) {
+        if ($("#message_log").length > 0) {
+            $("#message_log").append('<div style="color:gray; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
+        }
+        console.log('GDO' + module + ': ' + msg);
+    } else if (type == 4) {
+        if ($("#message_log").length > 0) {
+            $("#message_log").append('<div style="color:yellow; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
         console.warn('GDO' + module + ': ' + msg);
-    } else if (type == 3) {
+    } else if (type == 5) {
         if ($("#message_log").length > 0) {
-            $("#message_log").append('<b>GDO' + module + '- ERROR: ' + msg + "</b>&#10;").scrollTop($("#message_log")[0].scrollHeight);
+            $("#message_log").append('<div style="color:#coral; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + module + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#message_log")[0].scrollHeight);
         }
         console.error('GDO' + module + ': ' + msg);
     }

@@ -39,7 +39,7 @@ function updateDisplayCanvas() {
 
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         drawTestTable();
-        $("#test_node").empty().css({fontSize: 140}).css("color", "#333").append("GDO Node <b>" + gdo.clientId + "</b>")
+        $("#test_node").empty().css({fontSize: 140}).css("color", "#FFF").append("GDO Node <b>" + gdo.clientId + "</b>")
     }else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
        // drawNodeTable(gdo.nodeId);
         drawSectionTable();
@@ -63,41 +63,41 @@ function drawTestTable() {
             .css("width", (100 / gdo.net.cols) + "%");
             
         if (node.connectedToPeer || node.id == gdo.clientId) {
-            $("#node" + node.id + 'p').css("background", "lightgreen");
+            $("#node" + node.id + 'p').css("background", "darkgreen");
         } else {
-            $("#node" + node.id + 'p').css("background", "lightcoral");
+            $("#node" + node.id + 'p').css("background", "darkred");
         }
         if (node.isConnectedToCaveServer) {
-            $("#node" + node.id + 'c').css("background", "lightgreen");
+            $("#node" + node.id + 'c').css("background", "darkgreen");
         } else {
-            $("#node" + node.id + 'c').css("background", "lightcoral");
+            $("#node" + node.id + 'c').css("background", "darkred");
         }
         if (node.sectionId > 0 && node.sectionId == gdo.net.node[gdo.clientId].sectionId) {
-            $("#node" + node.id + 's').css("background", "lightgreen");
+            $("#node" + node.id + 's').css("background", "darkgreen");
         } else if (node.sectionId > 0) {
             $("#node" + node.id + 's').css("background", "lightsalmon");
         } else {
-            $("#node" + node.id + 's').css("background", "lightcoral");
+            $("#node" + node.id + 's').css("background", "darkred");
         }
         if (node.id == gdo.clientId) {
-            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #555");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "lightskyblue");
+            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
+            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#3F607B");
         } else if (node.isNeighbour) {
-            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #555");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "lightblue");
+            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
+            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#2A4E6C");
         } else {
-            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #555");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "lightgray");
+            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
+            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#222");
         }
         if (node.id == gdo.clientId) {
-            $("#status_table_col").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_row").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_sid").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_scol").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_srow").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_cid").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_pid").css("background", "lightgray").css("border", "4px solid #555");
-            $("#status_table_h").css("background", "lightgray").css("border", "4px solid #555");
+            $("#status_table_col").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_row").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_sid").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_scol").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_srow").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_cid").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_pid").css("background", "#222").css("border", "4px solid #444");
+            $("#status_table_h").css("background", "#222").css("border", "4px solid #444");
 
             $("#status_table_col_content").empty().css({ fontSize: 49 }).append(node.col);
             $("#status_table_row_content").empty().css({ fontSize: 49 }).append(node.row);
@@ -109,35 +109,35 @@ function drawTestTable() {
             $("#status_table_h_content").empty().css({ fontSize: 49 }).append((node.aggregatedConnectionHealth * 25) + "%");
 
             if (node.sectionId > 0) {
-                $("#status_table_sid").css("background", "lightskyblue");
-                $("#status_table_scol").css("background", "lightskyblue");
-                $("#status_table_srow").css("background", "lightskyblue");
+                $("#status_table_sid").css("background", "#2A4E6C");
+                $("#status_table_scol").css("background", "#2A4E6C");
+                $("#status_table_srow").css("background", "#2A4E6C");
             } else {
-                $("#status_table_sid").css("background", "lightgray");
-                $("#status_table_scol").css("background", "lightgray");
-                $("#status_table_srow").css("background", "lightgray");
+                $("#status_table_sid").css("background", "#222");
+                $("#status_table_scol").css("background", "#222");
+                $("#status_table_srow").css("background", "#222");
             }
             if (node.isConnectedToCaveServer) {
-                $("#status_table_cid").css("background", "lightgreen");
+                $("#status_table_cid").css("background", "darkgreen");
             } else {
-                $("#status_table_cid").css("background", "lightcoral");
+                $("#status_table_cid").css("background", "darkred");
             }
             if (node.isConnectedToPeerServer) {
-                $("#status_table_pid").css("background", "lightgreen");
+                $("#status_table_pid").css("background", "darkgreen");
             } else {
-                $("#status_table_pid").css("background", "lightcoral");
+                $("#status_table_pid").css("background", "darkred");
             }
 
             if (node.aggregatedConnectionHealth == 4) {
-                $("#status_table_h").css("background", "lightgreen");
+                $("#status_table_h").css("background", "darkgreen");
             } else if (node.aggregatedConnectionHealth == 3) {
                 $("#status_table_h").css("background", "yellow");
             } else if (node.aggregatedConnectionHealth == 2) {
                 $("#status_table_h").css("background", "lightsalmon");
             } else if (node.aggregatedConnectionHealth == 1) {
-                $("#status_table_h").css("background", "lightcoral");
+                $("#status_table_h").css("background", "darkred");
             } else {
-                $("#status_table_h").css("background", "lightcoral");
+                $("#status_table_h").css("background", "darkred");
             }
             $("#status_table").css({fontSize: 21});
         }

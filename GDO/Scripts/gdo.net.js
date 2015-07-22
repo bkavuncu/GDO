@@ -41,7 +41,7 @@ $(function() {
         net.cols = cols;
         net.rows = rows;
         net.node = new Array(cols * rows);
-        consoleOut('.NET', 1, 'Node Length ' + net.node.length);
+        consoleOut('.NET', 2, 'Node Length ' + net.node.length);
         deserializedCaveMap = JSON.parse(serializedCaveMap);
         for (i = 0; i < cols; i++) {
             for (j = 0; j < rows; j++) {
@@ -83,7 +83,7 @@ $(function() {
             net.node[gdo.clientId].isConnectedToCaveServer = true;
             net.node[gdo.clientId].isConnectedToPeerServer = false;
             updateNodes();
-            consoleOut('.NET', 1, 'Requesting the map of Neighbours');
+            consoleOut('.NET', 2, 'Requesting the map of Neighbours');
             net.server.requestNeighbourMap(gdo.clientId);
         } else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
             net.signalRServerResponded = true;
@@ -103,7 +103,7 @@ $(function() {
                 var id = deserializedNeighbourMap[i][j];
                 net.neighbour[k];
                 net.neighbour[k] = id;
-                consoleOut('.NET', 1, 'Neighbour ' + k + ' is node ' + id);
+                consoleOut('.NET', 3, 'Neighbour ' + k + ' is node ' + id);
                 k++;
             }
         }
@@ -158,7 +158,7 @@ $(function() {
                         net.node[getNodeId(col + i, row + j)].sectionRow = j;
                         net.node[getNodeId(col + i, row + j)].deployed = true;
                         net.node[getNodeId(col + i, row + j)].p2pmode = p2pMode;
-                        consoleOut('.NET', 1, 'Updating Node : (id:' + getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');
+                        consoleOut('.NET', 3, 'Updating Node : (id:' + getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');
                     } 
                 }
                 net.section[id].health = net.section[id].health / (cols * rows);
@@ -170,7 +170,7 @@ $(function() {
                         net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].sectionId = 0;
                         net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].deployed = false;
                         net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].p2pmode = net.p2pmode;
-                        consoleOut('.NET', 1, 'Updating Node : (id:' + getNodeId(net.section[id].col + i, net.section[id].row + j) + '),(col,row:' + net.section[id].col + i + ',' + net.section[id].row + j + ')');
+                        consoleOut('.NET', 3, 'Updating Node : (id:' + getNodeId(net.section[id].col + i, net.section[id].row + j) + '),(col,row:' + net.section[id].col + i + ',' + net.section[id].row + j + ')');
                     }
                 }
             }
@@ -186,7 +186,7 @@ $(function() {
         /// <returns></returns>
         if (isSignalRServerResponded()){
             var node = JSON.parse(serializedNode);
-            consoleOut('.NET', 1, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
+            consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
             net.node[node.Id].col = node.Col;
             net.node[node.Id].row = node.Row;
             net.node[node.Id].sectionCol = node.SectionCol;
@@ -212,7 +212,7 @@ $(function() {
                 net.section[net.node[node.Id].sectionId].health = net.section[net.node[node.Id].sectionId].health / (net.section[net.node[node.Id].sectionId].cols * net.section[net.node[node.Id].sectionId].rows);
             }
             updateSelf();
-            consoleOut('.NET', 1, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
+            consoleOut('.NET', 2, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
         }
     }
     $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
@@ -222,7 +222,7 @@ $(function() {
         for (var i = 0; i < deserializedAppList.length; i++) {
             gdo.app[i] = {};
             gdo.app[i].name = deserializedAppList[i];
-            consoleOut('.NET', 1, 'App ' + i + ' : ' + gdo.app[i].name);
+            consoleOut('.NET', 2, 'App ' + i + ' : ' + gdo.app[i].name);
             loadModule(deserializedAppList[i], MODULE_TYPE.APP);
             var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
             gdo.app[i].server = $.connection[hubName].server;
@@ -236,11 +236,11 @@ function initHub() {
     /// Assigns hub references to our object structure (Hub initialized on load)
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 1, 'Initializing Hub');
+    consoleOut('.NET', 2, 'Initializing Hub');
     net.connection = $.connection;
     net.server = $.connection.caveHub.server;
     //net.listener = $.connection.caveHub.client;
-    consoleOut('.NET', 1, 'Connected to Hub');
+    consoleOut('.NET', 0, 'Connected to Hub');
 }
 
 function initNet(clientMode) {//todo comment
@@ -248,7 +248,7 @@ function initNet(clientMode) {//todo comment
     /// Initializes the gdo.net.
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 1, 'Initializing Net');
+    consoleOut('.NET', 2, 'Initializing Net');
     net = {};
     net.peer = peer;
     net.node = [];
@@ -277,11 +277,11 @@ function initNet(clientMode) {//todo comment
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         waitForResponse(initPeer, isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     }
-    consoleOut('.NET', 1, 'Requesting Default P2P Mode');
+    consoleOut('.NET', 2, 'Requesting Default P2P Mode');
     net.server.requestDefaultP2PMode();
-    consoleOut('.NET', 1, 'Requesting App List');
+    consoleOut('.NET', 2, 'Requesting App List');
     net.server.requestAppList();
-    consoleOut('.NET', 1, 'Requesting Nodes');
+    consoleOut('.NET', 2, 'Requesting Nodes');
     var connection = $.hubConnection();
     net.tileAppHub = connection.createHubProxy('tileAppHub');
     net.tileAppHub.on('receiveTest', function (test) {
@@ -296,10 +296,10 @@ function initPeer() {
     /// Initializes the peerjs.
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 1, 'Initializing Peer Connections');
+    consoleOut('.NET', 2, 'Initializing Peer Connections');
     net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); //our own server will replace here
     net.peer.on('open', function(peerId) {
-        consoleOut('.NET', 1, 'Connected to PeerServer with Id:' + peerId);
+        consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         net.node[gdo.clientId].peerId = peerId;
         net.node[gdo.clientId].isConnectedToPeerServer = true;
         uploadNodeInfo();
@@ -310,7 +310,7 @@ function initPeer() {
     net.peer.on('close', function(err) {
         net.node[gdo.clientId].isConnectedToPeerServer = false;
         uploadNodeInfo();
-        consoleOut('.NET', 3, err);
+        consoleOut('.NET', 5, err);
     });
     net.peer.on('connection', receiveConn);
 }
@@ -330,21 +330,21 @@ function receiveConn(conn) {
             nodeId = Number(index);
         }
     }
-    consoleOut('.NET', 1, 'Receiving Connection from Node ' + nodeId + ' - ' + conn.peer);
+    consoleOut('.NET', 2, 'Receiving Connection from Node ' + nodeId + ' - ' + conn.peer);
     if (nodeId > 0) {
         conn.on('open', function () {
             conn.send('hi!');
             net.node[nodeId].connectedToPeer = true;
             uploadNodeInfo();
-            consoleOut('.NET', 1, 'Connected to Node ' + nodeId);
+            consoleOut('.NET', 0, 'Connected to Node ' + nodeId);
         });
         conn.on('close', function (err) {
             net.node[nodeId].connectedToPeer = false;
             uploadNodeInfo();
-            consoleOut('.NET', 2, 'Node Connection Closed : nodeId : ' + nodeId);
+            consoleOut('.NET', 4, 'Node Connection Closed : nodeId : ' + nodeId);
         });
         conn.on('data', receiveData);
-        conn.on('error', function (err) { consoleOut('.NET', 3, 'Connection Error - nodeId : ' + nodeId + ' - ' + err) });
+        conn.on('error', function (err) { consoleOut('.NET', 5, 'Connection Error - nodeId : ' + nodeId + ' - ' + err) });
     }
 }
 
@@ -355,20 +355,20 @@ function initConn(conn, nodeId) {
     /// <param name="conn">The connection.</param>
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
-    consoleOut('.NET', 1, 'Opening Connection to Node ' + nodeId);
+    consoleOut('.NET', 2, 'Opening Connection to Node ' + nodeId);
     conn.on('open', function(){
         conn.send('hi!');//todo send node id's in init messages
         net.node[nodeId].connectedToPeer = true;
         uploadNodeInfo();
-        consoleOut('.NET', 1, 'Connected to Node ' + nodeId);
+        consoleOut('.NET', 0, 'Connected to Node ' + nodeId);
     });
     conn.on('close', function(err) {
         net.node[nodeId].connectedToPeer = false;
         uploadNodeInfo();
-        consoleOut('.NET', 2, 'Node Connection Closed - nodeId : ' + nodeId);
+        consoleOut('.NET', 4, 'Node Connection Closed - nodeId : ' + nodeId);
     });
     conn.on('data', receiveData);
-    conn.on('error', function(err) { consoleOut('.NET', 3, 'nodeId : ' + nodeId + ' - ' + err) });
+    conn.on('error', function(err) { consoleOut('.NET', 5, 'nodeId : ' + nodeId + ' - ' + err) });
 }
 
 function initNodes() {
@@ -376,8 +376,8 @@ function initNodes() {
     /// Initializes the nodes.
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 1, 'Initializing Nodes');
-    consoleOut('.NET', 1, 'Requesting the map of the Cave');
+    consoleOut('.NET', 2, 'Initializing Nodes');
+    consoleOut('.NET', 2, 'Requesting the map of the Cave');
     net.server.requestCaveMap();
 }
 
@@ -397,7 +397,7 @@ function connectToPeer(nodeId) {
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
     if (net.node[nodeId].peerId != null && !net.node[nodeId].connectedToPeer && nodeId != gdo.clientId) {
-        consoleOut('.NET', 1, 'Connecting to Node ' + nodeId + ' - ' + net.node[nodeId].peerId + ' - Connection Status :' + net.node[nodeId].connectedToPeer);
+        consoleOut('.NET', 2, 'Connecting to Node ' + nodeId + ' - ' + net.node[nodeId].peerId + ' - Connection Status :' + net.node[nodeId].connectedToPeer);
         var c = net.peer.connect(net.node[nodeId].peerId);
         initConn(c, nodeId);
     }
@@ -409,7 +409,7 @@ function disconnectFromPeer(nodeId) {
     /// </summary>
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
-    consoleOut('.NET', 1, 'Disconnecting from Node ' + nodeId);
+    consoleOut('.NET', 2, 'Disconnecting from Node ' + nodeId);
     var conn = net.peer.connections[net.node[nodeId].peerId][0];
     net.node[nodeId].connectedToPeer = false;
     conn.close();
@@ -514,7 +514,7 @@ function receiveData(data) {
     /// </summary>
     /// <param name="data">The data.</param>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'RECEIVED DATA');
+    consoleOut('.NET', 4, 'RECEIVED DATA');
     //dataObj = JSON.parse(data);
 
     //var type = dataObj.type;

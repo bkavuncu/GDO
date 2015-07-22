@@ -127,25 +127,25 @@ function drawNodeTable(nodeId) {
             $("#selected_node_pid").empty().append("<b>Peer Id:</b> " + node.peerId).css("width", 10 + "%");
             $("#selected_node_h").empty().append("<b>Node Health:</b> " + (node.aggregatedConnectionHealth * 25) + "%").css("width", 10 + "%");
             if (node.isConnectedToCaveServer) {
-                $("#selected_node_cid").css("background", "lightgreen");
+                $("#selected_node_cid").css("background", "darkgreen");
             } else {
-                $("#selected_node_cid").css("background", "lightcoral");
+                $("#selected_node_cid").css("background", "darkred");
             }
             if (node.isConnectedToPeerServer) {
-                $("#selected_node_pid").css("background", "lightgreen");
+                $("#selected_node_pid").css("background", "darkgreen");
             } else {
-                $("#selected_node_pid").css("background", "lightcoral");
+                $("#selected_node_pid").css("background", "darkred");
             }
             if (node.aggregatedConnectionHealth == 4) {
-                $("#selected_node_h").css("background", "lightgreen");
+                $("#selected_node_h").css("background", "darkgreen");
             } else if (node.aggregatedConnectionHealth == 3) {
-                $("#selected_node_h").css("background", "yellow");
+                $("#selected_node_h").css("background", "goldenrod");
             } else if (node.aggregatedConnectionHealth == 2) {
-                $("#selected_node_h").css("background", "lightsalmon");
+                $("#selected_node_h").css("background", "coral");
             } else if (node.aggregatedConnectionHealth == 1) {
-                $("#selected_node_h").css("background", "lightcoral");
+                $("#selected_node_h").css("background", "darkred");
             } else {
-                $("#selected_node_h").css("background", "lightcoral");
+                $("#selected_node_h").css("background", "darkred");
             }
         }
         var forward = false;
@@ -161,44 +161,44 @@ function drawNodeTable(nodeId) {
             }
         }
         if (node.aggregatedConnectionHealth == 4) {
-            $("#node_table_node_" + node.id + '_h').css("background", "lightgreen");
+            $("#node_table_node_" + node.id + '_h').css("background", "darkgreen");
         } else if (node.aggregatedConnectionHealth == 3) {
-            $("#node_table_node_" + node.id + '_h').css("background", "yellow");
+            $("#node_table_node_" + node.id + '_h').css("background", "goldenrod");
         } else if (node.aggregatedConnectionHealth == 2) {
-            $("#node_table_node_" + node.id + '_h').css("background", "lightsalmon");
+            $("#node_table_node_" + node.id + '_h').css("background", "coral");
         } else if (node.aggregatedConnectionHealth == 1) {
-            $("#node_table_node_" + node.id + '_h').css("background", "lightcoral");
+            $("#node_table_node_" + node.id + '_h').css("background", "darkred");
         } else {
-            $("#node_table_node_" + node.id + '_h').css("background", "lightcoral");
+            $("#node_table_node_" + node.id + '_h').css("background", "darkred");
         }
         if (forward && reverse || (nodeId == node.id && node.peerId != null)) {
-            $("#node_table_node_" + node.id + '_p').css("background", "lightgreen");
+            $("#node_table_node_" + node.id + '_p').css("background", "darkgreen");
         } else if (forward || reverse ) {
-            $("#node_table_node_" + node.id + '_p').css("background", "lightsalmon");
+            $("#node_table_node_" + node.id + '_p').css("background", "coral");
         } else {
-            $("#node_table_node_" + node.id + '_p').css("background", "lightcoral");
+            $("#node_table_node_" + node.id + '_p').css("background", "darkred");
         }
         if (node.isConnectedToCaveServer) {
-            $("#node_table_node_" + node.id + '_c').css("background", "lightgreen");
+            $("#node_table_node_" + node.id + '_c').css("background", "darkgreen");
         } else {
-            $("#node_table_node_" + node.id + '_c').css("background", "lightcoral");
+            $("#node_table_node_" + node.id + '_c').css("background", "darkred");
         }
         if (node.sectionId > 0 && node.sectionId == gdo.net.node[nodeId].sectionId) {
-            $("#node_table_node_" + node.id + '_s').css("background", "lightgreen");
+            $("#node_table_node_" + node.id + '_s').css("background", "darkgreen");
         } else if (node.sectionId > 0) {
-            $("#node_table_node_" + node.id + '_s').css("background", "lightsalmon");
+            $("#node_table_node_" + node.id + '_s').css("background", "coral");
         } else {
-            $("#node_table_node_" + node.id + '_s').css("background", "lightcoral");
+            $("#node_table_node_" + node.id + '_s').css("background", "darkred");
         }
         if (node.id == nodeId) {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightskyblue");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#3F607B");
         } else if (isNeighbourOf(node.id, nodeId)) {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightblue");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#2A4E6C");
         } else {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightgray");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#222");
         }
     }
 }
@@ -222,8 +222,8 @@ function drawSectionTable() {
                     .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
                     .css("height", (table_height / gdo.net.rows) + "")
                     .css("width", (table_width / gdo.net.cols) + "%")
-                    .css("border", "4px solid #555")
-                    .css("background", "lightgray")
+                    .css("border", "4px solid #444")
+                    .css("background", "#222")
                     .css({ fontSize: section_font_size })
                     .css('padding', cell_padding)
                     .click(function () {
@@ -244,8 +244,8 @@ function drawSectionTable() {
                 .attr('rowspan', gdo.net.section[sectionId].rows)
                 .css("height", ((table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
                 .css("width", ((100 / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
-                .css("border", "4px solid #333")
-                .css("background", "lightskyblue")
+                .css("border", "4px solid #222")
+                .css("background", "#2A4E6C")
                 .css('padding', cell_padding)
                 .append("<div id='section_table_section_" + sectionId + "_s'> <b>Section ID:</b> " + sectionId + "</div>")
                 .append("<b>Start Col:</b> " + gdo.net.section[sectionId].col + " | <b>Start Row:</b> " + gdo.net.section[sectionId].row)
@@ -262,24 +262,24 @@ function drawSectionTable() {
                     updateDisplayCanvas();
                 });
             if (gdo.net.section[sectionId].isSelected) {
-                $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "dodgerblue");
+                $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#3F607B");
             }
             if (gdo.net.section[sectionId].health >= 4) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "lightgreen");
+                $("#section_table_section_" + sectionId + '_h').css("background", "darkgreen");
             } else if (gdo.net.section[sectionId].health >= 3) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "yellow");
+                $("#section_table_section_" + sectionId + '_h').css("background", "goldenrod");
             } else if (gdo.net.section[sectionId].health >= 2) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "lightsalmon");
+                $("#section_table_section_" + sectionId + '_h').css("background", "coral");
             } else if (gdo.net.section[sectionId].health >= 1) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "lightcoral");
+                $("#section_table_section_" + sectionId + '_h').css("background", "darkred");
             } else {
-                $("#section_table_section_" + sectionId + '_h').css("background", "lightcoral");
+                $("#section_table_section_" + sectionId + '_h').css("background", "darkred");
             }
         } else if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
             $("#section_table_row_" + node.row + "_col_" + node.col).hide();
         }
         if (node.isSelected) {
-            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "gray");
+            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#333");
         }
     }
 }
@@ -297,8 +297,9 @@ function drawButtonTable() {
         .append("<div id='button_Create_section'> <b>Create Section</b></div>")
         .css("height", button_height)
         .css("width", (table_width / button_cols) + "%")
-        .css("border", "3px solid #555")
-        .css("background", "lightskyblue")
+        .css("border", "3px solid #444")
+        .css("background", "#222")
+        .css("color", "#777")
         .css('padding', cell_padding)
         .attr("align", "center")
         .css({ fontSize: button_font_size });
@@ -353,14 +354,16 @@ function drawButtonTable() {
     if (isStarted) {
         if (isRectangle) {
             $("#button_table_row_0_col_0")
-                .css("background", "lightgreen");
+                .css("background", "darkgreen")
+                .css("color", "#FFF");
         } else {
             $("#button_table_row_0_col_0")
-                .css("background", "lightcoral");
+                .css("background", "darkred")
+                .css("color", "#FFF");
         }
     } else {
         $("#button_table_row_0_col_0")
-            .css("background", "lightblue");
+            .css("background", "#222");
     }
 
     //Dispose Section
@@ -370,8 +373,9 @@ function drawButtonTable() {
         .append("<div id='button_dispose_section'> <b>Dispose Section</b></div>")
         .css("height", button_height)
         .css("width", (100 / button_cols) + "%")
-        .css("border", "3px solid #555")
-        .css("background", "lightblue")
+        .css("border", "3px solid #444")
+        .css("color", "#777")
+        .css("background", "#222")
         .css('padding', cell_padding)
         .attr("align", "center")
         .css({ fontSize: button_font_size})
@@ -393,7 +397,7 @@ function drawButtonTable() {
 
     for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
         if (gdo.net.section[i].isSelected) {
-            $("#button_table_row_0_col_1").css("background", "lightgreen");
+            $("#button_table_row_0_col_1").css("background", "darkgreen").css("color", "#FFF");
         }
     }
 
@@ -420,27 +424,27 @@ function drawCaveTable() {
             .css("width", (100 / gdo.net.cols) + "%");
 
         if (node.aggregatedConnectionHealth == 4) {
-            $("#node" + node.id + 'h').css("background", "lightgreen");
+            $("#node" + node.id + 'h').css("background", "darkgreen");
         } else if (node.aggregatedConnectionHealth == 3) {
-            $("#node" + node.id + 'h').css("background", "yellow");
+            $("#node" + node.id + 'h').css("background", "goldenrod");
         } else if (node.aggregatedConnectionHealth == 2) {
-            $("#node" + node.id + 'h').css("background", "lightsalmon");
+            $("#node" + node.id + 'h').css("background", "coral");
         } else if (node.aggregatedConnectionHealth == 1) {
-            $("#node" + node.id + 'h').css("background", "lightcoral");
+            $("#node" + node.id + 'h').css("background", "darkred");
         } else {
-            $("#node" + node.id + 'h').css("background", "lightcoral");
+            $("#node" + node.id + 'h').css("background", "darkred");
         }
         if (node.isConnectedToCaveServer) {
-            $("#node" + node.id + 'c').css("background", "lightgreen");
+            $("#node" + node.id + 'c').css("background", "darkgreen");
         } else {
-            $("#node" + node.id + 'c').css("background", "lightcoral");
+            $("#node" + node.id + 'c').css("background", "darkred");
         }
         if (node.sectionId > 0) {
-            $("#node" + node.id + 's').css("background", "lightgreen");
+            $("#node" + node.id + 's').css("background", "darkgreen");
         } else {
-            $("#node" + node.id + 's').css("background", "lightcoral");
+            $("#node" + node.id + 's').css("background", "darkred");
         }
-        $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #555");
+        $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
         $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "lightgray");
     }
 }
