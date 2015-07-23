@@ -24,7 +24,7 @@ namespace GDO.Core
         public int SectionCol { get; set; }
         public int SectionRow { get; set; }
         public int SectionId { get; set; }
-        public int AppId { get; set; }
+        public int AppInstanceId { get; set; }
         public string PeerId { get; set; }
         public string ConnectionId { get; set; }
         public int P2PMode { get; set; }
@@ -65,7 +65,7 @@ namespace GDO.Core
             this.Width = width;
             this.Height = height;
             this.SectionId = 0;
-            this.AppId = -1;
+            this.AppInstanceId = -1;
             this.AggregatedConnectionHealth = 0;
             this.P2PMode = Cave.DefaultP2PMode;
             this.ConnectedNodeList = new List<int>();
@@ -97,7 +97,7 @@ namespace GDO.Core
         {
             this.IsDeployed = false;
             this.SectionId = 0;
-            this.AppId = -1;
+            this.AppInstanceId = -1;
             this.P2PMode = Cave.DefaultP2PMode;
             Cave.Sections.TryGetValue(0,out this.Section);
         }
@@ -158,6 +158,18 @@ namespace GDO.Core
             }
             AggregatedConnectionHealth = 4;
 
+        }
+
+        public bool isRunningApp()
+        {
+            if (AppInstanceId < 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 

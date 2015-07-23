@@ -26,7 +26,8 @@ namespace GDO.Core
         public void Init(string name)
         {
             this.Name = name;
-            //load configs
+            this.Configurations = new ConcurrentDictionary<string, AppConfiguration>();
+            this.Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
         public int CreateAppInstance(string configName, int sectionId)
@@ -65,6 +66,5 @@ namespace GDO.Core
         {
             return false;
         }
-
     }
 }

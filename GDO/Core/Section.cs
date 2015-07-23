@@ -21,6 +21,7 @@ namespace GDO.Core
         public int Cols { get; set; }
         public int Rows { get; set; }
         public int P2PMode { get; set; }
+        public bool IsDeployed { get; set; }
         public int AggregatedConnectionHealth { get; set; }
 
         /// <summary>
@@ -38,6 +39,7 @@ namespace GDO.Core
             this.Rows = rows;
             this.NumNodes = cols * rows;
             this.Nodes = new Node[cols, rows];
+            this.IsDeployed = false;
         }
 
         /// <summary>

@@ -11,5 +11,15 @@ namespace GDO.Core
     public class AppConfiguration
     {
         public string Name { get; set; }
+
+        public dynamic Json { get; set; }
+
+        public AppConfiguration(string Name, dynamic Json)
+        {
+            this.Name = Name;
+            this.Json = Json;
+        }
     }
+
+
 }

@@ -74,7 +74,7 @@ namespace GDO.Tests
                 }
             }
             Cave.Sections.TryGetValue(1, out section);
-            Cave.DisposeSection(1);
+            Cave.CloseSection(1);
             if (Cave.Sections.ContainsKey(1))
             {
                 Assert.Fail();

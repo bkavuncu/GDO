@@ -54,6 +54,7 @@ $(function() {
                 net.node[id].isNeighbour = false;
                 net.node[id].isSelected = false;
                 net.node[id].sectionId = 0;
+                //TODO Appid
                 net.node[id].sendData = function(id, type, command, data, mode) {
                     var dataObj = {};
                     dataObj.type = type;
@@ -147,6 +148,7 @@ $(function() {
                 net.section[id].row = row;
                 net.section[id].cols = cols;
                 net.section[id].rows = rows;
+                //TODO is deplyed
                 net.section[id].p2pmode = p2pMode;
                 net.section[id].nodeMap = nodeMap;
                 for(var i=0; i<cols; i++){
@@ -198,6 +200,7 @@ $(function() {
             net.node[node.Id].isConnectedToPeerServer = node.IsConnectedToPeerServer;
             net.node[node.Id].aggregatedConnectionHealth = node.AggregatedConnectionHealth;
             net.node[node.Id].appId = node.AppId;
+            //TODO appID
             net.node[node.Id].peerId = node.PeerId;
             net.node[node.Id].p2pmode = node.P2PMode;
             net.node[node.Id].id = node.Id;

@@ -106,7 +106,11 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\gdo.management.apps.js" />
+    <Content Include="Scripts\gdo.management.instances.js" />
     <Content Include="Scripts\gdo.management.js" />
+    <Content Include="Scripts\gdo.management.sections.js" />
+    <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.test.js" />
     <Content Include="Scripts\gdo.utilities.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />

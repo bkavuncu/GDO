@@ -44,12 +44,20 @@ namespace GDO.Core
         /// <param name="nodeId">The node identifier.</param>
         /// <param name="col">The col.</param>
         /// <param name="row">The row.</param>
-        public void DeployNode(int sectionId, int nodeId, int col, int row)
+        public bool DeployNode(int sectionId, int nodeId, int col, int row)
         {
             lock (Cave.ServerLock)
             {
-                Cave.DeployNode(sectionId, nodeId, col, row);
-                BroadcastNodeUpdate(nodeId);
+                Node node = Cave.DeployNode(sectionId, nodeId, col, row);
+                if (node != null)
+                {
+                    BroadcastNodeUpdate(nodeId);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -57,12 +65,20 @@ namespace GDO.Core
         /// Frees the node.
         /// </summary>
         /// <param name="nodeId">The node identifier.</param>
-        public void FreeNode(int nodeId)
+        public bool FreeNode(int nodeId)
         {
             lock (Cave.ServerLock)
             {
-                Cave.FreeNode(nodeId);
-                BroadcastNodeUpdate(nodeId);
+                Node node = Cave.FreeNode(nodeId);
+                if (node != null)
+                {
+                    BroadcastNodeUpdate(nodeId);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -81,11 +97,11 @@ namespace GDO.Core
                 List<Node> deployedNodes = Cave.CreateSection(colStart, rowStart, colEnd, rowEnd);
                 if (deployedNodes.Capacity > 0)
                 {
-                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
-                    /*foreach (Node node in deployedNodes)
+                    foreach (Node node in deployedNodes)
                     {
-                        BroadcastNodeUpdate(node.Id);
-                    }*/
+                        Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                    }
+                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
                     return true;
                 }
                 else
@@ -107,11 +123,11 @@ namespace GDO.Core
                 List<Node> freedNodes = Cave.CloseSection(sectionId);
                 if (freedNodes.Capacity > 0)
                 {
-                    BroadcastSectionUpdate(sectionId, false);
-                    /*foreach (Node node in freedNodes)
+                    foreach (Node node in freedNodes)
                     {
-                        BroadcastNodeUpdate(node.Id);
-                    }*/
+                        Groups.Remove(node.ConnectionId, node.SectionId.ToString());
+                    }
+                    BroadcastSectionUpdate(sectionId, false);
                     return true;
                 }
                 else
@@ -169,28 +185,46 @@ namespace GDO.Core
             }
         }
 
+
         /// <summary>
         /// Deploys the application.
         /// </summary>
-        public void DeployApp()
+        /// <param name="sectionId">The section identifier.</param>
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="configName">Name of the configuration.</param>
+        /// <returns></returns>
+        public int DeployApp(int sectionId, string appName, string configName)
         {
             lock (Cave.ServerLock)
             {
-                //create a app instance
-                //tell browser what part to use
+                int instanceId = Cave.CreateAppInstance(sectionId, appName, configName);
+                if (instanceId >= 0)
+                {
+                    BroadcastAppUpdate(sectionId, appName, configName, instanceId, true);
+                }
+                return instanceId;
             }
         }
+
         /// <summary>
         /// Closes the application.
         /// </summary>
-        public void CloseApp()
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <returns></returns>
+        public bool CloseApp(int instanceId)
         {
             lock (Cave.ServerLock)
             {
-                //close app instance
-                //send info to browsers, 
-                //they start clean up
-                //they deploy base app
+                if (Cave.ContainsInstance(instanceId))
+                {
+                    string appName = Cave.GetAppName(instanceId);
+                    if (Cave.DisposeAppInstance(appName, instanceId))
+                    {
+                        BroadcastAppUpdate(-1, appName, "", instanceId, false);
+                        return true;
+                    }
+                }
+                return false;
             }
         }
         /// <summary>
@@ -215,6 +249,14 @@ namespace GDO.Core
                 foreach (int connectedNode in deserializedConnectedNodes)
                 {
                     node.ConnectedNodeList.Add(connectedNode);
+                }
+                if (node.IsDeployed)
+                {
+                    Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                }
+                else
+                {
+                    Groups.Remove(node.ConnectionId, node.SectionId.ToString());
                 }
                 node.aggregateConnectionHealth();
                 BroadcastNodeUpdate(nodeId);
@@ -396,6 +438,11 @@ namespace GDO.Core
             }
         }
 
+        private bool BroadcastAppUpdate(int sectionId, string appName, string configName, int instanceId, bool exists)
+        {
+            return false;
+        }
+
         /// <summary>
         /// Sends the data.
         /// </summary>
@@ -428,6 +475,15 @@ namespace GDO.Core
             catch (Exception e)
             {
                 Console.WriteLine(e);
+            }
+        }
+
+        public void SetMaintenanceMode(bool mode)
+        {
+            lock (Cave.ServerLock)
+            {
+                Cave.MaintenanceMode = mode;
+                Clients.All.setMaintenanceMode(mode);
             }
         }
     }

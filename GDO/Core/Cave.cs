@@ -1,7 +1,11 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
+using System.Reflection;
 using GDO.Utility;
+using Newtonsoft.Json;
 
 namespace GDO.Core
 {
@@ -15,7 +19,7 @@ namespace GDO.Core
         public static readonly object ServerLock = new object();
         public static readonly List<object> AppLocks = new List<object>();
 
-
+        public static bool MaintenanceMode { get; set; }
         public static int Cols { get; set; }
         public static int Rows { get; set; }
         public static int NodeWidth { get; set; }
@@ -30,6 +34,7 @@ namespace GDO.Core
         /// </summary>
         public Cave()
         {
+            MaintenanceMode = false;
             Apps = new ConcurrentDictionary<string, App>();
             Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
@@ -124,12 +129,23 @@ namespace GDO.Core
         /// <returns></returns>
         public static Node DeployNode(int sectionId, int nodeId, int col, int row)
         {
-            if (!Nodes[nodeId].IsDeployed)
+            if (Cave.Sections.ContainsKey(sectionId) && Cave.Nodes.ContainsKey(nodeId))
             {
-                Nodes[nodeId].Deploy(Sections[sectionId], col, row);
-                Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
+                if (!Nodes[nodeId].IsDeployed)
+                {
+                    Nodes[nodeId].Deploy(Sections[sectionId], col, row);
+                    Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
+                    return Nodes[nodeId];
+                }
+                else
+                {
+                    return null;
+                }
             }
-            return Nodes[nodeId];
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -139,8 +155,15 @@ namespace GDO.Core
         /// <returns></returns>
         public static Node FreeNode(int nodeId)
         {
-            Nodes[nodeId].Free();
-            return Nodes[nodeId];
+            if (Cave.Nodes.ContainsKey(nodeId))
+            {
+                Nodes[nodeId].Free();
+                return Nodes[nodeId];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -194,14 +217,16 @@ namespace GDO.Core
             List<Node> freedNodes = new List<Node>();
             if (Cave.ContainsSection(sectionId))
             {
-                foreach (Node node in Sections[sectionId].Nodes)
+                if (!Cave.Sections[sectionId].IsDeployed)
                 {
-                    freedNodes.Add(FreeNode(node.Id));
+                    foreach (Node node in Sections[sectionId].Nodes)
+                    {
+                        freedNodes.Add(FreeNode(node.Id));
+                    }
+                    Sections[sectionId].Nodes = null;
+                    Section section;
+                    Sections.TryRemove(sectionId, out section);
                 }
-                Sections[sectionId].Nodes = null;
-                Section section;
-                Sections.TryRemove(sectionId, out section);
-                    
             }
             return freedNodes;
         }
@@ -397,6 +422,7 @@ namespace GDO.Core
                 App app = new App();
                 app.Init(name);
                 Apps.TryAdd(name, app);
+                Apps[name].Init(name);
                 List<AppConfiguration> configurations = LoadAppConfigurations(name);
                 foreach (var configuration in configurations)
                 {
@@ -413,12 +439,28 @@ namespace GDO.Core
         /// <summary>
         /// Loads the application configurations.
         /// </summary>
-        /// <param name="AppName">Name of the application.</param>
+        /// <param name="appName">Name of the application.</param>
         /// <returns></returns>
-        public static List<AppConfiguration> LoadAppConfigurations(string AppName)
+        public static List<AppConfiguration> LoadAppConfigurations(string appName)
         {
             List <AppConfiguration> configurations = new List<AppConfiguration>();
             //TODO Load app configurations from /Configurations/AppName directory
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;
+            if (Directory.Exists(path))
+            {
+                string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);
+                foreach (string filePath in filePaths)
+                {
+                    dynamic json = Utilities.LoadJsonFile(filePath);
+                    if (json != null)
+                    {
+                        string configurationName = Utilities.RemoveString(filePath, path + "\\");
+                        configurationName = Utilities.RemoveString(configurationName, ".json");
+                        Cave.Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
+                    }
+                }
+            }
             return configurations;
         }
 
@@ -437,24 +479,85 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Assigns the application.
+        /// Creates an application instance.
         /// </summary>
-        /// <param name="appId">The application identifier.</param>
         /// <param name="sectionId">The section identifier.</param>
-        public static void AssignApp(int appId, int sectionId)
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="configName">Name of the configuration.</param>
+        /// <returns></returns>
+        public static int CreateAppInstance(int sectionId, string appName, string configName)
         {
-
-        }
-
-        public static int CreateAppInstance(string appName, string configName)
-        {
+            if (!Cave.Sections[sectionId].IsDeployed && Cave.Apps.ContainsKey(appName))
+            {
+                if (Cave.Apps[appName].Configurations.ContainsKey(configName))
+                {
+                    int instanceId =  Apps[appName].CreateAppInstance(configName, sectionId);
+                    if (instanceId >= 0)
+                    {
+                        Apps[appName].Instances[instanceId].Section.IsDeployed = true;
+                    }
+                    return instanceId;
+                }
+            }
             return -1;
         }
-        public static bool CloseAppInstance(string appName, int instanceId)
+
+        /// <summary>
+        /// Disposes an application instance.
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <returns></returns>
+        public static bool DisposeAppInstance(string appName, int instanceId)
         {
+            if (Cave.Apps.ContainsKey(appName))
+            {
+                if (Cave.Apps[appName].Instances.ContainsKey(instanceId))
+                {
+                    Section section = Apps[appName].Instances[instanceId].Section;
+                    if (Apps[appName].DisposeAppInstance(instanceId))
+                    {
+                        section.IsDeployed = false;
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
+        /// <summary>
+        /// Gets the name of the application.
+        /// </summary>
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <returns></returns>
+        public static string GetAppName(int instanceId)
+        {
+            string appName = null;
+            foreach (KeyValuePair<string,App> appEntry in Cave.Apps)
+            {
+                if (appEntry.Value.Instances.ContainsKey(instanceId))
+                {
+                    appName = appEntry.Value.Name;
+                }
+            }
+            return appName;
+        }
 
+        /// <summary>
+        /// Determines whether the specified instance identifier contains instance.
+        /// </summary>
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <returns></returns>
+        public static bool ContainsInstance(int instanceId)
+        {
+            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            {
+                if (appEntry.Value.Instances.ContainsKey(instanceId))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
