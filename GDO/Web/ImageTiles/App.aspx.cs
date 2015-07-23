@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace GDO.Web.Base
+namespace GDO.Apps.ImageTiles.Web
 {
     public partial class App : System.Web.UI.Page
     {

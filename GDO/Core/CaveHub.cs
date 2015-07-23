@@ -99,7 +99,10 @@ namespace GDO.Core
                 {
                     foreach (Node node in deployedNodes)
                     {
-                        Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                        if(node.ConnectionId != null)
+                        {
+                            Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                        }
                     }
                     BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
                     return true;
@@ -125,7 +128,10 @@ namespace GDO.Core
                 {
                     foreach (Node node in freedNodes)
                     {
-                        Groups.Remove(node.ConnectionId, node.SectionId.ToString());
+                        if (node.ConnectionId != null)
+                        {
+                            Groups.Remove(node.ConnectionId, node.SectionId.ToString());
+                        }
                     }
                     BroadcastSectionUpdate(sectionId, false);
                     return true;
@@ -417,7 +423,7 @@ namespace GDO.Core
                     {
                         Section section;
                         Cave.Sections.TryGetValue(sectionId, out section);
-                        Clients.All.receiveSectionUpdate(true, sectionId, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.GetNodeMap());
+                        Clients.All.receiveSectionUpdate(true, sectionId, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.IsDeployed, section.GetNodeMap());
                         return true;
                     }
                     else

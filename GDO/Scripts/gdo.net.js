@@ -54,7 +54,7 @@ $(function() {
                 net.node[id].isNeighbour = false;
                 net.node[id].isSelected = false;
                 net.node[id].sectionId = 0;
-                //TODO Appid
+                net.node[id].appInstanceId = -1;
                 net.node[id].sendData = function(id, type, command, data, mode) {
                     var dataObj = {};
                     dataObj.type = type;
@@ -126,7 +126,18 @@ $(function() {
         updateSelf();
         net.signalRServerResponded = true;
     }
-    $.connection.caveHub.client.receiveSectionUpdate = function (exists, id, col, row, cols, rows, p2pMode, nodeMap) {
+    $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, exists) {
+        if (isSignalRServerResponded()) {
+            if (exists) {
+                consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
+                //
+            } else {
+
+            }
+            updateSelf();
+        }
+    }
+    $.connection.caveHub.client.receiveSectionUpdate = function (exists, id, col, row, cols, rows, p2pMode, isDeployed, nodeMap) {
         /// <summary>
         /// Receives a Section Update and update the local section representation and updates self
         /// </summary>
@@ -148,7 +159,7 @@ $(function() {
                 net.section[id].row = row;
                 net.section[id].cols = cols;
                 net.section[id].rows = rows;
-                //TODO is deplyed
+                net.section[id].isDeployed = isDeployed;
                 net.section[id].p2pmode = p2pMode;
                 net.section[id].nodeMap = nodeMap;
                 for(var i=0; i<cols; i++){
@@ -167,6 +178,7 @@ $(function() {
             } else {
                 net.section[id].id = id;
                 net.section[id].exists = false;
+                net.section[id].isDeployed = false;
                 for (var i = 0; i < net.section[id].cols; i++) {
                     for (var j = 0; j < net.section[id].rows; j++) {
                         net.node[getNodeId(net.section[id].col + i, net.section[id].row + j)].sectionId = 0;
@@ -199,8 +211,7 @@ $(function() {
             net.node[node.Id].isConnectedToCaveServer = node.IsConnectedToCaveServer;
             net.node[node.Id].isConnectedToPeerServer = node.IsConnectedToPeerServer;
             net.node[node.Id].aggregatedConnectionHealth = node.AggregatedConnectionHealth;
-            net.node[node.Id].appId = node.AppId;
-            //TODO appID
+            net.node[node.Id].appInstanceId = node.AppInstanceId;
             net.node[node.Id].peerId = node.PeerId;
             net.node[node.Id].p2pmode = node.P2PMode;
             net.node[node.Id].id = node.Id;
@@ -220,15 +231,15 @@ $(function() {
     }
     $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
         var deserializedAppList = JSON.parse(serializedAppList);
-        gdo.app = new Array(deserializedAppList.length);
+        gdo.net.app = new Array(deserializedAppList.length);
         consoleOut('.NET', 1, 'Received App List');
         for (var i = 0; i < deserializedAppList.length; i++) {
-            gdo.app[i] = {};
-            gdo.app[i].name = deserializedAppList[i];
-            consoleOut('.NET', 2, 'App ' + i + ' : ' + gdo.app[i].name);
+            gdo.net.app[name] = {};
+            gdo.net.app[name].name = deserializedAppList[i];
+            consoleOut('.NET', 2, 'App ' + i + ' : ' + gdo.net.app[name].name);
             loadModule(deserializedAppList[i], MODULE_TYPE.APP);
             var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
-            gdo.app[i].server = $.connection[hubName].server;
+            gdo.net.app[name].server = $.connection[hubName].server;
         }
     }
 });

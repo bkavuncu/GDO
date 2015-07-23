@@ -22,7 +22,7 @@ function drawEmptyHeaderTable(maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.MAN', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
+    //consoleOut('.CONTROL', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
     $("#header_table").empty().css("background-color","#222");
     for (var i = 0; i < maxRow; i++) {
         $("#header_table").append("<tr id='header_table_row_" + i + "' row='" + i + "'></tr>");
@@ -56,7 +56,7 @@ function drawEmptyNodeTable(maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.MAN', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
+    //consoleOut('.CONTROL', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
     $("#node_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#node_table").append("<tr id='node_table_row_" + i + "' row='"+i+"'></tr>");
@@ -73,7 +73,7 @@ function drawEmptyButtonTable(maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.MAN', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
+    //consoleOut('.CONTROL', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
     $("#button_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#button_table").append("<tr id='button_table_row_" + i + "' row='" + i + "'></tr>");
@@ -366,7 +366,7 @@ function drawButtonTable() {
                     node.isSelected = false;
                 }
             }
-            consoleOut('.MAN', 1, 'Requested Creation of Section at (' + colStart + ',' + rowStart + '),(' + colEnd + ',' + rowEnd + ')');
+            consoleOut('.CONTROL', 1, 'Requested Creation of Section at (' + colStart + ',' + rowStart + '),(' + colEnd + ',' + rowEnd + ')');
         } else {
             
         }
@@ -404,7 +404,7 @@ function drawButtonTable() {
                 if (gdo.net.section[i].isSelected) {
                     gdo.net.section[i].isSelected = false;
                     gdo.net.server.closeSection(i);
-                    consoleOut('.MAN', 1, 'Requested Disposal of Section ' + i);
+                    consoleOut('.CONTROL', 1, 'Requested Disposal of Section ' + i);
                 }
             }
         });
@@ -430,7 +430,7 @@ function drawButtonTable() {
                 if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
                     gdo.net.section[i].isSelected = false;
                     //TODO Deploy App
-                    consoleOut('.MAN', 1, 'Requested Deployment of App' + i);
+                    consoleOut('.CONTROL', 1, 'Requested Deployment of App' + i);
                 }
             }
         });
@@ -481,7 +481,7 @@ function drawButtonTable() {
             if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
                 gdo.net.section[i].isSelected = false;
                 //TODO Dispose App
-                consoleOut('.MAN', 1, 'Requested Disposal of App' + i);
+                consoleOut('.CONTROL', 1, 'Requested Disposal of App' + i);
             }
         }
     });
