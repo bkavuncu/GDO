@@ -10,7 +10,7 @@
 namespace GDO.Web {
     
     
-    public partial class Management {
+    public partial class Control {
         
         /// <summary>
         /// form1 control.

@@ -36,7 +36,7 @@
     <script type="text/javascript" src="../Scripts/peer.js"></script>
     <script>
         $(function() {
-            loadModule('test',MODULE_TYPE.CORE);
+            loadModule('maintenance',MODULE_TYPE.CORE);
             initGDO(CLIENT_MODE.NODE);
         });
         function initApp() {

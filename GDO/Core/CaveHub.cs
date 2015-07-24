@@ -492,5 +492,13 @@ namespace GDO.Core
                 Clients.All.setMaintenanceMode(mode);
             }
         }
+
+        public void RequestMaintenanceMode()
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.All.setMaintenanceMode(Cave.MaintenanceMode);
+            }
+        }
     }
 }

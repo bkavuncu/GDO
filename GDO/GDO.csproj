@@ -111,7 +111,7 @@
     <Content Include="Scripts\gdo.control.js" />
     <Content Include="Scripts\gdo.control.sections.js" />
     <Content Include="Scripts\gdo.control.nodes.js" />
-    <Content Include="Scripts\gdo.test.js" />
+    <Content Include="Scripts\gdo.maintenance.js" />
     <Content Include="Scripts\gdo.utilities.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />

@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace GDO.Web
 {
-    public partial class Management : System.Web.UI.Page
+    public partial class Control : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

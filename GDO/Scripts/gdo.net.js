@@ -31,7 +31,10 @@ $(function() {
     $.connection.caveHub.client.receiveDefaultP2PMode = function(defaultP2PMode) {
         net.p2pmode = defaultP2PMode;
     }
-
+    $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
+        net.maintenanceMode = maintenanceMode;
+        updateDisplayCanvas();
+    }
     $.connection.caveHub.client.receiveCaveMap = function(cols, rows, serializedCaveMap) {
         /// <summary>
         /// Receives Serialized Cave Map from Server and creates Node Object structure matching it at gdo.node[]
@@ -40,43 +43,14 @@ $(function() {
         consoleOut('.NET', 1, 'Received the map of the Cave');
         net.cols = cols;
         net.rows = rows;
-        net.node = new Array(cols * rows);
         consoleOut('.NET', 2, 'Node Length ' + net.node.length);
         deserializedCaveMap = JSON.parse(serializedCaveMap);
         for (i = 0; i < cols; i++) {
             for (j = 0; j < rows; j++) {
                 var id = deserializedCaveMap[i][j];
-                net.node[id] = {};
                 net.node[id].col = i;
                 net.node[id].row = j;
                 net.node[id].id = id;
-                net.node[id].connectedToPeer = false;
-                net.node[id].isNeighbour = false;
-                net.node[id].isSelected = false;
-                net.node[id].sectionId = 0;
-                net.node[id].appInstanceId = -1;
-                net.node[id].sendData = function(id, type, command, data, mode) {
-                    var dataObj = {};
-                    dataObj.type = type;
-                    dataObj.command = command;
-                    dataObj.data = data;
-                    var msg = JSON.stringify(dataObj);
-                    if (mode == COMM_MODE.P2P) {
-                        try {
-                            conn = peer.connections[id][0];
-                            conn.send(msg);
-                        } catch (err) {
-                            net.server.sendData(gdo.clientId, id, msg);
-                        }
-                    } else if (mode == COMM_MODE.SERVER) {
-                        net.server.sendData(gdo.clientId, id, msg);
-                    }
-                }
-                net.section[id] = {};
-                net.section[id].id = id;
-                net.section[id].exists = false;
-                net.section[id].health = 0;
-                net.section[id].isSelected = false;
             }
         }
         if (gdo.clientMode == CLIENT_MODE.NODE) {
@@ -128,11 +102,17 @@ $(function() {
     }
     $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, exists) {
         if (isSignalRServerResponded()) {
+            consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
             if (exists) {
-                consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
-                //
+                net.instance[instanceId].appName = appName;
+                net.instance[instanceId].id = instanceId;
+                net.instance[instanceId].sectionId = sectionId;
+                net.instance[instanceId].exists = true;
+                net.instance[instanceId].configName = configName;
+                net.section[sectionId].isDeployed = true;
             } else {
-
+                net.instance[instanceId].exists = false;
+                net.section[sectionId].isDeployed = false;
             }
             updateSelf();
         }
@@ -264,9 +244,13 @@ function initNet(clientMode) {//todo comment
     /// <returns></returns>
     consoleOut('.NET', 2, 'Initializing Net');
     net = {};
+    net.maintenanceMode = false;
     net.peer = peer;
     net.node = [];
     net.section = [];
+    net.app = [];
+    net.instance = [];
+    initializeArrays(100);
     initHub();
     net.nodes = {};
     net.neighbour = {};
@@ -291,6 +275,7 @@ function initNet(clientMode) {//todo comment
     if (gdo.clientMode == CLIENT_MODE.NODE) {
         waitForResponse(initPeer, isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     }
+    net.server.requestMaintenanceMode();
     consoleOut('.NET', 2, 'Requesting Default P2P Mode');
     net.server.requestDefaultP2PMode();
     consoleOut('.NET', 2, 'Requesting App List');
@@ -586,5 +571,51 @@ function isPeerJSServerResponded(){
         } else {
             return false;
         }
+    }
+}
+
+function initializeArrays(num) {
+    net.node = new Array(num);
+    for (var i = 0; i < num; i++) {
+        net.node[i] = {};
+        net.node[i].col = -1;
+        net.node[i].row = -1;
+        net.node[i].id = i;
+        net.node[i].connectedToPeer = false;
+        net.node[i].isNeighbour = false;
+        net.node[i].isSelected = false;
+        net.node[i].sectionId = 0;
+        net.node[i].appInstanceId = -1;
+        net.node[i].sendData = function (id, type, command, data, mode) {
+            var dataObj = {};
+            dataObj.type = type;
+            dataObj.command = command;
+            dataObj.data = data;
+            var msg = JSON.stringify(dataObj);
+            if (mode == COMM_MODE.P2P) {
+                try {
+                    conn = peer.connections[id][0];
+                    conn.send(msg);
+                } catch (err) {
+                    net.server.sendData(gdo.clientId, id, msg);
+                }
+            } else if (mode == COMM_MODE.SERVER) {
+                net.server.sendData(gdo.clientId, id, msg);
+            }
+        }
+        net.section[i] = {};
+        net.section[i].id = i;
+        net.section[i].exists = false;
+        net.section[i].health = 0;
+        net.section[i].isSelected = false;
+        net.section[i].isDeployed = false;
+
+        net.instance[i] = {}
+        net.instance[i].id = i;
+        net.instance[i].appName = null;
+        net.instance[i].sectionId = -1;
+        net.instance[i].exists = false;
+        net.instance[i].isSelected = false;
+        net.instance[i].configName = null;
     }
 }
