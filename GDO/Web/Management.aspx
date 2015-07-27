@@ -1,10 +1,10 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Control.aspx.cs" Inherits="GDO.Web.Control" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Management.aspx.cs" Inherits="GDO.Web.Management" %>
 
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>GDO Control Panel</title>
+    <title>GDO Management Panel</title>
      <style>
         #page td {
            padding:0; margin:0;
@@ -76,7 +76,7 @@
 
             <script>
                 $(function () {
-                    loadModule('control', MODULE_TYPE.CORE);
+                    loadModule('management', MODULE_TYPE.CORE);
                     initGDO(CLIENT_MODE.CONTROL);
                 });
                 function initApp() {
