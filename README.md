@@ -1,2 +1,2 @@
-# GDO
-GDO
+# GDO SDK
+Check out the WIKI
