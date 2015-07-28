@@ -35,107 +35,108 @@
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
     <script>
-        $(function() {
+        $(function () {
+            loadModule('node', MODULE_TYPE.CORE);
             loadModule('maintenance',MODULE_TYPE.CORE);
             initGDO(CLIENT_MODE.NODE);
         });
-        function initApp() {
+        initApp = function () {
             consoleOut('', 1, 'GDO Initialized');
-            drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
-            updateSelf();
+            gdo.updateSelf();
         }
     </script>
-    <div id="test_node" style="text-align:center">Test Node</div>
-    <br>
-    <table id="status_table" unselectable="on" class="unselectable" style="width:100%;text-align:center">
-        <tr>
-            <td id="status_table_col">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Cave Col</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_col_content"></td>
-                    </tr>
-                </table>
-            </td>    
-            <td id="status_table_row">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Cave Row</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_row_content"></td>
-                    </tr>
-                </table>
-            </td>
-            <td id="status_table_sid">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Section Id</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_sid_content"></td>
-                    </tr>
-                </table>
-            </td>
-            <td id="status_table_scol">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Section Col</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_scol_content"></td>
-                    </tr>
-                </table>
-            </td>
-            <td id="status_table_srow">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Section Row</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_srow_content"></td>
-                    </tr>
-                </table>
-            </td>
-            <td id="status_table_cid">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Connection Id</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_cid_content"></td>
-                    </tr>
-                </table>
-            </td>
-            <td id="status_table_pid">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Peer Id</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_pid_content"></td>
-                    </tr>
-                </table>
-            </td>
-            <td id="status_table_h">
-                <table  style="width:100%;text-align:center">
-                    <tr>
-                        <td><b>Node Health</b></td>
-                    </tr>
-                    <tr>
-                        <td id="status_table_h_content"></td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <br>
-    <table id="node_table" unselectable="on" class="unselectable" style="width:100%"></table>
-    <br>
-    <br>
-    <div style="width: 99.5%; height: 234px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF" id="message_log"></div>
-
+    <div id="maintenance">
+        <div id="maintenance_title" style="text-align:center">Test Node</div>
+        <br>
+        <table id="maintenance_status_table" unselectable="on" class="unselectable" style="width:100%;text-align:center">
+            <tr>
+                <td id="maintenance_status_table_col">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Cave Col</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_col_content"></td>
+                        </tr>
+                    </table>
+                </td>    
+                <td id="maintenance_status_table_row">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Cave Row</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_row_content"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="maintenance_status_table_sid">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Section Id</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_sid_content"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="maintenance_status_table_scol">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Section Col</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_scol_content"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="maintenance_status_table_srow">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Section Row</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_srow_content"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="maintenance_status_table_cid">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Connection Id</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_cid_content"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="maintenance_status_table_pid">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Peer Id</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_pid_content"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="maintenance_status_table_h">
+                    <table  style="width:100%;text-align:center">
+                        <tr>
+                            <td><b>Node Health</b></td>
+                        </tr>
+                        <tr>
+                            <td id="maintenance_status_table_h_content"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <table id="maintenance_node_table" unselectable="on" class="unselectable" style="width:100%"></table>
+        <br>
+        <br>
+        <div id="console_area" style="width: 99.5%; height: 234px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF"></div>
+    </div> 
 </body>
 </html>

@@ -48,7 +48,6 @@
         #header-text {
             width: 100%;
             background-color: #222;
-            color: #DDD;
             font-size: 140%;
         }             
         #divider {
@@ -79,12 +78,12 @@
                     loadModule('management', MODULE_TYPE.CORE);
                     initGDO(CLIENT_MODE.CONTROL);
                 });
-                function initApp() {
+                initApp = function () {
                     consoleOut('', 1, 'GDO Initialized');
-                    drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
-                    drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-                    drawEmptyButtonTable(5, 1);
-                    updateSelf();
+                    gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+                    gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+                    gdo.management.drawEmptyButtonTable(5, 1);
+                    gdo.updateSelf();
                 }
             </script>
             <div id="header" unselectable="on" class="unselectable">
@@ -106,12 +105,17 @@
                         <td id="selected_node_h"><b>Node Health:</b></td>
                     </tr>
                 </table>
-
+                <br>
                 <table id="node_table" unselectable="on" class="unselectable" style="width: 100%"></table>
-                <br>
-                <br>
+                <div id="node_table_space"><br></div>
+                <div id="console_area" style="width: 99.5%; height: 430px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF" ></div>
+                 <div id="console_area_space"><br></div>
+                <table id="app_table" unselectable="on" class="unselectable" style="width: 100%"></table>
+                 <div id="app_table_space"><br></div>
+                <table id="instance_table" unselectable="on" class="unselectable" style="width: 100%"></table>
+                 <div id="instance_table_space"><br></div>
                 <table id="section_table" unselectable="on" class="unselectable" style="width: 100%"></table>
-                <br>
+                 <div id="section_table_space"><br></div>
                 <table id="button_table" unselectable="on" class="unselectable" style="width: 100%"></table>
             </div>
     <form id="form1" runat="server">
