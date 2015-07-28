@@ -240,7 +240,14 @@ gdo.management.drawButtonTable = function () {
         .click(function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
                 if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
+
                     gdo.net.section[i].isSelected = false;
+                    gdo.management.toggleNodeTable = false;
+                    gdo.management.toggleAppTable = true;
+                    gdo.management.toggleInstanceTable = false;
+                    gdo.management.toggleConsole = false;
+                    gdo.management.toggleSectionTable = true;
+
                     consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App' + i);
                 }
             }
@@ -266,7 +273,13 @@ gdo.management.drawButtonTable = function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
                 if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
                     gdo.net.section[i].isSelected = false;
-                    //TODO Control App
+                    gdo.management.toggleNodeTable = false;
+                    gdo.management.toggleAppTable = false;
+                    gdo.management.toggleInstanceTable = true;
+                    gdo.management.toggleConsole = false;
+                    gdo.management.toggleSectionTable = true;
+
+                    //TODO
                 }
             }
         });

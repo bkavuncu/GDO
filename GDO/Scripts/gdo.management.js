@@ -27,6 +27,8 @@
 
     loadModule("management.nodes", MODULE_TYPE.CORE);
     loadModule("management.sections", MODULE_TYPE.CORE);
+    loadModule("management.apps", MODULE_TYPE.CORE);
+    loadModule("management.instances", MODULE_TYPE.CORE);
 });
 
 gdo.updateDisplayCanvas = function () {

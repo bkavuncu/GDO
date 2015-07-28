@@ -1,5 +1,15 @@
 :: This goes through all GDO.Apps directories and copy GDO.Apps.X.dll in bin folders to GDO\apps\ folder to be picked up by Assembly locator
-for /D %%a in (GDO.Apps.*) do copy "%cd%\%%a\bin\%%a.dll" "%cd%\GDO\bin\%%a.dll"
-for /D %%a in (GDO.Apps.*) do xcopy /E "%cd%\%%a\Scripts" "%cd%\GDO\Scripts" 
-for /D %%a in (GDO.Apps.*) do xcopy /E "%cd%\%%a\Web" "%cd%\GDO\Web" 
-for /D %%a in (GDO.Apps.*) do xcopy /E "%cd%\%%a\Configurations" "%cd%\GDO\Configurations" 
+@ECHO OFF
+SETLOCAL ENABLEDELAYEDEXPANSION
+
+for /D %%a in (GDO.Apps.*) do (
+	set str=%%a
+    echo Importing !str:GDO.Apps.=!
+	mkdir "%cd%\GDO\Configurations\"!str:GDO.Apps.=!
+	mkdir "%cd%\GDO\Scripts\"!str:GDO.Apps.=!
+	mkdir "%cd%\GDO\Web\"!str:GDO.Apps.=!
+	copy "%cd%\%%a\bin\%%a.dll" "%cd%\GDO\bin\%%a.dll"
+	xcopy /E "%cd%\%%a\Configurations\"!str:GDO.Apps.=! "%cd%\GDO\Configurations\"!str:GDO.Apps.=!\
+	xcopy /E "%cd%\%%a\Scripts\"!str:GDO.Apps.=! "%cd%\GDO\Scripts\"!str:GDO.Apps.=!\
+	xcopy /E "%cd%\%%a\Web\"!str:GDO.Apps.=! "%cd%\GDO\Web\"!str:GDO.Apps.=!\
+)

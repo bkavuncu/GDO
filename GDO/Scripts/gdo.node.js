@@ -13,10 +13,7 @@
         } else {
             $("#maintenance").hide();
         }
-
     } else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
-        // gdo.maintenance.drawNodeTable(gdo.nodeId);
-        gdo.maintenance.drawSectionTable();
-        gdo.maintenance.drawSectionButtonTable();
+        // TODO
     }
 }
