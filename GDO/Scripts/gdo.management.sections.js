@@ -1,4 +1,6 @@
-﻿gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
+﻿
+
+gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
     /// <summary>
     /// Draws the section table.
     /// </summary>
@@ -23,7 +25,7 @@ gdo.management.drawEmptyButtonTable = function (maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.MANAGEMENT', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
+    //gdo.consoleOut('.MANAGEMENT', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
     $("#button_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#button_table").append("<tr id='button_table_row_" + i + "' row='" + i + "'></tr>");
@@ -62,6 +64,10 @@ gdo.management.drawSectionTable =  function (){
                         if (gdo.net.node[id].isSelected) {
                             gdo.net.node[id].isSelected = false;
                         } else {
+                            for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+                                gdo.net.section[i].isSelected = false;
+                            }
+                            gdo.management.numSelectedSection = 0;
                             gdo.net.node[id].isSelected = true;
                         }
                         gdo.updateDisplayCanvas();
@@ -88,8 +94,15 @@ gdo.management.drawSectionTable =  function (){
                     var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
                     if (gdo.net.section[id].isSelected) {
                         gdo.net.section[id].isSelected = false;
+                        gdo.management.numSelectedSection--;
                     } else {
+                        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+                            gdo.net.section[i].isSelected = false;
+                            gdo.net.node[i].isSelected = false;
+                        }
+                        gdo.management.numSelectedSection = 0;
                         gdo.net.section[id].isSelected = true;
+                        gdo.management.numSelectedSection++;
                     }
                     gdo.updateDisplayCanvas();
                 });
@@ -178,7 +191,7 @@ gdo.management.drawButtonTable = function () {
                     node.isSelected = false;
                 }
             }
-            consoleOut('.MANAGEMENT', 1, 'Requested Creation of Section at (' + gdo.management.colStart + ',' + gdo.management.rowStart + '),(' + gdo.management.colEnd + ',' + gdo.management.rowEnd + ')');
+            gdo.consoleOut('.MANAGEMENT', 1, 'Requested Creation of Section at (' + gdo.management.colStart + ',' + gdo.management.rowStart + '),(' + gdo.management.colEnd + ',' + gdo.management.rowEnd + ')');
         } else {
 
         }
@@ -215,8 +228,9 @@ gdo.management.drawButtonTable = function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
                 if (gdo.net.section[i].isSelected) {
                     gdo.net.section[i].isSelected = false;
+                    gdo.management.numSelectedSection--;
                     gdo.net.server.closeSection(i);
-                    consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + i);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + i);
                 }
             }
         });
@@ -242,13 +256,14 @@ gdo.management.drawButtonTable = function () {
                 if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
 
                     gdo.net.section[i].isSelected = false;
+                    gdo.management.numSelectedSection--;
                     gdo.management.toggleNodeTable = false;
                     gdo.management.toggleAppTable = true;
                     gdo.management.toggleInstanceTable = false;
                     gdo.management.toggleConsole = false;
                     gdo.management.toggleSectionTable = true;
 
-                    consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App' + i);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App' + i);
                 }
             }
         });
@@ -273,6 +288,7 @@ gdo.management.drawButtonTable = function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
                 if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
                     gdo.net.section[i].isSelected = false;
+                    gdo.management.numSelectedSection--;
                     gdo.management.toggleNodeTable = false;
                     gdo.management.toggleAppTable = false;
                     gdo.management.toggleInstanceTable = true;
@@ -304,8 +320,9 @@ gdo.management.drawButtonTable = function () {
         for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
             if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
                 gdo.net.section[i].isSelected = false;
+                gdo.management.numSelectedSection--;
                 //TODO Dispose App
-                consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + i);
+                gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + i);
             }
         }
     });

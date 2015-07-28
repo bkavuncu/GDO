@@ -31,7 +31,7 @@ function waitForResponse(func, check, delay, repeat, msg) {
             setTimeout(function () { waitForResponse(func, check, delay, repeat - 1, msg); }, delay);
             return;
         } else {
-            consoleOut('', 3, msg);
+            gdo.consoleOut('', 3, msg);
             return;
         }
     } else {

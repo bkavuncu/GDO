@@ -75,11 +75,11 @@
 
             <script>
                 $(function () {
-                    loadModule('management', MODULE_TYPE.CORE);
-                    initGDO(CLIENT_MODE.CONTROL);
+                    gdo.loadModule('management', gdo.MODULE_TYPE.CORE);
+                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
                 });
                 initApp = function () {
-                    consoleOut('', 1, 'GDO Initialized');
+                    gdo.consoleOut('', 1, 'GDO Initialized');
                     gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
                     gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
                     gdo.management.drawEmptyButtonTable(5, 1);

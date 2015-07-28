@@ -1,4 +1,4 @@
-:: This goes through all GDO.Apps directories and copy GDO.Apps.X.dll in bin folders to GDO\apps\ folder to be picked up by Assembly locator
+:: This goes through all GDO.Apps directories and copy GDO.Apps.X.dll in bin folders to GDO\bin folder to be picked up by Assembly locator and copies app folders to main project
 @ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION
 

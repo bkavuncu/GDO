@@ -1,16 +1,16 @@
-﻿var COMM_MODE = {
+﻿gdo.net.COMM_MODE = {
     P2P: 1,
     SERVER: 2
 };
 
-var P2P_MODE = {
+gdo.net.P2P_MODE = {
     NONE : -1,
     CAVE: 1,
     SECTION: 2,
-    NEIGHBOURS: 3
+    NEIGHBOUR: 3
 };
 
-var NEIGHBOUR = {
+gdo.net.NEIGHBOUR_ENUM = {
     TOPLEFT: 0,
     TOP: 1,
     TOPRIGHT: 2,
@@ -30,6 +30,7 @@ $(function() {
     }
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
         gdo.net.maintenanceMode = maintenanceMode;
+        gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);
         gdo.updateDisplayCanvas();
     }
     $.connection.caveHub.client.receiveCaveMap = function(cols, rows, serializedCaveMap) {
@@ -37,10 +38,10 @@ $(function() {
         /// Receives Serialized Cave Map from Server and creates Node Object structure matching it at gdo.node[]
         /// </summary>
         /// <returns></returns>
-        consoleOut('.NET', 1, 'Received the map of the Cave');
+        gdo.consoleOut('.NET', 1, 'Received the map of the Cave');
         gdo.net.cols = cols;
         gdo.net.rows = rows;
-        consoleOut('.NET', 2, 'Node Length ' + gdo.net.node.length);
+        gdo.consoleOut('.NET', 2, 'Node Length ' + gdo.net.node.length);
         deserializedCaveMap = JSON.parse(serializedCaveMap);
         for (i = 0; i < cols; i++) {
             for (j = 0; j < rows; j++) {
@@ -50,14 +51,14 @@ $(function() {
                 gdo.net.node[id].id = id;
             }
         }
-        if (gdo.clientMode == CLIENT_MODE.NODE) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.net.node[gdo.clientId].connectionId = gdo.net.connection.hub.id;
             gdo.net.node[gdo.clientId].isConnectedToCaveServer = true;
             gdo.net.node[gdo.clientId].isConnectedToPeerServer = false;
             gdo.net.updateNodes();
-            consoleOut('.NET', 2, 'Requesting the map of Neighbours');
+            gdo.consoleOut('.NET', 2, 'Requesting the map of Neighbours');
             gdo.net.server.requestNeighbourMap(gdo.clientId);
-        } else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.net.signalRServerResponded = true;
         }
     };
@@ -67,7 +68,7 @@ $(function() {
         /// </summary>
         /// <param name="serializedNeighbourMap">The serialized neighbour map.</param>
         /// <returns></returns>
-        consoleOut('.NET', 1, 'Received the map of Neighbours');
+        gdo.consoleOut('.NET', 1, 'Received the map of Neighbours');
         deserializedNeighbourMap = JSON.parse(serializedNeighbourMap);
         var k = 0;
         for (j = 0; j < 3; j++) {
@@ -75,7 +76,7 @@ $(function() {
                 var id = deserializedNeighbourMap[i][j];
                 gdo.net.neighbour[k];
                 gdo.net.neighbour[k] = id;
-                consoleOut('.NET', 3, 'Neighbour ' + k + ' is node ' + id);
+                gdo.consoleOut('.NET', 3, 'Neighbour ' + k + ' is node ' + id);
                 k++;
             }
         }
@@ -99,7 +100,7 @@ $(function() {
     }
     $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, exists) {
         if (gdo.net.isSignalRServerResponded()) {
-            consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
+            gdo.consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
             if (exists) {
                 gdo.net.instance[instanceId].appName = appName;
                 gdo.net.instance[instanceId].id = instanceId;
@@ -129,7 +130,7 @@ $(function() {
         /// <returns></returns>
         if (gdo.net.isSignalRServerResponded()){
             if (exists) {
-                consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: ' + exists + ")");
+                gdo.consoleOut('.NET', 1, 'Received Section Update : (id:' + id + ', exists: ' + exists + ")");
                 gdo.net.section[id].id = id;
                 gdo.net.section[id].exists = true;
                 gdo.net.section[id].col = col;
@@ -139,16 +140,16 @@ $(function() {
                 gdo.net.section[id].isDeployed = isDeployed;
                 gdo.net.section[id].p2pmode = p2pMode;
                 gdo.net.section[id].nodeMap = nodeMap;
+                gdo.net.section[id].health = 0;
                 for(var i=0; i<cols; i++){
                     for (var j = 0; j < rows; j++) {
-                        // TODO section update simplification
                         gdo.net.section[id].health = gdo.net.section[id].health + gdo.net.node[gdo.net.section[id].nodeMap[i][j]].aggregatedConnectionHealth;
                         gdo.net.node[gdo.net.getNodeId(col + i, row + j)].sectionId = id;
                         gdo.net.node[gdo.net.getNodeId(col + i, row + j)].sectionCol = i;
                         gdo.net.node[gdo.net.getNodeId(col + i, row + j)].sectionRow = j;
                         gdo.net.node[gdo.net.getNodeId(col + i, row + j)].deployed = true;
                         gdo.net.node[gdo.net.getNodeId(col + i, row + j)].p2pmode = p2pMode;
-                        consoleOut('.NET', 3, 'Updating Node : (id:' + gdo.net.getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');
+                        gdo.consoleOut('.NET', 3, 'Updating Node : (id:' + gdo.net.getNodeId(col + i, row + j) + '),(col,row:' + col + i + ',' + row + j + ')');
                     } 
                 }
                 gdo.net.section[id].health = gdo.net.section[id].health / (cols * rows);
@@ -161,7 +162,7 @@ $(function() {
                         gdo.net.node[gdo.net.getNodeId(gdo.net.section[id].col + i, gdo.net.section[id].row + j)].sectionId = 0;
                         gdo.net.node[gdo.net.getNodeId(gdo.net.section[id].col + i, gdo.net.section[id].row + j)].deployed = false;
                         gdo.net.node[gdo.net.getNodeId(gdo.net.section[id].col + i, gdo.net.section[id].row + j)].p2pmode = gdo.net.p2pmode;
-                        consoleOut('.NET', 3, 'Updating Node : (id:' + gdo.net.getNodeId(gdo.net.section[id].col + i, gdo.net.section[id].row + j) + '),(col,row:' + gdo.net.section[id].col + i + ',' + gdo.net.section[id].row + j + ')');
+                        gdo.consoleOut('.NET', 3, 'Updating Node : (id:' + gdo.net.getNodeId(gdo.net.section[id].col + i, gdo.net.section[id].row + j) + '),(col,row:' + gdo.net.section[id].col + i + ',' + gdo.net.section[id].row + j + ')');
                     }
                 }
             }
@@ -177,7 +178,7 @@ $(function() {
         /// <returns></returns>
         if (gdo.net.isSignalRServerResponded()){
             var node = JSON.parse(serializedNode);
-            consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
+            gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
             gdo.net.node[node.Id].col = node.Col;
             gdo.net.node[node.Id].row = node.Row;
             gdo.net.node[node.Id].sectionCol = node.SectionCol;
@@ -203,18 +204,18 @@ $(function() {
                 gdo.net.section[gdo.net.node[node.Id].sectionId].health = gdo.net.section[gdo.net.node[node.Id].sectionId].health / (gdo.net.section[gdo.net.node[node.Id].sectionId].cols * gdo.net.section[gdo.net.node[node.Id].sectionId].rows);
             }
             gdo.updateSelf();
-            consoleOut('.NET', 2, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
+            gdo.consoleOut('.NET', 2, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
         }
     }
     $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
         var deserializedAppList = JSON.parse(serializedAppList);
         gdo.net.app = new Array(deserializedAppList.length);
-        consoleOut('.NET', 1, 'Received App List');
+        gdo.consoleOut('.NET', 1, 'Received App List');
         for (var i = 0; i < deserializedAppList.length; i++) {
             gdo.net.app[name] = {};
             gdo.net.app[name].name = deserializedAppList[i];
-            consoleOut('.NET', 2, 'App ' + i + ' : ' + gdo.net.app[name].name);
-            loadModule(deserializedAppList[i], MODULE_TYPE.APP);
+            gdo.consoleOut('.NET', 2, 'App ' + i + ' : ' + gdo.net.app[name].name);
+            gdo.loadModule(deserializedAppList[i], gdo.MODULE_TYPE.APP);
             var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
             gdo.net.app[name].server = $.connection[hubName].server;
         }
@@ -227,11 +228,11 @@ gdo.net.initHub = function () {
     /// Assigns hub references to our object structure (Hub initialized on load)
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'Initializing Hub');
+    gdo.consoleOut('.NET', 2, 'Initializing Hub');
     gdo.net.connection = $.connection;
     gdo.net.server = $.connection.caveHub.server;
     //gdo.net.listener = $.connection.caveHub.client;
-    consoleOut('.NET', 0, 'Connected to Hub');
+    gdo.consoleOut('.NET', 0, 'Connected to Hub');
 }
 
 gdo.net.initNet = function (clientMode) {//todo comment
@@ -239,7 +240,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     /// Initializes the gdo.net.
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'Initializing Net');
+    gdo.consoleOut('.NET', 2, 'Initializing Net');
     gdo.net.maintenanceMode = false;
     gdo.net.peer = {};
     gdo.net.node = [];
@@ -268,19 +269,19 @@ gdo.net.initNet = function (clientMode) {//todo comment
         return connectedNodes;
     }
     gdo.net.initNodes();
-    if (gdo.clientMode == CLIENT_MODE.NODE) {
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         waitForResponse(gdo.net.initPeer, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     }
     gdo.net.server.requestMaintenanceMode();
-    consoleOut('.NET', 2, 'Requesting Default P2P Mode');
+    gdo.consoleOut('.NET', 2, 'Requesting Default P2P Mode');
     gdo.net.server.requestDefaultP2PMode();
-    consoleOut('.NET', 2, 'Requesting App List');
+    gdo.consoleOut('.NET', 2, 'Requesting App List');
     gdo.net.server.requestAppList();
-    consoleOut('.NET', 2, 'Requesting Nodes');
+    gdo.consoleOut('.NET', 2, 'Requesting Nodes');
     var connection = $.hubConnection();
     gdo.net.tileAppHub = connection.createHubProxy('tileAppHub');
     gdo.net.tileAppHub.on('receiveTest', function (test) {
-        consoleOut('.APP.TILE', 2, 'Test ' + test);
+        gdo.consoleOut('.APP.TILE', 2, 'Test ' + test);
     });
     gdo.net.server.requestAllUpdates();
 }
@@ -290,21 +291,21 @@ gdo.net.initPeer = function () {
     /// Initializes the peerjs.
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'Initializing Peer Connections');
+    gdo.consoleOut('.NET', 2, 'Initializing Peer Connections');
     gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); //our own server will replace here
     gdo.net.peer.on('open', function(peerId) {
-        consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
+        gdo.consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         gdo.net.node[gdo.clientId].peerId = peerId;
         gdo.net.node[gdo.clientId].isConnectedToPeerServer = true;
         gdo.net.uploadNodeInfo();
         setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 1000 + Math.floor((Math.random() * 1000) + 1));
         gdo.net.peerJSServerResponded = true;
-        consoleOut('.NET', 1, 'Peer Connections Initialized');
+        gdo.consoleOut('.NET', 1, 'Peer Connections Initialized');
     });
     gdo.net.peer.on('close', function(err) {
         gdo.net.node[gdo.clientId].isConnectedToPeerServer = false;
         gdo.net.uploadNodeInfo();
-        consoleOut('.NET', 5, err);
+        gdo.consoleOut('.NET', 5, err);
     });
     gdo.net.peer.on('connection', gdo.net.receiveConn);
 }
@@ -324,21 +325,21 @@ gdo.net.receiveConn = function (conn) {
             nodeId = Number(index);
         }
     }
-    consoleOut('.NET', 2, 'Receiving Connection from Node ' + nodeId + ' - ' + conn.peer);
+    gdo.consoleOut('.NET', 2, 'Receiving Connection from Node ' + nodeId + ' - ' + conn.peer);
     if (nodeId > 0) {
         conn.on('open', function () {
             conn.send('hi!');
             gdo.net.node[nodeId].connectedToPeer = true;
             gdo.net.uploadNodeInfo();
-            consoleOut('.NET', 0, 'Connected to Node ' + nodeId);
+            gdo.consoleOut('.NET', 0, 'Connected to Node ' + nodeId);
         });
         conn.on('close', function (err) {
             gdo.net.node[nodeId].connectedToPeer = false;
             gdo.net.uploadNodeInfo();
-            consoleOut('.NET', 4, 'Node Connection Closed : nodeId : ' + nodeId);
+            gdo.consoleOut('.NET', 4, 'Node Connection Closed : nodeId : ' + nodeId);
         });
         conn.on('data', gdo.net.receiveData);
-        conn.on('error', function (err) { consoleOut('.NET', 5, 'Connection Error - nodeId : ' + nodeId + ' - ' + err) });
+        conn.on('error', function (err) { gdo.consoleOut('.NET', 5, 'Connection Error - nodeId : ' + nodeId + ' - ' + err) });
     }
 }
 
@@ -349,20 +350,20 @@ gdo.net.initConn = function (conn, nodeId) {
     /// <param name="conn">The connection.</param>
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'Opening Connection to Node ' + nodeId);
+    gdo.consoleOut('.NET', 2, 'Opening Connection to Node ' + nodeId);
     conn.on('open', function(){
         conn.send('hi!');//todo send node id's in init messages
         gdo.net.node[nodeId].connectedToPeer = true;
         gdo.net.uploadNodeInfo();
-        consoleOut('.NET', 0, 'Connected to Node ' + nodeId);
+        gdo.consoleOut('.NET', 0, 'Connected to Node ' + nodeId);
     });
     conn.on('close', function(err) {
         gdo.net.node[nodeId].connectedToPeer = false;
         gdo.net.uploadNodeInfo();
-        consoleOut('.NET', 4, 'Node Connection Closed - nodeId : ' + nodeId);
+        gdo.consoleOut('.NET', 4, 'Node Connection Closed - nodeId : ' + nodeId);
     });
     conn.on('data', gdo.net.receiveData);
-    conn.on('error', function(err) { consoleOut('.NET', 5, 'nodeId : ' + nodeId + ' - ' + err) });
+    conn.on('error', function(err) { gdo.consoleOut('.NET', 5, 'nodeId : ' + nodeId + ' - ' + err) });
 }
 
 gdo.net.initNodes = function () {
@@ -370,8 +371,8 @@ gdo.net.initNodes = function () {
     /// Initializes the nodes.
     /// </summary>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'Initializing Nodes');
-    consoleOut('.NET', 2, 'Requesting the map of the Cave');
+    gdo.consoleOut('.NET', 2, 'Initializing Nodes');
+    gdo.consoleOut('.NET', 2, 'Requesting the map of the Cave');
     gdo.net.server.requestCaveMap();
 }
 
@@ -384,7 +385,7 @@ gdo.net.uploadNodeInfo = function () {
     gdo.net.server.uploadNodeInfo(gdo.clientId, gdo.net.connection.hub.id, connectedNodes, gdo.net.node[gdo.clientId].peerId, gdo.net.node[gdo.clientId].isConnectedToPeerServer)
         .done(function (result) { gdo.net.node[gdo.clientId].isConnectedToCaveServer = true; })
         .fail(function(result) {
-            consoleOut(".NET", 5, "Failed to Upload Node Info");
+            gdo.consoleOut(".NET", 5, "Failed to Upload Node Info");
             gdo.net.node[gdo.clientId].isConnectedToCaveServer = false;
             gdo.net.node[gdo.clientId].aggregatedConnectionHealth = 0;
             gdo.updateSelf();
@@ -398,7 +399,7 @@ gdo.net.connectToPeer = function (nodeId) {
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
     if (gdo.net.node[nodeId].peerId != null && !gdo.net.node[nodeId].connectedToPeer && nodeId != gdo.clientId) {
-        consoleOut('.NET', 2, 'Connecting to Node ' + nodeId + ' - ' + gdo.net.node[nodeId].peerId + ' - Connection Status :' + gdo.net.node[nodeId].connectedToPeer);
+        gdo.consoleOut('.NET', 2, 'Connecting to Node ' + nodeId + ' - ' + gdo.net.node[nodeId].peerId + ' - Connection Status :' + gdo.net.node[nodeId].connectedToPeer);
         var c = gdo.net.peer.connect(gdo.net.node[nodeId].peerId);
         gdo.net.initConn(c, nodeId);
     }
@@ -410,7 +411,7 @@ gdo.net.disconnectFromPeer = function (nodeId) {
     /// </summary>
     /// <param name="nodeId">The node identifier.</param>
     /// <returns></returns>
-    consoleOut('.NET', 2, 'Disconnecting from Node ' + nodeId);
+    gdo.consoleOut('.NET', 2, 'Disconnecting from Node ' + nodeId);
     var conn = gdo.net.peer.connections[gdo.net.node[nodeId].peerId][0];
     gdo.net.node[nodeId].connectedToPeer = false;
     conn.close();
@@ -437,7 +438,7 @@ gdo.updateSelf = function () {
     /// Updates the self.
     /// </summary>
     /// <returns></returns>
-    if (gdo.clientMode == CLIENT_MODE.NODE) {
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         gdo.net.updateNodes();
         gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode);
     }
@@ -454,17 +455,17 @@ gdo.net.updatePeerConnections = function (p2pmode) {
         if (!gdo.net.node.hasOwnProperty((index))) {
             continue;
         }
-        if (p2pmode == P2P_MODE.CAVE) {
+        if (p2pmode == gdo.net.P2P_MODE.CAVE) {
             if (!gdo.net.node[index].connectedToPeer) {
                 gdo.net.connectToPeer(gdo.net.node[index].id);
             }
-        } else if (p2pmode == P2P_MODE.SECTION) {
+        } else if (p2pmode == gdo.net.P2P_MODE.SECTION) {
             if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].sectionId == gdo.net.node[gdo.clientId].sectionId) {
                 gdo.net.connectToPeer(gdo.net.node[index].id);
             } else if (gdo.net.node[index].connectedToPeer && gdo.net.node[index].sectionId != gdo.net.node[gdo.clientId].sectionId) {
                 gdo.net.disconnectFromPeer(gdo.net.node[index].id);
             }
-        } else if (p2pmode == P2P_MODE.NEIGHBOURS) {
+        } else if (p2pmode == gdo.net.P2P_MODE.NEIGHBOUR) {
             if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].isNeighbour) {
                 gdo.net.connectToPeer(gdo.net.node[index].id);
             } else if (gdo.net.node[index].connectedToPeer && !gdo.net.node[index].isNeighbour && gdo.net.node[index].id != gdo.clientId) {
@@ -515,7 +516,7 @@ gdo.net.receiveData = function (data) {
     /// </summary>
     /// <param name="data">The data.</param>
     /// <returns></returns>
-    consoleOut('.NET', 4, 'RECEIVED DATA');
+    gdo.consoleOut('.NET', 4, 'RECEIVED DATA');
     //dataObj = JSON.parse(data);
 
     //var type = dataObj.type;
@@ -587,14 +588,14 @@ gdo.net.initializeArrays = function (num) {
             dataObj.command = command;
             dataObj.data = data;
             var msg = JSON.stringify(dataObj);
-            if (mode == COMM_MODE.P2P) {
+            if (mode == gdo.net.COMM_MODE.P2P) {
                 try {
                     conn = peer.connections[id][0];
                     conn.send(msg);
                 } catch (err) {
                     gdo.net.server.sendData(gdo.clientId, id, msg);
                 }
-            } else if (mode == COMM_MODE.SERVER) {
+            } else if (mode == gdo.net.COMM_MODE.SERVER) {
                 gdo.net.server.sendData(gdo.clientId, id, msg);
             }
         }

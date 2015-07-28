@@ -8,7 +8,7 @@
     <meta charset="utf-8"/>
     <style> 
 
-        body {
+      body {
       background: #000;
       color: #FFF;
       font-family:helvetica;
@@ -21,6 +21,20 @@
             -o-user-select: none;
             user-select: none;
         }
+      #app_frame {
+           position:fixed;
+           top:0; left:0;
+           width:100%;
+           height:100%;
+           border:0 none;
+           z-index:9;
+      }
+      iframe {
+           border:0 none;
+           width:100%;
+           height:100%;
+           display:block;
+       }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -36,15 +50,16 @@
     <script type="text/javascript" src="../Scripts/peer.js"></script>
     <script>
         $(function () {
-            loadModule('node', MODULE_TYPE.CORE);
-            loadModule('maintenance',MODULE_TYPE.CORE);
-            initGDO(CLIENT_MODE.NODE);
+            gdo.loadModule('node', gdo.MODULE_TYPE.CORE);
+            gdo.loadModule('maintenance',gdo.MODULE_TYPE.CORE);
+            gdo.initGDO(gdo.CLIENT_MODE.NODE);
         });
         initApp = function () {
-            consoleOut('', 1, 'GDO Initialized');
+            gdo.consoleOut('', 1, 'GDO Initialized');
             gdo.updateSelf();
         }
     </script>
+    <div id="app_frame"><iframe ïd="app_frame_content" name="app_frame_content"></iframe></div>
     <div id="maintenance">
         <div id="maintenance_title" style="text-align:center">Test Node</div>
         <br>

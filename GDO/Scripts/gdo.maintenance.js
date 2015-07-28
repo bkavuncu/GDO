@@ -19,7 +19,7 @@ gdo.maintenance.drawEmptyNodeTable = function (maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.TEST', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
+    //gdo.consoleOut('.TEST', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
     $("#maintenance_node_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#maintenance_node_table").append("<tr id='maintenance_node_table_row" + i + "' row='"+i+"'></tr>");

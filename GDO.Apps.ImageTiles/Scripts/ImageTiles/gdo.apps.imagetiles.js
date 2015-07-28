@@ -1,6 +1,6 @@
 ﻿
 $(function() {
-    consoleOut('.IMAGETILES', 1, 'Loaded Image Tiles JS');
+    gdo.consoleOut('.IMAGETILES', 1, 'Loaded Image Tiles JS');
 });
 
 function test() {

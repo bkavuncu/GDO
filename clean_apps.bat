@@ -1,4 +1,4 @@
-:: This goes through all GDO.Apps directories and copy GDO.Apps.X.dll in bin folders to GDO\apps\ folder to be picked up by Assembly locator
+:: This removes GDO.Apps.X.dll in bin and app folders from main project
 @ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION
 

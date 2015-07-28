@@ -1,7 +1,7 @@
 ﻿$(function () {
     gdo.management.table_font_size = 11;
     gdo.management.section_font_size = 12;
-    gdo.management.button_font_size = 17;
+    gdo.management.button_font_size = 21;
     gdo.management.header_font_size = 17;
     gdo.management.table_height = 300;
     gdo.management.table_width = 100;
@@ -24,11 +24,13 @@
 
     gdo.management.numToggleMenu = 2;
     gdo.management.maxToggleMenu = 2;
+    gdo.management.numSelectedSection = 0;
+    gdo.management.maxSelectedSection = 1;
 
-    loadModule("management.nodes", MODULE_TYPE.CORE);
-    loadModule("management.sections", MODULE_TYPE.CORE);
-    loadModule("management.apps", MODULE_TYPE.CORE);
-    loadModule("management.instances", MODULE_TYPE.CORE);
+    gdo.loadModule("management.nodes", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("management.sections", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("management.apps", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("management.instances", gdo.MODULE_TYPE.CORE);
 });
 
 gdo.updateDisplayCanvas = function () {
@@ -96,7 +98,7 @@ gdo.management.drawEmptyHeaderTable = function (maxCol, maxRow) {
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.MANAGEMENT', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
+    //gdo.consoleOut('.MANAGEMENT', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
     $("#header_table").empty().css("background-color","#222");
     for (var i = 0; i < maxRow; i++) {
         $("#header_table").append("<tr id='header_table_row_" + i + "' row='" + i + "'></tr>");

@@ -5,7 +5,7 @@
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.MANAGEMENT', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
+    //gdo.consoleOut('.MANAGEMENT', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
     $("#node_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("#node_table").append("<tr id='node_table_row_" + i + "' row='" + i + "'></tr>");

@@ -284,7 +284,7 @@ namespace GDO.Core
                     Section section = sectionEntry.Value;
                     if (section.Id > 0)
                     {
-                        Clients.Caller.receiveSectionUpdate(true, section.Id, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.GetNodeMap());
+                        Clients.Caller.receiveSectionUpdate(true, section.Id, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.IsDeployed, section.GetNodeMap());
                     }
                 }
             }
@@ -433,7 +433,7 @@ namespace GDO.Core
                 }
                 else
                 {
-                    Clients.All.receiveSectionUpdate(false, sectionId, -1, -1, -1, -1, -1, -1);
+                    Clients.All.receiveSectionUpdate(false, sectionId, -1, -1, -1, -1, -1, -1, -1);
                     return true;
                 }
             }
