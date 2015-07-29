@@ -146,12 +146,50 @@
                     </table>
                 </td>
             </tr>
+            <tr>
+                <td colspan="8">
+                    <table style="width:100%;text-align:center">
+                        <tr>
+                            <td id="maintenance_status_table_app">
+                                <table  style="width:100%;text-align:center">
+                                    <tr>
+                                        <td><b>Application</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td id="maintenance_status_table_app_content"></td>
+                                    </tr>
+                                </table>
+                            </td>   
+                            <td id="maintenance_status_table_instance">
+                                <table  style="width:100%;text-align:center">
+                                    <tr>
+                                        <td><b>Instance</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td id="maintenance_status_table_instance_content"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td id="maintenance_status_table_configuration">
+                                <table  style="width:100%;text-align:center">
+                                    <tr>
+                                        <td><b>Configuration</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td id="maintenance_status_table_configuration_content"></td>
+                                    </tr>
+                                </table>
+                            </td> 
+                        </tr>
+                    </table>    
+                </td>    
+            </tr>
         </table>
         <br>
         <table id="maintenance_node_table" unselectable="on" class="unselectable" style="width:100%"></table>
         <br>
         <br>
-        <div id="console_area" style="width: 99.5%; height: 234px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF"></div>
+        <div id="console_area" style="width: 99.5%; height: 161px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF"></div>
     </div> 
 </body>
 </html>

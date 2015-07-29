@@ -11,7 +11,7 @@ namespace GDO.Utility
 {
     public class Utilities
     {
-        public static int getAvailableSlot<T>(ConcurrentDictionary<int, T> dictionary)
+        public static int GetAvailableSlot<T>(ConcurrentDictionary<int, T> dictionary)
         {
             int slot = -1;
             for (int i = 0; i < Cave.Cols * Cave.Rows; i++)

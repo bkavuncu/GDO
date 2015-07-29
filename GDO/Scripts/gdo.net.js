@@ -95,10 +95,18 @@ $(function() {
                 gdo.net.node[gdo.net.neighbour[index]].isNeighbour = true;
             }
         }
+        gdo.net.server.requestAllUpdates();
         gdo.updateSelf();
         gdo.net.signalRServerResponded = true;
     }
-    $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, exists) {
+    $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config) {
+        if (gdo.net.isSignalRServerResponded()) {
+            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ")");
+            gdo.net.app[appName].config[configName] = JSON.parse(config);
+            gdo.updateSelf();
+        }
+    }
+    $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, p2pMode, exists) {
         if (gdo.net.isSignalRServerResponded()) {
             gdo.consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
             if (exists) {
@@ -107,15 +115,31 @@ $(function() {
                 gdo.net.instance[instanceId].sectionId = sectionId;
                 gdo.net.instance[instanceId].exists = true;
                 gdo.net.instance[instanceId].configName = configName;
-                gdo.net.section[sectionId].isDeployed = true;
+                gdo.net.section[sectionId].appInstanceId = instanceId;
+                if (gdo.net.app[appName].config[configName] == null) {
+                    gdo.net.server.requestAppConfiguration(instanceId);
+                }
+                gdo.net.app[appName].p2pMode = p2pMode;
+                for (var i = 0; i < gdo.net.section[sectionId].cols; i++) {
+                    for (var j = 0; j < gdo.net.section[sectionId].rows; j++) {
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].p2pmode = p2pMode;
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = instanceId;
+                    }
+                }
             } else {
                 gdo.net.instance[instanceId].exists = false;
-                gdo.net.section[sectionId].isDeployed = false;
+                gdo.net.section[sectionId].appInstanceId = -1;
+                for (var i = 0; i < gdo.net.section[sectionId].cols; i++) {
+                    for (var j = 0; j < gdo.net.section[sectionId].rows; j++) {
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].p2pmode = gdo.net.p2pmode;
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = -1;
+                    }
+                }
             }
             gdo.updateSelf();
         }
     }
-    $.connection.caveHub.client.receiveSectionUpdate = function (exists, id, col, row, cols, rows, p2pMode, isDeployed, nodeMap) {
+    $.connection.caveHub.client.receiveSectionUpdate = function (exists, id, col, row, cols, rows, p2pMode, appInstanceId, nodeMap) {
         /// <summary>
         /// Receives a Section Update and update the local section representation and updates self
         /// </summary>
@@ -137,7 +161,7 @@ $(function() {
                 gdo.net.section[id].row = row;
                 gdo.net.section[id].cols = cols;
                 gdo.net.section[id].rows = rows;
-                gdo.net.section[id].isDeployed = isDeployed;
+                gdo.net.section[id].appInstanceId = appInstanceId;
                 gdo.net.section[id].p2pmode = p2pMode;
                 gdo.net.section[id].nodeMap = nodeMap;
                 gdo.net.section[id].health = 0;
@@ -156,7 +180,7 @@ $(function() {
             } else {
                 gdo.net.section[id].id = id;
                 gdo.net.section[id].exists = false;
-                gdo.net.section[id].isDeployed = false;
+                gdo.net.section[id].appInstanceId = -1;
                 for (var i = 0; i < gdo.net.section[id].cols; i++) {
                     for (var j = 0; j < gdo.net.section[id].rows; j++) {
                         gdo.net.node[gdo.net.getNodeId(gdo.net.section[id].col + i, gdo.net.section[id].row + j)].sectionId = 0;
@@ -211,13 +235,27 @@ $(function() {
         var deserializedAppList = JSON.parse(serializedAppList);
         gdo.net.app = new Array(deserializedAppList.length);
         gdo.consoleOut('.NET', 1, 'Received App List');
-        for (var i = 0; i < deserializedAppList.length; i++) {
+        gdo.net.apps = deserializedAppList;
+        gdo.net.numApps = deserializedAppList.length;
+        for (var i = 0; i < deserializedAppList.length; i++){
+            var name = deserializedAppList[i];
             gdo.net.app[name] = {};
             gdo.net.app[name].name = deserializedAppList[i];
             gdo.consoleOut('.NET', 2, 'App ' + i + ' : ' + gdo.net.app[name].name);
             gdo.loadModule(deserializedAppList[i], gdo.MODULE_TYPE.APP);
             var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
             gdo.net.app[name].server = $.connection[hubName].server;
+            gdo.net.app[name].config = new Array();
+            gdo.net.app[name].p2pMode = gdo.net.p2pmode;
+            gdo.net.server.requestAppConfigurationList(name);
+        }
+    }
+    $.connection.caveHub.client.receiveAppConfigurationList = function (appName, serializedAppConfigurationList) {
+        var deserializedAppConfigurationList = JSON.parse(serializedAppConfigurationList);
+        gdo.net.app[appName].config = new Array(deserializedAppConfigurationList.length);
+        gdo.consoleOut('.NET', 1, 'Received App Configuration List for App ' + appName);
+        for (var i = 0; i < deserializedAppConfigurationList.length; i++) {
+            gdo.net.app[appName].config[i] = deserializedAppConfigurationList[i];
         }
     }
 });
@@ -246,6 +284,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     gdo.net.node = [];
     gdo.net.section = [];
     gdo.net.app = [];
+    gdo.net.apps = {}
     gdo.net.instance = [];
     gdo.net.initializeArrays(100);
     gdo.net.initHub();
@@ -254,6 +293,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     gdo.net.clientMode = clientMode;
     gdo.net.signalRServerResponded = false;
     gdo.net.peerJSServerResponded = false;
+    gdo.net.numApps = 0;
     gdo.net.nodes.getConnected = function () {
         var i = 0;
         var connectedNodes = [];
@@ -278,12 +318,6 @@ gdo.net.initNet = function (clientMode) {//todo comment
     gdo.consoleOut('.NET', 2, 'Requesting App List');
     gdo.net.server.requestAppList();
     gdo.consoleOut('.NET', 2, 'Requesting Nodes');
-    var connection = $.hubConnection();
-    gdo.net.tileAppHub = connection.createHubProxy('tileAppHub');
-    gdo.net.tileAppHub.on('receiveTest', function (test) {
-        gdo.consoleOut('.APP.TILE', 2, 'Test ' + test);
-    });
-    gdo.net.server.requestAllUpdates();
 }
 
 gdo.net.initPeer = function () {
@@ -604,7 +638,7 @@ gdo.net.initializeArrays = function (num) {
         gdo.net.section[i].exists = false;
         gdo.net.section[i].health = 0;
         gdo.net.section[i].isSelected = false;
-        gdo.net.section[i].isDeployed = false;
+        gdo.net.section[i].appInstanceId = -1;
 
         gdo.net.instance[i] = {}
         gdo.net.instance[i].id = i;
@@ -613,5 +647,6 @@ gdo.net.initializeArrays = function (num) {
         gdo.net.instance[i].exists = false;
         gdo.net.instance[i].isSelected = false;
         gdo.net.instance[i].configName = null;
+        gdo.net.instance[i].sectionId = -1;
     }
 }

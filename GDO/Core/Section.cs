@@ -21,7 +21,7 @@ namespace GDO.Core
         public int Cols { get; set; }
         public int Rows { get; set; }
         public int P2PMode { get; set; }
-        public bool IsDeployed { get; set; }
+        public int AppInstanceId { get; set; }
         public int AggregatedConnectionHealth { get; set; }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace GDO.Core
             this.Rows = rows;
             this.NumNodes = cols * rows;
             this.Nodes = new Node[cols, rows];
-            this.IsDeployed = false;
+            this.AppInstanceId = -1;
         }
 
         /// <summary>
@@ -58,6 +58,19 @@ namespace GDO.Core
             }
             return check;
         }
+
+        public bool IsDeployed()
+        {
+            if (AppInstanceId > -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Gets the node map (Matrix of NodeIds within the section).
         /// </summary>
@@ -106,6 +119,23 @@ namespace GDO.Core
             }
             AggregatedConnectionHealth = agg / NumNodes;
 
+        }
+
+        public void DeploySection(int instanceId)
+        {
+            this.AppInstanceId = instanceId;
+            foreach (int nodeId in this.GetNodeMap())
+            {
+                Cave.Nodes[nodeId].AppInstanceId = instanceId;
+            }
+        }
+        public void FreeSection()
+        {
+            this.AppInstanceId = -1;
+            foreach (int nodeId in this.GetNodeMap())
+            {
+                Cave.Nodes[nodeId].AppInstanceId = -1;
+            }
         }
     }
 }

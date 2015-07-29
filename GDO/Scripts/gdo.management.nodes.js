@@ -52,15 +52,15 @@ gdo.management.drawNodeTable = function (nodeId) {
              .css({ fontSize: gdo.management.table_font_size })
              .css('padding', gdo.management.cell_padding);
         if (node.id == gdo.nodeId) {
-            $("#selected_node_id").empty().append("<b>Node Id:</b> " + node.id).css("width", 7 + "%");
-            $("#selected_node_col").empty().append("<b>Col:</b> " + node.col).css("width", 5 + "%");
-            $("#selected_node_row").empty().append("<b>Row:</b> " + node.row).css("width", 5 + "%");
-            $("#selected_node_sid").empty().append("<b>Section Id:</b> " + node.sectionId).css("width", 7 + "%");
-            $("#selected_node_scol").empty().append("<b>Section Col:</b> " + node.sectionCol).css("width", 10 + "%");
-            $("#selected_node_srow").empty().append("<b>Section Row:</b> " + node.sectionRow).css("width", 10 + "%");
-            $("#selected_node_cid").empty().append("<b>Connection Id:</b> " + node.connectionId).css("width", 20 + "%");
-            $("#selected_node_pid").empty().append("<b>Peer Id:</b> " + node.peerId).css("width", 10 + "%");
-            $("#selected_node_h").empty().append("<b>Node Health:</b> " + (node.aggregatedConnectionHealth * 25) + "%").css("width", 10 + "%");
+            $("#selected_node_id").empty().append("<b>Node Id:</b> " + node.id).css("width", 7 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_col").empty().append("<b>Col:</b> " + node.col).css("width", 5 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_row").empty().append("<b>Row:</b> " + node.row).css("width", 5 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_sid").empty().append("<b>Section Id:</b> " + node.sectionId).css("width", 7 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_scol").empty().append("<b>Section Col:</b> " + node.sectionCol).css("width", 10 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_srow").empty().append("<b>Section Row:</b> " + node.sectionRow).css("width", 10 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_cid").empty().append("<b>Connection Id:</b> " + node.connectionId).css("width", 20 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_pid").empty().append("<b>Peer Id:</b> " + node.peerId).css("width", 10 + "%").css("height", gdo.management.info_height);
+            $("#selected_node_h").empty().append("<b>Node Health:</b> " + (node.aggregatedConnectionHealth * 25) + "%").css("width", 10 + "%").css("height", gdo.management.info_height);
             if (node.isConnectedToCaveServer) {
                 $("#selected_node_cid").css("background", "darkgreen");
             } else {

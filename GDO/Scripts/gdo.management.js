@@ -1,9 +1,10 @@
 ﻿$(function () {
     gdo.management.table_font_size = 11;
-    gdo.management.section_font_size = 12;
+    gdo.management.section_font_size = 11;
     gdo.management.button_font_size = 21;
     gdo.management.header_font_size = 17;
-    gdo.management.table_height = 300;
+    gdo.management.table_height = 280;
+    gdo.management.info_height = 35;
     gdo.management.table_width = 100;
     gdo.management.button_height = 61;
     gdo.management.button_cols = 5;
@@ -24,8 +25,11 @@
 
     gdo.management.numToggleMenu = 2;
     gdo.management.maxToggleMenu = 2;
-    gdo.management.numSelectedSection = 0;
-    gdo.management.maxSelectedSection = 1;
+
+    gdo.management.selectedSection = -1;
+    gdo.management.selectedApp = null;
+    gdo.management.selectedConfiguration = null;
+
 
     gdo.loadModule("management.nodes", gdo.MODULE_TYPE.CORE);
     gdo.loadModule("management.sections", gdo.MODULE_TYPE.CORE);
@@ -66,7 +70,7 @@ gdo.updateDisplayCanvas = function () {
 
     if (gdo.management.toggleAppTable) {
         $("#app_table").show();
-        $("#app_space").show();
+        $("#app_table_space").show();
         gdo.management.drawAppTable();
     } else {
         $("#app_table").hide();

@@ -1,5 +1,6 @@
-﻿$(function() {
+﻿$(function () {
     gdo.closeAppFrame();
+    gdo.currentDisplayedAppInstance = -1;
 });
 
 gdo.updateDisplayCanvas = function () {
@@ -8,7 +9,18 @@ gdo.updateDisplayCanvas = function () {
     /// </summary>
     /// <returns></returns>
 
+
+
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        if (gdo.currentDisplayedAppInstance != gdo.net.node[gdo.clientId].appInstanceId) {
+            if (gdo.net.node[gdo.clientId].appInstanceId == -1) {
+                gdo.closeAppFrame();
+                gdo.currentDisplayedAppInstance = -1;
+            } else {
+                gdo.loadAppFrame(gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].appName);
+                gdo.currentDisplayedAppInstance = gdo.net.node[gdo.clientId].appInstanceId;
+            }
+        }
         if (gdo.net.maintenanceMode) {
             $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("GDO Node <b>" + gdo.clientId + "</b>");
             gdo.maintenance.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);

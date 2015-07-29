@@ -60,14 +60,11 @@ gdo.management.drawSectionTable =  function (){
                     .css({ fontSize: gdo.management.section_font_size })
                     .css('padding', gdo.management.cell_padding)
                     .click(function () {
-                        var id = gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))
+                        var id = gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'));
                         if (gdo.net.node[id].isSelected) {
                             gdo.net.node[id].isSelected = false;
                         } else {
-                            for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-                                gdo.net.section[i].isSelected = false;
-                            }
-                            gdo.management.numSelectedSection = 0;
+                            gdo.management.selectedSection = -1;
                             gdo.net.node[id].isSelected = true;
                         }
                         gdo.updateDisplayCanvas();
@@ -81,33 +78,42 @@ gdo.management.drawSectionTable =  function (){
                 .attr('rowspan', gdo.net.section[sectionId].rows)
                 .css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
                 .css("width", ((100 / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
-                .css("border", "4px solid #222")
+                .css("border", "4px solid #333")
                 .css("background", "#2A4E6C")
                 .css('padding', gdo.management.cell_padding)
                 .append("<div id='section_table_section_" + sectionId + "_s'> <b>Section ID:</b> " + sectionId + "</div>")
                 .append("<b>Start: </b> (" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")")
-                .append("<br><b>End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
+                .append("<br><b>End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")");
                 //.append("</br>(" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")->(" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
+            if (gdo.net.section[sectionId].appInstanceId >= 0) {
+                $("#section_table_row_" + node.row + "_col_" + node.col)
+                    .append("<div id='section_table_section_" + sectionId + "_a'> <b>Application:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
+                    .append("<div id='section_table_section_" + sectionId + "_i'> <b>Instance:</b> " + gdo.net.section[sectionId].appInstanceId + "</div>")
+                    .append("<div id='section_table_section_" + sectionId + "_c'> <b>Configuration:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
+                    .css("background", "#003300");
+            }
+            $("#section_table_row_" + node.row + "_col_" + node.col)
                 .append("<div id='section_table_section_" + sectionId + "_h'> <b>Section Health</b></div>")
                 .css({ fontSize: gdo.management.section_font_size })
                 .click(function () {
                     var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
-                    if (gdo.net.section[id].isSelected) {
-                        gdo.net.section[id].isSelected = false;
-                        gdo.management.numSelectedSection--;
+                    if (gdo.management.selectedSection == id) {
+                        gdo.management.selectedSection = -1;
                     } else {
                         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-                            gdo.net.section[i].isSelected = false;
                             gdo.net.node[i].isSelected = false;
                         }
-                        gdo.management.numSelectedSection = 0;
-                        gdo.net.section[id].isSelected = true;
-                        gdo.management.numSelectedSection++;
+                        gdo.management.selectedSection = id;
                     }
                     gdo.updateDisplayCanvas();
                 });
-            if (gdo.net.section[sectionId].isSelected) {
-                $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#527088");
+            if (gdo.management.selectedSection == sectionId) {
+                if (gdo.net.section[sectionId].appInstanceId >= 0) {
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#006B00");
+                } else {
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#6699FF");
+                }
+
             }
             if (gdo.net.section[sectionId].health >= 4) {
                 $("#section_table_section_" + sectionId + '_h').css("background", "darkgreen");
@@ -226,17 +232,17 @@ gdo.management.drawButtonTable = function () {
         .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-                if (gdo.net.section[i].isSelected) {
-                    gdo.net.section[i].isSelected = false;
-                    gdo.management.numSelectedSection--;
+                if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId == -1) {
+                    gdo.management.selectedSection = -1;
                     gdo.net.server.closeSection(i);
                     gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + i);
+                    break;
                 }
             }
         });
 
     for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.net.section[i].isSelected) {
+        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId == -1) {
             $("#button_table_row_0_col_1").css("background", "darkred").css("color", "#FFF");
         }
     }
@@ -253,29 +259,26 @@ gdo.management.drawButtonTable = function () {
         .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
             for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-                if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
-
-                    gdo.net.section[i].isSelected = false;
-                    gdo.management.numSelectedSection--;
+                if (gdo.management.selectedSection == i && !gdo.management.toggleAppTable && gdo.net.section[i].appInstanceId  == -1) {
                     gdo.management.toggleNodeTable = false;
                     gdo.management.toggleAppTable = true;
                     gdo.management.toggleInstanceTable = false;
                     gdo.management.toggleConsole = false;
                     gdo.management.toggleSectionTable = true;
-
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App' + i);
+                    gdo.updateDisplayCanvas();
+                    break;
                 }
             }
         });
 
     for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.net.section[i].isSelected && !gdo.net.section[i].deployed) {
+        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId == -1) {
             $("#button_table_row_0_col_2").css("background", "darkgreen").css("color", "#FFF");
         }
     }
     $("#button_table_row_0_col_3")
         .empty()
-        .append("<div id='button_close_app'> <b>Control App</b></div>")
+        .append("<div id='button_control_app'> <b>Control App</b></div>")
         .css("height", gdo.management.button_height)
         .css("width", (100 / gdo.management.button_cols) + "%")
         .css("border", "3px solid #444")
@@ -301,8 +304,8 @@ gdo.management.drawButtonTable = function () {
         });
 
     for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
-            $("#button_table_row_0_col_2").css("background", "darkgreen").css("color", "#FFF");
+        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId > -1) {
+            $("#button_table_row_0_col_3").css("background", "darkgreen").css("color", "#FFF");
         }
     }
     $("#button_table_row_0_col_4")
@@ -318,18 +321,17 @@ gdo.management.drawButtonTable = function () {
     .css({ fontSize: gdo.management.button_font_size })
     .click(function () {
         for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-            if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
-                gdo.net.section[i].isSelected = false;
-                gdo.management.numSelectedSection--;
-                //TODO Dispose App
+            if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId > -1) {
+                gdo.management.selectedSection = -1;
+                gdo.net.server.closeApp(gdo.net.section[i].appInstanceId);
                 gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + i);
             }
         }
     });
 
     for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
-            $("#button_table_row_0_col_2").css("background", "darkred").css("color", "#FFF");
+        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId > -1) {
+            $("#button_table_row_0_col_4").css("background", "darkred").css("color", "#FFF");
         }
     }
 }

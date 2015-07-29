@@ -29,6 +29,13 @@ namespace GDO.Core
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
 
+        public enum P2PModes
+        {
+            None = -1,
+            Cave = 1,
+            Section = 2,
+            Neighbours = 3
+        };
         /// <summary>
         /// Initializes a new instance of the <see cref="Cave"/> class.
         /// </summary>
@@ -191,7 +198,7 @@ namespace GDO.Core
             List<Node> deployedNodes = new List<Node>();
             if (Cave.IsSectionFree(colStart, rowStart, colEnd, rowEnd))
             {
-                int sectionId = Utilities.getAvailableSlot<Section>(Sections);
+                int sectionId = Utilities.GetAvailableSlot<Section>(Sections);
                 Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
                 Sections.TryAdd(sectionId, section);
                     
@@ -217,7 +224,7 @@ namespace GDO.Core
             List<Node> freedNodes = new List<Node>();
             if (Cave.ContainsSection(sectionId))
             {
-                if (!Cave.Sections[sectionId].IsDeployed)
+                if (!Cave.Sections[sectionId].IsDeployed())
                 {
                     foreach (Node node in Sections[sectionId].Nodes)
                     {
@@ -415,14 +422,14 @@ namespace GDO.Core
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="app">The application.</param>
-        public static bool RegisterApp(string name)
+        public static bool RegisterApp(string name, int p2pmode, Type appType)
         {
             if (!Apps.ContainsKey(name))
             {
                 App app = new App();
-                app.Init(name);
+                app.Init(name, p2pmode,appType);
                 Apps.TryAdd(name, app);
-                Apps[name].Init(name);
+                Apps[name].Init(name,p2pmode,appType);
                 List<AppConfiguration> configurations = LoadAppConfigurations(name);
                 foreach (var configuration in configurations)
                 {
@@ -487,14 +494,14 @@ namespace GDO.Core
         /// <returns></returns>
         public static int CreateAppInstance(int sectionId, string appName, string configName)
         {
-            if (!Cave.Sections[sectionId].IsDeployed && Cave.Apps.ContainsKey(appName))
+            if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
             {
                 if (Cave.Apps[appName].Configurations.ContainsKey(configName))
                 {
                     int instanceId =  Apps[appName].CreateAppInstance(configName, sectionId);
                     if (instanceId >= 0)
                     {
-                        Apps[appName].Instances[instanceId].Section.IsDeployed = true;
+                        Apps[appName].Instances[instanceId].Section.DeploySection(instanceId);
                     }
                     return instanceId;
                 }
@@ -517,7 +524,7 @@ namespace GDO.Core
                     Section section = Apps[appName].Instances[instanceId].Section;
                     if (Apps[appName].DisposeAppInstance(instanceId))
                     {
-                        section.IsDeployed = false;
+                        section.FreeSection();
                         return true;
                     }
                 }

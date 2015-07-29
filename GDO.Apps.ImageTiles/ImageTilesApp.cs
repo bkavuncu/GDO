@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Web;
@@ -14,7 +15,9 @@ namespace GDO.Apps.ImageTiles
         public AppConfiguration Configuration { get; set; }
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
-            throw new NotImplementedException();
+            this.Id = instanceId;
+            this.Section = section;
+            this.Configuration = configuration;
         } 
 
     }

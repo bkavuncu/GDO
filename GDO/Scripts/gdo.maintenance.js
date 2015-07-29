@@ -81,6 +81,10 @@ gdo.maintenance.drawMaintenanceTable = function() {
             $("#maintenance_status_table_pid").css("background", "#222").css("border", "4px solid #444");
             $("#maintenance_status_table_h").css("background", "#222").css("border", "4px solid #444");
 
+            $("#maintenance_status_table_app").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_instance").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_configuration").css("background", "#222").css("border", "4px solid #444");
+
             $("#maintenance_status_table_col_content").empty().css({ fontSize: 49 }).append(node.col);
             $("#maintenance_status_table_row_content").empty().css({ fontSize: 49 }).append(node.row);
             $("#maintenance_status_table_sid_content").empty().css({ fontSize: 49 }).append(node.sectionId);
@@ -89,6 +93,8 @@ gdo.maintenance.drawMaintenanceTable = function() {
             $("#maintenance_status_table_cid_content").empty().css({ fontSize: 35 }).append(node.connectionId);
             $("#maintenance_status_table_pid_content").empty().css({ fontSize: 35 }).append(node.peerId);
             $("#maintenance_status_table_h_content").empty().css({ fontSize: 49 }).append((node.aggregatedConnectionHealth * 25) + "%");
+
+
 
             if (node.sectionId > 0) {
                 $("#maintenance_status_table_sid").css("background", "#2A4E6C");
@@ -99,6 +105,23 @@ gdo.maintenance.drawMaintenanceTable = function() {
                 $("#maintenance_status_table_scol").css("background", "#222");
                 $("#maintenance_status_table_srow").css("background", "#222");
             }
+
+            if (node.appInstanceId >= 0) {
+                $("#maintenance_status_table_app").css("background", "#2A4E6C");
+                $("#maintenance_status_table_instance").css("background", "#2A4E6C");
+                $("#maintenance_status_table_configuration").css("background", "#2A4E6C");
+                $("#maintenance_status_table_app_content").empty().css({ fontSize: 35 }).append(gdo.net.instance[node.appInstanceId].appName);
+                $("#maintenance_status_table_instance_content").empty().css({ fontSize: 49 }).append(node.appInstanceId);
+                $("#maintenance_status_table_configuration_content").empty().css({ fontSize: 35 }).append(gdo.net.instance[node.appInstanceId].configName);
+            } else {
+                $("#maintenance_status_table_app").css("background", "#222");
+                $("#maintenance_status_table_instance").css("background", "#222");
+                $("#maintenance_status_table_configuration").css("background", "#222");
+                $("#maintenance_status_table_app_content").empty().css({ fontSize: 35 }).append("&nbsp;");
+                $("#maintenance_status_table_instance_content").empty().css({ fontSize:49 }).append("&nbsp;");
+                $("#maintenance_status_table_configuration_content").empty().css({ fontSize: 35 }).append("&nbsp;");
+            }
+
             if (node.isConnectedToCaveServer) {
                 $("#maintenance_status_table_cid").css("background", "darkgreen");
             } else {
