@@ -106,7 +106,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\Base\gdo.apps.base.js" />
+    <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
     <Content Include="Scripts\gdo.management.instances.js" />
     <Content Include="Scripts\gdo.management.js" />

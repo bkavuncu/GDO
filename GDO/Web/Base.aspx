@@ -28,7 +28,7 @@
     <script>
         $(function () {
             var gdo = parent.gdo;
-            gdo.loadModule("base", gdo.MODULE_TYPE.APP);
+            gdo.loadModule("node.base", gdo.MODULE_TYPE.CORE);
         });
     </script>
     <form id="form1" runat="server">

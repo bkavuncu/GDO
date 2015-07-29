@@ -64,6 +64,22 @@
             font-size: 100%;
             width: 100%;
         }
+        #app_frame {
+           width:100%;
+           height:100%;
+           border:0 none;
+           z-index:9;
+          }
+        iframe {
+            border:0 none;
+            width:99%;
+            height:99%;
+            display:block;
+        }
+        #instance_table_app_list_ {
+            height: 200px;
+            overflow-y: hidden;
+        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -113,14 +129,19 @@
                 <table id="app_table" unselectable="on" class="unselectable" style="width: 100%">
                     <tr>
                         <td id="app_table_select_app"></td>
-                        <td id="app_table_app_list"><div><table id="app_table_app_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></div></td>
+                        <td id="app_table_app_list"><table id="app_table_app_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></td>
                         <td id="app_table_select_configuration"></td>
                         <td id="app_table_configuration_list"><table id="app_table_configuration_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></td>
                         <td id="app_table_deploy_button"></td>
                     </tr>
                 </table>
                  <div id="app_table_space"><br></div>
-                <table id="instance_table" unselectable="on" class="unselectable" style="width: 100%"></table>
+                <table id="instance_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%;overflow:hidden">
+                    <tr>
+                        <td id="instance_table_app_list"><div instance_table_app_div><table id="instance_table_app_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></div></td>
+                        <td id="instance_table_control_frame"><div id="control_frame"><iframe ïd="control_frame_content" name="control_frame_content" width="100%" height="100%"></iframe></div></td>
+                    </tr>
+                </table>
                  <div id="instance_table_space"><br><br></div>
                 <table id="section_table" unselectable="on" class="unselectable" style="width: 100%"></table>
                  <div id="section_table_space"><br></div>

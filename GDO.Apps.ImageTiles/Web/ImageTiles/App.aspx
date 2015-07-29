@@ -27,13 +27,13 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
         $(function () {
-            var test = "test";
+           
         });
     </script>
     <form id="form1" runat="server">
     </form>
         <div>
-    <h1>This is Image Tiles</h1>
+    <h1>This is Image Tiles Node</h1>
     </div>
 </body>
 </html>

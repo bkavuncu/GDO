@@ -29,6 +29,7 @@
     gdo.management.selectedSection = -1;
     gdo.management.selectedApp = null;
     gdo.management.selectedConfiguration = null;
+    gdo.management.selectedInstance = -1;
 
 
     gdo.loadModule("management.nodes", gdo.MODULE_TYPE.CORE);
@@ -347,4 +348,18 @@ gdo.management.drawHeaderTable = function () {
         .css("color", "#777")
         .css('padding', gdo.management.cell_padding)
         .css({ fontSize: gdo.management.header_font_size });
+}
+
+gdo.management.loadControlFrame = function (appName, instanceId) {
+    gdo.consoleOut(".MANAGEMENT", 3, "Loading Control Frame " + appName + " with Instance Id" + instanceId);
+    //document.getElementById("app_frame").innerHTML = '<object type="text/html" data="\\Web\\'+app+'\\app.aspx" ></object>';
+    $('iframe').attr('src', "\\Web\\" + appName + "\\control.aspx?clientId="+instanceId);
+    $('iframe').fadeIn();
+}
+
+gdo.management.closeControlFrame = function () {
+    gdo.consoleOut(".MANGEMENT", 3, "Returning back to base control frame");
+    //document.getElementById("app_frame").innerHTML = '<object type="text/html" data="\\Web\\base.aspx" ></object>';
+    $('iframe').attr('src', "\\Web\\base.aspx");
+    $('iframe').fadeIn();
 }

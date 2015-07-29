@@ -23,7 +23,7 @@ namespace GDO.Apps.ImageTiles
         public string Name { get; set; } = "ImageTiles";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new ImageTilesApp().GetType();
-
+        
         public void RequestTile(int instanceId, int sectionCol, int sectionRow)
         {
             lock (Cave.AppLocks[instanceId])

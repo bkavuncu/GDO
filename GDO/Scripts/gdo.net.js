@@ -95,9 +95,8 @@ $(function() {
                 gdo.net.node[gdo.net.neighbour[index]].isNeighbour = true;
             }
         }
-        gdo.net.server.requestAllUpdates();
         gdo.updateSelf();
-        gdo.net.signalRServerResponded = true;
+        //gdo.net.signalRServerResponded = true;
     }
     $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config) {
         if (gdo.net.isSignalRServerResponded()) {
@@ -249,6 +248,8 @@ $(function() {
             gdo.net.app[name].p2pMode = gdo.net.p2pmode;
             gdo.net.server.requestAppConfigurationList(name);
         }
+        gdo.net.signalRServerResponded = true;
+        gdo.net.server.requestAllUpdates();
     }
     $.connection.caveHub.client.receiveAppConfigurationList = function (appName, serializedAppConfigurationList) {
         var deserializedAppConfigurationList = JSON.parse(serializedAppConfigurationList);
@@ -313,11 +314,13 @@ gdo.net.initNet = function (clientMode) {//todo comment
         waitForResponse(gdo.net.initPeer, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     }
     gdo.net.server.requestMaintenanceMode();
+    
     gdo.consoleOut('.NET', 2, 'Requesting Default P2P Mode');
     gdo.net.server.requestDefaultP2PMode();
     gdo.consoleOut('.NET', 2, 'Requesting App List');
     gdo.net.server.requestAppList();
-    gdo.consoleOut('.NET', 2, 'Requesting Nodes');
+    gdo.consoleOut('.NET', 2, 'Requesting All Updates');
+
 }
 
 gdo.net.initPeer = function () {

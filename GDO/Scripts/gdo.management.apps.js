@@ -54,14 +54,16 @@
         .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
-            if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
-                gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
+            if (gdo.net.section[gdo.management.selectedSection] != null) {
+                if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
+                    gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
                     gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedApp + " at Section " + gdo.management.selectedSection + " with Configuration " + gdo.management.selectedConfiguration);
                     gdo.management.selectedSection = -1;
                     gdo.management.selectedApp = null;
                     gdo.management.selectedConfiguration = null;
                     gdo.updateDisplayCanvas();
 
+                }
             }
         });
 }

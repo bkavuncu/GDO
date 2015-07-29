@@ -231,18 +231,16 @@ gdo.management.drawButtonTable = function () {
         .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
-            for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-                if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId == -1) {
+            if (gdo.management.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
+                    gdo.net.server.closeSection(gdo.management.selectedSection);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + gdo.management.selectedSection);
                     gdo.management.selectedSection = -1;
-                    gdo.net.server.closeSection(i);
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + i);
-                    break;
                 }
             }
         });
-
-    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId == -1) {
+    if (gdo.management.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
             $("#button_table_row_0_col_1").css("background", "darkred").css("color", "#FFF");
         }
     }
@@ -258,21 +256,19 @@ gdo.management.drawButtonTable = function () {
         .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
-            for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-                if (gdo.management.selectedSection == i && !gdo.management.toggleAppTable && gdo.net.section[i].appInstanceId  == -1) {
+            if (gdo.management.selectedSection > -1) {
+                if (!gdo.management.toggleAppTable && gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
                     gdo.management.toggleNodeTable = false;
                     gdo.management.toggleAppTable = true;
                     gdo.management.toggleInstanceTable = false;
                     gdo.management.toggleConsole = false;
                     gdo.management.toggleSectionTable = true;
                     gdo.updateDisplayCanvas();
-                    break;
                 }
             }
         });
-
-    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId == -1) {
+    if (gdo.management.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
             $("#button_table_row_0_col_2").css("background", "darkgreen").css("color", "#FFF");
         }
     }
@@ -288,23 +284,19 @@ gdo.management.drawButtonTable = function () {
         .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
-            for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-                if (gdo.net.section[i].isSelected && gdo.net.section[i].deployed) {
-                    gdo.net.section[i].isSelected = false;
-                    gdo.management.numSelectedSection--;
+            if (gdo.management.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
                     gdo.management.toggleNodeTable = false;
                     gdo.management.toggleAppTable = false;
                     gdo.management.toggleInstanceTable = true;
                     gdo.management.toggleConsole = false;
                     gdo.management.toggleSectionTable = true;
-
-                    //TODO
+                    gdo.updateDisplayCanvas();
                 }
             }
         });
-
-    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId > -1) {
+    if (gdo.management.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
             $("#button_table_row_0_col_3").css("background", "darkgreen").css("color", "#FFF");
         }
     }
@@ -320,17 +312,16 @@ gdo.management.drawButtonTable = function () {
     .attr("align", "center")
     .css({ fontSize: gdo.management.button_font_size })
     .click(function () {
-        for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-            if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId > -1) {
-                gdo.management.selectedSection = -1;
-                gdo.net.server.closeApp(gdo.net.section[i].appInstanceId);
-                gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + i);
+            if (gdo.management.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {                  
+                    gdo.net.server.closeApp(gdo.net.section[gdo.management.selectedSection].appInstanceId);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.selectedSection);
+                    gdo.management.selectedSection = -1;
+                }
             }
-        }
     });
-
-    for (var i = 1; i < (gdo.net.cols * gdo.net.rows) ; i++) {
-        if (gdo.management.selectedSection == i && gdo.net.section[i].appInstanceId > -1) {
+    if (gdo.management.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
             $("#button_table_row_0_col_4").css("background", "darkred").css("color", "#FFF");
         }
     }
