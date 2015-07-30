@@ -104,7 +104,7 @@ namespace GDO.Core
                             Groups.Add(node.ConnectionId, node.SectionId.ToString());
                         }
                     }
-                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart), true);
+                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart));
                     return true;
                 }
                 else
@@ -133,7 +133,7 @@ namespace GDO.Core
                             Groups.Remove(node.ConnectionId, node.SectionId.ToString());
                         }
                     }
-                    BroadcastSectionUpdate(sectionId, false);
+                    BroadcastSectionUpdate(sectionId);
                     return true;
                 }
                 else
@@ -155,7 +155,7 @@ namespace GDO.Core
                 List<Node> affectedNodes = Cave.SetSectionP2PMode(sectionId, p2pmode);
                 if (affectedNodes.Capacity > 0)
                 {
-                    BroadcastSectionUpdate(sectionId, true);
+                    BroadcastSectionUpdate(sectionId);
                     foreach (Node node in affectedNodes)
                     {
                         BroadcastNodeUpdate(node.Id);
@@ -285,18 +285,29 @@ namespace GDO.Core
                         Clients.Caller.receiveAppUpdate(instance.Section.Id, app.Name, instance.Configuration.Name, instance.Id, instance.Section.P2PMode, true);
                     }
                 }
+                List<int> sectionIds = new List<int>(Cave.Sections.Count-1);
+                List<bool> sectionStatuses = new List<bool>(Cave.Sections.Count-1);
+                List<string> serializedSections = new List<string>(Cave.Sections.Count-1);
+
                 foreach (KeyValuePair<int, Section> sectionEntry in Cave.Sections)
                 {
                     Section section = sectionEntry.Value;
                     if (section.Id > 0)
                     {
-                        Clients.Caller.receiveSectionUpdate(true, section.Id, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.AppInstanceId, section.GetNodeMap());
+                        sectionIds.Add(section.Id);
+                        sectionStatuses.Add(true);
+                        serializedSections.Add(GetSectionUpdate(section.Id));
                     }
                 }
+                    Clients.Caller.receiveSectionsUpdate(sectionStatuses, sectionIds, serializedSections);
+
+
+                List<string> serializedNodes = new List<string>(Cave.Nodes.Count);
                 foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
                 {
-                    Clients.Caller.receiveNodeUpdate(nodeEntry.Value.SerializeJSON());
+                    serializedNodes.Add(GetNodeUpdate(nodeEntry.Value.Id));
                 }
+                Clients.Caller.receiveNodesUpdate(serializedNodes);
             }
         }
         /// <summary>
@@ -424,6 +435,26 @@ namespace GDO.Core
             }
         }
 
+        private string GetNodeUpdate(int nodeId)
+        {
+            if (Cave.ContainsNode(nodeId))
+            {
+                try
+                {
+                    Node node;
+                    Cave.Nodes.TryGetValue(nodeId, out node);
+                    node.aggregateConnectionHealth();
+                    return node.SerializeJSON();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return null;
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// Broadcasts the node update.
         /// </summary>
@@ -434,11 +465,17 @@ namespace GDO.Core
             {
                 try
                 {
-                    Node node;
-                    Cave.Nodes.TryGetValue(nodeId, out node);
-                    node.aggregateConnectionHealth();
-                    Clients.All.receiveNodeUpdate(node.SerializeJSON());
-                    return true;
+                    string serializedNode = GetNodeUpdate(nodeId);
+                    if (serializedNode != null)
+                    {
+                        Clients.All.receiveNodeUpdate(serializedNode);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    
                 }
                 catch (Exception e)
                 {
@@ -446,31 +483,50 @@ namespace GDO.Core
                     return false;
                 } 
             }
-                return false;
+            return false;
         }
+
+        private string GetSectionUpdate(int sectionId)
+        {
+            try
+            {
+                if (Cave.ContainsSection(sectionId))
+                {
+                    Section section;
+                    Cave.Sections.TryGetValue(sectionId, out section);
+                    return section.SerializeJSON();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
         /// <summary>
         /// Broadcasts the section update.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <param name="exists">if set to <c>true</c> [exists].</param>
         /// <returns></returns>
-        private bool BroadcastSectionUpdate(int sectionId, bool exists)
+        private bool BroadcastSectionUpdate(int sectionId)
         {
             try
             {
-                if (exists)
+                string serializedSection = GetSectionUpdate(sectionId);
+                if (Cave.ContainsSection(sectionId) && serializedSection != null)
                 {
-                    if (Cave.ContainsSection(sectionId))
-                    {
-                        Section section;
-                        Cave.Sections.TryGetValue(sectionId, out section);
-                        Clients.All.receiveSectionUpdate(true, sectionId, section.Col, section.Row, section.Cols, section.Rows, section.P2PMode, section.AppInstanceId, section.GetNodeMap());
-                        return true;
-                    }
+                    Clients.All.receiveSectionUpdate(true, sectionId, serializedSection);
+                    return true;
                 }
                 else
                 {
-                    Clients.All.receiveSectionUpdate(false, sectionId, -1, -1, -1, -1, -1, -1, -1);
+                    Clients.All.receiveSectionUpdate(false, sectionId, "");
                     return true;
                 }
             }
@@ -479,7 +535,6 @@ namespace GDO.Core
                 Console.WriteLine(e);
                 return false;
             }
-            return false;
         }
 
         private bool BroadcastAppUpdate(int sectionId, string appName, string configName, int instanceId, int p2pmode, bool exists)

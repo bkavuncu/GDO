@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace GDO.Core
 {
@@ -11,8 +12,11 @@ namespace GDO.Core
     public class Section
     {
         public int Id { get; set; }
+        [JsonIgnore]
         public Node[,] Nodes;
+        public int[,] NodeMap { get; set; }
         public int NumNodes { get; set; }
+        [JsonIgnore]
         public IAppInstance App;
         public int Width { get; set; }
         public int Height { get; set; }
@@ -136,6 +140,16 @@ namespace GDO.Core
             {
                 Cave.Nodes[nodeId].AppInstanceId = -1;
             }
+        }
+
+        /// <summary>
+        /// Serializes this as a JSON
+        /// </summary>
+        /// <returns></returns>
+        public string SerializeJSON()
+        {
+            this.NodeMap = GetNodeMap();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
     }
 }

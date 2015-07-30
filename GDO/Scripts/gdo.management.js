@@ -43,7 +43,7 @@ gdo.updateDisplayCanvas = function () {
     /// Updates the gdo canvas.
     /// </summary>
     /// <returns></returns>
-
+    //gdo.consoleOut(".DISPLAY", 2, "At Update Display");
     gdo.management.drawHeaderTable();
 
     if (gdo.management.toggleNodeTable) {

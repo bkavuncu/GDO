@@ -99,11 +99,13 @@ gdo.management.drawSectionTable =  function (){
                     var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
                     if (gdo.management.selectedSection == id) {
                         gdo.management.selectedSection = -1;
+
                     } else {
                         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                             gdo.net.node[i].isSelected = false;
                         }
                         gdo.management.selectedSection = id;
+                        //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
                     }
                     gdo.updateDisplayCanvas();
                 });
