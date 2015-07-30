@@ -20,6 +20,14 @@
             -o-user-select: none;
             user-select: none;
         }
+    #image_tile {
+           position:fixed;
+           top:0; left:0;
+           width:100%;
+           height:100%;
+           border:0 none;
+           z-index:9;
+      }
     </style>
 </head>
 <body>
@@ -27,13 +35,15 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
         $(function () {
-           
+            var gdo = parent.gdo;
+            gdo.loadModule('imageTiles', gdo.MODULE_TYPE.APP);
+            gdo.net.app["ImageTiles"].initClient();
         });
     </script>
     <form id="form1" runat="server">
     </form>
-        <div>
-    <h1>This is Image Tiles Node</h1>
+    <div>
+        <img id="image_tile"/>
     </div>
 </body>
 </html>

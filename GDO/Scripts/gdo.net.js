@@ -28,6 +28,11 @@ $(function() {
     $.connection.caveHub.client.receiveDefaultP2PMode = function(defaultP2PMode) {
         gdo.net.p2pmode = defaultP2PMode;
     }
+    $.connection.imageTilesAppHub.client.receiveTile = function (imageVal) {
+        gdo.consoleOut('.IMAGETILES', 1, 'Received at Node ' + gdo.clientId);
+        $("iframe").contents().find("#image_tile").attr("src", "data:image/png;base64," + imageVal);
+        //$("iframe").css("background-image", "url('data:image/jpeg;base64," + imageVal + "')");
+    }
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);

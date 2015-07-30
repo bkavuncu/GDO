@@ -59,7 +59,7 @@
             gdo.updateSelf();
         }
     </script>
-    <div id="app_frame"><iframe ïd="app_frame_content" name="app_frame_content"></iframe></div>
+    <div id="app_frame"><iframe ïd="app_frame_content" name="app_frame_content" allowtransparency="true"></iframe></div>
     <div id="maintenance">
         <div id="maintenance_title" style="text-align:center">Test Node</div>
         <br>
