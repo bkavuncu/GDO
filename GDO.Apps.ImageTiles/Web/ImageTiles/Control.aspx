@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Control.aspx.cs" Inherits="GDO.Apps.ImageTiles.Web.Control" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Control.aspx.cs" Inherits="GDO.Apps.TimeV.Web.Control" %>
 
 <!DOCTYPE html>
 

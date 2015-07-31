@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using GDO.Core;
 
-namespace GDO.Apps.ImageTiles
+namespace GDO.Apps.TimeV
 {
     public class ImageTilesApp : IAppInstance
     {

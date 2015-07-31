@@ -7,12 +7,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{77BC15A4-E55B-46F5-BF97-CA91708661DA}</ProjectGuid>
+    <ProjectGuid>{64EE2286-C18A-471E-B8BC-918A8C00839A}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GDO.Apps.ImageTiles</RootNamespace>
-    <AssemblyName>GDO.Apps.ImageTiles</AssemblyName>
+    <RootNamespace>GDO.Apps.TimeV</RootNamespace>
+    <AssemblyName>GDO.Apps.TimeV</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -60,6 +60,18 @@
       <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.0.1\lib\net45\MongoDB.Bson.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver, Version=2.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.0.1\lib\net45\MongoDB.Driver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.0.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -89,14 +101,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="Scripts\jquery-2.1.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Web\ImageTiles\App.aspx" />
-    <Content Include="Web\ImageTiles\Control.aspx" />
-    <Content Include="Configurations\ImageTiles\sample.json" />
-    <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\TimeV\gdo.apps.timev.control.js" />
+    <Content Include="Web\TimeV\App.aspx" />
+    <Content Include="Web\TimeV\Control.aspx" />
+    <Content Include="Configurations\TimeV\config.json" />
+    <Content Include="Scripts\TimeV\gdo.apps.timev.app.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -105,33 +114,36 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-    <Content Include="Scripts\gdo.apps.imagetiles.js" />
+    <None Include="Scripts\TimeV\jquery-2.1.4-vsdoc.js" />
+    <Content Include="Scripts\TimeV\jquery-2.1.4.js" />
+    <Content Include="Scripts\TimeV\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\TimeV\jquery.signalR-2.2.0.js" />
+    <Content Include="Scripts\TimeV\jquery.signalR-2.2.0.min.js" />
     <Content Include="Web.config" />
+    <Content Include="Scripts\TimeV\jquery-2.1.4.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImageTilesApp.cs" />
+    <Compile Include="TimeVAppHub.cs" />
+    <Compile Include="TimeVApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ImageTilesAppHub.cs" />
-    <Compile Include="Web\ImageTiles\App.aspx.cs">
+    <Compile Include="Web\TimeV\App.aspx.cs">
       <DependentUpon>App.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Web\ImageTiles\App.aspx.designer.cs">
+    <Compile Include="Web\TimeV\App.aspx.designer.cs">
       <DependentUpon>App.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Web\ImageTiles\Control.aspx.cs">
+    <Compile Include="Web\TimeV\Control.aspx.cs">
       <DependentUpon>Control.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Web\ImageTiles\Control.aspx.designer.cs">
+    <Compile Include="Web\TimeV\Control.aspx.designer.cs">
       <DependentUpon>Control.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
-      <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>
+      <Project>{4A27F694-1D9A-420A-A3A6-62521EAA047E}</Project>
       <Name>GDO</Name>
     </ProjectReference>
   </ItemGroup>
@@ -149,9 +161,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>47012</DevelopmentServerPort>
+          <DevelopmentServerPort>58129</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:45048/</IISUrl>
+          <IISUrl>http://localhost:27261/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -18,9 +18,9 @@ using GDO.Core;
 namespace GDO.Apps.TimeV
 {
     [Export(typeof(IAppHub))]
-    public class ImageTilesAppHub : Hub, IAppHub
+    public class TimeVAppHub : Hub, IAppHub
     {
-        public string Name { get; set; } = "ImageTiles";
+        public string Name { get; set; } = "TimeV";
 
         public void RequestTile(int instanceId, int sectionCol, int sectionRow)
         {
@@ -28,7 +28,7 @@ namespace GDO.Apps.TimeV
             {
                 try
                 {
-                    //(ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).getTile(sectionCol, sectionRow)
+                    //(TimeVApp)Cave.Apps["ImageTiles"].Instances[instanceId]).getTile(sectionCol, sectionRow)
                     //Clients.Caller.receiveTile((tile);
                 }
                 catch (Exception e)

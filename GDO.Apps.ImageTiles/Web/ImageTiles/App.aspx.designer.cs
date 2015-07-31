@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GDO.Apps.ImageTiles.Web
+namespace GDO.Apps.TimeV.Web
 {
 
 
