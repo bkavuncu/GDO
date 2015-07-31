@@ -21,6 +21,7 @@ namespace GDO.Apps.ImageTiles
         public int Id { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public string ImageName { get; set; }
         public Image[,] Tiles { get; set; }
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
@@ -29,16 +30,11 @@ namespace GDO.Apps.ImageTiles
             this.Configuration = configuration;
         }
 
-        public byte[] GetTile(int sectionCol, int sectionRow)
+        public void ProcessImage(string imageName, int mode)
         {
-            ImageConverter converter = new ImageConverter();
-            var tileByte = (byte[])converter.ConvertTo(Tiles[sectionCol,sectionRow], typeof(byte[]));
-            return tileByte;
-        }
-
-        public void ProcessImage(string base64ImageWithHeader, int mode)
-        {
-            Image image = Utilities.Base64ToImage(base64ImageWithHeader.Substring(23));
+            this.ImageName = imageName;
+            String path = Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images\"+ ImageName;
+            Image image = Image.FromFile(path);
             double scaleWidth = (Section.Width + 0.000) / image.Width;
             double scaleHeight = (Section.Height + 0.000) / image.Height;
             int imageScaledWidth;
@@ -75,8 +71,11 @@ namespace GDO.Apps.ImageTiles
                         new Rectangle(i * imageScaledWidth, j * imageScaledHeight, imageScaledWidth, imageScaledHeight),
                         GraphicsUnit.Pixel);
                     graphics.Dispose();
+                    path = Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images\" + ImageName + @"_" + Id + @"_" + i + @"_" + j + @".png";
+                    Tiles[i, j].Save(path, ImageFormat.Png);
                 }
             }
+
         }
     }
 }

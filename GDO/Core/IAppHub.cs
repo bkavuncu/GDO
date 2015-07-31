@@ -22,5 +22,7 @@ namespace GDO.Core
         string Name { get; set; }
         int P2PMode { get; set; }
         Type InstanceType { get; set; }
+        void JoinGroup(int instanceId);
+        void ExitGroup(int instanceId);
     }
 }

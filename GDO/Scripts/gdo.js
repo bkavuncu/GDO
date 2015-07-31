@@ -1,6 +1,4 @@
-﻿var gdo = {};
-
-gdo.CLIENT_MODE = {
+﻿gdo.CLIENT_MODE = {
     NODE: 1,
     CONTROL: 2
 };
@@ -40,10 +38,10 @@ gdo.initGDO = function (clientMode) {
             gdo.consoleOut('', 0, 'Hub Started');
             gdo.net.initNet(clientMode);
             if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                waitForResponse(initApp, gdo.net.isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
+                waitForResponse( initApp, gdo.net.isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
                 setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                waitForResponse(initApp, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
+                waitForResponse( initApp, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
             }
             
             //set intervl and 
@@ -113,7 +111,7 @@ gdo.loadModule = function (js,moduleType) {
     /// <returns></returns>
     var $head = $('head');
     //gdo.window[js] = {};
-    eval("gdo." + js + " = {}");
+    //eval("gdo." + js + " = {}");
     if (moduleType == gdo.MODULE_TYPE.CORE) {
         gdo.consoleOut('', 1, 'Loading core module ' + js + ' at ' + '../scripts/gdo.' + js + '.js\'');
         $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + js + '.js\'></script>');

@@ -19,7 +19,7 @@ namespace GDO.Core
     {
         public string Name { get; set; }
         public int P2PMode { get; set; }
-        public Type appType { get; set; }
+        public Type AppType { get; set; }
         public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
 
@@ -31,7 +31,7 @@ namespace GDO.Core
         {
             this.Name = name;
             this.P2PMode = p2pmode;
-            this.appType = appType;
+            this.AppType = appType;
             this.Configurations = new ConcurrentDictionary<string, AppConfiguration>();
             this.Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
@@ -41,12 +41,7 @@ namespace GDO.Core
             if (Configurations.ContainsKey(configName))
             {
                 int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Instances);
-                //IAppInstance instance = (IAppInstance) System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(Name + "Instance");
-                IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.appType, new object[0]);
-                //Dictionary<string,Type> loadedTypes = System.Reflection.Assembly.GetExecutingAssembly().DefinedTypes.ToDictionary(x => x.Name, x => x.AsType());
-                //IAppInstance instance = (IAppInstance)Activator.CreateInstance(loadedTypes["GDO.Apps." + Name], new object[0]);
-                //Type type = Type.GetType("GDO.Apps." + Name + ", " + System.Reflection.Assembly.GetExecutingAssembly().GetName());
-                //IAppInstance instance = (IAppInstance) Activator.CreateInstance(type,new object[0]);
+                IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
                 AppConfiguration conf;
                 Configurations.TryGetValue(configName, out conf);
                 instance.init(instanceId, Cave.Sections[sectionId], conf);

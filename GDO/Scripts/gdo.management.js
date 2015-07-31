@@ -351,15 +351,13 @@ gdo.management.drawHeaderTable = function () {
 }
 
 gdo.management.loadControlFrame = function (appName, instanceId) {
-    gdo.consoleOut(".MANAGEMENT", 3, "Loading Control Frame " + appName + " with Instance Id" + instanceId);
-    //document.getElementById("app_frame").innerHTML = '<object type="text/html" data="\\Web\\'+app+'\\app.aspx" ></object>';
-    $('iframe').attr('src', "\\Web\\" + appName + "\\control.aspx?clientId="+instanceId);
+    gdo.consoleOut(".MANAGEMENT", 3, "Loading Control Frame " + appName + " with Instance Id " + instanceId);
+    $('iframe').attr('src', "\\Web\\" + appName + "\\control.cshtml?controlId="+instanceId);
     $('iframe').fadeIn();
 }
 
 gdo.management.closeControlFrame = function () {
     gdo.consoleOut(".MANGEMENT", 3, "Returning back to base control frame");
-    //document.getElementById("app_frame").innerHTML = '<object type="text/html" data="\\Web\\base.aspx" ></object>';
-    $('iframe').attr('src', "\\Web\\base.aspx");
+    $('iframe').attr('src', "\\Web\\base.cshtml");
     $('iframe').fadeIn();
 }

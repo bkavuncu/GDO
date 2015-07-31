@@ -2,8 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Threading.Tasks;
+using System.Timers;
 using GDO.Utility;
 using Newtonsoft.Json;
 
@@ -565,6 +569,17 @@ namespace GDO.Core
                 }
             }
             return false;
+        }
+
+        public static void WaitReady()
+        {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            while (timer.Elapsed.TotalSeconds < 10)
+            {
+                // do something
+            }
+            timer.Stop();
         }
     }
 }

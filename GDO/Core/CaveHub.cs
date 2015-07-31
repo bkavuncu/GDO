@@ -276,18 +276,17 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+
+                List<string> serializedNodes = new List<string>(Cave.Nodes.Count);
+                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
                 {
-                    App app = appEntry.Value;
-                    foreach (KeyValuePair<int, IAppInstance> appInstanceEntry in app.Instances)
-                    {
-                        IAppInstance instance = appInstanceEntry.Value;
-                        Clients.Caller.receiveAppUpdate(instance.Section.Id, app.Name, instance.Configuration.Name, instance.Id, instance.Section.P2PMode, true);
-                    }
+                    serializedNodes.Add(GetNodeUpdate(nodeEntry.Value.Id));
                 }
-                List<int> sectionIds = new List<int>(Cave.Sections.Count-1);
-                List<bool> sectionStatuses = new List<bool>(Cave.Sections.Count-1);
-                List<string> serializedSections = new List<string>(Cave.Sections.Count-1);
+                Clients.Caller.receiveNodesUpdate(serializedNodes);
+
+                List<int> sectionIds = new List<int>(Cave.Sections.Count - 1);
+                List<bool> sectionStatuses = new List<bool>(Cave.Sections.Count - 1);
+                List<string> serializedSections = new List<string>(Cave.Sections.Count - 1);
 
                 foreach (KeyValuePair<int, Section> sectionEntry in Cave.Sections)
                 {
@@ -299,15 +298,17 @@ namespace GDO.Core
                         serializedSections.Add(GetSectionUpdate(section.Id));
                     }
                 }
-                    Clients.Caller.receiveSectionsUpdate(sectionStatuses, sectionIds, serializedSections);
+                Clients.Caller.receiveSectionsUpdate(sectionStatuses, sectionIds, serializedSections);
 
-
-                List<string> serializedNodes = new List<string>(Cave.Nodes.Count);
-                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
+                foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                 {
-                    serializedNodes.Add(GetNodeUpdate(nodeEntry.Value.Id));
+                    App app = appEntry.Value;
+                    foreach (KeyValuePair<int, IAppInstance> appInstanceEntry in app.Instances)
+                    {
+                        IAppInstance instance = appInstanceEntry.Value;
+                        Clients.Caller.receiveAppUpdate(instance.Section.Id, app.Name, instance.Configuration.Name, instance.Id, instance.Section.P2PMode, true);
+                    }
                 }
-                Clients.Caller.receiveNodesUpdate(serializedNodes);
             }
         }
         /// <summary>
@@ -547,7 +548,7 @@ namespace GDO.Core
                     {
                         if (Cave.ContainsInstance(instanceId) &&Cave.Apps[appName].Configurations.ContainsKey(configName))
                         {
-                            Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
+                            //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
                             Clients.All.receiveAppUpdate(sectionId, appName, configName, instanceId, p2pmode, exists);
                             return true;
                         }
@@ -617,6 +618,14 @@ namespace GDO.Core
             {
                 Clients.All.setMaintenanceMode(Cave.MaintenanceMode);
             }
+        }
+        public void JoinGroup(int sectionId)
+        {
+            Groups.Add(Context.ConnectionId, "" + sectionId);
+        }
+        public void ExitGroup(int sectionId)
+        {
+            Groups.Remove(Context.ConnectionId, "" + sectionId);
         }
     }
 }

@@ -16,7 +16,7 @@ function lowerCaseFirstLetter(string) {
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
-function waitForResponse(func, check, delay, repeat, msg) {
+function waitForResponse( func, check, delay, repeat, msg) {
     /// <summary>
     /// Waits for a check and then executes the function
     /// </summary>
@@ -28,13 +28,14 @@ function waitForResponse(func, check, delay, repeat, msg) {
     /// <returns></returns>
     if (!check()) {
         if (repeat > 0) {
-            setTimeout(function () { waitForResponse(func, check, delay, repeat - 1, msg); }, delay);
+            setTimeout(function () { waitForResponse( func, check, delay, repeat - 1, msg); }, delay);
             return;
         } else {
-            gdo.consoleOut('', 3, msg);
+            gdo.consoleOut('', 5, msg);
             return;
         }
     } else {
+        //eval(""+func+"();");
         func();
     }
 }
@@ -67,7 +68,22 @@ function getUrlVar(variable) {
         var pair = vars[i].split('=');
         if (pair[0] === variable) { return pair[1]; }
     }
+    query = window.frames['control_frame_content'].location.search.substring(1);
+    vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (pair[0] === variable) { return pair[1]; }
+    }
     return (false);
 }
 
-
+function getUrlVars() {
+    var vars = [], hash;
+    var hashes = window.frames['control_frame_content'].location.search.slice(window.location.href.indexOf('?') + 1).split('&');
+    for (var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}

@@ -86,9 +86,9 @@ gdo.management.drawInstanceTable = function () {
                 .css("width", "86%")
                 .css({ fontSize: gdo.management.button_font_size / 1.4 });
             if (gdo.net.instance[i].id == gdo.management.selectedInstance) {
-               $("#instance_table_app_table_row_" + i + "_col_1").css("color", "lightgreen");
+               $("#instance_table_app_table_row_" + i + "_col_0").css("color", "lightgreen");
             } else {
-                $("#instance_table_app_table_row_" + i + "_col_1").css("color", "#DDD");
+                $("#instance_table_app_table_row_" + i + "_col_0").css("color", "#DDD");
             }
         }
        
