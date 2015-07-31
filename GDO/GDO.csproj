@@ -185,12 +185,6 @@
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Base.cshtml" />
     <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />

@@ -25,6 +25,13 @@ gdo.net.app["ImageTiles"].initControl = function () {
     gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);
 }
 
+gdo.net.app["ImageTiles"].terminateClient = function () {
+    gdo.consoleOut('.IMAGETILES', 1, 'Terminating Image Tiles App Client at Node ' + gdo.clientId);
+}
+
+gdo.net.app["ImageTiles"].ternminateControl = function () {
+    gdo.consoleOut('.IMAGETILES', 1, 'Terminating Image Tiles App Control at Instance ' + gdo.controlId);
+}
 
 
 

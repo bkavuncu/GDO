@@ -131,7 +131,7 @@ $(function() {
                     gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + appName+ ', instanceId: ' + instanceId + ")");
                 }
             } else {
-                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.app[appName] != undefined) {
                     gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
                     gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instanceId + ")");
                 }
@@ -204,7 +204,7 @@ $(function() {
         for (var i = 0; i < deserializedAppList.length; i++){
             var name = deserializedAppList[i];
             if (gdo.net.app[name] == null) {
-            //    gdo.net.app[name] = {};
+                gdo.net.app[name] = {};
             }
             gdo.consoleOut('.NET', 2, 'App ' + i + ' : ' + name);
             gdo.net.app[name].name = deserializedAppList[i];

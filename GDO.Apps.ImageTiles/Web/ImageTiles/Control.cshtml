@@ -1,4 +1,6 @@
-﻿@using GDO.Core
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
 @{
     Layout = null;
 }
@@ -49,10 +51,12 @@
         var imgname = "";
         if (IsPost)
         {
+            
             WebImage photo = WebImage.GetImageFromRequest();
             if (photo != null)
             {
                 imgname = Path.GetFileName(photo.FileName);
+                //foldername
                 path = @"\Web\ImageTiles\images\" + imgname;
                 photo.Save(@"~\" + path);
             }
@@ -73,7 +77,8 @@
                 {
                     <br>
                     <div class="result">
-                        <img id="thumbnail_image" src="\Web\ImageTiles\images\@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px"/>
+                        <div id="image_folder" style="visibility: hidden; display:inline;"></div>
+                        <img id="thumbnail_image" src="\Web\ImageTiles\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px"/>
                     </div>
 
                 }
@@ -95,7 +100,7 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
                 gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                gdo.net.app["ImageTiles"].server.changeImageName(gdo.controlId, "@imgname", gdo.net.app["ImageTiles"].displayMode);
+                gdo.net.app["ImageTiles"].server.changeImageName(gdo.controlId, "\@imgname", gdo.net.app["ImageTiles"].displayMode);
                 gdo.net.app["ImageTiles"].server.requestImageName(gdo.controlId);
             });
         });
