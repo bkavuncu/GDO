@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4A27F694-1D9A-420A-A3A6-62521EAA047E}"
 EndProject
@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		create_browsers_local.exe = create_browsers_local.exe
 		import_apps.bat = import_apps.bat
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.TimeV", "GDO.Apps.TimeV\GDO.Apps.TimeV.csproj", "{64EE2286-C18A-471E-B8BC-918A8C00839A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +34,6 @@ Global
 		{77BC15A4-E55B-46F5-BF97-CA91708661DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77BC15A4-E55B-46F5-BF97-CA91708661DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77BC15A4-E55B-46F5-BF97-CA91708661DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64EE2286-C18A-471E-B8BC-918A8C00839A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64EE2286-C18A-471E-B8BC-918A8C00839A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64EE2286-C18A-471E-B8BC-918A8C00839A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64EE2286-C18A-471E-B8BC-918A8C00839A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
