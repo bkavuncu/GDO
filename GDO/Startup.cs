@@ -26,6 +26,7 @@ using Owin;
 
 namespace GDO
 {
+
     public class Startup
     {
         public void Configuration(IAppBuilder app)
@@ -47,6 +48,7 @@ namespace GDO
     {
         [ImportMany(typeof(IAppHub))]
         private List<IAppHub> _caveapps { get; set; }
+
         public IList<Assembly> GetAssemblies()
         {
         IList<Assembly> assemblies = new List<Assembly>();
@@ -61,8 +63,9 @@ namespace GDO
             assemblies.Add(typeof(CaveHub).Assembly);
             foreach (var caveapp in _caveapps)
             {
-                Cave.RegisterApp(caveapp.Name);
+                Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType);
                 assemblies.Add(caveapp.GetType().Assembly);
+                //assemblies.Add(caveapp.InstanceType.Assembly);
             }
             return assemblies;
         }

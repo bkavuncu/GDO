@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.SignalR;
 
 namespace GDO.Core
 {
@@ -13,7 +14,6 @@ namespace GDO.Core
         int Id { get; set; }
         Section Section { get; set; }
         AppConfiguration Configuration { get; set; }
-
         void init(int instanceId, Section section, AppConfiguration configuration);
     }
 }

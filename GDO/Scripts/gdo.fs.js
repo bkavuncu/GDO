@@ -1,12 +1,12 @@
 ﻿function initFS(mb) {
     window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
     window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024 * mb, function (grantedBytes) {
-        window.requestFileSystem(PERSISTENT, grantedBytes, onInitFS, function (err) { consoleOut("FS", "ERROR", err) });
-    }, function(err){consoleOut("FS","ERROR",err)});
+        window.requestFileSystem(PERSISTENT, grantedBytes, onInitFS, function (err) { gdo.consoleOut("FS", "ERROR", err) });
+    }, function(err){gdo.consoleOut("FS","ERROR",err)});
 }
 
 function onInitFS(filesystem) {
-    consoleOut("FS","INFO","Opened file system: " + filesystem.name);
+    gdo.consoleOut("FS","INFO","Opened file system: " + filesystem.name);
     fs = filesystem;
 }
 
@@ -28,7 +28,7 @@ function createFile(path, name) {
 function removeFile(path, name) {
     fs.root.getFile(path + name, { create: false }, function (fileEntry) {
         fileEntry.remove(function () {
-            consoleOut("FS", "INFO", "File removed:" + name);
+            gdo.consoleOut("FS", "INFO", "File removed:" + name);
         }, errorHandler);
     }, errorHandler);
 }
@@ -66,7 +66,7 @@ function createDir(path) {
         // Recursively add the new subfolder (if we still have another to create).
         if (folders.length) {
             createDir(dirEntry, folders.slice(1));
-            consoleOut("FS", "INFO", "Path created:" + path);
+            gdo.consoleOut("FS", "INFO", "Path created:" + path);
         }
     }, errorHandler);
 }
@@ -74,7 +74,7 @@ function createDir(path) {
 function removeDir(path) {
     fs.root.getDirectory(path, {}, function (dirEntry) {
         dirEntry.removeRecursively(function () {
-            consoleOut("FS", "INFO", "Directory removed:" + path);
+            gdo.consoleOut("FS", "INFO", "Directory removed:" + path);
         }, errorHandler);
     }, errorHandler);
 }

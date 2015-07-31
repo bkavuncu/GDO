@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using Microsoft.AspNet.SignalR;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Registration;
+using System.Reflection;
 using GDO.Utility;
 
 
@@ -16,6 +18,8 @@ namespace GDO.Core
     public class App
     {
         public string Name { get; set; }
+        public int P2PMode { get; set; }
+        public Type AppType { get; set; }
         public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
 
@@ -23,9 +27,11 @@ namespace GDO.Core
         {
 
         }
-        public void Init(string name)
+        public void Init(string name, int p2pmode, Type appType)
         {
             this.Name = name;
+            this.P2PMode = p2pmode;
+            this.AppType = appType;
             this.Configurations = new ConcurrentDictionary<string, AppConfiguration>();
             this.Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
@@ -34,8 +40,8 @@ namespace GDO.Core
         {
             if (Configurations.ContainsKey(configName))
             {
-                int instanceId = Utilities.getAvailableSlot<IAppInstance>(Instances);
-                IAppInstance instance = (IAppInstance) System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(Name + "Instance");
+                int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Instances);
+                IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
                 AppConfiguration conf;
                 Configurations.TryGetValue(configName, out conf);
                 instance.init(instanceId, Cave.Sections[sectionId], conf);
@@ -65,6 +71,16 @@ namespace GDO.Core
         public bool LoadConfigurations()
         {
             return false;
+        }
+
+        public List<string> GetConfigurationList()
+        {
+            List<string> configurationList = new List<string>();
+            foreach (KeyValuePair<string, AppConfiguration> configurationEntry in Configurations)
+            {
+                configurationList.Add(configurationEntry.Value.Name);
+            }
+            return configurationList;
         }
     }
 }

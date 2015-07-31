@@ -1,56 +1,38 @@
-﻿var table_height = 400;
-var table_font_size = 11;
-var button_height = 100;
-var button_cols = 4;
-var isRectangle = true;
-var isStarted = false;
-var colStart = 1000;
-var colEnd = -1;
-var rowStart = 1000;
-var rowEnd = -1;
+﻿$(function () {
 
-function initTest() {
-    //create a section
-    //
-}
+    gdo.maintenance.table_height = 400;
+    gdo.maintenance.table_font_size = 11;
+    gdo.maintenance.button_height = 100;
+    gdo.maintenance.button_cols = 4;
+    gdo.maintenance.isRectangle = true;
+    gdo.maintenance.isStarted = false;
+    gdo.maintenance.colStart = 1000;
+    gdo.maintenance.colEnd = -1;
+    gdo.maintenance.rowStart = 1000;
+    gdo.maintenance.rowEnd = -1;
+});
 
-function drawEmptyNodeTable(maxCol, maxRow) {
+gdo.maintenance.drawEmptyNodeTable = function (maxCol, maxRow) {
     /// <summary>
     /// Draws the node table.
     /// </summary>
     /// <param name="maxRow">The maximum row.</param>
     /// <param name="maxCol">The maximum col.</param>
     /// <returns></returns>
-    //consoleOut('.TEST', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
-    $("#node_table").empty();
+    //gdo.consoleOut('.TEST', 1, 'Drawing Empty Node Table with ' + maxRow + ',' +maxCol);
+    $("#maintenance_node_table").empty();
     for (var i = 0; i < maxRow; i++) {
-        $("#node_table").append("<tr id='node_table_row" + i + "' row='"+i+"'></tr>");
+        $("#maintenance_node_table").append("<tr id='maintenance_node_table_row" + i + "' row='"+i+"'></tr>");
         for (var j = 0; j < maxCol; j++) {
-            $("#node_table tr:last").append("<td id='node_table_row" + i + "_col" + j + "' col='"+j+"' row='"+i+"'></td>");
+            $("#maintenance_node_table tr:last").append("<td id='maintenance_node_table_row" + i + "_col" + j + "' col='"+j+"' row='"+i+"'></td>");
         }
     }
 }
 
-function updateDisplayCanvas() {
-   /// <summary>
-   /// Updates the gdo canvas.
-   /// </summary>
-    /// <returns></returns>
-
-    if (gdo.clientMode == CLIENT_MODE.NODE) {
-        drawTestTable();
-        $("#test_node").empty().css({fontSize: 140}).css("color", "#FFF").append("GDO Node <b>" + gdo.clientId + "</b>")
-    }else if (gdo.clientMode == CLIENT_MODE.CONTROL) {
-       // drawNodeTable(gdo.nodeId);
-        drawSectionTable();
-        drawSectionButtonTable();
-    }
-}
-
-function drawTestTable() {
+gdo.maintenance.drawMaintenanceTable = function() {
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
-        $("#node_table_row" + node.row + "_col" + node.col)
+        $("#maintenance_node_table_row" + node.row + "_col" + node.col)
             .empty()
             .append("")
             .append("<div id='node" + node.id + "i'> <b>ID:</b> " + node.id + "</div>")
@@ -58,8 +40,8 @@ function drawTestTable() {
             .append("<div id='node" + node.id + "s'> <b>SectionID:</b> " + node.sectionId + "</div>")
             .append("<div id='node" + node.id + "p'> <b>PeerID:</b> " + node.peerId + "</div>")
             .append("<div id='node" + node.id + "c'> <b>ConnectionID:</b> " + node.connectionId + "</div>")
-            .css({fontSize: table_font_size})
-            .css("height", (table_height / gdo.net.rows) + "")
+            .css({ fontSize: gdo.maintenance.table_font_size })
+            .css("height", (gdo.maintenance.table_height / gdo.net.rows) + "")
             .css("width", (100 / gdo.net.cols) + "%");
             
         if (node.connectedToPeer || node.id == gdo.clientId) {
@@ -80,66 +62,89 @@ function drawTestTable() {
             $("#node" + node.id + 's').css("background", "darkred");
         }
         if (node.id == gdo.clientId) {
-            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#527088");
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("background", "#527088");
         } else if (node.isNeighbour) {
-            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#2A4E6C");
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("background", "#2A4E6C");
         } else {
-            $("#node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
-            $("#node_table_row" + node.row + "_col" + node.col).css("background", "#222");
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("border", "4px solid #444");
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("background", "#222");
         }
         if (node.id == gdo.clientId) {
-            $("#status_table_col").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_row").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_sid").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_scol").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_srow").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_cid").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_pid").css("background", "#222").css("border", "4px solid #444");
-            $("#status_table_h").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_col").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_row").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_sid").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_scol").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_srow").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_cid").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_pid").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_h").css("background", "#222").css("border", "4px solid #444");
 
-            $("#status_table_col_content").empty().css({ fontSize: 49 }).append(node.col);
-            $("#status_table_row_content").empty().css({ fontSize: 49 }).append(node.row);
-            $("#status_table_sid_content").empty().css({ fontSize: 49 }).append(node.sectionId);
-            $("#status_table_scol_content").empty().css({ fontSize: 49 }).append(node.sectionCol);
-            $("#status_table_srow_content").empty().css({ fontSize: 49 }).append(node.sectionRow);
-            $("#status_table_cid_content").empty().css({ fontSize: 35 }).append(node.connectionId);
-            $("#status_table_pid_content").empty().css({ fontSize: 35 }).append(node.peerId);
-            $("#status_table_h_content").empty().css({ fontSize: 49 }).append((node.aggregatedConnectionHealth * 25) + "%");
+            $("#maintenance_status_table_app").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_instance").css("background", "#222").css("border", "4px solid #444");
+            $("#maintenance_status_table_configuration").css("background", "#222").css("border", "4px solid #444");
+
+            $("#maintenance_status_table_col_content").empty().css({ fontSize: 49 }).append(node.col);
+            $("#maintenance_status_table_row_content").empty().css({ fontSize: 49 }).append(node.row);
+            $("#maintenance_status_table_sid_content").empty().css({ fontSize: 49 }).append(node.sectionId);
+            $("#maintenance_status_table_scol_content").empty().css({ fontSize: 49 }).append(node.sectionCol);
+            $("#maintenance_status_table_srow_content").empty().css({ fontSize: 49 }).append(node.sectionRow);
+            $("#maintenance_status_table_cid_content").empty().css({ fontSize: 35 }).append(node.connectionId);
+            $("#maintenance_status_table_pid_content").empty().css({ fontSize: 35 }).append(node.peerId);
+            $("#maintenance_status_table_h_content").empty().css({ fontSize: 49 }).append((node.aggregatedConnectionHealth * 25) + "%");
+
+
 
             if (node.sectionId > 0) {
-                $("#status_table_sid").css("background", "#2A4E6C");
-                $("#status_table_scol").css("background", "#2A4E6C");
-                $("#status_table_srow").css("background", "#2A4E6C");
+                $("#maintenance_status_table_sid").css("background", "#2A4E6C");
+                $("#maintenance_status_table_scol").css("background", "#2A4E6C");
+                $("#maintenance_status_table_srow").css("background", "#2A4E6C");
             } else {
-                $("#status_table_sid").css("background", "#222");
-                $("#status_table_scol").css("background", "#222");
-                $("#status_table_srow").css("background", "#222");
+                $("#maintenance_status_table_sid").css("background", "#222");
+                $("#maintenance_status_table_scol").css("background", "#222");
+                $("#maintenance_status_table_srow").css("background", "#222");
             }
-            if (node.isConnectedToCaveServer) {
-                $("#status_table_cid").css("background", "darkgreen");
+
+            if (node.appInstanceId >= 0) {
+                $("#maintenance_status_table_app").css("background", "#2A4E6C");
+                $("#maintenance_status_table_instance").css("background", "#2A4E6C");
+                $("#maintenance_status_table_configuration").css("background", "#2A4E6C");
+                $("#maintenance_status_table_app_content").empty().css({ fontSize: 35 }).append(gdo.net.instance[node.appInstanceId].appName);
+                $("#maintenance_status_table_instance_content").empty().css({ fontSize: 49 }).append(node.appInstanceId);
+                $("#maintenance_status_table_configuration_content").empty().css({ fontSize: 35 }).append(gdo.net.instance[node.appInstanceId].configName);
             } else {
-                $("#status_table_cid").css("background", "darkred");
+                $("#maintenance_status_table_app").css("background", "#222");
+                $("#maintenance_status_table_instance").css("background", "#222");
+                $("#maintenance_status_table_configuration").css("background", "#222");
+                $("#maintenance_status_table_app_content").empty().css({ fontSize: 35 }).append("&nbsp;");
+                $("#maintenance_status_table_instance_content").empty().css({ fontSize:49 }).append("&nbsp;");
+                $("#maintenance_status_table_configuration_content").empty().css({ fontSize: 35 }).append("&nbsp;");
+            }
+
+            if (node.isConnectedToCaveServer) {
+                $("#maintenance_status_table_cid").css("background", "darkgreen");
+            } else {
+                $("#maintenance_status_table_cid").css("background", "darkred");
             }
             if (node.isConnectedToPeerServer) {
-                $("#status_table_pid").css("background", "darkgreen");
+                $("#maintenance_status_table_pid").css("background", "darkgreen");
             } else {
-                $("#status_table_pid").css("background", "darkred");
+                $("#maintenance_status_table_pid").css("background", "darkred");
             }
 
             if (node.aggregatedConnectionHealth == 4) {
-                $("#status_table_h").css("background", "darkgreen").css("color", "white");
+                $("#maintenance_status_table_h").css("background", "darkgreen").css("color", "white");
             } else if (node.aggregatedConnectionHealth == 3) {
-                $("#status_table_h").css("background", "yellow").css("color","black");
+                $("#maintenance_status_table_h").css("background", "yellow").css("color","black");
             } else if (node.aggregatedConnectionHealth == 2) {
-                $("#status_table_h").css("background", "lightsalmon").css("color", "black");
+                $("#maintenance_status_table_h").css("background", "lightsalmon").css("color", "black");
             } else if (node.aggregatedConnectionHealth == 1) {
-                $("#status_table_h").css("background", "darkred").css("color", "white");
+                $("#maintenance_status_table_h").css("background", "darkred").css("color", "white");
             } else {
-                $("#status_table_h").css("background", "darkred").css("color", "white");
+                $("#maintenance_status_table_h").css("background", "darkred").css("color", "white");
             }
-            $("#status_table").css({fontSize: 21});
+            $("#maintenance_status_table").css({fontSize: 21});
         }
     }
 }

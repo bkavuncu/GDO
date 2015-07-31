@@ -20,5 +20,9 @@ namespace GDO.Core
     public interface IAppHub : IHub
     {
         string Name { get; set; }
+        int P2PMode { get; set; }
+        Type InstanceType { get; set; }
+        void JoinGroup(int instanceId);
+        void ExitGroup(int instanceId);
     }
 }

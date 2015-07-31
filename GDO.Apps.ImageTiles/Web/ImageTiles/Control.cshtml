@@ -1,0 +1,110 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["ImageTiles"].initControl();
+            });
+        });
+    </script>
+<div>
+    @{
+        var path = "";
+        var imgname = "";
+        if (IsPost)
+        {
+            
+            WebImage photo = WebImage.GetImageFromRequest();
+            if (photo != null)
+            {
+                imgname = Path.GetFileName(photo.FileName);
+                //foldername
+                path = @"\Web\ImageTiles\images\" + imgname;
+                photo.Save(@"~\" + path);
+            }
+        }
+    }
+
+    <div>
+        <h1>Upload Image</h1>
+        <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend> Upload Image </legend>
+                <label for="Image">Image</label>
+                <input type="file" name="Image" id="select_image">
+                <br>
+                <input id="submit_image" type="submit" value="Submit"/>
+                <br>
+                @if (path != "")
+                {
+                    <br>
+                    <div class="result">
+                        <div id="image_folder" style="visibility: hidden; display:inline;"></div>
+                        <img id="thumbnail_image" src="\Web\ImageTiles\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px"/>
+                    </div>
+
+                }
+                else
+                {
+                    <br>
+                    <div class="result">
+                        <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                    </div>
+                }
+            </fieldset>
+        </form>
+    </div>
+</div>
+@if (path != "")
+{
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
+                gdo.net.app["ImageTiles"].server.changeImageName(gdo.controlId, "\@imgname", gdo.net.app["ImageTiles"].displayMode);
+                gdo.net.app["ImageTiles"].server.requestImageName(gdo.controlId);
+            });
+        });
+    </script>
+}
+</body>
+</html>

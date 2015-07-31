@@ -7,12 +7,7 @@ using Newtonsoft.Json;
 
 namespace GDO.Core
 {
-    enum P2PModes  {
-        None = -1,
-        Cave = 1,
-        Section = 2,
-        Neighbours= 3
-    };
+
     /// <summary>
     /// Node Object Class
     /// </summary>
@@ -125,7 +120,7 @@ namespace GDO.Core
             {
                 AggregatedConnectionHealth = 2; return;
             }
-            if (P2PMode == (int)P2PModes.Cave)
+            if (P2PMode == (int) Cave.P2PModes.Cave)
             {
                 foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
                 {
@@ -135,7 +130,7 @@ namespace GDO.Core
                     }
                 }
             }
-            else if (P2PMode == (int) P2PModes.Section)
+            else if (P2PMode == (int)Cave.P2PModes.Section)
             {
                 foreach (Node node in Section.Nodes)
                 {
@@ -145,7 +140,7 @@ namespace GDO.Core
                     }
                 }
             }
-            else if (P2PMode == (int)P2PModes.Neighbours)
+            else if (P2PMode == (int)Cave.P2PModes.Neighbours)
             {
                 int[,] neighbours = Cave.GetNeighbourMap(Id);
                 foreach (int neighbourId in neighbours)
