@@ -45,57 +45,58 @@
             });
         });
     </script>
-<div>
-    @{
-        var path = "";
-        var imgname = "";
-        if (IsPost)
-        {
-            
-            WebImage photo = WebImage.GetImageFromRequest();
-            if (photo != null)
+    <div>
+        @{
+            var path = "";
+            var imgname = "";
+            if (IsPost)
             {
-                imgname = Path.GetFileName(photo.FileName);
-                //foldername
-                path = @"\Web\ImageTiles\images\" + imgname;
-                photo.Save(@"~\" + path);
+
+                WebImage photo = WebImage.GetImageFromRequest();
+                if (photo != null)
+                {
+                    imgname = Path.GetFileName(photo.FileName);
+                    //foldername
+                    Directory.CreateDirectory(@"~\Web\ImageTiles\images");
+                    path = @"\Web\ImageTiles\images\" + imgname;
+                    photo.Save(@"~\" + path);
+                }
             }
         }
-    }
 
-    <div>
-        <h1>Upload Image</h1>
-        <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
-            <fieldset>
-                <legend> Upload Image </legend>
-                <label for="Image">Image</label>
-                <input type="file" name="Image" id="select_image">
-                <br>
-                <input id="submit_image" type="submit" value="Submit"/>
-                <br>
-                @if (path != "")
-                {
+        <div>
+            <h1>Upload Image</h1>
+            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <legend> Upload Image </legend>
+                    <label for="Image">Image</label>
+                    <input type="file" name="Image" id="select_image">
                     <br>
-                    <div class="result">
-                        <div id="image_folder" style="visibility: hidden; display:inline;"></div>
-                        <img id="thumbnail_image" src="\Web\ImageTiles\images\@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px"/>
-                    </div>
+                    <input id="submit_image" type="submit" value="Submit" />
+                    <br>
+                    @if (path != "")
+                    {
+                        <br>
+                        <div class="result">
+                            <div id="image_folder" style="visibility: hidden; display:inline;"></div>
+                            <img id="thumbnail_image" src="\Web\ImageTiles\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                        </div>
 
-                }
-                else
-                {
-                    <br>
-                    <div class="result">
-                        <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
-                    </div>
-                }
-            </fieldset>
-        </form>
+                    }
+                    else
+                    {
+                        <br>
+                        <div class="result">
+                            <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                        </div>
+                    }
+                </fieldset>
+            </form>
+        </div>
     </div>
-</div>
-@if (path != "")
-{
-    <script>
+    @if (path != "")
+    {
+        <script>
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
@@ -104,7 +105,7 @@
                 gdo.net.app["ImageTiles"].server.requestImageName(gdo.controlId);
             });
         });
-    </script>
-}
+        </script>
+    }
 </body>
 </html>

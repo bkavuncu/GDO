@@ -1,14 +1,13 @@
-﻿
-$(function() {
+﻿$(function () {
     gdo.consoleOut('.IMAGETILES', 1, 'Loaded Image Tiles JS');
-    $.connection.imageTilesAppHub.client.receiveImageName = function (imageName) {
+    $.connection.imageTilesAppHub.client.receiveImageName = function (imageName, imageNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.controlId + ": Downloading Image : " + imageName);
-            $("iframe").contents().find("#thumbnail_image").attr("src", "\\Web\\ImageTiles\\images\\" + imageName);
+            $("iframe").contents().find("#thumbnail_image").attr("src", "\\Web\\ImageTiles\\images\\" + imageNameDigit + "\\thumb.png");
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.clientId + ": Downloading Image : " + imageName + "_" + gdo.net.node[gdo.clientId].appInstanceId + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");
-            $("iframe").contents().find("#image_tile").attr("src", "\\Web\\ImageTiles\\images\\" + imageName + "_" + gdo.net.node[gdo.clientId].appInstanceId + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");
-       }
+            $("iframe").contents().find("#image_tile").attr("src", "\\Web\\ImageTiles\\images\\" + imageNameDigit + "\\" + "crop" + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");
+        }
     }
 });
 
@@ -29,10 +28,6 @@ gdo.net.app["ImageTiles"].terminateClient = function () {
     gdo.consoleOut('.IMAGETILES', 1, 'Terminating Image Tiles App Client at Node ' + gdo.clientId);
 }
 
-gdo.net.app["ImageTiles"].terminateControl = function () {
+gdo.net.app["ImageTiles"].ternminateControl = function () {
     gdo.consoleOut('.IMAGETILES', 1, 'Terminating Image Tiles App Control at Instance ' + gdo.controlId);
 }
-
-
-
-           

@@ -18,14 +18,14 @@ using GDO.Utility;
 
 namespace GDO.Apps.ImageTiles
 {
-    [Export(typeof (IAppHub))]
+    [Export(typeof(IAppHub))]
     public class ImageTilesAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "ImageTiles";
-        public int P2PMode { get; set; } = (int) Cave.P2PModes.Neighbours;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new ImageTilesApp().GetType();
         public void JoinGroup(int instanceId)
-        { 
+        {
             Groups.Add(Context.ConnectionId, "" + instanceId);
         }
         public void ExitGroup(int instanceId)
@@ -39,8 +39,8 @@ namespace GDO.Apps.ImageTiles
             {
                 try
                 {
-                    ((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).ProcessImage(imageName,mode);
-                    SendImageNames(instanceId, imageName);
+                    string imageNameDigit = ((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).ProcessImage(imageName, mode);
+                    SendImageNames(instanceId, imageName, imageNameDigit);
                 }
                 catch (Exception e)
                 {
@@ -49,12 +49,12 @@ namespace GDO.Apps.ImageTiles
             }
         }
 
-        public void SendImageNames(int instanceId, string imageName)
+        public void SendImageNames(int instanceId, string imageName, string imageNameDigit)
         {
             try
             {
                 //Clients.All.receiveImageName(imageName);
-                Clients.Group(""+ instanceId).receiveImageName(imageName);
+                Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
             }
             catch (Exception e)
             {
@@ -68,9 +68,10 @@ namespace GDO.Apps.ImageTiles
             {
                 try
                 {
-                    if (((ImageTilesApp) Cave.Apps["ImageTiles"].Instances[instanceId]).ImageName != null)
+                    if (((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).ImageName != null)
                     {
-                        Clients.Caller.receiveImageName(((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).ImageName);
+                        Clients.Caller.receiveImageName(((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).ImageName,
+                                                        ((ImageTilesApp)Cave.Apps["ImageTiles"].Instances[instanceId]).ImageNameDigit);
                     }
                 }
                 catch (Exception e)

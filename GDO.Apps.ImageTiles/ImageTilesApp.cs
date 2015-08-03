@@ -13,8 +13,8 @@ namespace GDO.Apps.ImageTiles
 {
     enum Mode
     {
-        CROP=1,
-        FIT=0
+        CROP = 1,
+        FIT = 0
     };
     public class ImageTilesApp : IAppInstance
     {
@@ -22,19 +22,40 @@ namespace GDO.Apps.ImageTiles
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public string ImageName { get; set; }
+        public string ImageNameDigit { get; set; }
         public Image[,] Tiles { get; set; }
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images");
         }
 
-        public void ProcessImage(string imageName, int mode)
+        public string ProcessImage(string imageName, int mode)
         {
             this.ImageName = imageName;
-            String path = Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images\"+ ImageName;
-            Image image = Image.FromFile(path);
+
+            String basePath = Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images\";
+            String path1 = basePath + ImageName;
+            Random imgDigitGenerator = new Random();
+            while (Directory.Exists(basePath + ImageNameDigit))
+            {
+                this.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
+            }
+            String path2 = basePath + ImageNameDigit + "\\origin.png";
+            Directory.CreateDirectory(basePath + ImageNameDigit);
+            File.Move(path1, path2);
+
+            //create origin
+            Image image = Image.FromFile(path2);
+            //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
+            //File.Delete(path1);
+
+            //create thumnail
+            Image thumb = image.GetThumbnailImage(200 * image.Width / image.Height, 200, () => false, IntPtr.Zero);
+            thumb.Save(basePath + ImageNameDigit + "\\thumb.png", ImageFormat.Png);
+
             double scaleWidth = (Section.Width + 0.000) / image.Width;
             double scaleHeight = (Section.Height + 0.000) / image.Height;
             int imageScaledWidth;
@@ -48,7 +69,7 @@ namespace GDO.Apps.ImageTiles
                 scaleWidth < scaleHeight && mode == (int)Mode.FIT)
             {
                 imageScaledWidth = (image.Width - 1) / Section.Cols + 1; // ceiling
-                imageScaledHeight = (imageScaledWidth * (Section.Height/Section.Rows) - 1) / (Section.Width / Section.Cols) + 1;
+                imageScaledHeight = (imageScaledWidth * (Section.Height / Section.Rows) - 1) / (Section.Width / Section.Cols) + 1;
                 tempImageCols = Section.Cols;
                 tempImageRows = Math.Max(Section.Rows, (image.Height - 1) / imageScaledHeight + 1); // ceiling
             }
@@ -59,7 +80,7 @@ namespace GDO.Apps.ImageTiles
                 tempImageCols = Math.Max(Section.Cols, (image.Width - 1) / imageScaledWidth + 1); // ceiling
                 tempImageRows = Section.Rows;
             }
-            Tiles = new Image[tempImageCols,tempImageRows];
+            Tiles = new Image[tempImageCols, tempImageRows];
             for (int i = 0; i < tempImageCols; i++)
             {
                 for (int j = 0; j < tempImageRows; j++)
@@ -71,11 +92,11 @@ namespace GDO.Apps.ImageTiles
                         new Rectangle(i * imageScaledWidth, j * imageScaledHeight, imageScaledWidth, imageScaledHeight),
                         GraphicsUnit.Pixel);
                     graphics.Dispose();
-                    path = Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images\" + ImageName + @"_" + Id + @"_" + i + @"_" + j + @".png";
-                    Tiles[i, j].Save(path, ImageFormat.Png);
+                    path2 = basePath + ImageNameDigit + "\\" + "crop" + @"_" + i + @"_" + j + @".png";
+                    Tiles[i, j].Save(path2, ImageFormat.Png);
                 }
             }
-
+            return this.ImageNameDigit;
         }
     }
 }
