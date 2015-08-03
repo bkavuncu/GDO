@@ -14,6 +14,8 @@
  * Usage:
  *
  *     <script src="../loader.js?id=my-demo"></script>
+ * 
+ * BA
  */
 
 (function () {
@@ -58,12 +60,12 @@
 
     var scriptId = encodeURIComponent(scriptParams.id);
     if (!raw) {
-        document.write('<scr' + 'ipt type="text/javascript" src="lib/openlayer/build/ol.js"></scr' + 'ipt>');
+        document.write('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/build/ol.js"></scr' + 'ipt>');
     } else {
         window.CLOSURE_NO_DEPS = true; // we've got our own deps file
-        document.write('<scr' + 'ipt type="text/javascript" src="lib/openlayer/closure-library/closure/goog/base.js"></scr' + 'ipt>');
-        document.write('<scr' + 'ipt type="text/javascript" src="lib/openlayer/build/ol-deps.js"></scr' + 'ipt>');
-        document.write('<scr' + 'ipt type="text/javascript" src="scripts/ol.' + scriptId + '.require.js"></scr' + 'ipt>');
+        parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/closure-library/closure/goog/base.js"></scr' + 'ipt>');
+        parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/build/ol-deps.js"></scr' + 'ipt>');
+        parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/ol.' + scriptId + '.require.js"></scr' + 'ipt>');
     }
-    document.write('<scr' + 'ipt type="text/javascript" src="scripts/ol.' + scriptId + '.js"></scr' + 'ipt>');
+    parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/ol.' + scriptId + '.js"></scr' + 'ipt>');
 }());

@@ -184,6 +184,7 @@
     <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
     <None Include="Properties\PublishProfiles\FTP.pubxml" />
     <None Include="Properties\PublishProfiles\FTP1.pubxml" />
+    <Content Include="Web\Initialize.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />

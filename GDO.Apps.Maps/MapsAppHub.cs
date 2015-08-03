@@ -22,5 +22,47 @@ namespace GDO.Apps.Maps
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
+
+        public void UploadMapPosition(int instanceId, double longtitude, double latitude, int resolution, int zoom)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(longtitude,latitude,resolution,zoom);
+                    BroadcastMapUpdates(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestMapUpdate(int instanceId, int sectionCol, int sectionRow)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    if (((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).initialUpload)
+                    {
+                        MapPosition local = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetLocalMapPosition(sectionCol, sectionRow);
+                        Clients.Caller.receiveMapUpdate(instanceId, local.Longtitude, local.Latitude, local.Resolution, local.Zoom);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            
+            ;
+        }
+
+        public void BroadcastMapUpdates(int instanceId)
+        {
+            Clients.Group("" + instanceId).receiveMapUpdateNotification(instanceId);
+        }
     }
 }

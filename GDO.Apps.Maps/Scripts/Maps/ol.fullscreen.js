@@ -1,8 +1,8 @@
-﻿var view = new ol.View({
+﻿gdo.net.app["Maps"].view = new ol.View({
     center: [-9101767, 2822912],
     zoom: 11
 });
-var map = new ol.Map({
+gdo.net.app["Maps"].map = new ol.Map({
     controls: [
       new ol.control.FullScreen()
     ],
@@ -16,5 +16,5 @@ var map = new ol.Map({
     ],
     renderer: exampleNS.getRendererFromQueryString(),
     target: 'map',
-    view: view
+    view: gdo.net.app["Maps"].view
 });

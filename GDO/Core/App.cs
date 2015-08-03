@@ -43,6 +43,7 @@ namespace GDO.Core
                 int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
                 IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
                 AppConfiguration conf;
+                Cave.Sections[sectionId].CalculateDimensions();
                 Configurations.TryGetValue(configName, out conf);
                 instance.init(instanceId, Cave.Sections[sectionId], conf);
                 Instances.TryAdd(instanceId,instance);

@@ -627,5 +627,10 @@ namespace GDO.Core
         {
             Groups.Remove(Context.ConnectionId, "" + sectionId);
         }
+
+        public void Initialize()
+        {
+            //dummy
+        }
     }
 }
