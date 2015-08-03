@@ -57,15 +57,15 @@
     }
 
     var raw = pageParams.mode && pageParams.mode.toLowerCase() === 'raw';
-
+    var $head = $('head');
     var scriptId = encodeURIComponent(scriptParams.id);
     if (!raw) {
         document.write('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/build/ol.js"></scr' + 'ipt>');
     } else {
         window.CLOSURE_NO_DEPS = true; // we've got our own deps file
-        parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/closure-library/closure/goog/base.js"></scr' + 'ipt>');
-        parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/build/ol-deps.js"></scr' + 'ipt>');
-        parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/ol.' + scriptId + '.require.js"></scr' + 'ipt>');
+        $head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/closure-library/closure/goog/base.js"></scr' + 'ipt>');
+        p$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/lib/openlayer/build/ol-deps.js"></scr' + 'ipt>');
+        $head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/ol.' + scriptId + '.require.js"></scr' + 'ipt>');
     }
-    parent.$head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/ol.' + scriptId + '.js"></scr' + 'ipt>');
+    $head.append('<scr' + 'ipt type="text/javascript" src="../../Scripts/Maps/ol.' + scriptId + '.js"></scr' + 'ipt>');
 }());

@@ -56,10 +56,36 @@
 <body>
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/Maps/lib/openlayer/resources/example-behaviour.js" type="text/javascript"></script>
+    <script src="../../Scripts/Maps/ol.loader.js?id=fullscreen" type="text/javascript"></script>
     <script>
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
+
+                gdo.net.app["Maps"].map.getView().on('change:resolution', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+                gdo.net.app["Maps"].map.getView().on('change:center', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+                gdo.net.app["Maps"].map.getView().on('change:rotation', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+                gdo.net.app["Maps"].map.getView().on('change:size', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+                gdo.net.app["Maps"].map.getView().on('change:view', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+                gdo.net.app["Maps"].map.getView().on('change:zoom', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+                gdo.net.app["Maps"].map.getView().on('change:target', function () {
+                    gdo.net.app["Maps"].changeEvent();
+                });
+
+
                 gdo.net.app["Maps"].initControl();
             });
         });
@@ -72,31 +98,6 @@
     </div>
 </div>
 
-<script src="../../Scripts/Maps/lib/openlayer/resources/example-behaviour.js" type="text/javascript"></script>
-<script src="../../Scripts/Maps/ol.loader.js?id=fullscreen" type="text/javascript"></script>
-<script type="text/javascript">
-    var gdo = parent.gdo;
-    gdo.net.app["Maps"].map.getView().on('change:resolution', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-    gdo.net.app["Maps"].map.getView().on('change:center', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-    gdo.net.app["Maps"].map.getView().on('change:rotation', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-    gdo.net.app["Maps"].map.getView().on('change:size', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-    gdo.net.app["Maps"].map.getView().on('change:view', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-    gdo.net.app["Maps"].map.getView().on('change:zoom', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-    gdo.net.app["Maps"].map.getView().on('change:target', function () {
-        gdo.net.app["Maps"].changeEvent();
-    });
-</script>
+
 </body>
 </html>
