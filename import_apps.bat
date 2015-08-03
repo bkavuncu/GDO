@@ -9,7 +9,7 @@ for /D %%a in (GDO.Apps.*) do (
 	mkdir "%cd%\GDO\Scripts\"!str:GDO.Apps.=!
 	mkdir "%cd%\GDO\Web\"!str:GDO.Apps.=!
 	copy "%cd%\%%a\bin\%%a.*" "%cd%\GDO\bin\%%a.*"
-	xcopy /E "%cd%\%%a\Configurations\"!str:GDO.Apps.=! "%cd%\GDO\Configurations\"!str:GDO.Apps.=!\
-	xcopy /E "%cd%\%%a\Scripts\"!str:GDO.Apps.=! "%cd%\GDO\Scripts\"!str:GDO.Apps.=!\
-	xcopy /E "%cd%\%%a\Web\"!str:GDO.Apps.=! "%cd%\GDO\Web\"!str:GDO.Apps.=!\
+	echo a | xcopy /E "%cd%\%%a\Configurations\"!str:GDO.Apps.=! "%cd%\GDO\Configurations\"!str:GDO.Apps.=!\
+	echo a | xcopy /E "%cd%\%%a\Scripts\"!str:GDO.Apps.=! "%cd%\GDO\Scripts\"!str:GDO.Apps.=!\
+	echo a | xcopy /E "%cd%\%%a\Web\"!str:GDO.Apps.=! "%cd%\GDO\Web\"!str:GDO.Apps.=!\
 )

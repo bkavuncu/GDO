@@ -40,12 +40,13 @@ namespace GDO.Core
         {
             if (Configurations.ContainsKey(configName))
             {
-                int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Instances);
+                int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
                 IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
                 AppConfiguration conf;
                 Configurations.TryGetValue(configName, out conf);
                 instance.init(instanceId, Cave.Sections[sectionId], conf);
                 Instances.TryAdd(instanceId,instance);
+                Cave.Instances.TryAdd(instanceId,instance);
                 return instanceId;
             }
             else
@@ -60,6 +61,7 @@ namespace GDO.Core
             {
                 IAppInstance instance;
                 Instances.TryRemove(instanceId, out instance);
+                Cave.Instances.TryRemove(instanceId,out instance);
                 return true;
             }
             else

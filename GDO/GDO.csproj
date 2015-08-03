@@ -157,9 +157,6 @@
     <Content Include="Scripts\gdo.fs.js" />
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
-    <Content Include="Scripts\ol.fullscreen-require.js" />
-    <Content Include="Scripts\ol.fullscreen.js" />
-    <Content Include="Scripts\ol.loader.js" />
     <Content Include="Scripts\peer.js" />
   </ItemGroup>
   <ItemGroup>
