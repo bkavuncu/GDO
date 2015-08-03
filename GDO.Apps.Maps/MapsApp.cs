@@ -24,7 +24,7 @@ namespace GDO.Apps.Maps
             this.Configuration = configuration;
         }
 
-        public void SetGlobalMapPosition(double longtitude, double latitude, int resolution, int zoom)
+        public void SetGlobalMapPosition(double longtitude, double latitude, double resolution, int zoom)
         {
             initialUpload = true;
             Global = new MapPosition(longtitude,latitude,resolution,zoom,Section.Width,Section.Height);
@@ -33,7 +33,7 @@ namespace GDO.Apps.Maps
         public MapPosition GetLocalMapPosition(int sectionCol, int sectionRow)
         {
             MapPosition Local = new MapPosition();
-            Local.Resolution = Global.Resolution/(Section.NumNodes/2);
+            Local.Resolution = Global.Resolution / (Section.NumNodes/2);
             Local.Width = (Cave.NodeWidth*sectionCol) - (Cave.NodeWidth/2);
             Local.Height = (Cave.NodeHeight * sectionRow) - (Cave.NodeHeight / 2);
             double dn = Section.Pixels * ((Section.Height/ 2) - Local.Height);
@@ -42,7 +42,8 @@ namespace GDO.Apps.Maps
             double dLon = (de / (R * Math.Cos(Global.Latitude * Math.PI / 180))) * 180 / Math.PI;
             Local.Latitude = Global.Latitude + dLat;
             Local.Longtitude = Global.Longtitude + dLon;
-            return Local;
+            return Global;
+            //return Local;
         }
 
     }
@@ -50,7 +51,7 @@ namespace GDO.Apps.Maps
     {
         public double Longtitude { get; set; }
         public double Latitude { get; set; }
-        public int Resolution { get; set; }
+        public double Resolution { get; set; }
         public int Zoom { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
@@ -63,7 +64,7 @@ namespace GDO.Apps.Maps
             this.Width = -1;
             this.Height = -1;
         }
-        public MapPosition(double longtitude, double latitude, int resolution, int zoom, int width, int height)
+        public MapPosition(double longtitude, double latitude, double resolution, int zoom, int width, int height)
         {
             this.Longtitude = longtitude;
             this.Latitude = latitude;

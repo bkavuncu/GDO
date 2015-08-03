@@ -1,20 +1,19 @@
-﻿gdo.net.app["Maps"].view = new ol.View({
+﻿parent.gdo.net.app["Maps"].view = new parent.gdo.net.app["Maps"].ol.View({
     center: [-9101767, 2822912],
     zoom: 11
 });
-gdo.net.app["Maps"].map = new ol.Map({
+parent.gdo.net.app["Maps"].map = new parent.gdo.net.app["Maps"].ol.Map({
     controls: [
-      new ol.control.FullScreen()
+      new parent.gdo.net.app["Maps"].ol.control.FullScreen()
     ],
     layers: [
-      new ol.layer.Tile({
-          source: new ol.source.BingMaps({
+      new parent.gdo.net.app["Maps"].ol.layer.Tile({
+          source: new parent.gdo.net.app["Maps"].ol.source.BingMaps({
               key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
               imagerySet: 'Aerial'
           })
       })
     ],
-    renderer: exampleNS.getRendererFromQueryString(),
     target: 'map',
-    view: gdo.net.app["Maps"].view
+    view: parent.gdo.net.app["Maps"].view
 });

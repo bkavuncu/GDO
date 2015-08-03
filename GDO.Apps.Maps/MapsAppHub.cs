@@ -23,13 +23,13 @@ namespace GDO.Apps.Maps
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void UploadMapPosition(int instanceId, double longtitude, double latitude, int resolution, int zoom)
+        public void UploadMapPosition(int instanceId, string longtitude, string latitude, string resolution, int zoom)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(longtitude,latitude,resolution,zoom);
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(Convert.ToDouble(longtitude), Convert.ToDouble(latitude), Convert.ToDouble(resolution),zoom);
                     BroadcastMapUpdates(instanceId);
                 }
                 catch (Exception e)
@@ -63,6 +63,7 @@ namespace GDO.Apps.Maps
         public void BroadcastMapUpdates(int instanceId)
         {
             Clients.Group("" + instanceId).receiveMapUpdateNotification(instanceId);
+            //Clients.All.receiveMapUpdateNotification(instanceId);
         }
     }
 }
