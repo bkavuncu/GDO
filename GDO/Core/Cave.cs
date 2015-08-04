@@ -465,7 +465,7 @@ namespace GDO.Core
                 string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);
                 foreach (string filePath in filePaths)
                 {
-                    dynamic json = Utilities.LoadJsonFile(filePath);
+                    Newtonsoft.Json.Linq.JObject json = Utilities.LoadJsonFile(filePath);
                     if (json != null)
                     {
                         string configurationName = Utilities.RemoveString(filePath, path + "\\");
@@ -488,6 +488,7 @@ namespace GDO.Core
             {
                 appList.Add(appEntry.Value.Name);
             }
+            appList.Sort();
             return appList;
         }
 

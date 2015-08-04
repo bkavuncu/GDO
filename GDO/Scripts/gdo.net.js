@@ -606,6 +606,8 @@ gdo.net.processNode = function (node)
 {
     gdo.net.node[node.Id].col = node.Col;
     gdo.net.node[node.Id].row = node.Row;
+    gdo.net.node[node.Id].width = node.Width;
+    gdo.net.node[node.Id].height = node.Height;
     gdo.net.node[node.Id].sectionCol = node.SectionCol;
     gdo.net.node[node.Id].sectionRow = node.SectionRow;
     gdo.net.node[node.Id].sectionId = node.SectionId;

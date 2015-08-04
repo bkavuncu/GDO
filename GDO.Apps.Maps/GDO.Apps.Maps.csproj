@@ -79,8 +79,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\Maps\sample1.json" />
-    <Content Include="Configurations\Maps\sample2.json" />
+    <Content Include="Configurations\Maps\London.json" />
+    <Content Include="Configurations\Maps\Istanbul.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Web.Debug.config">

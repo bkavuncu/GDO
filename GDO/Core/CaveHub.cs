@@ -426,7 +426,7 @@ namespace GDO.Core
                     if (Cave.ContainsInstance(instanceId))
                     {
                         Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId), Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Name,
-                            Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json));
+                            Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()));
                     }
                 }
                 catch (Exception e)

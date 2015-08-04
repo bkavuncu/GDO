@@ -23,14 +23,14 @@ namespace GDO.Apps.Maps
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void UploadGlobalMapPosition(int instanceId, string[] longtitudes, string[] latitudes, string resolution, int width, int height,  int zoom)
+        public void UploadMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height,  int zoom)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(longtitudes, latitudes, resolution,width, height,zoom);
-                    BroadcastGlobalMapPosition(instanceId, longtitudes, latitudes, resolution, width, height, zoom);
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
+                    BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                 }
                 catch (Exception e)
                 {
@@ -39,51 +39,36 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void RequestGlobalMapPosition(int instanceId)
+        public void RequestMapPosition(int instanceId, bool control)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    MapPosition global = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetGlobalMapPosition();
-                    if (global != null)
+                    if (control)
                     {
-                        Clients.Caller.receiveGlobalMapPosition(instanceId, global.Longtitudes, global.Latitudes, global.Resolution, global.Width, global.Height, global.Zoom);
+                            MapPosition position = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetMapPosition();
+                            Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution);
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-        public void BroadcastGlobalMapPosition(int instanceId, string[] longtitudes, string[] latitudes, string resolution, int width, int height, int zoom)
-        {
-            Clients.Group("" + instanceId).receiveGlobalMapPosition(instanceId, longtitudes, latitudes, resolution, width, height, zoom);
-        }
-
-        /*public void BroadcastMapUpdates(int instanceId)
-        {
-            Clients.Group("" + instanceId).receiveMapUpdateNotification(instanceId);
-        }*/
-
-        /*public void RequestMapUpdate(int instanceId, int sectionCol, int sectionRow)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    if (((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).initialUpload)
+                    else
                     {
-                        MapPosition local = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetLocalMapPosition(sectionCol, sectionRow);
-                        Clients.Caller.receiveMapUpdate(instanceId, local.Longtitude, local.Latitude, local.Resolution, local.Zoom);
+                        if (((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).IsInitialized)
+                        {
+                            MapPosition position = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetMapPosition();
+                            Clients.Caller.receiveMapPosition(instanceId, position.TopLeft, position.Center, position.BottomRight, position.Resolution, position.Width, position.Height, position.Zoom);
+                        }
                     }
+
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
             }
-        }*/
+        }
+        public void BroadcastMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
+        {
+            Clients.Group("" + instanceId).receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
+        }
     }
 }

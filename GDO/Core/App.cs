@@ -83,6 +83,7 @@ namespace GDO.Core
             {
                 configurationList.Add(configurationEntry.Value.Name);
             }
+            configurationList.Sort();
             return configurationList;
         }
     }

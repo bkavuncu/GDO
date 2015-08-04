@@ -3,9 +3,6 @@
     zoom: 11
 });
 parent.gdo.net.app["Maps"].map = new parent.gdo.net.app["Maps"].ol.Map({
-    controls: [
-      new parent.gdo.net.app["Maps"].ol.control.FullScreen()
-    ],
     layers: [
       new parent.gdo.net.app["Maps"].ol.layer.Tile({
           source: new parent.gdo.net.app["Maps"].ol.source.BingMaps({
