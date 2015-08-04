@@ -1,7 +1,19 @@
 ﻿
 $(function() {
     gdo.consoleOut('.MAPS', 1, 'Loaded Maps JS');
-    $.connection.mapsAppHub.client.receiveMapUpdate = function (instanceId, longtitude, latitude, resolution, zoom) {
+    $.connection.mapsAppHub.client.receiveGlobalMapPosition = function(instanceId, longtitude, latitude, resolution, zoom) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
+            var center = [longtitude, latitude];
+            gdo.consoleOut('.MAPS', 4, center);
+            //var center = gdo.net.app["Maps"].calculateOffsetPosition(longtitude, latitude, -gdo.net.app["Maps"].sectionOffsetY, gdo.net.app["Maps"].sectionOffsetX);
+            gdo.consoleOut('.MAPS', 5, center);
+            parent.gdo.net.app["Maps"].map.getView().setCenter(center);
+            parent.gdo.net.app["Maps"].map.getView().setZoom(zoom);
+            parent.gdo.net.app["Maps"].map.getView().setResolution(resolution);
+        }
+    }
+
+    /*$.connection.mapsAppHub.client.receiveMapUpdate = function (instanceId, longtitude, latitude, resolution, zoom) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var center = [longtitude,latitude];
             parent.gdo.net.app["Maps"].map.getView().setCenter(center);
@@ -17,13 +29,39 @@ $(function() {
             //gdo.consoleOut('.Maps', 1, 'Receieved a Map Update Notification at ' + gdo.clientId);
             gdo.net.app["Maps"].server.requestMapUpdate(gdo.net.node[gdo.clientId].appInstanceId, gdo.net.node[gdo.clientId].sectionCol, gdo.net.node[gdo.clientId].sectionRow);
         }
-    }
+    }*/
 });
 
+gdo.net.app["Maps"].calculateOffsetPosition = function (longtitude, latitude, distanceNorth, distanceEast) {
+
+    var latitudeOffset = (distanceNorth / gdo.net.app["Maps"].R) * 180 / Math.PI;
+    var longtitudeOffset = (distanceEast / (gdo.net.app["Maps"].R * Math.cos(latitude * Math.PI / 180))) * 180 / Math.PI;
+    gdo.consoleOut('.MAPS', 3, longtitudeOffset + ", " + latitudeOffset);
+    return [longtitude + longtitudeOffset, latitude + latitudeOffset];
+}
 
 gdo.net.app["Maps"].initClient = function () {
     gdo.consoleOut('.Maps', 1, 'Initializing Maps App Client at Node ' + gdo.clientId);
-    gdo.net.app["Maps"].server.requestMapUpdate(gdo.net.node[gdo.clientId].appInstanceId, gdo.net.node[gdo.clientId].sectionCol, gdo.net.node[gdo.clientId].sectionRow);
+
+    gdo.net.app["Maps"].C = 156543.034;
+    gdo.net.app["Maps"].R = 6378137;
+
+    gdo.net.app["Maps"].sectionWidth = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width;
+    gdo.net.app["Maps"].sectionHeigth = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height;
+    gdo.net.app["Maps"].sectionPixels = gdo.net.app["Maps"].sectionWidth * gdo.net.app["Maps"].sectionHeight;
+    gdo.net.app["Maps"].sectionOffsetX = gdo.net.app["Maps"].sectionWidth / 2;
+    gdo.net.app["Maps"].sectionOffsetY = gdo.net.app["Maps"].sectionHeigth / 2;
+
+    gdo.net.app["Maps"].nodeWidth = gdo.net.node[gdo.clientId].width;
+    gdo.net.app["Maps"].nodeHeigth = gdo.net.node[gdo.clientId].height;
+    gdo.net.app["Maps"].nodePixels = gdo.net.app["Maps"].nodeWidth * gdo.net.app["Maps"].nodeHeigth;
+    gdo.net.app["Maps"].nodeOffsetX = gdo.net.app["Maps"].nodeWidth * (gdo.net.node[gdo.clientId].sectionCol + 1);
+    gdo.net.app["Maps"].nodeOffsetY = gdo.net.app["Maps"].nodeHeight * (gdo.net.node[gdo.clientId].sectionRow + 1);
+
+    gdo.net.app["Maps"].offsetX = gdo.net.app["Maps"].sectionOffsetX - gdo.net.app["Maps"].nodeOffsetX;
+    gdo.net.app["Maps"].offsetY = gdo.net.app["Maps"].sectionOffsetY - gdo.net.app["Maps"].nodeOffsetY;
+
+    gdo.net.app["Maps"].server.requestGlobalMapPosition(gdo.net.node[gdo.clientId].appInstanceId);
 }
 
 gdo.net.app["Maps"].initControl = function () {
@@ -46,7 +84,7 @@ gdo.net.app["Maps"].uploadMapPosition = function () {
     //var width = size[0];
     //var height = size[1];
     //gdo.consoleOut('.Maps', 1, 'Center ' + center + ' ,zoom ' + zoom + ' ,resolution ' + resolution);
-    gdo.net.app["Maps"].server.uploadMapPosition(gdo.net.node[gdo.clientId].appInstanceId, center[0], center[1], gdo.net.app["Maps"].map.getView().getResolution(), gdo.net.app["Maps"].map.getView().getZoom());
+    gdo.net.app["Maps"].server.uploadGlobalMapPosition(gdo.net.node[gdo.clientId].appInstanceId, center[0], center[1], gdo.net.app["Maps"].map.getView().getResolution(), gdo.net.app["Maps"].map.getView().getZoom());
 }
 
 gdo.net.app["Maps"].changeEvent = function() {

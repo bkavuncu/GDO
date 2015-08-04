@@ -1,0 +1,75 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+    </style>
+</head>
+<body>
+<script src="../../Scripts/jquery-1.11.3.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script>
+    $(function() {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Init Control');
+        gdo.net.app["Youtube"].initControl();
+    });
+
+</script>
+<div>
+    <h1>Youtube App Control</h1>
+    <h3>Update Channel Name</h3>
+    Channel Name: <input type="text" id="new_channel_name">
+    <button id="update_channel_name_submit">Submit</button>
+    <h3>Get Next videos</h3>
+    <p>Channel Name: <span id="current_channel_name"></span></p>
+    <button id="get_next_64_videos">Next</button>
+</div>
+
+<script>
+    $("#update_channel_name_submit").click(function () {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Updating channel name: ' + $("#new_channel_name").val());
+        gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_channel_name").val());
+        //$.connection.youtubeAppHub.server.updateChannelName(gdo.controlId, $("#new_channel_name").val());
+        gdo.consoleOut('.Youtube', 1, 'Updated channel name: ' + $("#new_channel_name").val());
+    });
+    $("#get_next_64_videos").click(function() {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Getting videos');
+        gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+    });
+</script>
+
+</body>
+
+</html>

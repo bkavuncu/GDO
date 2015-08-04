@@ -41,7 +41,7 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.net.app["ImageTiles"].initControl();
+                gdo.net.app["Images"].initControl();
             });
         });
     </script>
@@ -57,8 +57,8 @@
                 {
                     imgname = Path.GetFileName(photo.FileName);
                     //foldername
-                    Directory.CreateDirectory(@"~\Web\ImageTiles\images");
-                    path = @"\Web\ImageTiles\images\" + imgname;
+                    Directory.CreateDirectory(@"~\Web\Images\images");
+                    path = @"\Web\Images\images\" + imgname;
                     photo.Save(@"~\" + path);
                 }
             }
@@ -79,7 +79,7 @@
                         <br>
                         <div class="result">
                             <div id="image_folder" style="visibility: hidden; display:inline;"></div>
-                            <img id="thumbnail_image" src="\Web\ImageTiles\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                            <img id="thumbnail_image" src="\Web\Images\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
                         </div>
 
                     }
@@ -101,8 +101,8 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
                 gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                gdo.net.app["ImageTiles"].server.changeImageName(gdo.controlId, "\@imgname", gdo.net.app["ImageTiles"].displayMode);
-                gdo.net.app["ImageTiles"].server.requestImageName(gdo.controlId);
+                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "\@imgname", gdo.net.app["Images"].displayMode);
+                gdo.net.app["Images"].server.requestImageName(gdo.controlId);
             });
         });
         </script>

@@ -9,14 +9,14 @@ using System.Web;
 using GDO.Core;
 using GDO.Utility;
 
-namespace GDO.Apps.ImageTiles
+namespace GDO.Apps.Images
 {
     enum Mode
     {
         CROP = 1,
         FIT = 0
     };
-    public class ImageTilesApp : IAppInstance
+    public class ImagesApp : IAppInstance
     {
         public int Id { get; set; }
         public Section Section { get; set; }
@@ -29,14 +29,14 @@ namespace GDO.Apps.ImageTiles
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images");
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Web\Images\images");
         }
 
         public string ProcessImage(string imageName, int mode)
         {
             this.ImageName = imageName;
 
-            String basePath = Directory.GetCurrentDirectory() + @"\Web\ImageTiles\images\";
+            String basePath = Directory.GetCurrentDirectory() + @"\Web\Images\images\";
             String path1 = basePath + ImageName;
             Random imgDigitGenerator = new Random();
             while (Directory.Exists(basePath + ImageNameDigit))

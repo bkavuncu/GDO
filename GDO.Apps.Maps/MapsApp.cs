@@ -42,10 +42,19 @@ namespace GDO.Apps.Maps
             double dLon = (de / (R * Math.Cos(Global.Latitude * Math.PI / 180))) * 180 / Math.PI;
             Local.Latitude = Global.Latitude + dLat;
             Local.Longtitude = Global.Longtitude + dLon;
-            return Global;
-            //return Local;
+            return Local;
         }
-
+        public MapPosition GetGlobalMapPosition()
+        {
+            if (initialUpload)
+            {
+                return Global;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
     public class MapPosition
     {

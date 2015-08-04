@@ -23,14 +23,14 @@ namespace GDO.Apps.Maps
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void UploadMapPosition(int instanceId, string longtitude, string latitude, string resolution, int zoom)
+        public void UploadGlobalMapPosition(int instanceId, string longtitude, string latitude, string resolution, int zoom)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(Convert.ToDouble(longtitude), Convert.ToDouble(latitude), Convert.ToDouble(resolution),zoom);
-                    BroadcastMapUpdates(instanceId);
+                    BroadcastGlobalMapPosition(instanceId, longtitude, latitude, resolution, zoom);
                 }
                 catch (Exception e)
                 {
@@ -39,13 +39,41 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void RequestMapUpdate(int instanceId, int sectionCol, int sectionRow)
+        public void RequestGlobalMapPosition(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).initialUpload)
+                    MapPosition global = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetGlobalMapPosition();
+                    if (global != null)
+                    {
+                        Clients.Caller.receiveGlobalMapPosition(instanceId, global.Longtitude, global.Latitude, global.Resolution, global.Zoom);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        public void BroadcastGlobalMapPosition(int instanceId, string longtitude, string latitude, string resolution, int zoom)
+        {
+            Clients.Group("" + instanceId).receiveGlobalMapPosition(instanceId, Convert.ToDouble(longtitude), Convert.ToDouble(latitude), Convert.ToDouble(resolution), zoom);
+        }
+
+        /*public void BroadcastMapUpdates(int instanceId)
+        {
+            Clients.Group("" + instanceId).receiveMapUpdateNotification(instanceId);
+        }*/
+
+        /*public void RequestMapUpdate(int instanceId, int sectionCol, int sectionRow)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    if (((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).initialUpload)
                     {
                         MapPosition local = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetLocalMapPosition(sectionCol, sectionRow);
                         Clients.Caller.receiveMapUpdate(instanceId, local.Longtitude, local.Latitude, local.Resolution, local.Zoom);
@@ -56,14 +84,6 @@ namespace GDO.Apps.Maps
                     Console.WriteLine(e);
                 }
             }
-            
-            ;
-        }
-
-        public void BroadcastMapUpdates(int instanceId)
-        {
-            Clients.Group("" + instanceId).receiveMapUpdateNotification(instanceId);
-            //Clients.All.receiveMapUpdateNotification(instanceId);
-        }
+        }*/
     }
 }
