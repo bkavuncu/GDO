@@ -292,7 +292,7 @@ gdo.management.drawButtonTable = function () {
                     gdo.management.toggleAppTable = false;
                     gdo.management.toggleInstanceTable = true;
                     gdo.management.toggleConsole = false;
-                    gdo.management.toggleSectionTable = true;
+                    gdo.management.toggleSectionTable = false;
                     gdo.updateDisplayCanvas();
                 }
             }

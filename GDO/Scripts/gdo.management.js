@@ -251,8 +251,10 @@ gdo.management.drawHeaderTable = function () {
             if (gdo.management.toggleInstanceTable) {
                 gdo.management.toggleInstanceTable = false;
                 gdo.management.numToggleMenu--;
+                gdo.management.numToggleMenu--;
                 gdo.updateDisplayCanvas();
-            } else if (gdo.management.numToggleMenu < gdo.management.maxToggleMenu) {
+            } else if (gdo.management.numToggleMenu+1 < gdo.management.maxToggleMenu) {
+                gdo.management.numToggleMenu++;
                 gdo.management.numToggleMenu++;
                 gdo.management.toggleInstanceTable = true;
                 gdo.updateDisplayCanvas();
@@ -261,7 +263,7 @@ gdo.management.drawHeaderTable = function () {
     if (gdo.management.toggleInstanceTable) {
         $("#header_table_row_0_col_8").css("color", "lightgreen");
     } else {
-        if (gdo.management.numToggleMenu < gdo.management.maxToggleMenu) {
+        if (gdo.management.numToggleMenu+1 < gdo.management.maxToggleMenu) {
             $("#header_table_row_0_col_8").css("color", "white");
         } else {
             $("#header_table_row_0_col_8").css("color", "#777");

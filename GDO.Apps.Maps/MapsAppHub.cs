@@ -23,14 +23,14 @@ namespace GDO.Apps.Maps
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void UploadGlobalMapPosition(int instanceId, string longtitude, string latitude, string resolution, int zoom)
+        public void UploadGlobalMapPosition(int instanceId, string[] longtitudes, string[] latitudes, string resolution, int width, int height,  int zoom)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(Convert.ToDouble(longtitude), Convert.ToDouble(latitude), Convert.ToDouble(resolution),zoom);
-                    BroadcastGlobalMapPosition(instanceId, longtitude, latitude, resolution, zoom);
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetGlobalMapPosition(longtitudes, latitudes, resolution,width, height,zoom);
+                    BroadcastGlobalMapPosition(instanceId, longtitudes, latitudes, resolution, width, height, zoom);
                 }
                 catch (Exception e)
                 {
@@ -48,7 +48,7 @@ namespace GDO.Apps.Maps
                     MapPosition global = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetGlobalMapPosition();
                     if (global != null)
                     {
-                        Clients.Caller.receiveGlobalMapPosition(instanceId, global.Longtitude, global.Latitude, global.Resolution, global.Zoom);
+                        Clients.Caller.receiveGlobalMapPosition(instanceId, global.Longtitudes, global.Latitudes, global.Resolution, global.Width, global.Height, global.Zoom);
                     }
                 }
                 catch (Exception e)
@@ -57,9 +57,9 @@ namespace GDO.Apps.Maps
                 }
             }
         }
-        public void BroadcastGlobalMapPosition(int instanceId, string longtitude, string latitude, string resolution, int zoom)
+        public void BroadcastGlobalMapPosition(int instanceId, string[] longtitudes, string[] latitudes, string resolution, int width, int height, int zoom)
         {
-            Clients.Group("" + instanceId).receiveGlobalMapPosition(instanceId, Convert.ToDouble(longtitude), Convert.ToDouble(latitude), Convert.ToDouble(resolution), zoom);
+            Clients.Group("" + instanceId).receiveGlobalMapPosition(instanceId, longtitudes, latitudes, resolution, width, height, zoom);
         }
 
         /*public void BroadcastMapUpdates(int instanceId)

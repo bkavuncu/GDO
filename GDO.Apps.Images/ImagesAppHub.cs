@@ -53,7 +53,6 @@ namespace GDO.Apps.Images
         {
             try
             {
-                //Clients.All.receiveImageName(imageName);
                 Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
             }
             catch (Exception e)
