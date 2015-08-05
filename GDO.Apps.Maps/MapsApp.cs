@@ -13,6 +13,7 @@ namespace GDO.Apps.Maps
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public MapPosition Position { get; set; }
+        public string Style { get; set; }
         public bool IsInitialized = false;
 
         public void init(int instanceId, Section section, AppConfiguration configuration)

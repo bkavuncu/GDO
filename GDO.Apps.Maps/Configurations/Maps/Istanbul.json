@@ -1,5 +1,10 @@
 ﻿{
   "longtitude": "3260249.6364854947",
   "latitude": "4999514.430372002",
-  "resolution": "350"
+  "resolution": "350",
+  "styles": [
+    "Road",
+    "Aerial",
+    "AerialWithLabels"
+  ]
 }

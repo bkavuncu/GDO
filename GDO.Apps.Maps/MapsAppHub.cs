@@ -39,6 +39,22 @@ namespace GDO.Apps.Maps
             }
         }
 
+        public void UploadMapStyle(int instanceId, string style)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).Style = style;
+                    BroadcastMapStyle(instanceId, style);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void RequestMapPosition(int instanceId, bool control)
         {
             lock (Cave.AppLocks[instanceId])
@@ -66,9 +82,28 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+        public void RequestMapStyle(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    string style = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).Style;
+                     Clients.Caller.receiveMapStyle(instanceId, style);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
         public void BroadcastMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
         {
             Clients.Group("" + instanceId).receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
+        }
+        public void BroadcastMapStyle(int instanceId, string style)
+        {
+            Clients.Group("" + instanceId).receiveMapstyle(instanceId, style);
         }
     }
 }
