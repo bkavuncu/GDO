@@ -32,9 +32,23 @@
             border: 1px solid #000;
             margin: 10px 5px 0 0;
         }
+        .youtube_text {
+            color: #DDD;
+            font-size: 21px;
+        }
+        .youtube_button {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 100px;
+            height: 35px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
     </style>
 </head>
-<body>
+<body unselectable="on" class="unselectable">
 <script src="../../Scripts/jquery-1.11.3.min.js"></script>
 <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 <script>
@@ -47,12 +61,20 @@
 </script>
 <div>
     <h1>Youtube App Control</h1>
-    <h3>Update Channel Name</h3>
-    Channel Name: <input type="text" id="new_channel_name">
-    <button id="update_channel_name_submit">Submit</button>
-    <h3>Get Next videos</h3>
-    <p>Channel Name: <span id="current_channel_name"></span></p>
-    <button id="get_next_64_videos">Next</button>
+    <div class="youtube_text">
+        <b>Update Channel Name</b>
+        <br>
+        <fieldset>
+            Channel Name: <input type="text" id="new_channel_name">
+            <button id="update_channel_name_submit" class="youtube_button">Submit</button>
+        </fieldset>
+        <br>
+        <b>Get Next videos</b>
+        <fieldset>
+            Channel Name: <span id="current_channel_name"></span>
+            <button id="get_next_64_videos" class="youtube_button">Next</button>
+        </fieldset>
+    </div>
 </div>
 
 <script>

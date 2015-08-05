@@ -51,51 +51,25 @@
     </style>
 
 </head>
-<body>
+<body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-
     <script>
-        $(function () {
-            $(document).ready(function () {
+        $(function() {
+            $(document).ready(function() {
                 var gdo = parent.gdo;
-
-                gdo.net.app["Maps"].map.getView().on('change:resolution', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-                gdo.net.app["Maps"].map.getView().on('change:center', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-                gdo.net.app["Maps"].map.getView().on('change:rotation', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-                gdo.net.app["Maps"].map.getView().on('change:size', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-                gdo.net.app["Maps"].map.getView().on('change:view', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-                gdo.net.app["Maps"].map.getView().on('change:zoom', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-                gdo.net.app["Maps"].map.getView().on('change:target', function () {
-                    gdo.net.app["Maps"].changeEvent();
-                });
-
-
                 gdo.net.app["Maps"].initControl();
             });
         });
     </script>
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div id="map" class="map"></div>
+    <table id="map_table" unselectable="on" class="unselectable" style="width: 100%"></table>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div id="map" class="map"></div>
+            </div>
         </div>
     </div>
-</div>
-
-<script type="text/javascript" src="../../Scripts/Maps/ol.js"></script>
-<script type="text/javascript" src="../../Scripts/Maps/ol.fullscreen.js"></script>
+    <script type="text/javascript" src="../../Scripts/Maps/ol.js"></script>
 </body>
 </html>

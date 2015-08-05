@@ -119,8 +119,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Configurations\Youtube\sample3.json" />
-    <Content Include="Configurations\Youtube\sample4.json" />
+    <Content Include="Configurations\Youtube\Blank.json" />
+    <Content Include="Configurations\Youtube\Imperial.json" />
     <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

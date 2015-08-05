@@ -203,6 +203,12 @@ namespace GDO.Apps.Youtube
             this.Error = false;
             this.ErrorDetails = "";
             this.VideoReady = false;
+
+            string channelName = (string) configuration.Json.SelectToken("channel");
+            if (channelName != "")
+            {
+                //TODO configuration read
+            }
         }
 
     }

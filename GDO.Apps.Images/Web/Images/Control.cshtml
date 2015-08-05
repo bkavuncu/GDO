@@ -32,9 +32,57 @@
             border: 1px solid #000;
             margin: 10px 5px 0 0;
         }
+
+        #submit_image {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 210px;
+            height: 77px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        #select_image {
+            color: #DDD;
+            background: #222;
+            font-size: 28px;
+            width: 210px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        .file_upload {
+            position: relative;
+            overflow: hidden;
+            margin: 10px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            color: #DDD;
+            font-size: 21px;
+            background: #222;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
     </style>
 </head>
-<body>
+<body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
@@ -68,30 +116,40 @@
             <h1>Upload Image</h1>
             <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
                 <fieldset>
-                    <legend> Upload Image </legend>
-                    <label for="Image">Image</label>
-                    <input type="file" name="Image" id="select_image">
-                    <br>
-                    <input id="submit_image" type="submit" value="Submit" />
-                    <br>
-                    @if (path != "")
-                    {
-                        <br>
-                        <div class="result">
-                            <div id="image_folder" style="visibility: hidden; display:inline;"></div>
-                            <img id="thumbnail_image" src="\Web\Images\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
-                        </div>
-
-                    }
-                    else
-                    {
-                        <br>
-                        <div class="result">
-                            <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
-                        </div>
-                    }
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="file_upload">
+                                    <span>Choose File</span>
+                                    <input type="file" name="Image" class="upload" id="select_image" />
+                                </div>
+                            </td>
+                            <td>
+                                <input id="submit_image" type="submit" value="Submit" />
+                            </td>
+                        </tr>
+                    </table>
                 </fieldset>
+
+                @if (path != "")
+                {
+                    <br>
+                    <div class="result">
+                        <div id="image_folder" style="visibility: hidden; display: inline;"></div>
+                        <img id="thumbnail_image" src="\Web\Images\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                    </div>
+
+                }
+                else
+                {
+                    <br>
+                    <div class="result">
+                        <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                    </div>
+                }
+
             </form>
+
         </div>
     </div>
     @if (path != "")
@@ -104,6 +162,7 @@
                 gdo.net.app["Images"].server.changeImageName(gdo.controlId, "\@imgname", gdo.net.app["Images"].displayMode);
                 gdo.net.app["Images"].server.requestImageName(gdo.controlId);
             });
+
         });
         </script>
     }

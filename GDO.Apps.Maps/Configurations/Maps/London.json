@@ -1,5 +1,12 @@
 ﻿{
   "longtitude": "53156.64999889775",
   "latitude": "6704510.631260706",
-  "resolution": "350"
+  "resolution": "350",
+  "styles": [
+    "Road",
+    "Aerial",
+    "AerialWithLabels",
+    "collinsBart",
+    "ordnanceSurvey"
+  ]
 }
