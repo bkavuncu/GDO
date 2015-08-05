@@ -29,14 +29,14 @@ namespace GDO.Apps.Images
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Web\Images\images");
+            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
         }
 
         public string ProcessImage(string imageName, int mode)
         {
             this.ImageName = imageName;
 
-            String basePath = Directory.GetCurrentDirectory() + @"\Web\Images\images\";
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\";
             String path1 = basePath + ImageName;
             Random imgDigitGenerator = new Random();
             while (Directory.Exists(basePath + ImageNameDigit))

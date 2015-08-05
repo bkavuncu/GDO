@@ -105,9 +105,9 @@
                 {
                     imgname = Path.GetFileName(photo.FileName);
                     //foldername
-                    Directory.CreateDirectory(@"~\Web\Images\images");
-                    path = @"\Web\Images\images\" + imgname;
-                    photo.Save(@"~\" + path);
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + imgname;
+                    photo.Save(path);
                 }
             }
         }
