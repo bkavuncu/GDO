@@ -6,9 +6,13 @@ $(function() {
             var mapCenter = [0, 0];
             var mapResolution = parseFloat(resolution);
             mapCenter = gdo.net.app["Maps"].calculateLocalCenter(topLeft, bottomRight);
-            //mapResolution = mapResolution * (gdo.net.node[gdo.clientId].width * gdo.net.node[gdo.clientId].height);
-            mapResolution = mapResolution / (gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols * gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows);
-            //mapResolution = mapResolution / (width * height);
+            var nodePixels = gdo.net.node[gdo.clientId].width * gdo.net.node[gdo.clientId].height;
+            var controlPixels = width * height;
+            var numOfNodes = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols * gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows;
+            mapResolution = mapResolution / Math.sqrt((nodePixels*numOfNodes)/controlPixels);
+            //mapResolution = mapResolution / (gdo.net.node[gdo.clientId].height / height);
+            //mapResolution = mapResolution / ;
+            //mapResolution = mapResolution / (gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows);
             parent.gdo.net.app["Maps"].map.getView().setCenter(mapCenter);
             parent.gdo.net.app["Maps"].map.getView().setResolution(mapResolution);
         }
