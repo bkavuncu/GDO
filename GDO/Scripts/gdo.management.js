@@ -32,10 +32,10 @@
     gdo.management.selectedInstance = -1;
 
 
-    gdo.loadModule("management.nodes", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("management.sections", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("management.apps", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("management.instances", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("nodes","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("sections","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("apps","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("instances","management", gdo.MODULE_TYPE.CORE);
 });
 
 gdo.updateDisplayCanvas = function () {

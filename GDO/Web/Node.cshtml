@@ -78,12 +78,12 @@
                 @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
-                        @:gdo.loadModule("@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                        @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
                     }
                 }
                 gdo.initGDO(gdo.CLIENT_MODE.NODE);
-                gdo.loadModule('node', gdo.MODULE_TYPE.CORE);
-                gdo.loadModule('maintenance', gdo.MODULE_TYPE.CORE);
+                gdo.loadModule('node','node', gdo.MODULE_TYPE.CORE);
+                gdo.loadModule('maintenance','maintenance', gdo.MODULE_TYPE.CORE);
             });
             initApp = function() {
                 gdo.consoleOut('', 1, 'GDO Initialized');

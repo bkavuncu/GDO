@@ -8,8 +8,8 @@
   } else if (typeof define === "function" && define.amd) {
     define([], factory);
   } else {
-      root.ol = factory();
-      parent.gdo.net.app["Maps"].ol = root.ol;
+      //root.ol = factory();
+      parent.gdo.net.app["Maps"].ol = factory();
   }
 }(this, function () {
   var OPENLAYERS = {};

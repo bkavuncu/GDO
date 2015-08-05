@@ -208,7 +208,6 @@ $(function() {
             }
             gdo.consoleOut('.NET', 2, 'App ' + i + ' : ' + name);
             gdo.net.app[name].name = deserializedAppList[i];
-            //gdo.loadModule(deserializedAppList[i], gdo.MODULE_TYPE.APP);
             var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
             gdo.net.app[name].server = $.connection[hubName].server;
             gdo.net.app[name].config = new Array();

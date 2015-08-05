@@ -89,7 +89,9 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <Content Include="Scripts\Maps\gdo.apps.maps.3d.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.ui.js" />
     <Content Include="Scripts\Maps\ol-debug.js" />
     <Content Include="Scripts\Maps\ol.css" />
     <Content Include="Scripts\Maps\ol.js" />
