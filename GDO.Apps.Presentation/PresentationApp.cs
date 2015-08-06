@@ -34,7 +34,7 @@ namespace GDO.Apps.Presentation
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
-            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs";
+            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
             this.FileName = "";
             this.FileNameDigit = "";
             this.PageCount = 0;
@@ -45,7 +45,7 @@ namespace GDO.Apps.Presentation
         public void ProcessImage(string imagePath, int pageNumber, int mode)
         {
             Image image = Image.FromFile(imagePath);
-
+            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
             //create thumnail
             Image thumb = image.GetThumbnailImage(500 * image.Width / image.Height, 500, () => false, IntPtr.Zero);
             thumb.Save(BasePath + "\\" + FileNameDigit + "\\thumb_" + pageNumber + ".png", ImageFormat.Png);
@@ -98,7 +98,7 @@ namespace GDO.Apps.Presentation
         public void ProcessPpt(string filename)
         {
             this.FileName = filename;
-
+            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
             // generate unique digit id
             String path1 = BasePath + "\\" + FileName;
             Random fileDigitGenerator = new Random();
@@ -108,8 +108,8 @@ namespace GDO.Apps.Presentation
             }
             String path2 = BasePath + "\\" + FileNameDigit + "\\" + FileName;
             Directory.CreateDirectory(BasePath + "\\" + FileNameDigit);
+            //TODO new line problem
             File.Move(path1, path2);
-
             // convert ppt to png
             
             Application pptApp = new Application();
