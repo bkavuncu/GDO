@@ -83,18 +83,22 @@
     <Content Include="Configurations\Maps\Istanbul.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Scripts\Maps\ol3cesium.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <Content Include="Scripts\Maps\exports.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.3d.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.ui.js" />
-    <Content Include="Scripts\Maps\ol-debug.js" />
-    <Content Include="Scripts\Maps\ol.css" />
-    <Content Include="Scripts\Maps\ol.js" />
+    <Content Include="Scripts\Maps\ol3cesium-debug.js" />
+    <Content Include="Scripts\Maps\ol3cesium.js" />
+    <Content Include="Scripts\Maps\ol3\ol-debug.js" />
+    <Content Include="Scripts\Maps\ol3\ol.css" />
+    <Content Include="Scripts\Maps\ol3\ol.js" />
     <Content Include="Web\Maps\App.cshtml" />
     <Content Include="Web\Maps\Control.cshtml" />
   </ItemGroup>

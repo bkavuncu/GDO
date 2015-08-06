@@ -1,0 +1,131 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Web;
+using GDO.Core;
+using GDO.Utility;
+using Microsoft.Office.Core;
+using Microsoft.Office.Interop.PowerPoint;
+
+namespace GDO.Apps.Presentation
+{
+    enum Mode
+    {
+        CROP = 1,
+        FIT = 0
+    };
+    public class PresentationApp : IAppInstance
+    {
+        public int Id { get; set; }
+        public Section Section { get; set; }
+        public AppConfiguration Configuration { get; set; }
+        public string BasePath { get; set; }
+        public string FileName { get; set; }
+        public string FileNameDigit { get; set; }
+        public int PageCount { get; set; }
+        public int CurrentPage { get; set; }
+
+        public void init(int instanceId, Section section, AppConfiguration configuration)
+        {
+            this.Id = instanceId;
+            this.Section = section;
+            this.Configuration = configuration;
+            this.BasePath = Directory.GetCurrentDirectory() + @"\Web\Presentation\PPTs";
+            this.FileName = "";
+            this.FileNameDigit = "";
+            this.PageCount = 0;
+            this.CurrentPage = 0;
+            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Web\Presentation\PPTs");
+        }
+
+        public void ProcessImage(string imagePath, int pageNumber, int mode)
+        {
+            Image image = Image.FromFile(imagePath);
+
+            //create thumnail
+            Image thumb = image.GetThumbnailImage(200 * image.Width / image.Height, 200, () => false, IntPtr.Zero);
+            thumb.Save(BasePath + "\\" + FileNameDigit + "\\thumb_" + pageNumber + ".png", ImageFormat.Png);
+
+            double scaleWidth = (Section.Width + 0.000) / image.Width;
+            double scaleHeight = (Section.Height + 0.000) / image.Height;
+            int scaledCroppedImagedWidth;
+            int scaledCroppedImagedHeight;
+            double scale;
+
+            if (scaleWidth > scaleHeight && mode == (int)Mode.CROP ||
+                scaleWidth < scaleHeight && mode == (int)Mode.FIT)
+            {
+                scaledCroppedImagedWidth = (image.Width - 1) / Section.Cols + 1; // ceiling
+                scaledCroppedImagedHeight = (scaledCroppedImagedWidth * (Section.Height / Section.Rows) - 1) / (Section.Width / Section.Cols) + 1;
+                scale = scaleWidth;
+            }
+            else
+            {
+                scaledCroppedImagedHeight = (image.Height - 1) / Section.Rows + 1; // ceiling
+                scaledCroppedImagedWidth = (scaledCroppedImagedHeight * (Section.Width / Section.Cols) - 1) / (Section.Height / Section.Rows) + 1; // ceiling and keep ratio
+                scale = scaleHeight;
+            }
+
+            int scaledOriginImageWidth = Convert.ToInt32(image.Width*scale);
+            int scaledOriginImageHeight = Convert.ToInt32(scale*image.Height);
+
+            int offsetWidth = Convert.ToInt32((Section.Width - scaledOriginImageWidth)/scale);
+            int offsetHeight = Convert.ToInt32((Section.Height - scaledOriginImageHeight)/scale);
+            
+            for (int i = 0; i < Section.Cols; i++)
+            {
+                for (int j = 0; j < Section.Rows; j++)
+                {
+                    Image tile = new Bitmap((Section.Width / Section.Cols), (Section.Height / Section.Rows));
+                    Graphics graphics = Graphics.FromImage(tile);
+                    graphics.DrawImage(image,
+                        new Rectangle(0, 0, (Section.Width / Section.Cols), (Section.Height / Section.Rows)),
+                        new Rectangle(i*scaledCroppedImagedWidth - offsetWidth/2, j * scaledCroppedImagedHeight - offsetHeight/2, scaledCroppedImagedWidth, scaledCroppedImagedHeight),
+                        GraphicsUnit.Pixel);
+                    graphics.Dispose();
+                    string path = BasePath + "\\" + FileNameDigit + "\\" + "crop" + @"_" + pageNumber + @"_" + i + @"_" + j + @".png";
+                    tile.Save(path, ImageFormat.Png);
+                    tile.Dispose();
+                }
+            }
+            image.Dispose();
+        }
+
+        public void ProcessPpt(string filename)
+        {
+            this.FileName = filename;
+
+            // generate unique digit id
+            String path1 = BasePath + "\\" + FileName;
+            Random fileDigitGenerator = new Random();
+            while (Directory.Exists(BasePath + "\\" + FileNameDigit))
+            {
+                this.FileNameDigit = fileDigitGenerator.Next(10000, 99999).ToString();
+            }
+            String path2 = BasePath + "\\" + FileNameDigit + "\\" + FileName;
+            Directory.CreateDirectory(BasePath + "\\" + FileNameDigit);
+            File.Move(path1, path2);
+
+            // convert ppt to png
+            
+            Application pptApp = new Application();
+            Microsoft.Office.Interop.PowerPoint.Presentation pptFile = pptApp.Presentations.Open(path2, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
+
+            this.PageCount = pptFile.Slides.Count;
+            this.CurrentPage = 0;
+            int width = 4000;
+            int height = Convert.ToInt32(width*pptFile.PageSetup.SlideHeight/pptFile.PageSetup.SlideWidth);
+            for (int i = 0; i < pptFile.Slides.Count; i++)
+            {
+                string imagepath = BasePath + "\\" + FileNameDigit + "\\" + "page_" + i + ".png";
+                pptFile.Slides[i + 1].Export(imagepath, "png", width, height);
+                // crop pngs
+                ProcessImage(imagepath, i, 0);
+            }
+        }
+    }
+}

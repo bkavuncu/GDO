@@ -9,7 +9,7 @@
     define([], factory);
   } else {
       //root.ol = factory();
-      parent.gdo.net.app["Maps"].ol = factory();
+      parent.ol = factory();
   }
 }(this, function () {
   var OPENLAYERS = {};

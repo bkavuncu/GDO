@@ -1,0 +1,116 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["Presentation"].initControl();
+        });
+    </script>
+    <div>
+        @{
+            var path = "";
+            var filename = "";
+            if (IsPost)
+            {
+
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null)
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    //foldername
+                    Directory.CreateDirectory(@"~\Web\Presentation\PPTs");
+                    path = @"\Web\Presentation\PPTs\" + filename;
+                    file.SaveAs(Server.MapPath(@"~\" + path));
+                }
+            }
+        }
+        <h1>Presentation Control Panel</h1>
+        <div id="upload_panel">
+            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <legend> Upload Your PPT </legend>
+                    <label for="PPT">PPT</label>
+                    <input type="file" name="new_ppt" id="new_ppt">
+                    <input id="submit_ppt" type="submit" value="Submit"/>
+                </fieldset>
+            </form>
+        </div>
+        <div id="display_panel">
+            <h3>Control Your PPT</h3>
+            <img src="" id="ppt_thumbnail" style="max-width: 400px; max-height: 300px"/>
+            <br/>
+            <p><span id="current_page_number">0</span>/<span id="page_count">0</span></p>
+            <br/>
+            <button id="previous_page">Previous</button>
+            <button id="next_page">Next</button>
+            <button id="refresh">Refresh</button>
+        </div>
+    </div>
+    <script>
+        $("#previous_page").click(function() {
+            var gdo = parent.gdo;
+            gdo.net.app["Presentation"].previousPage();
+        });
+
+        $("#next_page").click(function() {
+            var gdo = parent.gdo;
+            gdo.net.app["Presentation"].nextPage();
+        });
+
+        $("#refresh").click(function() {
+            var gdo = parent.gdo;
+            gdo.net.app["Presentation"].refreshPage();
+        });
+
+    </script>
+
+    @if (path != "")
+    {
+        <script>
+            $(function () {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.Presentation', 1, "Uploaded PPT " + "@filename");
+                gdo.net.app["Presentation"].server.uploadPPT(gdo.controlId, "@filename");
+            });
+        </script>
+    }
+
+</body>
+</html>

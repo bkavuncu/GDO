@@ -98,6 +98,12 @@ gdo.net.app["Maps"].initMap = function(instanceId, center, resolution) {
         target: 'map',
         view: gdo.net.instance[instanceId].view
     });
+    gdo.net.instance[instanceId].map3D = new gdo.net.app["Maps"].olcs.OLCesium(gdo.net.instance[instanceId].map);
+    gdo.net.instance[instanceId].scene = ol3d.getCesiumScene();
+    gdo.net.instance[instanceId].terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: '//cesiumjs.org/stk-terrain/tilesets/world/tiles'
+    });
+    gdo.net.instance[instanceId].scene.terrainProvider = gdo.net.instance[instanceId].terrainProvider;
     gdo.net.app["Maps"].setStyle(instanceId, gdo.net.instance[instanceId].styles[0]);
 }
 
@@ -119,6 +125,7 @@ gdo.net.app["Maps"].setStyle = function (instanceId, style) {
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
+    gdo.net.instance[instanceId].map3D.setEnabled(mode);
     gdo.net.instance[instanceId].mode = mode;
 }
 
