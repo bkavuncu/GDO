@@ -23,7 +23,7 @@
                 } else {
                     $("iframe").contents().find("#next_page").prop('disabled', false);
                 }
-                $("iframe").contents().find("#current_page_number").html(currentPage);
+                $("iframe").contents().find("#current_page_number").html(currentPage + 1);
                 $("iframe").contents().find("#page_count").html(pageCount);
             }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {

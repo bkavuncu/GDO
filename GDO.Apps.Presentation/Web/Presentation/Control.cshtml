@@ -32,6 +32,67 @@
             border: 1px solid #000;
             margin: 10px 5px 0 0;
         }
+        .presentation_text {
+            color: #DDD;
+            font-size: 21px;
+        }
+        .presentation_button {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 140px;
+            height: 49px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+        #submit_ppt {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 140px;
+            height: 55px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        #new_ppt {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 140px;
+            height: 49px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        .file_upload {
+            position: relative;
+            overflow: hidden;
+            margin: 10px;
+            width: 140px;
+            height: 49px;
+            border: 3px solid #444;
+            color: #DDD;
+            font-size: 21px;
+            background: #222;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 49px;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
     </style>
 </head>
 <body>
@@ -65,22 +126,33 @@
         <div id="upload_panel">
             <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
                 <fieldset>
-                    <legend> Upload Your PPT </legend>
-                    <label for="PPT">PPT</label>
-                    <input type="file" name="new_ppt" id="new_ppt">
-                    <input id="submit_ppt" type="submit" value="Submit"/>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="file_upload">
+                                    <span>Choose File</span>
+                                    <input type="file" name="new_ppt" class="upload" id="new_ppt"/>
+                                </div>
+                            </td>
+                            <td>
+                                <input id="submit_ppt" type="submit" value="Submit"/>
+                            </td>
+                        </tr>
+                    </table>
                 </fieldset>
             </form>
         </div>
+        <br>
         <div id="display_panel">
-            <h3>Control Your PPT</h3>
-            <img src="" id="ppt_thumbnail" style="max-width: 400px; max-height: 300px"/>
-            <br/>
-            <p><span id="current_page_number">0</span>/<span id="page_count">0</span></p>
-            <br/>
-            <button id="previous_page">Previous</button>
-            <button id="next_page">Next</button>
-            <button id="refresh">Refresh</button>
+            <span class="presentation_text" ><b>Control Your PPT</b></span>
+            <br>
+            <img src="" id="ppt_thumbnail" style="max-width: 1200px; max-height: 600px"/>
+            <br>
+            <p><span id="current_page_number" class="presentation_text">0</span><span id="current_page_number" class="presentation_text">/</span><span id="page_count" class="presentation_text">0</span></p>
+            <br>
+            <button id="previous_page" class="presentation_button">Previous</button>
+            <button id="next_page" class="presentation_button">Next</button>
+            <button id="refresh" class="presentation_button">Refresh</button>
         </div>
     </div>
     <script>

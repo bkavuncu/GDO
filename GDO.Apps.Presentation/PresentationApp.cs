@@ -34,12 +34,12 @@ namespace GDO.Apps.Presentation
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
-            this.BasePath = Directory.GetCurrentDirectory() + @"\Web\Presentation\PPTs";
+            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs";
             this.FileName = "";
             this.FileNameDigit = "";
             this.PageCount = 0;
             this.CurrentPage = 0;
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + @"\Web\Presentation\PPTs");
+            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs");
         }
 
         public void ProcessImage(string imagePath, int pageNumber, int mode)
@@ -47,7 +47,7 @@ namespace GDO.Apps.Presentation
             Image image = Image.FromFile(imagePath);
 
             //create thumnail
-            Image thumb = image.GetThumbnailImage(200 * image.Width / image.Height, 200, () => false, IntPtr.Zero);
+            Image thumb = image.GetThumbnailImage(500 * image.Width / image.Height, 500, () => false, IntPtr.Zero);
             thumb.Save(BasePath + "\\" + FileNameDigit + "\\thumb_" + pageNumber + ".png", ImageFormat.Png);
 
             double scaleWidth = (Section.Width + 0.000) / image.Width;
@@ -117,7 +117,7 @@ namespace GDO.Apps.Presentation
 
             this.PageCount = pptFile.Slides.Count;
             this.CurrentPage = 0;
-            int width = 4000;
+            int width = 3072;
             int height = Convert.ToInt32(width*pptFile.PageSetup.SlideHeight/pptFile.PageSetup.SlideWidth);
             for (int i = 0; i < pptFile.Slides.Count; i++)
             {

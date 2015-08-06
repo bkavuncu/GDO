@@ -1,4 +1,12 @@
-﻿
+﻿var map;
+var map3D;
+var view;
+var styles;
+var layers;
+var scene;
+var terrainProvider;
+
+
 $(function() {
     gdo.consoleOut('.MAPS', 1, 'Loaded Maps JS');
     $.connection.mapsAppHub.client.receive3DMode = function (instanceId, mode) {
@@ -73,37 +81,59 @@ $(function() {
     }
 });
 
-gdo.net.app["Maps"].initMap = function(instanceId, center, resolution) {
-    gdo.net.instance[instanceId].view = new parent.gdo.net.app["Maps"].ol.View({
+gdo.net.app["Maps"].initMap = function (instanceId, center, resolution) {
+    view = new ol.View({
         center: [parseFloat(center[0]), parseFloat(center[1])],
         resolution: parseFloat(resolution)
     });
-    gdo.net.instance[instanceId].styles = gdo.net.app["Maps"].config[gdo.net.instance[instanceId].configName].styles;
-    gdo.net.instance[instanceId].layers = [];
+    gdo.net.instance[instanceId].view = view;
+    //$("iframe")[0].contentWindow.view = view;
+    styles = gdo.net.app["Maps"].config[gdo.net.instance[instanceId].configName].styles;
+    gdo.net.instance[instanceId].styles = styles;
+    //$("iframe")[0].contentWindow.styles = styles;
+    layers = [];
+    gdo.net.instance[instanceId].layers = layers;
+    //$("iframe")[0].contentWindow.layers = layers;
     var i, ii;
     for (i = 0, ii = gdo.net.instance[instanceId].styles.length; i < ii; ++i) {
-        gdo.net.instance[instanceId].layers.push(new gdo.net.app["Maps"].ol.layer.Tile({
+        gdo.net.instance[instanceId].layers.push(new ol.layer.Tile({
             visible: false,
             preload: Infinity,
-            source: new gdo.net.app["Maps"].ol.source.BingMaps({
+            source: new ol.source.BingMaps({
                 key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
                 imagerySet: gdo.net.instance[instanceId].styles[i],
                 maxZoom: 19
             })
         }));
     }
-    gdo.net.instance[instanceId].map = new gdo.net.app["Maps"].ol.Map({
+    map = new ol.Map({
         controls: new Array(),
         layers: gdo.net.instance[instanceId].layers,
         target: 'map',
         view: gdo.net.instance[instanceId].view
     });
-    gdo.net.instance[instanceId].map3D = new gdo.net.app["Maps"].olcs.OLCesium(gdo.net.instance[instanceId].map);
-    gdo.net.instance[instanceId].scene = ol3d.getCesiumScene();
-    gdo.net.instance[instanceId].terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: '//cesiumjs.org/stk-terrain/tilesets/world/tiles'
-    });
-    gdo.net.instance[instanceId].scene.terrainProvider = gdo.net.instance[instanceId].terrainProvider;
+    gdo.net.instance[instanceId].map = map;
+    //$("iframe")[0].contentWindow.map = map;
+    //parent.map = map;
+
+    //map3D = new $("iframe")[0].contentWindow.olcs.OLCesium({ map: map });
+
+    //gdo.net.instance[instanceId].map3D = map3D;
+    //$("iframe")[0].contentWindow.map3D = map3D;
+
+   // scene = gdo.net.instance[instanceId].Map3D.getCesiumScene();
+
+    //gdo.net.instance[instanceId].scene = scene;
+    //$("iframe")[0].contentWindow.scene = scene;
+
+    //terrainProvider = new $("iframe")[0].contentWindow.Cesium.CesiumTerrainProvider({
+    //    url: '//cesiumjs.org/stk-terrain/tilesets/world/tiles'
+    //});
+
+    //scene.terrainProvider = terrainProvider;
+    //gdo.net.instance[instanceId].terrainProvider = terrainProvider;
+    //$("iframe")[0].contentWindow.terrainProvider = terrainProvider;
+
     gdo.net.app["Maps"].setStyle(instanceId, gdo.net.instance[instanceId].styles[0]);
 }
 
@@ -125,7 +155,7 @@ gdo.net.app["Maps"].setStyle = function (instanceId, style) {
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
-    gdo.net.instance[instanceId].map3D.setEnabled(mode);
+    //gdo.net.instance[instanceId].map3D.setEnabled(mode);
     gdo.net.instance[instanceId].mode = mode;
 }
 
