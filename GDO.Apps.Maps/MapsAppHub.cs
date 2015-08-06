@@ -30,6 +30,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
+                    Clients.Caller.receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                     BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                 }
                 catch (Exception e)
@@ -46,6 +47,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).Style = style;
+                    Clients.Caller.receiveMapstyle(instanceId, style);
                     BroadcastMapStyle(instanceId, style);
                 }
                 catch (Exception e)
@@ -104,6 +106,39 @@ namespace GDO.Apps.Maps
         public void BroadcastMapStyle(int instanceId, string style)
         {
             Clients.Group("" + instanceId).receiveMapstyle(instanceId, style);
+        }
+
+        public void Set3DMode(int instanceId, bool mode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).mode = mode;
+                    Clients.Group("" + instanceId).receive3DMode(instanceId, mode);
+                    Clients.Caller.receive3DMode(instanceId, mode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+        }
+
+        public void Request3DMode(int instanceId, bool control)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.receive3DMode(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).mode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
     gdo.consoleOut('.IMAGETILES', 1, 'Loaded Image Tiles JS');
     $.connection.imagesAppHub.client.receiveImageName = function (imageName, imageNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.controlId + ": Downloading Image : " + imageName);
+            gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.controlId + ": Downloading Image : " + imageName + " with id: " + imageNameDigit);
             $("iframe").contents().find("#thumbnail_image").attr("src", "\\Web\\Images\\images\\" + imageNameDigit + "\\thumb.png");
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.clientId + ": Downloading Image : " + imageName + "_" + gdo.net.node[gdo.clientId].appInstanceId + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");

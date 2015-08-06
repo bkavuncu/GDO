@@ -136,7 +136,7 @@
                     <br>
                     <div class="result">
                         <div id="image_folder" style="visibility: hidden; display: inline;"></div>
-                        <img id="thumbnail_image" src="\Web\Images\images\thumb_@imgname" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                        <img id="thumbnail_image" src="" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
                     </div>
 
                 }
@@ -159,7 +159,7 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
                 gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "\@imgname", gdo.net.app["Images"].displayMode);
+                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "@imgname", gdo.net.app["Images"].displayMode);
                 gdo.net.app["Images"].server.requestImageName(gdo.controlId);
             });
 

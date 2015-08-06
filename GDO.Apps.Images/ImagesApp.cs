@@ -36,7 +36,7 @@ namespace GDO.Apps.Images
         {
             this.ImageName = imageName;
 
-            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\";
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\\";
             String path1 = basePath + ImageName;
             Random imgDigitGenerator = new Random();
             while (Directory.Exists(basePath + ImageNameDigit))
@@ -45,7 +45,9 @@ namespace GDO.Apps.Images
             }
             String path2 = basePath + ImageNameDigit + "\\origin.png";
             Directory.CreateDirectory(basePath + ImageNameDigit);
-            File.Move(path1, path2);
+            Image img1 = Image.FromFile(path1);
+            img1.Save(path2, ImageFormat.Png);
+            //File.Move(path1, path2);
 
             //create origin
             Image image = Image.FromFile(path2);
