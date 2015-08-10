@@ -10,7 +10,7 @@ gdo.net.app["Maps"].drawEmptyMapTable = function (maxCol, maxRow) {
 }
 
 gdo.net.app["Maps"].drawMapTable = function (instanceId) {
-    gdo.net.app["Maps"].drawEmptyMapTable(gdo.net.instance[instanceId].styles.length, 1);
+    gdo.net.app["Maps"].drawEmptyMapTable(gdo.net.instance[instanceId].styles.length+1, 1);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()

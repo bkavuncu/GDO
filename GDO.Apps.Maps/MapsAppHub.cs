@@ -66,7 +66,7 @@ namespace GDO.Apps.Maps
                     if (control)
                     {
                             MapPosition position = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetMapPosition();
-                            Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution);
+                            Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution, position.Zoom);
                     }
                     else
                     {
@@ -133,6 +133,21 @@ namespace GDO.Apps.Maps
                 try
                 {
                     Clients.Caller.receive3DMode(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).mode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateResolution(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.updateResolution(instanceId);
                 }
                 catch (Exception e)
                 {

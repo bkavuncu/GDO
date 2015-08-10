@@ -27,6 +27,7 @@ namespace GDO.Apps.Maps
             this.Position.Center[0] = (string)configuration.Json.SelectToken("longtitude");
             this.Position.Center[1] = (string)configuration.Json.SelectToken("latitude");
             this.Position.Resolution = (string)configuration.Json.SelectToken("resolution");
+            this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
         }
 
         public void SetMapPosition(string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
