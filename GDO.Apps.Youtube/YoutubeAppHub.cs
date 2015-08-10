@@ -90,7 +90,7 @@ namespace GDO.Apps.Youtube
 
                     yf.VideoReady = false;
                     string baseUrl = "http://www.youtube.com/embed/";
-                    string tailUrl = "?autoplay=1&controls=0";
+                    string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
 
                     //init
                     yf.VideoUrls = new string[yf.Section.Cols, yf.Section.Rows];
@@ -117,7 +117,8 @@ namespace GDO.Apps.Youtube
                         for (int i = 0; i < videoJson.items.Length; i++)
                         {
                             int rank = sum - remain + i;
-                            yf.VideoUrls[rank/yf.Section.Cols, rank%yf.Section.Cols] = baseUrl + videoJson.items[i].snippet.resourceId.videoId + tailUrl;
+                            yf.VideoUrls[rank/yf.Section.Cols, rank%yf.Section.Cols] = baseUrl + videoJson.items[i].snippet.resourceId.videoId + 
+                                                                                       tailUrl + videoJson.items[i].snippet.resourceId.videoId;
                         }
                         remain -= num;
                     }
