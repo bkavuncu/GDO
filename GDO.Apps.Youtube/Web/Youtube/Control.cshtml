@@ -68,27 +68,41 @@
             Channel Name: <input type="text" id="new_channel_name">
             <button id="update_channel_name_submit" class="youtube_button">Submit</button>
         </fieldset>
-        <br>
+        <br/>
+        <b>Message</b>
+        <fieldset>
+            <p id="message_from_server"></p>
+        </fieldset>
+        <br/>
         <b>Get Next videos</b>
         <fieldset>
             Channel Name: <span id="current_channel_name"></span>
-            <button id="get_next_64_videos" class="youtube_button">Next</button>
+            <button id="get_next_videos" class="youtube_button">Next</button>
         </fieldset>
+    </div>
+    <div id="video_list" style="margin-top: 20px">
+        <table border="0" style="width: 100%; text-align: left" id="video_table">
+
+        </table>
     </div>
 </div>
 
 <script>
     $("#update_channel_name_submit").click(function () {
         var gdo = parent.gdo;
+        $("#get_next_videos").prop("disabled", true);
         gdo.consoleOut('.Youtube', 1, 'Updating channel name: ' + $("#new_channel_name").val());
         gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_channel_name").val());
-        //$.connection.youtubeAppHub.server.updateChannelName(gdo.controlId, $("#new_channel_name").val());
-        gdo.consoleOut('.Youtube', 1, 'Updated channel name: ' + $("#new_channel_name").val());
     });
-    $("#get_next_64_videos").click(function() {
+    $("#get_next_videos").click(function () {
         var gdo = parent.gdo;
         gdo.consoleOut('.Youtube', 1, 'Getting videos');
         gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+    });
+    $("#new_channel_name").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $("#update_channel_name_submit").click();
+        }
     });
 </script>
 

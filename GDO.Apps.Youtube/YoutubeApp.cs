@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Configuration;
 using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json;
@@ -28,13 +29,22 @@ namespace GDO.Apps.Youtube
         public string ChannelId { get; set; }
         public string PlaylistId { get; set; }
         public bool VideoReady { get; set; }
-        public string[,] VideoUrls { get; set; }
+        public string[,] CurrentVideoUrls { get; set; }
+        public string[,] NextVideoUrls { get; set; }
+        public string[,] CurrentVideoName { get; set; }
+        public string[,] NextVideoName { get; set; }
         public string NextPageToken { get; set; }
         public bool Error { get; set; }
         public string ErrorDetails { get; set; }
 
         private string key { get; set; }
         private string baseURL  { get; set; }
+
+        public class NameInfo
+        {
+            public string currentName { get; set; }
+            public string nextName { get; set; }
+        }
 
         public class URLInfo
         {
@@ -147,7 +157,6 @@ namespace GDO.Apps.Youtube
                 if (yLine != null)
                     yResponse += yLine;
             }
-            //Console.WriteLine(yResponse);
             return yResponse;
         }
 
@@ -203,11 +212,15 @@ namespace GDO.Apps.Youtube
             this.Error = false;
             this.ErrorDetails = "";
             this.VideoReady = false;
+            this.CurrentVideoName = null;
+            this.NextVideoName = null;
+            this.CurrentVideoUrls = null;
+            this.NextVideoUrls = null;
 
             string channelName = (string) configuration.Json.SelectToken("channel");
             if (channelName != "")
             {
-                //TODO configuration read
+                ChannelName = channelName;
             }
         }
 
