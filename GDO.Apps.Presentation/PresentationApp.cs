@@ -95,10 +95,11 @@ namespace GDO.Apps.Presentation
             image.Dispose();
         }
 
-        public void ProcessPpt(string filename)
+        public void GenerateUniqueDigit(string filename)
         {
             this.FileName = filename;
             this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
+
             // generate unique digit id
             String path1 = BasePath + "\\" + FileName;
             Random fileDigitGenerator = new Random();
@@ -108,24 +109,9 @@ namespace GDO.Apps.Presentation
             }
             String path2 = BasePath + "\\" + FileNameDigit + "\\" + FileName;
             Directory.CreateDirectory(BasePath + "\\" + FileNameDigit);
-            //TODO new line problem
             File.Move(path1, path2);
-            // convert ppt to png
             
-            Application pptApp = new Application();
-            Microsoft.Office.Interop.PowerPoint.Presentation pptFile = pptApp.Presentations.Open(path2, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
-
-            this.PageCount = pptFile.Slides.Count;
-            this.CurrentPage = 0;
-            int width = 3072;
-            int height = Convert.ToInt32(width*pptFile.PageSetup.SlideHeight/pptFile.PageSetup.SlideWidth);
-            for (int i = 0; i < pptFile.Slides.Count; i++)
-            {
-                string imagepath = BasePath + "\\" + FileNameDigit + "\\" + "page_" + i + ".png";
-                pptFile.Slides[i + 1].Export(imagepath, "png", width, height);
-                // crop pngs
-                ProcessImage(imagepath, i, 0);
-            }
+            return;
         }
     }
 }

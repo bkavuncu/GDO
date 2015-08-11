@@ -1,5 +1,13 @@
 ﻿$(function () {
     gdo.consoleOut('.Presentation', 1, 'Loaded Presentation JS');
+    $.connection.presentationAppHub.client.setMessage = function(message) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.Presentation', 1, 'Message from server:' + message);
+            $("iframe").contents().find("#message_from_server").html(message);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            //do nothing
+        }
+    }
     $.connection.presentationAppHub.client.receivePptInfo = function (fileNameDigit, pageCount, currentPage) {
         gdo.consoleOut('.Presentation', 1, 'Get ppt info from server!');
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
