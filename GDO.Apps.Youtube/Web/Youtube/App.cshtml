@@ -40,13 +40,11 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
         $(function () {          
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                gdo.consoleOut('.Youtube', 1, 'Init Client');
-                gdo.net.app["Youtube"].initClient();
-                $("#ytplayer").width($(window).width());
-                $("#ytplayer").height($(window).height());
-            });
+            var gdo = parent.gdo;
+            gdo.consoleOut('.Youtube', 1, 'Init Client');
+            gdo.net.app["Youtube"].initClient();
+            $("#ytplayer").width($(window).width());
+            $("#ytplayer").height($(window).height());
         });
     </script>
     <form id="form1" runat="server"></form>
