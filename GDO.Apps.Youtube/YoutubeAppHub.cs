@@ -43,25 +43,29 @@ namespace GDO.Apps.Youtube
                 {
                     // update channel name
                     // search channel and get channel id
+
+                    Clients.Caller.setMessage("Searching for Channel id!");
+
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
                     YoutubeApp.ChannelInfo channelJson = yf.getChannelId(newChannelName);
                     if (channelJson.items.Length <= 0)
                     {
                         yf.Error = true;
                         yf.ErrorDetails = "Error! Channel Not Found!";
-                        Clients.Caller.updateChannelNameResult(yf.ErrorDetails);
+                        Clients.Caller.setMessage(yf.ErrorDetails);
                         return;
                     }
                     yf.ChannelName = channelJson.items[0].snippet.title;
                     yf.ChannelId = channelJson.items[0].id.channelId;
 
                     // get playlist id
+                    Clients.Caller.setMessage("Searching for Playlist id!");
                     YoutubeApp.PlayInfo playlistJson = yf.getPlaylists(yf.ChannelId);
                     if (playlistJson.items.Length <= 0)
                     {
                         yf.Error = true;
                         yf.ErrorDetails = "Error! Playlist Not Found!";
-                        Clients.Caller.updateChannelNameResult(yf.ErrorDetails);
+                        Clients.Caller.setMessage(yf.ErrorDetails);
                         return;
                     }
 
@@ -69,16 +73,22 @@ namespace GDO.Apps.Youtube
                     yf.PlaylistId = playlistJson.items[0].contentDetails.relatedPlaylists.uploads;
                     yf.VideoReady = false;
                     yf.NextPageToken = "";
+                    yf.CurrentVideoName = null;
+                    yf.NextVideoName = null;
+                    yf.CurrentVideoUrls = null;
+                    yf.NextVideoUrls = null;
                     Clients.Caller.updateChannelNameResult(yf.ChannelName);
+                    Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.ToString());
                 }
             }
         }
 
-        public void GetNextVideos(int instanceId, int first)
+        public void GetNextVideos(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -88,18 +98,22 @@ namespace GDO.Apps.Youtube
 
                     if (yf.Error)
                     {
-                        Clients.Caller.updateChannelNameResult(yf.ErrorDetails);
+                        Clients.Caller.setMessage(yf.ErrorDetails);
                         return;
                     }
+
+                    Clients.Caller.setMessage("Getting next group of videos!");
 
                     yf.VideoReady = false;
                     string baseUrl = "http://www.youtube.com/embed/";
                     string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
 
                     //init
-                    yf.CurrentVideoUrls = (string[,]) yf.NextVideoUrls.Clone();
+                    if (yf.NextVideoUrls != null)
+                        yf.CurrentVideoUrls = (string[,]) yf.NextVideoUrls.Clone();
                     yf.NextVideoUrls = new string[yf.Section.Cols, yf.Section.Rows];
-                    yf.CurrentVideoName = (string [,]) yf.NextVideoName.Clone();
+                    if (yf.NextVideoName != null)
+                        yf.CurrentVideoName = (string [,]) yf.NextVideoName.Clone();
                     yf.NextVideoName = new string[yf.Section.Cols, yf.Section.Rows];
                     for (int i = 0; i < yf.Section.Cols; i++)
                     {
@@ -115,6 +129,7 @@ namespace GDO.Apps.Youtube
                     int remain = sum;
                     while (remain > 0)
                     {
+                        Clients.Caller.setMessage("Fetching from Youtube: " + remain.ToString() + "/" + sum.ToString());
                         int num = Math.Min(remain, 50);
                         YoutubeApp.PlayInfo videoJson = yf.getVideos(yf.PlaylistId, yf.NextPageToken, num.ToString());
                         yf.NextPageToken = videoJson.nextPageToken;
@@ -131,12 +146,24 @@ namespace GDO.Apps.Youtube
                         }
                         remain -= num;
                     }
-                    yf.VideoReady = true;
-                    Clients.Group("" + instanceId).videoReady(first);
+                    if (yf.CurrentVideoName == null || yf.CurrentVideoUrls == null)
+                    {
+                        yf.VideoReady = false;
+                        Clients.Group("" + instanceId).videoReady(1);
+                        Clients.Caller.videoReady(1);
+                    }
+                    else
+                    {
+                        yf.VideoReady = true;
+                        Clients.Group("" + instanceId).videoReady(0);
+                        Clients.Caller.videoReady(0);
+                    }
+                    Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.ToString());
                 }
             }
         }
@@ -147,10 +174,15 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
+                    Clients.Caller.setMessage("Requesting latest video information!");
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
-                    if (!yf.VideoReady)
+                    if (yf.ChannelName != "")
                     {
-                        Clients.Caller.updateChannelNameResult("Video Not Ready!");
+                        Clients.Caller.setChannelName(yf.ChannelName);
+                    }
+                    if (!yf.VideoReady || yf.CurrentVideoName == null || yf.NextVideoName == null)
+                    {
+                        Clients.Caller.setMessage("Video Not Ready!");
                         return;
                     }
                     YoutubeApp.NameInfo[] videoName = new YoutubeApp.NameInfo[yf.Section.Cols*yf.Section.Rows];
@@ -158,15 +190,18 @@ namespace GDO.Apps.Youtube
                     {
                         for (int j = 0; j < yf.Section.Rows; j++)
                         {
+                            videoName[i*yf.Section.Cols + j] = new YoutubeApp.NameInfo();
                             videoName[i*yf.Section.Cols + j].currentName = yf.CurrentVideoName[i, j];
                             videoName[i*yf.Section.Cols + j].nextName = yf.NextVideoName[i, j];
                         }
                     }
                     Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName));
+                    Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.ToString());
                 }
             }
         }
@@ -178,16 +213,18 @@ namespace GDO.Apps.Youtube
                 try
                 {
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
-                    if (!yf.VideoReady)
+                    if (!yf.VideoReady || yf.CurrentVideoUrls == null)
                     {
-                        Clients.Caller.updateChannelNameResult("Video Not Ready!");
+                        Clients.Caller.setMessage("Video Not Ready!");
                         return;
                     }
                     Clients.Caller.updateVideo(yf.CurrentVideoUrls[cols, rows]);
+                    Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.ToString());
                 }
             }
         }
