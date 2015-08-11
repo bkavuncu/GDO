@@ -47,7 +47,7 @@ namespace GDO.Apps.Presentation
                     // generate unique digit name of the presentation file
                     pa.GenerateUniqueDigit(filename);
 
-                    Clients.Caller.setMessage("Processing presentatino file...");
+                    Clients.Caller.setMessage("Initializing presentation procession...");
                     // convert ppt to png
                     String pptPath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + pa.FileName;
                     Application pptApp = new Application();
@@ -59,7 +59,7 @@ namespace GDO.Apps.Presentation
                     int height = Convert.ToInt32(width*pptFile.PageSetup.SlideHeight/pptFile.PageSetup.SlideWidth);
                     for (int i = 0; i < pptFile.Slides.Count; i++)
                     {
-                        Clients.Caller.setMessage("Processing presentatino file: " + i.ToString() + "/" + pa.PageCount.ToString());
+                        Clients.Caller.setMessage("Processing presentation file: " + i.ToString() + "/" + pa.PageCount.ToString());
                         string imagepath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + "page_" + i + ".png";
                         pptFile.Slides[i + 1].Export(imagepath, "png", width, height);
                         // crop pngs
