@@ -12,6 +12,8 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 using GDO.Utility;
+using Microsoft.Office.Core;
+using Microsoft.Office.Interop.PowerPoint;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Presentation.Scripts.imagetiles.js", "application/x-javascript")]
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Presentation.Configurations.sample.js", "application/json")]
@@ -40,13 +42,39 @@ namespace GDO.Apps.Presentation
                 try
                 {
                     PresentationApp pa = ((PresentationApp) Cave.Apps["Presentation"].Instances[instanceId]);
-                    pa.ProcessPpt(filename);
+
+                    Clients.Caller.setMessage("Generating unique digits for presentation file...");
+                    // generate unique digit name of the presentation file
+                    pa.GenerateUniqueDigit(filename);
+
+                    Clients.Caller.setMessage("Processing presentatino file...");
+                    // convert ppt to png
+                    String pptPath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + pa.FileName;
+                    Application pptApp = new Application();
+                    Microsoft.Office.Interop.PowerPoint.Presentation pptFile = pptApp.Presentations.Open(pptPath, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
+
+                    pa.PageCount = pptFile.Slides.Count;
+                    pa.CurrentPage = 0;
+                    int width = 3072;
+                    int height = Convert.ToInt32(width*pptFile.PageSetup.SlideHeight/pptFile.PageSetup.SlideWidth);
+                    for (int i = 0; i < pptFile.Slides.Count; i++)
+                    {
+                        Clients.Caller.setMessage("Processing presentatino file: " + i.ToString() + "/" + pa.PageCount.ToString());
+                        string imagepath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + "page_" + i + ".png";
+                        pptFile.Slides[i + 1].Export(imagepath, "png", width, height);
+                        // crop pngs
+                        pa.ProcessImage(imagepath, i, 0);
+                    }
+
+                    Clients.Caller.setMessage("Updating presentation information...");
                     Clients.Group("" + instanceId).receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
                     Clients.Caller.receivePptInfo(pa.FileNameDigit, pa.PageCount, pa.CurrentPage);
+                    Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
@@ -63,6 +91,7 @@ namespace GDO.Apps.Presentation
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
@@ -80,6 +109,7 @@ namespace GDO.Apps.Presentation
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }   
         }
@@ -109,6 +139,7 @@ namespace GDO.Apps.Presentation
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
@@ -123,7 +154,8 @@ namespace GDO.Apps.Presentation
                     if (pa.CurrentPage < 0)
                     {
                         pa.CurrentPage = 0;
-                    } else if (pa.CurrentPage < (pa.PageCount - 1))
+                    } 
+                    else if (pa.CurrentPage < (pa.PageCount - 1))
                     {
                         pa.CurrentPage += 1;
                     }
@@ -137,6 +169,7 @@ namespace GDO.Apps.Presentation
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
