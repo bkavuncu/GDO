@@ -5,19 +5,25 @@ $(function() {
         gdo.consoleOut('.Youtube', 1, 'Current Channel Name: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#current_channel_name").html(message);
-            $("iframe").contents().find("#get_next_64_videos").click();
+            gdo.consoleOut('.Youtube', 1, 'Getting videos');
+            gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId, 1);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
     }
-    $.connection.youtubeAppHub.client.videoReady = function () {
+    $.connection.youtubeAppHub.client.videoReady = function (first) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.Youtube', 1, 'Clients are fetching videos');
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            if (first == 1) {
+                gdo.consoleOut('.Youtube', 1, 'Getting videos');
+                gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId, 0);
+            } else {
+                gdo.consoleOut('.Youtube', 1, 'Clients are fetching videos');
+            }
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE &&　first == 0) {
             gdo.consoleOut('.Youtube', 1, 'Fetching video ');
-            gdo.net.app["Youtube"].server.requestVideo(gdo.net.node[gdo.clientId].appInstanceId,
-                                                       gdo.net.node[gdo.clientId].sectionCol,
-                                                       gdo.net.node[gdo.clientId].sectionRow);
+            gdo.net.app["Youtube"].server.requestVideoUrls(gdo.net.node[gdo.clientId].appInstanceId,
+                                                           gdo.net.node[gdo.clientId].sectionCol,
+                                                           gdo.net.node[gdo.clientId].sectionRow);
         }
     }
     $.connection.youtubeAppHub.client.updateVideo = function (videoUrl) {
@@ -26,6 +32,20 @@ $(function() {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Youtube', 1, 'Update video url ');
             $("iframe").contents().find("#ytplayer").attr("src", videoUrl);
+        }
+    }
+    $.connection.youtubeAppHub.client.updateVideoList = function(videoName) {
+        videoName = JSON.parse(videoName);
+        $("#video_table > tr").remove();
+        $("#video_table").append('<tr id="video_table_title">' +
+                                      '<td>Current Videos</td>' +
+                                      '<td>Next Videos</td>' +
+                                 '</tr>')
+        for (i = 0; i < videoName.length; i++) {
+            $("#video_table").append('<tr class="video_table_content">' +
+                                          '<td>' + videoName["currentName"] + '</td>' +
+                                          '<td>' + videoName["nextName"] + '</td>' +
+                                     '</tr>')
         }
     }
 });

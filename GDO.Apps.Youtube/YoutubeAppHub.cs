@@ -8,10 +8,12 @@ using System.ComponentModel.Composition.Registration;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 using GDO.Utility;
+using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Youtube.Scripts.Youtube.js", "application/x-javascript")]
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Youtube.Configurations.sample.js", "application/json")]
@@ -39,6 +41,8 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
+                    // update channel name
+                    // search channel and get channel id
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
                     YoutubeApp.ChannelInfo channelJson = yf.getChannelId(newChannelName);
                     if (channelJson.items.Length <= 0)
@@ -51,6 +55,7 @@ namespace GDO.Apps.Youtube
                     yf.ChannelName = channelJson.items[0].snippet.title;
                     yf.ChannelId = channelJson.items[0].id.channelId;
 
+                    // get playlist id
                     YoutubeApp.PlayInfo playlistJson = yf.getPlaylists(yf.ChannelId);
                     if (playlistJson.items.Length <= 0)
                     {
@@ -73,7 +78,7 @@ namespace GDO.Apps.Youtube
             }
         }
 
-        public void GetNextVideos(int instanceId)
+        public void GetNextVideos(int instanceId, int first)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -86,19 +91,22 @@ namespace GDO.Apps.Youtube
                         Clients.Caller.updateChannelNameResult(yf.ErrorDetails);
                         return;
                     }
-                    //Clients.Caller.updateChannelNameResult(yf.ChannelName);
 
                     yf.VideoReady = false;
                     string baseUrl = "http://www.youtube.com/embed/";
                     string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
 
                     //init
-                    yf.VideoUrls = new string[yf.Section.Cols, yf.Section.Rows];
+                    yf.CurrentVideoUrls = (string[,]) yf.NextVideoUrls.Clone();
+                    yf.NextVideoUrls = new string[yf.Section.Cols, yf.Section.Rows];
+                    yf.CurrentVideoName = (string [,]) yf.NextVideoName.Clone();
+                    yf.NextVideoName = new string[yf.Section.Cols, yf.Section.Rows];
                     for (int i = 0; i < yf.Section.Cols; i++)
                     {
                         for (int j = 0; j < yf.Section.Rows; j++)
                         {
-                            yf.VideoUrls[i, j] = "";
+                            yf.NextVideoUrls[i, j] = "";
+                            yf.NextVideoName[i, j] = "";
                         }
                     }
 
@@ -117,13 +125,14 @@ namespace GDO.Apps.Youtube
                         for (int i = 0; i < videoJson.items.Length; i++)
                         {
                             int rank = sum - remain + i;
-                            yf.VideoUrls[rank/yf.Section.Cols, rank%yf.Section.Cols] = baseUrl + videoJson.items[i].snippet.resourceId.videoId + 
-                                                                                       tailUrl + videoJson.items[i].snippet.resourceId.videoId;
+                            yf.NextVideoUrls[rank/yf.Section.Cols, rank%yf.Section.Cols] = baseUrl + videoJson.items[i].snippet.resourceId.videoId + 
+                                                                                           tailUrl + videoJson.items[i].snippet.resourceId.videoId;
+                            yf.NextVideoName[rank/yf.Section.Cols, rank%yf.Section.Cols] = videoJson.items[i].snippet.title;
                         }
                         remain -= num;
                     }
                     yf.VideoReady = true;
-                    Clients.Group("" + instanceId).videoReady();
+                    Clients.Group("" + instanceId).videoReady(first);
                 }
                 catch (Exception e)
                 {
@@ -132,7 +141,7 @@ namespace GDO.Apps.Youtube
             }
         }
 
-        public void RequestVideo(int instanceId, int cols, int rows)
+        public void RequestVideoName(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -141,10 +150,40 @@ namespace GDO.Apps.Youtube
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
                     if (!yf.VideoReady)
                     {
-                        //Clients.Caller.updateChannelNameResult("Video Not Ready!");
+                        Clients.Caller.updateChannelNameResult("Video Not Ready!");
                         return;
                     }
-                    Clients.Caller.updateVideo(yf.VideoUrls[cols, rows]);
+                    YoutubeApp.NameInfo[] videoName = new YoutubeApp.NameInfo[yf.Section.Cols*yf.Section.Rows];
+                    for (int i = 0; i < yf.Section.Cols; i++)
+                    {
+                        for (int j = 0; j < yf.Section.Rows; j++)
+                        {
+                            videoName[i*yf.Section.Cols + j].currentName = yf.CurrentVideoName[i, j];
+                            videoName[i*yf.Section.Cols + j].nextName = yf.NextVideoName[i, j];
+                        }
+                    }
+                    Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestVideoUrls(int instanceId, int cols, int rows)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+                    if (!yf.VideoReady)
+                    {
+                        Clients.Caller.updateChannelNameResult("Video Not Ready!");
+                        return;
+                    }
+                    Clients.Caller.updateVideo(yf.CurrentVideoUrls[cols, rows]);
                 }
                 catch (Exception e)
                 {
