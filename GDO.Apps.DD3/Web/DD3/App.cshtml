@@ -1,0 +1,312 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #EEE;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+            padding : 0px;
+            margin: 0px;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .dot {
+          stroke: #000;
+        }
+    </style>
+</head>
+<body>
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/d3.js"></script>
+    <script src="../../Scripts/peer.js"></script>
+
+    <script>
+        var dd3;
+        var init1, init2, start1, start2, start3, t1, t2, t3;
+
+        $(function () {          
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+
+                var callback = function (configId) {
+                    if (dd3.state() === "ready") {
+                        test_bench[configId]();
+                    } else {
+                        dd3.on('ready', test_bench[configId]);
+                    }
+                }
+
+                dd3 = gdo.net.app["DD3"].initClient(d3, callback);
+                var test_bench = [];
+
+                var test_1 = function () {
+
+                    var svg = dd3.svgCanvas,
+	                    width = dd3.cave().svgWidth,
+	                    height = dd3.cave().svgHeight,
+	                    bwidth = dd3.browser().svgWidth,
+	                    bheight = dd3.browser().svgHeight,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser().column,
+                        r = dd3.browser().row;
+
+                    svg.append('rect')
+                        .attr("x", p.left(0))
+                        .attr("y", p.top(0))
+                        .attr("width", bwidth)
+                        .attr("height", bheight)
+                        .attr("stroke", "brown")
+                        .attr("fill", "#BBB");
+
+                    svg.append('g')
+                        .attr("transform", "translate(20,10)")
+                        .append('rect')
+                        .unwatch()
+                        .attr("x", -20)
+                        .attr("y", -10)
+                        .attr("width", width)
+                        .attr("height", height)
+                        .attr("stroke", "black")
+                        .attr("fill", "transparent");
+
+                    var circleGroup = svg.append("g").attr("id", "cg");
+
+                    svg.append("text")
+                        .unwatch()
+                        .text([r, c])
+                        .attr("font-size", 40)
+                        .attr("dominant-baseline", "text-before-edge")
+                        .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
+
+                    var rectG = svg.append('g').attr("id", "rect").append('g');
+                    var rect = rectG.append('rect')
+                        .attr("id", "test");
+
+                    init2 = function () {
+                        circleGroup.selectAll(".c").data(d3.range(100)).enter()
+                            .append('g')
+                            .append('circle')
+                            .attr("class", "c");
+
+                        circleGroup.selectAll(".c")
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 10 * Math.random() + 10; })
+                            .attr("stroke", "black")
+                            .attr("fill", "#FFF");
+                    };
+
+                    var init3 = function () {
+                        circleGroup.selectAll(".c").data(d3.range(10)).enter()
+                            .append('circle')
+                            .attr("class", "c");
+
+                        circleGroup.selectAll(".c")
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 20 * Math.random() + 20; })
+                            .attr("stroke", "black")
+                            .attr("opacity", 0.9)
+                            .attr("fill", "#FFF");
+                    };
+
+                    init1 = function () {
+                        rect.attr("x", width / 10)
+                            .attr("y", 4.5 * height / 10)
+                            .attr("width", width / 10)
+                            .attr("height", height / 10)
+                            .attr("stroke", "black")
+                            .style("fill", "#EEE")
+                            .attr("fill", "rgb(29, 219, 29)")
+                            .text("None");
+                    };
+
+                    startG = function (name) {
+                        rectG.transition(name)
+                             .duration(15000)
+                             .attr('transform', 'translate(500)');
+                    };
+
+                    start1 = function (name) {
+                        t1 = rect.transition(name)
+                            .duration(10000)
+                            .style("fill", "#AAA")
+                            .attr('x', 8 * width / 10)
+                            .text("test")
+                            .transition()
+                            .duration(5000)
+                            .attr('x', width / 10);
+                    };
+
+                    start2 = function (name) {
+                        t2 = rect.transition(name)
+                            .duration(40000)
+                            .attr('y', 8 * height / 10);
+                    };
+
+                    start3 = function (name) {
+                        t3 = circleGroup.selectAll(".c")
+                            .transition()
+                            .duration(20000)
+                            .precision(0.05)
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 40 * Math.random() + 50; });
+                    };
+
+                    change1 = function () {
+                        rectG.attr("transform", "rotate(" + (20 * Math.random() - 10) + ")");
+                    };
+
+                    /*
+                    init3();
+                    var f = function () {
+                        start3();
+                        setTimeout(f, 21000);
+                    };
+                    dd3.synchronize(f, 5000);
+                //*/
+                };
+
+                var test_2 = function () {
+                    var dim = dd3.dataDimensions();
+                    var extent = dim.x.max - dim.x.min, coef = 0., c = 1;
+                    var xDomain = [dim.x.min - coef * extent - c, dim.x.max + coef * extent + c];
+                    var yDomain = [dim.y.min - coef * extent - c, dim.y.max + coef * extent + c];
+
+                    // setup x
+                    var xScale = dd3.scale.linear().range([0, dd3.cave().svgWidth]),
+                        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+                    // setup y
+                    var yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]),
+                        yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                    xScale.domain(xDomain);
+                    yScale.domain(yDomain);
+
+                    var data = dd3.getData(xScale, yScale);
+                    var pathData = dd3.getPathData(xScale, yScale);
+
+                    var svg = dd3.svgCanvas;
+
+                    //*
+                    // x-axis
+                    svg.append("g")
+                      .unwatch()
+                      .attr("class", "x axis")
+                      .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
+                      .call(xAxis)
+                    .append("text")
+                      .attr("class", "label")
+                      .attr("x", dd3.cave().svgWidth)
+                      .attr("y", -6)
+                      .style("text-anchor", "end")
+                      .text("X axis");
+                    //*
+                    // y-axis
+                    svg.append("g")
+                      .unwatch()
+                      .attr("class", "y axis")
+                      .attr("transform", "translate(" + [0, 0] + ")")
+                      .call(yAxis)
+                    .append("text")
+                      .attr("class", "label")
+                      .attr("transform", "rotate(-90)")
+                      .attr("y", 6)
+                      .attr("dy", ".71em")
+                      .style("text-anchor", "end")
+                      .text("Y axis");
+
+                    /*
+                    var rGroup = svg.append('g').attr("id", "myRect");
+                    var pGroup = svg.append('g').attr("id", "myPoly");
+                    
+                    if (dd3.browser().row == 0 && dd3.browser().column == 0) {
+                        rGroup
+                            .append('rect')
+                            .attr("x", xScale(3))
+                            .attr("y", yScale(1))
+                            .attr("width", xScale(15) - xScale(3))
+                            .attr("height", yScale(0) - yScale(2))
+                            .attr("transform", "rotate(30 " + [xScale(3), yScale(1)] + ")scale(1)")
+                            .attr("stroke", "black")
+                            .attr("fill", "rgb(29, 219, 29)")
+                            .send();
+                    } else if (dd3.browser().row == 1 && dd3.browser().column == 1){
+                        pGroup
+                           .append('polygon')
+                           .attr("points", "50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180")
+                           .attr("transform", " scale(6) translate(50, -100)")
+                           .attr("stroke", "orange")
+                           .attr("stroke-width", "4")
+                           .attr("fill", "transparent")
+                           .send();
+                    } else {
+                        rGroup.attr("transform", "rotate(20)");
+                    }
+                    //*/
+
+                    // Draw dots
+                    svg.selectAll(".dot")
+                      .data(data)
+                    .enter()
+                      .append("g")
+                      .append("circle")
+                      .attr("class", "dot")
+                      .attr("cx", function (d) { return xScale(d['x']); })
+                      .attr("cy", function (d) { return yScale(d['y']); })
+                      .attr("r", 4)
+                      .style("fill", function (d, i) { return "black"; })
+                      .style("stroke", "red");
+
+                    var lineFunction = d3.svg.line()
+                            .x(function (d) { return xScale(d['x']); })
+                            .y(function (d) { return yScale(d['y']); })
+                            .interpolate("monotone");
+                    
+                    /*
+                    svg.append("path").datum(pathData)
+                        .attr("d", lineFunction)
+                        .attr("stroke", "blue")
+                        .attr("stroke-width", 2)
+                        .attr("fill", "none");
+                      //.send();
+                  
+                    //*/
+                };
+
+                test_bench.push(test_1);
+                test_bench.push(test_2);
+            });
+        });
+
+    </script>
+
+    <form id="form1" runat="server"></form>
+</body>
+</html>
