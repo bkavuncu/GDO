@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>ControlPage</title>
+    @RenderPage("Shared/_StyleSheets.cshtml")
+</head>
+<body>
+    <div class="container-fluid well">
+        <div class="row">
+            <div class="col-xs-1">
+                <h4 class="control-label">Add task:</h4>
+            </div>
+            <div class="col-xs-1">
+                <input data-bind="value: appData.newNodeId" placeholder="Node ID" class="form-control" />
+            </div>
+            <div class="col-xs-2">
+                <select class="form-control">
+                    <optgroup label="Aggregation Method"></optgroup>
+                    <option>Summation</option>
+                    <option>Average</option>
+                    <option>Minimum</option>
+                    <option>Custom</option>
+                </select>
+            </div>
+            <div class="col-xs-7">
+                <input data-bind="value: appData.newQuery" placeholder="Query" class="col-xs-12 form-control" />
+            </div>
+            <div class="col-xs-1">
+                <a href="#" data-bind="click: handlers.addTask" class="col-xs-12 btn btn-success">
+                    Add
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid well" data-bind="visible: appData.RuningVisualisations().length > 0">
+        <div class="row table table-striped table-hover">
+            <div class="col-xs-12 table-header ">
+                <div class="col-xs-2">Node ID</div>
+                <div class="col-xs-1">Query</div>
+                <div class="col-xs-1"></div>
+            </div>
+        </div>
+        <div data-bind="foreach: appData.RuningVisualisations">
+            <div class="row table-row">
+                <div data-bind="text: nodeId" class="col-xs-2 table-cell"></div>
+                <div data-bind="text: query" class="col-xs-9 table-cell"></div>
+                <a href="#" data-bind="click: $parent.handlers.removeTask" class="col-xs-1 btn btn-danger table-cell">Delete</a>
+            </div>
+        </div>
+    </div>
+
+    @RenderPage("Shared/_Scripts.cshtml")
+    <script src="~/Scripts/TimeV/gdo.apps.TimeV.js"></script>
+    <script src="~/Scripts/TimeV/gdo.apps.TimeV.server.js"></script>
+</body>
+</html>
+
+

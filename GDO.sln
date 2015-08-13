@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Tests", "GDO.Tests\GDO.Tests.csproj", "{EF4E4AC5-78ED-441A-996E-AE1EE5C6E991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.ImageTiles", "GDO.Apps.ImageTiles\GDO.Apps.ImageTiles.csproj", "{77BC15A4-E55B-46F5-BF97-CA91708661DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Images", "GDO.Apps.Images\GDO.Apps.Images.csproj", "{77BC15A4-E55B-46F5-BF97-CA91708661DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD4152F1-C1E9-4528-92F7-44112DF11A57}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,6 +15,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		create_browsers_local.exe = create_browsers_local.exe
 		import_apps.bat = import_apps.bat
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Maps", "GDO.Apps.Maps\GDO.Apps.Maps.csproj", "{03582490-FE29-4CBB-AFF5-98A51EC07E59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Youtube", "GDO.Apps.Youtube\GDO.Apps.Youtube.csproj", "{FFB1A839-7735-493F-A8F2-A43FF06D149E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Presentation", "GDO.Apps.Presentation\GDO.Apps.Presentation.csproj", "{B9637E74-6A97-4C7B-9320-7168FC6CC931}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.DD3", "GDO.Apps.DD3\GDO.Apps.DD3.csproj", "{DF0D5ADD-0B53-4564-8983-2498C76D621A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.TimeV", "GDO.Apps.TimeV\GDO.Apps.TimeV.csproj", "{61541E0F-32AF-47D7-B106-C04C4DC0149A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +44,26 @@ Global
 		{77BC15A4-E55B-46F5-BF97-CA91708661DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77BC15A4-E55B-46F5-BF97-CA91708661DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77BC15A4-E55B-46F5-BF97-CA91708661DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03582490-FE29-4CBB-AFF5-98A51EC07E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03582490-FE29-4CBB-AFF5-98A51EC07E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03582490-FE29-4CBB-AFF5-98A51EC07E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03582490-FE29-4CBB-AFF5-98A51EC07E59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFB1A839-7735-493F-A8F2-A43FF06D149E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFB1A839-7735-493F-A8F2-A43FF06D149E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFB1A839-7735-493F-A8F2-A43FF06D149E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFB1A839-7735-493F-A8F2-A43FF06D149E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9637E74-6A97-4C7B-9320-7168FC6CC931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9637E74-6A97-4C7B-9320-7168FC6CC931}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9637E74-6A97-4C7B-9320-7168FC6CC931}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9637E74-6A97-4C7B-9320-7168FC6CC931}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF0D5ADD-0B53-4564-8983-2498C76D621A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF0D5ADD-0B53-4564-8983-2498C76D621A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF0D5ADD-0B53-4564-8983-2498C76D621A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF0D5ADD-0B53-4564-8983-2498C76D621A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
