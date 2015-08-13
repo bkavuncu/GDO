@@ -91,6 +91,12 @@
                 var gdo = parent.gdo;
                 gdo.net.app["Images"].initControl();
             });
+
+            $("#display_mode_select").change(function() {
+                var gdo = parent.gdo;
+                gdo.net.app["Images"].displayMode = $(this).val();
+                console.log(gdo.net.app["Images"].displayMode);
+            });
         });
     </script>
     <div>
@@ -121,8 +127,14 @@
                             <td>
                                 <div class="file_upload">
                                     <span>Choose File</span>
-                                    <input type="file" name="Image" class="upload" id="select_image" />
+                                    <input type="file" name="Image" class="upload" id="select_image"/>
                                 </div>
+                            </td>
+                            <td>
+                                <select id="display_mode_select">
+                                    <option value="0">Fit</option>
+                                    <option value="1">Fill</option>
+                                </select>
                             </td>
                             <td>
                                 <input id="submit_image" type="submit" value="Submit" />
@@ -159,7 +171,7 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
                 gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "@imgname", gdo.net.app["Images"].displayMode);
+                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "@imgname");
                 gdo.net.app["Images"].server.requestImageName(gdo.controlId);
             });
 

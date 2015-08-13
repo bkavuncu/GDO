@@ -83,7 +83,7 @@ namespace GDO.Apps.Youtube
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Clients.Caller.setMessage(e.ToString());
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
@@ -111,13 +111,13 @@ namespace GDO.Apps.Youtube
                     //init
                     if (yf.NextVideoUrls != null)
                         yf.CurrentVideoUrls = (string[,]) yf.NextVideoUrls.Clone();
-                    yf.NextVideoUrls = new string[yf.Section.Cols, yf.Section.Rows];
+                    yf.NextVideoUrls = new string[yf.Section.Rows, yf.Section.Cols];
                     if (yf.NextVideoName != null)
                         yf.CurrentVideoName = (string [,]) yf.NextVideoName.Clone();
-                    yf.NextVideoName = new string[yf.Section.Cols, yf.Section.Rows];
-                    for (int i = 0; i < yf.Section.Cols; i++)
+                    yf.NextVideoName = new string[yf.Section.Rows, yf.Section.Cols];
+                    for (int i = 0; i < yf.Section.Rows; i++)
                     {
-                        for (int j = 0; j < yf.Section.Rows; j++)
+                        for (int j = 0; j < yf.Section.Cols; j++)
                         {
                             yf.NextVideoUrls[i, j] = "";
                             yf.NextVideoName[i, j] = "";
@@ -129,7 +129,7 @@ namespace GDO.Apps.Youtube
                     int remain = sum;
                     while (remain > 0)
                     {
-                        Clients.Caller.setMessage("Fetching from Youtube: " + remain.ToString() + "/" + sum.ToString());
+                        Clients.Caller.setMessage("Fetching from Youtube: " + (sum-remain).ToString() + "/" + sum.ToString());
                         int num = Math.Min(remain, 50);
                         YoutubeApp.PlayInfo videoJson = yf.getVideos(yf.PlaylistId, yf.NextPageToken, num.ToString());
                         yf.NextPageToken = videoJson.nextPageToken;
@@ -163,7 +163,7 @@ namespace GDO.Apps.Youtube
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Clients.Caller.setMessage(e.ToString());
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
@@ -186,9 +186,9 @@ namespace GDO.Apps.Youtube
                         return;
                     }
                     YoutubeApp.NameInfo[] videoName = new YoutubeApp.NameInfo[yf.Section.Cols*yf.Section.Rows];
-                    for (int i = 0; i < yf.Section.Cols; i++)
+                    for (int i = 0; i < yf.Section.Rows; i++)
                     {
-                        for (int j = 0; j < yf.Section.Rows; j++)
+                        for (int j = 0; j < yf.Section.Cols; j++)
                         {
                             videoName[i*yf.Section.Cols + j] = new YoutubeApp.NameInfo();
                             videoName[i*yf.Section.Cols + j].currentName = yf.CurrentVideoName[i, j];
@@ -201,7 +201,7 @@ namespace GDO.Apps.Youtube
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Clients.Caller.setMessage(e.ToString());
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
@@ -218,13 +218,13 @@ namespace GDO.Apps.Youtube
                         Clients.Caller.setMessage("Video Not Ready!");
                         return;
                     }
-                    Clients.Caller.updateVideo(yf.CurrentVideoUrls[cols, rows]);
+                    Clients.Caller.updateVideo(yf.CurrentVideoUrls[rows, cols]);
                     Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Clients.Caller.setMessage(e.ToString());
+                    Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
