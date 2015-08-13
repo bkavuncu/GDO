@@ -100,7 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Web\DD3\transition.html" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Transitions.json" />
