@@ -22,7 +22,7 @@ gdo.updateDisplayCanvas = function () {
             }
         }
         if (gdo.net.maintenanceMode) {
-            $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("GDO Node <b>" + gdo.clientId + "</b>");
+            $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("<b>GDO</b> Node " + gdo.clientId + "");
             gdo.maintenance.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
             gdo.maintenance.drawMaintenanceTable();
             $("#maintenance").show();

@@ -32,10 +32,10 @@
     gdo.management.selectedInstance = -1;
 
 
-    gdo.loadModule("management.nodes", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("management.sections", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("management.apps", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("management.instances", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("nodes","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("sections","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("apps","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("instances","management", gdo.MODULE_TYPE.CORE);
 });
 
 gdo.updateDisplayCanvas = function () {
@@ -251,8 +251,10 @@ gdo.management.drawHeaderTable = function () {
             if (gdo.management.toggleInstanceTable) {
                 gdo.management.toggleInstanceTable = false;
                 gdo.management.numToggleMenu--;
+                gdo.management.numToggleMenu--;
                 gdo.updateDisplayCanvas();
-            } else if (gdo.management.numToggleMenu < gdo.management.maxToggleMenu) {
+            } else if (gdo.management.numToggleMenu+1 < gdo.management.maxToggleMenu) {
+                gdo.management.numToggleMenu++;
                 gdo.management.numToggleMenu++;
                 gdo.management.toggleInstanceTable = true;
                 gdo.updateDisplayCanvas();
@@ -261,7 +263,7 @@ gdo.management.drawHeaderTable = function () {
     if (gdo.management.toggleInstanceTable) {
         $("#header_table_row_0_col_8").css("color", "lightgreen");
     } else {
-        if (gdo.management.numToggleMenu < gdo.management.maxToggleMenu) {
+        if (gdo.management.numToggleMenu+1 < gdo.management.maxToggleMenu) {
             $("#header_table_row_0_col_8").css("color", "white");
         } else {
             $("#header_table_row_0_col_8").css("color", "#777");

@@ -1,7 +1,7 @@
 ﻿gdo.management.drawEmptyInstanceTable = function () {
 
     $("#instance_table_app_list")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
+        .css("height", ((gdo.management.table_height * 2.5) + (gdo.management.info_height * 3.5)))
         .css("width", "14%")
         .css("border", "3px solid #444")
         .css("color", "#DDD")
@@ -13,7 +13,7 @@
         .css({ fontSize: gdo.management.button_font_size });
 
     $("#instance_table_control_frame")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
+        .css("height", ((gdo.management.table_height * 2.5) + (gdo.management.info_height * 3.5)))
         .css("width", "86%")
         .css("border", "3px solid #444")
         .css("color", "#DDD")
@@ -22,7 +22,7 @@
         .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size });
     $("iframe")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)));
+        .css("height", ((gdo.management.table_height * 2.5) + (gdo.management.info_height * 3.5)));
 }
 
 

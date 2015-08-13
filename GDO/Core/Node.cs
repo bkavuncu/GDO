@@ -16,6 +16,8 @@ namespace GDO.Core
         public int Id { get; set; }
         public int Col { get; set; }
         public int Row { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
         public int SectionCol { get; set; }
         public int SectionRow { get; set; }
         public int SectionId { get; set; }
@@ -27,10 +29,6 @@ namespace GDO.Core
         public bool IsConnectedToPeerServer { get; set; }
         public int AggregatedConnectionHealth { get; set; }
         public bool IsDeployed { get; set; }
-        [JsonIgnore]
-        public int Width { get; set; }
-        [JsonIgnore]
-        public int Height { get; set; }
         //[JsonIgnore]
         public List<int> ConnectedNodeList;
         [JsonIgnore]

@@ -20,6 +20,7 @@ namespace GDO.Core
         public IAppInstance App;
         public int Width { get; set; }
         public int Height { get; set; }
+        public int Pixels { get; set; }
         public int Col { get; set; }
         public int Row { get; set; }
         public int Cols { get; set; }
@@ -107,6 +108,7 @@ namespace GDO.Core
             }
             Width = Width / Rows;
             Height = Height / Cols;
+            Pixels = Width * Height;
         }
         /// <summary>
         /// Aggregates the connection health.

@@ -12,7 +12,7 @@ namespace GDO.Core
     {
         public string Name { get; set; }
 
-        public dynamic Json { get; set; }
+        public Newtonsoft.Json.Linq.JObject Json { get; set; }
 
         public AppConfiguration(string Name, dynamic Json)
         {

@@ -40,7 +40,7 @@
         }
 
         .cell {
-            margin: 10;
+            margin: 10px;
         }
 
         #header {
@@ -67,8 +67,8 @@
         }
 
         #content {
-            margin: 15 auto;
-            padding: 15;
+            margin: auto;
+            padding: 15px;
             border: 0;
             background-color: #000;
             color: #FFF;
@@ -129,14 +129,14 @@
         <script src="../signalr/hubs"></script>
         <script type="text/javascript" src="../Scripts/peer.js"></script>
         <script>
-            $(function () {       
+            $(function () {
                 @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
-                        @:gdo.loadModule("@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                        @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
                     }
                 }
-                gdo.loadModule('management', gdo.MODULE_TYPE.CORE);
+                gdo.loadModule('management','management', gdo.MODULE_TYPE.CORE);
                 gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
             });
             initApp = function () {

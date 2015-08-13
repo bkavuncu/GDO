@@ -30,6 +30,7 @@ namespace GDO.Core
         public static int NodeHeight { get; set; }
         public static int DefaultP2PMode { get; set; }
         public static ConcurrentDictionary<string, App> Apps { get; set; }
+        public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
 
@@ -47,6 +48,7 @@ namespace GDO.Core
         {
             MaintenanceMode = false;
             Apps = new ConcurrentDictionary<string, App>();
+            Instances = new ConcurrentDictionary<int, IAppInstance>();
             Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
@@ -463,7 +465,7 @@ namespace GDO.Core
                 string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);
                 foreach (string filePath in filePaths)
                 {
-                    dynamic json = Utilities.LoadJsonFile(filePath);
+                    Newtonsoft.Json.Linq.JObject json = Utilities.LoadJsonFile(filePath);
                     if (json != null)
                     {
                         string configurationName = Utilities.RemoveString(filePath, path + "\\");
@@ -486,6 +488,7 @@ namespace GDO.Core
             {
                 appList.Add(appEntry.Value.Name);
             }
+            appList.Sort();
             return appList;
         }
 

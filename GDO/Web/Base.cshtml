@@ -13,7 +13,7 @@
             background: #000;
             color: #222;
             font-family: helvetica;
-            font-size: 777;
+            font-size: 7px;
         }
 
         .unselectable {
@@ -25,13 +25,13 @@
         }
     </style>
 </head>
-<body>
+<body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
-            gdo.loadModule("node.base", gdo.MODULE_TYPE.CORE);
+            gdo.loadModule("base","node", gdo.MODULE_TYPE.CORE);
         });
     </script>
     <form id="form1" runat="server"></form>

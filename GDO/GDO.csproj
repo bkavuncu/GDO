@@ -152,15 +152,11 @@
     <Content Include="Scripts\gdo.utilities.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Scripts\d3.min.js" />
     <Content Include="Scripts\gdo.fs.js" />
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
-    <Content Include="Scripts\ol.fullscreen-require.js" />
-    <Content Include="Scripts\ol.fullscreen.js" />
-    <Content Include="Scripts\ol.loader.js" />
     <Content Include="Scripts\peer.js" />
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +180,11 @@
     <Content Include="Web\Node.cshtml" />
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Base.cshtml" />
+    <None Include="Properties\PublishProfiles\aa.pubxml" />
     <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\FTP1.pubxml" />
+    <Content Include="Web\Initialize.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />

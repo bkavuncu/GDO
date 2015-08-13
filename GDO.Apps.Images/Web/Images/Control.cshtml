@@ -1,0 +1,182 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+
+        #submit_image {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 210px;
+            height: 77px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        #select_image {
+            color: #DDD;
+            background: #222;
+            font-size: 28px;
+            width: 210px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        .file_upload {
+            position: relative;
+            overflow: hidden;
+            margin: 10px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            color: #DDD;
+            font-size: 21px;
+            background: #222;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["Images"].initControl();
+            });
+
+            $("#display_mode_select").change(function() {
+                var gdo = parent.gdo;
+                gdo.net.app["Images"].displayMode = $(this).val();
+                console.log(gdo.net.app["Images"].displayMode);
+            });
+        });
+    </script>
+    <div>
+        @{
+            var path = "";
+            var imgname = "";
+            if (IsPost)
+            {
+
+                WebImage photo = WebImage.GetImageFromRequest();
+                if (photo != null)
+                {
+                    imgname = Path.GetFileName(photo.FileName);
+                    //foldername
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + imgname;
+                    photo.Save(path);
+                }
+            }
+        }
+
+        <div>
+            <h1>Upload Image</h1>
+            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="file_upload">
+                                    <span>Choose File</span>
+                                    <input type="file" name="Image" class="upload" id="select_image"/>
+                                </div>
+                            </td>
+                            <td>
+                                <select id="display_mode_select">
+                                    <option value="0">Fit</option>
+                                    <option value="1">Fill</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="submit_image" type="submit" value="Submit" />
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+
+                @if (path != "")
+                {
+                    <br>
+                    <div class="result">
+                        <div id="image_folder" style="visibility: hidden; display: inline;"></div>
+                        <img id="thumbnail_image" src="" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                    </div>
+
+                }
+                else
+                {
+                    <br>
+                    <div class="result">
+                        <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                    </div>
+                }
+
+            </form>
+
+        </div>
+    </div>
+    @if (path != "")
+    {
+        <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
+                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "@imgname");
+                gdo.net.app["Images"].server.requestImageName(gdo.controlId);
+            });
+
+        });
+        </script>
+    }
+</body>
+</html>

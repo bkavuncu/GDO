@@ -102,7 +102,7 @@ $(function() {
     $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config) {
         if (gdo.net.isSignalRServerResponded()) {
             gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ")");
-            gdo.net.app[appName].config[configName] = JSON.parse(config);
+            gdo.net.app[appName].config[configName] = JSON.parse(JSON.parse(config));
             gdo.updateSelf();
         }
     }
@@ -208,7 +208,6 @@ $(function() {
             }
             gdo.consoleOut('.NET', 2, 'App ' + i + ' : ' + name);
             gdo.net.app[name].name = deserializedAppList[i];
-            //gdo.loadModule(deserializedAppList[i], gdo.MODULE_TYPE.APP);
             var hubName = lowerCaseFirstLetter(deserializedAppList[i]) + "AppHub";
             gdo.net.app[name].server = $.connection[hubName].server;
             gdo.net.app[name].config = new Array();
@@ -606,6 +605,8 @@ gdo.net.processNode = function (node)
 {
     gdo.net.node[node.Id].col = node.Col;
     gdo.net.node[node.Id].row = node.Row;
+    gdo.net.node[node.Id].width = node.Width;
+    gdo.net.node[node.Id].height = node.Height;
     gdo.net.node[node.Id].sectionCol = node.SectionCol;
     gdo.net.node[node.Id].sectionRow = node.SectionRow;
     gdo.net.node[node.Id].sectionId = node.SectionId;

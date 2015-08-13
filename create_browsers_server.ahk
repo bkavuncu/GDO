@@ -4,7 +4,7 @@ Width := 200
 Height := 200
 Cols := 2
 Rows := 2
-URL := "http://localhost:12332/Web/Node.cshtml"
+URL := "http://146.169.32.146/Web/Node.cshtml"
 URLParameter :="clientId"
 Title := "GDO Test Node "
 Node := 1
@@ -28,7 +28,7 @@ Gui, Add, Edit, w70 vTopLeftX , 0
 Gui, Add, Text,, Top Left Y:
 Gui, Add, Edit, w70 vTopLeftY , 0
 Gui, Add, Text,, URL:
-Gui, Add, Edit, w490 vURL , http://localhost:12332/Web/Node.cshtml
+Gui, Add, Edit, w490 vURL , http://146.169.32.146/Web/Node.cshtml
 Gui, Add, Text,, URL Parameter to Enumerate through:
 Gui, Add, Edit, w210 vURLParameter , clientId
 Gui, Add, Text,, Title to Match
