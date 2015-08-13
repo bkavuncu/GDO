@@ -33,13 +33,14 @@ namespace GDO.Apps.Images
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void ChangeImageName(int instanceId, string imageName, int mode)
+        public void ChangeImageName(int instanceId, string imageName)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    string imageNameDigit = ((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ProcessImage(imageName, mode);
+                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    string imageNameDigit = ia.ProcessImage(imageName, ia.DisplayMode);
                     SendImageNames(instanceId, imageName, imageNameDigit);
                 }
                 catch (Exception e)
@@ -72,6 +73,22 @@ namespace GDO.Apps.Images
                         Clients.Caller.receiveImageName(((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName,
                                                         ((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                     }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void SetDisplayMode(int instanceId, int displaymode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ia.DisplayMode = displaymode;
                 }
                 catch (Exception e)
                 {

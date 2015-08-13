@@ -13,7 +13,7 @@ namespace GDO.Apps.Images
 {
     enum Mode
     {
-        CROP = 1,
+        FILL = 1,
         FIT = 0
     };
     public class ImagesApp : IAppInstance
@@ -23,12 +23,14 @@ namespace GDO.Apps.Images
         public AppConfiguration Configuration { get; set; }
         public string ImageName { get; set; }
         public string ImageNameDigit { get; set; }
+        public int DisplayMode { get; set; }
         public Image[,] Tiles { get; set; }
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
+            this.DisplayMode = (int)Mode.FIT;
             Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
         }
 
@@ -67,7 +69,7 @@ namespace GDO.Apps.Images
             int tempImageRows;
 
 
-            if (scaleWidth > scaleHeight && mode == (int)Mode.CROP ||
+            if (scaleWidth > scaleHeight && mode == (int)Mode.FILL ||
                 scaleWidth < scaleHeight && mode == (int)Mode.FIT)
             {
                 imageScaledWidth = (image.Width - 1) / Section.Cols + 1; // ceiling
