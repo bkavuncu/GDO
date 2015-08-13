@@ -53,7 +53,9 @@ namespace GDO.Apps.DD3
             String browserInfoJson = Newtonsoft.Json.JsonConvert.SerializeObject(browserInfos);
             //Context.Clients.All.receiveConfiguration(browserInfoJson, Id);
             //Context.Clients.Group("" + Id).receiveConfiguration(browserInfoJson, Id);
-            DD3AppHub.self.broadcastConfiguration(browserInfoJson, (int) Configuration.Json.id.Value, Id);
+            Newtonsoft.Json.Linq.JToken value;
+            Configuration.Json.TryGetValue("id", out value);
+            DD3AppHub.self.broadcastConfiguration(browserInfoJson, (int)value, Id);
         }
 
         public void synchronize(string cid)
