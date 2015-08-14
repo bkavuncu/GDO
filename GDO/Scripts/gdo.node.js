@@ -41,12 +41,12 @@ gdo.updateDisplayCanvas = function () {
 
 gdo.loadAppFrame = function (app) {
     gdo.consoleOut(".NODE", 3, "Loading App Frame " + app);
-    $('iframe').attr('src', "\\Web\\"+app+"\\app.cshtml");
+    $('iframe').attr('src', "/Web/"+app+"/app.cshtml");
     $('iframe').fadeIn();
 }
 
 gdo.closeAppFrame = function () {
     gdo.consoleOut(".NODE", 3, "Returning back to base app frame");
-    $('iframe').attr('src', "\\Web\\base.cshtml");
+    $('iframe').attr('src', "/Web/base.cshtml");
     $('iframe').fadeIn();
 }

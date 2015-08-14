@@ -282,18 +282,21 @@ gdo.net.initPeer = function () {
     /// </summary>
     /// <returns></returns>
     gdo.consoleOut('.NET', 2, 'Initializing Peer Connections');
-    gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); //our own server will replace here
+    gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); // public server for testing outside of college
+
+    gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
+   
     gdo.net.peer.on('open', function(peerId) {
         gdo.consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         gdo.net.node[gdo.clientId].peerId = peerId;
         gdo.net.node[gdo.clientId].isConnectedToPeerServer = true;
         setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 1000 + Math.floor((Math.random() * 1000) + 1));
         gdo.net.peerJSServerResponded = true;
-        gdo.consoleOut('.NET', 1, 'Peer Connections Initialized');
+        gdo.consoleOut('.NET', 1, 'Peer Connections Initialized'+peerId);
     });
     gdo.net.peer.on('close', function(err) {
         gdo.net.node[gdo.clientId].isConnectedToPeerServer = false;
-        gdo.consoleOut('.NET', 5, err);
+        gdo.consoleOut('.NET', 5,'ERROR'+ err);
     });
     gdo.net.peer.on('connection', gdo.net.receiveConn);
 }
