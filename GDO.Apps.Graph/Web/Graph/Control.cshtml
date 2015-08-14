@@ -27,31 +27,13 @@
             user-select: none;
         }
 
-        #controlTest {
-            color: #FFF;
-            font-family: helvetica;
-            font-size: 70%;
-        }
 
     </style>
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    @{ 
-        var message = "Let's check if the button is working.";
-        var clickNum = 0;
-
-        /*
-        if (IsPost)
-        {
-           
-        }
-        */
-    }
-    
     <script>
-        
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
@@ -62,32 +44,17 @@
         function startRendering() {
             var gdo = parent.gdo;
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Starting graph rendering");  // can include filename here using razor
-            
-            gdo.net.app["Graph"].server.requestRendering(gdo.controlId); 
 
+            gdo.net.app["Graph"].server.RequestRendering(gdo.controlId);
         };
     </script>
     
     <div>
-        <h1>Distributed Graph Rendering</h1>
-        <form id="submit_render_action" action="" method="post" enctype="multipart/form-data">
-            <input type="submit" onclick="startRendering()" value="Render Graph">
-            </form>
-</div>
-
-    <div id="messages">
-        <h2>@message</h2>
-        <h2>No. of clicks: @clickNum</h2>
-
-        @if(IsPost) {
-            message = "Yes, the button is working :)";
-            clickNum++;
-        <br />
-        <h2>@message</h2>
-        <h2>No. of clicks: @clickNum</h2>
-        }
+            <h1>Distributed Graph Rendering</h1>
+            <input type="button" onclick="startRendering()" value="Render Graph">
     </div>
 
-    <div id="controlTest"> </div>
+    <div id="controlTest"></div>
+
 </body>
 </html>

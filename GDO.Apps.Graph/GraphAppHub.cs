@@ -30,9 +30,8 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void RequestRendering(int instanceId)
+        public void RequestRendering (int instanceId)
         {
-            Console.WriteLine("Debug: Server side RequestRendering is called correctly");
             lock (Cave.AppLocks[instanceId])
             {
                 try
@@ -42,8 +41,6 @@ namespace GDO.Apps.Graph
                     try // the 'try' 'catch' here seems redundant
                     {   // Clients.Group to let all clients within the group receive image name
                         Clients.Group("" + instanceId).RenderGraph(); // pass in parameters later
-                        
-                 
                     }
                     catch (Exception e)
                     {
@@ -89,7 +86,7 @@ namespace GDO.Apps.Graph
                 Console.WriteLine(e);
             }
         }
-        
+
         // called by clients (App or Control) to get image name from server, which will in turn call Client's receiveImageName function that will render the image
         public void RequestImageName(int instanceId)
         {
@@ -97,13 +94,11 @@ namespace GDO.Apps.Graph
             {
                 try
                 {
-                    // with this if condition, node only gets painted when there is an image; otherwise node will appear empty if it's loaded without any image uploaded
                     if (((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
                     {
                         Clients.Caller.receiveImageName(((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName,
                                                         ((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                     }
-                    
                 }
                 catch (Exception e)
                 {
@@ -111,7 +106,7 @@ namespace GDO.Apps.Graph
                 }
             }
         }
+
         */
-        
     }
 }
