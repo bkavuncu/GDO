@@ -37,7 +37,7 @@ namespace GDO.Apps.Graph
             public double height { get; set; }
         }
 
-        public class Pos
+        public class NodePos
         {
             public double x { get; set; }
             public double y { get; set; }
@@ -46,7 +46,7 @@ namespace GDO.Apps.Graph
         public class Node
         {
             public int id { get; set; }
-            public Pos pos { get; set; }
+            public NodePos pos { get; set; }
         }
 
         public class From
@@ -61,7 +61,7 @@ namespace GDO.Apps.Graph
             public double y { get; set; }
         }
 
-        public class Pos2
+        public class LinkPos
         {
             public From from { get; set; }
             public To to { get; set; }
@@ -71,10 +71,10 @@ namespace GDO.Apps.Graph
         {
             public int fromId { get; set; }
             public int toId { get; set; }
-            public Pos2 pos { get; set; }
+            public LinkPos pos { get; set; }
         }
 
-        public class RootObject
+        public class GraphCompleteData
         {
             public RectDimension rectDimension { get; set; }
             public List<Node> nodes { get; set; }
@@ -82,57 +82,21 @@ namespace GDO.Apps.Graph
         }
 
 
-        /* data structure for individual output file
+        // extra classes for individual browser's output
         public class BrowserPos
-{
-    public int row { get; set; }
-    public int col { get; set; }
-}
+        {
+            public int row { get; set; }
+            public int col { get; set; }
+        }
 
-public class Pos
-{
-    public double x { get; set; }
-    public double y { get; set; }
-}
 
-public class Node
-{
-    public int id { get; set; }
-    public Pos pos { get; set; }
-}
+        public class GraphPartitionData
+        {
+            public BrowserPos browserPos { get; set; }
+            public List<Node> nodes { get; set; }
+            public List<Link> links { get; set; }
 
-public class From
-{
-    public double x { get; set; }
-    public double y { get; set; }
-}
-
-public class To
-{
-    public double x { get; set; }
-    public double y { get; set; }
-}
-
-public class Pos2
-{
-    public From from { get; set; }
-    public To to { get; set; }
-}
-
-public class Link
-{
-    public int fromId { get; set; }
-    public int toId { get; set; }
-    public Pos2 pos { get; set; }
-}
-
-public class RootObject
-{
-    public BrowserPos browserPos { get; set; }
-    public List<Node> nodes { get; set; }
-    public List<Link> links { get; set; }
-
-        */
+        }
 
 
 
@@ -156,7 +120,7 @@ public class RootObject
             StreamReader file = File.OpenText(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json");
             JsonTextReader reader = new JsonTextReader(file);
             JsonSerializer serializer = new JsonSerializer();
-            RootObject graphData = serializer.Deserialize<RootObject>(reader);
+            GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
 
             System.Diagnostics.Debug.WriteLine(graphData.rectDimension.height);
 
