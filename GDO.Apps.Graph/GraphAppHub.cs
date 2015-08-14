@@ -32,7 +32,7 @@ namespace GDO.Apps.Graph
 
         public void RequestRendering(int instanceId)
         {
-            Console.WriteLine("Debug: Server side RequestRendering is called correctly");
+            System.Diagnostics.Debug.WriteLine("Debug: Server side RequestRendering is called correctly");
             lock (Cave.AppLocks[instanceId])
             {
                 try
@@ -41,6 +41,8 @@ namespace GDO.Apps.Graph
                     //string imageNameDigit = ia.ProcessImage(imageName, ia.DisplayMode);
                     try // the 'try' 'catch' here seems redundant
                     {   // Clients.Group to let all clients within the group receive image name
+                        GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                        ga.ProcessGraph();
                         Clients.Group("" + instanceId).RenderGraph(); // pass in parameters later
                         
                  
