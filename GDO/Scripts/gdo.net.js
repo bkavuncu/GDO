@@ -282,7 +282,7 @@ gdo.net.initPeer = function () {
     /// </summary>
     /// <returns></returns>
     gdo.consoleOut('.NET', 2, 'Initializing Peer Connections');
-    gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); // public server for testing outside of college
+   // gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); // public server for testing outside of college
 
     gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
    
@@ -369,6 +369,7 @@ gdo.net.uploadNodeInfo = function () {
     /// </summary>
     /// <returns></returns>
     var connectedNodes = JSON.stringify(gdo.net.nodes.getConnected());
+    gdo.consoleOut(".NET", 2, "about to uploadNodeInfo to Server myid =" + gdo.clientId + " hub id=" + gdo.net.connection.hub.id + " peerid= " + gdo.net.node[gdo.clientId].peerId);
     gdo.net.server.uploadNodeInfo(gdo.clientId, gdo.net.connection.hub.id, connectedNodes, gdo.net.node[gdo.clientId].peerId, gdo.net.node[gdo.clientId].isConnectedToPeerServer)
         .done(function (result) { gdo.net.node[gdo.clientId].isConnectedToCaveServer = true; })
         .fail(function(result) {
@@ -619,7 +620,9 @@ gdo.net.processNode = function (node)
     gdo.net.node[node.Id].isConnectedToPeerServer = node.IsConnectedToPeerServer;
     gdo.net.node[node.Id].aggregatedConnectionHealth = node.AggregatedConnectionHealth;
     gdo.net.node[node.Id].appInstanceId = node.AppInstanceId;
-    gdo.net.node[node.Id].peerId = node.PeerId;
+    if (node.Id != gdo.clientId) {// dont overwrite your own peerid
+        gdo.net.node[node.Id].peerId = node.PeerId;
+    }
     gdo.net.node[node.Id].p2pmode = node.P2PMode;
     gdo.net.node[node.Id].id = node.Id;
     gdo.net.node[node.Id].connectedNodeList = node.ConnectedNodeList;
