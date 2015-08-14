@@ -272,7 +272,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     }
     waitForResponse( gdo.net.server.requestMaintenanceMode, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     waitForResponse( gdo.net.server.requestDefaultP2PMode, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
-    waitForResponse( gdo.net.server.requestAppList, gdo.net.isSignalRServerResponded, 100, 20, 'SignalR server failed to Respond');
+    waitForResponse(gdo.net.server.requestAppList, gdo.net.isSignalRAndPeerJSServerResponded, 100, 20, 'SignalR server failed to Respond');
    
 }
 
@@ -542,6 +542,14 @@ gdo.net.isSignalRServerResponded = function () {
             return false;
         }
     }
+}
+
+gdo.net.isSignalRAndPeerJSServerResponded = function () {
+    /// <summary>
+    /// Determines whether both signalR and PeerJS have responded.
+    /// </summary>
+    /// <returns></returns>
+    return isPeerJSServerResponded() && isSignalRServerResponded();
 }
 
 gdo.net.isPeerJSServerResponded = function (){
