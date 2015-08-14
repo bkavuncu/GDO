@@ -108,8 +108,9 @@ namespace GDO.Apps.Graph
         public BrowserPos checkBrowserPos(Pos pos)
         {
             BrowserPos browserPos = new BrowserPos();
-            browserPos.row = (int)(Math.Floor(pos.y / Section.Height)); // cast it to int
-            browserPos.col = (int)(Math.Floor(pos.x / Section.Width));
+            // previously bug: didn't divide Section.Height by Section.Rows, which makes it divide by the dimension of whole section, hence all nodes appear in the first file
+            browserPos.row = (int)(Math.Floor(pos.y / (Section.Height/Section.Rows))); // cast it to int
+            browserPos.col = (int)(Math.Floor(pos.x / (Section.Width/Section.Cols)));
             return browserPos;
         }
 
@@ -123,9 +124,6 @@ namespace GDO.Apps.Graph
             GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
 
             //System.Diagnostics.Debug.WriteLine(graphData.rectDimension.height);
-
-
-
 
             List<Node> nodes = graphData.nodes;
             List<Link> links = graphData.links;
@@ -169,6 +167,8 @@ namespace GDO.Apps.Graph
             System.Diagnostics.Debug.WriteLine(Section.Cols);
             System.Diagnostics.Debug.WriteLine(Section.Row);
             System.Diagnostics.Debug.WriteLine(Section.Col);
+            System.Diagnostics.Debug.WriteLine(Section.Height);
+            System.Diagnostics.Debug.WriteLine(Section.Width);
 
             // previously forgot to initialise elements within array
             for (int i = 0; i < Section.Rows; i++)
@@ -208,27 +208,19 @@ namespace GDO.Apps.Graph
 
 
             // write to file
-            StreamWriter sw = new StreamWriter(basePath + FolderNameDigit + "\\new.json");
-            sw.AutoFlush = true;
-            JsonWriter writer = new JsonTextWriter(sw);
-            serializer.Serialize(writer, graphData.nodes);
-
-
-
-            /*
             for (int i = 0; i < Section.Rows; i++)
             {
                 for (int j = 0; j < Section.Cols; j++)
                 {
                     //TODO: replace autoflush by 'using', to flush the last buffer right away
-                    StreamWriter sw = new StreamWriter(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\new_output.json");
+                    StreamWriter sw = new StreamWriter(basePath + FolderNameDigit + "\\" + "partition" + @"_" + i + @"_" + j + @".json");
                     sw.AutoFlush = true;
                     JsonWriter writer = new JsonTextWriter(sw);
-                    serializer.Serialize(writer, graphData.nodes);
+                    serializer.Serialize(writer, partitionData[i,j]);
                 }
             }
 
-            */
+            
 
             /*
                 this.ImageName = imageName;
