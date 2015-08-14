@@ -194,6 +194,8 @@ $(function() {
             }
         }
         gdo.updateSelf();
+
+        gdo.net.NodesUpdateReceived = true;
     }
 
     $.connection.caveHub.client.receiveAppList = function (serializedAppList) {
@@ -268,11 +270,11 @@ gdo.net.initNet = function (clientMode) {//todo comment
     }
     gdo.net.initNodes();
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-        waitForResponse( gdo.net.initPeer, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
+        waitForResponse( gdo.net.initPeer, gdo.net.isNodesUpdateReceived, 50, 20, 'SignalR server failed to Respond');
     }
     waitForResponse( gdo.net.server.requestMaintenanceMode, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
     waitForResponse( gdo.net.server.requestDefaultP2PMode, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
-    waitForResponse(gdo.net.server.requestAppList, gdo.net.isSignalRAndPeerJSServerResponded, 100, 20, 'SignalR server failed to Respond');
+    waitForResponse(gdo.net.server.requestAppList, gdo.net.isSignalRServerResponded, 100, 20, 'SignalR server failed to Respond');
    
 }
 
@@ -544,12 +546,26 @@ gdo.net.isSignalRServerResponded = function () {
     }
 }
 
+gdo.net.isNodesUpdateReceived = function () {
+    /// <summary>
+    /// Determines whether [the node update has been received around init].
+    /// </summary>
+    /// <returns></returns>
+    if (gdo.net != null && gdo.net != undefined) {
+        if (gdo.net.NodesUpdateReceived != null && gdo.net.NodesUpdateReceived != undefined) {
+            return gdo.net.NodesUpdateReceived;
+        } else {
+            return false;
+        }
+    }
+}
+
 gdo.net.isSignalRAndPeerJSServerResponded = function () {
     /// <summary>
     /// Determines whether both signalR and PeerJS have responded.
     /// </summary>
     /// <returns></returns>
-    return isPeerJSServerResponded() && isSignalRServerResponded();
+    return gdo.net.isPeerJSServerResponded() && gdo.net.isSignalRServerResponded();
 }
 
 gdo.net.isPeerJSServerResponded = function (){
@@ -628,9 +644,7 @@ gdo.net.processNode = function (node)
     gdo.net.node[node.Id].isConnectedToPeerServer = node.IsConnectedToPeerServer;
     gdo.net.node[node.Id].aggregatedConnectionHealth = node.AggregatedConnectionHealth;
     gdo.net.node[node.Id].appInstanceId = node.AppInstanceId;
-    if (node.Id != gdo.clientId) {// dont overwrite your own peerid
-        gdo.net.node[node.Id].peerId = node.PeerId;
-    }
+    gdo.net.node[node.Id].peerId = node.PeerId;
     gdo.net.node[node.Id].p2pmode = node.P2PMode;
     gdo.net.node[node.Id].id = node.Id;
     gdo.net.node[node.Id].connectedNodeList = node.ConnectedNodeList;
