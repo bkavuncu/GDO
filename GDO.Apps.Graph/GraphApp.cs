@@ -115,7 +115,7 @@ namespace GDO.Apps.Graph
         }
 
 
-        public void ProcessGraph()   // add parameter string filename later, also may need to change return type
+        public string ProcessGraph()   // add parameter string filename later, also may need to change return type
         {
 
             StreamReader file = File.OpenText(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json");
@@ -220,7 +220,8 @@ namespace GDO.Apps.Graph
                 }
             }
 
-            
+
+            return this.FolderNameDigit;
 
             /*
                 this.ImageName = imageName;

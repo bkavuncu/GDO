@@ -30,27 +30,39 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
+        //TODO: Check if try, catch are implemented correctly
+        public void InitiateProcessing(int instanceId)
+        {
+            System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
+            lock (Cave.AppLocks[instanceId])
+            {
+                try 
+                {
+                    // Clients.Group to let all clients within the group receive image name
+                    GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                    string folderNameDigit = ga.ProcessGraph();
+                    // no need to implement broadcast to group first, since graph is not updated after initial upload
+                    //Clients.Group("" + instanceId).renderGraph(folderNameDigit); 
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void RequestRendering(int instanceId)
         {
-            System.Diagnostics.Debug.WriteLine("Debug: Server side RequestRendering is called correctly");
             lock (Cave.AppLocks[instanceId])
             {
                 try
-                {    // create the GraphApp object later on
-                    //GraphApp ga = (ImagesApp)Cave.Apps["Graph"].Instances[instanceId];
-                    //string imageNameDigit = ia.ProcessImage(imageName, ia.DisplayMode);
-                    try // the 'try' 'catch' here seems redundant
-                    {   // Clients.Group to let all clients within the group receive image name
-                        GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
-                        ga.ProcessGraph();
-                        Clients.Group("" + instanceId).RenderGraph(); // pass in parameters later
-                        
-                 
-                    }
-                    catch (Exception e)
+                {
+                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any image uploaded
+                    if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
                     {
-                        Console.WriteLine(e);
+                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
                     }
+
                 }
                 catch (Exception e)
                 {
@@ -114,6 +126,6 @@ namespace GDO.Apps.Graph
             }
         }
         */
-        
+
     }
 }

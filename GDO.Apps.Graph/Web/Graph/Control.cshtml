@@ -63,7 +63,10 @@
             var gdo = parent.gdo;
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Starting graph rendering");  // can include filename here using razor
             
-            gdo.net.app["Graph"].server.requestRendering(gdo.controlId); 
+            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId); 
+
+            // nothing to request render on control page yet, implement this later if necessary
+            // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
 
         };
     </script>
