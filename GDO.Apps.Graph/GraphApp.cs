@@ -10,7 +10,7 @@ using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json;
 
-/* transcoding from javascript distributeGraph.js
+/* transcoded from javascript distributeGraph.js
 
 */
 
@@ -95,6 +95,14 @@ namespace GDO.Apps.Graph
             public double y { get; set; }
         }
 
+        public class Intersection
+        {
+            public Pos pos { get; set; }
+            public string type { get; set; }
+            public int number { get; set; }
+
+        }
+
 
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, Section section, AppConfiguration configuration)
@@ -109,8 +117,8 @@ namespace GDO.Apps.Graph
         {
             BrowserPos browserPos = new BrowserPos();
             // previously bug: didn't divide Section.Height by Section.Rows, which makes it divide by the dimension of whole section, hence all nodes appear in the first file
-            browserPos.row = (int)(Math.Floor(pos.y / (Section.Height/Section.Rows))); // cast it to int
-            browserPos.col = (int)(Math.Floor(pos.x / (Section.Width/Section.Cols)));
+            browserPos.row = (int)(Math.Floor(pos.y / (Section.Height / Section.Rows))); // cast it to int
+            browserPos.col = (int)(Math.Floor(pos.x / (Section.Width / Section.Cols)));
             return browserPos;
         }
 
@@ -128,6 +136,9 @@ namespace GDO.Apps.Graph
             List<Node> nodes = graphData.nodes;
             List<Link> links = graphData.links;
             RectDimension rectDimension = graphData.rectDimension;
+
+            int singleDisplayHeight = (int)(Section.Height / Section.Rows);
+            int singleDisplayWidth = (int)(Section.Width / Section.Cols);
 
             // transform data to GDO dimension
             Scales scales = new Scales();
@@ -165,8 +176,6 @@ namespace GDO.Apps.Graph
 
             System.Diagnostics.Debug.WriteLine(Section.Rows);
             System.Diagnostics.Debug.WriteLine(Section.Cols);
-            System.Diagnostics.Debug.WriteLine(Section.Row);
-            System.Diagnostics.Debug.WriteLine(Section.Col);
             System.Diagnostics.Debug.WriteLine(Section.Height);
             System.Diagnostics.Debug.WriteLine(Section.Width);
 
@@ -185,11 +194,183 @@ namespace GDO.Apps.Graph
                 }
             }
 
+            // distribute nodes
             for (int i = 0; i < nodes.Count; i++)
             {
                 BrowserPos nodeBrowserPos = checkBrowserPos(nodes[i].pos);
                 partitionData[nodeBrowserPos.row, nodeBrowserPos.col].nodes.Add(nodes[i]);
             }
+
+
+            // distribute links
+            for (int i = 0; i < links.Count; i++)
+            {
+                Link link = links[i];
+
+                Pos startPos, endPos;
+
+                // set starting point to the one with smaller x, without changing original data
+                if (link.pos.from.x > link.pos.to.x)
+                {
+                    startPos = link.pos.to;
+                    endPos = link.pos.from;
+                }
+                else
+                {
+                    startPos = link.pos.from;
+                    endPos = link.pos.to;
+                }
+
+                BrowserPos startBrowserPos = checkBrowserPos(startPos);
+                BrowserPos endBrowserPos = checkBrowserPos(endPos);
+
+                // note:
+                // colDiff will always be >= 0, since we have set starting point's x to be smaller
+                // rowDiff may be < 0
+
+                int colDiff = endBrowserPos.col - startBrowserPos.col;
+                int rowDiff = endBrowserPos.row - startBrowserPos.row;
+
+                // find lines between the two points to check for intersection
+                List<int> horizontalLines = new List<int>(); // y = a
+                List<int> verticalLines = new List<int>(); // x = b
+
+                for (int j = 0; j < colDiff; ++j)
+                {
+                    verticalLines.Add((startBrowserPos.col + 1 + j) * singleDisplayWidth);
+                }
+
+                if (rowDiff > 0)
+                {
+                    for (int j = 0; j < rowDiff; ++j)
+                    {
+                        horizontalLines.Add((startBrowserPos.row + 1 + j) * singleDisplayHeight);
+                    }
+                }
+                else if (rowDiff < 0)
+                {
+                    for (int j = -rowDiff; j > 0; --j)
+                    {
+                        horizontalLines.Add((startBrowserPos.row + 1 - j) * singleDisplayHeight);
+                    }
+                }
+
+                // check for different cases & push link onto respective browser
+
+                // regardless of where the end point is, the starting browser definitely should have the link
+                // equivalently to basic case where colDiff == 0 && rowDiff == 0
+                partitionData[startBrowserPos.row, startBrowserPos.col].links.Add(link);
+
+                // cases:
+                // 1. both in the same browser
+                // 2. both in different browsers, but on the same row or same col
+                // 3. both in different browsers, diff row and diff col
+
+                if (rowDiff != 0 && colDiff == 0)
+                {
+                    // no colDiff means all are on same column, but different rows
+                    if (rowDiff > 0)
+                    {
+                        for (int j = 0; j < rowDiff; ++j)
+                        {
+                            partitionData[startBrowserPos.row + 1 + j, startBrowserPos.col].links.Add(link);
+                        }
+                    }
+                    else
+                    { //rowDiff < 0
+                        for (int j = -rowDiff; j > 0; --j)
+                        {  // previous bug, didn't put - in front of rowDiff, this condition will always be false, since rowDiff is negative at the start
+                            partitionData[startBrowserPos.row - j, startBrowserPos.col].links.Add(link);
+                        }
+                    }
+                }
+                else if (rowDiff == 0 && colDiff != 0)
+                {
+                    for (int j = 0; j < colDiff; ++j)
+                    {
+                        partitionData[startBrowserPos.row, startBrowserPos.col + 1 + j].links.Add(link);
+                    }
+                }
+                else if (rowDiff != 0 && colDiff != 0)
+                {
+                    // check for intersections & place into respective browsers
+
+                    // calculate line equation y = mx + c
+                    var m = (endPos.y - startPos.y) / (endPos.x - startPos.x);
+                    var c = startPos.y - (m * startPos.x);
+
+                    // get intersection points
+                    List<Intersection> intersections = new List<Intersection>();
+                   
+                    // check for x intersection with horizontal line (y = a)
+                    for (int j = 0; j < horizontalLines.Count; ++j)
+                    {
+                        int y = horizontalLines[j];
+                        Intersection intersection = new Intersection();
+                        intersection.pos = new Pos();
+                        intersection.pos.x = (y - c) / m;
+                        intersection.pos.y = y;
+                        intersection.type = "horizontal";
+                        intersection.number = (int)(Math.Floor(intersection.pos.x / singleDisplayWidth)); 
+                        // to get which col it belongs to
+                    }
+
+                    // check for y intersection with vertical line (x = b)
+                    for (int j = 0; j < verticalLines.Count; ++j)
+                    {
+                        int x = verticalLines[j];
+                        Intersection intersection = new Intersection();
+                        intersection.pos = new Pos();
+                        intersection.pos.x = x;
+                        intersection.pos.y = (m * x) + c;
+                        intersection.type = "vertical";
+                        intersection.number = (int)(Math.Floor(intersection.pos.y / singleDisplayHeight)); 
+                        // to get which row it belongs to
+                    }
+
+                    // sort list of intersections by x coordinate using Linq
+                    List<Intersection> sortedIntersections = intersections.OrderBy(o => o.pos.x).ToList();
+
+
+                    foreach (Intersection intersection in sortedIntersections)
+                    {
+                        System.Diagnostics.Debug.WriteLine(intersection.pos.x);
+                    }
+
+                    // TODO: check if there's a need for garbage collection
+                    intersections = sortedIntersections;
+
+                    // place link into respective browsers based on intersection points
+                    for (int j = 0; j < intersections.Count - 1; ++j)
+                    {  // intersections.length - 1 because the loop handles two intersections at a time
+
+                        if (intersections[j].type == "vertical" && intersections[j + 1].type == "horizontal")
+                        {
+                            partitionData[intersections[j].number, intersections[j + 1].number].links.Add(link);
+                        }
+                        else if (intersections[j].type == "horizontal" && intersections[j + 1].type == "vertical")
+                        {
+                            partitionData[intersections[j + 1].number, intersections[j].number].links.Add(link);
+                        }
+                        else if (intersections[j].type == "vertical" && intersections[j + 1].type == "vertical")
+                        {
+                            partitionData[intersections[j].number, (int)(intersections[j].pos.x / singleDisplayWidth)].links.Add(link);
+                        }
+                        else if (intersections[j].type == "horizontal" && intersections[j + 1].type == "horizontal")
+                        {
+                            // Math.min is used to find the smaller y and get its row
+                            partitionData[(int)(Math.Min(intersections[j].pos.y, intersections[j + 1].pos.y) / singleDisplayHeight), intersections[j].number].links.Add(link);
+                        }
+                    }
+            
+                    // for other cases, link is already added to the last browser; except for this case
+                    partitionData[endBrowserPos.row, endBrowserPos.col].links.Add(link);
+                }
+
+
+            }
+
+
 
             // write to individual browser file
             // create sub-directory to store partition files
@@ -216,91 +397,11 @@ namespace GDO.Apps.Graph
                     StreamWriter sw = new StreamWriter(basePath + FolderNameDigit + "\\" + "partition" + @"_" + i + @"_" + j + @".json");
                     sw.AutoFlush = true;
                     JsonWriter writer = new JsonTextWriter(sw);
-                    serializer.Serialize(writer, partitionData[i,j]);
+                    serializer.Serialize(writer, partitionData[i, j]);
                 }
             }
 
-
             return this.FolderNameDigit;
-
-            /*
-                this.ImageName = imageName;
-
-                String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\images\\";
-                String path1 = basePath + ImageName;
-                Random imgDigitGenerator = new Random();
-                while (Directory.Exists(basePath + ImageNameDigit))
-                {
-                    this.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
-                }
-                String path2 = basePath + ImageNameDigit + "\\origin.png";
-                Directory.CreateDirectory(basePath + ImageNameDigit);
-                Image img1 = Image.FromFile(path1);
-                img1.Save(path2, ImageFormat.Png);
-                //File.Move(path1, path2);
-
-
-                //create origin
-                Image image = Image.FromFile(path2);
-                //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
-                //File.Delete(path1);
-
-                //create thumnail
-                Image thumb = image.GetThumbnailImage(200 * image.Width / image.Height, 200, () => false, IntPtr.Zero);
-                thumb.Save(basePath + ImageNameDigit + "\\thumb.png", ImageFormat.Png);
-
-                double scaleWidth = (Section.Width + 0.000) / image.Width;
-                double scaleHeight = (Section.Height + 0.000) / image.Height;
-                int imageScaledWidth;
-                int imageScaledHeight;
-
-                int tempImageCols;
-                int tempImageRows;
-
-
-                if (scaleWidth > scaleHeight && mode == (int)Mode.FILL ||
-                    scaleWidth < scaleHeight && mode == (int)Mode.FIT)
-                {
-                    imageScaledWidth = (image.Width - 1) / Section.Cols + 1; // ceiling
-                    imageScaledHeight = (imageScaledWidth * (Section.Height / Section.Rows) - 1) / (Section.Width / Section.Cols) + 1;
-                    tempImageCols = Section.Cols;
-                    tempImageRows = Math.Max(Section.Rows, (image.Height - 1) / imageScaledHeight + 1); // ceiling
-                }
-                else
-                {
-                    imageScaledHeight = (image.Height - 1) / Section.Rows + 1; // ceiling
-                    imageScaledWidth = (imageScaledHeight * (Section.Width / Section.Cols) - 1) / (Section.Height / Section.Rows) + 1; // ceiling and keep ratio
-                    tempImageCols = Math.Max(Section.Cols, (image.Width - 1) / imageScaledWidth + 1); // ceiling
-                    tempImageRows = Section.Rows;
-                }
-                Tiles = new Image[tempImageCols, tempImageRows];
-                for (int i = 0; i < tempImageCols; i++)
-                {
-                    for (int j = 0; j < tempImageRows; j++)
-                    {
-                        // each tile is assigned to a newly constructed Bitmap, with the size of each browser
-                        // Bitmap is a descendant of Image
-                        Tiles[i, j] = new Bitmap((Section.Width / Section.Cols), (Section.Height / Section.Rows));
-
-                        // assign Bitmap to graphics
-                        Graphics graphics = Graphics.FromImage(Tiles[i, j]);
-
-                        // then draw image using DrawImage which is part of systems.drawing
-                        // Draws the specified portion of the specified Image at the specified location and with the specified size.
-
-
-
-                        graphics.DrawImage(image,
-                            new Rectangle(0, 0, (Section.Width / Section.Cols), (Section.Height / Section.Rows)),
-                            new Rectangle(i * imageScaledWidth, j * imageScaledHeight, imageScaledWidth, imageScaledHeight),
-                            GraphicsUnit.Pixel);
-                        graphics.Dispose();
-                        path2 = basePath + ImageNameDigit + "\\" + "crop" + @"_" + i + @"_" + j + @".png";
-                        Tiles[i, j].Save(path2, ImageFormat.Png);
-                    }
-                }
-                return this.ImageNameDigit;
-             */
         }
     }
 }
