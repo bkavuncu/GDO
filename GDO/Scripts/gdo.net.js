@@ -33,6 +33,10 @@ $(function() {
         gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);
         gdo.updateDisplayCanvas();
     }
+    $.connection.caveHub.client.reloadNodeIFrame = function () {
+        gdo.consoleOut('.NET', 1, 'Reload Node IFrame');
+        gdo.reloadNodeIFrame();
+    }
     $.connection.caveHub.client.receiveCaveMap = function(cols, rows, serializedCaveMap) {
         /// <summary>
         /// Receives Serialized Cave Map from Server and creates Node Object structure matching it at gdo.node[]
