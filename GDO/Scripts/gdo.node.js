@@ -3,13 +3,24 @@
     gdo.currentDisplayedAppInstance = -1;
 });
 
+gdo.reloadNodeIFrame = function() {
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        if (gdo.net.maintenanceMode) {
+            // do nothing
+        } else {
+            location.reload();
+        }
+    } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        //do nothing
+    }
+}
+
+
 gdo.updateDisplayCanvas = function () {
     /// <summary>
     /// Updates the gdo canvas.
     /// </summary>
     /// <returns></returns>
-
-
 
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         if (gdo.currentDisplayedAppInstance != gdo.net.node[gdo.clientId].appInstanceId) {
