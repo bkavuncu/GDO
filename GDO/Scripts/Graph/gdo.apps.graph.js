@@ -386,6 +386,8 @@ $(function () {
 
                                 // rendering
 
+                                console.log("Time before rendering: " + window.performance.now());
+
                                 // render edges
                                 links.forEach(function (link) {
 
@@ -417,6 +419,8 @@ $(function () {
                                     ;
 
                                 });
+
+                                console.log("Time after rendering: " + window.performance.now());
 
                                 // Performance measures
                                 window.performance.mark("mark_after_append");
