@@ -99,6 +99,8 @@
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/Images/cropper.min.js"></script>
+    <link href="../../Scripts/Images/cropper.min.css" rel="stylesheet" />
     <script>
         var display_mode = 0;
 
@@ -114,8 +116,44 @@
                 gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: ' + gdo.net.app["Images"].display_mode);
                 gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
                 gdo.net.app["Images"].setDisplayModeSelect();
-            });  
+            });
+
+            $(function () {
+                $('#thumbnail_control').width($(window).width() / 1.2);
+                $('#thumbnail_control').height($(window).width() / 1.8);
+                $('#thumbnail_control > img').cropper({
+                    aspectRatio: 16 / 9,
+                    autoCropArea: 0.65,
+                    strict: false,
+                    guides: false,
+                    highlight: false,
+                    dragCrop: false,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false
+                });
+
+                $('#thumbnail_control > img').on('cropmove.cropper', function (e) {
+                    updateThumbnailInfo($(this));
+                });
+
+                $('#thumbnail_control > img').on('zoom.cropper', function (e) {
+                    updateThumbnailInfo($(this));
+                });
+            });
         });
+
+        function updateThumbnailInfo(object) {
+            var imageData = object.cropper('getImageData');
+            var cropboxData = object.cropper('getCropBoxData');
+            var canvasData = object.cropper('getCanvasData');
+            var data = {}
+            data.imageData = imageData;
+            data.cropboxData = cropboxData;
+            data.canvasData = canvasData;
+            console.log(data);
+            //$().cropper('rotate', -90);
+        }
+
     </script>
     <div>
         @{
@@ -129,8 +167,8 @@
                 {
                     imgname = Path.GetFileName(photo.FileName);
                     //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + imgname;
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\Images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\Images\" + imgname;
                     photo.Save(path);
                 }
             }
@@ -168,8 +206,8 @@
 
                 <br/>
                 <h1>Thumbnail</h1>
-                <div class="result">
-                     <img id="thumbnail_image" src="" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
+                <div id="thumbnail_control">
+                    <img src="Images\Wave.jpg">
                 </div>
 
             </form>
