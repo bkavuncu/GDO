@@ -25,6 +25,17 @@ namespace GDO.Apps.Images
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }
         public Image[,] Tiles { get; set; }
+
+        public class CanvasDataInfo
+        {
+            public double left { get; set; }
+            public double top { get; set; }
+            public double width { get; set; }
+            public double height { get; set; }
+        }
+
+        public class Crop
+
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
