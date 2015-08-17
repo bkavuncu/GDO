@@ -7,6 +7,7 @@ using System.Web;
 using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json;
+using System.Net;
 
 /* transcoded from javascript distributeGraph.js
 
@@ -124,13 +125,21 @@ namespace GDO.Apps.Graph
         public string ProcessGraph()   // add parameter string filename later, also may need to change return type
         {
 
-            StreamReader file = File.OpenText(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json");
+            string fileName = @"output_10000nodes_15000links.json";
+            string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
+            //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";
+
+            System.Diagnostics.Debug.WriteLine(filePath);
+
+            WebClient client = new WebClient();
+            StreamReader file = new StreamReader(client.OpenRead(filePath));
+
+            //StreamReader file = File.OpenText(filePath);
             JsonTextReader reader = new JsonTextReader(file);
             JsonSerializer serializer = new JsonSerializer();
             GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
 
-            //System.Diagnostics.Debug.WriteLine(graphData.rectDimension.height);
-
+            
             List<Node> nodes = graphData.nodes;
             List<Link> links = graphData.links;
             RectDimension rectDimension = graphData.rectDimension;
