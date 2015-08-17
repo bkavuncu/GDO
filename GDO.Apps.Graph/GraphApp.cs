@@ -122,10 +122,10 @@ namespace GDO.Apps.Graph
         }
 
 
-        public string ProcessGraph()   // add parameter string filename later, also may need to change return type
+        public string ProcessGraph(string fileName)   // add parameter string filename later, also may need to change return type
         {
 
-            string fileName = @"output_10000nodes_15000links.json";
+            //string fileName = @"output_10000nodes_15000links.json";
             string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
             //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";
 
