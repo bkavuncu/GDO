@@ -1,5 +1,6 @@
 ﻿@using System.IO
 @using System.Web.Helpers
+@using System.Web.UI.WebControls
 @using GDO.Core
 @{
     Layout = null;
@@ -32,62 +33,69 @@
             font-family: helvetica;
             font-size: 70%;
         }
-
     </style>
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    @{ 
+    @{
         var message = "Let's check if the button is working.";
         var clickNum = 0;
-
         /*
         if (IsPost)
         {
-           
+            if (graphFile.HasFile)
         }
         */
     }
-    
+
     <script>
-        
+        var gdo = parent.gdo;
+
         $(function () {
             $(document).ready(function () {
-                var gdo = parent.gdo;
                 gdo.net.app["Graph"].initControl();
             });
         });
 
+
         function startRendering() {
-            var gdo = parent.gdo;
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Starting graph rendering");  // can include filename here using razor
-            
-            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId); 
+
+            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId);
 
             // nothing to request render on control page yet, implement this later if necessary
             // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
 
         };
     </script>
-    
+
     <div>
         <h1>Distributed Graph Rendering</h1>
         <form id="submit_render_action" action="" method="post" enctype="multipart/form-data">
-            <input type="submit" onclick="startRendering()" value="Render Graph">
-            </form>
-</div>
+           <!--
+             <div>
+                <label for="graphFile">Upload a raw graph data file (JSON) for rendering:</label>
+                <input type="file" name="graphFile" id="graphFile" onclick="uploadGraph()" />
+            </div>
+            -->
+            <div>
+                <input type="submit" onclick="startRendering()" value="Render Graph" />
+            </div>
+        </form>
+    </div>
 
     <div id="messages">
         <h2>@message</h2>
         <h2>No. of clicks: @clickNum</h2>
 
-        @if(IsPost) {
+        @if (IsPost)
+        {
             message = "Yes, the button is working :)";
             clickNum++;
-        <br />
-        <h2>@message</h2>
-        <h2>No. of clicks: @clickNum</h2>
+            <br />
+            <h2>@message</h2>
+            <h2>No. of clicks: @clickNum</h2>
         }
     </div>
 

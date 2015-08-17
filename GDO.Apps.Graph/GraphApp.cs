@@ -1,8 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -147,6 +145,9 @@ namespace GDO.Apps.Graph
 
             Double scaleDown = 0.9; // to make graph smaller and nearer to (0, 0)
 
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             for (int i = 0; i < nodes.Count; i++)
             {
                 nodes[i].pos.x *= scales.x * scaleDown;
@@ -170,14 +171,14 @@ namespace GDO.Apps.Graph
                 links[i].pos.to.y += Section.Height * (1 - scaleDown) / 2;
             }
 
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds);
+
+
             // distribute data across browser
+            sw.Restart();
 
             GraphPartitionData[,] partitionData = new GraphPartitionData[Section.Rows, Section.Cols];
-
-            System.Diagnostics.Debug.WriteLine(Section.Rows);
-            System.Diagnostics.Debug.WriteLine(Section.Cols);
-            System.Diagnostics.Debug.WriteLine(Section.Height);
-            System.Diagnostics.Debug.WriteLine(Section.Width);
 
             // previously forgot to initialise elements within array
             for (int i = 0; i < Section.Rows; i++)
@@ -194,6 +195,7 @@ namespace GDO.Apps.Graph
                 }
             }
 
+
             // distribute nodes
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -201,6 +203,10 @@ namespace GDO.Apps.Graph
                 partitionData[nodeBrowserPos.row, nodeBrowserPos.col].nodes.Add(nodes[i]);
             }
 
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
+
+            sw.Restart();
 
             // distribute links
             for (int i = 0; i < links.Count; i++)
@@ -370,7 +376,8 @@ namespace GDO.Apps.Graph
 
             }
 
-
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
 
             // write to individual browser file
             // create sub-directory to store partition files
@@ -387,6 +394,7 @@ namespace GDO.Apps.Graph
 
             Directory.CreateDirectory(basePath + FolderNameDigit);
 
+            sw.Restart();
 
             // write to file
             for (int i = 0; i < Section.Rows; i++)
@@ -394,12 +402,15 @@ namespace GDO.Apps.Graph
                 for (int j = 0; j < Section.Cols; j++)
                 {
                     //TODO: replace autoflush by 'using', to flush the last buffer right away
-                    StreamWriter sw = new StreamWriter(basePath + FolderNameDigit + "\\" + "partition" + @"_" + i + @"_" + j + @".json");
-                    sw.AutoFlush = true;
-                    JsonWriter writer = new JsonTextWriter(sw);
-                    serializer.Serialize(writer, partitionData[i, j]);
+                    StreamWriter streamWriter = new StreamWriter(basePath + FolderNameDigit + "\\" + "partition" + @"_" + i + @"_" + j + @".json");
+                    streamWriter.AutoFlush = true;
+                    JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                    serializer.Serialize(jsonWriter, partitionData[i, j]);
                 }
             }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to write file: " + sw.ElapsedMilliseconds);
 
             return this.FolderNameDigit;
         }
