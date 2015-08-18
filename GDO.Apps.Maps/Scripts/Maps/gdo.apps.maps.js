@@ -66,6 +66,11 @@ $(function() {
                 //gdo.net.app["Maps"].updateCenter(instanceId);
                 gdo.net.app["Maps"].server.updateResolution(instanceId);
             });
+           gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
+                gdo.net.app["Maps"].changeEvent(instanceId);
+                //gdo.net.app["Maps"].updateCenter(instanceId);
+                gdo.net.app["Maps"].server.updateResolution(instanceId);
+            });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
                 gdo.net.app["Maps"].changeEvent(instanceId);
             });

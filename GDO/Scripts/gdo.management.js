@@ -354,12 +354,12 @@ gdo.management.drawHeaderTable = function () {
 
 gdo.management.loadControlFrame = function (appName, instanceId) {
     gdo.consoleOut(".MANAGEMENT", 3, "Loading Control Frame " + appName + " with Instance Id " + instanceId);
-    $('iframe').attr('src', "\\Web\\" + appName + "\\control.cshtml?controlId="+instanceId);
+    $('iframe').attr('src', "/Web/" + appName + "/control.cshtml?controlId="+instanceId);
     $('iframe').fadeIn();
 }
 
 gdo.management.closeControlFrame = function () {
     gdo.consoleOut(".MANGEMENT", 3, "Returning back to base control frame");
-    $('iframe').attr('src', "\\Web\\base.cshtml");
+    $('iframe').attr('src', "/Web/base.cshtml");
     $('iframe').fadeIn();
 }

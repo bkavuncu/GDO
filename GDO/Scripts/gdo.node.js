@@ -3,13 +3,24 @@
     gdo.currentDisplayedAppInstance = -1;
 });
 
+gdo.reloadNodeIFrame = function() {
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        if (gdo.net.maintenanceMode) {
+            // do nothing
+        } else {
+            location.reload();
+        }
+    } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        //do nothing
+    }
+}
+
+
 gdo.updateDisplayCanvas = function () {
     /// <summary>
     /// Updates the gdo canvas.
     /// </summary>
     /// <returns></returns>
-
-
 
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         if (gdo.currentDisplayedAppInstance != gdo.net.node[gdo.clientId].appInstanceId) {
@@ -41,12 +52,12 @@ gdo.updateDisplayCanvas = function () {
 
 gdo.loadAppFrame = function (app) {
     gdo.consoleOut(".NODE", 3, "Loading App Frame " + app);
-    $('iframe').attr('src', "\\Web\\"+app+"\\app.cshtml");
+    $('iframe').attr('src', "/Web/"+app+"/app.cshtml");
     $('iframe').fadeIn();
 }
 
 gdo.closeAppFrame = function () {
     gdo.consoleOut(".NODE", 3, "Returning back to base app frame");
-    $('iframe').attr('src', "\\Web\\base.cshtml");
+    $('iframe').attr('src', "/Web/base.cshtml");
     $('iframe').fadeIn();
 }
