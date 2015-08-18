@@ -41,7 +41,7 @@
 <body>
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/d3.v3.js"></script>
+    <script src="../../Scripts/d3.min.js"></script>
     <script src="../../Scripts/peer.js"></script>
 
     <script>
@@ -52,7 +52,7 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
 
-                var callback = function (configId) {
+                var launcher = function (configId) {
                     if (dd3.state() === "ready") {
                         test_bench[configId]();
                     } else {
@@ -60,10 +60,20 @@
                     }
                 };
 
-                dd3 = gdo.net.app["DD3"].initClient(d3, callback);
+                var testController = (function () {
+                    var t = function (order) {
+                        testController.tests[order.name] ?
+                        testController.tests[order.name].apply(null, order.args) :
+                        gdo.consoleOut('.DD3', 1, 'No test function corresponding to ' + order.name);
+                    };
+                    t.tests = {};
+                    return t;
+                })();
+
+                dd3 = gdo.net.app["DD3"].initClient(d3, launcher, testController);
                 var test_bench = [];
 
-                var test_1 = function () {
+                var test_0 = function () {
 
                     var svg = dd3.svgCanvas,
 	                    width = dd3.cave().svgWidth,
@@ -106,7 +116,18 @@
                     var rect = rectG.append('rect')
                         .attr("id", "test");
 
-                    init2 = function () {
+                    testController.tests['createRect'] = init1 = function () {
+                        rect.attr("x", width / 10)
+                            .attr("y", 4.5 * height / 10)
+                            .attr("width", width / 10)
+                            .attr("height", height / 10)
+                            .attr("stroke", "black")
+                            .style("fill", "#EEE")
+                            .attr("fill", "rgb(29, 219, 29)")
+                            .text("None");
+                    };
+
+                    testController.tests['createCircles'] = init2 = function () {
                         circleGroup.selectAll(".c").data(d3.range(100)).enter()
                             .append('g')
                             .append('circle')
@@ -120,7 +141,7 @@
                             .attr("fill", "#FFF");
                     };
 
-                    var init3 = function () {
+                    testController.tests['createDistributedCircle'] = init3 = function () {
                         circleGroup.selectAll(".c").data(d3.range(10)).enter()
                             .append('circle')
                             .attr("class", "c");
@@ -134,24 +155,13 @@
                             .attr("fill", "#FFF");
                     };
 
-                    init1 = function () {
-                        rect.attr("x", width / 10)
-                            .attr("y", 4.5 * height / 10)
-                            .attr("width", width / 10)
-                            .attr("height", height / 10)
-                            .attr("stroke", "black")
-                            .style("fill", "#EEE")
-                            .attr("fill", "rgb(29, 219, 29)")
-                            .text("None");
-                    };
-
                     startG = function (name) {
                         rectG.transition(name)
                              .duration(15000)
                              .attr('transform', 'translate(500)');
                     };
 
-                    start1 = function (name) {
+                    testController.tests['startXTranslation'] = start1 = function (name) {
                         t1 = rect.transition(name)
                             .duration(10000)
                             .style("fill", "#AAA")
@@ -162,20 +172,20 @@
                             .attr('x', width / 10);
                     };
 
-                    start2 = function (name) {
+                    testController.tests['startYTranslation'] = start2 = function (name) {
                         t2 = rect.transition(name)
-                            .duration(40000)
+                            .duration(20000)
                             .attr('y', 8 * height / 10);
                     };
 
-                    start3 = function (name) {
+                    testController.tests['startMoveCircles'] = start3 = function (name) {
                         t3 = circleGroup.selectAll(".c")
                             .transition()
                             .duration(20000)
                             .precision(0.05)
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
-                            .attr("r", function () { return 40 * Math.random() + 50; });
+                            .attr("r", function () { return 40 * Math.random() + 20; });
                     };
 
                     change1 = function () {
@@ -192,7 +202,7 @@
                 //*/
                 };
 
-                var test_2 = function () {
+                var test_1 = function () {
                     var dim = dd3.dataDimensions();
                     var extent = dim.x.max - dim.x.min, coef = 0., c = 1;
                     var xDomain = [dim.x.min - coef * extent - c, dim.x.max + coef * extent + c];
@@ -300,8 +310,8 @@
                     //*/
                 };
 
+                test_bench.push(test_0);
                 test_bench.push(test_1);
-                test_bench.push(test_2);
             });
         });
 

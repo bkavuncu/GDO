@@ -6,6 +6,7 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 using GDO.Utility;
+using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.DD3
 {
@@ -14,7 +15,6 @@ namespace GDO.Apps.DD3
         public int Id { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-        public IHubContext<dynamic> Context;
 
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
@@ -22,11 +22,25 @@ namespace GDO.Apps.DD3
             this.Section = section;
             this.Configuration = configuration;
             this.Context = (IHubContext<dynamic>) GlobalHost.ConnectionManager.GetHubContext<DD3AppHub>();
+
+            Newtonsoft.Json.Linq.JToken value;
+            Configuration.Json.TryGetValue("id", out value);
+            this.ConfigurationId = (int)value;
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();
         private ConcurrentDictionary<string, bool> syncList = new ConcurrentDictionary<string, bool>();
         private readonly object _locker = new Object();
+        private IHubContext<dynamic> Context;
+        private string controllerId = "";
+        private int ConfigurationId;
+
+        /*
+        public enum MessageType
+        {
+          UPDATE  = -1,
+        };
+        */
 
         public void newClient(string cid, BrowserInfo b)
         {
@@ -36,7 +50,21 @@ namespace GDO.Apps.DD3
                 if (browserList.Count == Section.NumNodes)
                 {
                     broadcastConfiguration();
+                    if (controllerId != "")
+                    {
+                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(Id, 1).toString());
+                    }
                 }
+            }
+        }
+
+        public void defineController (string id)
+        {
+            controllerId = id;
+            if (browserList.Count == Section.NumNodes)
+            {
+                // 1 = Launched
+                DD3AppHub.self.updateController(controllerId, new ControllerMessage(ConfigurationId, 1).toString());
             }
         }
 
@@ -51,11 +79,7 @@ namespace GDO.Apps.DD3
             }
 
             String browserInfoJson = Newtonsoft.Json.JsonConvert.SerializeObject(browserInfos);
-            //Context.Clients.All.receiveConfiguration(browserInfoJson, Id);
-            //Context.Clients.Group("" + Id).receiveConfiguration(browserInfoJson, Id);
-            Newtonsoft.Json.Linq.JToken value;
-            Configuration.Json.TryGetValue("id", out value);
-            DD3AppHub.self.broadcastConfiguration(browserInfoJson, (int)value, Id);
+            DD3AppHub.self.broadcastConfiguration(browserInfoJson, ConfigurationId, Id);
         }
 
         public void synchronize(string cid)
@@ -63,10 +87,16 @@ namespace GDO.Apps.DD3
             syncList.AddOrUpdate(cid, true, (key, value) => true);
             if (syncList.Count == Section.NumNodes)
             {
-                //Context.Clients.Group("" + Id).synchronize();
                 DD3AppHub.self.broadcastSynchronize(Id);
                 syncList.Clear();
             }
+        }
+
+        public string getFirstNode()
+        {
+            var e = browserList.GetEnumerator();
+            e.MoveNext();
+            return e.Current.Key;
         }
 
         public bool removeClient(string id)
@@ -77,6 +107,23 @@ namespace GDO.Apps.DD3
                 return browserList.TryRemove(id, out b);
             }
         }
+    }
+
+    public class ControllerMessage
+    {
+        public ControllerMessage(int configurationId, int state)
+        {
+            this.configurationId = configurationId;
+            this.state = state;
+        }
+
+        public string toString ()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+
+        public int configurationId { get; set; }
+        public int state { get; set; }
     }
 
     public class BrowserBroadcastInfo

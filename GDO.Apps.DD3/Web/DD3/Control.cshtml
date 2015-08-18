@@ -41,9 +41,75 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.net.app["DD3"].initControl();
+                var server = gdo.net.app.DD3.server;
+                var instanceId;
+                var confId;
+                var test_bench = [];
+
+                var callback = function (message) {
+                    confId = message.configurationId;
+                    if (message.state == 1) {
+                        test_bench[confId]();
+                        $("#wait").css("display", "none");
+                        $("#control_" + confId).css("display", "");
+                    }
+                };
+
+                var order = function (name, args) {
+                    return JSON.stringify({ name: name, args: args });
+                };
+
+                instanceId = gdo.net.app["DD3"].initControl(callback);
+
+                test_bench[0] = function () {
+
+                    $('#TranslationX').click(function () {
+                        server.sendOrder(instanceId, order("createRect", []), false);
+                        server.sendOrder(instanceId, order("startXTranslation", []), false);
+                    });
+
+                    $('#TranslationY').click(function () {
+                        server.sendOrder(instanceId, order("createRect", []), false);
+                        server.sendOrder(instanceId, order("startYTranslation", []), false);
+                    });
+
+                    $('#TranslationXY').click(function () {
+                        server.sendOrder(instanceId, order("createRect", []), false);
+                        server.sendOrder(instanceId, order("startXTranslation", ["transitionX"]), false);
+                        server.sendOrder(instanceId, order("startYTranslation", ["transitionY"]), false);
+                    });
+
+                    $('#createCircles').click(function () {
+                        server.sendOrder(instanceId, order("createCircles", []), false);
+                    });
+
+                    $('#moveCircles').click(function () {
+                        server.sendOrder(instanceId, order("startMoveCircles", []), false);
+                    });
+
+                };
+
             });
         });
     </script>
+
+    <div id="wait" style="">
+        Please wait while app is initializing...
+    </div>
+
+    <div id="control_0" style="display:none">
+        <p>Control panel for test 0</p>
+        <p><button id="TranslationX">X Translation</button></p>
+        <p><button id="TranslationY">Y Translation</button></p>
+        <p><button id="TranslationXY">X and Y Translation</button></p>
+        <p><button id="createCircles">Create Circles</button></p>
+        <p><button id="moveCircles">Move Circles</button></p>
+        <p>More to come !</p>
+    </div>
+
+    <div id="control_1" style="display:none">
+        Here will be the control panel for test 1
+    </div>
+
 </body>
 </html>
