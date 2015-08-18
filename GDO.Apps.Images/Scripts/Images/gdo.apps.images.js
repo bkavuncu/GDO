@@ -62,10 +62,11 @@ gdo.net.app["Images"].initClient = function () {
 
 gdo.net.app["Images"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
+    gdo.net.app["Images"].control_status = 0;
     gdo.net.app["Images"].server.requestDisplayMode(gdo.controlId);
     gdo.net.app["Images"].server.requestImageName(gdo.controlId);
     gdo.net.app["Images"].server.requestSectionSize(gdo.controlId);
-    gdo.net.app["Images"].server.requestThumNailImageInfo(gdo.controlId);
+    //gdo.net.app["Images"].server.requestThumNailImageInfo(gdo.controlId);
     gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);
 }
 
