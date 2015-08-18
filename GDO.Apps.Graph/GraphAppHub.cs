@@ -31,7 +31,7 @@ namespace GDO.Apps.Graph
         }
 
         //TODO: Check if try, catch are implemented correctly
-        public void InitiateProcessing(int instanceId)
+        public void InitiateProcessing(int instanceId, string fileName)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
             lock (Cave.AppLocks[instanceId])
@@ -40,7 +40,7 @@ namespace GDO.Apps.Graph
                 {
                     // Clients.Group to let all clients within the group receive image name
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
-                    string folderNameDigit = ga.ProcessGraph();
+                    string folderNameDigit = ga.ProcessGraph(fileName);
                     // no need to implement broadcast to group first, since graph is not updated after initial upload
                     //Clients.Group("" + instanceId).renderGraph(folderNameDigit); 
                 }
