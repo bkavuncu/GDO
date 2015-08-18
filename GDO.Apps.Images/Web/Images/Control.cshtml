@@ -58,6 +58,48 @@
             line-height: 70px;
         }
 
+        #active_control {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #rotate_control {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #disable_control {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
         #select_image {
             color: #DDD;
             background: #222;
@@ -105,10 +147,7 @@
         var display_mode = 0;
 
         $(function () {
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                gdo.net.app["Images"].initControl();
-            });
+            var gdo = parent.gdo;
 
             $("#display_mode_select").click(function() {
                 var gdo = parent.gdo;
@@ -118,40 +157,111 @@
                 gdo.net.app["Images"].setDisplayModeSelect();
             });
 
-            $(function () {
-                $('#thumbnail_control').width($(window).width() / 1.2);
-                $('#thumbnail_control').height($(window).width() / 1.8);
-                $('#thumbnail_control > img').cropper({
-                    aspectRatio: 16 / 9,
-                    autoCropArea: 0.65,
-                    strict: false,
-                    guides: false,
-                    highlight: false,
-                    dragCrop: false,
-                    cropBoxMovable: false,
-                    cropBoxResizable: false
-                });
-
-                $('#thumbnail_control > img').on('cropmove.cropper', function (e) {
-                    updateThumbnailInfo($(this));
-                });
-
-                $('#thumbnail_control > img').on('zoom.cropper', function (e) {
-                    updateThumbnailInfo($(this));
-                });
+            $("#active_control").click(function() {
+                var gdo = parent.gdo;
+                gdo.net.app["Images"].control_status = 1;
+                updateControlButtonBackground();
             });
+
+            $("#disable_control").click(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["Images"].control_status = 0;
+                updateControlButtonBackground();
+            });
+
+            $("#rotate_control").click(function () {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1) {
+                    $('#thumbnail_control > img').cropper('rotate', 90);
+                    updateThumbNailImageInfo($('#thumbnail_control > img'));
+                }
+            });
+
+            $('#thumbnail_control').width($(window).width() / 1.2);
+            $('#thumbnail_control').height($(window).width() / 1.8);
+            $('#thumbnail_control > img').cropper({
+                aspectRatio: 1920 / 1080,
+                autoCropArea: 0.65,
+                strict: false,
+                guides: false,
+                highlight: false,
+                dragCrop: false,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
+                movable: false
         });
 
-        function updateThumbnailInfo(object) {
-            var imageData = object.cropper('getImageData');
-            var cropboxData = object.cropper('getCropBoxData');
-            var canvasData = object.cropper('getCanvasData');
-            var data = {}
-            data.imageData = imageData;
-            data.cropboxData = cropboxData;
-            data.canvasData = canvasData;
-            console.log(data);
-            //$().cropper('rotate', -90);
+            $('#thumbnail_control > img').on('cropmove.cropper', function (e) {
+                updateThumbNailImageInfo($(this));
+            });
+
+            $('#thumbnail_control > img').on('zoom.cropper', function (e) {
+                updateThumbNailImageInfo($(this));
+            });
+
+            gdo.net.app["Images"].initControl();
+            //updateControlButtonBackground();
+        });
+
+        function updateControlButtonBackground() {
+            var gdo = parent.gdo;
+            if (gdo.net.app["Images"].control_status == 0) {
+                $("#active_control").css("background", "darkgreen");
+                $("#disable_control").css("background", "#222");
+                $("#rotate_control").css("background", "darkgreen");
+                $("#thumbnail_control > img").cropper("movable", false);
+                $("#thumbnail_control > img").cropper("rotatable", false);
+                $("#thumbnail_control > img").cropper("scalable", false);
+                $("#thumbnail_control > img").cropper("zoomable", false);
+            } else if (gdo.net.app["Images"].control_status == 1) {
+                $("#active_control").css("background", "#222");
+                $("#disable_control").css("background", "darkred");
+                $("#rotate_control").css("background", "#222");
+                $("#thumbnail_control > img").cropper("movable", true);
+                $("#thumbnail_control > img").cropper("rotatable", true);
+                $("#thumbnail_control > img").cropper("scalable", true);
+                $("#thumbnail_control > img").cropper("zoomable", true);
+            }
+        }
+
+        function updateThumbNailImageInfo(object) {
+            var gdo = parent.gdo;
+            if (gdo.net.app["Images"].control_status == 1) {
+                var imageData = object.cropper('getImageData');
+                var cropboxData = object.cropper('getCropBoxData');
+                var canvasData = object.cropper('getCanvasData');
+                var data = {}
+                data.imageData = {};
+                data.imageData.aspectRatio = imageData.aspectRatio;
+                if (imageData.rotate != null) {
+                    data.imageData.rotate = imageData.rotate;
+                } else {
+                    data.imageData.rotate = 0;
+                }
+                data.cropboxData = {};
+                data.cropboxData.left = cropboxData.left;
+                data.cropboxData.top = cropboxData.top;
+                data.cropboxData.width = cropboxData.width;
+                data.cropboxData.height = cropboxData.height;
+                data.canvasData = {};
+                data.canvasData.left = canvasData.left;
+                data.canvasData.top = canvasData.top;
+                data.canvasData.width = canvasData.width;
+                data.canvasData.height = canvasData.height;
+                gdo.net.app["Images"].server.setThumbNailImageInfo(gdo.controlId, JSON.stringify(data));
+            }
+        }
+
+        function setThumbNailImageInfo(imageJson) {
+            $("#thumbnail_control > img").cropper('setCanvasData', imageJson.canvasData);
+            $("#thumbnail_control > img").cropper('setCropBoxData', imageJson.cropboxData);
+            $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
+            //$("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
+        }
+
+        function getSectionSize(section_width, section_height) {
+            $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
+
         }
 
     </script>
@@ -188,7 +298,7 @@
                             </td>
                             <td>
                                 <div id="display_mode_select">
-                                    <span id="display_mode_value">FIT</span>
+                                    <span id="display_mode_value">FIT Mode</span>
                                 </div>
                             </td>
                             <td>
@@ -206,7 +316,28 @@
 
                 <br/>
                 <h1>Thumbnail</h1>
-                <div id="thumbnail_control">
+                <fieldset>
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="active_control">
+                                    <span>Active Control</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div id="disable_control">
+                                    <span>Disable Control</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div id="rotate_control">
+                                    <span>Rotate</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+                <div id="thumbnail_control" style="margin-top:10px">
                     <img src="Images\Wave.jpg">
                 </div>
 

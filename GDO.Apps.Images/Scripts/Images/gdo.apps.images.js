@@ -21,9 +21,31 @@
             //do nothing
         }
     }
+    $.connection.imagesAppHub.client.setThumbNailImageInfo = function(imageInfo) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            if (imageInfo != null) {
+                gdo.consoleOut('.Images', 1, 'Set thumbnail image information');
+                var imageJson = JSON.parse(imageInfo);
+                $("iframe")[0].contentWindow.setThumbNailImageInfo(imageJson);
+            } else {
+                gdo.consoleOut('.Images', 1, 'Thumbnail image is null');
+            }
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            //do nothing
+        }
+    }
+    $.connection.imagesAppHub.client.getSectionSize = function (section_width, section_height){
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.Images', 1, 'Got section size information');
+            $("iframe")[0].contentWindow.getSectionSize(section_width, section_height);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            //do nothing
+        }
+    }
 });
 
 gdo.net.app["Images"].display_mode = 0;
+gdo.net.app["Images"].control_status = 0; // 0 disabled, 1 activated
 
 gdo.net.app["Images"].setDisplayModeSelect = function() {
     if (gdo.net.app["Images"].display_mode == 0) {
@@ -42,6 +64,8 @@ gdo.net.app["Images"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     gdo.net.app["Images"].server.requestDisplayMode(gdo.controlId);
     gdo.net.app["Images"].server.requestImageName(gdo.controlId);
+    gdo.net.app["Images"].server.requestSectionSize(gdo.controlId);
+    gdo.net.app["Images"].server.requestThumNailImageInfo(gdo.controlId);
     gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);
 }
 
