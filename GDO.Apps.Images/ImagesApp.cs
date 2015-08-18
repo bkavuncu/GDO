@@ -25,6 +25,7 @@ namespace GDO.Apps.Images
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }
         public Image[,] Tiles { get; set; }
+        public ThumbNailImageInfo ThumbNailImage { get; set; }
 
         public class CanvasDataInfo
         {
@@ -34,7 +35,32 @@ namespace GDO.Apps.Images
             public double height { get; set; }
         }
 
-        public class Crop
+        public class CropboxDataInfo
+        {
+            public double left { get; set; }
+            public double top { get; set; }
+            public double width { get; set; }
+            public double height { get; set; }
+        }
+
+        public class ImageDataInfo
+        {
+            public double left { get; set; }
+            public double top { get; set; }
+            public double width { get; set; }
+            public double height { get; set; }
+            public double aspectRatio { get; set; }
+            public double naturalHeight { get; set; }
+            public double naturalWidth { get; set; }
+            public double rotate { get; set; }
+        }
+
+        public class ThumbNailImageInfo
+        {
+            public ImageDataInfo imageData { get; set; }
+            public CropboxDataInfo cropboxData { get; set; }
+            public CanvasDataInfo canvasData { get; set; }
+        }
 
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
@@ -42,6 +68,7 @@ namespace GDO.Apps.Images
             this.Section = section;
             this.Configuration = configuration;
             this.DisplayMode = (int)Mode.FIT;
+            this.ThumbNailImage = null;
             Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
         }
 

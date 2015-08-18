@@ -15,6 +15,7 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 using GDO.Utility;
+using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Scripts.imagetiles.js", "application/x-javascript")]
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Configurations.sample.js", "application/json")]
@@ -198,6 +199,71 @@ namespace GDO.Apps.Images
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     Clients.Caller.receiveDisplayMode(ia.DisplayMode);
                     Clients.Caller.setMessage("Request display mode Successfully!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void SetThumbNailImageInfo(int instanceId, string imageInfo)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Setting thumbnail image information...");
+                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    ia.ThumbNailImage = JsonConvert.DeserializeObject<ImagesApp.ThumbNailImageInfo>(imageInfo);
+                    Clients.Caller.setMessage("Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void RequestThumNailImageInfo(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting thumbnail image information...");
+                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        Clients.Caller.setThumbNailImageInfo(JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                    else
+                    {
+                        Clients.Caller.setThumbNailImageInfo(null);
+                    }
+                    
+                    Clients.Caller.setMessage("Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+         public void RequestSectionSize(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting section information...");
+                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    Clients.Caller.getSectionSize(ia.Section.Width, ia.Section.Height);
+                    Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
                 {
