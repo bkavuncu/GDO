@@ -34,9 +34,9 @@ $(function () {
                     width: gdo.net.node[gdo.clientId].width,
                     height: gdo.net.node[gdo.clientId].height
                 },
-                displayDom: document.body
+                svgDom: document.body
                                     .getElementsByTagName('iframe')[0]
-                                    .contentDocument.getElementById("graph")
+                                    .contentDocument.getElementById("graphArea")
             };
 
 
@@ -368,10 +368,23 @@ $(function () {
                                 };
 
                                 // rendering
-                                // set up svgRoot
-                                var svgRoot = svg("svg");
+                                
+                                // reset SVG by removing all child elements (if any)
+                                while (settings.svgDom.firstChild) {
+                                    settings.svgDom.removeChild(settings.svgDom.firstChild);
+                                }
 
-                                settings.displayDom.appendChild(svgRoot);
+                                // set up svgRoot
+
+                                // svg() is a function provided by simplesvg, which creates a svg element,
+                                // and augment the elements' capabilities by defining functions such as attr()
+                                // which replaces DOM element's setAttribute() 
+                                var svgRoot = svg("svg");
+                                settings.svgDom.appendChild(svgRoot);
+
+
+                                // previous bug: no svgRoot.attr function (attached to simplesvg object)
+                             
 
                                 svgRoot.attr("width", settings.defaultDisplayDimension.width)
                                     .attr("height", settings.defaultDisplayDimension.height);

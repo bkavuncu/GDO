@@ -38,11 +38,12 @@ namespace GDO.Apps.Graph
             {
                 try 
                 {
-                    // Clients.Group to let all clients within the group receive image name
+                    // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
                     string folderNameDigit = ga.ProcessGraph(fileName);
-                    // no need to implement broadcast to group first, since graph is not updated after initial upload
-                    //Clients.Group("" + instanceId).renderGraph(folderNameDigit); 
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderGraph(folderNameDigit); 
                 }
                 catch (Exception e)
                 {
