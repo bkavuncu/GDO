@@ -41,7 +41,7 @@
 <body>
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/d3.min.js"></script>
+    <script src="../../Scripts/d3.v3.js"></script>
     <script src="../../Scripts/peer.js"></script>
 
     <script>
@@ -58,7 +58,7 @@
                     } else {
                         dd3.on('ready', test_bench[configId]);
                     }
-                }
+                };
 
                 dd3 = gdo.net.app["DD3"].initClient(d3, callback);
                 var test_bench = [];
