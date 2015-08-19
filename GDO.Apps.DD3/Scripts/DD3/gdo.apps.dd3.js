@@ -1671,7 +1671,7 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_findTransitionsRecipients = function (elem) {
-                if (!elem)
+                if (!elem || !elem.parentNode)
                     return [];
 
                 var g = elem.parentNode,
@@ -1789,7 +1789,8 @@ var initDD3App = function (d3) {
                 var initialize = function (t, ease, precision) {
 
                     t.each("start.dd3", function (d, i) {
-                        utils.log("Start transition triggered");
+                        if (!this.parentNode)
+                            return;
                         var transition = this[ns][this[ns].active];
 
                         var args = {

@@ -32,6 +32,26 @@
             border: 1px solid #000;
             margin: 10px 5px 0 0;
         }
+
+        .table_control td {
+            text-align:center;
+            border: 1px solid #FFF;
+            padding: 8px;
+            font-size:1.4em;
+        }
+
+        table.table_control {
+            /*border-collapse:collapse;*/
+        }
+
+        .green {
+            background-color:#006400;
+        }
+        
+        .red {
+            background-color:#8B0000;
+        }
+
     </style>
 </head>
 <body>
@@ -68,29 +88,92 @@
                 instanceId = gdo.net.app["DD3"].initControl(callback);
 
                 test_bench[0] = function () {
+                    var rect = false, circles = false, dcircles = false;
 
-                    $('#TranslationX').click(function () {
-                        server.sendOrder(instanceId, order("createRect", []), false);
-                        server.sendOrder(instanceId, order("startXTranslation", []), false);
+                    // == Basic Moves ==
+
+                    $('#createRect').click(function () {
+                        if (!rect) {
+                            server.sendOrder(instanceId, order("createRect", []), false);
+                            $(".basic_moves .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            rect = true;
+                        }
                     });
 
-                    $('#TranslationY').click(function () {
-                        server.sendOrder(instanceId, order("createRect", []), false);
-                        server.sendOrder(instanceId, order("startYTranslation", []), false);
+                    $('#removeRect').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("removeRect", []), false);
+                            $(".basic_moves .green").removeClass("green").addClass("red");
+                            $('#createRect').removeClass("red").addClass("green");
+                            rect = false;
+                        }
                     });
 
-                    $('#TranslationXY').click(function () {
-                        server.sendOrder(instanceId, order("createRect", []), false);
-                        server.sendOrder(instanceId, order("startXTranslation", ["transitionX"]), false);
-                        server.sendOrder(instanceId, order("startYTranslation", ["transitionY"]), false);
+                    $('#translationX').click(function () {
+                        rect && server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
                     });
+
+                    $('#translationY').click(function () {
+                        rect && server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
+                    });
+
+                    $('#rotation').click(function () {
+                        rect && server.sendOrder(instanceId, order("startRotation", ['R']), false);
+                    });
+
+                    $('#allMoves').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
+                            server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
+                            server.sendOrder(instanceId, order("startRotation", ["R"]), false);
+                        }
+                    });
+
+                    // == Superposition ==
 
                     $('#createCircles').click(function () {
-                        server.sendOrder(instanceId, order("createCircles", []), false);
+                        if (!circles) {
+                            server.sendOrder(instanceId, order("createCircles", [100, 1]), false);
+                            $(".superposition.non_distributed .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            circles = true;
+                        }
+                    });
+
+                    $('#createDistributedCircles').click(function () {
+                        if (!dcircles) {
+                            server.sendOrder(instanceId, order("createDistributedCircles", [10, 0.9]), true);
+                            $(".superposition.distributed .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            dcircles = true;
+                        }
+                    });
+
+                    $('#removeCircles').click(function () {
+                        if (circles) {
+                            server.sendOrder(instanceId, order("removeCircles", []), false);
+                            $(".superposition.non_distributed .green").removeClass("green").addClass("red");
+                            $('#createCircles').removeClass("red").addClass("green");
+                            circles = false;
+                        }
+                    });
+
+                    $('#removeDistributedCircles').click(function () {
+                        if (dcircles) {
+                            server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
+                            $(".superposition.distributed .green").removeClass("green").addClass("red");
+                            $('#createDistributedCircles').removeClass("red").addClass("green");
+                            dcircles = false;
+                        }
                     });
 
                     $('#moveCircles').click(function () {
-                        server.sendOrder(instanceId, order("startMoveCircles", []), false);
+                        circles && server.sendOrder(instanceId, order("startMoveCircles", []), false);
+                    });
+
+                    $('#moveDistributedCircles').click(function () {
+                        dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
                     });
 
                 };
@@ -114,13 +197,49 @@
     </div>
 
     <div id="control_0" style="display:none">
-        <p>Control panel for test 0</p>
-        <p><button id="TranslationX">X Translation</button></p>
-        <p><button id="TranslationY">Y Translation</button></p>
-        <p><button id="TranslationXY">X and Y Translation</button></p>
-        <p><button id="createCircles">Create Circles</button></p>
-        <p><button id="moveCircles">Move Circles</button></p>
-        <p>More to come !</p>
+        <table class="table_control">
+            <tr class="basic_moves">
+                <td colspan="3">Basic moves</td>
+            </tr>
+            <tr class="basic_moves">
+                <td rowspan="4" class="green" id="createRect">Create Rectangle</td>
+                <td class="red" id="translationX">X Translation</td>
+                <td rowspan="4" class="red" id="removeRect">Remove Rectangle</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="translationY">Y Translation</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="rotation">Rotation</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="allMoves">All</td>
+            </tr>
+            <tr>
+                <td colspan="3">Superposition</td>
+            </tr>
+            <tr class="superposition non_distributed">
+                <td class="green" id="createCircles">Create Circles</td>
+                <td class="red" id="moveCircles">Move Circles</td>
+                <td class="red" id="removeCircles">Remove Circles</td>
+            </tr>
+            <tr class="superposition distributed">
+                <td class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td class="red" id="moveDistributedCircles">Move distributed Circles</td>
+                <td class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+            </tr>
+            <tr>
+                <td colspan="3">Group transition (Not implemented)</td>
+            </tr>
+            <tr>
+                <td rowspan="2" class="green">Create</td>
+                <td class="red">Test 1</td>
+                <td rowspan="2" class="red">Remove</td>
+            </tr>
+            <tr>
+                <td class="red">Test 2</td>
+            </tr>
+        </table>
     </div>
 
     <div id="control_1" style="display:none">
