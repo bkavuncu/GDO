@@ -25,7 +25,7 @@ namespace GDO.Apps.Youtube
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
-        public string ChannelName { get; set; }
+        public string Keywords { get; set; }
         public string ChannelId { get; set; }
         public string PlaylistId { get; set; }
         public bool VideoReady { get; set; }
@@ -143,6 +143,29 @@ namespace GDO.Apps.Youtube
             public ItemInfo[] items { get; set; }
         }
 
+        public class KeywordVideoIdInfo
+        {
+            public string kind { get; set; }
+            public string videoId { get; set; }
+        }
+
+        public class KeywordVideoItemsInfo
+        {
+            public string kind { get; set; }
+            public string etag { get; set; }
+            public KeywordVideoIdInfo id { get; set; }
+            public SnippetInfo snippet { get; set; }
+        }
+
+        public class KeywordVideoInfo
+        {
+            public string kind { get; set; }
+            public string etag { get; set; }
+            public string nextPageToken { get; set; }
+            public PageNumInfo pageInfo { get; set; }
+            public KeywordVideoItemsInfo[] items { get; set; }
+        }
+
         public string requestYoutubeInfo(string yURL)
         {
             WebRequest yRequest = WebRequest.Create(yURL);
@@ -205,6 +228,21 @@ namespace GDO.Apps.Youtube
             return yJson;
         }
 
+        public KeywordVideoInfo getVideoByKeywords(string keywords, string pageToken, string num)
+        {
+            string yURL = baseURL + "search" + "?";
+            yURL += "part=" + "snippet" + "&";
+            yURL += "q=" + keywords.Replace(" ", "+") + "&";
+            yURL += "type=" + "video" + "&";
+            yURL += "maxResults=" + num + "&";
+            yURL += "pageToken=" + pageToken + "&";
+            yURL += "key=" + key;
+
+            string yResponse = requestYoutubeInfo(yURL);
+            KeywordVideoInfo yJson = JsonConvert.DeserializeObject<KeywordVideoInfo>(yResponse);
+            return yJson;
+        }
+
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
@@ -221,10 +259,10 @@ namespace GDO.Apps.Youtube
             this.NextVideoUrls = null;
             this.SearchMode = 0;
 
-            string channelName = (string) configuration.Json.SelectToken("channel");
-            if (channelName != "")
+            string keywords = (string) configuration.Json.SelectToken("channel");
+            if (keywords != "")
             {
-                ChannelName = channelName;
+                Keywords = keywords;
             }
         }
 

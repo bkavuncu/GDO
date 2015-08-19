@@ -1,17 +1,21 @@
 ﻿
 $(function() {
     gdo.consoleOut('.Youtube', 1, 'Loaded Image Tiles JS');
-    $.connection.youtubeAppHub.client.updateChannelNameResult = function (message) {
+    $.connection.youtubeAppHub.client.updateKeywords = function (message) {
         gdo.consoleOut('.Youtube', 1, 'Current Channel Name: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#current_keyword").html(message);
             gdo.consoleOut('.Youtube', 1, 'Getting videos from Youtube');
-            gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+            if (gdo.net.app["Youtube"].searchMode == 0) {
+                gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+            } else if (gdo.net.app["Youtube"].searchMode == 1) {
+                gdo.net.app["Youtube"].server.getNextVideosByKeywords(gdo.controlId);
+            }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
     }
-    $.connection.youtubeAppHub.client.setChannelName = function (message) {
+    $.connection.youtubeAppHub.client.setKeywords = function (message) {
         gdo.consoleOut('.Youtube', 1, 'Default Input Channel Name: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#new_keyword").val(message);
@@ -31,7 +35,11 @@ $(function() {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (first === 1) {
                 gdo.consoleOut('.Youtube', 1, 'Getting videos from Youtube');
-                gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+                if (gdo.net.app["Youtube"].searchMode == 0) {
+                    gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+                } else if (gdo.net.app["Youtube"].searchMode == 1) {
+                    gdo.net.app["Youtube"].server.getNextVideosByKeywords(gdo.controlId);
+                }
             } else {
                 gdo.consoleOut('.Youtube', 1, 'Videos are ready and Clients are requesting from server');
                 gdo.net.app["Youtube"].server.requestVideoName(gdo.controlId);

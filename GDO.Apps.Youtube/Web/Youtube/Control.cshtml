@@ -97,13 +97,21 @@
     $("#update_keyword_submit").click(function () {
         var gdo = parent.gdo;
         $("#get_next_videos").prop("disabled", true);
-        gdo.consoleOut('.Youtube', 1, 'Updating channel name: ' + $("#new_keyword").val());
-        gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_keyword").val());
+        gdo.consoleOut('.Youtube', 1, 'Updating keywords: ' + $("#new_keyword").val());
+        if (gdo.net.app["Youtube"].searchMode == 0) {
+            gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_keyword").val());
+        } else if (gdo.net.app["Youtube"].searchMode == 1) {
+            gdo.net.app["Youtube"].server.updateKeywords(gdo.controlId, $("#new_keyword").val());
+        }
     });
     $("#get_next_videos").click(function () {
         var gdo = parent.gdo;
         gdo.consoleOut('.Youtube', 1, 'Getting videos');
-        gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+        if (gdo.net.app["Youtube"].searchMode == 0) {
+            gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+        } else if (gdo.net.app["Youtube"].searchMode == 1) {
+            gdo.net.app["Youtube"].server.getNextVideosByKeywords(gdo.controlId);
+        }
     });
     $("#new_keyword").keypress(function (e) {
         if (e.keyCode == 13) {
