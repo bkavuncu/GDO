@@ -122,24 +122,28 @@ namespace GDO.Apps.Graph
         }
 
 
-        public string ProcessGraph(string fileName)   // add parameter string filename later, also may need to change return type
+        public string ProcessGraph(string fileName) 
         {
 
-            //string fileName = @"output_10000nodes_15000links.json";
+            //string fileName = @"output_10000nodes_15000links.json";   
             string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
-            //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";
 
-            System.Diagnostics.Debug.WriteLine(filePath);
+            //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
+
+            System.Diagnostics.Debug.WriteLine("Reading from: " + filePath);
 
             WebClient client = new WebClient();
+
+            // error exception is being handled centrally at GraphAppHub
+            // it will throw exception up the stack if file cannot be read
             StreamReader file = new StreamReader(client.OpenRead(filePath));
 
-            //StreamReader file = File.OpenText(filePath);
+            //StreamReader file = File.OpenText(filePath); //for local file
             JsonTextReader reader = new JsonTextReader(file);
             JsonSerializer serializer = new JsonSerializer();
             GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
 
-            
+
             List<Node> nodes = graphData.nodes;
             List<Link> links = graphData.links;
             RectDimension rectDimension = graphData.rectDimension;
@@ -316,7 +320,7 @@ namespace GDO.Apps.Graph
 
                     // get intersection points
                     List<Intersection> intersections = new List<Intersection>();
-                   
+
                     // check for x intersection with horizontal line (y = a)
                     for (int j = 0; j < horizontalLines.Count; ++j)
                     {
@@ -326,8 +330,10 @@ namespace GDO.Apps.Graph
                         intersection.pos.x = (y - c) / m;
                         intersection.pos.y = y;
                         intersection.type = "horizontal";
-                        intersection.number = (int)(Math.Floor(intersection.pos.x / singleDisplayWidth)); 
+                        intersection.number = (int)(Math.Floor(intersection.pos.x / singleDisplayWidth));
                         // to get which col it belongs to
+
+                        intersections.Add(intersection);
                     }
 
                     // check for y intersection with vertical line (x = b)
@@ -339,8 +345,10 @@ namespace GDO.Apps.Graph
                         intersection.pos.x = x;
                         intersection.pos.y = (m * x) + c;
                         intersection.type = "vertical";
-                        intersection.number = (int)(Math.Floor(intersection.pos.y / singleDisplayHeight)); 
+                        intersection.number = (int)(Math.Floor(intersection.pos.y / singleDisplayHeight));
                         // to get which row it belongs to
+
+                        intersections.Add(intersection);
                     }
 
                     // sort list of intersections by x coordinate using Linq
@@ -349,7 +357,7 @@ namespace GDO.Apps.Graph
 
                     foreach (Intersection intersection in sortedIntersections)
                     {
-                        System.Diagnostics.Debug.WriteLine(intersection.pos.x);
+                        System.Diagnostics.Debug.WriteLine("Intersection's x coordinate: " + intersection.pos.x);
                     }
 
                     // TODO: check if there's a need for garbage collection
@@ -377,7 +385,7 @@ namespace GDO.Apps.Graph
                             partitionData[(int)(Math.Min(intersections[j].pos.y, intersections[j + 1].pos.y) / singleDisplayHeight), intersections[j].number].links.Add(link);
                         }
                     }
-            
+
                     // for other cases, link is already added to the last browser; except for this case
                     partitionData[endBrowserPos.row, endBrowserPos.col].links.Add(link);
                 }

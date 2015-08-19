@@ -8,20 +8,21 @@
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
+    $.connection.graphAppHub.client.setMessage = function (message) {
+        gdo.consoleOut('.GRAPHRENDERER', 1, 'Message from server: ' + message);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // append new "p" element for each msg, instead of replacing existing one
+            $("iframe").contents().find("#message_from_server").append("<p>" + message + "</p>");
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing
+        }
+    }
 
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
-            /* both methods not working, might be problem with how innerHTML works
-            // method 1
-             $("iframe").contents().find("#controlTest")[0].innerHTML = "Hello Control page!";
-
-             // method 2
-            document.body
-                .getElementsByTagName('iframe')[0]
-                .contentDocument.getElementById("controlTest")
-                .innerHTML = "Hello Control page!";
-                */
+            
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".json");
