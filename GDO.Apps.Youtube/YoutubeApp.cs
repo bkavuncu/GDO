@@ -236,6 +236,8 @@ namespace GDO.Apps.Youtube
             yURL += "type=" + "video" + "&";
             yURL += "maxResults=" + num + "&";
             yURL += "pageToken=" + pageToken + "&";
+            yURL += "videoEmbeddable=true&";
+            yURL += "safeSearch=strict&";
             yURL += "key=" + key;
 
             string yResponse = requestYoutubeInfo(yURL);
