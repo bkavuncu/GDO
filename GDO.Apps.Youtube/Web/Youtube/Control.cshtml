@@ -40,7 +40,7 @@
             color: #DDD;
             background: #222;
             font-size: 21px;
-            width: 100px;
+            width: 200px;
             height: 35px;
             border: 3px solid #444;
             margin: 0;
@@ -62,11 +62,12 @@
 <div>
     <h1>Youtube App Control</h1>
     <div class="youtube_text">
-        <b>Update Channel Name</b>
+        <b>Update Keyword</b>
         <br>
         <fieldset>
-            Channel Name: <input type="text" id="new_channel_name">
-            <button id="update_channel_name_submit" class="youtube_button">Submit</button>
+            Keywords: <input type="text" id="new_keyword">
+            <button id="search_mode" class="youtube_button" val="0">Channel Mode</button>
+            <button id="update_keyword_submit" class="youtube_button">Submit</button>
         </fieldset>
         <br/>
         <b>Message</b>
@@ -76,7 +77,7 @@
         <br/>
         <b>Get Next videos</b>
         <fieldset>
-            Channel Name: <span id="current_channel_name"></span>
+            Keywords: <span id="current_keyword"></span>
             <button id="get_next_videos" class="youtube_button">Next</button>
         </fieldset>
     </div>
@@ -88,20 +89,25 @@
 </div>
 
 <script>
-    $("#update_channel_name_submit").click(function () {
+    $("#search_mode").click(function() {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Updating search mode: ' +  (1 - $("#search_mode").val()));
+        gdo.net.app["Youtube"].server.setSearchMode(gdo.controlId, (1 - $("#search_mode").val()));
+    });
+    $("#update_keyword_submit").click(function () {
         var gdo = parent.gdo;
         $("#get_next_videos").prop("disabled", true);
-        gdo.consoleOut('.Youtube', 1, 'Updating channel name: ' + $("#new_channel_name").val());
-        gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_channel_name").val());
+        gdo.consoleOut('.Youtube', 1, 'Updating channel name: ' + $("#new_keyword").val());
+        gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_keyword").val());
     });
     $("#get_next_videos").click(function () {
         var gdo = parent.gdo;
         gdo.consoleOut('.Youtube', 1, 'Getting videos');
         gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
     });
-    $("#new_channel_name").keypress(function (e) {
+    $("#new_keyword").keypress(function (e) {
         if (e.keyCode == 13) {
-            $("#update_channel_name_submit").click();
+            $("#update_keyword_submit").click();
         }
     });
 </script>

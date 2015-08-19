@@ -609,7 +609,7 @@ namespace GDO.Core
             {
                 Cave.MaintenanceMode = mode;
                 Clients.All.setMaintenanceMode(mode);
-                Clients.All.reloadNodeIFrame(mode);
+                //Clients.All.reloadNodeIFrame(mode);
             }
         }
 

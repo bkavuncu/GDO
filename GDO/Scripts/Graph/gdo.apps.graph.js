@@ -382,10 +382,6 @@ $(function () {
                                 var svgRoot = svg("svg");
                                 settings.svgDom.appendChild(svgRoot);
 
-
-                                // previous bug: no svgRoot.attr function (attached to simplesvg object)
-                             
-
                                 svgRoot.attr("width", settings.defaultDisplayDimension.width)
                                     .attr("height", settings.defaultDisplayDimension.height);
 

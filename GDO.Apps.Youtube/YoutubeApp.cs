@@ -36,6 +36,9 @@ namespace GDO.Apps.Youtube
         public string NextPageToken { get; set; }
         public bool Error { get; set; }
         public string ErrorDetails { get; set; }
+        public int SearchMode { get; set; }
+        // 0 channel mode
+        // 1 keyword mode
 
         private string key { get; set; }
         private string baseURL  { get; set; }
@@ -216,6 +219,7 @@ namespace GDO.Apps.Youtube
             this.NextVideoName = null;
             this.CurrentVideoUrls = null;
             this.NextVideoUrls = null;
+            this.SearchMode = 0;
 
             string channelName = (string) configuration.Json.SelectToken("channel");
             if (channelName != "")

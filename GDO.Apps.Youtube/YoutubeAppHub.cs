@@ -228,5 +228,45 @@ namespace GDO.Apps.Youtube
                 }
             }
         }
+
+        public void RequestSearchMode(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting search mode...");
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+                    Clients.Caller.updateSearchMode(yf.SearchMode);
+                    Clients.Caller.setMessage("Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void SetSearchMode(int instanceId, int sm)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Updating search mode...");
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+                    if (sm == 0 || sm == 1)
+                        yf.SearchMode = sm;
+                    Clients.Caller.updateSearchMode(yf.SearchMode);
+                    Clients.Caller.setMessage("Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
     }
 }
