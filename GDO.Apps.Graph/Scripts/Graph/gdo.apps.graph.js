@@ -11,7 +11,9 @@ $(function () {
     $.connection.graphAppHub.client.setMessage = function (message) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Message from server: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            $("iframe").contents().find("#message_from_server").html(message);
+            // append new "p" element for each msg, instead of replacing existing one
+            $("iframe").contents().find("#message_from_server").append("<p>" + message + "</p>");
+
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
