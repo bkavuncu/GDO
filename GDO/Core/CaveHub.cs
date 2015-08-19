@@ -609,7 +609,7 @@ namespace GDO.Core
             {
                 Cave.MaintenanceMode = mode;
                 Clients.All.setMaintenanceMode(mode);
-                Clients.All.reloadNodeIFrame(mode);
+              //  Clients.All.reloadNodeIFrame(mode); TODO This is showing up a concurrency bug which is crashing the server and some nodes! possibly related to issue #15
             }
         }
 
