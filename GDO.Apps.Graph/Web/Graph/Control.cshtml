@@ -67,7 +67,7 @@
 
         // TODO: include error checking for valid filename; alert if it's empty
         $("#update_fileName").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Starting graph rendering for file " + $("#fileName").val());  // can include filename here using razor
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val()); 
 
             gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#fileName").val());
 
