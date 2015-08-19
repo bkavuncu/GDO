@@ -35,6 +35,117 @@ namespace GDO.Apps.Youtube
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
+        public void UpdateKeywords(int instanceId, string newKeywords)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                    Clients.Caller.setMessage("Initializing for keywords...");
+
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+
+                    yf.Error = false;
+                    yf.VideoReady = false;
+                    yf.NextPageToken = "";
+                    yf.CurrentVideoName = null;
+                    yf.NextVideoName = null;
+                    yf.CurrentVideoUrls = null;
+                    yf.NextVideoUrls = null;
+                    yf.Keywords = newKeywords;
+
+                    Clients.Caller.updateKeywords(yf.Keywords);
+                    Clients.Caller.setMessage("Initialized keywords mode Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void GetNextVideosByKeywords(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+
+                    if (yf.Error)
+                    {
+                        Clients.Caller.setMessage(yf.ErrorDetails);
+                        return;
+                    }
+
+                    Clients.Caller.setMessage("Getting next group of videos...");
+
+                    yf.VideoReady = false;
+                    string baseUrl = "http://www.youtube.com/embed/";
+                    string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+
+                    //init
+                    if (yf.NextVideoUrls != null)
+                        yf.CurrentVideoUrls = (string[,]) yf.NextVideoUrls.Clone();
+                    yf.NextVideoUrls = new string[yf.Section.Rows, yf.Section.Cols];
+                    if (yf.NextVideoName != null)
+                        yf.CurrentVideoName = (string [,]) yf.NextVideoName.Clone();
+                    yf.NextVideoName = new string[yf.Section.Rows, yf.Section.Cols];
+                    for (int i = 0; i < yf.Section.Rows; i++)
+                    {
+                        for (int j = 0; j < yf.Section.Cols; j++)
+                        {
+                            yf.NextVideoUrls[i, j] = "";
+                            yf.NextVideoName[i, j] = "";
+                        }
+                    }
+
+                    //fetch video
+                    int sum = yf.Section.Cols*yf.Section.Rows;
+                    int remain = sum;
+                    while (remain > 0)
+                    {
+                        Clients.Caller.setMessage("Fetching from Youtube: " + (sum-remain).ToString() + "/" + sum.ToString());
+                        int num = Math.Min(remain, 50);
+                        YoutubeApp.KeywordVideoInfo videoJson = yf.getVideoByKeywords(yf.Keywords, yf.NextPageToken, num.ToString());
+                        yf.NextPageToken = videoJson.nextPageToken;
+                        if (videoJson.items.Length == 0)
+                        {
+                            break;
+                        }
+                        for (int i = 0; i < videoJson.items.Length; i++)
+                        {
+                            int rank = sum - remain + i;
+                            yf.NextVideoUrls[rank/yf.Section.Cols, rank%yf.Section.Cols] = baseUrl + videoJson.items[i].id.videoId + 
+                                                                                           tailUrl + videoJson.items[i].id.videoId;
+                            yf.NextVideoName[rank/yf.Section.Cols, rank%yf.Section.Cols] = videoJson.items[i].snippet.title;
+                        }
+                        remain -= num;
+                    }
+                    if (yf.CurrentVideoName == null || yf.CurrentVideoUrls == null)
+                    {
+                        yf.VideoReady = false;
+                        Clients.Group("" + instanceId).videoReady(1);
+                        Clients.Caller.videoReady(1);
+                    }
+                    else
+                    {
+                        yf.VideoReady = true;
+                        Clients.Group("" + instanceId).videoReady(0);
+                        Clients.Caller.videoReady(0);
+                    }
+                    Clients.Caller.setMessage("Fetched vidoes Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
         public void UpdateChannelName(int instanceId, string newChannelName)
         {
             lock (Cave.AppLocks[instanceId])
@@ -55,7 +166,7 @@ namespace GDO.Apps.Youtube
                         Clients.Caller.setMessage(yf.ErrorDetails);
                         return;
                     }
-                    yf.ChannelName = channelJson.items[0].snippet.title;
+                    yf.Keywords = channelJson.items[0].snippet.title;
                     yf.ChannelId = channelJson.items[0].id.channelId;
 
                     // get playlist id
@@ -77,8 +188,8 @@ namespace GDO.Apps.Youtube
                     yf.NextVideoName = null;
                     yf.CurrentVideoUrls = null;
                     yf.NextVideoUrls = null;
-                    Clients.Caller.updateChannelNameResult(yf.ChannelName);
-                    Clients.Caller.setMessage("Success!");
+                    Clients.Caller.updateKeywords(yf.Keywords);
+                    Clients.Caller.setMessage("Fetched channel information Success!");
                 }
                 catch (Exception e)
                 {
@@ -102,7 +213,7 @@ namespace GDO.Apps.Youtube
                         return;
                     }
 
-                    Clients.Caller.setMessage("Getting next group of videos!");
+                    Clients.Caller.setMessage("Getting next group of videos...");
 
                     yf.VideoReady = false;
                     string baseUrl = "http://www.youtube.com/embed/";
@@ -158,7 +269,7 @@ namespace GDO.Apps.Youtube
                         Clients.Group("" + instanceId).videoReady(0);
                         Clients.Caller.videoReady(0);
                     }
-                    Clients.Caller.setMessage("Success!");
+                    Clients.Caller.setMessage("Fetched videos Success!");
                 }
                 catch (Exception e)
                 {
@@ -176,9 +287,9 @@ namespace GDO.Apps.Youtube
                 {
                     Clients.Caller.setMessage("Requesting latest video information!");
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
-                    if (yf.ChannelName != "")
+                    if (yf.Keywords != "")
                     {
-                        Clients.Caller.setChannelName(yf.ChannelName);
+                        Clients.Caller.setKeywords(yf.Keywords);
                     }
                     if (!yf.VideoReady || yf.CurrentVideoName == null || yf.NextVideoName == null)
                     {
@@ -196,7 +307,7 @@ namespace GDO.Apps.Youtube
                         }
                     }
                     Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName));
-                    Clients.Caller.setMessage("Success!");
+                    Clients.Caller.setMessage("Got video titles Success!");
                 }
                 catch (Exception e)
                 {
@@ -219,7 +330,59 @@ namespace GDO.Apps.Youtube
                         return;
                     }
                     Clients.Caller.updateVideo(yf.CurrentVideoUrls[rows, cols]);
-                    Clients.Caller.setMessage("Success!");
+                    Clients.Caller.setMessage("Got video urls Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void RequestSearchMode(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting search mode...");
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+                    Clients.Caller.updateSearchMode(yf.SearchMode);
+                    Clients.Caller.setMessage("Got current search mode Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void SetSearchMode(int instanceId, int sm)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Updating search mode...");
+                    YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
+                    if (sm == 0 || sm == 1)
+                        yf.SearchMode = sm;
+                    Clients.Caller.updateSearchMode(yf.SearchMode);
+                    if (yf.SearchMode == 0)
+                    {
+                        Clients.Caller.setMessage("Set search mode to [ Channel Mode ] Success!");
+                    }
+                    else if (yf.SearchMode == 1)
+                    {
+                        Clients.Caller.setMessage("Set search mode to [ Keywords Mode ] Success!");
+                    }
+                    else
+                    {
+                        Clients.Caller.setMessage("Error! Illegal search mode!");
+                    }
+
                 }
                 catch (Exception e)
                 {

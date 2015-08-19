@@ -1,5 +1,3 @@
-﻿{
-    "connectionStrings": {
-        "DBConnectionString": ""
-    }
+{
+  "Dummy":  "Dummy"
 }

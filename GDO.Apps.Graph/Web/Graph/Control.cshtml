@@ -1,0 +1,72 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using System.Web.UI.WebControls
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        #controlTest {
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+
+    <div>
+        <h1>Distributed Graph Rendering</h1>
+        <br />
+        <h2>Input file name: </h2>
+        <input type="text" id="fileName" />
+        <button id="update_fileName">Render Graph</button>
+    </div>
+
+    <script>
+        var gdo = parent.gdo;
+
+        $(function () {
+            $(document).ready(function () {
+                gdo.net.app["Graph"].initControl();
+            });
+        });
+
+        // TODO: include error checking for valid filename; alert if it's empty
+        $("#update_fileName").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Starting graph rendering for file " + $("#fileName").val());  // can include filename here using razor
+
+            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#fileName").val());
+
+            // nothing to request render on control page yet, implement this later if necessary
+            // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
+        });
+
+    </script>
+
+</body>
+</html>

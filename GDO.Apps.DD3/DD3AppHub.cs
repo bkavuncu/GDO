@@ -32,10 +32,13 @@ namespace GDO.Apps.DD3
             this.InstanceType = new DD3App().GetType();
         }
 
+        // == APP ==
+
         public void JoinGroup(int instanceId)
         { 
             Groups.Add(Context.ConnectionId, "" + instanceId);
         }
+
         public void ExitGroup(int instanceId)
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
@@ -92,5 +95,44 @@ namespace GDO.Apps.DD3
                 ((DD3App)instances[instanceId]).removeClient(Context.ConnectionId);
             }
         }
+
+        public void broadcastControllerOrder(int Id, string order)
+        {
+            Clients.Group("" + Id).receiveControllerOrder(order);
+        }
+
+        public void sendControllerOrder(string Id, string order)
+        {
+            Clients.Client(Id).receiveControllerOrder(order);
+        }
+
+        // == CONTROLLER ==
+
+        public void defineController(int instanceId)
+        {
+            instances = Cave.Apps["DD3"].Instances;
+            ((DD3App)instances[instanceId]).defineController(Context.ConnectionId);
+        }
+
+        public void sendOrder(int instanceId, string order, bool all)
+        {
+            if (all)
+            {
+                broadcastControllerOrder(instanceId, order);
+            }
+            else
+            {
+                //Maybe make more checks to be sure it's always the same we send to...
+                instances = Cave.Apps["DD3"].Instances;
+                var cid = ((DD3App)instances[instanceId]).getFirstNode();
+                sendControllerOrder(cid, order);
+            }
+        }
+
+        public void updateController(string controllerId, string message)
+        {
+            Clients.Client(controllerId).updateController(message);
+        }
+
     }
 }

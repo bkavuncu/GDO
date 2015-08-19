@@ -16,6 +16,7 @@
             font-size: 70%;
             padding : 0px;
             margin: 0px;
+            overflow-y: hidden;
         }
 
         .unselectable {
@@ -46,24 +47,39 @@
 
     <script>
         var dd3;
-        var init1, init2, start1, start2, start3, t1, t2, t3;
+        var init1, init2, start1, start2, start3;
 
         $(function () {          
             $(document).ready(function () {
                 var gdo = parent.gdo;
+                var test_bench = [];
 
-                var callback = function (configId) {
+                var launcher = function (configId) {
                     if (dd3.state() === "ready") {
                         test_bench[configId]();
                     } else {
                         dd3.on('ready', test_bench[configId]);
                     }
+                };
+
+                var testController = (function () {
+                    var t = function (order) {
+                        testController.tests[order.name] ?
+                        testController.tests[order.name].apply(null, order.args) :
+                        gdo.consoleOut('.DD3', 1, 'No test function corresponding to ' + order.name);
+                    };
+                    t.tests = {};
+                    return t;
+                })();
+                
+                if (!gdo.net.app["DD3"].initClient) {
+                    $("#error").css("display", "");
+                    return;
                 }
 
-                dd3 = gdo.net.app["DD3"].initClient(d3, callback);
-                var test_bench = [];
+                dd3 = gdo.net.app["DD3"].initClient(d3, launcher, testController);
 
-                var test_1 = function () {
+                test_bench[0] = function () {
 
                     var svg = dd3.svgCanvas,
 	                    width = dd3.cave().svgWidth,
@@ -94,6 +110,7 @@
                         .attr("fill", "transparent");
 
                     var circleGroup = svg.append("g").attr("id", "cg");
+                    var circleGroupDistributed = svg.append("g").attr("id", "cgd");
 
                     svg.append("text")
                         .unwatch()
@@ -103,25 +120,25 @@
                         .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
 
                     var rectG = svg.append('g').attr("id", "rect").append('g');
-                    var rect = rectG.append('rect')
-                        .attr("id", "test");
+                    var rect;
 
-                    init2 = function () {
-                        circleGroup.selectAll(".c").data(d3.range(100)).enter()
-                            .append('g')
-                            .append('circle')
-                            .attr("class", "c");
-
-                        circleGroup.selectAll(".c")
-                            .attr("cx", function () { return width * Math.random(); })
-                            .attr("cy", function () { return height * Math.random(); })
-                            .attr("r", function () { return 10 * Math.random() + 10; })
+                    testController.tests['createRect'] = init1 = function () {
+                        rect = rectG.append('rect');
+                        rect.attr("x", width / 10)
+                            .attr("y", 4.5 * height / 10)
+                            .attr("width", width / 10)
+                            .attr("height", height / 10)
                             .attr("stroke", "black")
-                            .attr("fill", "#FFF");
+                            .style("fill", "#EEE")
+                            .text("None");
                     };
 
-                    var init3 = function () {
-                        circleGroup.selectAll(".c").data(d3.range(10)).enter()
+                    testController.tests['removeRect'] = function () {
+                        rectG.selectAll("rect").remove();
+                    };
+
+                    testController.tests['createCircles'] = init3 = function (number, opacity) {
+                        circleGroup.selectAll(".c").data(d3.range(number || 10)).enter()
                             .append('circle')
                             .attr("class", "c");
 
@@ -130,56 +147,90 @@
                             .attr("cy", function () { return height * Math.random(); })
                             .attr("r", function () { return 20 * Math.random() + 20; })
                             .attr("stroke", "black")
-                            .attr("opacity", 0.9)
+                            .attr("opacity", opacity || 1)
                             .attr("fill", "#FFF");
                     };
 
-                    init1 = function () {
-                        rect.attr("x", width / 10)
-                            .attr("y", 4.5 * height / 10)
-                            .attr("width", width / 10)
-                            .attr("height", height / 10)
+                    testController.tests['removeCircles'] = function () {
+                        circleGroup.selectAll(".c").remove();
+                    };
+                    
+                    testController.tests['createDistributedCircles'] = function (number, opacity) {
+                        circleGroupDistributed.selectAll(".c").data(d3.range(number || 10)).enter()
+                            .append('circle')
+                            .attr("class", "c");
+
+                        circleGroupDistributed.selectAll(".c")
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 20 * Math.random() + 20; })
                             .attr("stroke", "black")
-                            .style("fill", "#EEE")
-                            .attr("fill", "rgb(29, 219, 29)")
-                            .text("None");
+                            .attr("opacity", opacity || 1)
+                            .attr("fill", "#FFF");
                     };
 
+                    testController.tests['removeDistributedCircles'] = function () {
+                        circleGroupDistributed.selectAll(".c").remove();
+                    };
+
+        /*
                     startG = function (name) {
                         rectG.transition(name)
                              .duration(15000)
                              .attr('transform', 'translate(500)');
                     };
-
-                    start1 = function (name) {
-                        t1 = rect.transition(name)
+        */
+                    testController.tests['startXTranslation'] = start1 = function (name) {
+                        rect.transition(name)
                             .duration(10000)
                             .style("fill", "#AAA")
                             .attr('x', 8 * width / 10)
                             .text("test")
-                            .transition()
+                            .transition(name)
                             .duration(5000)
+                            .style("fill", "#EEE")
                             .attr('x', width / 10);
                     };
 
-                    start2 = function (name) {
-                        t2 = rect.transition(name)
-                            .duration(40000)
-                            .attr('y', 8 * height / 10);
+                    testController.tests['startYTranslation'] = start2 = function (name) {
+                        rect.transition(name)
+                            .duration(10000)
+                            .attr('y', 8 * height / 10)
+                            .transition(name)
+                            .duration(5000)
+                            .attr('y', 4.5 * height / 10);
                     };
 
-                    start3 = function (name) {
-                        t3 = circleGroup.selectAll(".c")
+                    testController.tests['startRotation'] = function (name) {
+                        rect.transition(name)
+                            .duration(3000)
+                            .attr('transform', 'rotate(-40)')
+                            .transition(name)
+                            .duration(3000)
+                            .attr('transform', 'rotate(40)')
+                            .transition(name)
+                            .duration(3000)
+                            .attr('transform', 'rotate(0)');
+                    };
+
+                    testController.tests['startMoveCircles'] = start3 = function (name) {
+                        circleGroup.selectAll(".c")
                             .transition()
-                            .duration(20000)
+                            .duration(15000)
                             .precision(0.05)
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
-                            .attr("r", function () { return 40 * Math.random() + 50; });
+                            .attr("r", function () { return 40 * Math.random() + 20; });
                     };
 
-                    change1 = function () {
-                        rectG.attr("transform", "rotate(" + (20 * Math.random() - 10) + ")");
+                    testController.tests['startMoveDistributedCircles'] = function (name) {
+                        circleGroupDistributed.selectAll(".c")
+                            .transition()
+                            .duration(15000)
+                            .precision(0.05)
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 30 * Math.random() + 20; });
                     };
 
                     /*
@@ -191,8 +242,8 @@
                     dd3.synchronize(f, 5000);
                 //*/
                 };
-
-                var test_2 = function () {
+                
+                test_bench[1] = function () {
                     var dim = dd3.dataDimensions();
                     var extent = dim.x.max - dim.x.min, coef = 0., c = 1;
                     var xDomain = [dim.x.min - coef * extent - c, dim.x.max + coef * extent + c];
@@ -300,13 +351,20 @@
                     //*/
                 };
 
-                test_bench.push(test_1);
-                test_bench.push(test_2);
             });
         });
 
     </script>
 
-    <form id="form1" runat="server"></form>
+    <div id="error" style="display:none">
+        <p style="color: rgb(237, 20, 51);font-size: 2.5em;">
+            :(
+        </p>
+        <p style="color: rgb(237, 20, 51);font-size:2.5em;">
+            Something went wrong, please reload the page<br>
+            <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initClient' was not initialized</span>
+        </p>
+    </div>
+
 </body>
 </html>

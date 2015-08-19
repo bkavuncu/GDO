@@ -3,6 +3,8 @@
 *   dd3 - v0.0.2
 */
 
+// ==== IF THIS NODE IS AN APP ====
+
 var initDD3App = function (d3) {
 
     var utils = (function () {
@@ -319,8 +321,8 @@ var initDD3App = function (d3) {
 
         var browser = {
             number: null,
-            width: 1280 / 4, //$(this).width();
-            height: 720 / 2 / 1, //$(this).height();
+            width: /*1280 / 4, /*/$(window).width(),
+            height:/* 720 / 2 / 1, /*/$(window).height(),
             margin: {
                 top: 0,
                 bottom: 0,
@@ -1669,7 +1671,7 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_findTransitionsRecipients = function (elem) {
-                if (!elem)
+                if (!elem || !elem.parentNode)
                     return [];
 
                 var g = elem.parentNode,
@@ -1787,7 +1789,8 @@ var initDD3App = function (d3) {
                 var initialize = function (t, ease, precision) {
 
                     t.each("start.dd3", function (d, i) {
-                        utils.log("Start transition triggered");
+                        if (!this.parentNode)
+                            return;
                         var transition = this[ns][this[ns].active];
 
                         var args = {
@@ -1915,33 +1918,53 @@ var initDD3App = function (d3) {
 
 var dd3Server = $.connection.dD3AppHub;
 var signalR_callback = [];
+var main_callback; // Callback inside the html file
+var test_controller; // Callback inside the html file
 
 dd3Server.client.receiveConfiguration = function (a, b) {
-    signalR_callback[0].apply(null, arguments);
+    signalR_callback[0] && signalR_callback[0].apply(null, arguments);
 };
+
 dd3Server.client.synchronize = function () {
-    signalR_callback[1].apply(null, arguments);
+    signalR_callback[1] && signalR_callback[1].apply(null, arguments);
 };
 
-// To get configId from server (I don't find it in gdo.net.app.DD3.config)
-
-var main_callback;
 dd3Server.client.receiveGDOConfiguration = function (id) {
-    main_callback(id);
+    // To get configId from server (I don't find it in gdo.net.app.DD3.config)
+    main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');
+    main_callback = null;
 };
+
+dd3Server.client.receiveControllerOrder = function (orders) {
+    test_controller ? test_controller(JSON.parse(orders)) : gdo.consoleOut('.DD3', 1, 'No test controller defined');
+};
+
+// ==== IF THIS NODE IS A CONTROLLER ====
+
+dd3Server.client.updateController = function (obj) {
+    gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
+    main_callback && main_callback(JSON.parse(obj));
+};
+
+
+// ===============================
 
 gdo.net.app["DD3"].displayMode = 0;
 
-gdo.net.app["DD3"].initClient = function (d3, callback) {
+gdo.net.app["DD3"].initClient = function (d3, callback, testController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     main_callback = callback;
+    test_controller = testController;
     return initDD3App(d3);
 }
 
-gdo.net.app["DD3"].initControl = function () {
-    gdo.controlId = utils.getUrlVar("controlId");
+gdo.net.app["DD3"].initControl = function (callback) {
+    gdo.controlId = getUrlVar("controlId");
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.controlId);
+    main_callback = callback;
+    dd3Server.server.defineController(gdo.management.selectedInstance);
+    return gdo.management.selectedInstance;
 }
 
 gdo.net.app["DD3"].terminateClient = function () {

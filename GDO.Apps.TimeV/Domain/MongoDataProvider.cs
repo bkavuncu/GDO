@@ -18,10 +18,10 @@ namespace GDO.Apps.TimeV.Domain
             this.Database = client.GetDatabase(databaseName);
         }
 
-        public async void Insert(BsonDocument document, String collectionName)
+        public void Insert(BsonDocument document, String collectionName)
         {
             var collection = this.Database.GetCollection<BsonDocument>(collectionName);
-            await collection.InsertOneAsync(document);
+            collection.InsertOneAsync(document);
         }
         
         public async Task<List<BsonDocument>> Fetch(FilterDefinition<BsonDocument> filter, String collectionName)
