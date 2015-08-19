@@ -28,10 +28,10 @@
             user-select: none;
         }
 
-        #controlTest {
+        p {
             color: #FFF;
             font-family: helvetica;
-            font-size: 70%;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -46,6 +46,12 @@
         <input type="text" id="fileName" />
         <button id="update_fileName">Render Graph</button>
     </div>
+
+    <br/>
+    <h2>Program Log</h2>
+    <fieldset>
+        <p id="message_from_server"></p>
+    </fieldset>
 
     <script>
         var gdo = parent.gdo;

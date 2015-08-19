@@ -34,19 +34,24 @@ namespace GDO.Apps.Graph
         public void InitiateProcessing(int instanceId, string fileName)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
+            
             lock (Cave.AppLocks[instanceId])
             {
                 try 
                 {
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                    Clients.Caller.setMessage("Initiate processing of raw graph data: " + fileName);
                     string folderNameDigit = ga.ProcessGraph(fileName);
+                    Clients.Caller.setMessage("Processing of raw graph data has completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).renderGraph(folderNameDigit); 
+                    Clients.Group("" + instanceId).renderGraph(folderNameDigit);
+                    Clients.Caller.setMessage("Graph is now being rendered.");
                 }
                 catch (Exception e)
                 {
+                    Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
                     Console.WriteLine(e);
                 }
             }
