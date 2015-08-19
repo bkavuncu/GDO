@@ -252,6 +252,16 @@
                 data.canvasData.width = canvasData.width;
                 data.canvasData.height = canvasData.height;
                 gdo.net.app["Images"].server.setThumbNailImageInfo(gdo.controlId, JSON.stringify(data));
+                $("#canvas_data_width").html(data.canvasData.width);
+                $("#canvas_data_height").html(data.canvasData.height);
+                $("#canvas_data_left").html(data.canvasData.left);
+                $("#canvas_data_top").html(data.canvasData.top);
+                $("#cropbox_data_width").html(data.cropboxData.width);
+                $("#cropbox_data_height").html(data.cropboxData.height);
+                $("#cropbox_data_left").html(data.cropboxData.left);
+                $("#cropbox_data_top").html(data.cropboxData.top);
+                $("#image_data_aspect_ratio").html(data.imageData.aspectRatio);
+                $("#image_data_rotate").html(data.imageData.rotate);
             }
         }
 
@@ -338,6 +348,24 @@
                             </td>
                         </tr>
                     </table>
+                </fieldset>
+                <fieldset>
+                    <p id="canvas_data">
+                        width:<span id="canvas_data_width"></span>/
+                        height:<span id="canvas_data_height"></span>/
+                        left:<span id="canvas_data_left"></span>/
+                        top:<span id="canvas_data_top"></span>
+                    </p>
+                    <p id="cropbox_data">
+                        width:<span id="cropbox_data_width"></span>/
+                        height:<span id="cropbox_data_height"></span>/
+                        left:<span id="cropbox_data_left"></span>/
+                        top:<span id="cropbox_data_top"></span>
+                    </p>
+                    <p id="image_data">
+                        aspectRatio:<span id="image_data_aspect_ratio"></span>/
+                        rotate:<span id="image_data_rotate"></span>
+                    </p>
                 </fieldset>
                 <div id="thumbnail_control" style="margin-top:10px">
                     <img src="Images\Wave.jpg">
