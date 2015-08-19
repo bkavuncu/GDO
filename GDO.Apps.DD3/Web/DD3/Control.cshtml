@@ -59,6 +59,12 @@
                     return JSON.stringify({ name: name, args: args });
                 };
 
+                if (!gdo.net.app["DD3"].initControl) {
+                    $("#wait").css("display", "none");
+                    $("#error").css("display", "");
+                    return;
+                }
+
                 instanceId = gdo.net.app["DD3"].initControl(callback);
 
                 test_bench[0] = function () {
@@ -95,6 +101,16 @@
 
     <div id="wait" style="">
         Please wait while app is initializing...
+    </div>
+
+    <div id="error" style="display:none">
+        <p style="color: rgb(237, 20, 51);font-size: 2.5em;">
+            :(
+        </p>
+        <p style="color: rgb(237, 20, 51);font-size:2.5em;">
+            Something went wrong, please reload the page<br>
+            <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initControl' was not initialized</span>
+        </p>
     </div>
 
     <div id="control_0" style="display:none">
