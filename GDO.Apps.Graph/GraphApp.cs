@@ -125,8 +125,9 @@ namespace GDO.Apps.Graph
         public string ProcessGraph(string fileName) 
         {
 
-            //string fileName = @"output_10000nodes_15000links.json";
+            //string fileName = @"output_10000nodes_15000links.json";   
             string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
+
             //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
 
             System.Diagnostics.Debug.WriteLine("Reading from: " + filePath);
@@ -331,6 +332,8 @@ namespace GDO.Apps.Graph
                         intersection.type = "horizontal";
                         intersection.number = (int)(Math.Floor(intersection.pos.x / singleDisplayWidth));
                         // to get which col it belongs to
+
+                        intersections.Add(intersection);
                     }
 
                     // check for y intersection with vertical line (x = b)
@@ -344,6 +347,8 @@ namespace GDO.Apps.Graph
                         intersection.type = "vertical";
                         intersection.number = (int)(Math.Floor(intersection.pos.y / singleDisplayHeight));
                         // to get which row it belongs to
+
+                        intersections.Add(intersection);
                     }
 
                     // sort list of intersections by x coordinate using Linq
@@ -352,7 +357,7 @@ namespace GDO.Apps.Graph
 
                     foreach (Intersection intersection in sortedIntersections)
                     {
-                        System.Diagnostics.Debug.WriteLine(intersection.pos.x);
+                        System.Diagnostics.Debug.WriteLine("Intersection's x coordinate: " + intersection.pos.x);
                     }
 
                     // TODO: check if there's a need for garbage collection
