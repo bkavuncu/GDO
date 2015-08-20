@@ -170,6 +170,7 @@ namespace GDO.Apps.Images
             }
         }
 
+        /*
         public void SetDisplayMode(int instanceId, int displaymode)
         {
             lock (Cave.AppLocks[instanceId])
@@ -207,6 +208,7 @@ namespace GDO.Apps.Images
                 }
             }
         }
+        */
 
         public void SetThumbNailImageInfo(int instanceId, string imageInfo)
         {
