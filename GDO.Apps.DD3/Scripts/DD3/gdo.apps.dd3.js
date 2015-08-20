@@ -1310,7 +1310,8 @@ var initDD3App = function (d3) {
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 }
 
-                _dd3_notifyChildren.call(this, 'updateContainer'); // If we send group as a shape, we may just want to send children.
+                if (this.parentNode) // If the group is still in the dom, we notify children. Otherwise they will be deleted in every previous recipients dom with the group deletion anyway
+                    _dd3_notifyChildren.call(this, 'updateContainer');
                 return rcpt.length;
             };
 
@@ -1342,9 +1343,7 @@ var initDD3App = function (d3) {
                 };
 
                 var createPropertyObject = function (obj, elem, f, p) {
-                    if (f === "remove") {
-                        obj.type = 'property';
-                    } else {
+                    if (f !== "remove") {
                         obj.type = 'property';
                         obj.function = f;
 
@@ -1829,7 +1828,7 @@ var initDD3App = function (d3) {
                             return this;
                         }
                         ease = e;
-                        return d3.selection.prototype.ease.call(this, arguments);
+                        return d3.transition.prototype.ease.apply(this, arguments);
                     };
 
                     t.precision = function (p) {
