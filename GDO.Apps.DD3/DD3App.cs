@@ -52,7 +52,7 @@ namespace GDO.Apps.DD3
                     broadcastConfiguration();
                     if (controllerId != "")
                     {
-                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(Id, 1).toString());
+                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(Id, 1, Section.NumNodes).toString());
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace GDO.Apps.DD3
             if (browserList.Count == Section.NumNodes)
             {
                 // 1 = Launched
-                DD3AppHub.self.updateController(controllerId, new ControllerMessage(ConfigurationId, 1).toString());
+                DD3AppHub.self.updateController(controllerId, new ControllerMessage(ConfigurationId, 1, Section.NumNodes).toString());
             }
         }
 
@@ -111,9 +111,10 @@ namespace GDO.Apps.DD3
 
     public class ControllerMessage
     {
-        public ControllerMessage(int configurationId, int state)
+        public ControllerMessage(int configurationId, int state, int numClient)
         {
             this.configurationId = configurationId;
+            this.numClient = numClient;
             this.state = state;
         }
 
@@ -124,6 +125,7 @@ namespace GDO.Apps.DD3
 
         public int configurationId { get; set; }
         public int state { get; set; }
+        public int numClient { get; set; }
     }
 
     public class BrowserBroadcastInfo

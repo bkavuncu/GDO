@@ -74,6 +74,7 @@
                 
                 if (!gdo.net.app["DD3"].initClient) {
                     $("#error").css("display", "");
+                    parent.location.reload();
                     return;
                 }
 
@@ -112,6 +113,12 @@
                     var circleGroup = svg.append("g").attr("id", "cg");
                     var circleGroupDistributed = svg.append("g").attr("id", "cgd");
 
+                    var rectG = svg.append('g').attr("id", "rect").append('g');
+                    var rect;
+
+                    var polygonGroupOutter = svg.append('g').attr('id', 'poly').append('g'),
+                        polygonGroupInner;
+
                     svg.append("text")
                         .unwatch()
                         .text([r, c])
@@ -119,8 +126,7 @@
                         .attr("dominant-baseline", "text-before-edge")
                         .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
 
-                    var rectG = svg.append('g').attr("id", "rect").append('g');
-                    var rect;
+                    
 
                     testController.tests['createRect'] = init1 = function () {
                         rect = rectG.append('rect');
@@ -138,17 +144,18 @@
                     };
 
                     testController.tests['createCircles'] = init3 = function (number, opacity) {
-                        circleGroup.selectAll(".c").data(d3.range(number || 10)).enter()
+                        circleGroup.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('circle')
-                            .attr("class", "c");
+                            .attr("class", "c new");
 
-                        circleGroup.selectAll(".c")
+                        circleGroup.selectAll(".new")
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
                             .attr("r", function () { return 20 * Math.random() + 20; })
                             .attr("stroke", "black")
                             .attr("opacity", opacity || 1)
-                            .attr("fill", "#FFF");
+                            .attr("fill", "#FFF")
+                            .classed("new", false);
                     };
 
                     testController.tests['removeCircles'] = function () {
@@ -156,30 +163,40 @@
                     };
                     
                     testController.tests['createDistributedCircles'] = function (number, opacity) {
-                        circleGroupDistributed.selectAll(".c").data(d3.range(number || 10)).enter()
+                        circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('circle')
-                            .attr("class", "c");
+                            .attr("class", "c new");
 
-                        circleGroupDistributed.selectAll(".c")
+                        circleGroupDistributed.selectAll(".new")
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
                             .attr("r", function () { return 20 * Math.random() + 20; })
                             .attr("stroke", "black")
                             .attr("opacity", opacity || 1)
-                            .attr("fill", "#FFF");
+                            .attr("fill", "#FFF")
+                            .classed("new", false);
                     };
 
                     testController.tests['removeDistributedCircles'] = function () {
                         circleGroupDistributed.selectAll(".c").remove();
                     };
 
-        /*
-                    startG = function (name) {
-                        rectG.transition(name)
-                             .duration(15000)
-                             .attr('transform', 'translate(500)');
+                    testController.tests['createPolygon'] = function () {
+                        polygonGroupInner = polygonGroupOutter.attr('transform', 'translate(0,0)').append("g");
+                        polygonGroupInner
+			               .append('polygon')
+			               .attr("points", "50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180")
+			               .attr("transform", "scale(6) translate(-25 -160)")
+			               .attr("stroke", "orange")
+			               .attr("stroke-width", "4")
+			               .attr("fill", "transparent");
                     };
-        */
+
+                    testController.tests['removePolygon'] = function () {
+                        polygonGroupOutter.selectAll('g').remove();
+                        polygonGroupOutter.transition();
+                    };
+
                     testController.tests['startXTranslation'] = start1 = function (name) {
                         rect.transition(name)
                             .duration(10000)
@@ -231,6 +248,40 @@
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
                             .attr("r", function () { return 30 * Math.random() + 20; });
+                    };
+
+                    testController.tests['startMovePolygon'] = function () {
+                        var pw = 300, ph = 300, n = 50, period = 2;
+                        var points = d3.range(n + 1).map(function (d) { var x = d * (width - pw) / n; var y =  (1 + Math.cos(d / n * 2 * Math.PI * period)) * (height - ph) / 2; return [x, y]; });
+
+                        var tr = polygonGroupOutter
+                            .transition()
+                            .duration(1000)
+                            .attr('transform', 'translate(' + points[0][0] + ' ' + points[0][1] + ')');
+                        
+                        points.forEach(function (p) {
+                            tr = tr.transition()
+                                .duration(200)
+                                .ease("linear")
+                                .attr('transform', 'translate(' + p[0] + ' ' + p[1] + ')');
+                        });
+                        
+                        polygonGroupInner
+                            .attr('transform', 'rotate(0 ' + [pw / 2, ph / 2] + ')')
+                            .transition()
+                            .duration(2500)
+                            .ease("linear")
+                            .attr('transform', 'rotate(90 ' + [pw / 2, ph / 2] + ')')
+                            .transition()
+                            .duration(2500)
+                            .attr('transform', 'rotate(180 ' + [pw / 2, ph / 2] + ')')
+                            .transition()
+                            .duration(2500)
+                            .attr('transform', 'rotate(270 ' + [pw / 2, ph / 2] + ')')
+                            .transition()
+                            .duration(2500)
+                            .attr('transform', 'rotate(0 ' + [pw / 2, ph / 2] + ')');
+
                     };
 
                     /*
