@@ -44,7 +44,7 @@
             padding: 0;
         }
 
-        #display_mode_select {
+        .display_mode_select {
             color: #DDD;
             background: #222;
             font-size: 21px;
@@ -144,23 +144,37 @@
     <script src="../../Scripts/Images/cropper.min.js"></script>
     <link href="../../Scripts/Images/cropper.min.css" rel="stylesheet" />
     <script>
-        var display_mode = 0;
-
         $(function () {
             var gdo = parent.gdo;
 
-            $("#display_mode_select").click(function() {
+            $("#fit_mode").click(function() {
                 var gdo = parent.gdo;
-                gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
-                gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: ' + gdo.net.app["Images"].display_mode);
-                gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
-                gdo.net.app["Images"].setDisplayModeSelect();
+                if (gdo.net.app["Images"].control_status == 1) {
+                    //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
+                    gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                    setThumbNailDisplayMode(0);
+                }
+            });
+
+            $("#fill_mode").click(function() {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1) {
+                    //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
+                    gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                    setThumbNailDisplayMode(1);
+                }
             });
 
             $("#active_control").click(function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Images"].control_status = 1;
                 updateControlButtonBackground();
+                gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                gdo.net.app["Images"].setDisplayModeSelect();
             });
 
             $("#disable_control").click(function () {
@@ -179,6 +193,29 @@
 
             $('#thumbnail_control').width($(window).width() / 1.2);
             $('#thumbnail_control').height($(window).width() / 1.8);
+            
+            gdo.net.app["Images"].initControl();
+            //updateThumbNailImageInfo($('#thumbnail_control > img'));
+            updateControlButtonBackground();
+        });
+
+        function updateControlButtonBackground() {
+            var gdo = parent.gdo;
+            if (gdo.net.app["Images"].control_status == 0) {
+                $("#active_control").css("background", "darkgreen");
+                $("#disable_control").css("background", "#222");
+                $("#rotate_control").css("background", "#222");
+                $(".display_mode_select").css("background", "#222");
+            } else if (gdo.net.app["Images"].control_status == 1) {
+                $("#active_control").css("background", "#222");
+                $("#disable_control").css("background", "darkred");
+                $("#rotate_control").css("background", "darkgreen");
+                $(".display_mode_select").css("background", "darkgreen");
+            }
+            updateThumbNailImageInfo($('#thumbnail_control > img'));
+        }
+
+        function initializeCropper() {
             $('#thumbnail_control > img').cropper({
                 aspectRatio: 1920 / 1080,
                 autoCropArea: 0.65,
@@ -207,24 +244,6 @@
                     updateThumbNailImageInfo($(this));
                 }
             });
-
-            gdo.net.app["Images"].initControl();
-            updateThumbNailImageInfo($('#thumbnail_control > img'));
-            updateControlButtonBackground();
-        });
-
-        function updateControlButtonBackground() {
-            var gdo = parent.gdo;
-            if (gdo.net.app["Images"].control_status == 0) {
-                $("#active_control").css("background", "darkgreen");
-                $("#disable_control").css("background", "#222");
-                $("#rotate_control").css("background", "#222");
-            } else if (gdo.net.app["Images"].control_status == 1) {
-                $("#active_control").css("background", "#222");
-                $("#disable_control").css("background", "darkred");
-                $("#rotate_control").css("background", "darkgreen");
-            }
-            //updateThumbNailImageInfo($('#thumbnail_control > img'));
         }
 
         function updateThumbNailImageInfo(object) {
@@ -235,7 +254,7 @@
                 var canvasData = object.cropper('getCanvasData');
                 var data = {}
                 data.imageData = {};
-                data.imageData.aspectRatio = imageData.aspectRatio;
+                data.imageData.aspectRatio = cropboxData.width / cropboxData.height;
                 if (imageData.rotate != null) {
                     data.imageData.rotate = imageData.rotate;
                 } else {
@@ -266,14 +285,47 @@
         }
 
         function setThumbNailImageInfo(imageJson) {
-            $("#thumbnail_control > img").cropper('setCanvasData', imageJson.canvasData);
-            $("#thumbnail_control > img").cropper('setCropBoxData', imageJson.cropboxData);
-            //$("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
-            //$("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
+            $("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
+            $("#thumbnail_control > img").cropper('setCropBoxData', {
+                left: imageJson.cropboxData.left,
+                top: imageJson.cropboxData.top,
+                width: imageJson.cropboxData.width,
+                height: imageJson.cropboxData.height
+            });
+            $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
+            $("#thumbnail_control > img").cropper('setCanvasData', {
+                left: imageJson.canvasData.left,
+                top: imageJson.canvasData.top,
+                width: imageJson.canvasData.width,
+                height: imageJson.canvasData.height
+            });
         }
 
         function getSectionSize(section_width, section_height) {
             $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
+        }
+
+        function setThumbNailDisplayMode(display_mode) {
+            var gdo = parent.gdo;
+            var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
+            var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
+            var scalewidth = cropboxData.width / canvasData.width;
+            var scaleheight = cropboxData.height / canvasData.height;
+            if (scalewidth > scaleheight && display_mode == 1 ||
+                scalewidth < scaleheight && display_mode == 0) {
+                $("#thumbnail_control > img").cropper('setCanvasData', {
+                    left: cropboxData.left,
+                    top: cropboxData.top,
+                    width: cropboxData.width
+                });
+            } else {
+                $("#thumbnail_control > img").cropper('setCanvasData', {
+                    left: cropboxData.left,
+                    top: cropboxData.top,
+                    height: cropboxData.height
+                });
+            }
+            updateThumbNailImageInfo($('#thumbnail_control > img'));
         }
 
     </script>
@@ -309,11 +361,6 @@
                                 </div>
                             </td>
                             <td>
-                                <div id="display_mode_select">
-                                    <span id="display_mode_value">FIT Mode</span>
-                                </div>
-                            </td>
-                            <td>
                                 <input id="submit_image" type="submit" value="Submit"/>
                             </td>
                         </tr>
@@ -341,6 +388,18 @@
                                     <span>Disable Control</span>
                                 </div>
                             </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="display_mode_select">
+                                    <span id="fit_mode">FIT</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="display_mode_select">
+                                    <span id="fill_mode">FILL</span>
+                                </div>
+                            </td>
                             <td>
                                 <div id="rotate_control">
                                     <span>Rotate</span>
@@ -350,25 +409,30 @@
                     </table>
                 </fieldset>
                 <fieldset>
-                    <p id="canvas_data">
-                        width:<span id="canvas_data_width"></span>/
-                        height:<span id="canvas_data_height"></span>/
-                        left:<span id="canvas_data_left"></span>/
-                        top:<span id="canvas_data_top"></span>
-                    </p>
-                    <p id="cropbox_data">
-                        width:<span id="cropbox_data_width"></span>/
-                        height:<span id="cropbox_data_height"></span>/
-                        left:<span id="cropbox_data_left"></span>/
-                        top:<span id="cropbox_data_top"></span>
-                    </p>
-                    <p id="image_data">
-                        aspectRatio:<span id="image_data_aspect_ratio"></span>/
-                        rotate:<span id="image_data_rotate"></span>
-                    </p>
+                    <table style="width:100%">
+                        <tr>
+                            <td>Canvas Info</td>
+                            <td>width:<span id="canvas_data_width"></span></td>
+                            <td>height:<span id="canvas_data_height"></span></td>
+                            <td>left:<span id="canvas_data_left"></span></td>
+                            <td>top:<span id="canvas_data_top"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Cropbox Info</td>   
+                            <td>width:<span id="cropbox_data_width"></span></td>
+                            <td>height:<span id="cropbox_data_height"></span></td>
+                            <td>left:<span id="cropbox_data_left"></span></td>
+                            <td>top:<span id="cropbox_data_top"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Image Info</td>
+                            <td>aspectRatio:<span id="image_data_aspect_ratio"></span></td>
+                            <td>rotate:<span id="image_data_rotate"></span></td>
+                        </tr>
+                    </table>
                 </fieldset>
                 <div id="thumbnail_control" style="margin-top:10px">
-                    <img src="Images\Wave.jpg">
+                    <img src="">
                 </div>
 
             </form>
