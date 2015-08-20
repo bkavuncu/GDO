@@ -19,10 +19,24 @@ $(function () {
         }
     }
 
+    $.connection.graphAppHub.client.hideLinks = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var linksDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("links")
+
+            while (linksDom.firstChild) {
+                linksDom.removeChild(linksDom.firstChild);
+            }
+        }
+    }
+
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
-            
+
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".json");
@@ -369,7 +383,7 @@ $(function () {
                                 };
 
                                 // rendering
-                                
+
                                 // reset SVG by removing all child elements (if any)
                                 while (settings.svgDom.firstChild) {
                                     settings.svgDom.removeChild(settings.svgDom.firstChild);
@@ -398,10 +412,13 @@ $(function () {
 
                                 console.log("Time before rendering: " + window.performance.now());
 
+                                var linksDom = graph.append("g")
+                                    .attr("id", "links");
+
                                 // render edges
                                 links.forEach(function (link) {
 
-                                    graph.append("line")
+                                    linksDom.append("line")
                                         .attr("x1", link.pos.from.x)
                                         .attr("y1", link.pos.from.y)
                                         .attr("x2", link.pos.to.x)

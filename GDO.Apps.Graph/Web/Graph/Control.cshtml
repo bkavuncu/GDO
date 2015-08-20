@@ -47,6 +47,8 @@
         <h2>Input file name: </h2>
         <input type="text" id="fileName" />
         <button id="update_fileName">Render Graph</button>
+        <br />
+        <button id="hide_links">Hide links</button>
     </div>
 
     <br/>
@@ -65,7 +67,6 @@
             });
         });
 
-        // TODO: include error checking for valid filename; alert if it's empty
         $("#update_fileName").click(function () {
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val()); 
 
@@ -73,6 +74,10 @@
 
             // nothing to request render on control page yet, implement this later if necessary
             // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
+        });
+
+        $("#hide_links").click(function () {
+            gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
         });
 
     </script>

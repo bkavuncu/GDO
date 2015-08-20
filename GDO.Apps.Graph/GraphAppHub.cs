@@ -68,6 +68,30 @@ namespace GDO.Apps.Graph
             }
         }
 
+
+        public void HideLinks(int instanceId)
+        {
+           
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Hiding links.");
+                   
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).hideLinks();
+                    Clients.Caller.setMessage("Links are now hidden.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to hide links.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
         public void RequestRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

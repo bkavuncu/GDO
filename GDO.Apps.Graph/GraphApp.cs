@@ -126,9 +126,9 @@ namespace GDO.Apps.Graph
         {
 
             //string fileName = @"output_10000nodes_15000links.json";   
-            string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
+            //string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
 
-            //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
+            string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
 
             System.Diagnostics.Debug.WriteLine("Reading from: " + filePath);
 
@@ -136,9 +136,9 @@ namespace GDO.Apps.Graph
 
             // error exception is being handled centrally at GraphAppHub
             // it will throw exception up the stack if file cannot be read
-            StreamReader file = new StreamReader(client.OpenRead(filePath));
+            //StreamReader file = new StreamReader(client.OpenRead(filePath));
 
-            //StreamReader file = File.OpenText(filePath); //for local file
+            StreamReader file = File.OpenText(filePath); //for local file
             JsonTextReader reader = new JsonTextReader(file);
             JsonSerializer serializer = new JsonSerializer();
             GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
