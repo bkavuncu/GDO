@@ -9,7 +9,7 @@ $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     /* global variables */
-    var links;
+    var links, nodes;
 
     // when div content exceeds div height, call this function 
     // to align bottom of content with bottom of div
@@ -33,6 +33,7 @@ $(function () {
         }
     }
 
+    //TODO: Refactor duplicating code for hideLinks and hideLabels
     $.connection.graphAppHub.client.hideLinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
@@ -67,6 +68,44 @@ $(function () {
             });
         }
     }
+
+    $.connection.graphAppHub.client.hideLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var labelsDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("labels");
+
+            while (labelsDom.firstChild) {
+                labelsDom.removeChild(labelsDom.firstChild);
+            }
+        }
+    }
+
+    $.connection.graphAppHub.client.renderLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var labelsDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("labels");
+
+            nodes.forEach(function (node) {
+
+                labelsDom.append("text")
+                    .attr("x", node.pos.x)
+                    .attr("y", node.pos.y)
+                    .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")
+                    .attr("font-size", 10)
+                ;
+
+            });
+        }
+    }
+
+
+
 
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -395,7 +434,7 @@ $(function () {
                     // main code
 
                     var svg = require('simplesvg');
-                    var data, nodes, browserPos;
+                    var data, browserPos;
 
                     renderInput(filePath);
 
@@ -463,17 +502,23 @@ $(function () {
                                 });
 
 
+                                var nodesDom = graph.append("g")
+                                    .attr("id", "nodes");
+
+                                var labelsDom = graph.append("g")
+                                    .attr("id", "labels");
+
                                 // render nodes & labels
                                 nodes.forEach(function (node) {
 
-                                    graph.append("circle")
+                                    nodesDom.append("circle")
                                         .attr("r", 5)
                                         .attr("cx", node.pos.x)
                                         .attr("cy", node.pos.y)
                                         .attr("fill", "teal")
                                     ;
 
-                                    graph.append("text")
+                                    labelsDom.append("text")
                                         .attr("x", node.pos.x)
                                         .attr("y", node.pos.y)
                                         .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")

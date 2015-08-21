@@ -40,6 +40,12 @@
             height: 150px;
             overflow: auto;
         }
+
+        #graph_UI {
+            /*height: 50px;*/
+            overflow: auto;
+        }
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -52,19 +58,28 @@
         <h2>Input file name: </h2>
         <input type="text" id="fileName" />
         <button id="update_fileName">Render Graph</button>
-        <br />
-        <br />
-        <button id="hide_links">Hide links</button>
-        <button id="show_links">Show links</button>
     </div>
 
     <br />
     <br />
 
+    <h2>Graph User Interface</h2>
+    <fieldset id="graph_UI">
+        <button id="show_links">Show links</button>
+        <button id="hide_links">Hide links</button>   
+        <br />
+        <br />
+        <button id="show_labels">Show labels</button>
+        <button id="hide_labels">Hide labels</button>
+
+    </fieldset>
+
+    <br />
+    <br />
+
     <h2>Program Log</h2>
-    
-        <fieldset id="message_from_server"></fieldset>
-    
+    <fieldset id="message_from_server"></fieldset>
+
 
     <script>
         var gdo = parent.gdo;
@@ -91,6 +106,16 @@
 
         $("#show_links").click(function () {
             gdo.net.app["Graph"].server.showLinks(gdo.controlId);
+        });
+
+
+        $("#hide_labels").click(function () {
+            gdo.net.app["Graph"].server.hideLabels(gdo.controlId);
+        });
+
+
+        $("#show_labels").click(function () {
+            gdo.net.app["Graph"].server.showLabels(gdo.controlId);
         });
 
     </script>
