@@ -24,8 +24,37 @@ namespace GDO.Apps.Images
         public string ImageName { get; set; }
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }
-        public Image[,] Tiles { get; set; }
+        
         public ThumbNailImageInfo ThumbNailImage { get; set; }
+        public int TilesNumInEachBlockRow { get; set; }
+        public int TilesNumInEachBlockCol { get; set;}
+        
+        public TilesInfo[,] Tiles { get; set; }
+        public int ImageNaturalWidth { get; set; }
+        public int ImageNaturalHeight { get; set; }
+        public int TileWidth { get; set; }
+        public int TileHeight { get; set; }
+        public int TileCols { get; set; }
+        public int TileRows { get; set; }
+        public int Rotate { get; set; }
+
+        public DisplayRegionInfo DisplayRegion { get; set; }
+
+        public class DisplayRegionInfo
+        {
+            public int left;
+            public int top;
+            public int width;
+            public int height;
+        }
+
+        public class TilesInfo 
+        {
+            public int left;
+            public int top;
+            public int cols;
+            public int rows;
+        }
 
         public class CanvasDataInfo
         {
@@ -69,6 +98,14 @@ namespace GDO.Apps.Images
             this.Configuration = configuration;
             this.DisplayMode = (int)Mode.FIT;
             this.ThumbNailImage = null;
+            this.TilesNumInEachBlockRow = 3;
+            this.TilesNumInEachBlockCol = 3;
+            this.DisplayRegion = new DisplayRegionInfo();
+            this.DisplayRegion.left = 0;
+            this.DisplayRegion.top = 0;
+            this.DisplayRegion.width = 0;
+            this.DisplayRegion.height = 0;
+            this.Tiles = null;
             Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
         }
 

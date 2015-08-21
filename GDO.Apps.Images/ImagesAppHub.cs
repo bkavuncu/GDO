@@ -71,50 +71,54 @@ namespace GDO.Apps.Images
                     Image thumb = image.GetThumbnailImage(200 * image.Width / image.Height, 200, () => false, IntPtr.Zero);
                     thumb.Save(basePath + ia.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
 
+                    ia.ImageNaturalWidth = image.Width;
+                    ia.ImageNaturalHeight = image.Height;
 
                     Clients.Caller.setMessage("Resizing the image to FIT/FILL the screen...");
                     double scaleWidth = (ia.Section.Width + 0.000) / image.Width;
                     double scaleHeight = (ia.Section.Height + 0.000) / image.Height;
-                    int imageScaledWidth;
-                    int imageScaledHeight;
 
-                    int tempImageCols;
-                    int tempImageRows;
+                    int totalTilesNumCols = ia.Section.Cols * ia.TilesNumInEachBlockCol;
+                    int totalTilesNumRows = ia.Section.Rows * ia.TilesNumInEachBlockRow; 
 
-                    if (scaleWidth > scaleHeight && ia.DisplayMode == (int)Mode.FILL ||
-                        scaleWidth < scaleHeight && ia.DisplayMode == (int)Mode.FIT)
+                    if (scaleWidth > scaleHeight)
                     {
-                        imageScaledWidth = (image.Width - 1) / ia.Section.Cols + 1; // ceiling
-                        imageScaledHeight = (imageScaledWidth * (ia.Section.Height / ia.Section.Rows) - 1) / (ia.Section.Width / ia.Section.Cols) + 1;
-                        tempImageCols = ia.Section.Cols;
-                        tempImageRows = Math.Max(ia.Section.Rows, (image.Height - 1) / imageScaledHeight + 1); // ceiling
+                        ia.TileWidth = (image.Width - 1) / totalTilesNumCols + 1; // ceiling
+                        ia.TileHeight = (ia.TileWidth * (ia.Section.Height / totalTilesNumRows) - 1) / (ia.Section.Width / totalTilesNumCols) + 1;
+                        ia.TileCols = totalTilesNumCols;
+                        ia.TileRows = Math.Max(totalTilesNumRows, (image.Height - 1) / ia.TileHeight + 1); // ceiling
                     }
                     else
                     {
-                        imageScaledHeight = (image.Height - 1) / ia.Section.Rows + 1; // ceiling
-                        imageScaledWidth = (imageScaledHeight * (ia.Section.Width / ia.Section.Cols) - 1) / (ia.Section.Height / ia.Section.Rows) + 1; // ceiling and keep ratio
-                        tempImageCols = Math.Max(ia.Section.Cols, (image.Width - 1) / imageScaledWidth + 1); // ceiling
-                        tempImageRows = ia.Section.Rows;
+                        ia.TileHeight = (image.Height - 1) / totalTilesNumRows + 1; // ceiling
+                        ia.TileWidth = (ia.TileHeight * (ia.Section.Width / totalTilesNumCols) - 1) / (ia.Section.Height / totalTilesNumRows) + 1; // ceiling and keep ratio
+                        ia.TileCols = Math.Max(totalTilesNumCols, (image.Width - 1) / ia.TileWidth + 1); // ceiling
+                        ia.TileRows = totalTilesNumRows;
                     }
 
                     Clients.Caller.setMessage("Cropping the image...");
-                    ia.Tiles = new Image[tempImageCols, tempImageRows];
-                    int sum = tempImageCols*tempImageRows;
+                    ia.Tiles = new ImagesApp.TilesInfo[ia.TileCols, ia.TileRows];
+                    int sum = ia.TileCols*ia.TileRows;
                     int cur = 0;
-                    for (int i = 0; i < tempImageCols; i++)
+                    for (int i = 0; i < ia.TileCols; i++)
                     {
-                        for (int j = 0; j < tempImageRows; j++)
+                        for (int j = 0; j < ia.TileRows; j++)
                         {
                             Clients.Caller.setMessage("Cropping the image " + cur.ToString() + "/" + sum.ToString());
-                            ia.Tiles[i, j] = new Bitmap((ia.Section.Width / ia.Section.Cols), (ia.Section.Height / ia.Section.Rows));
-                            Graphics graphics = Graphics.FromImage(ia.Tiles[i, j]);
+                            ia.Tiles[i, j] = new ImagesApp.TilesInfo();
+                            Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
+                            Graphics graphics = Graphics.FromImage(curTile);
                             graphics.DrawImage(image,
-                                new Rectangle(0, 0, (ia.Section.Width / ia.Section.Cols), (ia.Section.Height / ia.Section.Rows)),
-                                new Rectangle(i * imageScaledWidth, j * imageScaledHeight, imageScaledWidth, imageScaledHeight),
+                                new Rectangle(0, 0, ia.TileWidth, ia.TileHeight),
+                                new Rectangle(i * ia.TileWidth, j * ia.TileHeight, ia.TileWidth, ia.TileHeight),
                                 GraphicsUnit.Pixel);
                             graphics.Dispose();
                             path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + i + @"_" + j + @".png";
-                            ia.Tiles[i, j].Save(path2, ImageFormat.Png);
+                            ia.Tiles[i, j].left = i * ia.TileWidth;
+                            ia.Tiles[i, j].top = j * ia.TileHeight;
+                            ia.Tiles[i, j].cols = i;
+                            ia.Tiles[i, j].rows = j;
+                            curTile.Save(path2, ImageFormat.Png);
                             cur ++;
                         }
                     }
@@ -222,6 +226,39 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Setting thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     ia.ThumbNailImage = JsonConvert.DeserializeObject<ImagesApp.ThumbNailImageInfo>(imageInfo);
+                    ia.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
+                    double ratio = ia.ThumbNailImage.imageData.naturalWidth / ia.ThumbNailImage.imageData.width;
+                    double tl = 0, tt = 0, tw = 0, th = 0;
+                    // compute display region info
+                    if (ia.Rotate == 0) {
+                        tl = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
+                        tt = ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.canvasData.top;
+                        tw = ia.ThumbNailImage.cropboxData.width;
+                        th = ia.ThumbNailImage.cropboxData.height;
+                    } else if (ia.Rotate == 90) {
+                        tl = ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.canvasData.top;
+                        tt = ia.ThumbNailImage.canvasData.left + ia.ThumbNailImage.canvasData.width -
+                             ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.cropboxData.width;
+                        tw = ia.ThumbNailImage.cropboxData.height;
+                        th = ia.ThumbNailImage.cropboxData.width;
+                    } else if (ia.Rotate == 180) {
+                        tl = ia.ThumbNailImage.canvasData.left + ia.ThumbNailImage.canvasData.width -
+                             ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.cropboxData.width;
+                        tt = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
+                             ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
+                        tw = ia.ThumbNailImage.cropboxData.width;
+                        th = ia.ThumbNailImage.cropboxData.height;
+                    } else if (ia.Rotate == 270) {
+                        tl = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
+                             ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
+                        tt = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
+                        tw = ia.ThumbNailImage.cropboxData.height;
+                        th = ia.ThumbNailImage.cropboxData.width;
+                    }
+                    ia.DisplayRegion.left = Convert.ToInt32(ratio * tl);
+                    ia.DisplayRegion.top = Convert.ToInt32(ratio * tt);
+                    ia.DisplayRegion.width = Convert.ToInt32(ratio * tw);
+                    ia.DisplayRegion.height = Convert.ToInt32(ratio * th);
                     Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
