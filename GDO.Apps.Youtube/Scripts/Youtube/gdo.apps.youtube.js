@@ -1,20 +1,24 @@
 ﻿
 $(function() {
     gdo.consoleOut('.Youtube', 1, 'Loaded Image Tiles JS');
-    $.connection.youtubeAppHub.client.updateChannelNameResult = function (message) {
+    $.connection.youtubeAppHub.client.updateKeywords = function (message) {
         gdo.consoleOut('.Youtube', 1, 'Current Channel Name: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            $("iframe").contents().find("#current_channel_name").html(message);
+            $("iframe").contents().find("#current_keyword").html(message);
             gdo.consoleOut('.Youtube', 1, 'Getting videos from Youtube');
-            gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+            if (gdo.net.app["Youtube"].searchMode == 0) {
+                gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+            } else if (gdo.net.app["Youtube"].searchMode == 1) {
+                gdo.net.app["Youtube"].server.getNextVideosByKeywords(gdo.controlId);
+            }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
     }
-    $.connection.youtubeAppHub.client.setChannelName = function (message) {
+    $.connection.youtubeAppHub.client.setKeywords = function (message) {
         gdo.consoleOut('.Youtube', 1, 'Default Input Channel Name: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            $("iframe").contents().find("#new_channel_name").val(message);
+            $("iframe").contents().find("#new_keyword").val(message);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
@@ -31,7 +35,11 @@ $(function() {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (first === 1) {
                 gdo.consoleOut('.Youtube', 1, 'Getting videos from Youtube');
-                gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+                if (gdo.net.app["Youtube"].searchMode == 0) {
+                    gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+                } else if (gdo.net.app["Youtube"].searchMode == 1) {
+                    gdo.net.app["Youtube"].server.getNextVideosByKeywords(gdo.controlId);
+                }
             } else {
                 gdo.consoleOut('.Youtube', 1, 'Videos are ready and Clients are requesting from server');
                 gdo.net.app["Youtube"].server.requestVideoName(gdo.controlId);
@@ -70,7 +78,18 @@ $(function() {
                 '</tr>');
         }
     }
+    $.connection.youtubeAppHub.client.updateSearchMode = function(search_mode) {
+        gdo.net.app["Youtube"].searchMode = search_mode;
+        $("iframe").contents().find("#search_mode").val(search_mode);
+        if (search_mode == 0) {
+            $("iframe").contents().find("#search_mode").html("Channel Mode");
+        } else if (search_mode == 1) {
+            $("iframe").contents().find("#search_mode").html("Keywords Mode");
+        }
+    }
 });
+
+gdo.net.app["Youtube"].searchMode = 0;
 
 gdo.net.app["Youtube"].initClient = function () {
     gdo.consoleOut('.Youtube', 1, 'Initializing Image Tiles App Client at Node ' + gdo.clientId);
@@ -83,6 +102,7 @@ gdo.net.app["Youtube"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     $("iframe").contents().find("#get_next_videos").prop("disabled", true);
     gdo.consoleOut('.Youtube', 1, 'Initializing Youtube App Control at Instance ' + gdo.controlId);
+    gdo.net.app["Youtube"].server.requestSearchMode(gdo.controlId);
     gdo.net.app["Youtube"].server.requestVideoName(gdo.controlId);
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,20 +35,35 @@ namespace GDO.Apps.Graph
         public void InitiateProcessing(int instanceId, string fileName)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
+            
             lock (Cave.AppLocks[instanceId])
             {
                 try 
                 {
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                    Clients.Caller.setMessage("Initiate processing of raw graph data: " + fileName);
                     string folderNameDigit = ga.ProcessGraph(fileName);
 
+                    Clients.Caller.setMessage("Processing of raw graph data has completed.");
+
                     // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).renderGraph(folderNameDigit); 
+                    Clients.Group("" + instanceId).renderGraph(folderNameDigit);
+                    Clients.Caller.setMessage("Graph is now being rendered.");
+                }
+                catch (WebException e)
+                { 
+                    Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
+
+                    //Detailed error message for user is not necessary for this
+                    //Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
                 }
             }
         }
@@ -58,7 +74,7 @@ namespace GDO.Apps.Graph
             {
                 try
                 {
-                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any image uploaded
+                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
                     if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
                     {
                         Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
