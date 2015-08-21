@@ -159,6 +159,11 @@
     <link href="../../Scripts/Images/cropper.min.css" rel="stylesheet" />
     <script>
         $(function () {
+
+            window.onerror = function() {
+                location.reload();
+            }
+
             var gdo = parent.gdo;
 
             $("#fit_mode").click(function() {
@@ -279,12 +284,18 @@
                 var canvasData = object.cropper('getCanvasData');
                 var data = {}
                 data.imageData = {};
-                data.imageData.aspectRatio = cropboxData.width / cropboxData.height;
+                data.imageData.aspectRatio = cropboxData.width / cropboxData.height; //actually this is cropbox width/height ratio
                 if (imageData.rotate != null) {
                     data.imageData.rotate = imageData.rotate;
                 } else {
                     data.imageData.rotate = 0;
                 }
+                data.imageData.naturalWidth = imageData.naturalWidth;
+                data.imageData.naturalHeight = imageData.naturalHeight;
+                data.imageData.left = imageData.left;
+                data.imageData.top = imageData.top;
+                data.imageData.width = imageData.width;
+                data.imageData.height = imageData.height;
                 data.cropboxData = {};
                 data.cropboxData.left = cropboxData.left;
                 data.cropboxData.top = cropboxData.top;
