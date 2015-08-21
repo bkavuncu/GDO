@@ -7,7 +7,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html style="background-color:black">
 <head>
     <meta name="viewport" content="width=device-width" />
     <title></title>
@@ -44,7 +44,21 @@
             padding: 0;
         }
 
-        .display_mode_select {
+        #fit_mode {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #fill_mode {
             color: #DDD;
             background: #222;
             font-size: 21px;
@@ -149,7 +163,7 @@
 
             $("#fit_mode").click(function() {
                 var gdo = parent.gdo;
-                if (gdo.net.app["Images"].control_status == 1) {
+                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
                     //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
                     gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
@@ -160,7 +174,7 @@
 
             $("#fill_mode").click(function() {
                 var gdo = parent.gdo;
-                if (gdo.net.app["Images"].control_status == 1) {
+                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
                     //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
                     gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
@@ -170,22 +184,26 @@
             });
 
             $("#active_control").click(function() {
-                var gdo = parent.gdo;
-                gdo.net.app["Images"].control_status = 1;
-                updateControlButtonBackground();
-                gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
-                gdo.net.app["Images"].setDisplayModeSelect();
+                if ($('#thumbnail_control > img').attr("src") != "") {
+                    var gdo = parent.gdo;
+                    gdo.net.app["Images"].control_status = 1;
+                    updateControlButtonBackground();
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                }
             });
 
             $("#disable_control").click(function () {
-                var gdo = parent.gdo;
-                gdo.net.app["Images"].control_status = 0;
-                updateControlButtonBackground();
+                if ($('#thumbnail_control > img').attr("src") != "") {
+                    var gdo = parent.gdo;
+                    gdo.net.app["Images"].control_status = 0;
+                    updateControlButtonBackground();
+                }
             });
 
             $("#rotate_control").click(function () {
                 var gdo = parent.gdo;
-                if (gdo.net.app["Images"].control_status == 1) {
+                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
                     $('#thumbnail_control > img').cropper('rotate', 90);
                     updateThumbNailImageInfo($('#thumbnail_control > img'));
                 }
@@ -205,17 +223,21 @@
                 $("#active_control").css("background", "darkgreen");
                 $("#disable_control").css("background", "#222");
                 $("#rotate_control").css("background", "#222");
-                $(".display_mode_select").css("background", "#222");
+                $("#fit_mode").css("background", "#222");
+                $("#fill_mode").css("background", "#222");
             } else if (gdo.net.app["Images"].control_status == 1) {
                 $("#active_control").css("background", "#222");
                 $("#disable_control").css("background", "darkred");
                 $("#rotate_control").css("background", "darkgreen");
-                $(".display_mode_select").css("background", "darkgreen");
+                $("#fit_mode").css("background", "darkgreen");
+                $("#fill_mode").css("background", "darkgreen");
             }
             updateThumbNailImageInfo($('#thumbnail_control > img'));
         }
 
         function initializeCropper() {
+            var gdo = parent.gdo;
+
             $('#thumbnail_control > img').cropper({
                 aspectRatio: 1920 / 1080,
                 autoCropArea: 0.65,
@@ -244,11 +266,14 @@
                     updateThumbNailImageInfo($(this));
                 }
             });
+
+            gdo.net.app["Images"].server.requestSectionSize(gdo.controlId);
+            gdo.net.app["Images"].server.requestThumNailImageInfo(gdo.controlId);
         }
 
         function updateThumbNailImageInfo(object) {
             var gdo = parent.gdo;
-            if (gdo.net.app["Images"].control_status == 1) {
+            if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
                 var imageData = object.cropper('getImageData');
                 var cropboxData = object.cropper('getCropBoxData');
                 var canvasData = object.cropper('getCanvasData');
@@ -285,47 +310,58 @@
         }
 
         function setThumbNailImageInfo(imageJson) {
-            $("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
-            $("#thumbnail_control > img").cropper('setCropBoxData', {
-                left: imageJson.cropboxData.left,
-                top: imageJson.cropboxData.top,
-                width: imageJson.cropboxData.width,
-                height: imageJson.cropboxData.height
-            });
-            $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
-            $("#thumbnail_control > img").cropper('setCanvasData', {
-                left: imageJson.canvasData.left,
-                top: imageJson.canvasData.top,
-                width: imageJson.canvasData.width,
-                height: imageJson.canvasData.height
-            });
+            if ($('#thumbnail_control > img').attr("src") != "") {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.IMAGETILES', 1, 'Set thumbnail image configuration');
+                $("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
+                $("#thumbnail_control > img").cropper('setCropBoxData', {
+                    left: imageJson.cropboxData.left,
+                    top: imageJson.cropboxData.top,
+                    width: imageJson.cropboxData.width,
+                    height: imageJson.cropboxData.height
+                });
+                gdo.consoleOut('.IMAGETILES', 1, 'Set thumbnail image rotate configuration');
+                $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
+                $("#thumbnail_control > img").cropper('setCanvasData', {
+                    left: imageJson.canvasData.left,
+                    top: imageJson.canvasData.top,
+                    width: imageJson.canvasData.width,
+                    height: imageJson.canvasData.height
+                });
+            }
         }
 
         function getSectionSize(section_width, section_height) {
-            $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
+            if ($('#thumbnail_control > img').attr("src") != "") {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.IMAGETILES', 1, 'Set aspectRatio configuration');
+                $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
+            }
         }
 
         function setThumbNailDisplayMode(display_mode) {
-            var gdo = parent.gdo;
-            var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
-            var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
-            var scalewidth = cropboxData.width / canvasData.width;
-            var scaleheight = cropboxData.height / canvasData.height;
-            if (scalewidth > scaleheight && display_mode == 1 ||
-                scalewidth < scaleheight && display_mode == 0) {
-                $("#thumbnail_control > img").cropper('setCanvasData', {
-                    left: cropboxData.left,
-                    top: cropboxData.top,
-                    width: cropboxData.width
-                });
-            } else {
-                $("#thumbnail_control > img").cropper('setCanvasData', {
-                    left: cropboxData.left,
-                    top: cropboxData.top,
-                    height: cropboxData.height
-                });
+            if ($('#thumbnail_control > img').attr("src") != "") {
+                var gdo = parent.gdo;
+                var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
+                var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
+                var scalewidth = cropboxData.width / canvasData.width;
+                var scaleheight = cropboxData.height / canvasData.height;
+                if (scalewidth > scaleheight && display_mode == 1 ||
+                    scalewidth < scaleheight && display_mode == 0) {
+                    $("#thumbnail_control > img").cropper('setCanvasData', {
+                        left: cropboxData.left,
+                        top: cropboxData.top,
+                        width: cropboxData.width
+                    });
+                } else {
+                    $("#thumbnail_control > img").cropper('setCanvasData', {
+                        left: cropboxData.left,
+                        top: cropboxData.top,
+                        height: cropboxData.height
+                    });
+                }
+                updateThumbNailImageInfo($('#thumbnail_control > img'));
             }
-            updateThumbNailImageInfo($('#thumbnail_control > img'));
         }
 
     </script>
@@ -391,13 +427,13 @@
                         </tr>
                         <tr>
                             <td>
-                                <div class="display_mode_select">
-                                    <span id="fit_mode">FIT</span>
+                                <div id="fit_mode">
+                                    <span>FIT</span>
                                 </div>
                             </td>
                             <td>
-                                <div class="display_mode_select">
-                                    <span id="fill_mode">FILL</span>
+                                <div id="fill_mode">
+                                    <span>FILL</span>
                                 </div>
                             </td>
                             <td>
@@ -446,8 +482,8 @@
                 $(document).ready(function () {
                     var gdo = parent.gdo;
                     gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                    gdo.net.app["Images"].server.changeImageName(gdo.controlId, "@imgname");
-                    gdo.net.app["Images"].server.requestImageName(gdo.controlId);
+                    gdo.net.app["Images"].server.processImage(gdo.controlId, "@imgname");
+                    //gdo.net.app["Images"].server.requestImageName(gdo.controlId);
                 });
 
             });
