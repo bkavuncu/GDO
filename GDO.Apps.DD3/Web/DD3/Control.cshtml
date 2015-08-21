@@ -54,6 +54,10 @@
         .green {
             background-color:#006400;
         }
+
+        .green:active {
+            background-color:#005400;
+        }
         
         .red {
             background-color:#8B0000;
@@ -80,7 +84,7 @@
                     confId = message.configurationId;
                     numClients = message.numClient;
                     if (message.state == 1) {
-                        test_bench[confId]();
+                        test_bench[confId] && test_bench[confId]();
                         $("#wait").css("display", "none");
                         $("#control_" + confId).css("display", "");
                     }
@@ -231,6 +235,13 @@
 
                 };
 
+                test_bench[2] = function () {
+                    $("#changeValues").click(function () {
+                        var n = +$("#timeTr").val();
+                        server.sendOrder(instanceId, order("changeValues", [n]), true);
+                    });
+                };
+
             });
         });
     </script>
@@ -304,6 +315,17 @@
     <div id="control_1" style="display:none">
         Here will be the control panel for test 1
     </div>
+
+    <div id="control_2" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="changeValues">Change Values</td>
+            </tr>
+            <tr>
+                <td class="green">Transition Duration : <input id="timeTr" type="number" value="1000" style="width:60px" /></td>
+            </tr>
+        </table>            
+</div>
 
 </body>
 </html>

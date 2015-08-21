@@ -143,15 +143,17 @@ var initDD3App = function (d3) {
         return utils;
     })();
 
-    var api = (function () {
+    var api = function (dataType) {
         var api = {};
         var uid = 0;
 
-        api.dataPoints = d3.range(0, 200, 0.05).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) * 3 }; });
         //api.dataPoints = d3.range(0, 26, 0.8).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) }; });
         //api.dataPoints = d3.range(-10, 15, 0.5).map(function (d) { return { id: uid++, x: d, y: d*d }; });
         //api.dataPoints = [{ x: 1, y: 2 }, { x: 4.5, y: 3.3 }, { x: 1, y: 5 }, { x: 8, y: 2 }]
-        //api.dataPoints = [/**/{ country: "USA", gdp: "17.4" }, { country: "China", gdp: "10.3" }, { country: "England", gdp: "2.9" }, { country: "France", gdp: "2.8" }, { country: "Germany", gdp: "3.8" }, { country: "Japan", gdp: "4.6" }]
+        if (dataType == 'bargraph')
+            api.dataPoints = [/*{ country: "USA", gdp: "17.4" },*/ { country: "China", gdp: "10.3" }, { country: "England", gdp: "2.9" }, { country: "France", gdp: "2.8" }, { country: "Germany", gdp: "3.8" }, { country: "Japan", gdp: "4.6" }]
+        else if (dataType == 'scatterplot')
+            api.dataPoints = d3.range(0, 200, 0.05).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) * 3 }; });
 
         // The data dimensions api should read each entry and give the min and max
         api.getDataDimensions = function () {
@@ -239,20 +241,8 @@ var initDD3App = function (d3) {
             return pts;
         }
 
-        api.getConf = function () {
-            var c = {};
-            c.margin = {
-                top: 20,
-                bottom: 30,
-                left: 60,
-                right: 60
-            };
-
-            return c;
-        };
-
         return api;
-    })();
+    };
 
     var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
     
@@ -382,8 +372,6 @@ var initDD3App = function (d3) {
             };
 
             init.setBrowserConfiguration = function () {
-                var conf = api.getConf();
-
                 /*
                 browser.initColumn = +utils.getUrlVar('column');
                 browser.initRow = +utils.getUrlVar('row');
@@ -392,7 +380,12 @@ var initDD3App = function (d3) {
                 browser.initColumn = (browser.number - 1) % 16;
                 browser.initRow = 3 - ~~((browser.number - 1) / 16);
 
-                cave.margin = conf.margin;
+                cave.margin = {
+                    top: 20,
+                    bottom: 20,
+                    left: 60,
+                    right: 60
+                };
             };
 
             init.connectToPeerServer = function () {
@@ -520,8 +513,9 @@ var initDD3App = function (d3) {
                 launch();
             };
 
-            init.getDataDimensions = function () {
+            init.getDataDimensions = function (dataType) {
                 utils.log("Getting Data dimensions from api", 1);
+                api = api(dataType);
                 data.dataDimensions = api.getDataDimensions();
                 return data.dataDimensions;
             };
@@ -1866,7 +1860,7 @@ var initDD3App = function (d3) {
 
             _dd3.dataPoints = function () { return data.dataPoints.slice(); };
 
-            _dd3.dataDimensions = function () { initializer.getDataDimensions(); return utils.clone(data.dataDimensions); };
+            _dd3.dataDimensions = function (data_type) { initializer.getDataDimensions(data_type); return utils.clone(data.dataDimensions); };
 
             _dd3.peers = function () { return utils.extend({}, peer); };
 
@@ -1935,7 +1929,13 @@ dd3Server.client.receiveGDOConfiguration = function (id) {
 };
 
 dd3Server.client.receiveControllerOrder = function (orders) {
-    test_controller ? test_controller(JSON.parse(orders)) : gdo.consoleOut('.DD3', 1, 'No test controller defined');
+    if (test_controller) {
+        orders = JSON.parse(orders)
+        gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
+        test_controller(orders);
+    } else {
+        gdo.consoleOut('.DD3', 4, 'No test controller defined');
+    }
 };
 
 // ==== IF THIS NODE IS A CONTROLLER ====

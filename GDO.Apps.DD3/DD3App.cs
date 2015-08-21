@@ -52,7 +52,7 @@ namespace GDO.Apps.DD3
                     broadcastConfiguration();
                     if (controllerId != "")
                     {
-                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(Id, 1, Section.NumNodes).toString());
+                        DD3AppHub.self.updateController(controllerId, new ControllerMessage(ConfigurationId, 1, Section.NumNodes).toString());
                     }
                 }
             }
