@@ -471,8 +471,9 @@ $(function () {
                                 var svgRoot = svg("svg");
                                 settings.svgDom.appendChild(svgRoot);
 
-                                svgRoot.attr("width", settings.defaultDisplayDimension.width)
-                                    .attr("height", settings.defaultDisplayDimension.height);
+                                svgRoot.attr("width", "100%")
+                                    .attr("height", "100%") //settings.defaultDisplayDimension.height
+                                .attr("viewBox", "0 0 1920 1080");
 
                                 var graph = svgRoot.append("g")
                                     .attr("transform", "translate(" + translate.x + "," + translate.y + ")")
