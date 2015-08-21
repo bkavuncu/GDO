@@ -32,8 +32,13 @@
             color: #FFF;
             font-family: helvetica;
             font-size: 14px;
-            margin-top:2;
-            margin-bottom:2
+            margin-top: 2;
+            margin-bottom: 2;
+        }
+
+        #message_from_server {
+            height: 150px;
+            overflow: auto;
         }
     </style>
 </head>
@@ -53,12 +58,13 @@
         <button id="show_links">Show links</button>
     </div>
 
-    <br/>
-    <br/>
+    <br />
+    <br />
 
     <h2>Program Log</h2>
-    <fieldset id="message_from_server">
-    </fieldset>
+    
+        <fieldset id="message_from_server"></fieldset>
+    
 
     <script>
         var gdo = parent.gdo;
@@ -70,7 +76,7 @@
         });
 
         $("#update_fileName").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val()); 
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val());
 
             gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#fileName").val());
 

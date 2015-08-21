@@ -11,13 +11,22 @@ $(function () {
     /* global variables */
     var links;
 
-
+    // when div content exceeds div height, call this function 
+    // to align bottom of content with bottom of div
+    scroll_bottom = function (div) {
+        if (div.scrollHeight > div.clientHeight)
+            div.scrollTop = div.scrollHeight - div.clientHeight;
+    }
 
     $.connection.graphAppHub.client.setMessage = function (message) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Message from server: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            var logDom = $("iframe").contents().find("#message_from_server");
             // append new "p" element for each msg, instead of replacing existing one
-            $("iframe").contents().find("#message_from_server").append("<p>" + message + "</p>");
+            logDom.append("<p>" + message + "</p>");
+
+            scroll_bottom(logDom[0]);
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
@@ -49,7 +58,7 @@ $(function () {
             links.forEach(function (link) {
 
                 linksDom.append("line")
-                    .attr("x1", link.pos.from.x) 
+                    .attr("x1", link.pos.from.x)
                     .attr("y1", link.pos.from.y)
                     .attr("x2", link.pos.to.x)
                     .attr("y2", link.pos.to.y)
