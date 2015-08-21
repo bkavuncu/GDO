@@ -8,6 +8,11 @@
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
+    /* global variables */
+    var links;
+
+
+
     $.connection.graphAppHub.client.setMessage = function (message) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Message from server: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -30,6 +35,27 @@ $(function () {
             while (linksDom.firstChild) {
                 linksDom.removeChild(linksDom.firstChild);
             }
+        }
+    }
+
+    $.connection.graphAppHub.client.renderLinks = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var linksDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("links");
+
+            links.forEach(function (link) {
+
+                linksDom.append("line")
+                    .attr("x1", link.pos.from.x) 
+                    .attr("y1", link.pos.from.y)
+                    .attr("x2", link.pos.to.x)
+                    .attr("y2", link.pos.to.y)
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "#B8B8B8");
+            });
         }
     }
 
@@ -360,7 +386,7 @@ $(function () {
                     // main code
 
                     var svg = require('simplesvg');
-                    var data, nodes, links, browserPos;
+                    var data, nodes, browserPos;
 
                     renderInput(filePath);
 

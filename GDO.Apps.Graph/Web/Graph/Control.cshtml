@@ -48,7 +48,9 @@
         <input type="text" id="fileName" />
         <button id="update_fileName">Render Graph</button>
         <br />
+        <br />
         <button id="hide_links">Hide links</button>
+        <button id="show_links">Show links</button>
     </div>
 
     <br/>
@@ -78,6 +80,11 @@
 
         $("#hide_links").click(function () {
             gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
+        });
+
+
+        $("#show_links").click(function () {
+            gdo.net.app["Graph"].server.showLinks(gdo.controlId);
         });
 
     </script>
