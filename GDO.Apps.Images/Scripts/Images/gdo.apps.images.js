@@ -3,7 +3,7 @@
     $.connection.imagesAppHub.client.receiveImageName = function (imageName, imageNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.controlId + ": Downloading Image : " + imageName + " with id: " + imageNameDigit);
-            $("iframe").contents().find("#thumbnail_control　> img").attr("src", "\\Web\\Images\\images\\" + imageNameDigit + "\\thumb.png");
+            $("iframe").contents().find("#thumbnail_control > img").attr("src", "\\Web\\Images\\images\\" + imageNameDigit + "\\thumb.png");
             $("iframe")[0].contentWindow.initializeCropper();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.clientId + ": Downloading Image : " + imageName + "_" + gdo.net.node[gdo.clientId].appInstanceId + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");
@@ -16,6 +16,9 @@
         gdo.net.app["Images"].setDisplayModeSelect();
     }
     */
+    $.connection.imagesAppHub.client.reloadIFrame = function() {
+        $("iframe").attr("src", $("iframe").attr("src"));
+    }
     $.connection.imagesAppHub.client.setMessage = function (message) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Images', 1, 'Message from server:' + message);
@@ -69,10 +72,9 @@ gdo.net.app["Images"].initClient = function () {
 gdo.net.app["Images"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     gdo.net.app["Images"].control_status = 0;
+    gdo.net.app["Images"].init_cropper = 0;
     //gdo.net.app["Images"].server.requestDisplayMode(gdo.controlId);
     gdo.net.app["Images"].server.requestImageName(gdo.controlId);
-    gdo.net.app["Images"].server.requestSectionSize(gdo.controlId);
-    gdo.net.app["Images"].server.requestThumNailImageInfo(gdo.controlId);
     gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);
 }
 

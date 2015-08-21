@@ -37,7 +37,7 @@ namespace GDO.Apps.Images
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void ChangeImageName(int instanceId, string imageName)
+        public void ProcessImage(int instanceId, string imageName)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -118,6 +118,7 @@ namespace GDO.Apps.Images
                             cur ++;
                         }
                     }
+                    ia.ThumbNailImage = null;
                     Clients.Caller.setMessage("Sending results...");
                     SendImageNames(instanceId, ia.ImageName, ia.ImageNameDigit);
                     Clients.Caller.setMessage("Success!");
@@ -135,6 +136,8 @@ namespace GDO.Apps.Images
             try
             {
                 Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
+                //Clients.Caller.receiveImageName(imageName, imageNameDigit);
+                Clients.Caller.reloadIFrame();
             }
             catch (Exception e)
             {
