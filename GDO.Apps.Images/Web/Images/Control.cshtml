@@ -160,9 +160,11 @@
     <script>
         $(function () {
 
+            /*
             window.onerror = function() {
                 location.reload();
             }
+            */
 
             var gdo = parent.gdo;
 
@@ -286,7 +288,7 @@
                 data.imageData = {};
                 data.imageData.aspectRatio = cropboxData.width / cropboxData.height; //actually this is cropbox width/height ratio
                 if (imageData.rotate != null) {
-                    data.imageData.rotate = imageData.rotate;
+                    data.imageData.rotate = imageData.rotate % 360;
                 } else {
                     data.imageData.rotate = 0;
                 }
@@ -331,7 +333,7 @@
                     width: imageJson.cropboxData.width,
                     height: imageJson.cropboxData.height
                 });
-                gdo.consoleOut('.IMAGETILES', 1, 'Set thumbnail image rotate configuration');
+                //gdo.consoleOut('.IMAGETILES', 1, 'Set thumbnail image rotate configuration');
                 $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
                 $("#thumbnail_control > img").cropper('setCanvasData', {
                     left: imageJson.canvasData.left,

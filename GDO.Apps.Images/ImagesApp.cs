@@ -27,21 +27,28 @@ namespace GDO.Apps.Images
         
         public ThumbNailImageInfo ThumbNailImage { get; set; }
         public int TilesNumInEachBlockRow { get; set; }
-        public int TilesNumInEachBlockCol { get; set;}
+        public int TilesNumInEachBlockCol { get; set; }
         
         public TilesInfo[,] Tiles { get; set; }
-        public int ImageNaturalWidth { get; set; }
+        public int ImageNaturalWidth { get; set; } // natural size of the origin image
         public int ImageNaturalHeight { get; set; }
-        public int TileWidth { get; set; }
+        public int TileWidth { get; set; } // size of each tile 1:1 to the origin image without any zooming
         public int TileHeight { get; set; }
-        public int TileCols { get; set; }
-        public int TileRows { get; set; }
+        public int TileCols { get; set; } // cols of tiles including those not displayed
+        public int TileRows { get; set; } // rows of tiles including those not displayed
         public int Rotate { get; set; }
 
         public DisplayRegionInfo DisplayRegion { get; set; }
+        public DisplayRegionInfo[,] BlockRegion { get; set; }
 
         public class DisplayRegionInfo
         {
+            public DisplayRegionInfo() {
+                this.left = 0;
+                this.top = 0;
+                this.width = 0;
+                this.height = 0;
+            }
             public int left;
             public int top;
             public int width;
@@ -50,10 +57,24 @@ namespace GDO.Apps.Images
 
         public class TilesInfo 
         {
+            public TilesInfo() {
+                this.left = 0;
+                this.top = 0;
+                this.cols = 0;
+                this.rows = 0;
+                this.displayLeft = 0;
+                this.displayTop = 0;
+                this.displayWidth = 0;
+                this.displayHeight = 0;
+            }
             public int left;
             public int top;
             public int cols;
             public int rows;
+            public int displayLeft;
+            public int displayTop;
+            public int displayWidth;
+            public int displayHeight;
         }
 
         public class CanvasDataInfo
@@ -79,7 +100,7 @@ namespace GDO.Apps.Images
             public double width { get; set; }
             public double height { get; set; }
             public double aspectRatio { get; set; }
-            public double naturalHeight { get; set; }
+            public double naturalHeight { get; set; } // natural size of the thumbnail image not the origin one on Control Panel
             public double naturalWidth { get; set; }
             public double rotate { get; set; }
         }
@@ -101,10 +122,12 @@ namespace GDO.Apps.Images
             this.TilesNumInEachBlockRow = 3;
             this.TilesNumInEachBlockCol = 3;
             this.DisplayRegion = new DisplayRegionInfo();
-            this.DisplayRegion.left = 0;
-            this.DisplayRegion.top = 0;
-            this.DisplayRegion.width = 0;
-            this.DisplayRegion.height = 0;
+            this.BlockRegion = new DisplayRegionInfo[Section.Cols, Section.Rows];
+            for(int i = 0 ; i < Section.Cols ; i++) {
+                for (int j = 0 ; j < Section.Rows ; j++) {
+                    this.BlockRegion[i, j] = new DisplayRegionInfo();
+                }
+            }
             this.Tiles = null;
             Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
         }

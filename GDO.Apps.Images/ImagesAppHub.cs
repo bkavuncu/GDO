@@ -68,7 +68,7 @@ namespace GDO.Apps.Images
                     //File.Delete(path1);
 
                     //create thumnail
-                    Image thumb = image.GetThumbnailImage(200 * image.Width / image.Height, 200, () => false, IntPtr.Zero);
+                    Image thumb = image.GetThumbnailImage(500 * image.Width / image.Height, 500, () => false, IntPtr.Zero);
                     thumb.Save(basePath + ia.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
 
                     ia.ImageNaturalWidth = image.Width;
@@ -223,11 +223,11 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    Clients.Caller.setMessage("Setting thumbnail image information...");
+                    Clients.Caller.setMessage("Updating thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     ia.ThumbNailImage = JsonConvert.DeserializeObject<ImagesApp.ThumbNailImageInfo>(imageInfo);
                     ia.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
-                    double ratio = ia.ThumbNailImage.imageData.naturalWidth / ia.ThumbNailImage.imageData.width;
+                    double ratio = ia.ImageNaturalWidth / ia.ThumbNailImage.imageData.width;
                     double tl = 0, tt = 0, tw = 0, th = 0;
                     // compute display region info
                     if (ia.Rotate == 0) {
@@ -259,7 +259,70 @@ namespace GDO.Apps.Images
                     ia.DisplayRegion.top = Convert.ToInt32(ratio * tt);
                     ia.DisplayRegion.width = Convert.ToInt32(ratio * tw);
                     ia.DisplayRegion.height = Convert.ToInt32(ratio * th);
-                    Clients.Caller.setMessage("Success!");
+
+                    // compute each screen block and related tiles info
+                    int blockImageWidth = 0, blockImageHeight = 0;
+                    double displayRatio = 0;
+                    if (ia.Rotate == 0 || ia.Rotate == 180) {
+                        blockImageWidth = ia.DisplayRegion.width / ia.Section.Cols;
+                        blockImageHeight = ia.DisplayRegion.height / ia.Section.Rows;
+                        displayRatio = ia.Section.Height / ia.DisplayRegion.height;
+                    } else if (ia.Rotate == 90 || ia.Rotate == 270) {
+                        blockImageWidth = ia.DisplayRegion.width / ia.Section.Rows;
+                        blockImageHeight = ia.DisplayRegion.height / ia.Section.Cols;
+                        displayRatio = ia.Section.Height / ia.DisplayRegion.width;
+                    }
+
+                    int tileLeftTopCol, tileLeftTopRow; // can be smaller than 0 because of buffer & blank region
+                    int tileRightBottomCol, tileRightBottomRow; // can exceed tiles[,] index because of buffer & blank region
+                    for (int i = 0 ; i < ia.Section.Cols ; i++) {
+                        for (int j = 0 ; j < ia.Section.Rows ; j++) {
+                            ia.BlockRegion[i, j].left = i * blockImageWidth;
+                            ia.BlockRegion[i, j].top = j * blockImageHeight;
+                            ia.BlockRegion[i, j].width = blockImageWidth;
+                            ia.BlockRegion[i, j].height = blockImageHeight;
+                            tileLeftTopCol = Math.Max(0, ia.BlockRegion[i, j].left / ia.TileWidth - 1);
+                            tileLeftTopRow = Math.Max(0, ia.BlockRegion[i, j].top / ia.TileHeight - 1);
+                            tileRightBottomCol = Math.Min(ia.TileCols - 1,
+                                                          (ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width) / ia.TileWidth + 1);
+                            tileRightBottomRow = Math.Min(ia.TileRows - 1,
+                                                          (ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height) / ia.TileHeight + 1);
+                            for (int ii = tileLeftTopCol ; ii <= tileRightBottomCol ; ii++) {
+                                for (int jj = tileLeftTopRow ; jj <= tileRightBottomRow ; jj++) {
+                                    if (ia.Rotate == 0) {
+                                        tl = ia.Tiles[ii, jj].left - ia.BlockRegion[i, j].left;
+                                        tt = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
+                                        tw = ia.TileWidth;
+                                        th = ia.TileHeight;
+                                    } else if (ia.Rotate == 90) {
+                                        tl = ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height -
+                                             ia.Tiles[ii, jj].top - ia.TileHeight;
+                                        tt = ia.Tiles[ii, jj].left - ia.BlockRegion[i, j].left;
+                                        tw = ia.TileHeight;
+                                        th = ia.TileWidth;
+                                    } else if (ia.Rotate == 180) {
+                                        tl = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
+                                             ia.Tiles[ii, jj].left - ia.TileWidth;
+                                        tt = ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height -
+                                             ia.Tiles[ii, jj].top - ia.TileHeight;
+                                        tw = ia.TileWidth;
+                                        th = ia.TileHeight;
+                                    } else if (ia.Rotate == 270) {
+                                        tl = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
+                                        tt = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
+                                             ia.Tiles[ii, jj].left - ia.TileWidth;
+                                        tw = ia.TileHeight;
+                                        th = ia.TileWidth;
+                                    }
+                                    ia.Tiles[ii, jj].displayLeft = Convert.ToInt32(displayRatio * tl);
+                                    ia.Tiles[ii, jj].displayTop = Convert.ToInt32(displayRatio * tt);
+                                    ia.Tiles[ii, jj].displayWidth = Convert.ToInt32(displayRatio * tw);
+                                    ia.Tiles[ii, jj].displayHeight = Convert.ToInt32(displayRatio * th);
+                                }
+                            }
+                        }
+                    }
+                    Clients.Caller.setMessage("Updated thumbnail image information Success!");
                 }
                 catch (Exception e)
                 {
@@ -286,7 +349,7 @@ namespace GDO.Apps.Images
                         Clients.Caller.setThumbNailImageInfo(null);
                     }
                     
-                    Clients.Caller.setMessage("Success!");
+                    Clients.Caller.setMessage("Requested thumbnail image information Success!");
                 }
                 catch (Exception e)
                 {
@@ -305,7 +368,7 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Requesting section information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     Clients.Caller.getSectionSize(ia.Section.Width, ia.Section.Height);
-                    Clients.Caller.setMessage("Success!");
+                    Clients.Caller.setMessage("Requested section information Success!");
                 }
                 catch (Exception e)
                 {
