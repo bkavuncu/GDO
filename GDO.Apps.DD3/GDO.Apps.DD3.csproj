@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -104,6 +105,7 @@
   <ItemGroup>
     <Content Include="Configurations\DD3\Transitions.json" />
     <Content Include="Configurations\DD3\Scatterplot.json" />
+    <Content Include="Configurations\DD3\Graphs.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
