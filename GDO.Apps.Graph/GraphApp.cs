@@ -94,6 +94,8 @@ namespace GDO.Apps.Graph
             public double y { get; set; }
         }
 
+
+        /*
         public class Intersection
         {
             public Pos pos { get; set; }
@@ -101,7 +103,7 @@ namespace GDO.Apps.Graph
             public int number { get; set; }
 
         }
-
+        */
 
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, Section section, AppConfiguration configuration)
@@ -127,8 +129,8 @@ namespace GDO.Apps.Graph
 
             //string fileName = @"output_10000nodes_15000links.json";   
            
-            string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
-            //string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
+            //string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
+            string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
 
             System.Diagnostics.Debug.WriteLine("Reading from: " + filePath);
 
@@ -137,8 +139,8 @@ namespace GDO.Apps.Graph
             // error exception is being handled centrally at GraphAppHub
             // it will throw exception up the stack if file cannot be read
             
-            StreamReader file = new StreamReader(client.OpenRead(filePath));
-            //StreamReader file = File.OpenText(filePath); //for local file
+            //StreamReader file = new StreamReader(client.OpenRead(filePath));
+            StreamReader file = File.OpenText(filePath); //for local file
 
             JsonTextReader reader = new JsonTextReader(file);
             JsonSerializer serializer = new JsonSerializer();
@@ -277,6 +279,86 @@ namespace GDO.Apps.Graph
 
                 // check for different cases & push link onto respective browser
 
+                // START OF IMPROVED INTERSECTION ALGORITHM
+                // cases:
+                // 1. both in the same partition
+                // 2. both in different partitions
+
+                if (rowDiff == 0 && colDiff == 0)
+                {
+                    partitionData[startBrowserPos.row, startBrowserPos.col].links.Add(link);
+                }
+                else
+                {
+                    // 1. find intersections
+                    //    - get vertical and horizontal lines in between
+                    //    - calculate intersections with these lines using line equation
+                    // 2. add start and end points to intersections array; and sort the array by x
+                    // 3. loop through array; for every two consecutive points, find the partition it belongs to, and add to it
+
+                    // calculate line equation y = mx + c
+                    var m = (endPos.y - startPos.y) / (endPos.x - startPos.x);
+                    var c = startPos.y - (m * startPos.x);
+
+                    // get intersection points
+                    List<Pos> intersections = new List<Pos>();
+
+                    // check for x intersection with horizontal line (y = a)
+                    for (int j = 0; j < horizontalLines.Count; ++j)
+                    {
+                        int y = horizontalLines[j];
+                        Pos intersection = new Pos();
+
+                        intersection.x = (y - c) / m;
+                        intersection.y = y;
+                        
+                        intersections.Add(intersection);
+                    }
+
+                    // check for y intersection with vertical line (x = b)
+                    for (int j = 0; j < verticalLines.Count; ++j)
+                    {
+                        int x = verticalLines[j];
+                        Pos intersection = new Pos();
+         
+                        intersection.x = x;
+                        intersection.y = (m * x) + c;
+                        
+                        intersections.Add(intersection);
+                    }
+
+                    intersections.Add(startPos);
+                    intersections.Add(endPos);
+
+                    // sort list of intersections by x coordinate using Linq
+                    List<Pos> sortedIntersections = intersections.OrderBy(o => o.x).ToList();
+
+
+                    // TODO: check if there's a need for garbage collection
+                    intersections = sortedIntersections;
+
+                    // place link into respective browsers
+                    for (int j = 0; j < intersections.Count - 1; ++j)
+                    {  // intersections.length - 1 because the loop handles two intersections at a time
+
+                        // calculate midPoint, and use it to calculate partition position
+                        // greatly simplify calculation, rather than using both start, end points and calculate using other ways
+
+                        Pos midPoint = new Pos();
+                        midPoint.x = (intersections[j].x + intersections[j + 1].x) / 2;
+                        midPoint.y = (intersections[j].y + intersections[j + 1].y) / 2;
+
+                        BrowserPos segmentPos = checkBrowserPos(midPoint);
+
+                        partitionData[segmentPos.row, segmentPos.col].links.Add(link);
+                      
+                    }
+
+
+                }
+
+
+                /*
                 // regardless of where the end point is, the starting browser definitely should have the link
                 // equivalently to basic case where colDiff == 0 && rowDiff == 0
                 partitionData[startBrowserPos.row, startBrowserPos.col].links.Add(link);
@@ -390,7 +472,7 @@ namespace GDO.Apps.Graph
                     // for other cases, link is already added to the last browser; except for this case
                     partitionData[endBrowserPos.row, endBrowserPos.col].links.Add(link);
                 }
-
+                */
 
             }
 
