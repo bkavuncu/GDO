@@ -248,7 +248,7 @@ namespace GDO.Apps.Images
                              ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
                         tw = ia.ThumbNailImage.cropboxData.width;
                         th = ia.ThumbNailImage.cropboxData.height;
-                    } else if (ia.Rotate == 270) {
+                    } else { // ia.Rotate == 270
                         tl = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
                              ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
                         tt = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
@@ -267,14 +267,14 @@ namespace GDO.Apps.Images
                         blockImageWidth = ia.DisplayRegion.width / ia.Section.Cols;
                         blockImageHeight = ia.DisplayRegion.height / ia.Section.Rows;
                         displayRatio = ia.Section.Height / ia.DisplayRegion.height;
-                    } else if (ia.Rotate == 90 || ia.Rotate == 270) {
+                    } else {  // (ia.Rotate == 90 || ia.Rotate == 270) 
                         blockImageWidth = ia.DisplayRegion.width / ia.Section.Rows;
                         blockImageHeight = ia.DisplayRegion.height / ia.Section.Cols;
                         displayRatio = ia.Section.Height / ia.DisplayRegion.width;
                     }
 
-                    int tileLeftTopCol, tileLeftTopRow; // can be smaller than 0 because of buffer & blank region
-                    int tileRightBottomCol, tileRightBottomRow; // can exceed tiles[,] index because of buffer & blank region
+                    int tileLeftTopCol, tileLeftTopRow;  // left top tile rank
+                    int tileRightBottomCol, tileRightBottomRow; // bottom right tile rank
                     for (int i = 0 ; i < ia.Section.Cols ; i++) {
                         for (int j = 0 ; j < ia.Section.Rows ; j++) {
                             ia.BlockRegion[i, j].left = i * blockImageWidth;
@@ -287,6 +287,9 @@ namespace GDO.Apps.Images
                                                           (ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width) / ia.TileWidth + 1);
                             tileRightBottomRow = Math.Min(ia.TileRows - 1,
                                                           (ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height) / ia.TileHeight + 1);
+                            ia.BlockRegion[i, j].tiles = new ImagesApp.DisplayTileInfo[(tileRightBottomCol - tileLeftTopCol + 1) * 
+                                                                             (tileRightBottomRow - tileLeftTopRow + 1)];
+                            // traverse every tile that will be shown in this screen block
                             for (int ii = tileLeftTopCol ; ii <= tileRightBottomCol ; ii++) {
                                 for (int jj = tileLeftTopRow ; jj <= tileRightBottomRow ; jj++) {
                                     if (ia.Rotate == 0) {
@@ -307,17 +310,20 @@ namespace GDO.Apps.Images
                                              ia.Tiles[ii, jj].top - ia.TileHeight;
                                         tw = ia.TileWidth;
                                         th = ia.TileHeight;
-                                    } else if (ia.Rotate == 270) {
+                                    } else { // ia.Rotate == 270
                                         tl = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
                                         tt = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
                                              ia.Tiles[ii, jj].left - ia.TileWidth;
                                         tw = ia.TileHeight;
                                         th = ia.TileWidth;
                                     }
-                                    ia.Tiles[ii, jj].displayLeft = Convert.ToInt32(displayRatio * tl);
-                                    ia.Tiles[ii, jj].displayTop = Convert.ToInt32(displayRatio * tt);
-                                    ia.Tiles[ii, jj].displayWidth = Convert.ToInt32(displayRatio * tw);
-                                    ia.Tiles[ii, jj].displayHeight = Convert.ToInt32(displayRatio * th);
+                                    int rank = (ii - tileLeftTopCol) * (tileRightBottomRow - tileLeftTopRow + 1) + 
+                                               (jj - tileLeftTopRow); 
+                                    ia.BlockRegion[i, j].tiles[rank] = new ImagesApp.DisplayTileInfo();
+                                    ia.BlockRegion[i, j].tiles[rank].displayLeft = Convert.ToInt32(displayRatio * tl);
+                                    ia.BlockRegion[i, j].tiles[rank].displayTop = Convert.ToInt32(displayRatio * tt);
+                                    ia.BlockRegion[i, j].tiles[rank].displayWidth = Convert.ToInt32(displayRatio * tw);
+                                    ia.BlockRegion[i, j].tiles[rank].displayHeight = Convert.ToInt32(displayRatio * th);
                                 }
                             }
                         }

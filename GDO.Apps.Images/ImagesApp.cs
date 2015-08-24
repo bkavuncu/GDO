@@ -39,7 +39,7 @@ namespace GDO.Apps.Images
         public int Rotate { get; set; }
 
         public DisplayRegionInfo DisplayRegion { get; set; }
-        public DisplayRegionInfo[,] BlockRegion { get; set; }
+        public BlockRegionInfo[,] BlockRegion { get; set; }
 
         public class DisplayRegionInfo
         {
@@ -49,10 +49,41 @@ namespace GDO.Apps.Images
                 this.width = 0;
                 this.height = 0;
             }
-            public int left;
-            public int top;
-            public int width;
-            public int height;
+            public int left { get; set; }
+            public int top { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+        }
+
+        public class BlockRegionInfo 
+        {
+            public BlockRegionInfo() {
+                this.left = 0;
+                this.top = 0;
+                this.width = 0;
+                this.height = 0;
+                this.tiles = null;
+            }
+            public int left { get; set; }
+            public int top { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+            public DisplayTileInfo[] tiles { get; set; }
+        }
+
+        public class DisplayTileInfo
+        {
+            public DisplayTileInfo()
+            {
+                this.displayLeft = 0;
+                this.displayTop = 0;
+                this.displayWidth = 0;
+                this.displayHeight = 0;
+            }
+            public int displayLeft { get; set; }
+            public int displayTop { get; set; }
+            public int displayWidth { get; set; }
+            public int displayHeight { get; set; }
         }
 
         public class TilesInfo 
@@ -62,19 +93,11 @@ namespace GDO.Apps.Images
                 this.top = 0;
                 this.cols = 0;
                 this.rows = 0;
-                this.displayLeft = 0;
-                this.displayTop = 0;
-                this.displayWidth = 0;
-                this.displayHeight = 0;
             }
-            public int left;
-            public int top;
-            public int cols;
-            public int rows;
-            public int displayLeft;
-            public int displayTop;
-            public int displayWidth;
-            public int displayHeight;
+            public int left { get; set; }
+            public int top { get; set; }
+            public int cols { get; set; }
+            public int rows { get; set; }
         }
 
         public class CanvasDataInfo
@@ -122,10 +145,10 @@ namespace GDO.Apps.Images
             this.TilesNumInEachBlockRow = 3;
             this.TilesNumInEachBlockCol = 3;
             this.DisplayRegion = new DisplayRegionInfo();
-            this.BlockRegion = new DisplayRegionInfo[Section.Cols, Section.Rows];
+            this.BlockRegion = new BlockRegionInfo[Section.Cols, Section.Rows];
             for(int i = 0 ; i < Section.Cols ; i++) {
                 for (int j = 0 ; j < Section.Rows ; j++) {
-                    this.BlockRegion[i, j] = new DisplayRegionInfo();
+                    this.BlockRegion[i, j] = new BlockRegionInfo();
                 }
             }
             this.Tiles = null;
