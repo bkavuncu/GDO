@@ -69,6 +69,10 @@ $(function () {
         }
     }
 
+
+
+
+    // wouldn't work with updated data format; need to read from labels.json
     $.connection.graphAppHub.client.hideLabels = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
@@ -94,15 +98,17 @@ $(function () {
             nodes.forEach(function (node) {
 
                 labelsDom.append("text")
-                    .attr("x", node.pos.x)
-                    .attr("y", node.pos.y)
-                    .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")
+                    .attr("x", node[0] + 2)
+                    .attr("y", node[1] - 2)
+                    .text("(" + (node[0]).toFixed(0) + ", " + (node[1]).toFixed(0) + ")")
                     .attr("font-size", 10)
+                    .attr("fill", "white");
                 ;
 
             });
         }
     }
+
 
 
     // improved renderGraph() implementation
@@ -460,6 +466,9 @@ $(function () {
 
                     var nodesDom = svgRoot.append("g")
                         .attr("id", "nodes");
+
+                    var labelsDom = svgRoot.append("g")
+                        .attr("id", "labels");
 
 
 
