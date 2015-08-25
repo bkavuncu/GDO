@@ -114,6 +114,9 @@ namespace GDO.Apps.Graph
             List<Node> nodes = new List<Node>();
             List<Link> links = new List<Link>();
 
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             using (BinaryReader reader = new BinaryReader(File.Open(nodesFilePath, FileMode.Open)))
             {
 
@@ -159,6 +162,10 @@ namespace GDO.Apps.Graph
 
             }
 
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds);
+
+            sw.Restart();
 
             using (BinaryReader reader = new BinaryReader(File.Open(linksFilePath, FileMode.Open)))
             {
@@ -197,7 +204,8 @@ namespace GDO.Apps.Graph
 
             }
 
-
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
 
 
             int singleDisplayHeight = (int)(Section.Height / Section.Rows);
@@ -210,8 +218,9 @@ namespace GDO.Apps.Graph
 
             float scaleDown = (float)0.9; // to make graph smaller and nearer to (0, 0)
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            
+
+            sw.Restart();
 
             // scale nodes to full gdo dimension
             for (int i = 0; i < nodes.Count; ++i)
@@ -260,6 +269,8 @@ namespace GDO.Apps.Graph
 
                     // initialise objects within element
                     nodesPartitions[i, j].partitionPos = new PartitionPos();
+                    nodesPartitions[i, j].partitionPos.row = i;
+                    nodesPartitions[i, j].partitionPos.col = j;
                     nodesPartitions[i, j].nodes = new List<Node>();
                 }
             }
@@ -271,6 +282,8 @@ namespace GDO.Apps.Graph
                 nodesPartitions[nodePartitionPos.row, nodePartitionPos.col].nodes.Add(nodes[i]);
             }
 
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
 
             // debugging code: check no. of nodes distributed to each partition
             for (int i = 0; i < Section.Rows; ++i)
@@ -281,8 +294,7 @@ namespace GDO.Apps.Graph
                 }
             }
 
-            sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
+            
 
 
 
@@ -301,6 +313,9 @@ namespace GDO.Apps.Graph
 
                     // initialise objects within element
                     linksPartitions[i, j].partitionPos = new PartitionPos();
+                    linksPartitions[i, j].partitionPos.row = i;
+                    linksPartitions[i, j].partitionPos.col = j;
+
                     linksPartitions[i, j].links = new List<Link>();
                 }
             }
@@ -437,11 +452,13 @@ namespace GDO.Apps.Graph
 
                         linksPartitions[segmentPos.row, segmentPos.col].links.Add(linkSegment);
                     }
-                    
+
                 }
 
             }
 
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
 
             // debugging code: check no. of links distributed to each partition
             for (int i = 0; i < Section.Rows; ++i)
@@ -453,14 +470,149 @@ namespace GDO.Apps.Graph
             }
 
 
+            
+
+
+
+
+            // write to individual browser file
+            // i. create sub-directories to store partition files
+
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph\\";
+
+            // Generate random numbers as folder name
+            Random randomDigitGenerator = new Random();
+
+            while (Directory.Exists(basePath + FolderNameDigit))
+            {
+                this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
+            }
+
+            Directory.CreateDirectory(basePath + FolderNameDigit);
+            Directory.CreateDirectory(basePath + FolderNameDigit + @"\nodes");
+            Directory.CreateDirectory(basePath + FolderNameDigit + @"\links");
+
+            string nodesPath = basePath + FolderNameDigit + @"\nodes\\";
+            string linksPath = basePath + FolderNameDigit + @"\links\\";
+
+            // ii. write to files
+
+            // write nodes files
+            sw.Restart();
+
+            for (int i = 0; i < Section.Rows; ++i)
+            {
+                for (int j = 0; j < Section.Cols; ++j)
+                {
+                    using (BinaryWriter writer = new BinaryWriter(
+       File.Open(nodesPath + i + "_" + j + ".bin", FileMode.Create)))
+                    {
+                        writer.Write((float) nodesPartitions[i, j].partitionPos.row);
+                        writer.Write((float)nodesPartitions[i, j].partitionPos.col);
+
+                        for (int k = 0; k < nodesPartitions[i, j].nodes.Count; ++k)
+                        {
+                            writer.Write(nodesPartitions[i, j].nodes[k].pos.x);
+                            writer.Write(nodesPartitions[i, j].nodes[k].pos.y);
+                            writer.Write((float)nodesPartitions[i, j].nodes[k].numLinks);
+                        }
+                    }
+                }
+            }
+
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
+            System.Diagnostics.Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds);
 
-    
+            // for debugging: check if writing into binary file is correct
+            using (BinaryReader reader = new BinaryReader(File.Open(nodesPath + "1_0.bin", FileMode.Open)))
+            {
+
+                // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                int offset = 0;
+
+                // Use BaseStream
+                int length = (int)reader.BaseStream.Length;
+
+                Debug.WriteLine("Total byte length: " + length);
+
+                Debug.WriteLine("Partition row: " + reader.ReadSingle());
+                Debug.WriteLine("Partition col: " + reader.ReadSingle());
+                offset += 8;
 
 
+                while (offset < length)
+                {                    
+                    Debug.WriteLine("Node pos x: " + reader.ReadSingle());
+                    Debug.WriteLine("Node pos y: " + reader.ReadSingle());
+                    Debug.WriteLine("Node numlinks: " + reader.ReadSingle());
 
-            return "dummy";
+                    offset += 12;
+                }               
+
+            }
+              
+
+
+            // write links to files
+            sw.Restart();
+
+            for (int i = 0; i < Section.Rows; ++i)
+            {
+                for (int j = 0; j < Section.Cols; ++j)
+                {
+                    using (BinaryWriter writer = new BinaryWriter(
+       File.Open(linksPath + i + "_" + j + ".bin", FileMode.Create)))
+                    {
+                        writer.Write((float)linksPartitions[i, j].partitionPos.row);
+                        writer.Write((float)linksPartitions[i, j].partitionPos.col);
+
+                        for (int k = 0; k < linksPartitions[i, j].links.Count; ++k)
+                        {
+                            writer.Write(linksPartitions[i, j].links[k].startPos.x);
+                            writer.Write(linksPartitions[i, j].links[k].startPos.y);
+                            writer.Write(linksPartitions[i, j].links[k].endPos.x);
+                            writer.Write(linksPartitions[i, j].links[k].endPos.y);
+                        }
+                    }
+                }
+            }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds);
+
+
+            // for debugging: check if writing into binary file is correct
+            using (BinaryReader reader = new BinaryReader(File.Open(linksPath + "1_0.bin", FileMode.Open)))
+            {
+
+                // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                int offset = 0;
+
+                // Use BaseStream
+                int length = (int)reader.BaseStream.Length;
+
+                Debug.WriteLine("Total byte length: " + length);
+
+                Debug.WriteLine("Partition row: " + reader.ReadSingle());
+                Debug.WriteLine("Partition col: " + reader.ReadSingle());
+                offset += 8;
+
+
+                while (offset < length)
+                {
+                    Debug.WriteLine("Start pos x: " + reader.ReadSingle());
+                    Debug.WriteLine("Start pos y: " + reader.ReadSingle());
+                    Debug.WriteLine("End pos x: " + reader.ReadSingle());
+                    Debug.WriteLine("End pos y: " + reader.ReadSingle());
+
+                    offset += 16;
+                }
+
+            }
+
+            
+ 
+            return this.FolderNameDigit;
         }
     }
 }
@@ -471,40 +623,10 @@ namespace GDO.Apps.Graph
 
 
 
+/*
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 
-
-    //function processGraph() is called by clicking on 'Render Graph' button on Control page
-    //it is now set to read from a specified local file whenever the button is clicked
-
-
-
+//function processGraph() is called by clicking on 'Render Graph' button on Control page
+//it is now set to read from a specified local file whenever the button is clicked
 
 
 namespace GDO.Apps.Graph
@@ -615,9 +737,11 @@ namespace GDO.Apps.Graph
 
         public string ProcessGraph(string fileName) 
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             //string fileName = @"output_10000nodes_15000links.json";   
-           
+
             //string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
             string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
 
@@ -635,6 +759,9 @@ namespace GDO.Apps.Graph
             JsonSerializer serializer = new JsonSerializer();
             GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
 
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to read input file: " + sw.ElapsedMilliseconds);
+
 
             List<Node> nodes = graphData.nodes;
             List<Link> links = graphData.links;
@@ -650,8 +777,7 @@ namespace GDO.Apps.Graph
 
             Double scaleDown = 0.9; // to make graph smaller and nearer to (0, 0)
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            sw.Restart();
 
             for (int i = 0; i < nodes.Count; i++)
             {
