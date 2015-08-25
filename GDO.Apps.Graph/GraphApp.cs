@@ -22,13 +22,186 @@ namespace GDO.Apps.Graph
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
+
         public string FolderNameDigit { get; set; }
-        /*
-        public string ImageName { get; set; }
-        
-        public int DisplayMode { get; set; }
-        public Image[,] Tiles { get; set; }
-        */
+
+
+        public class Pos
+        {
+            public float x { get; set; }
+            public float y { get; set; }
+        }
+
+        public class PartitionPos
+        {
+            public int row { get; set; }
+            public int col { get; set; }
+        }
+
+        public class RectDimension
+        {
+            public float width { get; set; }
+            public float height { get; set; }
+        }
+
+        public class Scales
+        {
+            public float x { get; set; }
+            public float y { get; set; }
+        }
+
+        public class Node
+        {
+            public Pos pos { get; set; }
+            public int numLinks { get; set; }
+        }
+
+        // init is run when 'Deploy' is clicked
+        public void init(int instanceId, Section section, AppConfiguration configuration)
+        {
+            this.Id = instanceId;
+            this.Section = section;
+            this.Configuration = configuration;
+            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph");
+        }
+
+        public PartitionPos checkPartitionPos(Pos pos)
+        {
+            PartitionPos partitionPos = new PartitionPos();
+            // previously bug: didn't divide Section.Height by Section.Rows, which makes it divide by the dimension of whole section, hence all nodes appear in the first file
+            partitionPos.row = (int)(Math.Floor(pos.y / (Section.Height / Section.Rows))); // cast it to int
+            partitionPos.col = (int)(Math.Floor(pos.x / (Section.Width / Section.Cols)));
+            return partitionPos;
+        }
+
+        // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
+        // return name of folder that stores
+        public string ProcessGraph(string fileName)
+        {
+
+            // local file
+            string nodesFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodesPos.bin";
+
+            string linksFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\linksPos.bin";
+
+            // server file
+            // string nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + folderName + @"/nodesPos.bin";
+            // string linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + folderName + @"/linksPos.bin";
+
+            // WebClient client = new WebClient();
+            // using (BinaryReader reader = new BinaryReader(client.OpenRead(nodesFilePath)))
+
+            RectDimension rectDim = new RectDimension();
+
+
+            using (BinaryReader reader = new BinaryReader(File.Open(nodesFilePath, FileMode.Open)))
+            {
+                
+                // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                int offset = 0;
+                
+                // Use BaseStream
+                int length = (int)reader.BaseStream.Length;
+
+                // ReadSingle reads 4-byte floating point value & auto advance stream position by 4 bytes
+                // reads in dimension of rect first
+                rectDim.width = reader.ReadSingle();
+                rectDim.height = reader.ReadSingle();
+
+                offset += 8;
+
+                Debug.WriteLine("Rect width: " + rectDim.width);
+                Debug.WriteLine("Rect height: " + rectDim.height);
+
+                List<Node> nodes = new List<Node>();
+                Debug.WriteLine("nodes list: " + nodes);
+                Debug.WriteLine("nodes list length: " + nodes.Count);
+
+                while (offset < length)
+                {
+                    Node node = new Node();
+                    node.pos = new Pos();
+                    node.pos.x = reader.ReadSingle();
+                    node.pos.y = reader.ReadSingle();
+                    node.numLinks = (int)reader.ReadSingle();
+
+                    nodes.Add(node);
+
+                    Debug.WriteLine("Node pos x: " + node.pos.x);
+                    Debug.WriteLine("Node pos y: " + node.pos.y);
+                    Debug.WriteLine("Node numlinks: " + node.numLinks);
+
+                    offset += 12;
+
+                }
+                Debug.WriteLine("nodes list: " + nodes);
+                Debug.WriteLine("nodes list length: " + nodes.Count);
+
+            }
+
+
+            return "dummy";
+        }
+
+
+
+
+
+
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
+
+namespace GDO.Apps.Graph
+{
+
+    public class GraphApp : IAppInstance
+    {
+        public int Id { get; set; }
+        public Section Section { get; set; }
+        public AppConfiguration Configuration { get; set; }
+
+        public string FolderNameDigit { get; set; }
+
 
         // set up classes for graph data
         public class RectDimension
@@ -95,15 +268,15 @@ namespace GDO.Apps.Graph
         }
 
 
-        /*
-        public class Intersection
-        {
-            public Pos pos { get; set; }
-            public string type { get; set; }
-            public int number { get; set; }
+        
+        //public class Intersection
+        //{
+        //    public Pos pos { get; set; }
+         //   public string type { get; set; }
+          //  public int number { get; set; }
 
-        }
-        */
+        //}
+        
 
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, Section section, AppConfiguration configuration)
@@ -398,3 +571,4 @@ namespace GDO.Apps.Graph
         }
     }
 }
+*/
