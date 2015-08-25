@@ -48,6 +48,7 @@ $(function () {
         }
     }
 
+    //TODO: change name to showLinks
     $.connection.graphAppHub.client.renderLinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
@@ -121,6 +122,7 @@ $(function () {
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
             var nodesFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\nodes\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
+            var linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -473,6 +475,7 @@ $(function () {
 
 
                     renderNodes(nodesFilePath);
+                    renderLinks(linksFilePath);
 
                     // new optimised rendering, to read from binary pos files
                     function renderNodes(file) {
@@ -483,7 +486,6 @@ $(function () {
 
                         xhr.onreadystatechange = function () {
                             var rawBuffer = xhr.response;
-
 
                             if (rawBuffer)
                                 var data = new Float32Array(rawBuffer);  // will auto-format buffer, and convert byte into float array
@@ -551,18 +553,55 @@ $(function () {
                                         .attr("cy", node[1])
                                         .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")") 
                                     ;
-                                    /*
-                                     graph.append("text")
-                                     .attr("x", node.pos.x)
-                                     .attr("y", node.pos.y)
-                                     .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")
-                                     .attr("font-size", 10);
-                                     ;
-                                     */
+                                    
                                 });
 
                             }
                         }
+                    }
+
+
+                    function renderLinks(file) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", file, true);
+                        xhr.responseType = "arraybuffer";
+                        xhr.send();
+
+                        xhr.onreadystatechange = function () {
+                            var rawBuffer = xhr.response;
+
+                            if (rawBuffer)
+                                var data = new Float32Array(rawBuffer);  // will auto-format buffer, and convert byte into float array
+
+                            if (data) {    // data may not be ready the first time this function is called
+
+                                // partitionPos = [row, col]
+                                var partitionPos = [data[0], data[1]];
+
+                                // links = [[x1, y1, x2, y2], [], ...]
+                                links = [];
+
+                                // read links data and add each link onto array
+                                for (var i = 2; i < data.length - 3; i += 4) {
+                                    links.push([data[i], data[i + 1], data[i + 2], data[i + 3]]);
+                                }
+
+                                // render edges
+
+                                links.forEach(function (link) {
+
+                                    linksDom.append("line")
+                                        .attr("x1", link[0])
+                                        .attr("y1", link[1])
+                                        .attr("x2", link[2])
+                                        .attr("y2", link[3])
+                                        .attr("stroke-width", 1)
+                                        .attr("stroke", "#333"); //B8B8B8
+                                });
+
+                            }
+
+                        };
                     }
 
 
