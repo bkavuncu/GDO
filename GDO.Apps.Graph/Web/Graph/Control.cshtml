@@ -46,6 +46,19 @@
             overflow: auto;
         }
 
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        span {
+            display: block;
+            margin-left: 50px;
+            margin-bottom: 3px;
+        }
+
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -71,6 +84,18 @@
         <br />
         <button id="show_labels">Show labels</button>
         <button id="hide_labels">Hide labels</button>
+        <br />
+        <br />
+        <br />
+        <label> Toggle panning </label>
+        <br />
+        <span>
+            <button id="up">Up</button>
+        </span>      
+        <button id="left">Left</button>
+        <button id="down">Down</button>
+        <button id="right">Right</button>
+
 
     </fieldset>
 
@@ -117,6 +142,50 @@
         $("#show_labels").click(function () {
             gdo.net.app["Graph"].server.showLabels(gdo.controlId);
         });
+
+        // trigger panning
+        $("#up").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "up");
+        });
+
+
+        $("#left").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "left");
+        });
+
+
+        $("#down").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "down");
+        });
+
+        $("#right").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
+        });
+
+
+
+        window.addEventListener('keydown', processKeyPress, true);
+
+        function processKeyPress(evt) {
+
+            var key = evt.keyCode;
+            var direction = null;
+
+            if (key == 37) {    // default code for arrow keys
+                direction = "left";
+            } else if (key == 38) {
+                direction = "up";
+            } else if (key == 39) {
+                direction = "right";
+            } else if (key == 40) {
+                direction = "down";
+            }
+   
+            if (direction != null) {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
+            }
+        }
+
 
     </script>
 

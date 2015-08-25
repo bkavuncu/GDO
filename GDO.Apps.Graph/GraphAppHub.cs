@@ -35,10 +35,10 @@ namespace GDO.Apps.Graph
         public void InitiateProcessing(int instanceId, string fileName)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
-            
+
             lock (Cave.AppLocks[instanceId])
             {
-                try 
+                try
                 {
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
@@ -52,7 +52,7 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Graph is now being rendered.");
                 }
                 catch (WebException e)
-                { 
+                {
                     Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
 
                     //Detailed error message for user is not necessary for this
@@ -71,13 +71,13 @@ namespace GDO.Apps.Graph
 
         public void HideLinks(int instanceId)
         {
-           
+
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Hiding links.");
-                   
+
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).hideLinks();
                     Clients.Caller.setMessage("Links are now hidden.");
@@ -158,6 +158,30 @@ namespace GDO.Apps.Graph
         }
 
 
+
+        public void TriggerPanning(int instanceId, string direction)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering panning action.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).pan(direction);
+                    Clients.Caller.setMessage("Triggered panning action.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
         public void RequestRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -178,61 +202,6 @@ namespace GDO.Apps.Graph
             }
         }
 
-        /*
-
-        // this function is used to initialise ImagesApp object and imageNameDigit (obtained thru processImage function)
-        public void ChangeImageName(int instanceId, string imageName)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
-                    string imageNameDigit = ia.ProcessImage(imageName, ia.DisplayMode);
-                    SendImageNames(instanceId, imageName, imageNameDigit);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        // called by ChangeImageName above to let all clients receive image name (when new photo is uploaded after nodes have been initiated probably)
-        public void SendImageNames(int instanceId, string imageName, string imageNameDigit)
-        {
-            try
-            {   // Clients.Group to let all clients within the group receive image name
-                Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-        
-        // called by clients (App or Control) to get image name from server, which will in turn call Client's receiveImageName function that will render the image
-        public void RequestImageName(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    // with this if condition, node only gets painted when there is an image; otherwise node will appear empty if it's loaded without any image uploaded
-                    if (((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
-                    {
-                        Clients.Caller.receiveImageName(((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName,
-                                                        ((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
-                    }
-                    
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-        */
 
     }
 }

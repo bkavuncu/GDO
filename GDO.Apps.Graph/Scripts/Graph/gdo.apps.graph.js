@@ -112,6 +112,37 @@ $(function () {
         }
     }
 
+    $.connection.graphAppHub.client.pan = function (direction) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var panRate = 10;
+
+            var svgElement = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("graph");
+
+            var viewBox = svgElement.getAttribute('viewBox');
+
+            var viewBoxValues = viewBox.split(' ');	// split and convert viewBox values into array			
+
+            // convert values to float (original type is string)
+            viewBoxValues[0] = parseFloat(viewBoxValues[0]);// represents x coordinate of top left corner
+            viewBoxValues[1] = parseFloat(viewBoxValues[1]);// represents y coordinate of top left corner	
+
+            if (direction == "left") {
+                viewBoxValues[0] += panRate;      // Manipulate x coordinate
+            } else if (direction == "right") {
+                viewBoxValues[0] -= panRate;
+            } else if (direction == "up") {
+                viewBoxValues[1] += panRate;      // Manipulate y coordinate
+            } else if (direction == "down") {
+                viewBoxValues[1] -= panRate;
+            }
+
+            svgElement.setAttribute('viewBox', viewBoxValues.join(' '));	// Convert viewBoxValues array into a string separated by white space characters
+        }
+    }
 
 
     // improved renderGraph() implementation
