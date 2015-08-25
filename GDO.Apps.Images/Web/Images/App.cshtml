@@ -44,7 +44,7 @@
             widthScale = $(window).width() / blockWidth;
             heightScale = $(window).height() / blockHeight;
             for (i = 0 ; i < tilesJson.length ; i++) {
-                key = tilesJson[i].tileIdCol + '_' + tilesJson[i].tileIdRow;
+                key = imageNameDigit + '_' + tilesJson[i].tileIdCol + '_' + tilesJson[i].tileIdRow;
                 tmpTileIdDic[key] = true;
                 if (tileIdDictionary != null && tileIdDictionary[key] != null) {
                     // if tiles already shown in current block then update its position information
