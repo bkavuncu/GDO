@@ -448,14 +448,11 @@ $(function () {
 
                     var svgRoot = svg("svg");
 
-                    svgRoot.attr("width", "100%") //"100%"
-                         .attr("height", "100%")
-                         .attr("id", "graph"); //settings.defaultDisplayDimension.height
-                    //.attr("viewBox", "0 0 1920 1080");
+                    svgRoot.attr("width", "100%") 
+                         .attr("height", "100%") //previously: settings.defaultDisplayDimension.height
+                         .attr("id", "graph"); 
 
                     settings.svgDom.appendChild(svgRoot);
-
-                    //var graph = svgRoot.append("g");
 
 
                     var linksDom = svgRoot.append("g")
@@ -506,16 +503,11 @@ $(function () {
 
                                 // rendering
 
-
-                                var translate = { // translate is negative, to make the whole canvas towards (0,0)
-                                    x: -(partitionPos[1] * settings.defaultDisplayDimension.width),
-                                    y: -(partitionPos[0] * settings.defaultDisplayDimension.height)
-                                };
-
-
-                                // graph.attr("transform", "translate(" + translate.x + "," + translate.y + ")");
-
-                                var offset = { // translate is negative, to make the whole canvas towards (0,0)
+                                // offset here is used to set viewBox property of SVG canvas, 
+                                // to make SVG top left corner starts from offset.x and offset.y
+                                // if setting translation of each element, it should then be 
+                                // negative, to make the whole element closer towards (0,0)
+                                var offset = { 
                                     x: partitionPos[1] * settings.defaultDisplayDimension.width,
                                     y: partitionPos[0] * settings.defaultDisplayDimension.height
                                 };
@@ -523,8 +515,9 @@ $(function () {
                                 svgRoot.attr("viewBox", offset.x + " " + offset.y + " " + settings.defaultDisplayDimension.width + " " + settings.defaultDisplayDimension.height);
 
 
-
-                                var r, g, b;  // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); r 50, g 100, b 50 (pastel green)
+                                // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
+                                // r 50, g 100, b 50 (pastel green)
+                                var r, g, b;  
                                 r = 0;  //
                                 g = 50;
                                 b = 20;   // range is 0 to 255
@@ -533,7 +526,10 @@ $(function () {
                                 var maxLinks = 5;
                                 var maxRGB = Math.max(r, g, b);
                                 //console.log(maxRGB);
-                                var rgbIncrement = (255 - maxRGB) / maxLinks; //amount of increment remaining divide by no. of possible links (to know how much to increase for every increase in link)
+                                var rgbIncrement = (255 - maxRGB) / maxLinks;
+                                //amount of increment remaining divide by no. of possible links 
+                                // (to know how much to increase for every increase in link)
+
                                 //console.log(rgbIncrement);
 
                                 nodes.forEach(function (node) {
@@ -544,7 +540,7 @@ $(function () {
                                         .attr("r", 3)
                                         .attr("cx", node[0])
                                         .attr("cy", node[1])
-                                        .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")") //2B5D85(darker) C4FFF6 BCF5EC  A9DED9
+                                        .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")") 
                                     ;
                                     /*
                                      graph.append("text")
