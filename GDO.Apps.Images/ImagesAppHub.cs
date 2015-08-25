@@ -347,21 +347,21 @@ namespace GDO.Apps.Images
                         tw = ia.ThumbNailImage.cropboxData.height;
                         th = ia.ThumbNailImage.cropboxData.width;
                     }
-                    ia.DisplayRegion.left = Convert.ToInt32(ratio * tl);
-                    ia.DisplayRegion.top = Convert.ToInt32(ratio * tt);
-                    ia.DisplayRegion.width = Convert.ToInt32(ratio * tw);
-                    ia.DisplayRegion.height = Convert.ToInt32(ratio * th);
+                    ia.DisplayRegion.left = Convert.ToInt32(Math.Floor(ratio * tl));
+                    ia.DisplayRegion.top = Convert.ToInt32(Math.Floor(ratio * tt));
+                    ia.DisplayRegion.width = Convert.ToInt32(Math.Ceiling(ratio * tw));
+                    ia.DisplayRegion.height = Convert.ToInt32(Math.Ceiling(ratio * th));
 
                     // compute each screen block and related tiles info
                     int blockImageWidth = 0, blockImageHeight = 0;
                     double displayRatio = 0;
                     if (ia.Rotate == 0 || ia.Rotate == 180) {
-                        blockImageWidth = ia.DisplayRegion.width / ia.Section.Cols;
-                        blockImageHeight = ia.DisplayRegion.height / ia.Section.Rows;
+                        blockImageWidth = (ia.DisplayRegion.width - 1) / ia.Section.Cols + 1; //ceiling
+                        blockImageHeight = (ia.DisplayRegion.height - 1) / ia.Section.Rows + 1; //ceiling
                         displayRatio = ia.Section.Height / (ia.DisplayRegion.height + 0.0);
                     } else {  // (ia.Rotate == 90 || ia.Rotate == 270) 
-                        blockImageWidth = ia.DisplayRegion.width / ia.Section.Rows;
-                        blockImageHeight = ia.DisplayRegion.height / ia.Section.Cols;
+                        blockImageWidth = (ia.DisplayRegion.width - 1) / ia.Section.Rows + 1; //ceiling
+                        blockImageHeight = (ia.DisplayRegion.height -1 )/ ia.Section.Cols + 1; //ceiling
                         displayRatio = ia.Section.Height / (ia.DisplayRegion.width + 0.0);
                     }
 
@@ -424,10 +424,10 @@ namespace GDO.Apps.Images
                                     ia.BlockRegion[i, j].tiles[rank] = new ImagesApp.DisplayTileInfo();
                                     ia.BlockRegion[i, j].tiles[rank].tileIdCol = ii;
                                     ia.BlockRegion[i, j].tiles[rank].tileIdRow = jj;
-                                    ia.BlockRegion[i, j].tiles[rank].displayLeft = Convert.ToInt32(displayRatio * tl);
-                                    ia.BlockRegion[i, j].tiles[rank].displayTop = Convert.ToInt32(displayRatio * tt);
-                                    ia.BlockRegion[i, j].tiles[rank].displayWidth = Convert.ToInt32(displayRatio * tw);
-                                    ia.BlockRegion[i, j].tiles[rank].displayHeight = Convert.ToInt32(displayRatio * th);
+                                    ia.BlockRegion[i, j].tiles[rank].displayLeft = Convert.ToInt32(Math.Floor(displayRatio * tl));
+                                    ia.BlockRegion[i, j].tiles[rank].displayTop = Convert.ToInt32(Math.Floor(displayRatio * tt));
+                                    ia.BlockRegion[i, j].tiles[rank].displayWidth = Convert.ToInt32(Math.Ceiling(displayRatio * tw));
+                                    ia.BlockRegion[i, j].tiles[rank].displayHeight = Convert.ToInt32(Math.Ceiling(displayRatio * th));
                                 }
                             }
                         }
