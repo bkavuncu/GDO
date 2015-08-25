@@ -75,11 +75,15 @@ namespace GDO.Apps.Images
         {
             public DisplayTileInfo()
             {
+                this.tileIdCol = -1;
+                this.tileIdRow = -1;
                 this.displayLeft = 0;
                 this.displayTop = 0;
                 this.displayWidth = 0;
                 this.displayHeight = 0;
             }
+            public int tileIdCol { get; set; }
+            public int tileIdRow { get; set; }
             public int displayLeft { get; set; }
             public int displayTop { get; set; }
             public int displayWidth { get; set; }
@@ -141,6 +145,11 @@ namespace GDO.Apps.Images
             this.Section = section;
             this.Configuration = configuration;
             this.DisplayMode = (int)Mode.FIT;
+            this.ImageName = null;
+            this.ImageNameDigit = ""; 
+
+            this.Rotate = 0;
+
             this.ThumbNailImage = null;
             this.TilesNumInEachBlockRow = 3;
             this.TilesNumInEachBlockCol = 3;

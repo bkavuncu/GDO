@@ -227,8 +227,8 @@ namespace GDO.Apps.Images
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     ia.ThumbNailImage = JsonConvert.DeserializeObject<ImagesApp.ThumbNailImageInfo>(imageInfo);
                     ia.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
-                    double ratio = ia.ImageNaturalWidth / ia.ThumbNailImage.imageData.width;
-                    double tl = 0, tt = 0, tw = 0, th = 0;
+                    double ratio = ia.ImageNaturalWidth / (ia.ThumbNailImage.imageData.width + 0.0);
+                    double tl = 0.0, tt = 0.0, tw = 0.0, th = 0.0;
                     // compute display region info
                     if (ia.Rotate == 0) {
                         tl = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
@@ -266,68 +266,81 @@ namespace GDO.Apps.Images
                     if (ia.Rotate == 0 || ia.Rotate == 180) {
                         blockImageWidth = ia.DisplayRegion.width / ia.Section.Cols;
                         blockImageHeight = ia.DisplayRegion.height / ia.Section.Rows;
-                        displayRatio = ia.Section.Height / ia.DisplayRegion.height;
+                        displayRatio = ia.Section.Height / (ia.DisplayRegion.height + 0.0);
                     } else {  // (ia.Rotate == 90 || ia.Rotate == 270) 
                         blockImageWidth = ia.DisplayRegion.width / ia.Section.Rows;
                         blockImageHeight = ia.DisplayRegion.height / ia.Section.Cols;
-                        displayRatio = ia.Section.Height / ia.DisplayRegion.width;
+                        displayRatio = ia.Section.Height / (ia.DisplayRegion.width + 0.0);
                     }
 
-                    int tileLeftTopCol, tileLeftTopRow;  // left top tile rank
-                    int tileRightBottomCol, tileRightBottomRow; // bottom right tile rank
                     for (int i = 0 ; i < ia.Section.Cols ; i++) {
                         for (int j = 0 ; j < ia.Section.Rows ; j++) {
-                            ia.BlockRegion[i, j].left = i * blockImageWidth;
-                            ia.BlockRegion[i, j].top = j * blockImageHeight;
-                            ia.BlockRegion[i, j].width = blockImageWidth;
-                            ia.BlockRegion[i, j].height = blockImageHeight;
-                            tileLeftTopCol = Math.Max(0, ia.BlockRegion[i, j].left / ia.TileWidth - 1);
-                            tileLeftTopRow = Math.Max(0, ia.BlockRegion[i, j].top / ia.TileHeight - 1);
-                            tileRightBottomCol = Math.Min(ia.TileCols - 1,
-                                                          (ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width) / ia.TileWidth + 1);
-                            tileRightBottomRow = Math.Min(ia.TileRows - 1,
-                                                          (ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height) / ia.TileHeight + 1);
-                            ia.BlockRegion[i, j].tiles = new ImagesApp.DisplayTileInfo[(tileRightBottomCol - tileLeftTopCol + 1) * 
-                                                                             (tileRightBottomRow - tileLeftTopRow + 1)];
+                            int di, dj;
+                            if (ia.Rotate == 0) {
+                                di = i; 
+                                dj = j;
+                            } else if (ia.Rotate == 90) {
+                                di = 1 - j; // 00->10 10->11 11->01 01->00
+                                dj = i;
+                            } else if (ia.Rotate == 180) {
+                                di = 1 - i; // 00->11 10->01 11->00 01->10
+                                dj = 1 - j;
+                            } else { //if (ia.Rotate == 270)
+                                di = j; // 00->01 01->11 11->10 10->00
+                                dj = 1- i;
+                            }
+                            ia.BlockRegion[di, dj].left = i * blockImageWidth + ia.DisplayRegion.left;
+                            ia.BlockRegion[di, dj].top = j * blockImageHeight + ia.DisplayRegion.top;
+                            ia.BlockRegion[di, dj].width = blockImageWidth;
+                            ia.BlockRegion[di, dj].height = blockImageHeight;
+                            int tileLeftTopCol = Math.Max(0, ia.BlockRegion[di, dj].left / ia.TileWidth - 1);
+                            int tileLeftTopRow = Math.Max(0, ia.BlockRegion[di, dj].top / ia.TileHeight - 1);
+                            int tileRightBottomCol = Math.Min(ia.TileCols - 1,
+                                                          (ia.BlockRegion[di, dj].left + ia.BlockRegion[di, dj].width) / ia.TileWidth + 1);
+                            int tileRightBottomRow = Math.Min(ia.TileRows - 1,
+                                                          (ia.BlockRegion[di, dj].top + ia.BlockRegion[di, dj].height) / ia.TileHeight + 1);
+                            int tilesNum = (tileRightBottomCol - tileLeftTopCol + 1) * (tileRightBottomRow - tileLeftTopRow + 1);
+                            if (tilesNum <= 0) {
+                                ia.BlockRegion[di, dj].tiles = null;
+                                continue;
+                            }
+                            ia.BlockRegion[di, dj].tiles = new ImagesApp.DisplayTileInfo[tilesNum];
                             // traverse every tile that will be shown in this screen block
                             for (int ii = tileLeftTopCol ; ii <= tileRightBottomCol ; ii++) {
                                 for (int jj = tileLeftTopRow ; jj <= tileRightBottomRow ; jj++) {
                                     if (ia.Rotate == 0) {
-                                        tl = ia.Tiles[ii, jj].left - ia.BlockRegion[i, j].left;
-                                        tt = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
-                                        tw = ia.TileWidth;
-                                        th = ia.TileHeight;
+                                        tl = ia.Tiles[ii, jj].left - ia.BlockRegion[di, dj].left;
+                                        tt = ia.Tiles[ii, jj].top - ia.BlockRegion[di, dj].top;
                                     } else if (ia.Rotate == 90) {
-                                        tl = ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height -
-                                             ia.Tiles[ii, jj].top - ia.TileHeight;
-                                        tt = ia.Tiles[ii, jj].left - ia.BlockRegion[i, j].left;
-                                        tw = ia.TileHeight;
-                                        th = ia.TileWidth;
+                                        tl = ia.BlockRegion[di, dj].top + ia.BlockRegion[di, dj].height -
+                                             ia.Tiles[ii, jj].top;
+                                        tt = ia.Tiles[ii, jj].left - ia.BlockRegion[di, dj].left;
                                     } else if (ia.Rotate == 180) {
-                                        tl = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
-                                             ia.Tiles[ii, jj].left - ia.TileWidth;
-                                        tt = ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height -
-                                             ia.Tiles[ii, jj].top - ia.TileHeight;
-                                        tw = ia.TileWidth;
-                                        th = ia.TileHeight;
+                                        tl = ia.BlockRegion[di, dj].left + ia.BlockRegion[di, dj].width -
+                                             ia.Tiles[ii, jj].left;
+                                        tt = ia.BlockRegion[di, dj].top + ia.BlockRegion[di, dj].height -
+                                             ia.Tiles[ii, jj].top;
                                     } else { // ia.Rotate == 270
-                                        tl = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
-                                        tt = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
-                                             ia.Tiles[ii, jj].left - ia.TileWidth;
-                                        tw = ia.TileHeight;
-                                        th = ia.TileWidth;
+                                        tl = ia.Tiles[ii, jj].top - ia.BlockRegion[di, dj].top;
+                                        tt = ia.BlockRegion[di, dj].left + ia.BlockRegion[di, dj].width -
+                                             ia.Tiles[ii, jj].left;
                                     }
+                                    tw = ia.TileWidth;
+                                    th = ia.TileHeight;
                                     int rank = (ii - tileLeftTopCol) * (tileRightBottomRow - tileLeftTopRow + 1) + 
                                                (jj - tileLeftTopRow); 
-                                    ia.BlockRegion[i, j].tiles[rank] = new ImagesApp.DisplayTileInfo();
-                                    ia.BlockRegion[i, j].tiles[rank].displayLeft = Convert.ToInt32(displayRatio * tl);
-                                    ia.BlockRegion[i, j].tiles[rank].displayTop = Convert.ToInt32(displayRatio * tt);
-                                    ia.BlockRegion[i, j].tiles[rank].displayWidth = Convert.ToInt32(displayRatio * tw);
-                                    ia.BlockRegion[i, j].tiles[rank].displayHeight = Convert.ToInt32(displayRatio * th);
+                                    ia.BlockRegion[di, dj].tiles[rank] = new ImagesApp.DisplayTileInfo();
+                                    ia.BlockRegion[di, dj].tiles[rank].tileIdCol = ii;
+                                    ia.BlockRegion[di, dj].tiles[rank].tileIdRow = jj;
+                                    ia.BlockRegion[di, dj].tiles[rank].displayLeft = Convert.ToInt32(displayRatio * tl);
+                                    ia.BlockRegion[di, dj].tiles[rank].displayTop = Convert.ToInt32(displayRatio * tt);
+                                    ia.BlockRegion[di, dj].tiles[rank].displayWidth = Convert.ToInt32(displayRatio * tw);
+                                    ia.BlockRegion[di, dj].tiles[rank].displayHeight = Convert.ToInt32(displayRatio * th);
                                 }
                             }
                         }
                     }
+                    Clients.Group("" + instanceId).tilesReady();
                     Clients.Caller.setMessage("Updated thumbnail image information Success!");
                 }
                 catch (Exception e)
@@ -338,7 +351,29 @@ namespace GDO.Apps.Images
             }
         }
 
-        public void RequestThumNailImageInfo(int instanceId)
+        public void RequestTilesInfo(int instanceId, int col, int row)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting tiles information...");
+                    ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.BlockRegion[col, row].tiles != null)
+                        Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width / ia.Section.Cols, ia.Section.Height / ia.Section.Rows, JsonConvert.SerializeObject(ia.BlockRegion[col, row].tiles));
+                    else
+                        Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width / ia.Section.Cols, ia.Section.Height / ia.Section.Rows, "");
+                    Clients.Caller.setMessage("Requested tiles information Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void RequestThumbNailImageInfo(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {

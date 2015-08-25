@@ -8,20 +8,109 @@
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
+    /* global variables */
+    var links, nodes;
+
+    // when div content exceeds div height, call this function 
+    // to align bottom of content with bottom of div
+    scroll_bottom = function (div) {
+        if (div.scrollHeight > div.clientHeight)
+            div.scrollTop = div.scrollHeight - div.clientHeight;
+    }
+
+    $.connection.graphAppHub.client.setMessage = function (message) {
+        gdo.consoleOut('.GRAPHRENDERER', 1, 'Message from server: ' + message);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            var logDom = $("iframe").contents().find("#message_from_server");
+            // append new "p" element for each msg, instead of replacing existing one
+            logDom.append("<p>" + message + "</p>");
+
+            scroll_bottom(logDom[0]);
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing
+        }
+    }
+
+    //TODO: Refactor duplicating code for hideLinks and hideLabels
+    $.connection.graphAppHub.client.hideLinks = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var linksDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("links")
+
+            while (linksDom.firstChild) {
+                linksDom.removeChild(linksDom.firstChild);
+            }
+        }
+    }
+
+    $.connection.graphAppHub.client.renderLinks = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var linksDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("links");
+
+            links.forEach(function (link) {
+
+                linksDom.append("line")
+                    .attr("x1", link.pos.from.x)
+                    .attr("y1", link.pos.from.y)
+                    .attr("x2", link.pos.to.x)
+                    .attr("y2", link.pos.to.y)
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "#B8B8B8");
+            });
+        }
+    }
+
+    $.connection.graphAppHub.client.hideLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var labelsDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("labels");
+
+            while (labelsDom.firstChild) {
+                labelsDom.removeChild(labelsDom.firstChild);
+            }
+        }
+    }
+
+    $.connection.graphAppHub.client.renderLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var labelsDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("labels");
+
+            nodes.forEach(function (node) {
+
+                labelsDom.append("text")
+                    .attr("x", node.pos.x)
+                    .attr("y", node.pos.y)
+                    .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")
+                    .attr("font-size", 10)
+                ;
+
+            });
+        }
+    }
+
+
+
 
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
-            /* both methods not working, might be problem with how innerHTML works
-            // method 1
-             $("iframe").contents().find("#controlTest")[0].innerHTML = "Hello Control page!";
 
-             // method 2
-            document.body
-                .getElementsByTagName('iframe')[0]
-                .contentDocument.getElementById("controlTest")
-                .innerHTML = "Hello Control page!";
-                */
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".json");
@@ -345,7 +434,7 @@ $(function () {
                     // main code
 
                     var svg = require('simplesvg');
-                    var data, nodes, links, browserPos;
+                    var data, browserPos;
 
                     renderInput(filePath);
 
@@ -368,7 +457,7 @@ $(function () {
                                 };
 
                                 // rendering
-                                
+
                                 // reset SVG by removing all child elements (if any)
                                 while (settings.svgDom.firstChild) {
                                     settings.svgDom.removeChild(settings.svgDom.firstChild);
@@ -397,10 +486,13 @@ $(function () {
 
                                 console.log("Time before rendering: " + window.performance.now());
 
+                                var linksDom = graph.append("g")
+                                    .attr("id", "links");
+
                                 // render edges
                                 links.forEach(function (link) {
 
-                                    graph.append("line")
+                                    linksDom.append("line")
                                         .attr("x1", link.pos.from.x)
                                         .attr("y1", link.pos.from.y)
                                         .attr("x2", link.pos.to.x)
@@ -410,17 +502,23 @@ $(function () {
                                 });
 
 
+                                var nodesDom = graph.append("g")
+                                    .attr("id", "nodes");
+
+                                var labelsDom = graph.append("g")
+                                    .attr("id", "labels");
+
                                 // render nodes & labels
                                 nodes.forEach(function (node) {
 
-                                    graph.append("circle")
+                                    nodesDom.append("circle")
                                         .attr("r", 5)
                                         .attr("cx", node.pos.x)
                                         .attr("cy", node.pos.y)
                                         .attr("fill", "teal")
                                     ;
 
-                                    graph.append("text")
+                                    labelsDom.append("text")
                                         .attr("x", node.pos.x)
                                         .attr("y", node.pos.y)
                                         .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")

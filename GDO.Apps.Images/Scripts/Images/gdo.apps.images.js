@@ -6,8 +6,7 @@
             $("iframe").contents().find("#thumbnail_control > img").attr("src", "\\Web\\Images\\images\\" + imageNameDigit + "\\thumb.png");
             $("iframe")[0].contentWindow.initializeCropper();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.clientId + ": Downloading Image : " + imageName + "_" + gdo.net.node[gdo.clientId].appInstanceId + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");
-            $("iframe").contents().find("#image_tile").attr("src", "\\Web\\Images\\images\\" + imageNameDigit + "\\" + "crop" + "_" + gdo.net.node[gdo.clientId].sectionCol + "_" + gdo.net.node[gdo.clientId].sectionRow + ".png");
+            // do nothing
         }
     }
     /*
@@ -16,6 +15,29 @@
         gdo.net.app["Images"].setDisplayModeSelect();
     }
     */
+    $.connection.imagesAppHub.client.tilesReady = function() {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.IMAGETILES', 1, 'Requesting tiles');
+            gdo.net.app["Images"].server.requestTilesInfo(gdo.net.node[gdo.clientId].appInstanceId,
+                                                          gdo.net.node[gdo.clientId].sectionCol,
+                                                          gdo.net.node[gdo.clientId].sectionRow);   
+        }
+    }
+    $.connection.imagesAppHub.client.setTiles = function(imageNameDigit, rotate, blockWidth, blockHeight, tilesInfo) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.IMAGETILES', 1, 'Fetching tiles');
+            if (tilesInfo != "") {
+                tilesJson = JSON.parse(tilesInfo);
+                $("iframe")[0].contentWindow.setTiles(imageNameDigit, rotate, blockWidth, blockHeight, tilesJson);
+            } else {
+                $("iframe")[0].contentWindow.setTiles(imageNameDigit, rotate, blockWidth, blockHeight, {});
+            }
+        }
+    }
     $.connection.imagesAppHub.client.reloadIFrame = function() {
         $("iframe").attr("src", $("iframe").attr("src"));
     }
@@ -66,7 +88,10 @@ gdo.net.app["Images"].setDisplayModeSelect = function () {
 
 gdo.net.app["Images"].initClient = function () {
     gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Client at Node ' + gdo.clientId);
-    gdo.net.app["Images"].server.requestImageName(gdo.net.node[gdo.clientId].appInstanceId);
+    //gdo.net.app["Images"].server.requestImageName(gdo.net.node[gdo.clientId].appInstanceId);
+    gdo.net.app["Images"].server.requestTilesInfo(gdo.net.node[gdo.clientId].appInstanceId,
+                                                  gdo.net.node[gdo.clientId].sectionCol,
+                                                  gdo.net.node[gdo.clientId].sectionRow);   
 }
 
 gdo.net.app["Images"].initControl = function () {
