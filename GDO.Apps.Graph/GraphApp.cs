@@ -62,6 +62,19 @@ namespace GDO.Apps.Graph
             public Pos endPos { get; set; }
         }
 
+        public class NodePartition
+        {
+            public PartitionPos partitionPos { get; set; }
+            public List<Node> nodes { get; set; }
+        }
+
+        public class LinkPartition
+        {
+            public PartitionPos partitionPos { get; set; }
+            public List<Link> links { get; set; }
+        }
+
+
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
@@ -103,10 +116,10 @@ namespace GDO.Apps.Graph
 
             using (BinaryReader reader = new BinaryReader(File.Open(nodesFilePath, FileMode.Open)))
             {
-                
+
                 // Set up variables: offset (index of byte array)  and length (no. of bytes)
                 int offset = 0;
-                
+
                 // Use BaseStream
                 int length = (int)reader.BaseStream.Length;
 
@@ -120,7 +133,7 @@ namespace GDO.Apps.Graph
                 Debug.WriteLine("Rect width: " + rectDim.width);
                 Debug.WriteLine("Rect height: " + rectDim.height);
 
-                
+
                 Debug.WriteLine("nodes list length: " + nodes.Count);
 
                 while (offset < length)
@@ -133,12 +146,13 @@ namespace GDO.Apps.Graph
 
                     nodes.Add(node);
 
+                    offset += 12;
+
+                    /*
                     Debug.WriteLine("Node pos x: " + node.pos.x);
                     Debug.WriteLine("Node pos y: " + node.pos.y);
                     Debug.WriteLine("Node numlinks: " + node.numLinks);
-
-                    offset += 12;
-
+                    */
                 }
 
                 Debug.WriteLine("nodes list length: " + nodes.Count);
@@ -169,13 +183,14 @@ namespace GDO.Apps.Graph
 
                     links.Add(link);
 
+                    offset += 16;
+
+                    /*
                     Debug.WriteLine("Start pos x: " + link.startPos.x);
                     Debug.WriteLine("Start pos y: " + link.startPos.y);
                     Debug.WriteLine("End pos x: " + link.endPos.x);
                     Debug.WriteLine("End pos y: " + link.endPos.y);
-
-                    offset += 16;
-
+                    */
                 }
 
                 Debug.WriteLine("links list length: " + links.Count);
@@ -183,15 +198,270 @@ namespace GDO.Apps.Graph
             }
 
 
+
+
+            int singleDisplayHeight = (int)(Section.Height / Section.Rows);
+            int singleDisplayWidth = (int)(Section.Width / Section.Cols);
+
+            // transform data to GDO dimension
+            Scales scales = new Scales();
+            scales.x = Section.Width / rectDim.width;
+            scales.y = Section.Height / rectDim.height;
+
+            float scaleDown = (float)0.9; // to make graph smaller and nearer to (0, 0)
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            // scale nodes to full gdo dimension
+            for (int i = 0; i < nodes.Count; ++i)
+            {
+                nodes[i].pos.x *= scales.x * scaleDown;
+                nodes[i].pos.y *= scales.y * scaleDown;
+
+                // add padding on x, y to centralise graph after being scaled down
+                nodes[i].pos.x += Section.Width * (1 - scaleDown) / 2;
+                nodes[i].pos.y += Section.Height * (1 - scaleDown) / 2;
+            }
+
+            // scale links to full gdo dimension
+            for (int i = 0; i < links.Count; ++i)
+            {
+                links[i].startPos.x *= scales.x * scaleDown;
+                links[i].startPos.y *= scales.y * scaleDown;
+                links[i].endPos.x *= scales.x * scaleDown;
+                links[i].endPos.y *= scales.y * scaleDown;
+
+                links[i].startPos.x += Section.Width * (1 - scaleDown) / 2;
+                links[i].startPos.y += Section.Height * (1 - scaleDown) / 2;
+                links[i].endPos.x += Section.Width * (1 - scaleDown) / 2;
+                links[i].endPos.y += Section.Height * (1 - scaleDown) / 2;
+            }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds);
+
+
+
+            // Distribute data across browser
+
+            // 1. Distribute nodes
+            sw.Restart();
+
+            // Set up a 2D array to store nodes data in each partition
+            NodePartition[,] nodesPartitions = new NodePartition[Section.Rows, Section.Cols];
+
+            // initialise elements within array
+            for (int i = 0; i < Section.Rows; i++)
+            {
+                for (int j = 0; j < Section.Cols; j++)
+                {
+                    nodesPartitions[i, j] = new NodePartition();
+
+                    // initialise objects within element
+                    nodesPartitions[i, j].partitionPos = new PartitionPos();
+                    nodesPartitions[i, j].nodes = new List<Node>();
+                }
+            }
+
+            // distribute nodes into respective partitions
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                PartitionPos nodePartitionPos = checkPartitionPos(nodes[i].pos);
+                nodesPartitions[nodePartitionPos.row, nodePartitionPos.col].nodes.Add(nodes[i]);
+            }
+
+
+            // debugging code: check no. of nodes distributed to each partition
+            for (int i = 0; i < Section.Rows; ++i)
+            {
+                for (int j = 0; j < Section.Cols; ++j)
+                {
+                    Debug.WriteLine("Nodes count in partition " + i + "_" + j + ": " + nodesPartitions[i, j].nodes.Count);
+                }
+            }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
+
+
+
+            // 2. Distribute links
+            sw.Restart();
+
+            // Set up a 2D array to store nodes data in each partition
+            LinkPartition[,] linksPartitions = new LinkPartition[Section.Rows, Section.Cols];
+
+            // initialise elements within array
+            for (int i = 0; i < Section.Rows; i++)
+            {
+                for (int j = 0; j < Section.Cols; j++)
+                {
+                    linksPartitions[i, j] = new LinkPartition();
+
+                    // initialise objects within element
+                    linksPartitions[i, j].partitionPos = new PartitionPos();
+                    linksPartitions[i, j].links = new List<Link>();
+                }
+            }
+
+            // distribute links into respective partitions
+            for (int i = 0; i < links.Count; i++)
+            {
+                Link link = links[i];
+
+                Pos startPos, endPos;
+
+                // set starting point to the one with smaller x, without changing original data
+                if (link.startPos.x > link.endPos.x)
+                {
+                    startPos = link.endPos;
+                    endPos = link.startPos;
+                }
+                else
+                {
+                    startPos = link.startPos;
+                    endPos = link.endPos;
+                }
+
+                PartitionPos startPartitionPos = checkPartitionPos(startPos);
+                PartitionPos endPartitionPos = checkPartitionPos(endPos);
+
+                // note:
+                // colDiff will always be >= 0, since we have set starting point's x to be smaller
+                // rowDiff may be < 0
+
+                int colDiff = endPartitionPos.col - startPartitionPos.col;
+                int rowDiff = endPartitionPos.row - startPartitionPos.row;
+
+                // find lines between the two points to check for intersection
+                List<int> horizontalLines = new List<int>(); // y = a
+                List<int> verticalLines = new List<int>(); // x = b
+
+                for (int j = 0; j < colDiff; ++j)
+                {
+                    verticalLines.Add((startPartitionPos.col + 1 + j) * singleDisplayWidth);
+                }
+
+                if (rowDiff > 0)
+                {
+                    for (int j = 0; j < rowDiff; ++j)
+                    {
+                        horizontalLines.Add((startPartitionPos.row + 1 + j) * singleDisplayHeight);
+                    }
+                }
+                else if (rowDiff < 0)
+                {
+                    for (int j = -rowDiff; j > 0; --j)
+                    {
+                        horizontalLines.Add((startPartitionPos.row + 1 - j) * singleDisplayHeight);
+                    }
+                }
+
+                // check for different cases & push link onto respective browser
+
+                // START OF IMPROVED INTERSECTION ALGORITHM
+                // cases:
+                // 1. both in the same partition
+                // 2. both in different partitions
+
+                if (rowDiff == 0 && colDiff == 0)
+                {
+                    linksPartitions[startPartitionPos.row, startPartitionPos.col].links.Add(link);
+                }
+                else
+                {
+                    // 1. find intersections
+                    //    - get vertical and horizontal lines in between
+                    //    - calculate intersections with these lines using line equation
+                    // 2. add start and end points to intersections array; and sort the array by x
+                    // 3. loop through array; for every two consecutive points, find the partition it belongs to, and add to it
+
+                    // calculate line equation y = mx + c
+                    var m = (endPos.y - startPos.y) / (endPos.x - startPos.x);
+                    var c = startPos.y - (m * startPos.x);
+
+                    // get intersection points
+                    List<Pos> intersections = new List<Pos>();
+
+                    // check for x intersection with horizontal line (y = a)
+                    for (int j = 0; j < horizontalLines.Count; ++j)
+                    {
+                        int y = horizontalLines[j];
+                        Pos intersection = new Pos();
+
+                        intersection.x = (y - c) / m;
+                        intersection.y = y;
+
+                        intersections.Add(intersection);
+                    }
+
+                    // check for y intersection with vertical line (x = b)
+                    for (int j = 0; j < verticalLines.Count; ++j)
+                    {
+                        int x = verticalLines[j];
+                        Pos intersection = new Pos();
+
+                        intersection.x = x;
+                        intersection.y = (m * x) + c;
+
+                        intersections.Add(intersection);
+                    }
+
+                    intersections.Add(startPos);
+                    intersections.Add(endPos);
+
+                    // sort list of intersections by x coordinate using Linq
+                    List<Pos> sortedIntersections = intersections.OrderBy(o => o.x).ToList();
+
+
+                    // TODO: check if there's a need for garbage collection
+                    intersections = sortedIntersections;
+
+                    // place link into respective browsers
+                    for (int j = 0; j < intersections.Count - 1; ++j)
+                    {  // intersections.length - 1 because the loop handles two intersections at a time
+
+                        // calculate midPoint, and use it to calculate partition position
+                        // greatly simplify calculation, rather than using both start, end points and calculate using other ways
+
+                        Pos midPoint = new Pos();
+                        midPoint.x = (intersections[j].x + intersections[j + 1].x) / 2;
+                        midPoint.y = (intersections[j].y + intersections[j + 1].y) / 2;
+
+                        PartitionPos segmentPos = checkPartitionPos(midPoint);
+
+                        var linkSegment = new Link();
+                        linkSegment.startPos = intersections[j];
+                        linkSegment.endPos = intersections[j + 1];
+
+                        linksPartitions[segmentPos.row, segmentPos.col].links.Add(linkSegment);
+                    }
+                    
+                }
+
+            }
+
+
+            // debugging code: check no. of links distributed to each partition
+            for (int i = 0; i < Section.Rows; ++i)
+            {
+                for (int j = 0; j < Section.Cols; ++j)
+                {
+                    Debug.WriteLine("Links count in partition " + i + "_" + j + ": " + linksPartitions[i, j].links.Count);
+                }
+            }
+
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
+
+    
+
+
+
             return "dummy";
         }
-
-
-
-
-
-
-
     }
 }
 
@@ -228,7 +498,10 @@ namespace GDO.Apps.Graph
 
 
 
-/*
+/* 
+
+    //function processGraph() is called by clicking on 'Render Graph' button on Control page
+    //it is now set to read from a specified local file whenever the button is clicked
 
 
 
