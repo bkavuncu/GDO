@@ -56,6 +56,12 @@ namespace GDO.Apps.Graph
             public int numLinks { get; set; }
         }
 
+        public class Link
+        {
+            public Pos startPos { get; set; }
+            public Pos endPos { get; set; }
+        }
+
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, Section section, AppConfiguration configuration)
         {
@@ -92,7 +98,8 @@ namespace GDO.Apps.Graph
             // using (BinaryReader reader = new BinaryReader(client.OpenRead(nodesFilePath)))
 
             RectDimension rectDim = new RectDimension();
-
+            List<Node> nodes = new List<Node>();
+            List<Link> links = new List<Link>();
 
             using (BinaryReader reader = new BinaryReader(File.Open(nodesFilePath, FileMode.Open)))
             {
@@ -113,8 +120,7 @@ namespace GDO.Apps.Graph
                 Debug.WriteLine("Rect width: " + rectDim.width);
                 Debug.WriteLine("Rect height: " + rectDim.height);
 
-                List<Node> nodes = new List<Node>();
-                Debug.WriteLine("nodes list: " + nodes);
+                
                 Debug.WriteLine("nodes list length: " + nodes.Count);
 
                 while (offset < length)
@@ -134,8 +140,45 @@ namespace GDO.Apps.Graph
                     offset += 12;
 
                 }
-                Debug.WriteLine("nodes list: " + nodes);
+
                 Debug.WriteLine("nodes list length: " + nodes.Count);
+
+            }
+
+
+            using (BinaryReader reader = new BinaryReader(File.Open(linksFilePath, FileMode.Open)))
+            {
+
+                // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                int offset = 0;
+                int length = (int)reader.BaseStream.Length;
+
+
+                Debug.WriteLine("links list length: " + links.Count);
+
+                while (offset < length)
+                {
+                    Link link = new Link();
+                    link.startPos = new Pos();
+                    link.endPos = new Pos();
+
+                    link.startPos.x = reader.ReadSingle();
+                    link.startPos.y = reader.ReadSingle();
+                    link.endPos.x = reader.ReadSingle();
+                    link.endPos.y = reader.ReadSingle();
+
+                    links.Add(link);
+
+                    Debug.WriteLine("Start pos x: " + link.startPos.x);
+                    Debug.WriteLine("Start pos y: " + link.startPos.y);
+                    Debug.WriteLine("End pos x: " + link.endPos.x);
+                    Debug.WriteLine("End pos y: " + link.endPos.y);
+
+                    offset += 16;
+
+                }
+
+                Debug.WriteLine("links list length: " + links.Count);
 
             }
 
