@@ -105,8 +105,8 @@ namespace GDO.Apps.Images
                     int sum = ia.TileCols*ia.TileRows;
                     // if too many tiles
                     if (sum > 1000) {
-                        totalTilesNumCols = ia.Section.Cols * 2;
-                        totalTilesNumRows = ia.Section.Rows * 2; 
+                        totalTilesNumCols = Math.Max(ia.Section.Cols * ia.TilesNumInEachBlockCol / (sum/1000 + 1), 1);
+                        totalTilesNumRows = Math.Max(ia.Section.Rows * ia.TilesNumInEachBlockRow / (sum/1000 + 1), 1); 
                         if (scaleWidth > scaleHeight)
                         {
                             ia.TileWidth = (image.Width - 1) / totalTilesNumCols + 1; // ceiling
