@@ -60,13 +60,15 @@ $(function () {
             links.forEach(function (link) {
 
                 linksDom.append("line")
-                    .attr("x1", link.pos.from.x)
-                    .attr("y1", link.pos.from.y)
-                    .attr("x2", link.pos.to.x)
-                    .attr("y2", link.pos.to.y)
+                    .attr("x1", link[0])
+                    .attr("y1", link[1])
+                    .attr("x2", link[2])
+                    .attr("y2", link[3])
                     .attr("stroke-width", 1)
-                    .attr("stroke", "#B8B8B8");
+                    .attr("stroke", "#333");
+
             });
+
         }
     }
 
@@ -456,9 +458,9 @@ $(function () {
 
                     var svgRoot = svg("svg");
 
-                    svgRoot.attr("width", "100%") 
+                    svgRoot.attr("width", "100%")
                          .attr("height", "100%") //previously: settings.defaultDisplayDimension.height
-                         .attr("id", "graph"); 
+                         .attr("id", "graph");
 
                     settings.svgDom.appendChild(svgRoot);
 
@@ -518,7 +520,7 @@ $(function () {
                                 // to make SVG top left corner starts from offset.x and offset.y
                                 // if setting translation of each element, it should then be 
                                 // negative, to make the whole element closer towards (0,0)
-                                var offset = { 
+                                var offset = {
                                     x: partitionPos[1] * settings.defaultDisplayDimension.width,
                                     y: partitionPos[0] * settings.defaultDisplayDimension.height
                                 };
@@ -528,7 +530,7 @@ $(function () {
 
                                 // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
                                 // r 50, g 100, b 50 (pastel green)
-                                var r, g, b;  
+                                var r, g, b;
                                 r = 0;  //
                                 g = 50;
                                 b = 20;   // range is 0 to 255
@@ -551,9 +553,9 @@ $(function () {
                                         .attr("r", 3)
                                         .attr("cx", node[0])
                                         .attr("cy", node[1])
-                                        .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")") 
+                                        .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")")
                                     ;
-                                    
+
                                 });
 
                             }
