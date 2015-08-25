@@ -1,10 +1,12 @@
 ﻿$(function () {
-    gdo.consoleOut('.IMAGETILES', 1, 'Loaded Image Tiles JS');
+    gdo.consoleOut('.Images', 1, 'Loaded Image Tiles JS');
     $.connection.imagesAppHub.client.receiveImageName = function (imageName, imageNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.IMAGETILES', 1, 'Instance - ' + gdo.controlId + ": Downloading Image : " + imageName + " with id: " + imageNameDigit);
+            gdo.consoleOut('.Images', 1, 'Instance - ' + gdo.controlId + ": Downloading Image : " + imageName + " with id: " + imageNameDigit);
             $("iframe").contents().find("#thumbnail_control > img").attr("src", "\\Web\\Images\\images\\" + imageNameDigit + "\\thumb.png");
-            $("iframe")[0].contentWindow.initializeCropper();
+            $("iframe").contents().find("#thumbnail_control > img").load(function () {
+                $("iframe")[0].contentWindow.initializeCropper();
+            });
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
@@ -15,11 +17,19 @@
         gdo.net.app["Images"].setDisplayModeSelect();
     }
     */
+    $.connection.imagesAppHub.client.setDigitText = function (digits) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.Images', 1, 'Set digits ' + digits);
+            $("iframe").contents().find("#image_digit").val(digits);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing  
+        }
+    }
     $.connection.imagesAppHub.client.tilesReady = function() {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.IMAGETILES', 1, 'Requesting tiles');
+            gdo.consoleOut('.Images', 1, 'Requesting tiles');
             gdo.net.app["Images"].server.requestTilesInfo(gdo.net.node[gdo.clientId].appInstanceId,
                                                           gdo.net.node[gdo.clientId].sectionCol,
                                                           gdo.net.node[gdo.clientId].sectionRow);   
@@ -29,7 +39,7 @@
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.IMAGETILES', 1, 'Fetching tiles');
+            gdo.consoleOut('.Images', 1, 'Fetching tiles');
             if (tilesInfo != "") {
                 tilesJson = JSON.parse(tilesInfo);
                 $("iframe")[0].contentWindow.setTiles(imageNameDigit, rotate, blockWidth, blockHeight, tilesJson);
@@ -87,7 +97,7 @@ gdo.net.app["Images"].setDisplayModeSelect = function () {
 */
 
 gdo.net.app["Images"].initClient = function () {
-    gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Client at Node ' + gdo.clientId);
+    gdo.consoleOut('.Images', 1, 'Initializing Image Tiles App Client at Node ' + gdo.clientId);
     //gdo.net.app["Images"].server.requestImageName(gdo.net.node[gdo.clientId].appInstanceId);
     gdo.net.app["Images"].server.requestTilesInfo(gdo.net.node[gdo.clientId].appInstanceId,
                                                   gdo.net.node[gdo.clientId].sectionCol,
@@ -97,16 +107,15 @@ gdo.net.app["Images"].initClient = function () {
 gdo.net.app["Images"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     gdo.net.app["Images"].control_status = 0;
-    gdo.net.app["Images"].init_cropper = 0;
     //gdo.net.app["Images"].server.requestDisplayMode(gdo.controlId);
     gdo.net.app["Images"].server.requestImageName(gdo.controlId);
-    gdo.consoleOut('.IMAGETILES', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);
+    gdo.consoleOut('.Images', 1, 'Initializing Image Tiles App Control at Instance ' + gdo.controlId);
 }
 
 gdo.net.app["Images"].terminateClient = function () {
-    gdo.consoleOut('.IMAGETILES', 1, 'Terminating Image Tiles App Client at Node ' + clientId);
+    gdo.consoleOut('.Images', 1, 'Terminating Image Tiles App Client at Node ' + clientId);
 }
 
 gdo.net.app["Images"].ternminateControl = function () {
-    gdo.consoleOut('.IMAGETILES', 1, 'Terminating Image Tiles App Control at Instance ' + gdo.controlId);
+    gdo.consoleOut('.Images', 1, 'Terminating Image Tiles App Control at Instance ' + gdo.controlId);
 }

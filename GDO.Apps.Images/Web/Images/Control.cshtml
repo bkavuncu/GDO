@@ -150,6 +150,20 @@
             opacity: 0;
             filter: alpha(opacity=0);
         }
+
+        #image_digit_button {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 210px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -168,11 +182,22 @@
 
             var gdo = parent.gdo;
 
+            $("#image_digit_button").click(function (){
+                var gdo = parent.gdo;
+                gdo.net.app["Images"].server.findDigits(gdo.controlId, $("#image_digit").val());
+            });
+
+            $("#image_digit").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    $("#image_digit_button").click();
+                }
+            });
+
             $("#fit_mode").click(function() {
                 var gdo = parent.gdo;
                 if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
                     //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
-                    gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
+                    gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
                     //gdo.net.app["Images"].setDisplayModeSelect();
                     setThumbNailDisplayMode(0);
@@ -183,7 +208,7 @@
                 var gdo = parent.gdo;
                 if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
                     //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
-                    gdo.consoleOut('.IMAGETILES', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
+                    gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
                     //gdo.net.app["Images"].setDisplayModeSelect();
                     setThumbNailDisplayMode(1);
@@ -325,7 +350,6 @@
         function setThumbNailImageInfo(imageJson) {
             if ($('#thumbnail_control > img').attr("src") != "") {
                 var gdo = parent.gdo;
-                gdo.consoleOut('.IMAGETILES', 1, 'Set thumbnail image configuration');
                 $("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
                 $("#thumbnail_control > img").cropper('setCropBoxData', {
                     left: imageJson.cropboxData.left,
@@ -333,7 +357,7 @@
                     width: imageJson.cropboxData.width,
                     height: imageJson.cropboxData.height
                 });
-                //gdo.consoleOut('.IMAGETILES', 1, 'Set thumbnail image rotate configuration');
+                //gdo.consoleOut('.Images', 1, 'Set thumbnail image rotate configuration');
                 $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
                 $("#thumbnail_control > img").cropper('setCanvasData', {
                     left: imageJson.canvasData.left,
@@ -347,7 +371,7 @@
         function getSectionSize(section_width, section_height) {
             if ($('#thumbnail_control > img').attr("src") != "") {
                 var gdo = parent.gdo;
-                gdo.consoleOut('.IMAGETILES', 1, 'Set aspectRatio configuration');
+                gdo.consoleOut('.Images', 1, 'Set aspectRatio configuration');
                 $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
             }
         }
@@ -411,6 +435,21 @@
                             </td>
                             <td>
                                 <input id="submit_image" type="submit" value="Submit"/>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+                <br/>
+
+                 <h1>Find Processed Image</h1>
+                 <fieldset>
+                    <table>
+                        <tr>
+                            <td>
+                                Digits: <input type="text" id="image_digit">
+                            </td>
+                            <td>
+                                 <div id="image_digit_button">Submit</div>
                             </td>
                         </tr>
                     </table>
@@ -494,7 +533,7 @@
             $(function () {
                 $(document).ready(function () {
                     var gdo = parent.gdo;
-                    gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
+                    gdo.consoleOut('.Images', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
                     gdo.net.app["Images"].server.processImage(gdo.controlId, "@imgname");
                     //gdo.net.app["Images"].server.requestImageName(gdo.controlId);
                 });
