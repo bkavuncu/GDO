@@ -48,7 +48,7 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Processing of raw graph data has completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).renderGraph(folderNameDigit);
+                    Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("Graph is now being rendered.");
 
                     // After rendering, start processing graph for zooming
@@ -74,7 +74,7 @@ namespace GDO.Apps.Graph
         }
 
 
-
+        // TODO: update method to adapt to zooming
         public void RequestRendering(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -84,7 +84,7 @@ namespace GDO.Apps.Graph
                     // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
                     if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
                     {
-                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
+                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
                     }
 
                 }
@@ -202,6 +202,29 @@ namespace GDO.Apps.Graph
                 catch (Exception e)
                 {
                     Clients.Caller.setMessage("Error: Failed to trigger panning action.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void TriggerZooming(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering rendering of zoomed graph.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
+                    Clients.Caller.setMessage("Zoomed graph is now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render zoomed graph.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }

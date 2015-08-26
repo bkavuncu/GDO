@@ -146,7 +146,7 @@ $(function () {
 
 
     // improved renderGraph() implementation
-    $.connection.graphAppHub.client.renderGraph = function (folderNameDigit) {
+    $.connection.graphAppHub.client.renderGraph = function (folderNameDigit, zoomed) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
 
@@ -154,8 +154,28 @@ $(function () {
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
-            var nodesFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\nodes\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
-            var linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
+            var basePath, fileName, nodesFilePath, linksFilePath;
+            var clientRow = gdo.net.node[gdo.clientId].sectionRow;
+            var clientCol = gdo.net.node[gdo.clientId].sectionCol;
+            
+
+            if (!zoomed) {
+                basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal";
+                fileName = clientRow + "_" + clientCol + ".bin";
+                nodesFilePath = basePath + "\\nodes\\" + fileName;
+                linksFilePath = basePath + "\\links\\" + fileName;
+
+                /*
+                linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
+                */
+            } else {  // for zoomed in graph, read the file that's 1 row and 1 col more
+                basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\zoomed";
+                fileName = (clientRow + 1) + "_" + (clientCol + 1) + ".bin";
+                nodesFilePath = basePath + "\\nodes\\" + fileName;
+                linksFilePath = basePath + "\\links\\" + fileName;
+            }
+
+            
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -506,7 +526,6 @@ $(function () {
                         .attr("id", "labels");
 
 
-
                     renderNodes(nodesFilePath);
                     renderLinks(linksFilePath);
 
@@ -637,115 +656,6 @@ $(function () {
                         };
                     }
 
-
-                    /*
-                    // old code
-                    renderInput(filePath);
-
-                    var data, browserPos;
-
-                    // get data from server
-                    function renderInput(file) {
-                        var xhr = new XMLHttpRequest();
-
-                        xhr.onreadystatechange = function () {
-
-                            if (xhr.readyState == 4 && xhr.status == 200) {
-                                data = JSON.parse(xhr.responseText);
-
-                                browserPos = data.browserPos;
-                                nodes = data.nodes;
-                                links = data.links;
-
-                                var translate = { // translate is negative, to make the whole canvas towards (0,0)
-                                    x: -(browserPos.col * settings.defaultDisplayDimension.width),
-                                    y: -(browserPos.row * settings.defaultDisplayDimension.height)
-                                };
-
-                                // rendering
-
-                                // reset SVG by removing all child elements (if any)
-                                while (settings.svgDom.firstChild) {
-                                    settings.svgDom.removeChild(settings.svgDom.firstChild);
-                                }
-
-                                
-
-                                
-
-                                var graph = svgRoot.append("g")
-                                    .attr("transform", "translate(" + translate.x + "," + translate.y + ")")
-                                    .attr("class", "graph");
-
-
-                                //console.log("Time before rendering: " + window.performance.now());
-                                window.performance.mark("mark_before_append");
-
-                                // rendering
-
-                                console.log("Time before rendering: " + window.performance.now());
-
-                                var linksDom = graph.append("g")
-                                    .attr("id", "links");
-
-                                // render edges
-                                links.forEach(function (link) {
-
-                                    linksDom.append("line")
-                                        .attr("x1", link.pos.from.x)
-                                        .attr("y1", link.pos.from.y)
-                                        .attr("x2", link.pos.to.x)
-                                        .attr("y2", link.pos.to.y)
-                                        .attr("stroke-width", 1)
-                                        .attr("stroke", "#B8B8B8 ");
-                                });
-
-
-                                var nodesDom = graph.append("g")
-                                    .attr("id", "nodes");
-
-                                var labelsDom = graph.append("g")
-                                    .attr("id", "labels");
-
-                                // render nodes & labels
-                                nodes.forEach(function (node) {
-
-                                    nodesDom.append("circle")
-                                        .attr("r", 5)
-                                        .attr("cx", node.pos.x)
-                                        .attr("cy", node.pos.y)
-                                        .attr("fill", "teal")
-                                    ;
-
-                                    labelsDom.append("text")
-                                        .attr("x", node.pos.x)
-                                        .attr("y", node.pos.y)
-                                        .text("(" + (node.pos.x).toFixed(0) + ", " + (node.pos.y).toFixed(0) + ")")
-                                        .attr("font-size", 10)
-                                    ;
-
-                                });
-
-                                console.log("Time after rendering: " + window.performance.now());
-
-                                // Performance measures
-                                window.performance.mark("mark_after_append");
-                                window.performance.measure("measure_append", "mark_before_append", "mark_after_append");
-                                //     console.log("Time after rendering: " + window.performance.now());
-                                var mark_all = window.performance.getEntriesByType("mark");
-                                var measure_all = window.performance.getEntriesByType("measure");
-                                // console.log("All marks are: ");
-                                // console.log(mark_all);
-                                // console.log("All measures are: ");
-                                // console.log(measure_all);
-
-                            }
-                        }
-
-                        xhr.open("GET", file, true);
-                        xhr.send();
-
-                    }*/
 
                 }, { "simplesvg": 1 }]
             }, {}, [6]);

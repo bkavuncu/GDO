@@ -95,7 +95,12 @@
         <button id="left">Left</button>
         <button id="down">Down</button>
         <button id="right">Right</button>
-
+        <br />
+        <br />
+        <br />
+        <label> Toggle zooming </label>
+        <br />
+        <button id="zoom">Zoom in</button>
 
     </fieldset>
 
@@ -186,6 +191,10 @@
             }
         }
 
+
+        $("#zoom").click(function () {
+            gdo.net.app["Graph"].server.triggerZooming(gdo.controlId);
+        });
 
     </script>
 
