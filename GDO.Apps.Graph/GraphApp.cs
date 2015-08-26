@@ -88,14 +88,15 @@ namespace GDO.Apps.Graph
         {
             PartitionPos partitionPos = new PartitionPos();
             // previously bug: didn't divide Section.Height by Section.Rows, which makes it divide by the dimension of whole section, hence all nodes appear in the first file
-            partitionPos.row = (int)(Math.Floor(pos.y / (Section.Height / Section.Rows))); // cast it to int
+            partitionPos.row = (int)(Math.Floor(pos.y / (Section.Height / Section.Rows))); // cast it to int; Section.Height/Section.Rows to get height of single display
             partitionPos.col = (int)(Math.Floor(pos.x / (Section.Width / Section.Cols)));
+
             return partitionPos;
         }
 
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
-        // return name of folder that stores
-        public string ProcessGraph(string fileName)
+        // return name of folder that stores processed data
+        public string ProcessGraph(string fileName, bool zoomed, string folderName)
         {
 
             // local file
@@ -208,17 +209,38 @@ namespace GDO.Apps.Graph
             System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
 
 
-            int singleDisplayHeight = (int)(Section.Height / Section.Rows);
             int singleDisplayWidth = (int)(Section.Width / Section.Cols);
+            int singleDisplayHeight = (int)(Section.Height / Section.Rows);
+
+
+            // set up total width and height, which differ for non-zoomed and zoomed version
+            int totalWidth, totalHeight;
+            int totalRows, totalCols;
+
+            if (!zoomed)
+            {
+                totalWidth = Section.Width;
+                totalHeight = Section.Height;
+                totalRows = Section.Rows;
+                totalCols = Section.Cols;
+            }
+            else
+            { // current zooming is pre-set to include two extra rows and two extra cols (regardless of section dimension)
+                totalWidth = Section.Width + (2 * singleDisplayWidth);
+                totalHeight = Section.Height + (2 * singleDisplayHeight);
+                totalRows = Section.Rows + 2;
+                totalCols = Section.Cols + 2;
+            }
+
 
             // transform data to GDO dimension
             Scales scales = new Scales();
-            scales.x = Section.Width / rectDim.width;
-            scales.y = Section.Height / rectDim.height;
+
+            scales.x = totalWidth / rectDim.width;
+            scales.y = totalHeight / rectDim.height;
 
             float scaleDown = (float)0.9; // to make graph smaller and nearer to (0, 0)
 
-            
 
             sw.Restart();
 
@@ -229,8 +251,8 @@ namespace GDO.Apps.Graph
                 nodes[i].pos.y *= scales.y * scaleDown;
 
                 // add padding on x, y to centralise graph after being scaled down
-                nodes[i].pos.x += Section.Width * (1 - scaleDown) / 2;
-                nodes[i].pos.y += Section.Height * (1 - scaleDown) / 2;
+                nodes[i].pos.x += totalWidth * (1 - scaleDown) / 2;
+                nodes[i].pos.y += totalHeight * (1 - scaleDown) / 2;
             }
 
             // scale links to full gdo dimension
@@ -241,10 +263,10 @@ namespace GDO.Apps.Graph
                 links[i].endPos.x *= scales.x * scaleDown;
                 links[i].endPos.y *= scales.y * scaleDown;
 
-                links[i].startPos.x += Section.Width * (1 - scaleDown) / 2;
-                links[i].startPos.y += Section.Height * (1 - scaleDown) / 2;
-                links[i].endPos.x += Section.Width * (1 - scaleDown) / 2;
-                links[i].endPos.y += Section.Height * (1 - scaleDown) / 2;
+                links[i].startPos.x += totalWidth * (1 - scaleDown) / 2;
+                links[i].startPos.y += totalHeight * (1 - scaleDown) / 2;
+                links[i].endPos.x += totalWidth * (1 - scaleDown) / 2;
+                links[i].endPos.y += totalHeight * (1 - scaleDown) / 2;
             }
 
             sw.Stop();
@@ -258,12 +280,12 @@ namespace GDO.Apps.Graph
             sw.Restart();
 
             // Set up a 2D array to store nodes data in each partition
-            NodePartition[,] nodesPartitions = new NodePartition[Section.Rows, Section.Cols];
+            NodePartition[,] nodesPartitions = new NodePartition[totalRows, totalCols];
 
             // initialise elements within array
-            for (int i = 0; i < Section.Rows; i++)
+            for (int i = 0; i < totalRows; i++)
             {
-                for (int j = 0; j < Section.Cols; j++)
+                for (int j = 0; j < totalCols; j++)
                 {
                     nodesPartitions[i, j] = new NodePartition();
 
@@ -286,15 +308,15 @@ namespace GDO.Apps.Graph
             System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
 
             // debugging code: check no. of nodes distributed to each partition
-            for (int i = 0; i < Section.Rows; ++i)
+            for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < Section.Cols; ++j)
+                for (int j = 0; j < totalCols; ++j)
                 {
                     Debug.WriteLine("Nodes count in partition " + i + "_" + j + ": " + nodesPartitions[i, j].nodes.Count);
                 }
             }
 
-            
+
 
 
 
@@ -302,12 +324,12 @@ namespace GDO.Apps.Graph
             sw.Restart();
 
             // Set up a 2D array to store nodes data in each partition
-            LinkPartition[,] linksPartitions = new LinkPartition[Section.Rows, Section.Cols];
+            LinkPartition[,] linksPartitions = new LinkPartition[totalRows, totalCols];
 
             // initialise elements within array
-            for (int i = 0; i < Section.Rows; i++)
+            for (int i = 0; i < totalRows; i++)
             {
-                for (int j = 0; j < Section.Cols; j++)
+                for (int j = 0; j < totalCols; j++)
                 {
                     linksPartitions[i, j] = new LinkPartition();
 
@@ -461,16 +483,14 @@ namespace GDO.Apps.Graph
             System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
 
             // debugging code: check no. of links distributed to each partition
-            for (int i = 0; i < Section.Rows; ++i)
+            for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < Section.Cols; ++j)
+                for (int j = 0; j < totalCols; ++j)
                 {
                     Debug.WriteLine("Links count in partition " + i + "_" + j + ": " + linksPartitions[i, j].links.Count);
                 }
             }
 
-
-            
 
 
 
@@ -480,34 +500,61 @@ namespace GDO.Apps.Graph
 
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph\\";
 
-            // Generate random numbers as folder name
-            Random randomDigitGenerator = new Random();
-
-            while (Directory.Exists(basePath + FolderNameDigit))
+            if (folderName == null)
             {
-                this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
+                // Generate random numbers as folder name
+                Random randomDigitGenerator = new Random();
+
+                while (Directory.Exists(basePath + FolderNameDigit))
+                {
+                    this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
+                }
+
+                Directory.CreateDirectory(basePath + FolderNameDigit);
+
+            }
+            else
+            {
+                this.FolderNameDigit = folderName;
             }
 
-            Directory.CreateDirectory(basePath + FolderNameDigit);
-            Directory.CreateDirectory(basePath + FolderNameDigit + @"\nodes");
-            Directory.CreateDirectory(basePath + FolderNameDigit + @"\links");
 
-            string nodesPath = basePath + FolderNameDigit + @"\nodes\\";
-            string linksPath = basePath + FolderNameDigit + @"\links\\";
+            string nodesPath, linksPath;
+
+            if (!zoomed)
+            {
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\nodes");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\links");
+
+                nodesPath = basePath + FolderNameDigit + @"\normal\nodes\\";
+                linksPath = basePath + FolderNameDigit + @"\normal\links\\";
+            }
+            else
+            {
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\nodes");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\links");
+
+                nodesPath = basePath + FolderNameDigit + @"\zoomed\nodes\\";
+                linksPath = basePath + FolderNameDigit + @"\zoomed\links\\";
+            }
+
+
 
             // ii. write to files
 
             // write nodes files
             sw.Restart();
 
-            for (int i = 0; i < Section.Rows; ++i)
+            for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < Section.Cols; ++j)
+                for (int j = 0; j < totalCols; ++j)
                 {
                     using (BinaryWriter writer = new BinaryWriter(
        File.Open(nodesPath + i + "_" + j + ".bin", FileMode.Create)))
                     {
-                        writer.Write((float) nodesPartitions[i, j].partitionPos.row);
+                        writer.Write((float)nodesPartitions[i, j].partitionPos.row);
                         writer.Write((float)nodesPartitions[i, j].partitionPos.col);
 
                         for (int k = 0; k < nodesPartitions[i, j].nodes.Count; ++k)
@@ -524,7 +571,7 @@ namespace GDO.Apps.Graph
             System.Diagnostics.Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds);
 
             // for debugging: check if writing into binary file is correct
-            using (BinaryReader reader = new BinaryReader(File.Open(nodesPath + "1_0.bin", FileMode.Open)))
+            using (BinaryReader reader = new BinaryReader(File.Open(nodesPath + "0_0.bin", FileMode.Open)))
             {
 
                 // Set up variables: offset (index of byte array)  and length (no. of bytes)
@@ -541,24 +588,24 @@ namespace GDO.Apps.Graph
 
 
                 while (offset < length)
-                {                    
+                {
                     Debug.WriteLine("Node pos x: " + reader.ReadSingle());
                     Debug.WriteLine("Node pos y: " + reader.ReadSingle());
                     Debug.WriteLine("Node numlinks: " + reader.ReadSingle());
 
                     offset += 12;
-                }               
+                }
 
             }
-              
+
 
 
             // write links to files
             sw.Restart();
 
-            for (int i = 0; i < Section.Rows; ++i)
+            for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < Section.Cols; ++j)
+                for (int j = 0; j < totalCols; ++j)
                 {
                     using (BinaryWriter writer = new BinaryWriter(
        File.Open(linksPath + i + "_" + j + ".bin", FileMode.Create)))
@@ -582,7 +629,7 @@ namespace GDO.Apps.Graph
 
 
             // for debugging: check if writing into binary file is correct
-            using (BinaryReader reader = new BinaryReader(File.Open(linksPath + "1_0.bin", FileMode.Open)))
+            using (BinaryReader reader = new BinaryReader(File.Open(linksPath + "0_0.bin", FileMode.Open)))
             {
 
                 // Set up variables: offset (index of byte array)  and length (no. of bytes)
@@ -610,8 +657,8 @@ namespace GDO.Apps.Graph
 
             }
 
-            
- 
+
+
             return this.FolderNameDigit;
         }
     }

@@ -154,8 +154,8 @@ $(function () {
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
-            var nodesFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\nodes\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
-            var linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
+            var nodesFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\nodes\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
+            var linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section

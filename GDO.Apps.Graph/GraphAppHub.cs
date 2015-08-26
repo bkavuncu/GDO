@@ -42,14 +42,19 @@ namespace GDO.Apps.Graph
                 {
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
-                    Clients.Caller.setMessage("Initiate processing of raw graph data: " + fileName);
-                    string folderNameDigit = ga.ProcessGraph(fileName);
+                    Clients.Caller.setMessage("Initiating processing of raw graph data: " + fileName);
+                    string folderNameDigit = ga.ProcessGraph(fileName, false, null);
 
                     Clients.Caller.setMessage("Processing of raw graph data has completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit);
                     Clients.Caller.setMessage("Graph is now being rendered.");
+
+                    // After rendering, start processing graph for zooming
+                    Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
+                    ga.ProcessGraph(fileName, true, folderNameDigit);
+                    Clients.Caller.setMessage("Graph is now ready for zooming.");
                 }
                 catch (WebException e)
                 {
@@ -64,6 +69,28 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+
+        public void RequestRendering(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
+                    if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
+                    {
+                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                 }
             }
         }
@@ -177,27 +204,6 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Error: Failed to trigger panning action.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
-                }
-            }
-        }
-
-
-        public void RequestRendering(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
-                    if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
-                    {
-                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
                 }
             }
         }
