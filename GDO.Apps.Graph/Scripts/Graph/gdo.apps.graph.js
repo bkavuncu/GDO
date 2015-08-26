@@ -512,9 +512,16 @@ $(function () {
                                 var partitionPos = [data[0], data[1]];
 
                                 // nodes = [[x, y, numLinks], [], ...]
+
+                                // currentNodes keep track of nodes to be rendered for this round
+                                // previous bug: used 'nodes', instead of 'currentNodes' to render
+                                // which resulted in some nodes & links being rendered extra times
+                                var currentNodes = [];
+
                                 // global variable
                                 for (var i = 2; i < data.length - 2; i += 3) {
                                     nodes.push([data[i], data[i + 1], data[i + 2]]);
+                                    currentNodes.push([data[i], data[i + 1], data[i + 2]]);
                                 }
 
                                 /* 
@@ -548,7 +555,7 @@ $(function () {
 
                                 var radius = 4;
 
-                                nodes.forEach(function (node) {
+                                currentNodes.forEach(function (node) {
 
                                     var inc = Math.round(rgbIncrement * node[2]);
 
@@ -587,14 +594,17 @@ $(function () {
                                 var partitionPos = [data[0], data[1]];
 
                                 // links = [[x1, y1, x2, y2], [], ...]
+                                var currentLinks = [];
+
                                 // read links data and add each link onto array
                                 for (var i = 2; i < data.length - 3; i += 4) {
                                     links.push([data[i], data[i + 1], data[i + 2], data[i + 3]]);
+                                    currentLinks.push([data[i], data[i + 1], data[i + 2], data[i + 3]]);
                                 }
 
                                 // render edges
 
-                                links.forEach(function (link) {
+                                currentLinks.forEach(function (link) {
 
                                     linksDom.append("line")
                                         .attr("x1", link[0])
