@@ -221,6 +221,10 @@ namespace GDO.Apps.Graph
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
+
+
+                    Clients.Group("" + instanceId).renderBuffer(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
+                    Clients.Caller.setMessage("Buffer for zoomed-in graph is now being rendered.");
                 }
                 catch (Exception e)
                 {

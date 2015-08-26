@@ -570,6 +570,7 @@ namespace GDO.Apps.Graph
             sw.Stop();
             System.Diagnostics.Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds);
 
+            /*
             // for debugging: check if writing into binary file is correct
             using (BinaryReader reader = new BinaryReader(File.Open(nodesPath + "0_0.bin", FileMode.Open)))
             {
@@ -597,6 +598,7 @@ namespace GDO.Apps.Graph
                 }
 
             }
+            */
 
 
 
@@ -627,7 +629,7 @@ namespace GDO.Apps.Graph
             sw.Stop();
             System.Diagnostics.Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds);
 
-
+            /*
             // for debugging: check if writing into binary file is correct
             using (BinaryReader reader = new BinaryReader(File.Open(linksPath + "0_0.bin", FileMode.Open)))
             {
@@ -656,6 +658,7 @@ namespace GDO.Apps.Graph
                 }
 
             }
+            */
 
 
 
