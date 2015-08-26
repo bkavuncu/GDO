@@ -69,8 +69,8 @@
         <h1>Distributed Graph Rendering</h1>
         <br />
         <h2>Input file name: </h2>
-        <input type="text" id="fileName" />
-        <button id="update_fileName">Render Graph</button>
+        <input type="text" id="folderName" />
+        <button id="update_folderName">Render Graph</button>
     </div>
 
     <br />
@@ -121,10 +121,10 @@
             });
         });
 
-        $("#update_fileName").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val());
+        $("#update_folderName").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for folder " + $("#folderName").val());
 
-            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#fileName").val());
+            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#folderName").val());
 
             // nothing to request render on control page yet, implement this later if necessary
             // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);

@@ -32,7 +32,7 @@ namespace GDO.Apps.Graph
         }
 
         //TODO: Check if try, catch are implemented correctly
-        public void InitiateProcessing(int instanceId, string fileName)
+        public void InitiateProcessing(int instanceId, string inputFolder)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
 
@@ -42,8 +42,8 @@ namespace GDO.Apps.Graph
                 {
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
-                    Clients.Caller.setMessage("Initiating processing of raw graph data: " + fileName);
-                    string folderNameDigit = ga.ProcessGraph(fileName, false, null);
+                    Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
+                    string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
 
                     Clients.Caller.setMessage("Processing of raw graph data has completed.");
 
@@ -53,12 +53,12 @@ namespace GDO.Apps.Graph
 
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
-                    ga.ProcessGraph(fileName, true, folderNameDigit);
+                    ga.ProcessGraph(inputFolder, true, folderNameDigit);
                     Clients.Caller.setMessage("Graph is now ready for zooming.");
                 }
                 catch (WebException e)
                 {
-                    Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
+                    Clients.Caller.setMessage("Error: Files cannot be loaded. Please check if folder name is valid.");
 
                     //Detailed error message for user is not necessary for this
                     //Clients.Caller.setMessage(e.ToString());
