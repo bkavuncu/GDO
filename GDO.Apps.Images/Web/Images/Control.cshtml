@@ -243,6 +243,35 @@
 
             $('#thumbnail_control').width($(window).width() / 1.2);
             $('#thumbnail_control').height($(window).width() / 1.8);
+
+            $("body").keypress(function(e) {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1) {
+                    var canvasData = $('#thumbnail_control > img').cropper('getCanvasData');
+                    if(e.keyCode == 97) { // A left
+                        //alert("left");
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            left: canvasData.left - 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    } else if (e.keyCode == 115) { // S down
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            top: canvasData.top + 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    } else if (e.keyCode == 100) { // D right
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            left: canvasData.left + 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    } else if (e.keyCode == 119) { // W up
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            top: canvasData.top - 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    }
+                } 
+            });
             
             gdo.net.app["Images"].initControl();
             //updateThumbNailImageInfo($('#thumbnail_control > img'));
@@ -468,7 +497,7 @@
                         <tr>
                             <td>
                                 <div id="active_control">
-                                    <span>Active Control</span>
+                                    <span>Activate Control</span>
                                 </div>
                             </td>
                             <td>
@@ -519,6 +548,7 @@
                         </tr>
                     </table>
                 </fieldset>
+                <h4>KeyPress Note: A [Left] | S [Down] | W [Up] | D [Right]</h4>
                 <div id="thumbnail_control" style="margin-top:10px">
                     <img src="">
                 </div>
