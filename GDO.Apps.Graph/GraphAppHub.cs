@@ -209,22 +209,45 @@ namespace GDO.Apps.Graph
         }
 
 
-        public void TriggerZooming(int instanceId)
+        public void TriggerZoomIn(int instanceId)
         {
 
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Triggering rendering of zoomed graph.");
+                    Clients.Caller.setMessage("Triggering rendering of zoomed-in graph.");
 
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
-                    Clients.Caller.setMessage("Zoomed graph is now being rendered.");
+                    Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
                 }
                 catch (Exception e)
                 {
-                    Clients.Caller.setMessage("Error: Failed to render zoomed graph.");
+                    Clients.Caller.setMessage("Error: Failed to render zoomed-in graph.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void TriggerZoomOut(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Triggering rendering of zoomed-out graph.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
+                    Clients.Caller.setMessage("Zoomed-out graph is now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render zoomed-out graph.");
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }

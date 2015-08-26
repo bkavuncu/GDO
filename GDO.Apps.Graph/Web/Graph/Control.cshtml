@@ -100,7 +100,8 @@
         <br />
         <label> Toggle zooming </label>
         <br />
-        <button id="zoom">Zoom in</button>
+        <button id="zoomIn">Zoom in</button>
+        <button id="zoomOut">Zoom out</button>
 
     </fieldset>
 
@@ -192,9 +193,14 @@
         }
 
 
-        $("#zoom").click(function () {
-            gdo.net.app["Graph"].server.triggerZooming(gdo.controlId);
+        $("#zoomIn").click(function () {
+            gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
         });
+
+        $("#zoomOut").click(function () {
+            gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+        });
+
 
     </script>
 

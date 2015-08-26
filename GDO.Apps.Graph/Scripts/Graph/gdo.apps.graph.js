@@ -595,12 +595,20 @@ $(function () {
 
                                 //console.log(rgbIncrement);
 
+                                var radius;
+                                if (!zoomed) {
+                                    radius = 3;
+                                } else {
+                                    radius = 4;
+                                }
+
+
                                 nodes.forEach(function (node) {
 
                                     var inc = Math.round(rgbIncrement * node[2]);
 
                                     nodesDom.append("circle")
-                                        .attr("r", 3)
+                                        .attr("r", radius)
                                         .attr("cx", node[0])
                                         .attr("cy", node[1])
                                         .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")")
