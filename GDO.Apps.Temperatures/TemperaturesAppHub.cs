@@ -80,9 +80,6 @@ namespace GDO.Apps.Temperatures {
                     if (urls.ContainsKey(clientId)) {
                         Clients.Caller.receiveDataUpdate(urls[clientId] + suffix, "temperature");
                     }
-                    else {
-                        Clients.Caller.receiveDataUpdate("nothing for you " + clientId,"temperature");
-                    }
                     
                 }
                 catch (Exception e) {
