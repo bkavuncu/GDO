@@ -1,0 +1,125 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+        .youtube_text {
+            color: #DDD;
+            font-size: 21px;
+        }
+        .youtube_button {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 200px;
+            height: 35px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+<script src="../../Scripts/jquery-1.11.3.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script>
+    $(function() {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Init Control');
+        gdo.net.app["Youtube"].initControl();
+    });
+
+</script>
+<div>
+    <h1>Youtube App Control</h1>
+    <div class="youtube_text">
+        <b>Update Keyword</b>
+        <br>
+        <fieldset>
+            Keywords: <input type="text" id="new_keyword">
+            <button id="search_mode" class="youtube_button" val="0">Channel Mode</button>
+            <button id="update_keyword_submit" class="youtube_button">Submit</button>
+        </fieldset>
+        <br/>
+        <b>Message</b>
+        <fieldset>
+            <p id="message_from_server"></p>
+        </fieldset>
+        <br/>
+        <b>Get Next videos</b>
+        <fieldset>
+            Keywords: <span id="current_keyword"></span>
+            <button id="get_next_videos" class="youtube_button">Next</button>
+        </fieldset>
+    </div>
+    <div id="video_list" style="margin-top: 20px">
+        <table border="0" style="width: 100%; text-align: left" id="video_table">
+
+        </table>
+    </div>
+</div>
+
+<script>
+    $("#search_mode").click(function() {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Updating search mode: ' +  (1 - $("#search_mode").val()));
+        gdo.net.app["Youtube"].server.setSearchMode(gdo.controlId, (1 - $("#search_mode").val()));
+    });
+    $("#update_keyword_submit").click(function () {
+        var gdo = parent.gdo;
+        $("#get_next_videos").prop("disabled", true);
+        gdo.consoleOut('.Youtube', 1, 'Updating keywords: ' + $("#new_keyword").val());
+        if (gdo.net.app["Youtube"].searchMode == 0) {
+            gdo.net.app["Youtube"].server.updateChannelName(gdo.controlId, $("#new_keyword").val());
+        } else if (gdo.net.app["Youtube"].searchMode == 1) {
+            gdo.net.app["Youtube"].server.updateKeywords(gdo.controlId, $("#new_keyword").val());
+        }
+    });
+    $("#get_next_videos").click(function () {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.Youtube', 1, 'Getting videos');
+        if (gdo.net.app["Youtube"].searchMode == 0) {
+            gdo.net.app["Youtube"].server.getNextVideos(gdo.controlId);
+        } else if (gdo.net.app["Youtube"].searchMode == 1) {
+            gdo.net.app["Youtube"].server.getNextVideosByKeywords(gdo.controlId);
+        }
+    });
+    $("#new_keyword").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $("#update_keyword_submit").click();
+        }
+    });
+</script>
+
+</body>
+
+</html>

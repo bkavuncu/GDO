@@ -80,6 +80,7 @@
             full_width: true
         })
         .target(target);
+        debugger;
         var keys = Object.keys(data[0]);
         for (var i = 0; i < keys.length; i++) {
             var col = new frameWindow.Object();
