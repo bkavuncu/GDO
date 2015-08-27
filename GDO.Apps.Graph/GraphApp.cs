@@ -101,7 +101,7 @@ namespace GDO.Apps.Graph
             string nodesFilePath, linksFilePath;
 
             // 0 means local, 1 means http
-            int inputSourceType = 0;
+            int inputSourceType = 1;
 
             if (inputSourceType == 1)
             {
