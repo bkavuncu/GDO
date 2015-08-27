@@ -42,12 +42,11 @@
 <body>
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/d3.min.js"></script>
+    <script src="../../Scripts/d3.js"></script>
     <script src="../../Scripts/peer.js"></script>
 
     <script>
         var dd3;
-        var init1, init2, start1, start2, start3;
 
         $(function () {          
             $(document).ready(function () {
@@ -127,9 +126,28 @@
                         .attr("dominant-baseline", "text-before-edge")
                         .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
 
-                    
+                    dd3.defineEase("normalEase", d3.ease('linear'));
 
-                    testController.tests['createRect'] = init1 = function () {
+                    dd3.defineTween("myTween", function () {
+                        return function (t) {
+                            this.setAttribute("width", t*500);
+                        }
+                    });
+
+                    dd3.defineAttrTween("my2Tween", function () {
+                        return function (t) {
+                            return t * 200 + 10;
+                        }
+                    });
+
+                    dd3.defineStyleTween("my3Tween", function (d, i, a) {
+                        var i = d3.interpolate(a, "#AAA");
+                        return function (t) {
+                            return i(t);
+                        }
+                    });
+
+                    testController.tests['createRect'] = function () {
                         rect = rectG.append('rect');
                         rect.attr("x", width / 10)
                             .attr("y", 4.5 * height / 10)
@@ -144,7 +162,7 @@
                         rectG.selectAll("rect").remove();
                     };
 
-                    testController.tests['createCircles'] = init3 = function (number, opacity) {
+                    testController.tests['createCircles'] = function (number, opacity) {
                         circleGroup.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('circle')
                             .attr("class", "c new");
@@ -198,19 +216,23 @@
                         polygonGroupOutter.transition();
                     };
 
-                    testController.tests['startXTranslation'] = start1 = function (name) {
+                    testController.tests['startXTranslation'] = function (name) {
                         rect.transition(name)
                             .duration(10000)
                             .style("fill", "#AAA")
                             .attr('x', 8 * width / 10)
                             .text("test")
+                            .ease("normalEase")
+                            //.tween('name', 'myTween')
+                            //.attrTween('height', 'my2Tween')
+                            //.styleTween('fill', 'my3Tween')
                             .transition(name)
                             .duration(5000)
                             .style("fill", "#EEE")
                             .attr('x', width / 10);
                     };
 
-                    testController.tests['startYTranslation'] = start2 = function (name) {
+                    testController.tests['startYTranslation'] = function (name) {
                         rect.transition(name)
                             .duration(10000)
                             .attr('y', 8 * height / 10)
@@ -231,7 +253,7 @@
                             .attr('transform', 'rotate(0)');
                     };
 
-                    testController.tests['startMoveCircles'] = start3 = function (name) {
+                    testController.tests['startMoveCircles'] = function (name) {
                         circleGroup.selectAll(".c")
                             .transition()
                             .duration(15000)
@@ -297,180 +319,204 @@
                 
                 // ScatterPlot
                 test_bench[1] = function () {
-                    var dim = dd3.dataDimensions('scatterplot');
-                    var extent = dim.x.max - dim.x.min, coef = 0., c = 1;
-                    var xDomain = [dim.x.min - coef * extent - c, dim.x.max + coef * extent + c];
-                    var yDomain = [dim.y.min - coef * extent - c, dim.y.max + coef * extent + c];
+                    var xAxis, yAxis, xScale, yScale;
+                    var data, pathData;
 
-                    // setup x
-                    var xScale = dd3.scale.linear().range([0, dd3.cave().svgWidth]),
+                    dd3.getDataDimensions('scatterplot4000', function (d) {
+                        var dim = d;
+                        var extent = dim.x.max - dim.x.min, coef = 0., c = 1;
+                        var xDomain = [dim.x.min - coef * extent - c, dim.x.max + coef * extent + c];
+                        var yDomain = [dim.y.min - coef * extent - c, dim.y.max + coef * extent + c];
+
+                        // Setup x
+                        xScale = dd3.scale.linear().range([0, dd3.cave().svgWidth]);
                         xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-                    // setup y
-                    var yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]),
+                        // Setup y
+                        yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]);
                         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-                    xScale.domain(xDomain);
-                    yScale.domain(yDomain);
+                        xScale.domain(xDomain);
+                        yScale.domain(yDomain);
 
-                    var data = dd3.getData(xScale, yScale);
-                    var pathData = dd3.getPathData(xScale, yScale);
+                        dd3.getData('pointData', 'scatterplot4000', function (d) {
+                            data = d;
+                            draw();
+                        }, xScale, yScale);
 
-                    var svg = dd3.svgCanvas;
+                        dd3.getPathData('pathData', 'scatterplot4000', function (d) {
+                            pathData = d;
+                            draw();
+                        }, xScale, yScale, 'x', 'y');
 
-                    //*
-                    // x-axis
-                    svg.append("g")
-                      .unwatch()
-                      .attr("class", "x axis")
-                      .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
-                      .call(xAxis)
-                    .append("text")
-                      .attr("class", "label")
-                      .attr("x", dd3.cave().svgWidth)
-                      .attr("y", -6)
-                      .style("text-anchor", "end")
-                      .text("X axis");
-                    //*
-                    // y-axis
-                    svg.append("g")
-                      .unwatch()
-                      .attr("class", "y axis")
-                      .attr("transform", "translate(" + [0, 0] + ")")
-                      .call(yAxis)
-                    .append("text")
-                      .attr("class", "label")
-                      .attr("transform", "rotate(-90)")
-                      .attr("y", 6)
-                      .attr("dy", ".71em")
-                      .style("text-anchor", "end")
-                      .text("Y axis");
+                    });
 
-                    /*
-                    var rGroup = svg.append('g').attr("id", "myRect");
-                    var pGroup = svg.append('g').attr("id", "myPoly");
-                    
-                    if (dd3.browser().row == 0 && dd3.browser().column == 0) {
-                        rGroup
-                            .append('rect')
-                            .attr("x", xScale(3))
-                            .attr("y", yScale(1))
-                            .attr("width", xScale(15) - xScale(3))
-                            .attr("height", yScale(0) - yScale(2))
-                            .attr("transform", "rotate(30 " + [xScale(3), yScale(1)] + ")scale(1)")
-                            .attr("stroke", "black")
-                            .attr("fill", "rgb(29, 219, 29)")
-                            .send();
-                    } else if (dd3.browser().row == 1 && dd3.browser().column == 1){
-                        pGroup
-                           .append('polygon')
-                           .attr("points", "50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180")
-                           .attr("transform", " scale(6) translate(50, -100)")
-                           .attr("stroke", "orange")
-                           .attr("stroke-width", "4")
-                           .attr("fill", "transparent")
-                           .send();
-                    } else {
-                        rGroup.attr("transform", "rotate(20)");
-                    }
-                    //*/
+                    var draw = function () {
+                       // if (!data || !pathData)
+                      //      return;
 
-                    // Draw dots
-                    svg.selectAll(".dot")
-                      .data(data)
-                    .enter()
-                      .append("g")
-                      .append("circle")
-                      .attr("class", "dot")
-                      .attr("cx", function (d) { return xScale(d['x']); })
-                      .attr("cy", function (d) { return yScale(d['y']); })
-                      .attr("r", 4)
-                      .style("fill", function (d, i) { return "black"; })
-                      .style("stroke", "red");
+                        var svg = dd3.svgCanvas;
 
-                    var lineFunction = d3.svg.line()
-                            .x(function (d) { return xScale(d['x']); })
-                            .y(function (d) { return yScale(d['y']); })
-                            .interpolate("monotone");
-                    
-                    /*
-                    svg.append("path").datum(pathData)
-                        .attr("d", lineFunction)
-                        .attr("stroke", "blue")
-                        .attr("stroke-width", 2)
-                        .attr("fill", "none");
-                      //.send();
-                  
-                    //*/
+                        // x-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "x axis")
+                          .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
+                          .call(xAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("x", dd3.cave().svgWidth)
+                          .attr("y", -6)
+                          .style("text-anchor", "end")
+                          .text("X axis");
+
+                        // y-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "y axis")
+                          .attr("transform", "translate(" + [0, 0] + ")")
+                          .call(yAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("transform", "rotate(-90)")
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("Y axis");
+
+                        /*
+                        var rGroup = svg.append('g').attr("id", "myRect");
+                        var pGroup = svg.append('g').attr("id", "myPoly");
+                        
+                        if (dd3.browser().row == 0 && dd3.browser().column == 0) {
+                            rGroup
+                                .append('rect')
+                                .attr("x", xScale(3))
+                                .attr("y", yScale(1))
+                                .attr("width", xScale(15) - xScale(3))
+                                .attr("height", yScale(0) - yScale(2))
+                                .attr("transform", "rotate(30 " + [xScale(3), yScale(1)] + ")scale(1)")
+                                .attr("stroke", "black")
+                                .attr("fill", "rgb(29, 219, 29)")
+                                .send();
+                        } else if (dd3.browser().row == 1 && dd3.browser().column == 1){
+                            pGroup
+                               .append('polygon')
+                               .attr("points", "50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180")
+                               .attr("transform", " scale(6) translate(50, -100)")
+                               .attr("stroke", "orange")
+                               .attr("stroke-width", "4")
+                               .attr("fill", "transparent")
+                               .send();
+                        } else {
+                            rGroup.attr("transform", "rotate(20)");
+                        }
+                        //*/
+
+                        // Draw dots
+                        svg.selectAll(".dot")
+                          .data(data)
+                        .enter()
+                          .append("g")
+                          .append("circle")
+                          .attr("class", "dot")
+                          .attr("cx", function (d) { return xScale(d['x']); })
+                          .attr("cy", function (d) { return yScale(d['y']); })
+                          .attr("r", 3)
+                          .style("fill", function (d, i) { return "black"; })
+                          .style("stroke", "red");
+
+                        var lineFunction = d3.svg.line()
+                                .x(function (d) { return xScale(d['x']); })
+                                .y(function (d) { return yScale(d['y']); })
+                                .interpolate("monotone");
+
+                        /*
+                        svg.append("path").datum(pathData)
+                            .unwatch()
+                            .attr("d", lineFunction)
+                            .attr("stroke", "blue")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+                        //*/
+                    };
                 };
 
                 // Graphs
                 test_bench[2] = function () {
-                    var dim = dd3.dataDimensions('bargraph');
-                    var extent = dim.gdp.max - dim.gdp.min, coef = 0.2, c = 0;
-                    var xDomain = d3.range(dim.length);
-                    var yDomain = [0, +dim.gdp.max + coef * extent + c];
-
-                    // setup x
-                    var xRange = dd3.scale.ordinal().rangeBands([0, dd3.cave().svgWidth], 0.2),
-                        xAxis = d3.svg.axis().scale(xRange).orient("bottom");
-
-                    // setup y
-                    var yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]),
-                        yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-                    xRange.domain(xDomain);
-                    yScale.domain(yDomain);
-
-                    var barData = dd3.getBarData(xRange, 'gdp');
+                    var dim, xDomain, xRange, xAxis, yScale, yAxis;
                     var svg = dd3.svgCanvas;
 
-                    barData.forEach(function (d) { xDomain[d.order] = d.country; });
+                    dd3.getDataDimensions('barData', function (d) {
+                        dim = d
+                        var extent = dim.gdp.max - dim.gdp.min, coef = 0.2, c = 0;
+                        var yDomain = [0, +dim.gdp.max + coef * extent + c];
+                        xDomain = d3.range(dim.length);
 
-                    xRange.domain(xDomain);
+                        // Setup x
+                        xRange = dd3.scale.ordinal().rangeBands([0, dd3.cave().svgWidth], 0.2);
+                        xAxis = d3.svg.axis().scale(xRange).orient("bottom");
 
-                    svg.append("g")
-                      .unwatch()
-                      .attr("class", "x axis")
-                      .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
-                      .call(xAxis)
-                    .append("text")
-                      .attr("class", "label")
-                      .attr("x", dd3.cave().svgWidth)
-                      .attr("y", -6)
-                      .style("text-anchor", "middle")
-                      .text("Countries");
+                        // Setup y
+                        yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]);
+                        yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-                    svg.append("g")
-                      .unwatch()
-                      .attr("class", "y axis")
-                      .attr("transform", "translate(" + [0, 0] + ")")
-                      .call(yAxis)
-                    .append("text")
-                      .attr("class", "label")
-                      .attr("transform", "rotate(-90)")
-                      .attr("y", 6)
-                      .attr("dy", ".71em")
-                      .style("text-anchor", "end")
-                      .text("GDP");
+                        xRange.domain(xDomain);
+                        yScale.domain(yDomain);
 
-                    svg.append("g")
-                      .attr("id", "rect")
-                      .selectAll('rect')
-                      .data(barData)
-                      .enter()
-                      .append('rect')
-                      .attr('x', function (d) { return xRange(d.country); })
-                      .attr('y', function (d) {
-                          return (yScale(d.gdp));
-                      })
-                      .attr('width', xRange.rangeBand())
-                      .attr('height', function (d) {
-                          return (yScale(0) - yScale(d.gdp));
-                      })
-                      .attr('fill', 'steelblue')
-                      .attr('stroke', 'black')
-                      .attr('stroke-width', '2');
+                        dd3.getBarData('bar', 'barData', draw, xRange, 'gdp');
+                    });
+
+                    var draw = function (barData) {
+                        barData.forEach(function (d) { xDomain[d.order] = d.country; });
+                        xRange.domain(xDomain);
+
+                        //  PLOT X AXIS
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "x axis")
+                          .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
+                          .call(xAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("x", dd3.cave().svgWidth)
+                          .attr("y", -6)
+                          .style("text-anchor", "middle")
+                          .text("Countries");
+
+                        //  PLOT Y AXIS
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "y axis")
+                          .attr("transform", "translate(" + [0, 0] + ")")
+                          .call(yAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("transform", "rotate(-90)")
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("GDP");
+
+                        // PLOT BAR
+                        svg.append("g")
+                          .attr("id", "rect")
+                          .selectAll('rect')
+                          .data(barData)
+                          .enter()
+                          .append('rect')
+                          .attr('x', function (d) { return xRange(d.country); })
+                          .attr('y', function (d) {
+                              return (yScale(d.gdp));
+                          })
+                          .attr('width', xRange.rangeBand())
+                          .attr('height', function (d) {
+                              return (yScale(0) - yScale(d.gdp));
+                          })
+                          .attr('fill', 'steelblue')
+                          .attr('stroke', 'black')
+                          .attr('stroke-width', '2');
+                    };
 
                     var color = d3.scale.category20(),
                         i = 0;
@@ -479,7 +525,6 @@
                         var randomGDP = xDomain.map(function () { return dim.gdp.max * Math.random(); });
 
                         svg.selectAll('rect')
-                          .data(barData)
                           .transition()
                           .duration(time)
                           .precision(0.1)
@@ -497,7 +542,6 @@
                     };
 
                 };
-
 
             });
         });
