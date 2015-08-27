@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.DD3", "GDO.Apps.DD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Temperatures", "GDO.Apps.Temperatures\GDO.Apps.Temperatures.csproj", "{18E90339-02F1-4281-B3F9-3DC2F7861AA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.TimeV", "GDO.Apps.TimeV\GDO.Apps.TimeV.csproj", "{61541E0F-32AF-47D7-B106-C04C4DC0149A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{18E90339-02F1-4281-B3F9-3DC2F7861AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18E90339-02F1-4281-B3F9-3DC2F7861AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18E90339-02F1-4281-B3F9-3DC2F7861AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61541E0F-32AF-47D7-B106-C04C4DC0149A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

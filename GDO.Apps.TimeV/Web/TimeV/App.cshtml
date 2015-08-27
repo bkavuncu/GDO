@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html style="height:100vh">
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Visualisation</title>
+    @RenderPage("Shared/_StyleSheets.cshtml")
+</head>
+<body style="height:100vh">
+    <div class="container-fluid full-height row">
+        <div id="placeholder" class="row col-xs-12 show">
+            <p>Pending Data...</p>
+        </div>
+        <div id="visualisation" class="row col-xs-12" style="height:100%">
+            <div id="y_axis"></div>
+            <div id="graph" style="height:100%"></div>            
+        </div>
+        <div id="legend" class="row col-xs-12"></div>
+    </div>
+
+    @RenderPage("Shared/_Scripts.cshtml")
+    <script src="~/Scripts/TimeV/gdo.apps.TimeV.js"></script>
+</body>
+</html>
