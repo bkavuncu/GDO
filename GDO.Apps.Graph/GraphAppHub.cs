@@ -259,5 +259,33 @@ namespace GDO.Apps.Graph
         }
 
 
+        public void TriggerRGB(int instanceId, string colourScheme)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Setting colour scheme to: " + colourScheme);
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).setRGB(colourScheme);
+                    Clients.Caller.setMessage("Colour scheme has been changed.");
+
+                    // hide nodes and render new nodes
+                    Clients.Group("" + instanceId).hideNodes();
+                    Clients.Group("" + instanceId).renderNodes();
+                    Clients.Caller.setMessage("Nodes are now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render new colour scheme.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
     }
 }

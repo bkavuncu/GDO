@@ -102,6 +102,15 @@
         <br />
         <button id="zoomIn">Zoom in</button>
         <button id="zoomOut">Zoom out</button>
+        <br />
+        <br />
+        <br />
+        <label> Colour Scheme </label>
+        <br />
+        <button id="blue">Blue</button>
+        <button id="green">Green</button>
+        <button id="yellow">Yellow</button>
+        <button id="orange">Orange</button>
 
     </fieldset>
 
@@ -199,6 +208,22 @@
 
         $("#zoomOut").click(function () {
             gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+        });
+
+        $("#blue").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
+        });
+
+        $("#green").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "green");
+        });
+
+        $("#yellow").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "yellow");
+        });
+
+        $("#orange").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
         });
 
 

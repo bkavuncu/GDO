@@ -67,6 +67,78 @@ $(function () {
         }
     }
 
+    $.connection.graphAppHub.client.setRGB = function (colourScheme) {
+        gdo.consoleOut('.GRAPHRENDERER', 1, 'Setting colour scheme to: ' + colourScheme);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            if (colourScheme == "blue") {
+                r = 0;
+                g = 20;
+                b = 50;
+            } else if (colourScheme == "green") {
+                r = 0;
+                g = 50;
+                b = 20;
+            } else if (colourScheme == "yellow") {
+                r = 30;
+                g = 30;
+                b = 0;
+            } else if (colourScheme == "orange") {
+                r = 50;
+                g = 20;
+                b = 0;
+            }
+        }
+    }
+
+
+
+    $.connection.graphAppHub.client.hideNodes = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var nodesDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("nodes")
+
+            while (nodesDom.firstChild) {
+                nodesDom.removeChild(nodesDom.firstChild);
+            }
+        }
+    }
+
+    $.connection.graphAppHub.client.renderNodes = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var nodesDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("nodes");
+
+            var radius;
+            if (!globalZoomed) {
+                radius = normalRadius;
+            } else {
+                radius = zoomedRadius;
+            }
+
+            nodes.forEach(function (node) {
+
+                var inc = Math.round(rgbIncrement * node[2]); //multiply rgbIncrement by no. of links each node has
+
+                nodesDom.append("circle")
+                    .attr("r", radius)
+                    .attr("cx", node[0])
+                    .attr("cy", node[1])
+                    .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")")
+                ;
+
+            });
+
+        }
+    }
+
     //TODO: Refactor duplicating code for hideLinks and hideLabels
     $.connection.graphAppHub.client.hideLinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
