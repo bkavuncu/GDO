@@ -9,7 +9,41 @@ $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     /* global variables */
+
+    // arrays to store data
     var links, nodes;
+
+    // boolean to track if current graph is zoomed
+    var globalZoomed;
+
+    // set size of nodes and links
+    var zoomedRadius = 5;
+    var zoomedStrokeWidth = 2;
+    var zoomedFontSize = 16;
+    var normalRadius = 3;
+    var normalStrokeWidth = 1;
+    var normalFontSize = 10;
+
+    // rgb setting to track current color scheme
+    var r, g, b;
+    r = 0;  
+    g = 50;
+    b = 20;   // range is 0 to 255
+
+    
+// r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
+// r 50, g 100, b 50 (pastel green)
+
+
+    var maxLinks = 5;
+    var maxRGB = Math.max(r, g, b);
+    //console.log(maxRGB);
+    var rgbIncrement = (255 - maxRGB) / maxLinks;
+    //amount of increment remaining divide by no. of possible links 
+    // (to know how much to increase for every increase in link)
+
+    //console.log(rgbIncrement);
+
 
     // when div content exceeds div height, call this function 
     // to align bottom of content with bottom of div
@@ -57,6 +91,14 @@ $(function () {
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("links");
 
+            var strokeWidth;
+
+            if (!globalZoomed) {
+                strokeWidth = normalStrokeWidth;
+            } else {
+                strokeWidth = zoomedStrokeWidth;
+            }
+
             links.forEach(function (link) {
 
                 linksDom.append("line")
@@ -64,7 +106,7 @@ $(function () {
                     .attr("y1", link[1])
                     .attr("x2", link[2])
                     .attr("y2", link[3])
-                    .attr("stroke-width", 1)
+                    .attr("stroke-width", strokeWidth)
                     .attr("stroke", "#333");
 
             });
@@ -98,13 +140,25 @@ $(function () {
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("labels");
 
+            var fontSize, padding;
+
+            if (!globalZoomed) {
+                fontSize = normalFontSize;
+                padding = 2;
+            } else {
+                fontSize = zoomedFontSize;
+                padding = 3;
+            }
+                
+
+
             nodes.forEach(function (node) {
 
                 labelsDom.append("text")
-                    .attr("x", node[0] + 2)
-                    .attr("y", node[1] - 2)
+                    .attr("x", node[0] + padding)
+                    .attr("y", node[1] - padding)
                     .text("(" + (node[0]).toFixed(0) + ", " + (node[1]).toFixed(0) + ")")
-                    .attr("font-size", 10)
+                    .attr("font-size", fontSize)
                     .attr("fill", "white");
                 ;
 
@@ -455,7 +509,7 @@ $(function () {
                 }, {}], 6: [function (require, module, exports) {
 
                     // main code
-                 
+
                     // simply append to svg canvas that has been set up previously 
                     // when renderGraph() was called
                     var linksDom = document.body
@@ -536,31 +590,12 @@ $(function () {
 
                                 // rendering                               
 
-                                // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
-                                // r 50, g 100, b 50 (pastel green)
-                                var r, g, b;
-                                r = 0;  //
-                                g = 50;
-                                b = 20;   // range is 0 to 255
-
-
-                                var maxLinks = 5;
-                                var maxRGB = Math.max(r, g, b);
-                                //console.log(maxRGB);
-                                var rgbIncrement = (255 - maxRGB) / maxLinks;
-                                //amount of increment remaining divide by no. of possible links 
-                                // (to know how much to increase for every increase in link)
-
-                                //console.log(rgbIncrement);
-
-                                var radius = 4;
-
                                 currentNodes.forEach(function (node) {
 
                                     var inc = Math.round(rgbIncrement * node[2]);
 
                                     nodesDom.append("circle")
-                                        .attr("r", radius)
+                                        .attr("r", zoomedRadius)
                                         .attr("cx", node[0])
                                         .attr("cy", node[1])
                                         .attr("fill", "rgb(" + (r + inc) + "," + (g + inc) + "," + (b + inc) + ")")
@@ -611,7 +646,7 @@ $(function () {
                                         .attr("y1", link[1])
                                         .attr("x2", link[2])
                                         .attr("y2", link[3])
-                                        .attr("stroke-width", 1)
+                                        .attr("stroke-width", zoomedStrokeWidth)
                                         .attr("stroke", "#333"); //B8B8B8
                                 });
 
@@ -643,6 +678,7 @@ $(function () {
             
 
             if (!zoomed) {
+                globalZoomed = false;
                 basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal";
                 fileName = clientRow + "_" + clientCol + ".bin";
                 nodesFilePath = basePath + "\\nodes\\" + fileName;
@@ -652,6 +688,7 @@ $(function () {
                 linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
                 */
             } else {  // for zoomed in graph, read the file that's 1 row and 1 col more
+                globalZoomed = true;
                 basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\zoomed";
                 fileName = (clientRow + 1) + "_" + (clientCol + 1) + ".bin";
                 nodesFilePath = basePath + "\\nodes\\" + fileName;
@@ -1064,34 +1101,16 @@ $(function () {
                                 svgRoot.attr("viewBox", offset.x + " " + offset.y + " " + settings.defaultDisplayDimension.width + " " + settings.defaultDisplayDimension.height);
 
 
-                                // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
-                                // r 50, g 100, b 50 (pastel green)
-                                var r, g, b;
-                                r = 0;  //
-                                g = 50;
-                                b = 20;   // range is 0 to 255
-
-
-                                var maxLinks = 5;
-                                var maxRGB = Math.max(r, g, b);
-                                //console.log(maxRGB);
-                                var rgbIncrement = (255 - maxRGB) / maxLinks;
-                                //amount of increment remaining divide by no. of possible links 
-                                // (to know how much to increase for every increase in link)
-
-                                //console.log(rgbIncrement);
-
                                 var radius;
                                 if (!zoomed) {
-                                    radius = 3;
+                                    radius = normalRadius;
                                 } else {
-                                    radius = 4;
+                                    radius = zoomedRadius;
                                 }
-
 
                                 nodes.forEach(function (node) {
 
-                                    var inc = Math.round(rgbIncrement * node[2]);
+                                    var inc = Math.round(rgbIncrement * node[2]); //multiply rgbIncrement by no. of links each node has
 
                                     nodesDom.append("circle")
                                         .attr("r", radius)
@@ -1137,6 +1156,13 @@ $(function () {
 
                                 // render edges
 
+                                var strokeWidth;
+                                if (!zoomed)
+                                    strokeWidth = normalStrokeWidth;
+                                else
+                                    strokeWidth = zoomedStrokeWidth;                                    
+
+
                                 links.forEach(function (link) {
 
                                     linksDom.append("line")
@@ -1144,7 +1170,7 @@ $(function () {
                                         .attr("y1", link[1])
                                         .attr("x2", link[2])
                                         .attr("y2", link[3])
-                                        .attr("stroke-width", 1)
+                                        .attr("stroke-width", strokeWidth)
                                         .attr("stroke", "#333"); //B8B8B8
                                 });
 

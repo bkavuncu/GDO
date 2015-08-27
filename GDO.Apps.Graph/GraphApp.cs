@@ -98,50 +98,173 @@ namespace GDO.Apps.Graph
         // return name of folder that stores processed data
         public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
         {
+            string nodesFilePath, linksFilePath;
+
+            // 0 means local, 1 means http
+            int inputSourceType = 0;
+
+            if (inputSourceType == 1)
+            {
+                // server file
+                nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";
+                linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/linksPos.bin";
+            }
+            else
+            {
+                // local file
+                nodesFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodesPos.bin";
+                linksFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\linksPos.bin";
+            }
 
 
-            // local file
-            //string nodesFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodesPos.bin";
-
-            //string linksFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\linksPos.bin";
-
-            // server file
-            string nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";
-            string linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/linksPos.bin";
-
-                        
 
             RectDimension rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
             List<Link> links = new List<Link>();
 
             Stopwatch sw = new Stopwatch();
-            sw.Start();
-
             
 
-           
 
-
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(nodesFilePath);
-            WebResponse resp = req.GetResponse();
-
-            using (Stream stream = resp.GetResponseStream())
-            using (MemoryStream ms = new MemoryStream())
+            if (inputSourceType == 1)
             {
-                int count = 0;
-                do
-                {
-                    byte[] buf = new byte[1024];
-                    count = stream.Read(buf, 0, 1024);
-                    ms.Write(buf, 0, count);
-                } while (stream.CanRead && count > 0);
+                sw.Start();
 
-                using (BinaryReader reader = new BinaryReader(ms))
-                {
-                    // Set position to beginning of stream
-                    reader.BaseStream.Position = 0;
+                // read from HTTP
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(nodesFilePath);
+                WebResponse resp = req.GetResponse();
 
+                using (Stream stream = resp.GetResponseStream())
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    int count = 0;
+                    do
+                    {
+                        byte[] buf = new byte[1024];
+                        count = stream.Read(buf, 0, 1024);
+                        ms.Write(buf, 0, count);
+                    } while (stream.CanRead && count > 0);
+
+                    using (BinaryReader reader = new BinaryReader(ms))
+                    {
+                        // Set position to beginning of stream
+                        reader.BaseStream.Position = 0;
+
+                        // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                        int offset = 0;
+
+                        // Use BaseStream
+                        int length = (int)reader.BaseStream.Length;
+
+                        // ReadSingle reads 4-byte floating point value & auto advance stream position by 4 bytes
+                        // reads in dimension of rect first
+                        rectDim.width = reader.ReadSingle();
+                        rectDim.height = reader.ReadSingle();
+
+                        offset += 8;
+
+                        Debug.WriteLine("Rect width: " + rectDim.width);
+                        Debug.WriteLine("Rect height: " + rectDim.height);
+
+
+                        Debug.WriteLine("nodes list length: " + nodes.Count);
+
+                        while (offset < length)
+                        {
+                            Node node = new Node();
+                            node.pos = new Pos();
+                            node.pos.x = reader.ReadSingle();
+                            node.pos.y = reader.ReadSingle();
+                            node.numLinks = (int)reader.ReadSingle();
+
+                            nodes.Add(node);
+
+                            offset += 12;
+
+
+                            //Debug.WriteLine("Node pos x: " + node.pos.x);
+                            //Debug.WriteLine("Node pos y: " + node.pos.y);
+                            //Debug.WriteLine("Node numlinks: " + node.numLinks);
+
+                        }
+
+                        Debug.WriteLine("nodes list length: " + nodes.Count);
+
+                    }
+
+                }
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds);
+
+                sw.Restart();
+
+                // read from HTTP
+                req = (HttpWebRequest)WebRequest.Create(linksFilePath);
+                resp = req.GetResponse();
+
+                using (Stream stream = resp.GetResponseStream())
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    int count = 0;
+                    do
+                    {
+                        byte[] buf = new byte[1024];
+                        count = stream.Read(buf, 0, 1024);
+                        ms.Write(buf, 0, count);
+                    } while (stream.CanRead && count > 0);
+
+                    using (BinaryReader reader = new BinaryReader(ms))
+                    {
+                        // Set position to beginning of stream
+                        reader.BaseStream.Position = 0;
+
+                        // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                        int offset = 0;
+                        int length = (int)reader.BaseStream.Length;
+
+                        Debug.WriteLine("links list length: " + links.Count);
+
+                        while (offset < length)
+                        {
+                            Link link = new Link();
+                            link.startPos = new Pos();
+                            link.endPos = new Pos();
+
+                            link.startPos.x = reader.ReadSingle();
+                            link.startPos.y = reader.ReadSingle();
+                            link.endPos.x = reader.ReadSingle();
+                            link.endPos.y = reader.ReadSingle();
+
+                            links.Add(link);
+
+                            offset += 16;
+
+
+                            //Debug.WriteLine("Start pos x: " + link.startPos.x);
+                            //Debug.WriteLine("Start pos y: " + link.startPos.y);
+                            //Debug.WriteLine("End pos x: " + link.endPos.x);
+                            //Debug.WriteLine("End pos y: " + link.endPos.y);
+
+                        }
+
+                        Debug.WriteLine("links list length: " + links.Count);
+
+                    }
+
+                }
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
+
+            }
+            else
+            {
+                sw.Start();
+
+                // to read from local file
+                using (BinaryReader reader = new BinaryReader(File.Open(nodesFilePath, FileMode.Open)))
+                {
                     // Set up variables: offset (index of byte array)  and length (no. of bytes)
                     int offset = 0;
 
@@ -174,94 +297,29 @@ namespace GDO.Apps.Graph
                         offset += 12;
 
 
-                        Debug.WriteLine("Node pos x: " + node.pos.x);
-                        Debug.WriteLine("Node pos y: " + node.pos.y);
-                        Debug.WriteLine("Node numlinks: " + node.numLinks);
+                        //Debug.WriteLine("Node pos x: " + node.pos.x);
+                        //Debug.WriteLine("Node pos y: " + node.pos.y);
+                        //Debug.WriteLine("Node numlinks: " + node.numLinks);
 
                     }
 
                     Debug.WriteLine("nodes list length: " + nodes.Count);
 
                 }
-                
-            }
 
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds);
 
-            /*
-            // to read from local file
-            using (BinaryReader reader = new BinaryReader(File.Open(nodesFilePath, FileMode.Open)))
-            {
-                // Set up variables: offset (index of byte array)  and length (no. of bytes)
-                int offset = 0;
+                sw.Restart();
 
-                // Use BaseStream
-                int length = (int)reader.BaseStream.Length;
-
-                // ReadSingle reads 4-byte floating point value & auto advance stream position by 4 bytes
-                // reads in dimension of rect first
-                rectDim.width = reader.ReadSingle();
-                rectDim.height = reader.ReadSingle();
-
-                offset += 8;
-
-                Debug.WriteLine("Rect width: " + rectDim.width);
-                Debug.WriteLine("Rect height: " + rectDim.height);
-
-
-                Debug.WriteLine("nodes list length: " + nodes.Count);
-
-                while (offset < length)
+                // to read from local file
+                using (BinaryReader reader = new BinaryReader(File.Open(linksFilePath, FileMode.Open)))
                 {
-                    Node node = new Node();
-                    node.pos = new Pos();
-                    node.pos.x = reader.ReadSingle();
-                    node.pos.y = reader.ReadSingle();
-                    node.numLinks = (int)reader.ReadSingle();
-
-                    nodes.Add(node);
-
-                    offset += 12;
-
-                    
-                    //Debug.WriteLine("Node pos x: " + node.pos.x);
-                    //Debug.WriteLine("Node pos y: " + node.pos.y);
-                    //Debug.WriteLine("Node numlinks: " + node.numLinks);
-                    
-                }
-
-                Debug.WriteLine("nodes list length: " + nodes.Count);
-
-            }
-            */
-
-            sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds);
-
-            sw.Restart();
-
-
-            req = (HttpWebRequest)WebRequest.Create(linksFilePath);
-            resp = req.GetResponse();
-
-            using (Stream stream = resp.GetResponseStream())
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int count = 0;
-                do
-                {
-                    byte[] buf = new byte[1024];
-                    count = stream.Read(buf, 0, 1024);
-                    ms.Write(buf, 0, count);
-                } while (stream.CanRead && count > 0);
-
-                using (BinaryReader reader = new BinaryReader(ms))
-                {
-                    // Set position to beginning of stream
-                    reader.BaseStream.Position = 0;
 
                     // Set up variables: offset (index of byte array)  and length (no. of bytes)
                     int offset = 0;
                     int length = (int)reader.BaseStream.Length;
+
 
                     Debug.WriteLine("links list length: " + links.Count);
 
@@ -281,10 +339,10 @@ namespace GDO.Apps.Graph
                         offset += 16;
 
 
-                        Debug.WriteLine("Start pos x: " + link.startPos.x);
-                        Debug.WriteLine("Start pos y: " + link.startPos.y);
-                        Debug.WriteLine("End pos x: " + link.endPos.x);
-                        Debug.WriteLine("End pos y: " + link.endPos.y);
+                        //Debug.WriteLine("Start pos x: " + link.startPos.x);
+                        //Debug.WriteLine("Start pos y: " + link.startPos.y);
+                        //Debug.WriteLine("End pos x: " + link.endPos.x);
+                        //Debug.WriteLine("End pos y: " + link.endPos.y);
 
                     }
 
@@ -292,50 +350,11 @@ namespace GDO.Apps.Graph
 
                 }
 
-            }
 
-            /*
-            // to read from local file
-            using (BinaryReader reader = new BinaryReader(File.Open(linksFilePath, FileMode.Open)))
-            {
-
-                // Set up variables: offset (index of byte array)  and length (no. of bytes)
-                int offset = 0;
-                int length = (int)reader.BaseStream.Length;
-
-
-                Debug.WriteLine("links list length: " + links.Count);
-
-                while (offset < length)
-                {
-                    Link link = new Link();
-                    link.startPos = new Pos();
-                    link.endPos = new Pos();
-
-                    link.startPos.x = reader.ReadSingle();
-                    link.startPos.y = reader.ReadSingle();
-                    link.endPos.x = reader.ReadSingle();
-                    link.endPos.y = reader.ReadSingle();
-
-                    links.Add(link);
-
-                    offset += 16;
-
-                    
-                    //Debug.WriteLine("Start pos x: " + link.startPos.x);
-                    //Debug.WriteLine("Start pos y: " + link.startPos.y);
-                    //Debug.WriteLine("End pos x: " + link.endPos.x);
-                    //Debug.WriteLine("End pos y: " + link.endPos.y);
-                    
-                }
-
-                Debug.WriteLine("links list length: " + links.Count);
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
 
             }
-            */
-
-            sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
 
 
             int singleDisplayWidth = (int)(Section.Width / Section.Cols);
