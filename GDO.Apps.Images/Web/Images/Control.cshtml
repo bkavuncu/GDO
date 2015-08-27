@@ -7,7 +7,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html style="background-color:black">
 <head>
     <meta name="viewport" content="width=device-width" />
     <title></title>
@@ -42,6 +42,76 @@
             border: 3px solid #444;
             margin: 0;
             padding: 0;
+        }
+
+        #fit_mode {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #fill_mode {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #active_control {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #rotate_control {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
+
+        #disable_control {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 280px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
         }
 
         #select_image {
@@ -80,24 +150,286 @@
             opacity: 0;
             filter: alpha(opacity=0);
         }
+
+        #image_digit_button {
+            color: #DDD;
+            background: #222;
+            font-size: 21px;
+            width: 210px;
+            height: 70px;
+            border: 3px solid #444;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 70px;
+        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/Images/cropper.min.js"></script>
+    <link href="../../Scripts/Images/cropper.min.css" rel="stylesheet" />
     <script>
         $(function () {
-            $(document).ready(function () {
+
+            /*
+            window.onerror = function() {
+                location.reload();
+            }
+            */
+
+            var gdo = parent.gdo;
+
+            $("#image_digit_button").click(function (){
                 var gdo = parent.gdo;
-                gdo.net.app["Images"].initControl();
+                gdo.net.app["Images"].server.findDigits(gdo.controlId, $("#image_digit").val());
             });
 
-            $("#display_mode_select").change(function() {
-                var gdo = parent.gdo;
-                gdo.net.app["Images"].displayMode = $(this).val();
-                console.log(gdo.net.app["Images"].displayMode);
+            $("#image_digit").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    $("#image_digit_button").click();
+                }
             });
+
+            $("#fit_mode").click(function() {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                    //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
+                    gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                    setThumbNailDisplayMode(0);
+                }
+            });
+
+            $("#fill_mode").click(function() {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                    //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
+                    gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                    setThumbNailDisplayMode(1);
+                }
+            });
+
+            $("#active_control").click(function() {
+                if ($('#thumbnail_control > img').attr("src") != "") {
+                    var gdo = parent.gdo;
+                    gdo.net.app["Images"].control_status = 1;
+                    updateControlButtonBackground();
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                }
+            });
+
+            $("#disable_control").click(function () {
+                if ($('#thumbnail_control > img').attr("src") != "") {
+                    var gdo = parent.gdo;
+                    gdo.net.app["Images"].control_status = 0;
+                    updateControlButtonBackground();
+                }
+            });
+
+            $("#rotate_control").click(function () {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                    $('#thumbnail_control > img').cropper('rotate', 90);
+                    updateThumbNailImageInfo($('#thumbnail_control > img'));
+                }
+            });
+
+            $('#thumbnail_control').width($(window).width() / 1.2);
+            $('#thumbnail_control').height($(window).width() / 1.8);
+
+            $("body").keypress(function(e) {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1) {
+                    var canvasData = $('#thumbnail_control > img').cropper('getCanvasData');
+                    if(e.keyCode == 97) { // A left
+                        //alert("left");
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            left: canvasData.left - 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    } else if (e.keyCode == 115) { // S down
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            top: canvasData.top + 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    } else if (e.keyCode == 100) { // D right
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            left: canvasData.left + 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    } else if (e.keyCode == 119) { // W up
+                        $('#thumbnail_control > img').cropper('setCanvasData', {
+                            top: canvasData.top - 1
+                        });
+                        updateThumbNailImageInfo($('#thumbnail_control > img'));
+                    }
+                } 
+            });
+            
+            gdo.net.app["Images"].initControl();
+            //updateThumbNailImageInfo($('#thumbnail_control > img'));
+            updateControlButtonBackground();
         });
+
+        function updateControlButtonBackground() {
+            var gdo = parent.gdo;
+            if (gdo.net.app["Images"].control_status == 0) {
+                $("#active_control").css("background", "darkgreen");
+                $("#disable_control").css("background", "#222");
+                $("#rotate_control").css("background", "#222");
+                $("#fit_mode").css("background", "#222");
+                $("#fill_mode").css("background", "#222");
+            } else if (gdo.net.app["Images"].control_status == 1) {
+                $("#active_control").css("background", "#222");
+                $("#disable_control").css("background", "darkred");
+                $("#rotate_control").css("background", "darkgreen");
+                $("#fit_mode").css("background", "darkgreen");
+                $("#fill_mode").css("background", "darkgreen");
+            }
+            updateThumbNailImageInfo($('#thumbnail_control > img'));
+        }
+
+        function initializeCropper() {
+            var gdo = parent.gdo;
+
+            $('#thumbnail_control > img').cropper({
+                aspectRatio: 1920 / 1080,
+                autoCropArea: 0.65,
+                strict: false,
+                guides: false,
+                highlight: false,
+                dragCrop: false,
+                cropBoxMovable: false,
+                cropBoxResizable: false
+            });
+
+            $('#thumbnail_control > img').on('cropmove.cropper', function (e) {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 0) {
+                    e.preventDefault();
+                } else if (gdo.net.app["Images"].control_status == 1) {
+                    updateThumbNailImageInfo($(this));
+                }
+            });
+
+            $('#thumbnail_control > img').on('zoom.cropper', function (e) {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 0) {
+                    e.preventDefault();
+                } else if (gdo.net.app["Images"].control_status == 1) {
+                    updateThumbNailImageInfo($(this));
+                }
+            });
+
+            gdo.net.app["Images"].server.requestSectionSize(gdo.controlId);
+            gdo.net.app["Images"].server.requestThumbNailImageInfo(gdo.controlId);
+        }
+
+        function updateThumbNailImageInfo(object) {
+            var gdo = parent.gdo;
+            if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
+                var imageData = object.cropper('getImageData');
+                var cropboxData = object.cropper('getCropBoxData');
+                var canvasData = object.cropper('getCanvasData');
+                var data = {}
+                data.imageData = {};
+                data.imageData.aspectRatio = cropboxData.width / cropboxData.height; //actually this is cropbox width/height ratio
+                if (imageData.rotate != null) {
+                    data.imageData.rotate = imageData.rotate % 360;
+                } else {
+                    data.imageData.rotate = 0;
+                }
+                data.imageData.naturalWidth = imageData.naturalWidth;
+                data.imageData.naturalHeight = imageData.naturalHeight;
+                data.imageData.left = imageData.left;
+                data.imageData.top = imageData.top;
+                data.imageData.width = imageData.width;
+                data.imageData.height = imageData.height;
+                data.cropboxData = {};
+                data.cropboxData.left = cropboxData.left;
+                data.cropboxData.top = cropboxData.top;
+                data.cropboxData.width = cropboxData.width;
+                data.cropboxData.height = cropboxData.height;
+                data.canvasData = {};
+                data.canvasData.left = canvasData.left;
+                data.canvasData.top = canvasData.top;
+                data.canvasData.width = canvasData.width;
+                data.canvasData.height = canvasData.height;
+                gdo.net.app["Images"].server.setThumbNailImageInfo(gdo.controlId, JSON.stringify(data));
+                $("#canvas_data_width").html(data.canvasData.width);
+                $("#canvas_data_height").html(data.canvasData.height);
+                $("#canvas_data_left").html(data.canvasData.left);
+                $("#canvas_data_top").html(data.canvasData.top);
+                $("#cropbox_data_width").html(data.cropboxData.width);
+                $("#cropbox_data_height").html(data.cropboxData.height);
+                $("#cropbox_data_left").html(data.cropboxData.left);
+                $("#cropbox_data_top").html(data.cropboxData.top);
+                $("#image_data_aspect_ratio").html(data.imageData.aspectRatio);
+                $("#image_data_rotate").html(data.imageData.rotate);
+            }
+        }
+
+        function setThumbNailImageInfo(imageJson) {
+            if ($('#thumbnail_control > img').attr("src") != "") {
+                var gdo = parent.gdo;
+                $("#thumbnail_control > img").cropper('setAspectRatio', imageJson.imageData.aspectRatio);
+                $("#thumbnail_control > img").cropper('setCropBoxData', {
+                    left: imageJson.cropboxData.left,
+                    top: imageJson.cropboxData.top,
+                    width: imageJson.cropboxData.width,
+                    height: imageJson.cropboxData.height
+                });
+                //gdo.consoleOut('.Images', 1, 'Set thumbnail image rotate configuration');
+                $("#thumbnail_control > img").cropper('rotate', imageJson.imageData.rotate);
+                $("#thumbnail_control > img").cropper('setCanvasData', {
+                    left: imageJson.canvasData.left,
+                    top: imageJson.canvasData.top,
+                    width: imageJson.canvasData.width,
+                    height: imageJson.canvasData.height
+                });
+            }
+        }
+
+        function getSectionSize(section_width, section_height) {
+            if ($('#thumbnail_control > img').attr("src") != "") {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.Images', 1, 'Set aspectRatio configuration');
+                $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
+            }
+        }
+
+        function setThumbNailDisplayMode(display_mode) {
+            if ($('#thumbnail_control > img').attr("src") != "") {
+                var gdo = parent.gdo;
+                var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
+                var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
+                var scalewidth = cropboxData.width / canvasData.width;
+                var scaleheight = cropboxData.height / canvasData.height;
+                if (scalewidth > scaleheight && display_mode == 1 ||
+                    scalewidth < scaleheight && display_mode == 0) {
+                    $("#thumbnail_control > img").cropper('setCanvasData', {
+                        left: cropboxData.left,
+                        top: cropboxData.top,
+                        width: cropboxData.width
+                    });
+                } else {
+                    $("#thumbnail_control > img").cropper('setCanvasData', {
+                        left: cropboxData.left,
+                        top: cropboxData.top,
+                        height: cropboxData.height
+                    });
+                }
+                updateThumbNailImageInfo($('#thumbnail_control > img'));
+            }
+        }
+
     </script>
     <div>
         @{
@@ -111,8 +443,8 @@
                 {
                     imgname = Path.GetFileName(photo.FileName);
                     //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + imgname;
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\Images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\Images\" + imgname;
                     photo.Save(path);
                 }
             }
@@ -131,34 +463,95 @@
                                 </div>
                             </td>
                             <td>
-                                <select id="display_mode_select">
-                                    <option value="0">Fit</option>
-                                    <option value="1">Fill</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input id="submit_image" type="submit" value="Submit" />
+                                <input id="submit_image" type="submit" value="Submit"/>
                             </td>
                         </tr>
                     </table>
                 </fieldset>
+                <br/>
 
-                @if (path != "")
-                {
-                    <br>
-                    <div class="result">
-                        <div id="image_folder" style="visibility: hidden; display: inline;"></div>
-                        <img id="thumbnail_image" src="" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
-                    </div>
+                 <h1>Find Processed Image</h1>
+                 <fieldset>
+                    <table>
+                        <tr>
+                            <td>
+                                Digits: <input type="text" id="image_digit">
+                            </td>
+                            <td>
+                                 <div id="image_digit_button">Submit</div>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+                <br/>
 
-                }
-                else
-                {
-                    <br>
-                    <div class="result">
-                        <img id="thumbnail_image" alt="Thumbnail image" style="max-width: 500px; max-height: 200px" />
-                    </div>
-                }
+                <h1>Message</h1>
+                <fieldset>
+                    <p id="message_from_server"></p>
+                </fieldset>
+
+                <br/>
+                <h1>Thumbnail</h1>
+                <fieldset>
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="active_control">
+                                    <span>Activate Control</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div id="disable_control">
+                                    <span>Disable Control</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="fit_mode">
+                                    <span>FIT</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div id="fill_mode">
+                                    <span>FILL</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div id="rotate_control">
+                                    <span>Rotate</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+                <fieldset>
+                    <table style="width:100%">
+                        <tr>
+                            <td>Canvas Info</td>
+                            <td>width:<span id="canvas_data_width"></span></td>
+                            <td>height:<span id="canvas_data_height"></span></td>
+                            <td>left:<span id="canvas_data_left"></span></td>
+                            <td>top:<span id="canvas_data_top"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Cropbox Info</td>   
+                            <td>width:<span id="cropbox_data_width"></span></td>
+                            <td>height:<span id="cropbox_data_height"></span></td>
+                            <td>left:<span id="cropbox_data_left"></span></td>
+                            <td>top:<span id="cropbox_data_top"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Image Info</td>
+                            <td>aspectRatio:<span id="image_data_aspect_ratio"></span></td>
+                            <td>rotate:<span id="image_data_rotate"></span></td>
+                        </tr>
+                    </table>
+                </fieldset>
+                <h4>KeyPress Note: A [Left] | S [Down] | W [Up] | D [Right]</h4>
+                <div id="thumbnail_control" style="margin-top:10px">
+                    <img src="">
+                </div>
 
             </form>
 
@@ -167,15 +560,15 @@
     @if (path != "")
     {
         <script>
-        $(function () {
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                gdo.consoleOut('.IMAGETILES', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                gdo.net.app["Images"].server.changeImageName(gdo.controlId, "@imgname");
-                gdo.net.app["Images"].server.requestImageName(gdo.controlId);
-            });
+            $(function () {
+                $(document).ready(function () {
+                    var gdo = parent.gdo;
+                    gdo.consoleOut('.Images', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
+                    gdo.net.app["Images"].server.processImage(gdo.controlId, "@imgname");
+                    //gdo.net.app["Images"].server.requestImageName(gdo.controlId);
+                });
 
-        });
+            });
         </script>
     }
 </body>

@@ -28,11 +28,24 @@
             user-select: none;
         }
 
-        #controlTest {
+        p {
             color: #FFF;
             font-family: helvetica;
-            font-size: 70%;
+            font-size: 14px;
+            margin-top: 2;
+            margin-bottom: 2;
         }
+
+        #message_from_server {
+            height: 150px;
+            overflow: auto;
+        }
+
+        #graph_UI {
+            /*height: 50px;*/
+            overflow: auto;
+        }
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -47,6 +60,27 @@
         <button id="update_fileName">Render Graph</button>
     </div>
 
+    <br />
+    <br />
+
+    <h2>Graph User Interface</h2>
+    <fieldset id="graph_UI">
+        <button id="show_links">Show links</button>
+        <button id="hide_links">Hide links</button>   
+        <br />
+        <br />
+        <button id="show_labels">Show labels</button>
+        <button id="hide_labels">Hide labels</button>
+
+    </fieldset>
+
+    <br />
+    <br />
+
+    <h2>Program Log</h2>
+    <fieldset id="message_from_server"></fieldset>
+
+
     <script>
         var gdo = parent.gdo;
 
@@ -56,14 +90,32 @@
             });
         });
 
-        // TODO: include error checking for valid filename; alert if it's empty
         $("#update_fileName").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Starting graph rendering for file " + $("#fileName").val());  // can include filename here using razor
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val());
 
             gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#fileName").val());
 
             // nothing to request render on control page yet, implement this later if necessary
             // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
+        });
+
+        $("#hide_links").click(function () {
+            gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
+        });
+
+
+        $("#show_links").click(function () {
+            gdo.net.app["Graph"].server.showLinks(gdo.controlId);
+        });
+
+
+        $("#hide_labels").click(function () {
+            gdo.net.app["Graph"].server.hideLabels(gdo.controlId);
+        });
+
+
+        $("#show_labels").click(function () {
+            gdo.net.app["Graph"].server.showLabels(gdo.controlId);
         });
 
     </script>

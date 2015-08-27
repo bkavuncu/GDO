@@ -38,6 +38,13 @@
             border: 1px solid #FFF;
             padding: 8px;
             font-size:1.4em;
+
+            /* Unselectable */
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
         }
 
         table.table_control {
@@ -46,6 +53,10 @@
 
         .green {
             background-color:#006400;
+        }
+
+        .green:active {
+            background-color:#005400;
         }
         
         .red {
@@ -60,16 +71,20 @@
     <script>
         $(function () {
             $(document).ready(function () {
-                var gdo = parent.gdo;
-                var server = gdo.net.app.DD3.server;
-                var instanceId;
-                var confId;
+                var gdo = parent.gdo,
+                    server = gdo.net.app.DD3.server;
+
+                var instanceId,
+                    confId,
+                    numClients;
+
                 var test_bench = [];
 
                 var callback = function (message) {
                     confId = message.configurationId;
+                    numClients = message.numClient;
                     if (message.state == 1) {
-                        test_bench[confId]();
+                        test_bench[confId] && test_bench[confId]();
                         $("#wait").css("display", "none");
                         $("#control_" + confId).css("display", "");
                     }
@@ -88,7 +103,7 @@
                 instanceId = gdo.net.app["DD3"].initControl(callback);
 
                 test_bench[0] = function () {
-                    var rect = false, circles = false, dcircles = false;
+                    var rect = false, circles = 0, dcircles = 0, polygon = false;
 
                     // == Basic Moves ==
 
@@ -134,38 +149,56 @@
 
                     $('#createCircles').click(function () {
                         if (!circles) {
-                            server.sendOrder(instanceId, order("createCircles", [100, 1]), false);
+                            circles = 100;
+                            server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
                             $(".superposition.non_distributed .red").removeClass("red").addClass("green");
                             $(this).removeClass("green").addClass("red");
-                            circles = true;
+                            $("#spanc").text(circles)
                         }
                     });
 
                     $('#createDistributedCircles').click(function () {
                         if (!dcircles) {
-                            server.sendOrder(instanceId, order("createDistributedCircles", [10, 0.9]), true);
+                            dcircles = 10;
+                            server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
                             $(".superposition.distributed .red").removeClass("red").addClass("green");
                             $(this).removeClass("green").addClass("red");
-                            dcircles = true;
+                            $("#spandc").text(dcircles * numClients)
                         }
                     });
 
                     $('#removeCircles').click(function () {
-                        if (circles) {
+                        if (!!circles) {
                             server.sendOrder(instanceId, order("removeCircles", []), false);
                             $(".superposition.non_distributed .green").removeClass("green").addClass("red");
                             $('#createCircles').removeClass("red").addClass("green");
-                            circles = false;
+                            circles = 0;
+                            $("#spanc").text("");
                         }
                     });
 
                     $('#removeDistributedCircles').click(function () {
-                        if (dcircles) {
+                        if (!!dcircles) {
                             server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
                             $(".superposition.distributed .green").removeClass("green").addClass("red");
                             $('#createDistributedCircles').removeClass("red").addClass("green");
-                            dcircles = false;
+                            dcircles = 0;
+                            $("#spandc").text("");
                         }
+                    });
+
+                    $("#nbAddCircles").click(function (e) { e.stopPropagation(); });
+
+                    $('#addCircles').click(function () {
+                        var n = +$("#nbAddCircles").val();
+                        circles && (server.sendOrder(instanceId, order("createCircles", [n]), false), $("#spanc").text(circles += n));
+                    });
+
+                    $("#nbAddDistributedCircles").click(function (e) { e.stopPropagation(); });
+
+                    $('#addDistributedCircles').click(function () {
+                        var n = +$("#nbAddDistributedCircles").val();
+                        dcircles && (server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true), $("#spandc").text((dcircles += n) * numClients));
                     });
 
                     $('#moveCircles').click(function () {
@@ -176,6 +209,37 @@
                         dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
                     });
 
+                    // == Group Transition ==
+
+                    $('#createPolygon').click(function () {
+                        if (!polygon) {
+                            server.sendOrder(instanceId, order("createPolygon", []), false);
+                            $(".group .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            polygon = true;
+                        }
+                    });
+
+                    $('#removePolygon').click(function () {
+                        if (polygon) {
+                            server.sendOrder(instanceId, order("removePolygon", []), false);
+                            $(".group .green").removeClass("green").addClass("red");
+                            $('#createPolygon').removeClass("red").addClass("green");
+                            polygon = false;
+                        }
+                    });
+
+                    $('#movePolygon').click(function () {
+                        polygon && server.sendOrder(instanceId, order("startMovePolygon", []), false);
+                    });
+
+                };
+
+                test_bench[2] = function () {
+                    $("#changeValues").click(function () {
+                        var n = +$("#timeTr").val();
+                        server.sendOrder(instanceId, order("changeValues", [n]), true);
+                    });
                 };
 
             });
@@ -215,29 +279,35 @@
             <tr class="basic_moves">
                 <td class="red" id="allMoves">All</td>
             </tr>
-            <tr>
+            <tr class="superposition">
                 <td colspan="3">Superposition</td>
             </tr>
             <tr class="superposition non_distributed">
-                <td class="green" id="createCircles">Create Circles</td>
-                <td class="red" id="moveCircles">Move Circles</td>
-                <td class="red" id="removeCircles">Remove Circles</td>
+                <td rowspan="2" class="green" id="createCircles">Create Circles</td>
+                <td class="red" id="moveCircles">Move <span id="spanc"></span> Circles</td>
+                <td rowspan="2" class="red" id="removeCircles">Remove Circles</td>
+            </tr>
+            <tr class="superposition non_distributed">
+                <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
             </tr>
             <tr class="superposition distributed">
-                <td class="green" id="createDistributedCircles">Create distributed Circles</td>
-                <td class="red" id="moveDistributedCircles">Move distributed Circles</td>
-                <td class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
+                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
             </tr>
-            <tr>
-                <td colspan="3">Group transition (Not implemented)</td>
+            <tr class="superposition distributed">
+                <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
             </tr>
-            <tr>
-                <td rowspan="2" class="green">Create</td>
-                <td class="red">Test 1</td>
-                <td rowspan="2" class="red">Remove</td>
+            <tr class="group">
+                <td colspan="3">Group transition</td>
             </tr>
-            <tr>
-                <td class="red">Test 2</td>
+            <tr class="group">
+                <td rowspan="2" class="green" id="createPolygon">Create</td>
+                <td class="red" id="movePolygon">Test 1</td>
+                <td rowspan="2" class="red" id="removePolygon">Remove</td>
+            </tr>
+            <tr class="group">
+                <td class="red">Test 2 (not implemented)</td>
             </tr>
         </table>
     </div>
@@ -245,6 +315,17 @@
     <div id="control_1" style="display:none">
         Here will be the control panel for test 1
     </div>
+
+    <div id="control_2" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="changeValues">Change Values</td>
+            </tr>
+            <tr>
+                <td class="green">Transition Duration : <input id="timeTr" type="number" value="1000" style="width:60px" /></td>
+            </tr>
+        </table>            
+</div>
 
 </body>
 </html>
