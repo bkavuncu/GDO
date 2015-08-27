@@ -46,6 +46,19 @@
             overflow: auto;
         }
 
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        span {
+            display: block;
+            margin-left: 50px;
+            margin-bottom: 3px;
+        }
+
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -56,8 +69,8 @@
         <h1>Distributed Graph Rendering</h1>
         <br />
         <h2>Input file name: </h2>
-        <input type="text" id="fileName" />
-        <button id="update_fileName">Render Graph</button>
+        <input type="text" id="folderName" />
+        <button id="update_folderName">Render Graph</button>
     </div>
 
     <br />
@@ -71,6 +84,33 @@
         <br />
         <button id="show_labels">Show labels</button>
         <button id="hide_labels">Hide labels</button>
+        <br />
+        <br />
+        <br />
+        <label> Toggle panning </label>
+        <br />
+        <span>
+            <button id="up">Up</button>
+        </span>      
+        <button id="left">Left</button>
+        <button id="down">Down</button>
+        <button id="right">Right</button>
+        <br />
+        <br />
+        <br />
+        <label> Toggle zooming </label>
+        <br />
+        <button id="zoomIn">Zoom in</button>
+        <button id="zoomOut">Zoom out</button>
+        <br />
+        <br />
+        <br />
+        <label> Colour Scheme </label>
+        <br />
+        <button id="blue">Blue</button>
+        <button id="green">Green</button>
+        <button id="yellow">Yellow</button>
+        <button id="orange">Orange</button>
 
     </fieldset>
 
@@ -90,10 +130,10 @@
             });
         });
 
-        $("#update_fileName").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for file " + $("#fileName").val());
+        $("#update_folderName").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for folder " + $("#folderName").val());
 
-            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#fileName").val());
+            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#folderName").val());
 
             // nothing to request render on control page yet, implement this later if necessary
             // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
@@ -117,6 +157,75 @@
         $("#show_labels").click(function () {
             gdo.net.app["Graph"].server.showLabels(gdo.controlId);
         });
+
+        // trigger panning
+        $("#up").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "up");
+        });
+
+
+        $("#left").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "left");
+        });
+
+
+        $("#down").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "down");
+        });
+
+        $("#right").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
+        });
+
+
+
+        window.addEventListener('keydown', processKeyPress, true);
+
+        function processKeyPress(evt) {
+
+            var key = evt.keyCode;
+            var direction = null;
+
+            if (key == 37) {    // default code for arrow keys
+                direction = "left";
+            } else if (key == 38) {
+                direction = "up";
+            } else if (key == 39) {
+                direction = "right";
+            } else if (key == 40) {
+                direction = "down";
+            }
+   
+            if (direction != null) {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
+            }
+        }
+
+
+        $("#zoomIn").click(function () {
+            gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
+        });
+
+        $("#zoomOut").click(function () {
+            gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+        });
+
+        $("#blue").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
+        });
+
+        $("#green").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "green");
+        });
+
+        $("#yellow").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "yellow");
+        });
+
+        $("#orange").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
+        });
+
 
     </script>
 
