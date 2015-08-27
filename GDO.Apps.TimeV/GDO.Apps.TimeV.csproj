@@ -173,6 +173,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\TimeV\metricsgraphics.js" />
+    <Content Include="Scripts\TimeV\mg_line_brushing.js" />
+    <Content Include="Web\TimeV\Content\metricsgraphics.css" />
+    <Content Include="Web\TimeV\Content\mg_line_brushing.css" />
     <Content Include="Web\TimeV\Content\themes\base\accordion.css" />
     <Content Include="Web\TimeV\Content\themes\base\all.css" />
     <Content Include="Web\TimeV\Content\themes\base\autocomplete.css" />
@@ -208,12 +212,8 @@
     <Content Include="Web\TimeV\Content\themes\base\tooltip.css" />
     <Content Include="Scripts\TimeV\jquery-ui-1.11.4.js" />
     <Content Include="Scripts\TimeV\jquery-ui-1.11.4.min.js" />
-    <Content Include="Web\TimeV\Content\rickshaw.css" />
-    <Content Include="Web\TimeV\Content\rickshaw.min.css" />
     <Content Include="Scripts\TimeV\d3.js" />
     <Content Include="Scripts\TimeV\d3.min.js" />
-    <Content Include="Scripts\TimeV\rickshaw.js" />
-    <Content Include="Scripts\TimeV\rickshaw.min.js" />
     <Content Include="Scripts\TimeV\gdo.apps.TimeV.server.js" />
     <Content Include="Scripts\TimeV\knockout-3.3.0.js" />
     <Content Include="Web\TimeV\Content\bootstrap-theme.css" />

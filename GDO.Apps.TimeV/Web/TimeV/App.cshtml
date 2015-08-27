@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿<!DOCTYPE html style="height:100vh">
 
 <html>
 <head>
@@ -7,11 +7,17 @@
     <title>Visualisation</title>
     @RenderPage("Shared/_StyleSheets.cshtml")
 </head>
-<body>
-    <div id="placeholder" class="show">
-        <p>Pending Data...</p>
+<body style="height:100vh">
+    <div class="container-fluid full-height">
+        <div id="placeholder" class="row show">
+            <p>Pending Data...</p>
+        </div>
+        <div id="visualisation" class="row" style="height:100%">
+            <div id="y_axis"></div>
+            <div id="graph" style="height:100%"></div>            
+        </div>
+        <div id="legend" class="row"></div>
     </div>
-    <div id="visualisation"></div>
 
     @RenderPage("Shared/_Scripts.cshtml")
     <script src="~/Scripts/TimeV/gdo.apps.TimeV.js"></script>

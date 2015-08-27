@@ -27,7 +27,7 @@ namespace GDO.Apps.TimeV
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void RequestVisualisation(int instanceId, int nodeId, string query)
+        public void RequestVisualisation(int instanceId, int nodeId, string query, string mode, string x_accessor)
         {
             Debug.WriteLine("Visualisation request for " + nodeId);
             lock (Cave.AppLocks[instanceId])
@@ -36,9 +36,12 @@ namespace GDO.Apps.TimeV
                 {
                     string timeStamp = DateTime.Now.ToString();
                     TimeVApp app = ((TimeVApp)Cave.Apps["TimeV"].Instances[instanceId]);
-                    app.MakeQuery(nodeId, timeStamp, query);
-                    new Thread(() => ResultProcessor(instanceId, nodeId, timeStamp, app.Database())).Start();
-                    //Clients.Group("" + instanceId).visualise(nodeId.ToString(), timeStamp, "dummy");
+                    app.StopQueryThread(nodeId);
+                    Clients.All.prepareVisualisation(nodeId, timeStamp, mode, x_accessor);
+                    app.MakeQuery(nodeId, timeStamp, query);                    
+                    Thread queryThread = new Thread(() => ResultProcessor(instanceId, nodeId, timeStamp, app.Database()));
+                    app.AddQueryThread(nodeId, queryThread);
+                    queryThread.Start();                    
                 }
                 catch (Exception e)
                 {
@@ -53,6 +56,8 @@ namespace GDO.Apps.TimeV
             {
                 try
                 {
+                    TimeVApp app = ((TimeVApp)Cave.Apps["TimeV"].Instances[instanceId]);
+                    app.StopQueryThread(nodeId);
                     Clients.All.dispose(nodeId);
                 }
                 catch (Exception e)
@@ -80,37 +85,52 @@ namespace GDO.Apps.TimeV
 
         private void ResultProcessor(int instanceId, int nodeId, String timeStamp, MongoDataProvider db)
         {
-            var filter = Builders<BsonDocument>.Filter.Eq("value.NodeId", nodeId.ToString());
+            var filterBuilder = Builders<BsonDocument>.Filter;
+            var filter = filterBuilder.Eq("value.NodeId", nodeId.ToString()) & filterBuilder.Eq("value.TimeStamp", timeStamp);
             while (true)
             {
-                Debug.WriteLine("Polling result for " + nodeId);
-
-                var records = db.Fetch(new BsonDocument(), "Query_Results").Result.ToArray();
-                var results = db.Fetch(filter, "Query_Results").Result;
-                if (results.Count != 0)
+                try
                 {
-                    Debug.WriteLine("Result available for " + nodeId);
+                    Debug.WriteLine("Polling result for " + nodeId);
 
-                    foreach (BsonDocument doc in results)
+                    var records = db.Fetch(new BsonDocument(), "Query_Results").Result.ToListAsync().Result.ToArray();
+                    var results = db.Fetch(filter, "Query_Results").Result.ToListAsync().Result;
+
+                    if (results.Count != 0)
                     {
-                        Debug.WriteLine(doc.ToString());
-                        var data = doc.GetValue("value").ToBsonDocument();
-                        int id = data.GetValue("NodeId").ToInt32();
-                        String stamp = data.GetValue("TimeStamp").ToString();
-                        var result = data.GetValue("Result").ToJson();
-                        lock (Cave.AppLocks[instanceId])
-                        try
+                        Debug.WriteLine("Result available for " + nodeId);
+
+                        foreach (BsonDocument doc in results)
                         {
-                            Clients.All.visualise(nodeId.ToString(), stamp, data);
+                            Debug.WriteLine(doc.ToString());
+                            var data = doc.GetValue("value").ToBsonDocument();
+                            int id = data.GetValue("NodeId").ToInt32();
+                            String stamp = data.GetValue("TimeStamp").ToString();
+                            var rawResults = data.GetValue("Results").ToBsonDocument();
+                            lock (Cave.AppLocks[instanceId])
+                            try
+                            {
+                                    var processedResults = ((TimeVApp)Cave.Apps["TimeV"].Instances[instanceId]).ProcessResults(rawResults);
+                                    Debug.Write("Results processed");
+                                    Clients.All.visualise(nodeId.ToString(), stamp, processedResults);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e);
+                                db.DeleteOne(doc, "Query_Results");
+                                return;
+                            }
+
+                            db.DeleteOne(doc, "Query_Results");
+                            return;
                         }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                        }
-                        return;
                     }
+                    Thread.Sleep(1000);
                 }
-                Thread.Sleep(1000);
+                catch(ThreadInterruptedException)
+                {
+                    return;
+                }
             }
         }
     }

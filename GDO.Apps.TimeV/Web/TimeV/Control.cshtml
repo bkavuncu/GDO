@@ -21,19 +21,20 @@
                 <input data-bind="value: appData.newNodeId" placeholder="Node ID" class="form-control" />
             </div>
             <div class="col-xs-2">
-                <select class="form-control">
-                    <optgroup label="Aggregation Method"></optgroup>
-                    <option>Summation</option>
-                    <option>Average</option>
-                    <option>Minimum</option>
-                    <option>Custom</option>
+                <select class="form-control" 
+                        data-bind="options: appData.availableMethods,
+                       value: appData.selectedMethod,
+                       optionsCaption: 'Choose...'">
                 </select>
             </div>
-            <div class="col-xs-7">
+            <div class="col-xs-5">
                 <input data-bind="value: appData.newQuery" placeholder="Query" class="col-xs-12 form-control" />
             </div>
+            <div class="col-xs-2">
+                <input data-bind="value: appData.newXAccessor, enable: appData.selectedMethod() == 'Aggregation'" placeholder="X Axis" class="col-xs-12 form-control" />
+            </div>
             <div class="col-xs-1">
-                <a href="#" data-bind="click: handlers.addTask" class="col-xs-12 btn btn-success">
+                <a href="#" data-bind="click: handlers.addTask, enable: appData.canSubmit() == true" class="col-xs-12 btn btn-success">
                     Add
                 </a>
             </div>
@@ -50,7 +51,8 @@
         <div data-bind="foreach: appData.RuningVisualisations">
             <div class="row table-row">
                 <div data-bind="text: nodeId" class="col-xs-2 table-cell"></div>
-                <div data-bind="text: query" class="col-xs-9 table-cell"></div>
+                <div data-bind="text: query" class="col-xs-7 table-cell"></div>
+                <div data-bind="text: x_accessor" class="col-xs-2 table-cell"></div>
                 <a href="#" data-bind="click: $parent.handlers.removeTask" class="col-xs-1 btn btn-danger table-cell">Delete</a>
             </div>
         </div>

@@ -14,6 +14,9 @@ using MongoDB.Driver;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System.Diagnostics;
+using System.Collections;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.TimeV
 {
@@ -25,6 +28,7 @@ namespace GDO.Apps.TimeV
 
         private MongoDataProvider db;
         private IHubContext hubContext;
+        private Hashtable qureyThreads;
 
         private bool IsEnabled = true;
 
@@ -37,7 +41,7 @@ namespace GDO.Apps.TimeV
             else
             {
                 var t = Configuration.Json.Values<Object>().ToArray().ToString();          
-                this.db = new MongoDataProvider("mongodb://192.168.56.101:27017", "GDO_Apps_TimeV");
+                this.db = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
                 return this.db;
             }
         }
@@ -47,8 +51,8 @@ namespace GDO.Apps.TimeV
             this.Id = instanceId;
             this.Section = section;
             this.Configuration = configuration;
-            this.db = new MongoDataProvider("mongodb://192.168.56.101:27017", "GDO_Apps_TimeV");
-            //this.hubContext = GlobalHost.ConnectionManager.GetHubContext<TimeVAppHub>();
+            this.db = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
+            this.qureyThreads = new Hashtable();
         }
 
         public void MakeQuery(int nodeId, string timeStamp, string query)
@@ -89,7 +93,8 @@ namespace GDO.Apps.TimeV
             }
 
             var queries = this.Database().Fetch(filter, "Running_Queries");
-            return queries.Result;
+            var results = queries.Result.ToListAsync<BsonDocument>();
+            return results.Result;
         }
 
         public BsonDocument GetResult(int nodeId, String timeStamp)
@@ -99,28 +104,45 @@ namespace GDO.Apps.TimeV
                        & builder.Eq("InstanceId", this.Id)
                        & builder.Eq("Section", this.Section.ToString())
                        & builder.Eq("TimeStamp", timeStamp);
-            var result = this.Database().Fetch(filter, "Query_Results");
+            var result = this.Database().Fetch(filter, "Query_Results").Result.ToListAsync<BsonDocument>();
             return result.Result.FirstOrDefault();
         }        
 
-        public void ResultProcessor()
-        {            
-            while (IsEnabled)
-            {
-                var results = this.Database().Fetch(new BsonDocument(), "Query_Results").Result;
-                if (results.Count() != 0)
-                {
-                    foreach (BsonDocument doc in results)
-                    {
-                        Debug.WriteLine(doc.ToString());
-                        var data = doc.GetValue("value").ToBsonDocument();
-                        int nodeId = data.GetValue("NodeId").ToInt32();
-                        String timeStamp = data.GetValue("TimeStamp").ToString();
-                        var result = data.GetValue("Result").ToJson();
-                        Debug.WriteLine(result.ToString());
-                    }
-                }
-            }
+        public void AddQueryThread(int nodeId, Thread thread)
+        {
+            this.qureyThreads.Add(nodeId, thread);
         }
+
+        public void StopQueryThread(int nodeId)
+        {
+            Thread t = this.qureyThreads[nodeId] as Thread;
+            if (t != null)
+            {
+                t.Interrupt();
+                if (t.IsAlive)
+                {
+                    Debug.WriteLine("Forcibly abort query thread for " + nodeId);
+                    t.Abort();
+                }
+                this.qureyThreads.Remove(nodeId);
+            }            
+        }
+
+        public String ProcessResults(BsonDocument results)
+        {
+            BsonArray processed = new BsonArray();
+            long size = results.Elements.ElementAt(0).Value.AsBsonArray.Count();
+            for (long i = 0; i < size; i++)
+            {
+                BsonDocument dataPoint = new BsonDocument();
+                foreach (BsonElement element in results.Elements)
+                {
+                    dataPoint.Add(element.Name, element.Value.AsBsonArray.ElementAt((int)i));
+                }
+                processed.Add(dataPoint);
+            }
+            return processed.ToJson();
+        }
+       
     }
 }

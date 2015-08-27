@@ -24,12 +24,17 @@ namespace GDO.Apps.TimeV.Domain
             collection.InsertOneAsync(document);
         }
         
-        public async Task<List<BsonDocument>> Fetch(FilterDefinition<BsonDocument> filter, String collectionName)
+        public async Task<IAsyncCursor<BsonDocument>> Fetch(FilterDefinition<BsonDocument> filter, String collectionName)
         {
             var collection = this.Database.GetCollection<BsonDocument>(collectionName);
             var cursor = await collection.FindAsync(filter);
-            var results = await cursor.ToListAsync<BsonDocument>();
-            return results;
+            return cursor;
+        }
+
+        public void DeleteOne(FilterDefinition<BsonDocument> filter, String collectionName)
+        {
+            var collection = this.Database.GetCollection<BsonDocument>(collectionName);
+            collection.DeleteOneAsync(filter);            
         }
     }
 }
