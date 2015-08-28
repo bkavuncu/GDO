@@ -1,9 +1,7 @@
 ﻿var TimeV = TimeV || {};
 
 $(function () {
-    TimeV.app = this;
-    var hub = $.connection.timeVAppHub;
-    var app = $.connection.timeVAppHub.client;
+    TimeV.app = this;    
     var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
     TimeV.app.stamp = null;
     TimeV.app.data = null;
@@ -66,8 +64,7 @@ $(function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             if (gdo.clientId == nodeId) {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " visualising");
-                var doc = $("iframe").contents();
-                
+                var doc = $("iframe").contents();                
 
                 doc.find("#visualisation").removeClass("show");
                 doc.find("#visualisation").addClass("hidden");

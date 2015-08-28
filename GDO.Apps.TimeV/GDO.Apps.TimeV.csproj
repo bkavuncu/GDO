@@ -272,8 +272,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Web\TimeV\Shared\Error.cshtml" />
-    <Content Include="Web\TimeV\Shared\_Layout.cshtml" />
     <Content Include="Web\TimeV\App.cshtml" />
     <Content Include="Web\TimeV\Control.cshtml" />
     <Content Include="Web\TimeV\Shared\_StyleSheets.cshtml" />
