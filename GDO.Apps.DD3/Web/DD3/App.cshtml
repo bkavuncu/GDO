@@ -339,7 +339,7 @@
                         xScale.domain(xDomain);
                         yScale.domain(yDomain);
 
-                        dd3.getData('pointData', 'scatterplot4000', function (d) {
+                        dd3.getPointData('pointData', 'scatterplot4000', function (d) {
                             data = d;
                             draw();
                         }, xScale, yScale);
@@ -352,8 +352,8 @@
                     });
 
                     var draw = function () {
-                       // if (!data || !pathData)
-                      //      return;
+                        if (!data || !pathData)
+                            return;
 
                         var svg = dd3.svgCanvas;
 
@@ -431,7 +431,7 @@
                                 .y(function (d) { return yScale(d['y']); })
                                 .interpolate("monotone");
 
-                        /*
+                        //*
                         svg.append("path").datum(pathData)
                             .unwatch()
                             .attr("d", lineFunction)

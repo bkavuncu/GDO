@@ -126,6 +126,13 @@ namespace GDO.Apps.DD3
             Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
         }
 
+        public void getBarData(int instanceId, BarDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
+            var data = ((DD3App)instances[instanceId]).requestBarData(request);
+            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+        }
+
         // Orders
 
         public void broadcastControllerOrder(int Id, string order)

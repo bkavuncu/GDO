@@ -143,7 +143,7 @@ var initDD3App = function (d3) {
         return utils;
     })();
 
-    var api = (function () {
+    var api = function () {
         var api = { };
         var uid = 0;
 
@@ -181,7 +181,7 @@ var initDD3App = function (d3) {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[2](dataId, dimensions);
+                signalR_callback[2](dataId, JSON.stringify(dimensions));
             }, 500);
         };
 
@@ -193,7 +193,7 @@ var initDD3App = function (d3) {
         };
 
         //Not perfect ... need the case x = xmax
-        api.getDataWithin = function (request) {
+        api.getPointData = function (request) {
             var data = api.dataPoints[request.dataId],
                 limit = request.limit,
                 xKey = request.xKey,
@@ -203,9 +203,7 @@ var initDD3App = function (d3) {
                 .map(function (d) {
                     var obj = {};
 
-                    if (request._keys != null) {
-                        obj[xKey] = d[xKey];
-                        obj[yKey] = d[yKey];
+                    if (request._keys !== null) {
                         request._keys.forEach(function (k) {
                             obj[k] = d[k];
                         });
@@ -221,7 +219,7 @@ var initDD3App = function (d3) {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](request.dataName, request.dataId, requestedData);
+                signalR_callback[3](request.dataName, request.dataId, JSON.stringify(requestedData));
             }, 500);
         };
 
@@ -237,9 +235,7 @@ var initDD3App = function (d3) {
                 .map(function (d) {
                     var obj = {};
 
-                    if (request._keys) {
-                        obj[sortOnKey] = d[sortOnKey];
-                        obj.order = d.order;
+                    if (request._keys !== null) {
                         request._keys.forEach(function (k) {
                             obj[k] = d[k];
                         });
@@ -255,7 +251,7 @@ var initDD3App = function (d3) {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](request.dataName, request.dataId, requestedData);
+                signalR_callback[3](request.dataName, request.dataId, JSON.stringify(requestedData));
             }, 500);
         };
 
@@ -302,9 +298,7 @@ var initDD3App = function (d3) {
             var requestedData = pts.map(function (d) {
                 var obj = {};
 
-                if (request._keys) {
-                    obj[xKey] = d[xKey];
-                    obj[yKey] = d[yKey];
+                if (request._keys !== null) {
                     request._keys.forEach(function (k) {
                         obj[k] = d[k];
                     });
@@ -320,12 +314,12 @@ var initDD3App = function (d3) {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](request.dataName, request.dataId, requestedData);
+                signalR_callback[3](request.dataName, request.dataId, JSON.stringify(requestedData));
             }, 500);
         }
 
         return api;
-    })();
+    };
 
     var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
     
@@ -334,6 +328,8 @@ var initDD3App = function (d3) {
         var _dd3 = Object.create(d3);
         
         var useApi = false;
+
+        if (useApi) api = api();
 
         var state = (function () {
             var _state = 'loading';
@@ -604,6 +600,10 @@ var initDD3App = function (d3) {
 
             /*  ====  DATA  ====  */
 
+            var pr = function (s) {
+                return "dd3_" + s;
+            };
+
             init.data = {};
 
             init.data.dataType = {
@@ -614,22 +614,30 @@ var initDD3App = function (d3) {
             };
 
             init.data.getDimensions = function (dataId, callback) {
-                utils.log("Getting Data dimensions from api", 1);
-                data[dataId] = {};
-                data[dataId].callback_dimensions = callback;
+                utils.log("Data dimensions requested for " + dataId, 1);
+                data[pr(dataId)] = {};
+                data[pr(dataId)].callback_dimensions = callback;
                 if (useApi)
                     api.getDataDimensions(dataId);
                 else
                     signalR.server.getDimensions(signalR.sid, dataId);
             };
 
-            init.data.getBounds = function (dataId, scaleX, scaleY) {
+            init.data.getBounds = function (dataId, scaleX, scaleY, xKey, yKey) {
 
-                var d = data[dataId].dataDimensions;
+                var d = data[pr(dataId)].dataDimensions;
+                if (!d && (!scaleX || !scaleY)) {
+                    utils.log("You need to provide scales or to request data dimensions before requesting this type of data", 3);
+                    return;
+                } else if ((!scaleX && !d[xKey]) || (!scaleY && !d[yKey])) {
+                    utils.log("Incorrect key(s) provided", 3);
+                    return;
+                }
+
                 var p = _dd3.position('svg', 'local', 'svg', 'global');
-                var domainX = scaleX ? scaleX.domain().slice() : [d.x.min, d.x.max],
+                var domainX = scaleX ? scaleX.domain().slice() : [d[xKey].min, d[xKey].max],
                     rangeX = scaleX ? scaleX.range().slice() : [0, cave.svgWidth],
-                    domainY = scaleY ? scaleY.domain().slice() : [d.y.min, d.y.max],
+                    domainY = scaleY ? scaleY.domain().slice() : [d[yKey].min, d[yKey].max],
                     rangeY = scaleY ? scaleY.range().slice() : [cave.svgHeight, 0];
 
                 var invX = 1, invY = 1;
@@ -678,40 +686,52 @@ var initDD3App = function (d3) {
 
             // Data Request
 
-            init.data.getData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys) {
+            init.data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys) {
 
-                data[dataId] = data[dataId] || {};
-                data[dataId][dataName] = data[dataId][dataName] || {};
-                data[dataId][dataName].callback_data = callback;
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
+                data[pr(dataId)][pr(dataName)].callback_data = callback;
+                
+                xKey = xKey || 'x';
+                yKey = yKey || 'y';
+                var limits = init.data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                if (!limits) return;
 
                 var request = {
                     dataId: dataId,
                     dataName: dataName,
-                    limit: init.data.getBounds(dataId, scaleX, scaleY),
-                    xKey: xKey || 'x',
-                    yKey: yKey || 'y',
+                    limit: limits,
+                    xKey: xKey,
+                    yKey: yKey,
                     _keys: keys || null
                 };
 
                 if (useApi)
-                    api.getDataWithin(request);
+                    api.getPointData(request);
                 else
                     signalR.server.getPointData(signalR.sid, request);
+
+                utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
             init.data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation) {
 
-                data[dataId] = data[dataId] || {};
-                data[dataId][dataName] = data[dataId][dataName] || {};
-                data[dataId][dataName].callback_data = callback;
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
+                data[pr(dataId)][pr(dataName)].callback_data = callback;
+
+                xKey = xKey || 'x';
+                yKey = yKey || 'y';
+                var limits = init.data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                if (!limits) return;
 
                 var request = {
                     dataId: dataId,
                     dataName: dataName,
-                    limit: init.data.getBounds(dataId, scaleX, scaleY),
-                    xKey: xKey || 'x',
-                    yKey: yKey || 'y',
-                    _keys: keys,
+                    limit: limits,
+                    xKey: xKey,
+                    yKey: yKey,
+                    _keys: keys || null,
                     approximation: approximation || 5
                 };
 
@@ -719,6 +739,8 @@ var initDD3App = function (d3) {
                     api.getPathData(request);
                 else
                     signalR.server.getPathData(signalR.sid, request);
+
+                utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
             init.data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation) {
@@ -729,9 +751,11 @@ var initDD3App = function (d3) {
                     slsg = _dd3.position('svg', 'local', 'svg', 'global')[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
                     limit = {};
 
-                data[dataId] = data[dataId] || {};
-                data[dataId][dataName] = data[dataId][dataName] || {};
-                data[dataId][dataName].callback_data = callback;
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
+                data[pr(dataId)][pr(dataName)].callback_data = callback;
+
+                utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
 
                 if (orientation === "bottom" && browser.row === cave.rows - 1 ||
                     orientation === "top" && browser.row === 0 ||
@@ -746,42 +770,52 @@ var initDD3App = function (d3) {
                         dataName: dataName,
                         limit: limit,
                         orderingKey: orderingKey, // Key on which to order the data
-                        _keys: keys
+                        _keys: keys || null
                     };
 
                     if (useApi)
                         api.getBarData(request);
                     else
-                        signal.server.getBarData(signalR.sid, request);
+                        signalR.server.getBarData(signalR.sid, request);
                 } else {
-                    init.data.receiveData(dataName, dataId, []);
+                    init.data.receiveData(dataName, dataId, "[]");
                 }
             };
 
             init.data.getPieData = function (dataName, dataId, callback, centerX, centerY) {
-                data[dataId] = data[dataId] || {};
-                data[dataId][dataName] = data[dataId][dataName] || {};
-                data[dataId][dataName].callback_data = callback;
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
+                data[pr(dataId)][pr(dataName)].callback_data = callback;
 
                 var sgsl = _dd3.position('svg', 'global', 'svg', 'local');
                 if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)
                     if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height)
                         return api.getData(dataName, dataId);
-                return init.data.receiveData(dataName, dataId, []);
+                return init.data.receiveData(dataName, dataId, "[]");
             };
 
             // Data Reception
 
             init.data.receiveDimensions = function (dataId, dimensions) {
+                utils.log("Data dimensions received for " + dataId, 1);
                 dimensions = JSON.parse(dimensions);
-                data[dataId].dataDimensions = dimensions;
-                data[dataId].callback_dimensions(dimensions);
+                if (dimensions.error) {
+                    utils.log("Error requesting dimensions : " + dimensions.error, 3);
+                    return;
+                }
+                data[pr(dataId)].dataDimensions = dimensions;
+                data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
             };
 
             init.data.receiveData = function (dataName, dataId, dataPoints) {
+                utils.log("Data received : " + dataName + " (" + dataId +")", 1);
                 dataPoints = JSON.parse(dataPoints);
-                data[dataId][dataName].dataPoints = dataPoints;
-                data[dataId][dataName].callback_data(dataPoints);
+                if (dataPoints.error) {
+                    utils.log("Error requesting data : " + dataPoints.error, 3);
+                    return;
+                }
+                data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
+                data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
             };
 
             return init;
@@ -2193,8 +2227,6 @@ var initDD3App = function (d3) {
              *  Getter
              */
 
-            //_dd3.dataPoints = function () { return data.dataPoints.slice(); };
-
             _dd3.peers = function () { return utils.extend({}, peer); };
 
             _dd3.cave = function () { return utils.clone(cave); };
@@ -2203,13 +2235,21 @@ var initDD3App = function (d3) {
 
             _dd3.getDataDimensions = initializer.data.getDimensions;
 
-            _dd3.getData = initializer.data.getData;
+            _dd3.getPointData = initializer.data.getPointData;
 
             _dd3.getPathData = initializer.data.getPathData;
 
             _dd3.getBarData = initializer.data.getBarData;
 
             _dd3.getPieData = initializer.data.getPieData;
+
+            _dd3.retrieveDimensions = function (id) {
+                return data["dd3_" + id].dataDimensions;
+            };
+
+            _dd3.retrieveData = function (name, id) {
+                return data["dd3_" + id]["dd3_" + name].dataPoints;
+            };
 
             _dd3.state = function () { return state(); };
 
