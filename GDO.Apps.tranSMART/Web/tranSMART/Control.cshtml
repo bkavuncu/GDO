@@ -11,66 +11,13 @@
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/tranSMART/tree.jquery.js"></script>
-    <script src="../../Scripts/tranSMART/jquery.cookie.js"></script>
-    <link rel="stylesheet" href="../../Scripts/tranSMART/jqtree.css">
-
     <script>
-        function getUrlVar(variable) {
-            /// <summary>
-            /// Gets the URL variable.
-            /// </summary>
-            /// <param name="variable">The variable.</param>
-            /// <returns></returns>
-            var query = window.location.search.substring(1);
-            var vars = query.split('&');
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split('=');
-                if (pair[0] === variable) { return pair[1]; }
-            }
-        }
-
-        $(function() {
-            $(document).ready(function() {
-                var gdo = parent.gdo;
-                gdo.controlId = getUrlVar("controlId");
-                gdo.net.app["tranSMART"].initControl(gdo.controlId);
-                gdo.net.app["tranSMART"].getJsonTree(gdo.controlId);
-                $("#transmart").width($(window).width());
-                $("#transmart").height($(window).height());
+        $(function () {
+            $(document).ready(function () {
+                $("#transmart").attr("src", "http://146.169.32.102/?ctrl");
             });
         });
-
     </script>
-    <div id="top">
-        <h1>tranSMART App Control</h1>
-        <br>
-        <b>Message</b>
-        <fieldset>
-            <p id="message_from_server"></p>
-        </fieldset>
-        <br />
-        <div id="tree"></div>
-    </div>
-    <script>
-
-  /*      $(function () {
-            var gdo = parent.gdo;
-            gdo.controlId = getUrlVar("controlId");
-            gdo.net.app["tranSMART"].getJsonTree(gdo.controlId);
-        });*/
-
-        //var tree = loadJsonTree();
-        $.get(
-            );
-        $('#tree').tree({
-        data: tree,
-        autoOpen: true,
-        dragAndDrop: true
-        });
-    </script>
-    <iframe id="transmart" src="http://guitton.tv"></iframe>
-
+    <iframe id="transmart"></iframe>
 </body>
 </html>
