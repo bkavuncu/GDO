@@ -434,18 +434,18 @@
     <div>
         @{
             var path = "";
-            var imgname = "";
+            var filename = "";
             if (IsPost)
             {
 
-                WebImage photo = WebImage.GetImageFromRequest();
-                if (photo != null)
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null)
                 {
-                    imgname = Path.GetFileName(photo.FileName);
+                    filename = Path.GetFileName(file.FileName);
                     //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\Images");
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\Images\" + imgname;
-                    photo.Save(path);
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + filename;
+                    file.SaveAs(path);
                 }
             }
         }
@@ -563,8 +563,8 @@
             $(function () {
                 $(document).ready(function () {
                     var gdo = parent.gdo;
-                    gdo.consoleOut('.Images', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@imgname");
-                    gdo.net.app["Images"].server.processImage(gdo.controlId, "@imgname");
+                    gdo.consoleOut('.Images', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@filename");
+                    gdo.net.app["Images"].server.processImage(gdo.controlId, "@filename");
                     //gdo.net.app["Images"].server.requestImageName(gdo.controlId);
                 });
 
