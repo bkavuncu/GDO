@@ -7,6 +7,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace GDO.Apps.DD3
 {
@@ -23,9 +24,13 @@ namespace GDO.Apps.DD3
             this.Configuration = configuration;
             this.Context = (IHubContext<dynamic>) GlobalHost.ConnectionManager.GetHubContext<DD3AppHub>();
 
-            Newtonsoft.Json.Linq.JToken value;
+            JToken value;
+
             Configuration.Json.TryGetValue("id", out value);
             this.ConfigurationId = (int)value;
+
+            Configuration.Json.TryGetValue("data", out value);
+            this.data = value;
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();
@@ -34,13 +39,81 @@ namespace GDO.Apps.DD3
         private IHubContext<dynamic> Context;
         private string controllerId = "";
         private int ConfigurationId;
+        private JToken data;
+        private Dictionary<string, JToken> dimensions = new Dictionary<string, JToken>();
+        private Dictionary<string, object> _lockersDim = new Dictionary<string, object>();
+        private readonly object _lockerDim = new Object();
 
-        /*
-        public enum MessageType
+
+        // Code for Data Request and Management
+
+        public string getDimensions(string dataId)
         {
-          UPDATE  = -1,
-        };
-        */
+
+            lock (_lockerDim)
+            {
+                if (!this._lockersDim.ContainsKey(dataId))
+                {
+                    this._lockersDim.Add(dataId, new object());
+                }
+            }
+
+            lock (_lockersDim[dataId])
+            {
+                if (this.dimensions.ContainsKey(dataId))
+                {
+                    return this.dimensions[dataId].ToString();
+                }
+
+                var data = this.data[dataId];
+
+                if (data == null)
+                {
+                    return "{\"error\":\"incorrect_dataId\"}";
+                }
+
+                var dimensions = new JObject();
+                Func<JToken, JToken> tryParseNumber = d =>
+                {
+                    double number;
+                    return Double.TryParse(d.ToString(), out number) ? number : d;
+                };
+
+                foreach (var p in (JObject)(data[0]))
+                {
+                    dimensions[p.Key] = new JObject();
+                    dimensions[p.Key]["min"] = data.ToObject<IEnumerable<JToken>>().Min(c => tryParseNumber(c[p.Key]));
+                    dimensions[p.Key]["max"] = data.ToObject<IEnumerable<JToken>>().Max(c => tryParseNumber(c[p.Key]));
+                }
+
+                dimensions["length"] = data.Count();
+                this.dimensions.Add(dataId, dimensions);
+
+                return dimensions.ToString();
+            }
+        }
+
+        public string requestData(DataRequest request)
+        {
+            return this.data[request.dataId].ToString();
+        }
+        //*
+        public string requestPointData(PointDataRequest request)
+        {
+            return request.executeWith(this.data);
+        }
+        //*/
+        public string requestPathData(PathDataRequest request)
+        {
+            return request.executeWith(this.data);
+        }
+
+        public string requestBarData(BarDataRequest request)
+        {
+            return request.executeWith(this.data);
+        }
+
+        // Code for Connection and Control
 
         public void newClient(string cid, BrowserInfo b)
         {
@@ -109,6 +182,179 @@ namespace GDO.Apps.DD3
         }
     }
 
+    public enum DataType
+    {
+        ALL = 0,
+        POINT = 1,
+        PATH = 2,
+        BAR = 3
+    };
+
+    public abstract class DataRequest
+    {
+        public string dataId { get; set; }
+        public string dataName { get; set; }
+        public dynamic limit { get; set; }
+        public string [] _keys { get; set; }
+
+        public DataRequest(string dataId, string dataName, dynamic limit, string [] _keys)
+        {
+            this.dataId = dataId;
+            this.dataName = dataName;
+            this.limit = limit;
+            this._keys = _keys;
+        }
+
+        protected IEnumerable<JToken> createResponseObject(IEnumerable<JToken> data)
+        {
+            Func<JToken, JToken> mapFunction = d => {
+                dynamic obj = new JObject();
+
+                if (_keys != null)
+                {
+                    foreach (string k in _keys)
+                    {
+                        obj[k] = d[k];
+                    }
+                }
+                else
+                {
+                    foreach (var k in (JObject)d)
+                    {
+                        obj[k.Key] = d[k.Key];
+                    }
+                }
+
+                return obj;
+            };
+
+            return data.Select(mapFunction);
+        }
+    }
+
+    public class PointDataRequest : DataRequest
+    {
+        public string xKey { get; set; }
+        public string yKey { get; set; }
+        protected Func<JToken, bool> isIn;
+
+        public PointDataRequest(string dataId, string dataName, dynamic limit, string xKey, string yKey, string[] _keys) : base (dataId, dataName, (object)limit, _keys)
+        {
+            this.xKey = xKey;
+            this.yKey = yKey;
+            isIn = d => (d[xKey] >= limit.xmin && d[xKey] < limit.xmax && d[yKey] >= limit.ymin && d[yKey] < limit.ymax);
+        }
+
+        public string executeWith(JToken dataIn)
+        {
+            if (dataIn[dataId] == null)
+            {
+                return "{\"error\":\"incorrect_dataId\"}";
+            }
+
+            var data = dataIn[dataId].ToObject<IEnumerable<JToken>>();
+
+            IEnumerable<JToken> filteredData = data.Where(isIn);
+
+            IEnumerable<JToken> responseData = createResponseObject(filteredData);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(responseData.ToArray());
+        }
+        
+    }
+
+    public class BarDataRequest : DataRequest
+    {
+        public string orderingKey { get; set; }
+        protected Func<JToken, bool> isIn;
+        protected Func<string, Func<JToken, JToken>> tryParseNumber = s =>
+        {
+            return d =>
+            {
+                double number;
+                return Double.TryParse(d[s].ToString(), out number) ? number : d[s];
+            };
+        };
+        protected Func<JToken, int, JToken> addOrderProperty = (d, i) => {
+            d["order"] = i;
+            return d;
+        };
+
+        public BarDataRequest(string dataId, string dataName, dynamic limit, string orderingKey, string[] _keys) : base (dataId, dataName, (object)limit, _keys)
+        {
+            this.orderingKey = orderingKey;
+            isIn = d => (d["order"] >= limit.min && d["order"] < limit.max);
+        }
+
+        public string executeWith(JToken dataIn)
+        {
+            if (dataIn[dataId] == null)
+            {
+                return "{\"error\":\"incorrect_dataId\"}";
+            }
+
+            var data = dataIn[dataId].ToObject<IEnumerable<JToken>>();
+
+            IEnumerable<JToken> orderedData = data.OrderBy(tryParseNumber(orderingKey));
+
+            IEnumerable<JToken> filteredData = orderedData.Select(addOrderProperty).Where(isIn);
+
+            IEnumerable<JToken> responseData = createResponseObject(filteredData);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(responseData.ToArray());
+        }
+        
+    }
+
+    public class PathDataRequest : PointDataRequest
+    {
+        public int approximation { get; set; }
+        protected Func<int, int, int, int> clamp = (value, min, max) => (value < min ? min : value > max ? max : value);
+
+        public PathDataRequest(string dataId, string dataName, int approximation, dynamic limit, string xKey, string yKey, string[] _keys) : base (dataId, dataName, (object)limit, xKey, yKey, _keys)
+        {
+            this.approximation = approximation;
+        }
+
+        public new string executeWith(JToken dataIn)
+        {
+            if (dataIn[dataId] == null)
+            {
+                return "{\"error\":\"incorrect_dataId\"}";
+            }
+
+            var data = dataIn[dataId].ToArray();
+            List<JToken> filteredData = new List<JToken>();
+            int counter = approximation;
+
+            for (int i = 0, l = data.Count(); i < l; i++)
+            {
+                if (isIn(data[i]))
+                {
+                    var d =  clamp(approximation - counter, -approximation, 0);
+                    for (var j = Math.Max(i + d, 0); j <= i; j++)
+                    {
+                        filteredData.Add(data[j]);
+                    }
+                    counter = 0;
+                }
+                else
+                {
+                    if (counter < approximation)
+                    {
+                        filteredData.Add(data[i]);
+                    }
+                    counter++;
+                }
+            }
+
+            IEnumerable<JToken> responseData = createResponseObject(filteredData);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(responseData.ToArray());
+        }
+
+    }
+
     public class ControllerMessage
     {
         public ControllerMessage(int configurationId, int state, int numClient)
@@ -166,5 +412,3 @@ namespace GDO.Apps.DD3
         public string width { get; set; }
     }
 }
-
-//yky112358

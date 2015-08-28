@@ -96,6 +96,45 @@ namespace GDO.Apps.DD3
             }
         }
 
+        // Data
+
+        public void getDimensions(int instanceId, string dataId)
+        {
+            System.Diagnostics.Debug.WriteLine("Dimensions were requested");
+            var dimensions = ((DD3App)instances[instanceId]).getDimensions(dataId);
+            Clients.Client(Context.ConnectionId).receiveDimensions(dataId, dimensions);
+        }
+        
+        public void getData(int instanceId, DataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
+            var data = ((DD3App)instances[instanceId]).requestData(request);
+            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+        }
+    
+        public void getPointData(int instanceId, PointDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
+            var data = ((DD3App)instances[instanceId]).requestPointData(request);
+            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+        }
+
+        public void getPathData(int instanceId, PathDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
+            var data = ((DD3App)instances[instanceId]).requestPathData(request);
+            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+        }
+
+        public void getBarData(int instanceId, BarDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
+            var data = ((DD3App)instances[instanceId]).requestBarData(request);
+            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+        }
+
+        // Orders
+
         public void broadcastControllerOrder(int Id, string order)
         {
             Clients.Group("" + Id).receiveControllerOrder(order);
