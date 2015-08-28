@@ -287,5 +287,75 @@ namespace GDO.Apps.Graph
         }
 
 
+
+        public void RenderMostConnectedNodes(int instanceId, int numLinks)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Highlighting nodes with more than " + numLinks + " links.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderMostConnectedNodes(numLinks);
+                    Clients.Caller.setMessage("Nodes with more than " + numLinks + " links are now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to highlight nodes.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void RenderMostConnectedLabels(int instanceId, int numLinks)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Showing labels for nodes with more than " + numLinks + " links.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderMostConnectedLabels(numLinks);
+                    Clients.Caller.setMessage("Labels for nodes with more than " + numLinks + " links are now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to show labels.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void HideMostConnected(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Removing highlight for most connected nodes and labels.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).hideHighlight();
+                    Clients.Caller.setMessage("Highlights for most connected nodes and labels are now hidden.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to remove highlights.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
     }
 }

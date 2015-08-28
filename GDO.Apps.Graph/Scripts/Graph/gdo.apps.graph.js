@@ -11,7 +11,8 @@ $(function () {
     /* global variables */
 
     // arrays to store data
-    var links, nodes;
+    var links, nodes, mostConnectedNodes;
+    var minLinks = 3;
 
     // boolean to track if current graph is zoomed
     var globalZoomed;
@@ -29,6 +30,13 @@ $(function () {
     r = 0;  
     g = 50;
     b = 20;   // range is 0 to 255
+
+    // rgb setting for highlighted nodes
+    var highlightR, highlightG, highlightB;
+
+    highlightR = 207;
+    highlightG = 35;
+    highlightB = 49;
 
     
 // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
@@ -92,6 +100,93 @@ $(function () {
         }
     }
 
+
+    $.connection.graphAppHub.client.hideHighlight = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var highlightDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("highlight");
+
+            while (highlightDom.firstChild) {
+                highlightDom.removeChild(highlightDom.firstChild);
+            }
+        }
+    }
+
+
+    $.connection.graphAppHub.client.renderMostConnectedNodes = function (numLinks) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var highlightDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("highlight");
+
+            var radius;
+            if (!globalZoomed) {
+                radius = normalRadius + 2;
+            } else {
+                radius = zoomedRadius + 2;
+            }
+
+            mostConnectedNodes.forEach(function (node) {
+
+                if (node[2] >= numLinks) {
+
+                    highlightDom.append("circle")
+                        .attr("r", radius)
+                        .attr("cx", node[0])
+                        .attr("cy", node[1])
+                        .attr("fill", "rgb(" + highlightR + "," + highlightG + "," + highlightB + ")")
+                    ;
+                }
+            });
+
+        }
+    }
+
+
+    $.connection.graphAppHub.client.renderMostConnectedLabels = function (numLinks) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var highlightDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("highlight");
+
+ 
+            var fontSize, padding;
+
+            if (!globalZoomed) {
+                fontSize = normalFontSize;
+                padding = 3;
+            } else {
+                fontSize = zoomedFontSize;
+                padding = 4;
+            }
+
+
+            mostConnectedNodes.forEach(function (node) {
+
+                if (node[2] >= numLinks) {
+
+                    highlightDom.append("text")
+                        .attr("x", node[0] + padding)
+                        .attr("y", node[1] - padding)
+                        .text("(" + (node[0]).toFixed(0) + ", " + (node[1]).toFixed(0) + ")")
+                        .attr("font-size", fontSize)
+                        .attr("fill", "white");
+                    ;
+
+                }
+            });
+
+
+
+        }
+    }
 
 
     $.connection.graphAppHub.client.hideNodes = function () {
@@ -644,10 +739,18 @@ $(function () {
                                 // which resulted in some nodes & links being rendered extra times
                                 var currentNodes = [];
 
-                                // global variable
+                               
                                 for (var i = 2; i < data.length - 2; i += 3) {
+                                    // push onto overall nodes array
                                     nodes.push([data[i], data[i + 1], data[i + 2]]);
+
+                                    // push onto current nodes array for rendering of current partition
                                     currentNodes.push([data[i], data[i + 1], data[i + 2]]);
+
+                                    // push onto most connected nodes
+                                    if (data[i + 2] >= minLinks) {
+                                        mostConnectedNodes.push([data[i], data[i + 1], data[i + 2]]);
+                                    }
                                 }
 
                                 /* 
@@ -1114,8 +1217,13 @@ $(function () {
                     var nodesDom = svgRoot.append("g")
                         .attr("id", "nodes");
 
+                    var highlightDom = svgRoot.append("g")
+                        .attr("id", "highlight");
+
                     var labelsDom = svgRoot.append("g")
                         .attr("id", "labels");
+
+
 
 
                     renderNodes(nodesFilePath);
@@ -1144,13 +1252,19 @@ $(function () {
                                 // nodes = [[x, y, numLinks], [], ...]
                                 // global variable
                                 nodes = [];
+                                mostConnectedNodes = [];
 
                                 for (var i = 2; i < data.length - 2; i += 3) {
                                     nodes.push([data[i], data[i + 1], data[i + 2]]);
+
+                                    if (data[i + 2] >= minLinks) {
+                                        mostConnectedNodes.push([data[i], data[i + 1], data[i + 2]]);
+                                    }
                                 }
 
                                 /* 
                                 //for debugging
+
                                 console.log("partitionPos x: " + partitionPos[0]);
                                 console.log("partitionPos y: " + partitionPos[1]);
                                 console.log("nodes length: " + nodes.length);
