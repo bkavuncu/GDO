@@ -12,37 +12,37 @@
     @RenderPage("Shared/_StyleSheets.cshtml")
 </head>
 <body>
-    <div class="container-fluid well">
-        <div class="row">
-            <div class="col-xs-1">
-                <h4 class="control-label">Add task:</h4>
+    <div tabindex="-1">
+        <div class="container-fluid " style="color: #cdbfe3; background-color: #6f5499; background-image: linear-gradient(to bottom,#563d7c 0,#6f5499 100%); background-repeat: repeat-x;">
+            <div class="row">
+                <h1 class="col-xs-12" style="color: #fff">TimeV</h1>
             </div>
-            <div class="col-xs-1">
-                <input data-bind="value: appData.newNodeId" placeholder="Node ID" class="form-control" />
-            </div>
-            <div class="col-xs-2">
-                <select class="form-control" 
-                        data-bind="options: appData.availableMethods,
-                       value: appData.selectedMethod,
-                       optionsCaption: 'Choose...'">
-                </select>
-            </div>
-            <div class="col-xs-5">
-                <input data-bind="value: appData.newQuery" placeholder="Query" class="col-xs-12 form-control" />
-            </div>
-            <div class="col-xs-2">
-                <input data-bind="value: appData.newXAccessor, enable: appData.selectedMethod() == 'Aggregation'" placeholder="X Axis" class="col-xs-12 form-control" />
-            </div>
-            <div class="col-xs-1">
-                <a href="#" data-bind="click: handlers.addTask, enable: appData.canSubmit() == true" class="col-xs-12 btn btn-success">
-                    Add
-                </a>
+            <div class="row">
+                <p class="col-xs-12">The first application incoporating the power of Spark and the Imperial GDO platform to enable real-time querying and visualisation of time-series data</p>
             </div>
         </div>
     </div>
-    <div class="container-fluid well" data-bind="visible: appData.RuningVisualisations().length > 0">
+    <div class="container-fluid well" style="margin-bottom: 0;">
+
+        <div class="row">
+            <h3 class="col-xs-12">Management</h3>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newFieldModal">Build new query</button>
+                    <button type="button" class="btn btn-primary" data-bind="click: handlers.runSamples">Run Sample Visualisations</button>
+                </div>
+            </div>
+        </div>
+        <div class="row"><p></p></div>
+    </div>
+    <div class="container-fluid well" data-bind="visible: appData.RuningVisualisations().length > 0" style="display:none">
+        <div class="row">
+            <h3 class="col-xs-12">Running Visualisations</h3>
+        </div>
         <div class="row table table-striped table-hover">
-            <div class="col-xs-12 table-header ">
+            <div class="table-header">
                 <div class="col-xs-2">Node ID</div>
                 <div class="col-xs-1">Query</div>
                 <div class="col-xs-1"></div>
@@ -54,6 +54,159 @@
                 <div data-bind="text: query" class="col-xs-7 table-cell"></div>
                 <div data-bind="text: x_accessor" class="col-xs-2 table-cell"></div>
                 <a href="#" data-bind="click: $parent.handlers.removeTask" class="col-xs-1 btn btn-danger table-cell">Delete</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newFieldModal" tabindex="-1" role="dialog" aria-labelledby="newFieldModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header container-fluid form-horizontal">
+                    <div class="row">
+                        <button type="button" class="col-xs-1 close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="col-xs-3 modal-title control-label" style="text-align: start;" id="newFieldModalLabel">New Query</h4>
+                        <div>
+                            <div class="btn-group" data-toggle="buttons" data-bind="foreach: appData.availableModes">
+                                <label class="btn btn-primary" data-bind="css: { active: $root.appData.selectedMode() == $data}, click: function() { $root.appData.selectedMode($data); }">
+                                    <input type="radio" name="modes" autocomplete="off"><span data-bind="text: $data"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body container-fluid form-horizontal">
+                    <div id="AggregationQuery" data-bind="visible: appData.selectedMode() != 'Custom'">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>NodeID:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-2">
+                                <select class="form-control" data-bind="options: appData.availableNodes, value: appData.newNodeId, optionsCaption: 'Node'"></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Aggregation Interval:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <select class="form-control" data-bind="options: appData.availableTimeInterval, value: appData.selectedTimeInterval, optionsCaption: 'Aggregation Interval'"></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Select fields:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <select class="form-control" id="selField" data-bind="options: appData.availableFilelds, optionsText: 'fullName', value: appData.selectedField, optionsCaption: 'Select a field'"></select>
+                            </div>
+                            <div class="col-xs-4">
+                                <select class="form-control" id="selMethod" data-bind="options: appData.availableMethods,  optionsText: 'name', value: appData.selectedMethod, optionsCaption: 'Select a method'"></select>
+                            </div>
+                            <div class="col-xs-2">
+                                <button type="button" class="btn btn-primary" data-bind="click: handlers.addField">Add</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Selected fields:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12" data-bind="foreach: appData.selectedFields">
+                                <div class="label label-success">
+                                    <span data-bind="text: $data.method + '(' + $data.name + ')'"></span>
+                                    <a data-bind="click: $root.handlers.removeField">
+                                        <i class="glyphicon glyphicon-remove" style="color:white"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div><p></p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Selected range:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="input-group">
+                                    <div class="input-group-addon">From</div>
+                                    <input type='text' class="form-control" id='datetimepickerFrom' />
+                                </div>
+                            </div>
+                            <div class="col-xs-5">
+                                <div class="input-group">
+                                    <div class="input-group-addon">To</div>
+                                    <input type='text' class="form-control" id='datetimepickerTo' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Custom condition clause:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <textarea id="customCondition" rows="3" class="form-control" placeholder="You must be really careful typing here" data-bind="value: appData.customCondition"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="CustomQuery" data-bind="visible: appData.selectedMode() == 'Custom'">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>NodeID:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-2">
+                                <select class="form-control" data-bind="options: appData.availableNodes, value: appData.newNodeId, optionsCaption: 'Node'"></select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Avaialbe fields:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12" data-bind="foreach: appData.availableFilelds">
+                                <label class="label label-primary" data-bind="text: fullName"> </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>Query:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <textarea id="customQuery" rows="5" class="form-control" placeholder="You must be really careful typing here" data-bind="value: appData.customQuery"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <label>X_Accessor:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="text" id="customXAccessor" class="form-control" placeholder="X" data-bind="value: appData.customXAccessor">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: handlers.reload">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: handlers.addTask, visible: handlers.canSubmit">Submit</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
