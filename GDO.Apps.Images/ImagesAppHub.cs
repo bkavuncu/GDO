@@ -60,6 +60,7 @@ namespace GDO.Apps.Images
                     Directory.CreateDirectory(basePath + ia.ImageNameDigit);
                     Image img1 = Image.FromFile(path1);
                     img1.Save(path2, ImageFormat.Png);
+                    img1.Dispose();
                     //File.Move(path1, path2);
 
                     Clients.Caller.setMessage("Loading the image and creating thumbnail...");
@@ -72,12 +73,14 @@ namespace GDO.Apps.Images
                     } else {
                         image = originImage;
                     }
+                    
                     //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
                     //File.Delete(path1);
 
                     //create thumnail
                     Image thumb = image.GetThumbnailImage(150 * image.Width / image.Height, 150, () => false, IntPtr.Zero);
                     thumb.Save(basePath + ia.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
+                    thumb.Dispose();
 
                     ia.ImageNaturalWidth = image.Width;
                     ia.ImageNaturalHeight = image.Height;
@@ -149,6 +152,8 @@ namespace GDO.Apps.Images
                             cur ++;
                         }
                     }
+                    originImage.Dispose();
+                    image.Dispose();
                     ia.ThumbNailImage = null;
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt")) 
                     {
