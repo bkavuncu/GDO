@@ -81,7 +81,7 @@ namespace GDO.Apps.Temperatures {
                         Clients.Caller.receiveDataUpdate(urls[clientId] + suffix, "temperature");
                     }
                     else {
-                        Clients.Caller.receiveDataUpdate("nothing for you " + clientId,"temperature");
+                      //  Clients.Caller.receiveDataUpdate("nothing for you " + clientId,"temperature");
                     }
                     
                 }
