@@ -1,10 +1,13 @@
-﻿@{
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
     Layout = null;
 }
 
 <!DOCTYPE html>
 
-<html>
+<html style="overflow: hidden">
 <head>
     <meta name="viewport" content="width=device-width" />
     <title></title>
@@ -15,6 +18,14 @@
             font-family: helvetica;
             font-size: 70%;
         }
+        #CurrentData {
+            background: #111;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 144pt;
+            text-align: center;
+            vertical-align: middle;
+        }
 
         .unselectable {
             -moz-user-select: -moz-none;
@@ -24,7 +35,7 @@
             user-select: none;
         }
 
-        #graphArea {
+        #image_tile {
             position: fixed;
             top: 0;
             left: 0;
@@ -39,14 +50,17 @@
     <script src="../../Scripts/jquery-1.11.3.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
-        $(function () {
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                gdo.net.app["Graph"].initClient();
-            });
+        $(function () {          
+            var gdo = parent.gdo;
+            gdo.consoleOut('.Temperatures', 1, 'Init Client');
+            gdo.net.app["Temperatures"].initClient();
+            $("#tempDisplay").width($(window).width());
+            $("#tempDisplay").height($(window).height());
         });
     </script>
-    <div id= "graphArea">
-    </div>
+    <form id="form1" runat="server"></form>
+<div>
+    <p id="CurrentData"> </p>  
+</div>
 </body>
 </html>

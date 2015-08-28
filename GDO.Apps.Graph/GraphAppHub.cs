@@ -32,28 +32,33 @@ namespace GDO.Apps.Graph
         }
 
         //TODO: Check if try, catch are implemented correctly
-        public void InitiateProcessing(int instanceId, string fileName)
+        public void InitiateProcessing(int instanceId, string inputFolder)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
-            
+
             lock (Cave.AppLocks[instanceId])
             {
-                try 
+                try
                 {
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
-                    Clients.Caller.setMessage("Initiate processing of raw graph data: " + fileName);
-                    string folderNameDigit = ga.ProcessGraph(fileName);
+                    Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
+                    string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
 
                     Clients.Caller.setMessage("Processing of raw graph data has completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).renderGraph(folderNameDigit);
+                    Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("Graph is now being rendered.");
+
+                    // After rendering, start processing graph for zooming
+                    Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
+                    ga.ProcessGraph(inputFolder, true, folderNameDigit);
+                    Clients.Caller.setMessage("Graph is now ready for zooming.");
                 }
                 catch (WebException e)
-                { 
-                    Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
+                {
+                    Clients.Caller.setMessage("Error: Files cannot be loaded. Please check if folder name is valid.");
 
                     //Detailed error message for user is not necessary for this
                     //Clients.Caller.setMessage(e.ToString());
@@ -69,15 +74,37 @@ namespace GDO.Apps.Graph
         }
 
 
+        // TODO: update method to adapt to zooming
+        public void RequestRendering(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
+                    if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
+                    {
+                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+
         public void HideLinks(int instanceId)
         {
-           
+
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Hiding links.");
-                   
+
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).hideLinks();
                     Clients.Caller.setMessage("Links are now hidden.");
@@ -158,81 +185,107 @@ namespace GDO.Apps.Graph
         }
 
 
-        public void RequestRendering(int instanceId)
+
+        public void TriggerPanning(int instanceId, string direction)
         {
+
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    // with this if condition, node only gets painted when there is a graph; otherwise node will appear empty if it's loaded without any graph uploaded
-                    if (((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit != null)
-                    {
-                        Clients.Caller.renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
-                    }
+                    Clients.Caller.setMessage("Triggering panning action.");
 
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).pan(direction);
+                    Clients.Caller.setMessage("Triggered panning action.");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Clients.Caller.setMessage("Error: Failed to trigger panning action.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
                 }
             }
         }
 
-        /*
 
-        // this function is used to initialise ImagesApp object and imageNameDigit (obtained thru processImage function)
-        public void ChangeImageName(int instanceId, string imageName)
+        public void TriggerZoomIn(int instanceId)
         {
+
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
-                    string imageNameDigit = ia.ProcessImage(imageName, ia.DisplayMode);
-                    SendImageNames(instanceId, imageName, imageNameDigit);
+                    Clients.Caller.setMessage("Triggering rendering of zoomed-in graph.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
+                    Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
+
+
+                    Clients.Group("" + instanceId).renderBuffer(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
+                    Clients.Caller.setMessage("Buffer for zoomed-in graph is now being rendered.");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Clients.Caller.setMessage("Error: Failed to render zoomed-in graph.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
                 }
             }
         }
 
-        // called by ChangeImageName above to let all clients receive image name (when new photo is uploaded after nodes have been initiated probably)
-        public void SendImageNames(int instanceId, string imageName, string imageNameDigit)
+
+        public void TriggerZoomOut(int instanceId)
         {
-            try
-            {   // Clients.Group to let all clients within the group receive image name
-                Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-        
-        // called by clients (App or Control) to get image name from server, which will in turn call Client's receiveImageName function that will render the image
-        public void RequestImageName(int instanceId)
-        {
+
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    // with this if condition, node only gets painted when there is an image; otherwise node will appear empty if it's loaded without any image uploaded
-                    if (((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
-                    {
-                        Clients.Caller.receiveImageName(((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageName,
-                                                        ((ImagesApp)Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
-                    }
-                    
+                    Clients.Caller.setMessage("Triggering rendering of zoomed-out graph.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
+                    Clients.Caller.setMessage("Zoomed-out graph is now being rendered.");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Clients.Caller.setMessage("Error: Failed to render zoomed-out graph.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
                 }
             }
         }
-        */
+
+
+        public void TriggerRGB(int instanceId, string colourScheme)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Setting colour scheme to: " + colourScheme);
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).setRGB(colourScheme);
+                    Clients.Caller.setMessage("Colour scheme has been changed.");
+
+                    // hide nodes and render new nodes
+                    Clients.Group("" + instanceId).hideNodes();
+                    Clients.Group("" + instanceId).renderNodes();
+                    Clients.Caller.setMessage("Nodes are now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to render new colour scheme.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
 
     }
 }
