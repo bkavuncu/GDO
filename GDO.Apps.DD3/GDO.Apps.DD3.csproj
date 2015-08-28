@@ -107,6 +107,7 @@
     <Content Include="Configurations\DD3\Scatterplot.json" />
     <Content Include="Configurations\DD3\Graphs.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\d3.v3.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
