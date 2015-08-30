@@ -58,11 +58,14 @@
             margin-bottom: 3px;
         }
 
+        #mostConnected {
+            display: inline;
+        }
 
     </style>
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../../Scripts/jquery-1.11.3.min.js"></script>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
     <div>
@@ -111,6 +114,19 @@
         <button id="green">Green</button>
         <button id="yellow">Yellow</button>
         <button id="orange">Orange</button>
+        <br />
+        <br />
+        <br />
+        <label> Most connected nodes </label>
+        <br />
+        <p id="mostConnected">Input no. of links: </p>
+        <input type="text" id="numLinks" />
+        <br />
+        <br />
+        <button id="show_mostConnectedNodes">Highlight nodes</button>
+        <button id="show_mostConnectedLabels">Show labels</button>
+        <button id="hide_mostConnected">Hide all</button>
+
 
     </fieldset>
 
@@ -224,6 +240,23 @@
 
         $("#orange").click(function () {
             gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
+        });
+
+
+        $("#show_mostConnectedNodes").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering most connected nodes.");
+          
+            gdo.net.app["Graph"].server.renderMostConnectedNodes(gdo.controlId, parseInt($("#numLinks").val()));
+        });
+
+        $("#show_mostConnectedLabels").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of most connected nodes.");
+
+            gdo.net.app["Graph"].server.renderMostConnectedLabels(gdo.controlId, parseInt($("#numLinks").val()));
+        });
+
+        $("#hide_mostConnected").click(function () {
+            gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
         });
 
 
