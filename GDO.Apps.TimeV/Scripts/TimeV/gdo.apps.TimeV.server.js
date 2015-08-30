@@ -8,7 +8,7 @@ var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
 //   }, 500); // Restart connection after 0.5 seconds.
 //});
 
-TimeV.ControlViewModel = function () {
+TimeV.ControlViewModel = function() {
     function Task(data) {
         this.nodeId = ko.observable(data.nodeId);
         this.query = ko.observable(data.query);
@@ -88,7 +88,7 @@ TimeV.ControlViewModel = function () {
     } else {
         var nodes = [];
         var nodeMap = gdo.net.section[gdo.clientId].nodeMap;
-        
+
         for (var i = 0; i < nodeMap.length; i++) {
             var col = nodeMap[i];
             for (var j = 0; j < col.length; j++) {
@@ -96,7 +96,7 @@ TimeV.ControlViewModel = function () {
             }
         }
 
-        nodes.sort(function (a, b) { return a - b; });
+        nodes.sort(function(a, b) { return a - b; });
         self.appData.availableNodes(nodes);
     }
 
@@ -105,7 +105,7 @@ TimeV.ControlViewModel = function () {
     self.appData.selectedMethod(self.appData.availableMethods()[0]);
     self.appData.sampleQueries = [
         {
-            query: "SELECT SUBSTRING(time_stamp, 1, 13) AS Hour, AVG(humidity) AS avg_humidity_per_hour FROM log GROUP BY SUBSTRING(time_stamp, 1, 13)",
+            query: "SELECT SUBSTRING(time_stamp, 1, 13) AS Hour, AVG(humidity) AS avg_humidity FROM log GROUP BY SUBSTRING(time_stamp, 1, 13)",
             x_accessor: "Hour",
             mode: "Aggregation"
         },
@@ -122,7 +122,7 @@ TimeV.ControlViewModel = function () {
     ];
 
     self.handlers = {
-        addTask: function () {           
+        addTask: function() {
             var nodeId = self.appData.newNodeId(),
                 query = undefined,
                 x_accessor = undefined;
@@ -132,10 +132,10 @@ TimeV.ControlViewModel = function () {
             } else if (self.appData.selectedMode() == "Statistics") {
                 x_accessor = self.appData.customXAccessor();
             } else if (self.appData.selectedMode() == "Custom") {
-                x_accessor = self.appData.customXAccessor();                
+                x_accessor = self.appData.customXAccessor();
             }
 
-            query = self.handlers.buildQuery();            
+            query = self.handlers.buildQuery();
 
             gdo.net.app["TimeV"].server.requestVisualisation(gdo.net.node[nodeId].appInstanceId, nodeId, query, self.appData.selectedMode(), x_accessor);
 
@@ -146,27 +146,27 @@ TimeV.ControlViewModel = function () {
             self.handlers.reload();
         },
 
-        removeTask: function (task) {
+        removeTask: function(task) {
             gdo.net.app["TimeV"].server.disposeVisualisation(gdo.net.node[task.nodeId()].appInstanceId, task.nodeId());
-            self.appData.RuningVisualisations.remove(task)
+            self.appData.RuningVisualisations.remove(task);
         },
 
-        addField: function () {
+        addField: function() {
             var field = new self.appData.selectedField();
             field.method = self.appData.selectedMethod().signature;
             self.appData.selectedFields.push(field);
         },
 
-        removeField: function (field) {
+        removeField: function(field) {
             self.appData.selectedFields.remove(field);
         },
 
-        buildQuery: function () {
+        buildQuery: function() {
             var query = "";
             if (self.appData.selectedMode() != "Custom") {
                 query = "SELECT ";
 
-                $.each(self.appData.selectedFields(), function (idx, field) {
+                $.each(self.appData.selectedFields(), function(idx, field) {
                     if (!field.method) {
                         query += field.name + ", ";
                     } else {
@@ -185,10 +185,10 @@ TimeV.ControlViewModel = function () {
                 var fromDate = self.appData.datetimepickerFrom.date();
                 var toDate = self.appData.datetimepickerTo.date();
                 var customCondition = $.trim(self.appData.customCondition());
-                
+
                 if (!!fromDate || !!toDate || customCondition != "") {
-                    query += " WHERE "
-                }                             
+                    query += " WHERE ";
+                }
 
                 if (!!fromDate) {
                     fromDate = self.handlers.dateToString(fromDate);
@@ -216,13 +216,13 @@ TimeV.ControlViewModel = function () {
                     query += " GROUP BY " + actualInterval;
                 }
             } else if (self.appData.selectedMode() == "Custom") {
-                query = $.trim(self.appData.customQuery());                
+                query = $.trim(self.appData.customQuery());
             }
 
             return query;
         },
 
-        dateToString: function (date) {
+        dateToString: function(date) {
             var str = date.format("YYYY-MM-DD HH:mm:ss");
             var interval = self.appData.selectedTimeInterval();
             if (interval == "Year") {
@@ -239,10 +239,10 @@ TimeV.ControlViewModel = function () {
                 str = str.substring(0, 19);
             }
 
-            return "'" + str + "'"
+            return "'" + str + "'";
         },
 
-        reload: function () {
+        reload: function() {
             self.appData.newNodeId(self.appData.availableNodes()[0]);
             self.appData.selectedField(self.appData.availableFilelds()[0]);
             self.appData.selectedFields([]);
@@ -257,7 +257,7 @@ TimeV.ControlViewModel = function () {
             self.appData.datetimepickerTo.date(null);
         },
 
-        canSubmit: ko.computed(function () {
+        canSubmit: ko.computed(function() {
             if (self.appData.selectedMode() != "Custom") {
                 return (self.appData.selectedFields().length != 0);
             } else if (self.appData.selectedMode() == "Custom") {
@@ -267,8 +267,8 @@ TimeV.ControlViewModel = function () {
             }
         }),
 
-        runSamples: function () {
-            $.each(self.appData.RuningVisualisations(), function (idx, task) {
+        runSamples: function() {
+            $.each(self.appData.RuningVisualisations(), function(idx, task) {
                 self.handlers.removeTask(task);
             });
 
@@ -286,7 +286,7 @@ TimeV.ControlViewModel = function () {
             }
         },
 
-         
+
     };
 
     self.intervalMap = {
@@ -297,15 +297,15 @@ TimeV.ControlViewModel = function () {
         "Hour": "SUBSTRING(time_stamp, 1, 13)",
         "Minute": "SUBSTRING(time_stamp, 1, 16)",
         "Second": "SUBSTRING(time_stamp, 1, 19)"
-    }
+    };
 };
 
-$(function () {
+$(function() {
     TimeV.model = new TimeV.ControlViewModel();
     $("#datetimepickerFrom").datetimepicker();
     $("#datetimepickerTo").datetimepicker();
     TimeV.model.appData.datetimepickerFrom = $("#datetimepickerFrom").data("DateTimePicker");
     TimeV.model.appData.datetimepickerTo = $("#datetimepickerTo").data("DateTimePicker");
 
-    ko.applyBindings(TimeV.model);    
+    ko.applyBindings(TimeV.model);
 });

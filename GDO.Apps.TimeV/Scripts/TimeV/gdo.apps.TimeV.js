@@ -1,14 +1,14 @@
 ﻿var TimeV = TimeV || {};
 
-$(function () {
-    TimeV.app = this;    
+$(function() {
+    TimeV.app = this;
     var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
     TimeV.app.stamp = null;
     TimeV.app.data = null;
     TimeV.app.x_accessor = null;
     TimeV.app.query_mode = null;
 
-    $.connection.timeVAppHub.client.prepareVisualisation = function (nodeId, timeStamp, mode, accessor) {
+    $.connection.timeVAppHub.client.prepareVisualisation = function(nodeId, timeStamp, mode, accessor) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.clientId == nodeId) {
             TimeV.app.stamp = timeStamp;
             TimeV.app.x_accessor = accessor;
@@ -19,9 +19,9 @@ $(function () {
             doc.find("#processing").removeClass("hidden");
             doc.find("#processing").addClass("show");
         }
-    }
+    };
 
-    $.connection.timeVAppHub.client.visualise = function (nodeId, timeStamp, data, title) {
+    $.connection.timeVAppHub.client.visualise = function(nodeId, timeStamp, data, title) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " function visualise: " + nodeId);
             if (gdo.clientId == nodeId) {
@@ -30,15 +30,15 @@ $(function () {
                 TimeV.app.data = JSON.parse(data);
                 if (TimeV.app.query_mode == "Aggregation") {
                     if (TimeV.app.data.length < 2) {
-                        TimeV.makeTable("#graph", data, TimeV.makeTitle(TimeV.app.data))
+                        TimeV.makeTable("#graph", data, TimeV.makeTitle(TimeV.app.data));
                     } else {
                         TimeV.makeGraph("#graph", "line", data, TimeV.makeTitle(TimeV.app.data), "#lengnd");
                     }
                 } else if (TimeV.app.query_mode == "Statistics") {
-                    TimeV.makeTable("#graph", data, "results")
+                    TimeV.makeTable("#graph", data, "results");
                 } else if (TimeV.app.query_mode == "Custom") {
                     if (TimeV.app.data.length < 2) {
-                        TimeV.makeTable("#graph", data, TimeV.makeTitle(TimeV.app.data))
+                        TimeV.makeTable("#graph", data, TimeV.makeTitle(TimeV.app.data));
                     } else {
                         TimeV.makeGraph("#graph", "line", data, TimeV.makeTitle(TimeV.app.data), "#lengnd");
                     }
@@ -53,18 +53,18 @@ $(function () {
                 doc.find("#processing").addClass("hidden");
                 doc.find("#visualisation").removeClass("hidden");
                 doc.find("#visualisation").addClass("show");
-                doc.find("#dataholder").html("<p>" + JSON.stringify(JSON.parse(data)) + "</p>")
+                doc.find("#dataholder").html("<p>" + JSON.stringify(JSON.parse(data)) + "</p>");
             } else {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " ignoring request for " + nodeId);
             }
         }
-    }
+    };
 
-    $.connection.timeVAppHub.client.dispose = function (nodeId) {
+    $.connection.timeVAppHub.client.dispose = function(nodeId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             if (gdo.clientId == nodeId) {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " visualising");
-                var doc = $("iframe").contents();                
+                var doc = $("iframe").contents();
 
                 doc.find("#visualisation").removeClass("show");
                 doc.find("#visualisation").addClass("hidden");
@@ -75,33 +75,32 @@ $(function () {
                 doc.find("#graph").html("");
                 doc.find("#y_axis").html("");
                 doc.find("#legend").html("");
-                doc.find("#dataholder").html("")
+                doc.find("#dataholder").html("");
             } else {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " ignoring request for " + nodeId);
             }
         }
-    }
+    };
 
-    $.connection.timeVAppHub.client.reload = function (nodeId) {
+    $.connection.timeVAppHub.client.reload = function(nodeId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.clientId == nodeId) {
             location.reload();
         }
-    }
-
-    TimeV.makeTable = function (target, data, title) {
+    };
+    TimeV.makeTable = function(target, data, title) {
         var frameWindow = document.getElementsByName("app_frame_content")[0].contentWindow;
         var MG = typeof (MG) == "undefined" ? frameWindow.MG : MG;
         // using the frame's constructor for MG's instanceof check
         data = frameWindow.JSON.parse(data);
 
         var table = MG.data_table({
-            title: title,
-            description: "Query Results",
-            data: data,
-            show_tooltips: true,
-            full_width: true
-        })
-        .target(target);
+                title: title,
+                description: "Query Results",
+                data: data,
+                show_tooltips: true,
+                full_width: true
+            })
+            .target(target);
         var keys = Object.keys(data[0]);
         for (var i = 0; i < keys.length; i++) {
             var col = new frameWindow.Object();
@@ -112,9 +111,9 @@ $(function () {
         }
 
         table.display();
-    }
+    };
 
-    TimeV.makeGraph = function (target, style, series, title, legend, width, height) {
+    TimeV.makeGraph = function(target, style, series, title, legend, width, height) {
         var frameWindow = document.getElementsByName("app_frame_content")[0].contentWindow;
         var MG = typeof (MG) == "undefined" ? frameWindow.MG : MG;
         // using the frame's constructor for MG's instanceof check
@@ -163,13 +162,13 @@ $(function () {
             interpolate: "monotone",
             full_width: true,
             full_height: true,
-            brushing: (keys.length <2),
+            brushing: (keys.length < 2),
             brushing_history: (keys.length < 2),
             missing_is_hidden: (keys.length < 2)
         });
-    }
+    };
 
-    TimeV.makeTitle = function (data) {
+    TimeV.makeTitle = function(data) {
         var keys = Object.keys(data[0]);
         var index = keys.indexOf(TimeV.app.x_accessor);
         if (index >= 0) {
@@ -181,7 +180,7 @@ $(function () {
         if (TimeV.app.x_accessor != "All" && TimeV.app.x_accessor != "") {
             title += " per " + TimeV.app.x_accessor;
         }
-        
-        return title;        
-    }
+
+        return title;
+    };
 });
