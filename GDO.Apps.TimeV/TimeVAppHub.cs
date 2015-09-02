@@ -127,7 +127,7 @@ namespace GDO.Apps.TimeV
                             return;
                         }
                     }
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1000);// TODO BUG Do not send the thread to sleep - you will kill server performance
                 }
                 catch (ThreadInterruptedException)
                 {
