@@ -19,6 +19,9 @@ namespace GDO.Apps.Graph
     [Export(typeof(IAppHub))]
     public class GraphAppHub : Hub, IAppHub
     {
+        public string ControllerId { get; set; }
+        public static GraphAppHub self;
+
         public string Name { get; set; } = "Graph";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new GraphApp().GetType();
@@ -40,6 +43,9 @@ namespace GDO.Apps.Graph
             {
                 try
                 {
+                    self = this;
+                    this.ControllerId = Context.ConnectionId;
+
                     // create GraphApp project and call its function to process graph
                     GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
                     Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
@@ -353,6 +359,22 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }
+            }
+        }
+
+
+        public void LogTime(string message)
+        {
+
+            try
+            {
+                Clients.Client(ControllerId).logTime(message);
+            }
+            catch (Exception e)
+            {
+                Clients.Client(ControllerId).logTime("Error: Failed to log time.");
+                Clients.Client(ControllerId).logTime(e.ToString());
+                Debug.WriteLine(e);
             }
         }
 
