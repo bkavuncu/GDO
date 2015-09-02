@@ -12,6 +12,16 @@
     @RenderPage("Shared/_StyleSheets.cshtml")
 </head>
 <body>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+    $(function() {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.TimeV', 1, 'Init Control');
+        gdo.net.app["TimeV"].initControl();
+    });
+
+    </script>
 <div tabindex="-1">
     <div class="container-fluid " style="background-color: #6f5499; background-image: linear-gradient(to bottom, #563d7c 0, #6f5499 100%); background-repeat: repeat-x; color: #cdbfe3;">
         <div class="row">
