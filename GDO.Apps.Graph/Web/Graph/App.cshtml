@@ -35,16 +35,22 @@
         }
     </style>
 </head>
-<body unselectable="on" class="unselectable">
+<body unselectable="on" class="unselectable" onload="getTime()">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
+                console.log("Start time: " + window.performance.now());
                 gdo.net.app["Graph"].initClient();
             });
         });
+
+        function getTime() {
+            console.log("Intermediate time: " + window.performance.now());
+        }
+
     </script>
     <div id= "graphArea">
     </div>
