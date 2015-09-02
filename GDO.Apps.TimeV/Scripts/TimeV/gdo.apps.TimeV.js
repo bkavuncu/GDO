@@ -40,7 +40,7 @@ $(function() {
                     if (TimeV.app.data.length < 2) {
                         TimeV.makeTable("#graph", data, TimeV.makeTitle(TimeV.app.data));
                     } else {
-                        TimeV.makeGraph("#graph", "line", data, TimeV.makeTitle(TimeV.app.data), "#lengnd");
+                        TimeV.makeGraph("#graph", "custom", data, TimeV.makeTitle(TimeV.app.data), "#lengnd");
                     }
                 } else {
                     alert("Unkown query mode");
@@ -146,7 +146,9 @@ $(function() {
             }
         }
 
-        series = MG.convert.date(series, TimeV.app.x_accessor, time_format);
+        if (style != "custom") {
+            series = MG.convert.date(series, TimeV.app.x_accessor, time_format);
+        }
 
         MG.data_graphic({
             title: title,
