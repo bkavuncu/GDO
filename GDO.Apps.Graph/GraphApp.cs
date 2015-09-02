@@ -195,7 +195,8 @@ namespace GDO.Apps.Graph
                 }
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds);
+                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
 
                 sw.Restart();
 
@@ -255,8 +256,8 @@ namespace GDO.Apps.Graph
                 }
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
-
+                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
             }
             else
             {
@@ -308,7 +309,8 @@ namespace GDO.Apps.Graph
                 }
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds);
+                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
 
                 sw.Restart();
 
@@ -352,8 +354,8 @@ namespace GDO.Apps.Graph
 
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds);
-
+                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
             }
 
 
@@ -418,8 +420,8 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds);
-
+            System.Diagnostics.Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
 
 
             // Distribute data across browser
@@ -453,7 +455,8 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
 
             // debugging code: check no. of nodes distributed to each partition
             for (int i = 0; i < totalRows; ++i)
@@ -628,7 +631,9 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
+            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
+
 
             // debugging code: check no. of links distributed to each partition
             for (int i = 0; i < totalRows; ++i)
@@ -716,8 +721,8 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds);
-
+            System.Diagnostics.Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
             /*
             // for debugging: check if writing into binary file is correct
             using (BinaryReader reader = new BinaryReader(File.Open(nodesPath + "0_0.bin", FileMode.Open)))
@@ -775,8 +780,8 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds);
-
+            System.Diagnostics.Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
             /*
             // for debugging: check if writing into binary file is correct
             using (BinaryReader reader = new BinaryReader(File.Open(linksPath + "0_0.bin", FileMode.Open)))
