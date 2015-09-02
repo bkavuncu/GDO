@@ -2,7 +2,7 @@
 
 $(function() {
     TimeV.app = this;
-    var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
+//    var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo; called in cshtml
     TimeV.app.stamp = null;
     TimeV.app.data = null;
     TimeV.app.x_accessor = null;

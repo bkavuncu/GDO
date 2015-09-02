@@ -1,6 +1,6 @@
 ﻿var TimeV = TimeV || {};
 var hub = $.connection.timeVAppHub;
-var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
+// var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo; called in cshtml
 
 //$.connection.timeVAppHub.connection.disconnected(function() {
 //   setTimeout(function() {
