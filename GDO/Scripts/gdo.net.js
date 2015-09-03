@@ -366,17 +366,17 @@ gdo.net.updatePeerConnections = function (p2pmode) {
             }
         } else if (p2pmode == gdo.net.P2P_MODE.SECTION) {
             if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].sectionId == gdo.net.node[gdo.clientId].sectionId) {
-                if (gdo.clientId > gdo.net.node[index].id) {
+                //if (gdo.clientId > gdo.net.node[index].id) {
                     gdo.net.connectToPeer(gdo.net.node[index].id);
-                }  
+                //}  
             } else if (gdo.net.node[index].connectedToPeer && (gdo.net.node[gdo.clientId].sectionId == 0 || gdo.net.node[gdo.clientId].sectionId != gdo.net.node[index].sectionId)) {
                 gdo.net.disconnectFromPeer(gdo.net.node[index].id);
             }
         } else if (p2pmode == gdo.net.P2P_MODE.NEIGHBOUR) {
             if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].isNeighbour) {
-                if (gdo.clientId > gdo.net.node[index].id) {
+                //if (gdo.clientId > gdo.net.node[index].id) {
                     gdo.net.connectToPeer(gdo.net.node[index].id);
-                }
+                //}
             } else if (gdo.net.node[index].connectedToPeer && !gdo.net.node[index].isNeighbour && gdo.net.node[index].id != gdo.clientId) {
                 gdo.net.disconnectFromPeer(gdo.net.node[index].id);
             }
