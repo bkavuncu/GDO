@@ -2,12 +2,6 @@
 var hub = $.connection.timeVAppHub;
 var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
 
-//$.connection.timeVAppHub.connection.disconnected(function() {
-//   setTimeout(function() {
-//       $.connection.timeVAppHub.connection.start();
-//   }, 500); // Restart connection after 0.5 seconds.
-//});
-
 TimeV.ControlViewModel = function() {
     function Task(data) {
         this.nodeId = ko.observable(data.nodeId);
@@ -108,6 +102,11 @@ TimeV.ControlViewModel = function() {
             query: "SELECT SUBSTRING(time_stamp, 1, 13) AS Hour, AVG(humidity) AS avg_humidity FROM log GROUP BY SUBSTRING(time_stamp, 1, 13)",
             x_accessor: "Hour",
             mode: "Aggregation"
+        },
+        {
+            query: "SELECT AVG(humidity) AS avg_humidity, SUBSTRING(time_stamp, 12, 2) AS Hour_of_Day FROM log WHERE (SUBSTRING(time_stamp, 1, 13) >= '2015-03-01 00') AND (SUBSTRING(time_stamp, 1, 13) <= '2015-05-31 24') GROUP BY SUBSTRING(time_stamp, 12, 2)",
+            x_accessor: "Hour_of_Day",
+            mode: "Custom"
         },
         {
             query: "SELECT SUBSTRING(time_stamp, 1, 7) AS Month, COUNT(*) AS log_count, MIN(humidity) AS min_humidity, MAX(temperature) As max_temperature FROM log GROUP BY SUBSTRING(time_stamp, 1, 7)",

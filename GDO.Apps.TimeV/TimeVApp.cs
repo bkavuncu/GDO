@@ -12,10 +12,9 @@ namespace GDO.Apps.TimeV
 {
     public class TimeVApp : IAppInstance
     {
-        private MongoDataProvider db;
+        private MongoDataProvider _dataProvider;
 
-        private bool IsEnabled = true;
-        private Hashtable qureyThreads;
+        private Hashtable _qureyThreads;
         public int Id { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
@@ -25,19 +24,19 @@ namespace GDO.Apps.TimeV
             Id = instanceId;
             Section = section;
             Configuration = configuration;
-            db = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
-            qureyThreads = new Hashtable();
+            _dataProvider = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
+            _qureyThreads = new Hashtable();
         }
 
         public MongoDataProvider Database()
         {
-            if (db != null)
+            if (_dataProvider != null)
             {
-                return db;
+                return _dataProvider;
             }
-            var t = Configuration.Json.Values<object>().ToArray().ToString();
-            db = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
-            return db;
+
+            _dataProvider = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
+            return _dataProvider;
         }
 
         public void MakeQuery(int nodeId, string timeStamp, string query)
@@ -80,12 +79,12 @@ namespace GDO.Apps.TimeV
 
         public void AddQueryThread(int nodeId, Thread thread)
         {
-            qureyThreads.Add(nodeId, thread);
+            _qureyThreads.Add(nodeId, thread);
         }
 
         public void StopQueryThread(int nodeId)
         {
-            var t = qureyThreads[nodeId] as Thread;
+            var t = _qureyThreads[nodeId] as Thread;
             if (t != null)
             {
                 t.Interrupt();
@@ -94,7 +93,7 @@ namespace GDO.Apps.TimeV
                     Debug.WriteLine("Forcibly abort query thread for " + nodeId);
                     t.Abort();
                 }
-                qureyThreads.Remove(nodeId);
+                _qureyThreads.Remove(nodeId);
             }
         }
 

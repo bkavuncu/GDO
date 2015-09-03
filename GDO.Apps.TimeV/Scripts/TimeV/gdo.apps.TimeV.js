@@ -87,6 +87,7 @@ $(function() {
             location.reload();
         }
     };
+
     TimeV.makeTable = function(target, data, title) {
         var frameWindow = document.getElementsByName("app_frame_content")[0].contentWindow;
         var MG = typeof (MG) == "undefined" ? frameWindow.MG : MG;
