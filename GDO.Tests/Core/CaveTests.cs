@@ -13,7 +13,7 @@ namespace GDO.Tests
     [TestClass()]
     public class CaveTests
     {
-        private int[,] _caveMap;
+        private int[,] _nodeMap;
         private int[,] _sectionMap;
         private int[,] _neighbourMap;
 
@@ -102,13 +102,13 @@ namespace GDO.Tests
             Cave.Init();
             List<Node> deployedNodes = Cave.CreateSection(2, 2, 3, 3);
 
-            _caveMap = Cave.GetCaveMap();
+            _nodeMap = Cave.GetNodeMap();
             _sectionMap = Cave.GetSectionMap(1);
 
             _neighbourMap = Cave.GetNeighbourMap(6);
 
-            Assert.AreEqual(11, _caveMap[2, 2]);
-            Assert.AreEqual(16, _caveMap[3, 3]);
+            Assert.AreEqual(11, _nodeMap[2, 2]);
+            Assert.AreEqual(16, _nodeMap[3, 3]);
             Assert.AreEqual(11, _sectionMap[0, 0]);
             Assert.AreEqual(16, _sectionMap[1, 1]);
             Assert.AreEqual(1, _neighbourMap[0, 0]);

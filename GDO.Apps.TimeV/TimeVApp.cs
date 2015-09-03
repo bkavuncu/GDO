@@ -16,12 +16,14 @@ namespace GDO.Apps.TimeV
 
         private Hashtable _qureyThreads;
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
-            Id = instanceId;
+            this.Id = instanceId;
+            this.AppName = appName;
             Section = section;
             Configuration = configuration;
             _dataProvider = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");

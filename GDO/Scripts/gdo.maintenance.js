@@ -1,7 +1,7 @@
 ﻿$(function () {
 
-    gdo.maintenance.table_height = 400;
-    gdo.maintenance.table_font_size = 11;
+    gdo.maintenance.table_height = 350;
+    gdo.maintenance.table_font_size = 10;
     gdo.maintenance.button_height = 100;
     gdo.maintenance.button_cols = 4;
     gdo.maintenance.isRectangle = true;

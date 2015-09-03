@@ -7,7 +7,7 @@
     gdo.management.info_height = 35;
     gdo.management.table_width = 100;
     gdo.management.button_height = 61;
-    gdo.management.button_cols = 5;
+    gdo.management.button_cols = 6;
     gdo.management.header_cols = 10;
     gdo.management.cell_padding = 7;
     gdo.management.isRectangle = true;
