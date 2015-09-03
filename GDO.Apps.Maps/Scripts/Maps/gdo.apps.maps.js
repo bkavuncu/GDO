@@ -260,7 +260,7 @@ gdo.net.app["Maps"].uploadMapPosition = function (instanceId) {
 gdo.net.app["Maps"].changeEvent = function (instanceId) {
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         if (gdo.net.instance[instanceId].isInitialized) {
-            gdo.net.app["Maps"].uploadMapPosition(instanceId);
+            setTimeout(gdo.net.app["Maps"].uploadMapPosition(instanceId), 350);
         }
     }
 }
