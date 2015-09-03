@@ -2986,9 +2986,9 @@
   background: #c7efcf;
 }
 .inner-circles-loader:not(:required):after {
-  -moz-animation: inner-circles-loader 3s 0.2s infinite;
-  -webkit-animation: inner-circles-loader 3s 0.2s infinite;
-  animation: inner-circles-loader 3s 0.2s infinite;
+  -moz-animation: inner-circles-loader 3s 0.2s reverse infinite;
+  -webkit-animation: inner-circles-loader 3s 0.2s reverse infinite;
+  animation: inner-circles-loader 3s 0.2s reverse infinite;
   -moz-transform-origin: 100% 50%;
   -ms-transform-origin: 100% 50%;
   -webkit-transform-origin: 100% 50%;

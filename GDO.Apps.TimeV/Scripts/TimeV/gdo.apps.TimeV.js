@@ -2,7 +2,7 @@
 
 $(function() {
     TimeV.app = this;
-//    var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo; called in cshtml
+    var gdo = typeof (gdo) == "undefined" ? parent.gdo : gdo;
     TimeV.app.stamp = null;
     TimeV.app.data = null;
     TimeV.app.x_accessor = null;
@@ -87,6 +87,7 @@ $(function() {
             location.reload();
         }
     };
+
     TimeV.makeTable = function(target, data, title) {
         var frameWindow = document.getElementsByName("app_frame_content")[0].contentWindow;
         var MG = typeof (MG) == "undefined" ? frameWindow.MG : MG;

@@ -2202,7 +2202,7 @@
         },
 
         unix : function () {
-            return Math.floor(+this.offset / 1000);
+            return Math.floor(+this / 1000);
         },
 
         toString : function () {

@@ -27,7 +27,7 @@ namespace GDO.Apps.TimeV
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void RequestVisualisation(int instanceId, int nodeId, string query, string mode, string x_accessor)
+        public void RequestVisualisation(int instanceId, int nodeId, string query, string mode, string xAccessor)
         {
             Debug.WriteLine("Visualisation request for " + nodeId);
             lock (Cave.AppLocks[instanceId])
@@ -37,7 +37,7 @@ namespace GDO.Apps.TimeV
                     var timeStamp = DateTime.Now.ToString();
                     var app = ((TimeVApp) Cave.Apps["TimeV"].Instances[instanceId]);
                     app.StopQueryThread(nodeId);
-                    Clients.All.prepareVisualisation(nodeId, timeStamp, mode, x_accessor);
+                    Clients.All.prepareVisualisation(nodeId, timeStamp, mode, xAccessor);
                     app.MakeQuery(nodeId, timeStamp, query);
                     var queryThread = new Thread(() => ResultProcessor(instanceId, nodeId, timeStamp, app.Database()));
                     app.AddQueryThread(nodeId, queryThread);
@@ -83,7 +83,7 @@ namespace GDO.Apps.TimeV
             }
         }
 
-        private void ResultProcessor(int instanceId, int nodeId, string timeStamp, MongoDataProvider db)
+        private void ResultProcessor(int instanceId, int nodeId, string timeStamp, MongoDataProvider dataProvider)
         {
             var filterBuilder = Builders<BsonDocument>.Filter;
             var filter = filterBuilder.Eq("value.NodeId", nodeId.ToString()) &
@@ -95,7 +95,7 @@ namespace GDO.Apps.TimeV
                     Debug.WriteLine("Polling result for " + nodeId);
 
                     //var records = db.Fetch(new BsonDocument(), "Query_Results").Result.ToListAsync().Result;
-                    var results = db.Fetch(filter, "Query_Results").Result.ToListAsync().Result;
+                    var results = dataProvider.Fetch(filter, "Query_Results").Result.ToListAsync().Result;
 
                     if (results.Count != 0)
                     {
@@ -119,15 +119,15 @@ namespace GDO.Apps.TimeV
                                 catch (Exception e)
                                 {
                                     Debug.WriteLine(e);
-                                    db.DeleteOne(doc, "Query_Results");
+                                    dataProvider.DeleteOne(doc, "Query_Results");
                                     return;
                                 }
 
-                            db.DeleteOne(doc, "Query_Results");
+                            dataProvider.DeleteOne(doc, "Query_Results");
                             return;
                         }
                     }
-                    Thread.Sleep(1000);// TODO BUG Do not send the thread to sleep - you will kill server performance
+                    Thread.Sleep(1000);
                 }
                 catch (ThreadInterruptedException)
                 {
