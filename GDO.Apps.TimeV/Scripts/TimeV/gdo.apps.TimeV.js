@@ -120,8 +120,8 @@ $(function() {
         // using the frame's constructor for MG's instanceof check
         series = frameWindow.JSON.parse(series);
 
-        var w = typeof (width) == "undefined" ? 540 : width;
-        var h = typeof (height) == "undefined" ? 240 : height;
+        var w = typeof (width) == "undefined" ? $(window).width() : width;
+        var h = typeof (height) == "undefined" ? $(window).height() * 0.85 : height;
 
         var keys = Object.keys(series[0]);
         var index = keys.indexOf(TimeV.app.x_accessor);
@@ -162,12 +162,11 @@ $(function() {
             legend_target: "#legend",
             x_accessor: TimeV.app.x_accessor,
             y_accessor: keys,
-            interpolate: "monotone",
-            full_width: true,
-            full_height: true,
+            interpolate: "monotone",            
             brushing: (keys.length < 2),
             brushing_history: (keys.length < 2),
-            missing_is_hidden: (keys.length < 2)
+            missing_is_hidden: (keys.length < 2),
+            xax_start_at_min: true
         });
     };
 
