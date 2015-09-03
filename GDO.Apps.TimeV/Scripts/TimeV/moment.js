@@ -2058,7 +2058,7 @@
     }
 
     function unix () {
-        return Math.floor(+this.offset / 1000);
+        return Math.floor(+this._offset / 1000);
     }
 
     function toDate () {
