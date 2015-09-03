@@ -204,6 +204,7 @@ namespace GDO.Core
             lock (Cave.ServerLock)
             {
                 int instanceId = Cave.CreateAppInstance(sectionId, appName, configName);
+                Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
                 if (instanceId >= 0)
                 {
                     BroadcastAppUpdate(sectionId, appName, configName, instanceId, Cave.Apps[appName].P2PMode, true);
@@ -225,6 +226,7 @@ namespace GDO.Core
                 {
                     string appName = Cave.GetAppName(instanceId);
                     int sectionId = Cave.Apps[appName].Instances[instanceId].Section.Id;
+                    Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
                         BroadcastAppUpdate(sectionId, appName, "", instanceId, (int) Cave.P2PModes.None, false);
