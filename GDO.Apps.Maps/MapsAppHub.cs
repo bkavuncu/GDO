@@ -12,7 +12,7 @@ namespace GDO.Apps.Maps
     public class MapsAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "Maps";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.Section;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new MapsApp().GetType();
         public void JoinGroup(int instanceId)
         {

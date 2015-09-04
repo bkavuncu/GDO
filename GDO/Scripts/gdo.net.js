@@ -162,6 +162,7 @@ gdo.net.initHub = function () {
     gdo.consoleOut('.NET', 2, 'Initializing Hub');
     gdo.net.connection = $.connection;
     gdo.net.server = $.connection.caveHub.server;
+    gdo.net.node[gdo.clientId].connectionId = gdo.net.connection.hub.id;
     //gdo.net.listener = $.connection.caveHub.client;
     gdo.consoleOut('.NET', 0, 'Connected to Hub');
 }
@@ -208,7 +209,6 @@ gdo.net.initPeer = function () {
    // gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); // public server for testing outside of college
 
     gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
-   
     gdo.net.peer.on('open', function(peerId) {
         gdo.consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         gdo.net.node[gdo.clientId].peerId = peerId;
@@ -292,6 +292,7 @@ gdo.net.uploadNodeInfo = function () {
     /// </summary>
     /// <returns></returns>
     var connectedNodes = JSON.stringify(gdo.net.nodes.getConnected());
+    gdo.net.node[gdo.clientId].connectionId = gdo.net.connection.hub.id;
     //gdo.consoleOut(".NET", 2, "Uploading Node Info to to Server id =" + gdo.clientId + " hub id=" + gdo.net.connection.hub.id + " peer id= " + gdo.net.node[gdo.clientId].peerId);
     gdo.net.server.uploadNodeInfo(gdo.clientId, gdo.net.connection.hub.id, connectedNodes, gdo.net.node[gdo.clientId].peerId, gdo.net.node[gdo.clientId].isConnectedToPeerServer)
         .done(function (result) { gdo.net.node[gdo.clientId].isConnectedToCaveServer = true; })
@@ -356,33 +357,35 @@ gdo.net.updatePeerConnections = function (p2pmode) {
     /// </summary>
     /// <param name="p2pmode">The p2pmode.</param>
     /// <returns></returns>
-    for (var index in gdo.net.node) {
-        if (!gdo.net.node.hasOwnProperty((index))) {
-            continue;
-        }
-        if (p2pmode == gdo.net.P2P_MODE.CAVE) {
-            if (!gdo.net.node[index].connectedToPeer) {
-                //gdo.net.connectToPeer(gdo.net.node[index].id);
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        for (var index in gdo.net.node) {
+            if (!gdo.net.node.hasOwnProperty((index))) {
+                continue;
             }
-        } else if (p2pmode == gdo.net.P2P_MODE.SECTION) {
-            if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].sectionId == gdo.net.node[gdo.clientId].sectionId) {
-                //if (gdo.clientId > gdo.net.node[index].id) {
+            if (p2pmode == gdo.net.P2P_MODE.CAVE) {
+                if (!gdo.net.node[index].connectedToPeer) {
+                    //gdo.net.connectToPeer(gdo.net.node[index].id);
+                }
+            } else if (p2pmode == gdo.net.P2P_MODE.SECTION) {
+                if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].sectionId == gdo.net.node[gdo.clientId].sectionId) {
+                    if (gdo.clientId > gdo.net.node[index].id) {
                     gdo.net.connectToPeer(gdo.net.node[index].id);
-                //}  
-            } else if (gdo.net.node[index].connectedToPeer && (gdo.net.node[gdo.clientId].sectionId == 0 || gdo.net.node[gdo.clientId].sectionId != gdo.net.node[index].sectionId)) {
-                gdo.net.disconnectFromPeer(gdo.net.node[index].id);
-            }
-        } else if (p2pmode == gdo.net.P2P_MODE.NEIGHBOUR) {
-            if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].isNeighbour) {
-                //if (gdo.clientId > gdo.net.node[index].id) {
+                    }  
+                } else if (gdo.net.node[index].connectedToPeer && (gdo.net.node[gdo.clientId].sectionId == 0 || gdo.net.node[gdo.clientId].sectionId != gdo.net.node[index].sectionId)) {
+                    gdo.net.disconnectFromPeer(gdo.net.node[index].id);
+                }
+            } else if (p2pmode == gdo.net.P2P_MODE.NEIGHBOUR) {
+                if (!gdo.net.node[index].connectedToPeer && gdo.net.node[index].isNeighbour) {
+                    if (gdo.clientId > gdo.net.node[index].id) {
                     gdo.net.connectToPeer(gdo.net.node[index].id);
-                //}
-            } else if (gdo.net.node[index].connectedToPeer && !gdo.net.node[index].isNeighbour && gdo.net.node[index].id != gdo.clientId) {
-                gdo.net.disconnectFromPeer(gdo.net.node[index].id);
-            }
-        } else {
-            if (gdo.net.node[index].connectedToPeer && index != gdo.clientId) {
-                gdo.net.disconnectFromPeer(gdo.net.node[index].id);
+                    }
+                } else if (gdo.net.node[index].connectedToPeer && !gdo.net.node[index].isNeighbour && gdo.net.node[index].id != gdo.clientId) {
+                    gdo.net.disconnectFromPeer(gdo.net.node[index].id);
+                }
+            } else {
+                if (gdo.net.node[index].connectedToPeer && index != gdo.clientId) {
+                    gdo.net.disconnectFromPeer(gdo.net.node[index].id);
+                }
             }
         }
     }
@@ -576,12 +579,14 @@ gdo.net.processNode = function (node)
     gdo.net.node[node.Id].sectionRow = node.SectionRow;
     gdo.net.node[node.Id].sectionId = node.SectionId;
     gdo.net.node[node.Id].deployed = node.IsDeployed;
-    gdo.net.node[node.Id].connectionId = node.ConnectionId;
+    if (node.Id != gdo.clientId || gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.node[node.Id].connectionId = node.ConnectionId;
+        gdo.net.node[node.Id].peerId = node.PeerId;
+    }
     gdo.net.node[node.Id].isConnectedToCaveServer = node.IsConnectedToCaveServer;
     gdo.net.node[node.Id].isConnectedToPeerServer = node.IsConnectedToPeerServer;
     gdo.net.node[node.Id].aggregatedConnectionHealth = node.AggregatedConnectionHealth;
     gdo.net.node[node.Id].appInstanceId = node.AppInstanceId;
-    gdo.net.node[node.Id].peerId = node.PeerId;
     gdo.net.node[node.Id].p2pmode = node.P2PMode;
     gdo.net.node[node.Id].id = node.Id;
     gdo.net.node[node.Id].connectedNodeList = node.ConnectedNodeList;
