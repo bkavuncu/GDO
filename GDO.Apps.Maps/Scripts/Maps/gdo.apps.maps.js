@@ -63,12 +63,12 @@ $(function () {
             gdo.net.instance[instanceId].map.updateSize();
             gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
                 gdo.net.app["Maps"].changeEvent(instanceId);
-                //gdo.net.app["Maps"].updateCenter(instanceId);
+                gdo.net.app["Maps"].updateCenter(instanceId);
                 gdo.net.app["Maps"].server.updateResolution(instanceId);
             });
             gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
                 gdo.net.app["Maps"].changeEvent(instanceId);
-                //gdo.net.app["Maps"].updateCenter(instanceId);
+                gdo.net.app["Maps"].updateCenter(instanceId);
                 gdo.net.app["Maps"].server.updateResolution(instanceId);
             });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
@@ -260,7 +260,7 @@ gdo.net.app["Maps"].uploadMapPosition = function (instanceId) {
 gdo.net.app["Maps"].changeEvent = function (instanceId) {
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         if (gdo.net.instance[instanceId].isInitialized) {
-            setTimeout(gdo.net.app["Maps"].uploadMapPosition(instanceId), 700);
+            gdo.net.app["Maps"].uploadMapPosition(instanceId);
         }
     }
 }
