@@ -68,6 +68,7 @@
 <body>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/d3.js"></script>
     <script>
         $(function () {
             $(document).ready(function () {
@@ -85,6 +86,7 @@
                     numClients = message.numClient;
                     if (message.state == 1) {
                         test_bench[confId] && test_bench[confId]();
+                        test_bench[confId] = null;
                         $("#wait").css("display", "none");
                         $("#control_" + confId).css("display", "");
                     }
@@ -242,6 +244,98 @@
                     });
                 };
 
+                test_bench[3] = function () {
+                    var id = 0;
+                    var pos = {};
+                    var posC = {};
+                    var wr = 600, hr = 300;
+                    var selected = "";
+                    d3.select("#control_3").selectAll("svg").remove();
+                    var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
+
+                    svg.append("rect").attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", wr + "px")
+                        .attr("height", hr + "px")
+                        .attr("stroke", "black")
+                        .style("fill", "#EEE")
+                        .on("click", function () {
+                            selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                            selected = "";
+                        });
+
+                    var g = svg.append("g");
+
+                    $("#addRect").click(function () {
+                        id++;
+                        server.sendOrder(instanceId, order("createRect", ['d' + id]), false);
+                        var drag = d3.behavior.drag();
+                        var dragC = d3.behavior.drag();
+
+                        drag.on("drag", moveRect);
+                        drag.on("dragstart", function () {
+                            var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            pos.x = t[0] - d3.mouse(g.node())[0];
+                            pos.y = t[1] - d3.mouse(g.node())[1];
+                        });
+
+                        dragC.on("drag", resizeRect);
+                        dragC.on("dragstart", function () {
+                            var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            posC.x = t[0] - d3.mouse(g.node())[0];
+                            posC.y = t[1] - d3.mouse(g.node())[1];
+                        });
+
+                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [wr * 4 / 10, hr * 4 / 10] + ")");
+                        var r = rg.append("rect").attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * wr / 10)
+                            .attr("height", 2 * hr / 10)
+                            .attr("stroke", "black")
+                            .attr("fill", "#EEE")
+                            .call(drag)
+                            .on("click", function () {
+                                selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                selected = this.parentElement.id;
+                                d3.select(this).style("fill", "#FDD1FD");
+                                //this.parentElement.parentElement.appendChild(this.parentElement);
+                                //server.sendOrder(instanceId, order("frontRect", [selected]), false);
+                            });
+
+                        rg.append("circle").attr("cx", wr * 2 / 10)
+                            .attr("cy", hr * 2 / 10)
+                            .attr("r", 10)
+                            .attr("stroke", "transparent")
+                            .attr("fill", "rgba(252,231,31,0.5)")
+                            .call(dragC);
+
+                        server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                    });
+
+                    var moveRect = function () {
+                        server.sendOrder(instanceId, order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]), false);
+                        d3.select(this.parentElement).attr("transform", "translate(" + [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y] + ")");
+                    };
+
+                    var resizeRect = function () {
+                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]);
+                        server.sendOrder(instanceId, order("resizeRect", [this.parentElement.id, x / wr, y / hr]), false);
+                        d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
+                        d3.select(this).attr("cx", x).attr("cy", y);
+                    };
+
+                    var delRect = function () {
+                        server.sendOrder(instanceId, order("delRect", [this.id]), false);
+                        d3.select(this).remove();
+                    };
+
+                    $("#removeAllRect").click(function () {
+                        server.sendOrder(instanceId, order("delAllRect", []), true);
+                        d3.selectAll('g.r').remove();
+                    });
+
+                    server.sendOrder(instanceId, order("delAllRect", []), true);
+                };
             });
         });
     </script>
@@ -255,7 +349,7 @@
             :(
         </p>
         <p style="color: rgb(237, 20, 51);font-size:2.5em;">
-            Something went wrong, please reload the page<br>
+            Something went wrong, please <a href="javascript:parent.location.href=parent.location.href" style="color: rgb(237, 20, 51);">reload</a> the page<br>
             <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initControl' was not initialized</span>
         </p>
     </div>
@@ -326,6 +420,17 @@
             </tr>
         </table>            
 </div>
+
+    <div id="control_3" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="addRect">Add Rectangle</td>
+            </tr>
+            <tr>
+                <td class="green" id="removeAllRect">Remove All</td>
+            </tr>
+        </table> 
+    </div>
 
 </body>
 </html>
