@@ -5,6 +5,16 @@
 */
 
 
+
+document.body
+.getElementsByTagName('iframe')[0]
+.onload = function () {
+    console.log("Time after rendering (using onload): " + window.performance.now());
+};
+
+
+
+
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
@@ -27,7 +37,7 @@ $(function () {
 
     // rgb setting to track current color scheme
     var r, g, b;
-    r = 0;  
+    r = 0;
     g = 50;
     b = 20;   // range is 0 to 255
 
@@ -38,9 +48,9 @@ $(function () {
     highlightG = 35;
     highlightB = 49;
 
-    
-// r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
-// r 50, g 100, b 50 (pastel green)
+
+    // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
+    // r 50, g 100, b 50 (pastel green)
 
 
     var maxLinks = 5;
@@ -73,6 +83,16 @@ $(function () {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
         }
+    }
+
+
+    $.connection.graphAppHub.client.logTime = function (message) {
+
+        var logDom = $("iframe").contents().find("#message_from_server");
+        // append new "p" element for each msg, instead of replacing existing one
+        logDom.append("<p>" + message + "</p>");
+
+        scroll_bottom(logDom[0]);
     }
 
     $.connection.graphAppHub.client.setRGB = function (colourScheme) {
@@ -156,7 +176,7 @@ $(function () {
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("highlight");
 
- 
+
             var fontSize, padding;
 
             if (!globalZoomed) {
@@ -316,7 +336,7 @@ $(function () {
                 fontSize = zoomedFontSize;
                 padding = 3;
             }
-                
+
 
 
             nodes.forEach(function (node) {
@@ -701,17 +721,17 @@ $(function () {
                                 fileName = (clientRow + i) + "_" + (clientCol + j) + ".bin";
                                 nodesFilePath = basePath + "\\nodes\\" + fileName;
                                 linksFilePath = basePath + "\\links\\" + fileName;
-                                
+
                                 console.log(fileName + " is being rendered.");
 
                                 renderNodes(nodesFilePath);
                                 renderLinks(linksFilePath);
-                            }                         
+                            }
                         }
                     }
 
 
-                    
+
                     // new optimised rendering, to read from binary pos files
                     function renderNodes(file) {
 
@@ -739,7 +759,7 @@ $(function () {
                                 // which resulted in some nodes & links being rendered extra times
                                 var currentNodes = [];
 
-                               
+
                                 for (var i = 2; i < data.length - 2; i += 3) {
                                     // push onto overall nodes array
                                     nodes.push([data[i], data[i + 1], data[i + 2]]);
@@ -850,7 +870,7 @@ $(function () {
             var basePath, fileName, nodesFilePath, linksFilePath;
             var clientRow = gdo.net.node[gdo.clientId].sectionRow;
             var clientCol = gdo.net.node[gdo.clientId].sectionCol;
-            
+
 
             if (!zoomed) {
                 globalZoomed = false;
@@ -870,7 +890,7 @@ $(function () {
                 linksFilePath = basePath + "\\links\\" + fileName;
             }
 
-            
+
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -1225,8 +1245,11 @@ $(function () {
 
 
 
+                    console.log("Time before rendering: " + window.performance.now());
 
+                    console.log("Time before reading nodesPos.bin: " + window.performance.now());
                     renderNodes(nodesFilePath);
+                    console.log("Time before reading linksPos.bin: " + window.performance.now());
                     renderLinks(linksFilePath);
 
                     // new optimised rendering, to read from binary pos files
@@ -1246,6 +1269,8 @@ $(function () {
                                 var data = new Float32Array(rawBuffer);  // will auto-format buffer, and convert byte into float array
 
                             if (data) {    // if condition needed because data may not be ready the first time this function is called
+                                console.log("Time after reading nodesPos.bin: " + window.performance.now());
+
                                 // partitionPos = [row, col]
                                 var partitionPos = [data[0], data[1]];
 
@@ -1307,6 +1332,8 @@ $(function () {
 
                                 });
 
+                                console.log("Time after appending nodes: " + window.performance.now());
+
                             }
                         }
                     }
@@ -1329,6 +1356,8 @@ $(function () {
 
                             if (data) {    // data may not be ready the first time this function is called
 
+                                console.log("Time after reading linksPos.bin: " + window.performance.now());
+
                                 // partitionPos = [row, col]
                                 var partitionPos = [data[0], data[1]];
 
@@ -1346,7 +1375,7 @@ $(function () {
                                 if (!zoomed)
                                     strokeWidth = normalStrokeWidth;
                                 else
-                                    strokeWidth = zoomedStrokeWidth;                                    
+                                    strokeWidth = zoomedStrokeWidth;
 
 
                                 links.forEach(function (link) {
@@ -1360,10 +1389,14 @@ $(function () {
                                         .attr("stroke", "#333"); //B8B8B8
                                 });
 
+                                console.log("Time after appending links: " + window.performance.now());
                             }
 
                         };
                     }
+
+
+
 
 
                 }, { "simplesvg": 1 }]

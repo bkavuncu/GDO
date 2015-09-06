@@ -11,6 +11,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Registration;
 using System.Reflection;
 using GDO.Utility;
+using Newtonsoft.Json;
 
 
 namespace GDO.Core
@@ -19,8 +20,12 @@ namespace GDO.Core
     {
         public string Name { get; set; }
         public int P2PMode { get; set; }
+        [JsonIgnore]
         public Type AppType { get; set; }
+        [JsonIgnore]
         public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
+        public List<string> ConfigurationList { get; set; }
+        [JsonIgnore]
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
 
         public App()
@@ -45,7 +50,7 @@ namespace GDO.Core
                 AppConfiguration conf;
                 Cave.Sections[sectionId].CalculateDimensions();
                 Configurations.TryGetValue(configName, out conf);
-                instance.init(instanceId, Cave.Sections[sectionId], conf);
+                instance.init(instanceId, this.Name, Cave.Sections[sectionId], conf);
                 Instances.TryAdd(instanceId,instance);
                 Cave.Instances.TryAdd(instanceId,instance);
                 return instanceId;
@@ -84,7 +89,14 @@ namespace GDO.Core
                 configurationList.Add(configurationEntry.Value.Name);
             }
             configurationList.Sort();
+            this.ConfigurationList = configurationList;
             return configurationList;
+        }
+
+        public string SerializeJSON()
+        {
+            GetConfigurationList();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace GDO.Apps.Youtube
     public class YoutubeApp : IAppInstance
     {
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
@@ -245,9 +246,10 @@ namespace GDO.Apps.Youtube
             return yJson;
         }
 
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
+            this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
             this.key = "AIzaSyCVoYXZZHaRNqnJw6pINn9PG3wly3_xNYY";

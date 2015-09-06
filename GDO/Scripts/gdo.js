@@ -28,7 +28,7 @@ gdo.initGDO = function (clientMode) {
     gdo.clientMode = clientMode;
     gdo.clientId = getUrlVar('clientId');
     $("title").append(" :" + gdo.clientId);
-    gdo.updateInterval = 14000;
+    gdo.updateInterval = 21000;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
@@ -38,10 +38,10 @@ gdo.initGDO = function (clientMode) {
             gdo.consoleOut('', 0, 'Hub Started');
             gdo.net.initNet(clientMode);
             if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                waitForResponse( initApp, gdo.net.isPeerJSServerResponded, 500, 20, 'PeerJS server failed to Respond');
+                waitForResponse(initApp, gdo.net.isNodeInitialized, 500, 20, 'Node Failed to Initialize');
                 setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                waitForResponse( initApp, gdo.net.isSignalRServerResponded, 50, 20, 'SignalR server failed to Respond');
+                waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
             }
             
             //set intervl and 

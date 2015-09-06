@@ -19,6 +19,7 @@ namespace GDO.Apps.Images
     public class ImagesApp : IAppInstance
     {
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public string ImageName { get; set; }
@@ -139,9 +140,10 @@ namespace GDO.Apps.Images
             public CanvasDataInfo canvasData { get; set; }
         }
 
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
+            this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
             this.DisplayMode = (int)Mode.FIT;
