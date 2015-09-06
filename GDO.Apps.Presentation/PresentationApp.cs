@@ -21,6 +21,7 @@ namespace GDO.Apps.Presentation
     public class PresentationApp : IAppInstance
     {
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public string BasePath { get; set; }
@@ -29,9 +30,10 @@ namespace GDO.Apps.Presentation
         public int PageCount { get; set; }
         public int CurrentPage { get; set; }
 
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
+            this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
             this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";

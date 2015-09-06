@@ -1,0 +1,5904 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.273275,
+                    121.509586
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u978d\u5c71\u65b0\u6751",
+                "Lines": "8",
+                "Station Name English": "Anshan Xincun",
+                "Station ID": "842"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.288511,
+                    121.162097
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5b89\u4ead",
+                "Lines": "11",
+                "Station Name English": "Anting",
+                "Station ID": "1117"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.345276,
+                    121.245426
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u767d\u94f6\u8def",
+                "Lines": "11",
+                "Station Name English": "Baiyin Road",
+                "Station ID": "1133"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.369561,
+                    121.430965
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5b9d\u5b89\u516c\u8def",
+                "Lines": "1",
+                "Station Name English": "Bao'an Highway",
+                "Station ID": "136"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.251564,
+                    121.476367
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "324|411",
+                "Station Name Chinese": "\u5b9d\u5c71\u8def",
+                "Lines": "3|4",
+                "Station Name English": "Baoshan Road",
+                "Station ID": "324"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.251564,
+                    121.476367
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "324|411",
+                "Station Name Chinese": "\u5b9d\u5c71\u8def",
+                "Lines": "3|4",
+                "Station Name English": "Baoshan Road",
+                "Station ID": "411"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.395319,
+                    121.479593
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5b9d\u6768\u8def",
+                "Lines": "3",
+                "Station Name English": "Baoyang Road",
+                "Station ID": "336"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.045038,
+                    121.410113
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5317\u6865",
+                "Lines": "5",
+                "Station Name English": "Beiqiao",
+                "Station ID": "507"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.216801,
+                    121.373538
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5317\u65b0\u6cfe",
+                "Lines": "2",
+                "Station Name English": "Beixinjing",
+                "Station ID": "238"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.239126,
+                    121.552298
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5317\u6d0b\u6cfe\u8def",
+                "Lines": "6",
+                "Station Name English": "Beiyangjing Road",
+                "Station ID": "635"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.263506,
+                    121.586684
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u535a\u5174\u8def",
+                "Lines": "6",
+                "Station Name English": "Boxing Road",
+                "Station ID": "639"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.168209,
+                    121.434972
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6f15\u5b9d\u8def",
+                "Lines": "1",
+                "Station Name English": "Caobao Road",
+                "Station ID": "116"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.170634,
+                    121.397826
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6f15\u6cb3\u6cfe\u5f00\u53d1\u533a",
+                "Lines": "9",
+                "Station Name English": "Caohejing Hi-Tech Park",
+                "Station ID": "931"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.176736,
+                    121.438381
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6f15\u6eaa\u8def",
+                "Lines": "3",
+                "Station Name English": "Caoxi Road",
+                "Station ID": "314"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.239263,
+                    121.417684
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "320|407|1145",
+                "Station Name Chinese": "\u66f9\u6768\u8def",
+                "Lines": "3|4|11",
+                "Station Name English": "Caoyang Road",
+                "Station ID": "320"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.239263,
+                    121.417684
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "320|407|1145",
+                "Station Name Chinese": "\u66f9\u6768\u8def",
+                "Lines": "3|4|11",
+                "Station Name English": "Caoyang Road",
+                "Station ID": "407"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.239263,
+                    121.417684
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "320|407|1145",
+                "Station Name Chinese": "\u66f9\u6768\u8def",
+                "Lines": "3|4|11",
+                "Station Name English": "Caoyang Road",
+                "Station ID": "1145"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.228978,
+                    121.526788
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "249|417|632|942",
+                "Station Name Chinese": "\u4e16\u7eaa\u5927\u9053",
+                "Lines": "2|4|6|9",
+                "Station Name English": "Century Avenue",
+                "Station ID": "249"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.228978,
+                    121.526788
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "249|417|632|942",
+                "Station Name Chinese": "\u4e16\u7eaa\u5927\u9053",
+                "Lines": "2|4|6|9",
+                "Station Name English": "Century Avenue",
+                "Station ID": "417"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.228978,
+                    121.526788
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "249|417|632|942",
+                "Station Name Chinese": "\u4e16\u7eaa\u5927\u9053",
+                "Lines": "2|4|6|9",
+                "Station Name English": "Century Avenue",
+                "Station ID": "632"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.228978,
+                    121.526788
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "249|417|632|942",
+                "Station Name Chinese": "\u4e16\u7eaa\u5927\u9053",
+                "Lines": "2|4|6|9",
+                "Station Name English": "Century Avenue",
+                "Station ID": "942"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.209969,
+                    121.550774
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e16\u7eaa\u516c\u56ed",
+                "Lines": "2",
+                "Station Name English": "Century Park",
+                "Station ID": "251"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.233876,
+                    121.442531
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u660c\u5e73\u8def",
+                "Lines": "7",
+                "Station Name English": "Changping Road",
+                "Station ID": "738"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.174619,
+                    121.486123
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u957f\u6e05\u8def",
+                "Lines": "7",
+                "Station Name English": "Changqing Road",
+                "Station ID": "745"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.240074,
+                    121.437854
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "737|1330",
+                "Station Name Chinese": "\u957f\u5bff\u8def",
+                "Lines": "7",
+                "Station Name English": "Changshou Road",
+                "Station ID": "737"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.240074,
+                    121.437854
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "737|1330",
+                "Station Name Chinese": "\u957f\u5bff\u8def",
+                "Lines": "7",
+                "Station Name English": "Changshou Road",
+                "Station ID": "1330"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.213342,
+                    121.451075
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "120|740",
+                "Station Name Chinese": "\u5e38\u719f\u8def",
+                "Lines": "1|7",
+                "Station Name English": "Changshu Road",
+                "Station ID": "120"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.213342,
+                    121.451075
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "120|740",
+                "Station Name Chinese": "\u5e38\u719f\u8def",
+                "Lines": "1|7",
+                "Station Name English": "Changshu Road",
+                "Station ID": "740"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.303975,
+                    121.413754
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u573a\u4e2d\u8def",
+                "Lines": "7",
+                "Station Name English": "Changzhong Road",
+                "Station ID": "730"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.170687,
+                    121.496232
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6210\u5c71\u8def",
+                "Lines": "8",
+                "Station Name English": "Chengshan Road",
+                "Station ID": "828"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.281324,
+                    121.482497
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u8d64\u5cf0\u8def",
+                "Lines": "3",
+                "Station Name English": "Chifeng Road",
+                "Station ID": "327"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.185411,
+                    121.493616
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e2d\u534e\u827a\u672f\u5bab",
+                "Lines": "8",
+                "Station Name English": "China Art Museum",
+                "Station ID": "830"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.186701,
+                    121.698078
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5ddd\u6c99",
+                "Lines": "2",
+                "Station Name English": "Chuansha",
+                "Station ID": "259"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.098129,
+                    121.385645
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6625\u7533\u8def",
+                "Lines": "5",
+                "Station Name English": "Chunshen Road",
+                "Station ID": "502"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.289552,
+                    121.483284
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5927\u67cf\u6811",
+                "Lines": "3",
+                "Station Name English": "Dabaishu",
+                "Station ID": "328"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.293317,
+                    121.416545
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5927\u573a\u9547",
+                "Lines": "7",
+                "Station Name English": "Dachang Town",
+                "Station ID": "731"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.231875,
+                    121.393404
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5927\u6e21\u6cb3\u8def",
+                "Lines": "13",
+                "Station Name English": "Daduhe Road",
+                "Station ID": "1326"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.273808,
+                    121.423054
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5927\u534e\u4e09\u8def",
+                "Lines": "7",
+                "Station Name English": "Dahuasan Road",
+                "Station ID": "733"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.257936,
+                    121.513091
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "414|1240",
+                "Station Name Chinese": "\u5927\u8fde\u8def",
+                "Lines": "4",
+                "Station Name English": "Dalian Road",
+                "Station ID": "414"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.257936,
+                    121.513091
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "414|1240",
+                "Station Name Chinese": "\u5927\u8fde\u8def",
+                "Lines": "4",
+                "Station Name English": "Dalian Road",
+                "Station ID": "1240"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.194155,
+                    121.463671
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5927\u6728\u6865\u8def",
+                "Lines": "4",
+                "Station Name English": "Damuqiao Road",
+                "Station ID": "424"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.206078,
+                    121.468265
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6253\u6d66\u6865",
+                "Lines": "9",
+                "Station Name English": "Dapuqiao",
+                "Station ID": "937"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.22724,
+                    121.479284
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5927\u4e16\u754c",
+                "Lines": "8",
+                "Station Name English": "Dashijie",
+                "Station ID": "834"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.245355,
+                    121.564164
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5fb7\u5e73\u8def",
+                "Lines": "6",
+                "Station Name English": "Deping Road",
+                "Station ID": "636"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    30.907129,
+                    121.929759
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6ef4\u6c34\u6e56",
+                "Lines": "16",
+                "Station Name English": "Dishui lake",
+                "Station ID": "1633"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.190815,
+                    121.45487
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u5b89\u8def",
+                "Lines": "4|7",
+                "Station Name English": "Dong'an Road",
+                "Station ID": "425"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.190815,
+                    121.45487
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u5b89\u8def",
+                "Lines": "4|7",
+                "Station Name English": "Dong'an Road \u0002 ",
+                "Station ID": "742"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.260116,
+                    121.480351
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u5b9d\u5174\u8def",
+                "Lines": "3",
+                "Station Name English": "Dongbaoxing Road",
+                "Station ID": "325"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.23331,
+                    121.515415
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u660c\u8def",
+                "Lines": "2",
+                "Station Name English": "Dongchang Road",
+                "Station ID": "248"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.018204,
+                    121.419844
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u5ddd\u8def",
+                "Lines": "5",
+                "Station Name English": "Dongchuan Road",
+                "Station ID": "509"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.084486,
+                    121.230472
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d1e\u6cfe",
+                "Lines": "9",
+                "Station Name English": "Dongjing",
+                "Station ID": "923"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.29065,
+                    121.588852
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u9756\u8def",
+                "Lines": "6",
+                "Station Name English": "Dongjing Road",
+                "Station ID": "642"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.282529,
+                    121.57893
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u9646\u8def",
+                "Lines": "12",
+                "Station Name English": "Donglu Road",
+                "Station ID": "1246"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.172743,
+                    121.510847
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e1c\u660e\u8def",
+                "Lines": "6",
+                "Station Name English": "Dongming Road",
+                "Station ID": "626"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.29356,
+                    121.20039
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u660c\u5409\u4e1c\u8def",
+                "Lines": "11",
+                "Station Name English": "East Changji Road",
+                "Station ID": "1119"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.054373,
+                    121.617134
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u822a\u5934\u4e1c",
+                "Lines": "16",
+                "Station Name English": "East Hangtou",
+                "Station ID": "1626"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.196572,
+                    121.681107
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u534e\u590f\u4e1c\u8def",
+                "Lines": "2",
+                "Station Name English": "East Huaxia Road",
+                "Station ID": "258"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.026813,
+                    121.794014
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u60e0\u5357\u4e1c",
+                "Lines": "16",
+                "Station Name English": "East Huinan",
+                "Station ID": "1630"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.237632,
+                    121.484857
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "246|1056",
+                "Station Name Chinese": "\u5357\u4eac\u4e1c\u8def",
+                "Lines": "2|10",
+                "Station Name English": "East Nanjing Road",
+                "Station ID": "246"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.237632,
+                    121.484857
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "246|1056",
+                "Station Name Chinese": "\u5357\u4eac\u4e1c\u8def",
+                "Lines": "2|10",
+                "Station Name English": "East Nanjing Road",
+                "Station ID": "1056"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.146504,
+                    121.523129
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e09\u6797\u4e1c",
+                "Lines": "11",
+                "Station Name English": "East Sanlin",
+                "Station ID": "1156"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.188288,
+                    121.299323
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5f90\u6cfe\u4e1c",
+                "Lines": "2",
+                "Station Name English": "East Xujing",
+                "Station ID": "234"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.321777,
+                    121.50681
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6bb7\u9ad8\u4e1c\u8def",
+                "Lines": "10",
+                "Station Name English": "East Yingao Road",
+                "Station ID": "1067"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.109083,
+                    121.606471
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5468\u6d66\u4e1c",
+                "Lines": "10",
+                "Station Name English": "East Zhoupu",
+                "Station ID": "1624"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.19316,
+                    121.550094
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u82b3\u534e\u8def",
+                "Lines": "7",
+                "Station Name English": "Fanghua Road",
+                "Station ID": "751"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.241814,
+                    121.411459
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u67ab\u6865\u8def",
+                "Lines": "11",
+                "Station Name English": "Fengqiao Road",
+                "Station ID": "1144"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.242542,
+                    121.355225
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e30\u5e84",
+                "Lines": "13",
+                "Station Name English": "Fengzhuang",
+                "Station ID": "1323"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.392241,
+                    121.424665
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5bcc\u9526\u8def",
+                "Lines": "1",
+                "Station Name English": "Fujin Road",
+                "Station ID": "138"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.280504,
+                    121.561123
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u590d\u5174\u5c9b",
+                "Lines": "12",
+                "Station Name English": "Fuxing Island",
+                "Station ID": "1245"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.353006,
+                    121.574856
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6e2f\u57ce\u8def",
+                "Lines": "6",
+                "Station Name English": "Gangcheng Road",
+                "Station ID": "648"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.160097,
+                    121.515674
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9ad8\u9752\u8def",
+                "Lines": "6",
+                "Station Name English": "Gaoqing Road",
+                "Station ID": "625"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.355404,
+                    121.434092
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5171\u5bcc\u65b0\u6751",
+                "Lines": "1",
+                "Station Name English": "Gongfu Xincun",
+                "Station ID": "135"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.318955,
+                    121.447109
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5171\u5eb7\u8def",
+                "Lines": "1",
+                "Station Name English": "Gongkang Road",
+                "Station ID": "132"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211027,
+                    121.621112
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5e7f\u5170\u8def",
+                "Lines": "2",
+                "Station Name English": "Guanglan Road",
+                "Station ID": "255"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.296312,
+                    121.117284
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5149\u660e\u8def",
+                "Lines": "11",
+                "Station Name English": "Guangming Road",
+                "Station ID": "1115"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.3448,
+                    121.372779
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u987e\u6751\u516c\u56ed",
+                "Lines": "7",
+                "Station Name English": "Gucun Park",
+                "Station ID": "725"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.174879,
+                    121.418553
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6842\u6797\u8def",
+                "Lines": "9",
+                "Station Name English": "Guilin Road",
+                "Station ID": "932"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.289657,
+                    121.510214
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u56fd\u6743\u8def",
+                "Lines": "10",
+                "Station Name English": "Guoquan Road",
+                "Station ID": "1063"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.25927,
+                    121.488675
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "412|1059",
+                "Station Name Chinese": "\u6d77\u4f26\u8def",
+                "Lines": "4|10",
+                "Station Name English": "Hailun Road",
+                "Station ID": "412"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.25927,
+                    121.488675
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "412|1059",
+                "Station Name Chinese": "\u6d77\u4f26\u8def",
+                "Lines": "4|10",
+                "Station Name English": "HaiLun Road",
+                "Station ID": "1059"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.168356,
+                    121.797035
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d77\u5929\u4e09\u8def",
+                "Lines": "2",
+                "Station Name English": "Haitiansan Road",
+                "Station ID": "262"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.335404,
+                    121.593976
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u822a\u6d25\u8def",
+                "Lines": "6",
+                "Station Name English": "Hangjin Road",
+                "Station ID": "646"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.165586,
+                    121.354902
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u822a\u4e2d\u8def",
+                "Lines": "10",
+                "Station Name English": "Hangzhong Road",
+                "Station ID": "1018"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.241618,
+                    121.458318
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c49\u4e2d\u8def",
+                "Lines": "1",
+                "Station Name English": "Hanzhong Road",
+                "Station ID": "125"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.166554,
+                    121.384798
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5408\u5ddd\u8def",
+                "Lines": "9",
+                "Station Name English": "Hechuan Road",
+                "Station ID": "930"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.204711,
+                    121.446558
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u8861\u5c71\u8def",
+                "Lines": "1",
+                "Station Name English": "Hengshan Road",
+                "Station ID": "119"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.077434,
+                    121.60981
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9e64\u6c99\u822a\u57ce",
+                "Lines": "16",
+                "Station Name English": "Heshahangcheng",
+                "Station ID": "1625"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.271442,
+                    121.479268
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "326|839",
+                "Station Name Chinese": "\u8679\u53e3\u8db3\u7403\u573a",
+                "Lines": "3|8",
+                "Station Name English": "Hongkou Football Stadium",
+                "Station ID": "326"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.271442,
+                    121.479268
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "326|839",
+                "Station Name Chinese": "\u8679\u53e3\u8db3\u7403\u573a",
+                "Lines": "3|8",
+                "Station Name English": "Hongkou Football Stadium",
+                "Station ID": "839"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.192922,
+                    121.326291
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "236|1042",
+                "Station Name Chinese": "\u8679\u68652\u53f7\u822a\u7ad9\u697c",
+                "Lines": "2|10",
+                "Station Name English": "Hongqiao Airport Terminal 2",
+                "Station ID": "236"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.191366,
+                    121.347095
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u8679\u68651\u53f7\u822a\u7ad9\u697c",
+                "Lines": "10",
+                "Station Name English": "Hongqiao Airport Terminal 1",
+                "Station ID": "1043"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.192922,
+                    121.326291
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "236|1042",
+                "Station Name Chinese": "\u8679\u68652\u53f7\u822a\u7ad9\u697c",
+                "Lines": "2|10",
+                "Station Name English": "Hongqiao Airport Terminal 2",
+                "Station ID": "1042"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.192672,
+                    121.321509
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "235|1041",
+                "Station Name Chinese": "\u8679\u6865\u706b\u8f66\u7ad9",
+                "Lines": "2|10",
+                "Station Name English": "Hongqiao Railway Station",
+                "Station ID": "235"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.192672,
+                    121.321509
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "235|1041",
+                "Station Name Chinese": "\u8679\u6865\u706b\u8f66\u7ad9",
+                "Lines": "2|10",
+                "Station Name English": "Hongqiao Railway Station",
+                "Station ID": "1041"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.19745,
+                    121.420775
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "316|403|1049",
+                "Station Name Chinese": "\u8679\u6865\u8def",
+                "Lines": "3|4|10",
+                "Station Name English": "Hongqiao Road",
+                "Station ID": "316"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.19745,
+                    121.420775
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "316|403|1049",
+                "Station Name Chinese": "\u8679\u6865\u8def",
+                "Lines": "3|4|10",
+                "Station Name English": "Hongqiao Road",
+                "Station ID": "403"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.19745,
+                    121.420775
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "316|403|1049",
+                "Station Name Chinese": "\u8679\u6865\u8def",
+                "Lines": "3|4|10",
+                "Station Name English": "Hongqiao Road",
+                "Station ID": "1049"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.171874,
+                    121.47392
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u540e\u6ee9",
+                "Lines": "7",
+                "Station Name English": "Houtan",
+                "Station ID": "744"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.339881,
+                    121.437723
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "",
+                "Lines": "1",
+                "Station Name English": "",
+                "Station ID": ""
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211212,
+                    121.562792
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u82b1\u6728\u8def",
+                "Lines": "7",
+                "Station Name English": "Huamu Road",
+                "Station ID": "753"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.295803,
+                    121.533146
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9ec4\u5174\u516c\u56ed",
+                "Lines": "8",
+                "Station Name English": "Huangxing Park",
+                "Station ID": "846"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.278784,
+                    121.528368
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9ec4\u5174\u8def",
+                "Lines": "8",
+                "Station Name English": "Huangxing Road",
+                "Station ID": "844"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.007379,
+                    121.395271
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u534e\u5b81\u8def",
+                "Lines": "5",
+                "Station Name English": "Huaning Road",
+                "Station ID": "511"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.298943,
+                    121.102407
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u82b1\u6865",
+                "Lines": "11",
+                "Station Name English": "Huaqiao",
+                "Station ID": "1114"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.053801,
+                    121.762136
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u60e0\u5357",
+                "Lines": "16",
+                "Station Name English": "Huinan",
+                "Station ID": "1629"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.339971,
+                    121.437672
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u547c\u5170\u8def",
+                "Lines": "1",
+                "Station Name English": "Hulan Road",
+                "Station ID": "134"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.249963,
+                    121.498092
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u56fd\u9645\u5ba2\u8fd0\u4e2d\u5fc3",
+                "Lines": "12",
+                "Station Name English": "International Passenger Transport Center",
+                "Station ID": "1238"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.330062,
+                    121.254342
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5609\u5b9a\u65b0\u57ce",
+                "Lines": "11",
+                "Station Name English": "Jiading Xincheng",
+                "Station ID": "1134"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.026424,
+                    121.41653
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5251\u5ddd\u8def",
+                "Lines": "5",
+                "Station Name English": "Jianchuan Road",
+                "Station ID": "508"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.264585,
+                    121.523737
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c5f\u6d66\u516c\u56ed",
+                "Lines": "12",
+                "Station Name English": "Jiangpu Park",
+                "Station ID": "1241"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.274954,
+                    121.518448
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c5f\u6d66\u8def",
+                "Lines": "8",
+                "Station Name English": "Jiangpu Road",
+                "Station ID": "843"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.220518,
+                    121.430676
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "242|1147",
+                "Station Name Chinese": "\u6c5f\u82cf\u8def",
+                "Lines": "2|11",
+                "Station Name English": "Jiangsu Road",
+                "Station ID": "242"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.220518,
+                    121.430676
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "242|1147",
+                "Station Name Chinese": "\u6c5f\u82cf\u8def",
+                "Lines": "2|11",
+                "Station Name English": "Jiangsu Road",
+                "Station ID": "1147"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.303177,
+                    121.514335
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c5f\u6e7e\u4f53\u80b2\u573a",
+                "Lines": "10",
+                "Station Name English": "Jiangwan Stadium",
+                "Station ID": "1065"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.305514,
+                    121.485083
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c5f\u6e7e\u9547",
+                "Lines": "3",
+                "Station Name English": "Jiangwan Town",
+                "Station ID": "329"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.084285,
+                    121.508583
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c5f\u6708\u8def",
+                "Lines": "8",
+                "Station Name English": "Jiangyue Road",
+                "Station ID": "822"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.202265,
+                    121.435259
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1050|1148",
+                "Station Name Chinese": "\u4ea4\u901a\u5927\u5b66",
+                "Lines": "10",
+                "Station Name English": "Jiaotong university",
+                "Station ID": "1050"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.202265,
+                    121.435259
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1050|1148",
+                "Station Name Chinese": "\u4ea4\u901a\u5927\u5b66",
+                "Lines": "10",
+                "Station Name English": "JiaoTong University",
+                "Station ID": "1148"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.202846,
+                    121.460872
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5609\u5584\u8def",
+                "Lines": "9",
+                "Station Name English": "Jiashan Road",
+                "Station ID": "936"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.223201,
+                    121.446441
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "243|739",
+                "Station Name Chinese": "\u9759\u5b89\u5bfa",
+                "Lines": "2|7",
+                "Station Name English": "Jing'an Temple",
+                "Station ID": "243"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.223201,
+                    121.446441
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "243|739",
+                "Station Name Chinese": "\u9759\u5b89\u5bfa",
+                "Lines": "2|7",
+                "Station Name English": "Jing'an Temple",
+                "Station ID": "739"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.263446,
+                    121.638443
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u6d77\u8def",
+                "Lines": "12",
+                "Station Name English": "Jinhai Road",
+                "Station ID": "1251"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.14196,
+                    121.413956
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9526\u6c5f\u4e50\u56ed",
+                "Lines": "1",
+                "Station Name English": "Jinjiang Park",
+                "Station ID": "114"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.279822,
+                    121.615501
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u4eac\u8def",
+                "Lines": "12",
+                "Station Name English": "Jinjing Road",
+                "Station ID": "1249"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.204215,
+                    121.602039
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u79d1\u8def",
+                "Lines": "2",
+                "Station Name English": "Jinke Road",
+                "Station ID": "254"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.011129,
+                    121.410182
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u5e73\u8def",
+                "Lines": "5",
+                "Station Name English": "Jinping Road",
+                "Station ID": "510"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.257178,
+                    121.581904
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u6865\u8def",
+                "Lines": "6",
+                "Station Name English": "Jinqiao Road",
+                "Station ID": "638"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.23225,
+                    121.413245
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "319|406|1327",
+                "Station Name Chinese": "\u91d1\u6c99\u6c5f\u8def",
+                "Lines": "3|4|13",
+                "Station Name English": "Jinshajiang Road",
+                "Station ID": "319"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.23225,
+                    121.413245
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "319|406|1327",
+                "Station Name Chinese": "\u91d1\u6c99\u6c5f\u8def",
+                "Lines": "3|4|13",
+                "Station Name English": "Jinshajiang Road",
+                "Station ID": "406"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.23225,
+                    121.413245
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "319|406|1327",
+                "Station Name Chinese": "\u91d1\u6c99\u6c5f\u8def",
+                "Lines": "3|4|13",
+                "Station Name English": "Jinshajiang Road",
+                "Station ID": "1327"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.18759,
+                    121.540035
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9526\u7ee3\u8def",
+                "Lines": "7",
+                "Station Name English": "Jinxiu Road",
+                "Station ID": "750"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.241074,
+                    121.320335
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u8fd0\u8def",
+                "Lines": "13",
+                "Station Name English": "Jinyun Road",
+                "Station ID": "1321"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.137548,
+                    121.319363
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e5d\u4ead",
+                "Lines": "9",
+                "Station Name English": "Jiuting",
+                "Station ID": "926"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.280676,
+                    121.588449
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "641|1247",
+                "Station Name Chinese": "\u5de8\u5cf0\u8def",
+                "Lines": "6",
+                "Station Name English": "Jufeng Road",
+                "Station ID": "641"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.280676,
+                    121.588449
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "641|1247",
+                "Station Name Chinese": "\u5de8\u5cf0\u8def",
+                "Lines": "6",
+                "Station Name English": "Jufeng Road",
+                "Station ID": "1247"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211848,
+                    121.527741
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "419|630",
+                "Station Name Chinese": "\u84dd\u6751\u8def",
+                "Lines": "4|6",
+                "Station Name English": "Lancun Road",
+                "Station ID": "419"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211848,
+                    121.527741
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "419|630",
+                "Station Name Chinese": "\u84dd\u6751\u8def",
+                "Lines": "4|6",
+                "Station Name English": "Lancun Road",
+                "Station ID": "630"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.255864,
+                    121.421788
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5c9a\u768b\u8def",
+                "Lines": "7",
+                "Station Name English": "Langao Road",
+                "Station ID": "735"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.218871,
+                    121.482946
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "833|1054",
+                "Station Name Chinese": "\u8001\u897f\u95e8",
+                "Lines": "8|10",
+                "Station Name English": "Laoximen",
+                "Station ID": "833"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.218871,
+                    121.482946
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "833|1054",
+                "Station Name Chinese": "\u8001\u897f\u95e8",
+                "Lines": "8|10",
+                "Station Name English": "Laoximen",
+                "Station ID": "1054"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.073599,
+                    121.510549
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u8054\u822a\u8def",
+                "Lines": "8",
+                "Station Name English": "Lianhang Road",
+                "Station ID": "821"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.131004,
+                    121.402943
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u83b2\u82b1\u8def",
+                "Lines": "1",
+                "Station Name English": "Lianhua Road",
+                "Station ID": "113"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    30.924195,
+                    121.910075
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e34\u6e2f\u5927\u9053",
+                "Lines": "16",
+                "Station Name English": "Lingang Avenue",
+                "Station ID": "1632"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.192637,
+                    121.722833
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u51cc\u7a7a\u8def",
+                "Lines": "2",
+                "Station Name English": "Lingkong Road",
+                "Station ID": "260"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.141343,
+                    121.489653
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u51cc\u5146\u65b0\u6751",
+                "Lines": "8",
+                "Station Name English": "Lingzhao Xincun",
+                "Station ID": "825"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.260872,
+                    121.500663
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e34\u5e73\u8def",
+                "Lines": "4",
+                "Station Name English": "Linping Road",
+                "Station ID": "413"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.193326,
+                    121.516905
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e34\u6c82\u65b0\u6751",
+                "Lines": "6",
+                "Station Name English": "Linyi Xincun",
+                "Station ID": "628"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.357569,
+                    121.36241
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5218\u884c",
+                "Lines": "7",
+                "Station Name English": "Liuhang",
+                "Station ID": "724"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.269025,
+                    121.389973
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u674e\u5b50\u56ed",
+                "Lines": "11",
+                "Station Name English": "Liziyuan",
+                "Station ID": "1141"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.176833,
+                    121.370426
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9f99\u67cf\u65b0\u6751",
+                "Lines": "10",
+                "Station Name English": "LongBai Xincun",
+                "Station ID": "1020"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.169454,
+                    121.44439
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9f99\u6f15\u8def",
+                "Lines": "3",
+                "Station Name English": "Longcao Road",
+                "Station ID": "313"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.275362,
+                    121.54489
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9686\u660c\u8def",
+                "Lines": "12",
+                "Station Name English": "Longchang Road",
+                "Station ID": "1243"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.230513,
+                    121.423572
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1146|1328",
+                "Station Name Chinese": "\u9686\u5fb7\u8def",
+                "Lines": "11",
+                "Station Name English": "Longde Road",
+                "Station ID": "1146"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.230513,
+                    121.423572
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1146|1328",
+                "Station Name Chinese": "\u9686\u5fb7\u8def",
+                "Lines": "11",
+                "Station Name English": "Longde Road",
+                "Station ID": "1328"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.172576,
+                    121.452835
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9f99\u534e",
+                "Lines": "11",
+                "Station Name English": "Longhua",
+                "Station ID": "1151"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.194413,
+                    121.380057
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9f99\u6eaa\u8def",
+                "Lines": "10",
+                "Station Name English": "Longxi Road",
+                "Station ID": "1045"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.203191,
+                    121.557644
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "252|752|1621",
+                "Station Name Chinese": "\u9f99\u9633\u8def",
+                "Lines": "2|7|Maglev",
+                "Station Name English": "Longyang Road",
+                "Station ID": "252"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.203191,
+                    121.557644
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "252|752|1621",
+                "Station Name Chinese": "\u9f99\u9633\u8def",
+                "Lines": "2|7|Maglev",
+                "Station Name English": "Longyang Road",
+                "Station ID": "752"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.203191,
+                    121.557644
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "252|752|1621",
+                "Station Name Chinese": "\u9f99\u9633\u8def",
+                "Lines": "2|7|Maglev",
+                "Station Name English": "Longyang Road",
+                "Station ID": "1621"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.15984,
+                    121.459779
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9f99\u8000\u8def",
+                "Lines": "11",
+                "Station Name English": "Longyao Road",
+                "Station ID": "1153"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211157,
+                    121.404007
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5a04\u5c71\u5173\u8def",
+                "Lines": "2",
+                "Station Name English": "Loushanguan Road",
+                "Station ID": "240"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.199192,
+                    121.474977
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9c81\u73ed\u8def",
+                "Lines": "4",
+                "Station Name English": "Luban Road",
+                "Station ID": "423"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.11917,
+                    121.497777
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u82a6\u6052\u8def",
+                "Lines": "8",
+                "Station Name English": "Luheng Road",
+                "Station ID": "824"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211763,
+                    121.486112
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "832|939",
+                "Station Name Chinese": "\u9646\u5bb6\u6d5c\u8def",
+                "Lines": "8|9",
+                "Station Name English": "Lujiabang Road",
+                "Station ID": "832"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.211763,
+                    121.486112
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "832|939",
+                "Station Name Chinese": "\u9646\u5bb6\u6d5c\u8def",
+                "Lines": "8|9",
+                "Station Name English": "Lujiabang Road",
+                "Station ID": "939"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.238205,
+                    121.502315
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9646\u5bb6\u5634",
+                "Lines": "2",
+                "Station Name English": "Lujiazui",
+                "Station ID": "247"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.388747,
+                    121.357446
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7f57\u5357\u65b0\u6751",
+                "Lines": "7",
+                "Station Name English": "Luonan Xincun",
+                "Station ID": "722"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.152139,
+                    121.593653
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1160|1623",
+                "Station Name Chinese": "\u7f57\u5c71\u8def",
+                "Lines": "11|16",
+                "Station Name English": "Luoshan Road",
+                "Station ID": "1160"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.152139,
+                    121.593653
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1160|1623",
+                "Station Name Chinese": "\u7f57\u5c71\u8def",
+                "Lines": "11|16",
+                "Station Name English": "Luoshan Road",
+                "Station ID": "1623"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.209344,
+                    121.476489
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9a6c\u5f53\u8def",
+                "Lines": "9",
+                "Station Name English": "Madang Road",
+                "Station ID": "938"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.319492,
+                    121.276855
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9a6c\u9646",
+                "Lines": "11",
+                "Station Name English": "Malu",
+                "Station ID": "1135"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.401735,
+                    121.350117
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7f8e\u5170\u6e56",
+                "Lines": "7",
+                "Station Name English": "Meilan Lake",
+                "Station ID": "721"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.213863,
+                    121.67374
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u521b\u65b0\u4e2d\u8def",
+                "Lines": "2",
+                "Station Name English": "Middle Chuangxin Road",
+                "Station ID": "257"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.175139,
+                    121.583297
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u534e\u590f\u4e2d\u8def",
+                "Lines": "16",
+                "Station Name English": "Middle Huaxia Road",
+                "Station ID": "1622"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.184826,
+                    121.457266
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9f99\u534e\u4e2d\u8def",
+                "Lines": "7",
+                "Station Name English": "Middle Longhua Road",
+                "Station ID": "743"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.227522,
+                    121.548676
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6768\u9ad8\u4e2d\u8def",
+                "Lines": "9",
+                "Station Name English": "Middle Yanggao Road",
+                "Station ID": "943"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.288331,
+                    121.534945
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5ef6\u5409\u4e2d\u8def",
+                "Lines": "8",
+                "Station Name English": "Middle Yanji Road",
+                "Station ID": "845"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.00053,
+                    121.369781
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u95f5\u884c\u5f00\u53d1\u533a",
+                "Lines": "5",
+                "Station Name English": "Minhang Development Zone",
+                "Station ID": "513"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.235845,
+                    121.543573
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c11\u751f\u8def",
+                "Lines": "6",
+                "Station Name English": "Minsheng Road",
+                "Station ID": "634"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.321743,
+                    121.398774
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5357\u9648\u8def",
+                "Lines": "7",
+                "Station Name English": "Nanchen Road",
+                "Station ID": "728"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.208468,
+                    121.499378
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5357\u6d66\u5927\u6865",
+                "Lines": "4",
+                "Station Name English": "Nanpu Bridge",
+                "Station ID": "421"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.296862,
+                    121.323296
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5357\u7fd4",
+                "Lines": "11",
+                "Station Name English": "Nanxiang",
+                "Station ID": "1137"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.314794,
+                    121.531957
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5ae9\u6c5f\u8def",
+                "Lines": "8",
+                "Station Name English": "Nenjiang Road",
+                "Station ID": "848"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.268804,
+                    121.532758
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5b81\u56fd\u8def",
+                "Lines": "12",
+                "Station Name English": "Ningguo Road",
+                "Station ID": "1242"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.391516,
+                    121.237331
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5609\u5b9a\u5317",
+                "Lines": "11",
+                "Station Name English": "North Jiading",
+                "Station ID": "1131"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.407792,
+                    121.439473
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c5f\u6768\u5317\u8def",
+                "Lines": "3",
+                "Station Name English": "North Jiangyang Road",
+                "Station ID": "339"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.251982,
+                    121.483815
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u56db\u5ddd\u5317\u8def",
+                "Lines": "10",
+                "Station Name English": "North Sichuan Road",
+                "Station ID": "1058"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.347831,
+                    121.586919
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5916\u9ad8\u6865\u4fdd\u7a0e\u533a\u5317\u7ad9",
+                "Lines": "6",
+                "Station Name English": "North Waigaoqiao Free Trade Zone",
+                "Station ID": "647"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.263529,
+                    121.468789
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u897f\u85cf\u5317\u8def",
+                "Lines": "8",
+                "Station Name English": "North Xizang Road",
+                "Station ID": "838"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.280097,
+                    121.603246
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6768\u9ad8\u5317\u8def",
+                "Lines": "12",
+                "Station Name English": "North Yanggao Road",
+                "Station ID": "1248"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.258764,
+                    121.459229
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e2d\u5c71\u5317\u8def",
+                "Lines": "1",
+                "Station Name English": "North Zhongshan Road",
+                "Station ID": "127"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.152897,
+                    121.480009
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "621|826|1154",
+                "Station Name Chinese": "\u4e1c\u65b9\u4f53\u80b2\u4e2d\u5fc3",
+                "Lines": "6|8",
+                "Station Name English": "Oriental Sports Center",
+                "Station ID": "621"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.152897,
+                    121.480009
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "621|826|1154",
+                "Station Name Chinese": "\u4e1c\u65b9\u4f53\u80b2\u4e2d\u5fc3",
+                "Lines": "6|8",
+                "Station Name English": "Oriental Sports Center",
+                "Station ID": "826"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.152897,
+                    121.480009
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "621|826|1154",
+                "Station Name Chinese": "\u4e1c\u65b9\u4f53\u80b2\u4e2d\u5fc3",
+                "Lines": "6|8",
+                "Station Name English": "Oriental Sports Center",
+                "Station ID": "1154"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.364174,
+                    121.355842
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6f58\u5e7f\u8def",
+                "Lines": "7",
+                "Station Name English": "Panguang Road",
+                "Station ID": "723"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.30659,
+                    121.448637
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5f6d\u6d66\u65b0\u6751",
+                "Lines": "1",
+                "Station Name English": "Pengpu Xincun",
+                "Station ID": "131"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.232812,
+                    121.475372
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "123|245|835",
+                "Station Name Chinese": "\u4eba\u6c11\u5e7f\u573a",
+                "Lines": "1|2|8",
+                "Station Name English": "People's Square",
+                "Station ID": "123"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.232812,
+                    121.475372
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "123|245|835",
+                "Station Name Chinese": "\u4eba\u6c11\u5e7f\u573a",
+                "Lines": "1|2|8",
+                "Station Name English": "People's Square",
+                "Station ID": "245"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.232812,
+                    121.475372
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "123|245|835",
+                "Station Name Chinese": "\u4eba\u6c11\u5e7f\u573a",
+                "Lines": "1|2|8",
+                "Station Name English": "People's Square",
+                "Station ID": "835"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.222353,
+                    121.532047
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "418|631",
+                "Station Name Chinese": "\u6d66\u7535\u8def",
+                "Lines": "4",
+                "Station Name English": "Pudian Road",
+                "Station ID": "418"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.220152,
+                    121.529107
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "418|631",
+                "Station Name Chinese": "\u6d66\u7535\u8def",
+                "Lines": "6",
+                "Station Name English": "Pudian Road",
+                "Station ID": "631"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.240008,
+                    121.519384
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d66\u4e1c\u5927\u9053",
+                "Lines": "4",
+                "Station Name English": "Pudong Avenue",
+                "Station ID": "416"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.150456,
+                    121.805867
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d66\u4e1c\u56fd\u9645\u673a\u573a",
+                "Lines": "2| Maglev ",
+                "Station Name English": "Pudong International Airport",
+                "Station ID": "263"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.096259,
+                    121.506393
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d66\u6c5f\u9547",
+                "Lines": "8",
+                "Station Name English": "Pujiang Town",
+                "Station ID": "823"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.15085,
+                    121.538825
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d66\u4e09\u8def",
+                "Lines": "11",
+                "Station Name English": "Pusan Road",
+                "Station ID": "1157"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.155541,
+                    121.349635
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e03\u5b9d",
+                "Lines": "9",
+                "Station Name English": "Qibao",
+                "Station ID": "928"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.322703,
+                    121.375804
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7941\u534e\u8def",
+                "Lines": "7",
+                "Station Name English": "Qihua Road",
+                "Station ID": "726"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.271643,
+                    121.375962
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7941\u8fde\u5c71\u8def",
+                "Lines": "11",
+                "Station Name English": "Qilianshan Road",
+                "Station ID": "1140"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.24233,
+                    121.471591
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "836|1236",
+                "Station Name Chinese": "\u66f2\u961c\u8def",
+                "Lines": "8",
+                "Station Name English": "Qufu Road",
+                "Station ID": "836"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.24233,
+                    121.471591
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "836|1236",
+                "Station Name Chinese": "\u66f2\u961c\u8def",
+                "Lines": "8",
+                "Station Name English": "Qufu Road",
+                "Station ID": "1236"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.276525,
+                    121.490712
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u66f2\u9633\u8def",
+                "Lines": "8",
+                "Station Name English": "Quyang Road",
+                "Station ID": "840"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.143027,
+                    121.510789
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e09\u6797",
+                "Lines": "11",
+                "Station Name English": "Sanlin",
+                "Station ID": "1155"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.313151,
+                    121.508298
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e09\u95e8\u8def",
+                "Lines": "10",
+                "Station Name English": "Sanmen Road",
+                "Station ID": "1066"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.230385,
+                    121.516188
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5546\u57ce\u8def",
+                "Lines": "9",
+                "Station Name English": "Shangcheng Road",
+                "Station ID": "941"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.314796,
+                    121.408642
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u5927\u8def",
+                "Lines": "7",
+                "Station Name English": "Shangda Road",
+                "Station ID": "729"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.285391,
+                    121.180824
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u6c7d\u8f66\u57ce",
+                "Lines": "11",
+                "Station Name English": "Shanghai Automobile City",
+                "Station ID": "1118"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.203254,
+                    121.523476
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u513f\u7ae5\u533b\u5b66\u4e2d\u5fc3",
+                "Lines": "6",
+                "Station Name English": "Shanghai Children's Medical Center",
+                "Station ID": "629"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.331861,
+                    121.226056
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u8d5b\u8f66\u573a",
+                "Lines": "11",
+                "Station Name English": "Shanghai Circuit",
+                "Station ID": "1120"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.279554,
+                    121.452049
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u9a6c\u620f\u57ce",
+                "Lines": "1",
+                "Station Name English": "Shanghai Circus World",
+                "Station ID": "129"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.182786,
+                    121.437272
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "117|401",
+                "Station Name Chinese": "\u4e0a\u6d77\u4f53\u80b2\u9986",
+                "Lines": "1|4",
+                "Station Name English": "Shanghai Indoor Stadium",
+                "Station ID": "117"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.182786,
+                    121.437272
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "117|401",
+                "Station Name Chinese": "\u4e0a\u6d77\u4f53\u80b2\u9986",
+                "Lines": "1|4",
+                "Station Name English": "Shanghai Indoor Stadium",
+                "Station ID": "401"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.208057,
+                    121.444278
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u56fe\u4e66\u9986",
+                "Lines": "10",
+                "Station Name English": "Shanghai Library",
+                "Station ID": "1051"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.24986,
+                    121.457935
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "126|323|410",
+                "Station Name Chinese": "\u4e0a\u6d77\u706b\u8f66\u7ad9",
+                "Lines": "1|3|4",
+                "Station Name English": "Shanghai Railway Station",
+                "Station ID": "126"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.24986,
+                    121.457935
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "126|323|410",
+                "Station Name Chinese": "\u4e0a\u6d77\u706b\u8f66\u7ad9",
+                "Lines": "1|3|4",
+                "Station Name English": "Shanghai Railway Station",
+                "Station ID": "323"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.24986,
+                    121.457935
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "126|323|410",
+                "Station Name Chinese": "\u4e0a\u6d77\u706b\u8f66\u7ad9",
+                "Lines": "1|3|4",
+                "Station Name English": "Shanghai Railway Station",
+                "Station ID": "410"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.219641,
+                    121.54291
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u79d1\u6280\u9986",
+                "Lines": "2",
+                "Station Name English": "Shanghai Science and Technology Museum",
+                "Station ID": "250"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.154832,
+                    121.430449
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "115|311",
+                "Station Name Chinese": "\u4e0a\u6d77\u5357\u7ad9",
+                "Lines": "1|3",
+                "Station Name English": "Shanghai South Railway Station",
+                "Station ID": "115"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.154832,
+                    121.430449
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "115|311",
+                "Station Name Chinese": "\u4e0a\u6d77\u5357\u7ad9",
+                "Lines": "1|3",
+                "Station Name English": "Shanghai South Railway Station",
+                "Station ID": "311"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.182778,
+                    121.437268
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u4f53\u80b2\u573a",
+                "Lines": "4",
+                "Station Name English": "Shanghai Stadium",
+                "Station ID": "426"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.179461,
+                    121.441461
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u6e38\u6cf3\u9986",
+                "Lines": "11",
+                "Station Name English": "Shanghai Swimming Center",
+                "Station ID": "1150"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.320565,
+                    121.388824
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u5927\u5b66",
+                "Lines": "7",
+                "Station Name English": "Shanghai University",
+                "Station ID": "727"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.190233,
+                    121.368168
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u52a8\u7269\u56ed",
+                "Lines": "10",
+                "Station Name English": "Shanghai Zoo",
+                "Station ID": "1044"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.148835,
+                    121.506475
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u5357\u8def",
+                "Lines": "6",
+                "Station Name English": "Shangnan Road",
+                "Station ID": "623"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.061386,
+                    121.512244
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c88\u675c\u516c\u8def",
+                "Lines": "8",
+                "Station Name English": "Shendu highway",
+                "Station ID": "820"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.280192,
+                    121.626778
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7533\u6c5f\u8def",
+                "Lines": "12",
+                "Station Name English": "Shenjiang Road",
+                "Station ID": "1250"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.104468,
+                    121.229723
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4f58\u5c71",
+                "Lines": "9",
+                "Station Name English": "Sheshan",
+                "Station ID": "924"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.322762,
+                    121.53195
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5e02\u5149\u8def",
+                "Lines": "8",
+                "Station Name English": "Shiguang Road",
+                "Station ID": "849"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.157928,
+                    121.443194
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u77f3\u9f99\u8def",
+                "Lines": "3",
+                "Station Name English": "Shilong Road",
+                "Station ID": "312"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.381407,
+                    121.488172
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c34\u4ea7\u8def",
+                "Lines": "3",
+                "Station Name English": "Shuichan Road",
+                "Station ID": "335"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.199432,
+                    121.392076
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c34\u57ce\u8def",
+                "Lines": "10",
+                "Station Name English": "Shuicheng Road",
+                "Station ID": "1046"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    30.95955,
+                    121.850027
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e66\u9662",
+                "Lines": "16",
+                "Station Name English": "Shuyuan",
+                "Station ID": "1631"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.11832,
+                    121.260453
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6cd7\u6cfe",
+                "Lines": "9",
+                "Station Name English": "Sijing",
+                "Station ID": "925"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.274878,
+                    121.501483
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "841|1061",
+                "Station Name Chinese": "\u56db\u5e73\u8def",
+                "Lines": "8|10",
+                "Station Name English": "Siping Road",
+                "Station ID": "841"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.274878,
+                    121.501483
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "841|1061",
+                "Station Name Chinese": "\u56db\u5e73\u8def",
+                "Lines": "8|10",
+                "Station Name English": "Siping Road",
+                "Station ID": "1061"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.371012,
+                    121.492842
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6dde\u6ee8\u8def",
+                "Lines": "3",
+                "Station Name English": "Songbin Road",
+                "Station ID": "334"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.345143,
+                    121.500421
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6dde\u53d1\u8def",
+                "Lines": "3",
+                "Station Name English": "Songfa Road",
+                "Station ID": "332"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.218195,
+                    121.359476
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6dde\u8679\u8def",
+                "Lines": "2",
+                "Station Name English": "Songhong Road",
+                "Station ID": "237"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    30.984531,
+                    121.230176
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u677e\u6c5f\u5357\u7ad9",
+                "Lines": "9",
+                "Station Name English": "Songjiang South Railway Station",
+                "Station ID": "918"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.015552,
+                    121.230504
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u677e\u6c5f\u4f53\u80b2\u4e2d\u5fc3",
+                "Lines": "9",
+                "Station Name English": "Songjiang Sports Center",
+                "Station ID": "920"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.054112,
+                    121.232633
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u677e\u6c5f\u5927\u5b66\u57ce",
+                "Lines": "9",
+                "Station Name English": "Songjiang University Town",
+                "Station ID": "922"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.030342,
+                    121.230777
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u677e\u6c5f\u65b0\u57ce",
+                "Lines": "9",
+                "Station Name English": "Songjiang Xincheng",
+                "Station ID": "921"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.196434,
+                    121.411705
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5b8b\u56ed\u8def",
+                "Lines": "10",
+                "Station Name English": "Songyuan Road",
+                "Station ID": "1048"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.331949,
+                    121.491481
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u957f\u6c5f\u5357\u8def",
+                "Lines": "3",
+                "Station Name English": "South Changjiang Road",
+                "Station ID": "331"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.222725,
+                    121.473295
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9ec4\u9642\u5357\u8def",
+                "Lines": "1",
+                "Station Name English": "South Huangpi Road",
+                "Station ID": "122"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.148761,
+                    121.495078
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7075\u5ca9\u5357\u8def",
+                "Lines": "6",
+                "Station Name English": "South Lingyan Road",
+                "Station ID": "622"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.237803,
+                    121.367337
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7941\u8fde\u5c71\u5357\u8def",
+                "Lines": "13",
+                "Station Name English": "South Qilianshan Road",
+                "Station ID": "1324"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.214996,
+                    121.458265
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "121|1052",
+                "Station Name Chinese": "\u9655\u897f\u5357\u8def",
+                "Lines": "1|10",
+                "Station Name English": "South Shaanxi Road",
+                "Station ID": "121"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.214996,
+                    121.458265
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "121|1052",
+                "Station Name Chinese": "\u9655\u897f\u5357\u8def",
+                "Lines": "1|10",
+                "Station Name English": "South Shaanxi Road",
+                "Station ID": "1052"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.321589,
+                    121.601988
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5916\u9ad8\u6865\u4fdd\u7a0e\u533a\u5357\u7ad9",
+                "Lines": "6",
+                "Station Name English": "South Waigaoqiao Free Trade Zone",
+                "Station ID": "645"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.201968,
+                    121.489568
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "422|831",
+                "Station Name Chinese": "\u897f\u85cf\u5357\u8def",
+                "Lines": "4|8",
+                "Station Name English": "South Xizang Road",
+                "Station ID": "422"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.201968,
+                    121.489568
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "422|831",
+                "Station Name Chinese": "\u897f\u85cf\u5357\u8def",
+                "Lines": "4|8",
+                "Station Name English": "South Xizang Road",
+                "Station ID": "831"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.187572,
+                    121.525107
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6768\u9ad8\u5357\u8def",
+                "Lines": "7",
+                "Station Name English": "South Yanggao Road",
+                "Station ID": "749"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.209794,
+                    121.518635
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5858\u6865",
+                "Lines": "4",
+                "Station Name English": "Tangqiao",
+                "Station ID": "420"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.213156,
+                    121.655579
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5510\u9547",
+                "Lines": "2",
+                "Station Name English": "Tangzhen",
+                "Station ID": "256"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.281607,
+                    121.349624
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6843\u6d66\u65b0\u6751",
+                "Lines": "11",
+                "Station Name English": "Taopu Xincun",
+                "Station ID": "1138"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.243904,
+                    121.482451
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1057|1237",
+                "Station Name Chinese": "\u5929\u6f7c\u8def",
+                "Lines": "10",
+                "Station Name English": "Tiantong Road",
+                "Station ID": "1057"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.243904,
+                    121.482451
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "1057|1237",
+                "Station Name Chinese": "\u5929\u6f7c\u8def",
+                "Lines": "10",
+                "Station Name English": "Tiantong Road",
+                "Station ID": "1237"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.408032,
+                    121.462336
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u94c1\u529b\u8def",
+                "Lines": "3",
+                "Station Name English": "Tieli Road",
+                "Station ID": "338"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.253596,
+                    121.506629
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u63d0\u7bee\u6865",
+                "Lines": "12",
+                "Station Name English": "Tilan Qiao",
+                "Station ID": "1239"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.331253,
+                    121.441483
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u901a\u6cb3\u65b0\u6751",
+                "Lines": "1",
+                "Station Name English": "Tonghe Xincun",
+                "Station ID": "133"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.282169,
+                    121.506343
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u540c\u6d4e\u5927\u5b66",
+                "Lines": "10",
+                "Station Name English": "Tongji University",
+                "Station ID": "1062"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.12059,
+                    121.392774
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5916\u73af\u8def",
+                "Lines": "1",
+                "Station Name English": "Waihuanlu",
+                "Station ID": "112"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.214944,
+                    121.386927
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5a01\u5b81\u8def",
+                "Lines": "2",
+                "Station Name English": "Weining Road",
+                "Station ID": "239"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.003478,
+                    121.380743
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6587\u4e95\u8def",
+                "Lines": "5",
+                "Station Name English": "Wenjing Road",
+                "Station ID": "512"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.292616,
+                    121.450235
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6c76\u6c34\u8def",
+                "Lines": "1",
+                "Station Name English": "Wenshui Road",
+                "Station ID": "130"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.185745,
+                    121.509791
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "627|748",
+                "Station Name Chinese": "\u9ad8\u79d1\u897f\u8def",
+                "Lines": "6|7",
+                "Station Name English": "West Gaoke Road",
+                "Station ID": "627"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.185745,
+                    121.509791
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "627|748",
+                "Station Name Chinese": "\u9ad8\u79d1\u897f\u8def",
+                "Lines": "6|7",
+                "Station Name English": "West Gaoke Road",
+                "Station ID": "748"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.149855,
+                    121.514519
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u534e\u590f\u897f\u8def",
+                "Lines": "6",
+                "Station Name English": "West Huaxia Road",
+                "Station ID": "624"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.377084,
+                    121.227868
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5609\u5b9a\u897f",
+                "Lines": "11",
+                "Station Name English": "West Jiading",
+                "Station ID": "1132"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.241136,
+                    121.335176
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91d1\u6c99\u6c5f\u897f\u8def",
+                "Lines": "13",
+                "Station Name English": "West Jinshajiang Road",
+                "Station ID": "1322"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.229755,
+                    121.459726
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5357\u4eac\u897f\u8def",
+                "Lines": "2",
+                "Station Name English": "West Nanjing Road",
+                "Station ID": "244"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.262285,
+                    121.403712
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e0a\u6d77\u897f\u7ad9",
+                "Lines": "11",
+                "Station Name English": "West Shanghai Railway Station",
+                "Station ID": "1142"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.209598,
+                    121.41707
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "317|404",
+                "Station Name Chinese": "\u5ef6\u5b89\u897f\u8def",
+                "Lines": "3|4",
+                "Station Name English": "West Yan'an Road",
+                "Station ID": "317"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.209598,
+                    121.41707
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "317|404",
+                "Station Name Chinese": "\u5ef6\u5b89\u897f\u8def",
+                "Lines": "3|4",
+                "Station Name English": "West Yan'an Road",
+                "Station ID": "404"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.319967,
+                    121.484962
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6bb7\u9ad8\u897f\u8def",
+                "Lines": "3",
+                "Station Name English": "West Yingao Road",
+                "Station ID": "330"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.380989,
+                    121.42804
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u53cb\u8c0a\u897f\u8def",
+                "Lines": "1",
+                "Station Name English": "West Youyi Road",
+                "Station ID": "137"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.0497,
+                    121.709389
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u91ce\u751f\u52a8\u7269\u56ed",
+                "Lines": "16",
+                "Station Name English": "Wild Animal Park",
+                "Station ID": "1628"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.297805,
+                    121.514507
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e94\u89d2\u573a",
+                "Lines": "10",
+                "Station Name English": "Wujiaochang",
+                "Station ID": "1064"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.272087,
+                    121.587994
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e94\u83b2\u8def",
+                "Lines": "6",
+                "Station Name English": "Wulian Road",
+                "Station ID": "640"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.233646,
+                    121.429828
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6b66\u5b81\u8def",
+                "Lines": "13",
+                "Station Name English": "Wuning Road",
+                "Station ID": "1329"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.276641,
+                    121.364674
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6b66\u5a01\u8def",
+                "Lines": "11",
+                "Station Name English": "Wuwei Road",
+                "Station ID": "1139"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.302584,
+                    121.589325
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e94\u6d32\u5927\u9053",
+                "Lines": "6",
+                "Station Name English": "Wuzhou Avenue",
+                "Station ID": "643"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.305128,
+                    121.531979
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7fd4\u6bb7\u8def",
+                "Lines": "8",
+                "Station Name English": "Xiangyin Road",
+                "Station ID": "847"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.216698,
+                    121.498366
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5c0f\u5357\u95e8",
+                "Lines": "9",
+                "Station Name English": "Xiaonanmen",
+                "Station ID": "940"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.04498,
+                    121.648854
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u65b0\u573a",
+                "Lines": "16",
+                "Station Name English": "Xinchang",
+                "Station ID": "1627"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.264243,
+                    121.42272
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u65b0\u6751\u8def",
+                "Lines": "7",
+                "Station Name English": "Xincun Road",
+                "Station ID": "734"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.28494,
+                    121.421487
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u884c\u77e5\u8def",
+                "Lines": "7",
+                "Station Name English": "Xingzhi Road",
+                "Station ID": "732"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.15815,
+                    121.368695
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u661f\u4e2d\u8def",
+                "Lines": "9",
+                "Station Name English": "Xingzhong Road",
+                "Station ID": "929"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.328584,
+                    121.506771
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u65b0\u6c5f\u6e7e\u57ce",
+                "Lines": "10",
+                "Station Name English": "Xinjiangwancheng",
+                "Station ID": "1068"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.216379,
+                    121.475112
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u65b0\u5929\u5730",
+                "Lines": "10",
+                "Station Name English": "Xintiandi",
+                "Station ID": "1053"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.238454,
+                    121.467937
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u65b0\u95f8\u8def",
+                "Lines": "1",
+                "Station Name English": "Xinzha Road",
+                "Station ID": "124"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.111095,
+                    121.385337
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "111|501",
+                "Station Name Chinese": "\u8398\u5e84",
+                "Lines": "1|5",
+                "Station Name English": "Xinzhuang",
+                "Station ID": "111"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.111095,
+                    121.385337
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "111|501",
+                "Station Name Chinese": "\u8398\u5e84",
+                "Lines": "1|5",
+                "Station Name English": "Xinzhuang \u0002  ",
+                "Station ID": "501"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.194621,
+                    121.436139
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "118|1149|934",
+                "Station Name Chinese": "\u5f90\u5bb6\u6c47",
+                "Lines": "1|9",
+                "Station Name English": "Xujiahui",
+                "Station ID": "118"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.194621,
+                    121.436139
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "118|1149|934",
+                "Station Name Chinese": "\u5f90\u5bb6\u6c47",
+                "Lines": "1|9",
+                "Station Name English": "Xujiahui",
+                "Station ID": "934"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.194621,
+                    121.436139
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "118|1149|934",
+                "Station Name Chinese": "\u5f90\u5bb6\u6c47",
+                "Lines": "1|9",
+                "Station Name English": "Xujiahui",
+                "Station ID": "1149"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.271386,
+                    121.45549
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5ef6\u957f\u8def",
+                "Lines": "1",
+                "Station Name English": "Yanchang Road",
+                "Station ID": "128"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.252171,
+                    121.516996
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6768\u6811\u6d66\u8def",
+                "Lines": "4",
+                "Station Name English": "Yangshupu Road",
+                "Station ID": "415"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.161065,
+                    121.493471
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6768\u601d",
+                "Lines": "8",
+                "Station Name English": "Yangsi",
+                "Station ID": "827"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.136556,
+                    121.558711
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e25\u5fa1\u8def",
+                "Lines": "11",
+                "Station Name English": "Yanyu Road",
+                "Station ID": "1158"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.178513,
+                    121.494621
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "746|829",
+                "Station Name Chinese": "\u8000\u534e\u8def",
+                "Lines": "7|8",
+                "Station Name English": "Yaohua Road",
+                "Station ID": "746"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.178513,
+                    121.494621
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "746|829",
+                "Station Name Chinese": "\u8000\u534e\u8def",
+                "Lines": "7|8",
+                "Station Name English": "Yaohua Road",
+                "Station ID": "829"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.19893,
+                    121.40386
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4f0a\u7281\u8def",
+                "Lines": "10",
+                "Station Name English": "Yili Road",
+                "Station ID": "1047"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.089316,
+                    121.390344
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u94f6\u90fd\u8def",
+                "Lines": "5",
+                "Station Name English": "Yindu Road",
+                "Station ID": "503"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.186717,
+                    121.427184
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "315|402|933",
+                "Station Name Chinese": "\u5b9c\u5c71\u8def",
+                "Lines": "3|4|9",
+                "Station Name English": "Yishan Road",
+                "Station ID": "315"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.186717,
+                    121.427184
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "315|402|933",
+                "Station Name Chinese": "\u5b9c\u5c71\u8def",
+                "Lines": "3|4|9",
+                "Station Name English": "Yishan Road",
+                "Station ID": "402"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.186717,
+                    121.427184
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "315|402|933",
+                "Station Name Chinese": "\u5b9c\u5c71\u8def",
+                "Lines": "3|4|9",
+                "Station Name English": "Yishan Road",
+                "Station ID": "933"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.268642,
+                    121.494499
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u90ae\u7535\u65b0\u6751",
+                "Lines": "10",
+                "Station Name English": "Youdian Xincun",
+                "Station ID": "1060"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.404012,
+                    121.475956
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u53cb\u8c0a\u8def",
+                "Lines": "3",
+                "Station Name English": "Youyi Road",
+                "Station ID": "337"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.199441,
+                    121.755374
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u8fdc\u4e1c\u5927\u9053",
+                "Lines": "2",
+                "Station Name English": "Yuandong Avenue",
+                "Station ID": "261"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.232985,
+                    121.534579
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6e90\u6df1\u4f53\u80b2\u4e2d\u5fc3",
+                "Lines": "6",
+                "Station Name English": "Yuanshen Stadium",
+                "Station ID": "633"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.166474,
+                    121.458505
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e91\u9526\u8def",
+                "Lines": "11",
+                "Station Name English": "Yunjin Road",
+                "Station ID": "1152"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.250386,
+                    121.572737
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e91\u5c71\u8def",
+                "Lines": "6",
+                "Station Name English": "Yunshan Road",
+                "Station ID": "637"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.182128,
+                    121.500379
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e91\u53f0\u8def",
+                "Lines": "7",
+                "Station Name English": "Yuntai Road",
+                "Station ID": "747"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.15831,
+                    121.57163
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5fa1\u6865",
+                "Lines": "11",
+                "Station Name English": "Yuqiao",
+                "Station ID": "1159"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.228093,
+                    121.487368
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u8c6b\u56ed",
+                "Lines": "10",
+                "Station Name English": "Yuyuan Garden",
+                "Station ID": "1055"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.357981,
+                    121.498693
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5f20\u534e\u6d5c",
+                "Lines": "3",
+                "Station Name English": "Zhanghuabang",
+                "Station ID": "333"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.201825,
+                    121.587687
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5f20\u6c5f\u9ad8\u79d1",
+                "Lines": "2",
+                "Station Name English": "Zhangjiang Hi-Tech Park",
+                "Station ID": "253"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.28897,
+                    121.150353
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u5146\u4e30\u8def",
+                "Lines": "11",
+                "Station Name English": "Zhaofeng Road",
+                "Station ID": "1116"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.199513,
+                    121.450331
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "741|935",
+                "Station Name Chinese": "\u8087\u5609\u6d5c\u8def",
+                "Lines": "7|9",
+                "Station Name English": "Zhaojiabang Road",
+                "Station ID": "741"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.199513,
+                    121.450331
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "741|935",
+                "Station Name Chinese": "\u8087\u5609\u6d5c\u8def",
+                "Lines": "7|9",
+                "Station Name English": "Zhaojiabang Road",
+                "Station ID": "935"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.232362,
+                    121.381631
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u771f\u5317\u8def",
+                "Lines": "13",
+                "Station Name English": "Zhenbei Road",
+                "Station ID": "1325"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.246509,
+                    121.430006
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "321|408|736",
+                "Station Name Chinese": "\u9547\u576a\u8def",
+                "Lines": "3|4|7",
+                "Station Name English": "Zhenping Road",
+                "Station ID": "321"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.246509,
+                    121.430006
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "321|408|736",
+                "Station Name Chinese": "\u9547\u576a\u8def",
+                "Lines": "3|4|7",
+                "Station Name English": "Zhenping Road",
+                "Station ID": "408"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.246509,
+                    121.430006
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "321|408|736",
+                "Station Name Chinese": "\u9547\u576a\u8def",
+                "Lines": "3|4|7",
+                "Station Name English": "Zhenping Road",
+                "Station ID": "736"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.250833,
+                    121.407201
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u771f\u5982",
+                "Lines": "11",
+                "Station Name English": "Zhenru",
+                "Station ID": "1143"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.149431,
+                    121.33777
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e2d\u6625\u8def",
+                "Lines": "9",
+                "Station Name English": "Zhongchun Road",
+                "Station ID": "927"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.218001,
+                    121.415713
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "241|318|405",
+                "Station Name Chinese": "\u4e2d\u5c71\u516c\u56ed",
+                "Lines": "2|3|4",
+                "Station Name English": "Zhongshan Park",
+                "Station ID": "241"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.218001,
+                    121.415713
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "241|318|405",
+                "Station Name Chinese": "\u4e2d\u5c71\u516c\u56ed",
+                "Lines": "2|3|4",
+                "Station Name English": "Zhongshan Park",
+                "Station ID": "318"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.218001,
+                    121.415713
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "241|318|405",
+                "Station Name Chinese": "\u4e2d\u5c71\u516c\u56ed",
+                "Lines": "2|3|4",
+                "Station Name English": "Zhongshan Park",
+                "Station ID": "405"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.254699,
+                    121.441191
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "322|409",
+                "Station Name Chinese": "\u4e2d\u6f6d\u8def",
+                "Lines": "3|4",
+                "Station Name English": "Zhongtan Road",
+                "Station ID": "322"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.254699,
+                    121.441191
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "322|409",
+                "Station Name Chinese": "\u4e2d\u6f6d\u8def",
+                "Lines": "3|4",
+                "Station Name English": "Zhongtan Road",
+                "Station ID": "409"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.253231,
+                    121.469031
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u4e2d\u5174\u8def",
+                "Lines": "8",
+                "Station Name English": "Zhongxing Road",
+                "Station ID": "837"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.312303,
+                    121.589423
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u6d32\u6d77\u8def",
+                "Lines": "6",
+                "Station Name English": "Zhouhai Road",
+                "Station ID": "644"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.066964,
+                    121.401916
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u989b\u6865",
+                "Lines": "5",
+                "Station Name English": "Zhuanqiao",
+                "Station ID": "505"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.169535,
+                    121.364503
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u7d2b\u85e4\u8def",
+                "Lines": "10",
+                "Station Name English": "Ziteng Road",
+                "Station ID": "1019"
+            }
+        },
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    31.001401,
+                    121.229631
+                ]
+            },
+            "type": "Feature",
+            "properties": {
+                "Duplicate IDS": "",
+                "Station Name Chinese": "\u9189\u767d\u6c60",
+                "Lines": "9",
+                "Station Name English": "Zuibaichi Park",
+                "Station ID": "919"
+            }
+        }
+    ]
+}

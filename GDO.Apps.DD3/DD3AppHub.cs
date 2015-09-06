@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
-
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
 
 namespace GDO.Apps.DD3
 {
@@ -78,13 +71,13 @@ namespace GDO.Apps.DD3
 
         public void broadcastConfiguration(string browserInfoJson, int confId, int Id)
         {
-            Clients.Group("" + Id).receiveConfiguration(browserInfoJson);
+            Clients.Group("" + Id).dd3Receive("receiveConfiguration", browserInfoJson);
             Clients.Group("" + Id).receiveGDOConfiguration(confId);
         }
 
         public void broadcastSynchronize(int Id)
         {
-            Clients.Group("" + Id).synchronize();
+            Clients.Group("" + Id).dd3Receive("receiveSynchronize");
         }
 
         public void removeClient(int instanceId)
@@ -102,35 +95,42 @@ namespace GDO.Apps.DD3
         {
             System.Diagnostics.Debug.WriteLine("Dimensions were requested");
             var dimensions = ((DD3App)instances[instanceId]).getDimensions(dataId);
-            Clients.Client(Context.ConnectionId).receiveDimensions(dataId, dimensions);
+            Clients.Client(Context.ConnectionId).dd3Receive("receiveDimensions", dataId, dimensions);
         }
         
         public void getData(int instanceId, DataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
             var data = ((DD3App)instances[instanceId]).requestData(request);
-            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+            Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
     
         public void getPointData(int instanceId, PointDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
             var data = ((DD3App)instances[instanceId]).requestPointData(request);
-            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+            Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
 
         public void getPathData(int instanceId, PathDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
             var data = ((DD3App)instances[instanceId]).requestPathData(request);
-            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+            Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
 
         public void getBarData(int instanceId, BarDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
             var data = ((DD3App)instances[instanceId]).requestBarData(request);
-            Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+            Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
+        }
+
+        public void requestFromRemote(int instanceId, RemoteDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Received request for remote server data : " + request.ToString());
+            var result = ((DD3App)instances[instanceId]).requestRemoteData(request);
+            Clients.Client(Context.ConnectionId).dd3Receive("receiveRemoteDataReady", request.dataId, result);
         }
 
         // Orders

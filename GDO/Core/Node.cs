@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace GDO.Core
@@ -124,7 +120,8 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)
                     {
-                        AggregatedConnectionHealth = 3; return;
+                        AggregatedConnectionHealth = 3;
+                        return;
                     }
                 }
             }
@@ -134,7 +131,8 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(node.Id) && node.Id != Id)
                     {
-                        AggregatedConnectionHealth = 3; return;
+                        AggregatedConnectionHealth = 3;
+                        return;
                     }
                 }
             }
@@ -143,9 +141,13 @@ namespace GDO.Core
                 int[,] neighbours = Cave.GetNeighbourMap(Id);
                 foreach (int neighbourId in neighbours)
                 {
-                    if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id)
+                    if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id && neighbourId > 0)
                     {
-                        AggregatedConnectionHealth = 3; return;
+                        if (Cave.Nodes[neighbourId].SectionId == SectionId)
+                        {
+                            AggregatedConnectionHealth = 3;
+                            return;
+                        }
                     }
                 }
             }

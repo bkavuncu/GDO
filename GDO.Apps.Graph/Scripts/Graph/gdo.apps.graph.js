@@ -5,13 +5,23 @@
 */
 
 
+
+//document.body
+//.getElementsByTagName('iframe')[0]
+//.onload = function () {
+ //   console.log("Time after rendering (using onload): " + window.performance.now());
+//};
+
+
+
+
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     /* global variables */
 
     // arrays to store data
-    var links, nodes, mostConnectedNodes;
+    var links, nodes, mostConnectedNodes, labels, k;
     var minLinks = 3;
 
     // boolean to track if current graph is zoomed
@@ -27,7 +37,7 @@ $(function () {
 
     // rgb setting to track current color scheme
     var r, g, b;
-    r = 0;  
+    r = 0;
     g = 50;
     b = 20;   // range is 0 to 255
 
@@ -38,9 +48,9 @@ $(function () {
     highlightG = 35;
     highlightB = 49;
 
-    
-// r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
-// r 50, g 100, b 50 (pastel green)
+
+    // r 50 g 100 b 0 (lime green); r 0 g 50 b 100 (nice blue); 
+    // r 50, g 100, b 50 (pastel green)
 
 
     var maxLinks = 5;
@@ -66,12 +76,165 @@ $(function () {
 
             var logDom = $("iframe").contents().find("#message_from_server");
             // append new "p" element for each msg, instead of replacing existing one
-            logDom.append("<p>" + message + "</p>");
+            logDom.empty().append("<p>" + message + "</p>");
 
             scroll_bottom(logDom[0]);
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
+        }
+    }
+
+
+    $.connection.graphAppHub.client.logTime = function (message) {
+
+        var logDom = $("iframe").contents().find("#message_from_server");
+        // append new "p" element for each msg, instead of replacing existing one
+        logDom.empty().append("<p>" + message + "</p>");
+
+        scroll_bottom(logDom[0]);
+    }
+
+
+    var overallFolder; // defined in renderGraph()
+    var nodeList;
+
+    $.connection.graphAppHub.client.renderSearch = function (folderName) {
+
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            var basePath = "\\Web\\Graph\\graph\\" + overallFolder + "\\search\\" + folderName + "\\";
+            var nodesPath = basePath + "nodes.json";
+            var linksPath = basePath + "links.json";
+            searchPath = nodesPath;
+
+            var highlightDom = document.body
+                        .getElementsByTagName('iframe')[0]
+                        .contentDocument.getElementById("highlight");
+
+            var linksDom = highlightDom.append("g")
+                           .attr("id", "sublinks");
+
+            renderSearchLinks(linksPath);
+            renderSearchNodes(nodesPath);
+            
+
+            function renderSearchNodes(file) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("GET", file, true);
+                xhr.send();
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        nodeList = JSON.parse(xhr.responseText);
+
+                        var radius;
+                        if (!globalZoomed) {
+                            radius = normalRadius + 2;
+                        } else {
+                            radius = zoomedRadius + 2;
+                        }
+
+                        nodeList.forEach(function (node) {
+
+                                highlightDom.append("circle")
+                                    .attr("r", radius)
+                                    .attr("cx", node.pos.x)
+                                    .attr("cy", node.pos.y)
+                                    .attr("fill", "rgb(" + highlightR + "," + highlightG + "," + highlightB + ")")
+                                ;
+                            
+                        });
+
+                    }
+                }
+            }
+
+
+            function renderSearchLinks(file) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("GET", file, true);
+                xhr.send();
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var linkList = JSON.parse(xhr.responseText);
+
+                        var strokeWidth;
+
+                        if (!globalZoomed) {
+                            strokeWidth = normalStrokeWidth;
+                        } else {
+                            strokeWidth = zoomedStrokeWidth;
+                        }
+
+                        linkList.forEach(function (link) {
+
+                            linksDom.append("line")
+                                .attr("x1", link.startPos.x)
+                                .attr("y1", link.startPos.y)
+                                .attr("x2", link.endPos.x)
+                                .attr("y2", link.endPos.y)
+                                .attr("stroke-width", strokeWidth)
+                                .attr("stroke", "#333");
+
+                        });
+
+                    }
+                }
+            }
+        }
+    }
+
+
+    $.connection.graphAppHub.client.renderSearchLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var highlightDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("highlight");
+
+            var fontSize, padding;
+
+            if (!globalZoomed) {
+                fontSize = normalFontSize;
+                padding = 3;
+            } else {
+                fontSize = zoomedFontSize;
+                padding = 4;
+            }
+
+            nodeList.forEach(function (node) {
+
+                    highlightDom.append("text")
+                        .attr("x", node.pos.x + padding)
+                        .attr("y", node.pos.y - padding)
+                        .text(node.label)
+                        .attr("font-size", fontSize)
+                        .attr("fill", "white");
+                    ;
+                
+            });
+
+        }
+    }
+
+    $.connection.graphAppHub.client.hideSublinks = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var dom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("sublinks");
+
+            while (dom.firstChild) {
+                dom.removeChild(dom.firstChild);
+            }
         }
     }
 
@@ -141,6 +304,7 @@ $(function () {
                         .attr("cy", node[1])
                         .attr("fill", "rgb(" + highlightR + "," + highlightG + "," + highlightB + ")")
                     ;
+                    console.log("node pos: " + node[0] + ", " + node[1]);
                 }
             });
 
@@ -156,7 +320,7 @@ $(function () {
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("highlight");
 
- 
+
             var fontSize, padding;
 
             if (!globalZoomed) {
@@ -171,15 +335,17 @@ $(function () {
             mostConnectedNodes.forEach(function (node) {
 
                 if (node[2] >= numLinks) {
+                    console.log("label: " + labels[node[3]] + ", pos: " + node[0] + ", " + node[1] + ", node id: " + node[3]);
 
                     highlightDom.append("text")
                         .attr("x", node[0] + padding)
                         .attr("y", node[1] - padding)
-                        .text("(" + (node[0]).toFixed(0) + ", " + (node[1]).toFixed(0) + ")")
+                        .text(labels[node[3]])
                         .attr("font-size", fontSize)
                         .attr("fill", "white");
                     ;
 
+                    
                 }
             });
 
@@ -283,8 +449,6 @@ $(function () {
 
 
 
-
-    // wouldn't work with updated data format; need to read from labels.json
     $.connection.graphAppHub.client.hideLabels = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
@@ -316,15 +480,15 @@ $(function () {
                 fontSize = zoomedFontSize;
                 padding = 3;
             }
-                
 
 
-            nodes.forEach(function (node) {
+
+            nodes.forEach(function (node, index) {
 
                 labelsDom.append("text")
                     .attr("x", node[0] + padding)
                     .attr("y", node[1] - padding)
-                    .text("(" + (node[0]).toFixed(0) + ", " + (node[1]).toFixed(0) + ")")
+                    .text(labels[index])
                     .attr("font-size", fontSize)
                     .attr("fill", "white");
                 ;
@@ -550,7 +714,7 @@ $(function () {
                             }
                         }
 
-                        if (nodeType === 3) { // text:
+                        if (nodeType === 3) { // text
                             bindTextContent(domNode, allBindings);
                         }
 
@@ -695,23 +859,25 @@ $(function () {
 
                     for (var i = 0; i < 3; ++i) {
                         for (var j = 0; j < 3; ++j) {
-                            if (i == 1 && j == 1) {
+                            if (i == 1 && j == 1) { // skip original partition
                                 continue;
                             } else {
-                                fileName = (clientRow + i) + "_" + (clientCol + j) + ".bin";
-                                nodesFilePath = basePath + "\\nodes\\" + fileName;
-                                linksFilePath = basePath + "\\links\\" + fileName;
-                                
+                                fileName = (clientRow + i) + "_" + (clientCol + j);
+                                nodesFilePath = basePath + "\\nodes\\" + fileName + ".bin";
+                                linksFilePath = basePath + "\\links\\" + fileName + ".bin";
+                                labelsFilePath = basePath + "\\labels\\" + fileName + ".json";
+
                                 console.log(fileName + " is being rendered.");
 
                                 renderNodes(nodesFilePath);
                                 renderLinks(linksFilePath);
-                            }                         
+                                readPartitionLabels(labelsFilePath);
+                            }
                         }
                     }
 
 
-                    
+
                     // new optimised rendering, to read from binary pos files
                     function renderNodes(file) {
 
@@ -739,7 +905,7 @@ $(function () {
                                 // which resulted in some nodes & links being rendered extra times
                                 var currentNodes = [];
 
-                               
+
                                 for (var i = 2; i < data.length - 2; i += 3) {
                                     // push onto overall nodes array
                                     nodes.push([data[i], data[i + 1], data[i + 2]]);
@@ -749,8 +915,10 @@ $(function () {
 
                                     // push onto most connected nodes
                                     if (data[i + 2] >= minLinks) {
-                                        mostConnectedNodes.push([data[i], data[i + 1], data[i + 2]]);
+                                        mostConnectedNodes.push([data[i], data[i + 1], data[i + 2], k]);       
                                     }
+
+                                    k++;
                                 }
 
                                 /* 
@@ -831,6 +999,25 @@ $(function () {
                     }
 
 
+                    function readPartitionLabels(file) {
+                        var xhr = new XMLHttpRequest();
+
+                        xhr.open("GET", file, true);
+                        xhr.send();
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                data = JSON.parse(xhr.responseText);
+
+                                data.forEach(function (label) {
+                                    labels.push(label);
+                                }
+                                );
+
+                            }
+                        }
+                    }
+
                 }, { "simplesvg": 1 }]
             }, {}, [6]);
         }
@@ -847,17 +1034,16 @@ $(function () {
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
-            var basePath, fileName, nodesFilePath, linksFilePath;
+            var basePath, fileName, nodesFilePath, linksFilePath, labelsFilePath;
             var clientRow = gdo.net.node[gdo.clientId].sectionRow;
             var clientCol = gdo.net.node[gdo.clientId].sectionCol;
-            
+
+            overallFolder = folderNameDigit;
 
             if (!zoomed) {
                 globalZoomed = false;
                 basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal";
-                fileName = clientRow + "_" + clientCol + ".bin";
-                nodesFilePath = basePath + "\\nodes\\" + fileName;
-                linksFilePath = basePath + "\\links\\" + fileName;
+                fileName = clientRow + "_" + clientCol;
 
                 /*
                 linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
@@ -865,12 +1051,12 @@ $(function () {
             } else {  // for zoomed in graph, read the file that's 1 row and 1 col more
                 globalZoomed = true;
                 basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\zoomed";
-                fileName = (clientRow + 1) + "_" + (clientCol + 1) + ".bin";
-                nodesFilePath = basePath + "\\nodes\\" + fileName;
-                linksFilePath = basePath + "\\links\\" + fileName;
+                fileName = (clientRow + 1) + "_" + (clientCol + 1);
             }
 
-            
+            nodesFilePath = basePath + "\\nodes\\" + fileName + ".bin";
+            linksFilePath = basePath + "\\links\\" + fileName + ".bin";
+            labelsFilePath = basePath + "\\labels\\" + fileName + ".json";
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -1225,9 +1411,15 @@ $(function () {
 
 
 
+                    console.log("Time before rendering: " + window.performance.now());
 
+                    console.log("Time before reading nodesPos.bin: " + window.performance.now());
                     renderNodes(nodesFilePath);
+                    console.log("Time before reading linksPos.bin: " + window.performance.now());
                     renderLinks(linksFilePath);
+
+                    // read in labels and store in variable 'labels' for rendering later
+                    readLabels(labelsFilePath);
 
                     // new optimised rendering, to read from binary pos files
                     function renderNodes(file) {
@@ -1246,6 +1438,8 @@ $(function () {
                                 var data = new Float32Array(rawBuffer);  // will auto-format buffer, and convert byte into float array
 
                             if (data) {    // if condition needed because data may not be ready the first time this function is called
+                                console.log("Time after reading nodesPos.bin: " + window.performance.now());
+
                                 // partitionPos = [row, col]
                                 var partitionPos = [data[0], data[1]];
 
@@ -1254,14 +1448,20 @@ $(function () {
                                 nodes = [];
                                 mostConnectedNodes = [];
 
+                                k = 0; // to keep track of nodes index within nodes array
+
                                 for (var i = 2; i < data.length - 2; i += 3) {
                                     nodes.push([data[i], data[i + 1], data[i + 2]]);
 
+                                    // last array element is index of node, so as to identify its label later
                                     if (data[i + 2] >= minLinks) {
-                                        mostConnectedNodes.push([data[i], data[i + 1], data[i + 2]]);
+                                        mostConnectedNodes.push([data[i], data[i + 1], data[i + 2], k]);
                                     }
+
+                                    k++;
                                 }
 
+                                console.log("value of k : " + k);
                                 /* 
                                 //for debugging
 
@@ -1307,6 +1507,8 @@ $(function () {
 
                                 });
 
+                                console.log("Time after appending nodes: " + window.performance.now());
+
                             }
                         }
                     }
@@ -1329,6 +1531,8 @@ $(function () {
 
                             if (data) {    // data may not be ready the first time this function is called
 
+                                console.log("Time after reading linksPos.bin: " + window.performance.now());
+
                                 // partitionPos = [row, col]
                                 var partitionPos = [data[0], data[1]];
 
@@ -1346,7 +1550,7 @@ $(function () {
                                 if (!zoomed)
                                     strokeWidth = normalStrokeWidth;
                                 else
-                                    strokeWidth = zoomedStrokeWidth;                                    
+                                    strokeWidth = zoomedStrokeWidth;
 
 
                                 links.forEach(function (link) {
@@ -1360,10 +1564,25 @@ $(function () {
                                         .attr("stroke", "#333"); //B8B8B8
                                 });
 
+                                console.log("Time after appending links: " + window.performance.now());
                             }
 
                         };
                     }
+
+                    function readLabels(file) {
+                        var xhr = new XMLHttpRequest();
+
+                        xhr.open("GET", file, true);
+                        xhr.send();
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                labels = JSON.parse(xhr.responseText);
+                            }
+                        }
+                    }
+
 
 
                 }, { "simplesvg": 1 }]

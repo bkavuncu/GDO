@@ -39,6 +39,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
@@ -108,13 +112,29 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configurations\DD3\Data\FileMapTube.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines30.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines2.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghai.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeLondon.txt" />
+    <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
+    <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
     <Content Include="packages.config" />
+    <Content Include="Web\DD3\Scripts\animationLines.js" />
+    <Content Include="Web\DD3\Scripts\animation.js" />
+    <Content Include="Web\DD3\Scripts\lines.js" />
+    <Content Include="Web\DD3\Scripts\map.js" />
+    <Content Include="Web\DD3\Scripts\stations.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Transitions.json" />
     <Content Include="Configurations\DD3\Scatterplot.json" />
     <Content Include="Configurations\DD3\Graphs.json" />
     <Content Include="Configurations\DD3\Handmoves.json" />
+    <Content Include="Configurations\DD3\MapTubeLondon.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghai.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghaiLines2.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghaiLines30.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\d3.v3.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
@@ -146,6 +166,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -171,11 +192,21 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
+    <ItemGroup>
+      <GDOAppData Include="$(ProjectDir)Data\**\*.*" />
+      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*" />
+      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*" />
+      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*" />
+      <GDOAppBin Include="$(ProjectDir)bin\*.*" />
+    </ItemGroup>
+    <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
+    <Copy SourceFiles="@(GDOAppData)" DestinationFiles="@(GDOAppData->'$(SolutionDir)GDO\Data\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppScripts)" DestinationFiles="@(GDOAppScripts->'$(SolutionDir)GDO\Scripts\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppWeb)" DestinationFiles="@(GDOAppWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppBin)" DestinationFiles="@(GDOAppBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
   </Target>
-  -->
 </Project>

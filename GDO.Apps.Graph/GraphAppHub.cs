@@ -19,6 +19,10 @@ namespace GDO.Apps.Graph
     [Export(typeof(IAppHub))]
     public class GraphAppHub : Hub, IAppHub
     {
+        public string ControllerId { get; set; }
+        public static GraphAppHub self;
+        public static GraphApp ga = null;
+
         public string Name { get; set; } = "Graph";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new GraphApp().GetType();
@@ -31,7 +35,7 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        //TODO: Check if try, catch are implemented correctly
+ 
         public void InitiateProcessing(int instanceId, string inputFolder)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
@@ -40,8 +44,11 @@ namespace GDO.Apps.Graph
             {
                 try
                 {
+                    self = this;
+                    this.ControllerId = Context.ConnectionId;
+
                     // create GraphApp project and call its function to process graph
-                    GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                    ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
                     Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
                     string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
 
@@ -50,6 +57,19 @@ namespace GDO.Apps.Graph
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("Graph is now being rendered.");
+
+                    // read in nodes.json which stores nodes data (id, pos, connectedNodes) and store in var
+                    ga.ReadNodesData(inputFolder);
+                    Clients.Caller.setMessage("Reading in nodes.json data to prepare for search function.");
+
+                    // set up label dictionary to prepare for search
+                    Clients.Caller.setMessage("Setting up label dictionary.");
+                    ga.SetupLabelDictionary();
+
+                    // set up nodes dictionary to prepare for search
+                    Clients.Caller.setMessage("Setting up nodes dictionary.");
+                    ga.SetupNodeDictionary();
+
 
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
@@ -218,6 +238,9 @@ namespace GDO.Apps.Graph
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-in graph.");
 
+                    // updated zoomedIn variable within ga object
+                    ga.UpdateZoomVar(true);
+
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
@@ -244,6 +267,9 @@ namespace GDO.Apps.Graph
                 try
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-out graph.");
+
+                    // updated zoomedIn variable within ga object
+                    ga.UpdateZoomVar(false);
 
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
@@ -355,6 +381,132 @@ namespace GDO.Apps.Graph
                 }
             }
         }
+
+
+        public void LogTime(string message)
+        {
+
+            try
+            {
+                Clients.Client(ControllerId).logTime(message);
+            }
+            catch (Exception e)
+            {
+                Clients.Client(ControllerId).logTime("Error: Failed to log time.");
+                Clients.Client(ControllerId).logTime(e.ToString());
+                Debug.WriteLine(e);
+            }
+        }
+
+
+
+        public void InitiateSearch(int instanceId, string keywords)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Initiating processing of search query: " + keywords);
+                    string folderName = ga.ProcessSearch(keywords);
+
+                    if (folderName == null)
+                    {
+                        Clients.Caller.setMessage("Search query is not valid. Please input a valid keyword(s).");
+                    }
+                    else
+                    {
+                        Clients.Caller.setMessage("Processing of search query has completed.");
+
+                        // Clients.Group to broadcast and get all clients to update graph
+
+                        // Clients.Group to broadcast and get all clients to update graph
+
+                        // hide all highlight
+                        Clients.Group("" + instanceId).hideHighlight();
+                        Clients.Group("" + instanceId).hideLabels();
+                        Clients.Group("" + instanceId).hideLinks();
+
+                        Clients.Group("" + instanceId).renderSearch(folderName);
+                        Clients.Caller.setMessage("Search result is now being rendered.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Processing of search query failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void RenderSearchLabels(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Rendering labels for selected nodes.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderSearchLabels();
+                    Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to show labels.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void HideSearch(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Removing highlight for selected nodes.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).hideHighlight();
+                    Clients.Caller.setMessage("Highlights for selected nodes are now hidden.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to remove highlights.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void HideSublinks(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Hiding sublinks.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).hideSublinks();
+                    Clients.Caller.setMessage("Sublinks are now hidden.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to remove sublinks.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
 
 
     }

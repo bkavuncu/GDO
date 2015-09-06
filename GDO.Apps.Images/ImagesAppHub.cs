@@ -26,7 +26,7 @@ namespace GDO.Apps.Images
     public class ImagesAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "Images";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new ImagesApp().GetType();
         public void JoinGroup(int instanceId)
         {

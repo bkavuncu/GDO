@@ -70,11 +70,31 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/d3.js"></script>
     <script>
+        function getUrlVar(variable) {
+            /// <summary>
+            /// Gets the URL variable.
+            /// </summary>
+            /// <param name="variable">The variable.</param>
+            /// <returns></returns>
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) { return pair[1]; }
+            }
+            query = window.frames['control_frame_content'].location.search.substring(1);
+            vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) { return pair[1]; }
+            }
+            return (false);
+        }
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo,
                     server = gdo.net.app.DD3.server;
-
+                gdo.controlId = getUrlVar("controlId");
                 var instanceId,
                     confId,
                     numClients;
@@ -82,13 +102,18 @@
                 var test_bench = [];
 
                 var callback = function (message) {
+                    gdo.consoleOut(".DD3", 4, "Callback Message: " + message);
                     confId = message.configurationId;
                     numClients = message.numClient;
                     if (message.state == 1) {
                         test_bench[confId] && test_bench[confId]();
                         test_bench[confId] = null;
                         $("#wait").css("display", "none");
-                        $("#control_" + confId).css("display", "");
+                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
+                            $("#control_6").css("display", "");
+                        }else {
+                            $("#control_" + confId).css("display", "");
+                        }
                     }
                 };
 
@@ -237,6 +262,20 @@
 
                 };
 
+                test_bench[1] = function () {
+                    var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
+                    
+                    var table = $("#control_1 table");
+                    var send = function (value) {
+                        server.sendOrder(instanceId, order("plot", [value]), true);
+                    };
+
+                    dataIds.forEach(function (d) {
+                        table.append('<tr><td>' + d + '</td></tr>');
+                        table.find("tr:last td").addClass('green').click(send.bind(null, d));
+                    });
+                };
+
                 test_bench[2] = function () {
                     $("#changeValues").click(function () {
                         var n = +$("#timeTr").val();
@@ -246,6 +285,9 @@
 
                 test_bench[3] = function () {
                     var id = 0;
+                    var previous;
+                    var timeout = -1;
+                    var sensibility = 100;
                     var pos = {};
                     var posC = {};
                     var wr = 600, hr = 300;
@@ -275,6 +317,7 @@
                         drag.on("drag", moveRect);
                         drag.on("dragstart", function () {
                             var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            previous = Date.now();
                             pos.x = t[0] - d3.mouse(g.node())[0];
                             pos.y = t[1] - d3.mouse(g.node())[1];
                         });
@@ -282,6 +325,7 @@
                         dragC.on("drag", resizeRect);
                         dragC.on("dragstart", function () {
                             var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            previous = Date.now();
                             posC.x = t[0] - d3.mouse(g.node())[0];
                             posC.y = t[1] - d3.mouse(g.node())[1];
                         });
@@ -312,16 +356,37 @@
                         server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                     });
 
+                    $("#sens").change(function () {
+                        sensibility = +this.value;
+                    });
+
                     var moveRect = function () {
-                        server.sendOrder(instanceId, order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]), false);
-                        d3.select(this.parentElement).attr("transform", "translate(" + [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y] + ")");
+                        var o = order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
+                            tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
+
+                        var move = function () {
+                            server.sendOrder(instanceId, o, false);
+                            previous = Date.now();
+                        };
+
+                        d3.select(this.parentElement).attr("transform", "translate(" + tr + ")");
+                        clearTimeout(timeout);
+                        timeout = setTimeout(move, Math.max(0, sensibility - (Date.now() - previous)));
                     };
 
                     var resizeRect = function () {
-                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]);
-                        server.sendOrder(instanceId, order("resizeRect", [this.parentElement.id, x / wr, y / hr]), false);
+                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]),
+                            o = order("resizeRect", [this.parentElement.id, x / wr, y / hr]);
+
+                        var resize = function () {
+                            server.sendOrder(instanceId, o, false);
+                            previous = Date.now();
+                        };
+
                         d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
                         d3.select(this).attr("cx", x).attr("cy", y);
+                        clearTimeout(timeout);
+                        timeout = setTimeout(resize, Math.max(0, sensibility - (Date.now() - previous)));
                     };
 
                     var delRect = function () {
@@ -335,6 +400,62 @@
                     });
 
                     server.sendOrder(instanceId, order("delAllRect", []), true);
+                };
+
+                test_bench[4] = function () {
+                    $('#launchEntryAnimationLondon').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    });
+
+                    $('#launchExitAnimationLondon').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    });
+                };
+
+                test_bench[5] = function () {
+                    $('#launchEntryAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    });
+
+                    /*
+                    $('#cleanupAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("cleanupAnimation", []), true);
+                    });
+
+                    $('#pauseAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("pauseAnimation", []), true);
+                    });
+
+                    $('#startAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("startAnimation", []), true);
+                    });
+
+                    $('#initAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("initAnimation", []), true);
+                    });
+
+                    $('#createAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("createAnimation", []), true);
+                    });
+                    //*/
+
+                    $('#launchExitAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    });
+                };
+
+                test_bench[6] = test_bench[7] = test_bench[8] = test_bench[9] = function () {
+                    var cb = $('#outterCheckbox');
+                    var cb2 = $('#widthChangingCheckbox');
+                    var cb3 = $('#widthChangingLinkLoadCheckbox');
+
+                    $('#launchNormalAnimationShanghaiLines').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
+                    });
+
+                    $('#launchDisruptedAnimationShanghaiLines').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
+                    });
                 };
             });
         });
@@ -407,7 +528,9 @@
     </div>
 
     <div id="control_1" style="display:none">
-        Here will be the control panel for test 1
+        <table class="table_control">
+
+        </table>
     </div>
 
     <div id="control_2" style="display:none">
@@ -429,7 +552,69 @@
             <tr>
                 <td class="green" id="removeAllRect">Remove All</td>
             </tr>
+            <tr>
+                <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width:40px" /></td>
+            </tr>
         </table> 
+    </div>
+
+    <div id="control_4" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationLondon">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationLondon">Launch Animation of exit</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_5" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationShanghai">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationShanghai">Launch Animation of exit</td>
+            </tr>
+            <!--
+            <tr>
+                <td class="green" id="createAnimationShanghai">Create</td>
+            </tr>
+            <tr>
+                <td class="green" id="initAnimationShanghai">Init</td>
+            </tr>
+            <tr>
+                <td class="green" id="startAnimationShanghai">Start</td>
+            </tr>
+            <tr>
+                <td class="green" id="pauseAnimationShanghai">Pause</td>
+            </tr>
+            <tr>
+                <td class="green" id="cleanupAnimationShanghai">Cleanup</td>
+            </tr>
+            <!---->
+        </table>
+    </div>
+    
+    <div id="control_6" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="outter" id="outterCheckbox"> With outter lines (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChanging" id="widthChangingCheckbox" checked> Width changing (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChangingLinkLoad" id="widthChangingLinkLoadCheckbox"> Width represents link load (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchNormalAnimationShanghaiLines">Launch Animation with normal data</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchDisruptedAnimationShanghaiLines">Launch Animation with disrupted data</td>
+            </tr>
+        </table>
     </div>
 
 </body>

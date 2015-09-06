@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Web;
+using GDO.Apps.SmartCity.Core.Sources.Tiles;
+
+namespace GDO.Apps.SmartCity.Core.Sources
+{
+    public class BingMapsSource : ImageTileSource
+    {
+        public string Culture { get; set; }
+        public string Key { get; set; }
+        public string ImagerySet { get; set; }
+        public int? MaxZoom { get; set; }
+        new public void Init(string culture, string key, string imagerySet, int maxZoom)
+        {
+            Culture = culture;
+            Key = key;
+            ImagerySet = imagerySet;
+            MaxZoom = maxZoom;
+
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
+        new public void Modify()
+        {
+
+        }
+    }
+}
