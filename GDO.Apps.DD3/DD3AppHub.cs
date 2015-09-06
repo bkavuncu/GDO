@@ -161,10 +161,11 @@ namespace GDO.Apps.DD3
             }
             else
             {
-                //Maybe make more checks to be sure it's always the same we send to...
+                //Maybe should we make more checks to ensure we always send order to the same node...
                 instances = Cave.Apps["DD3"].Instances;
                 var cid = ((DD3App)instances[instanceId]).getFirstNode();
-                sendControllerOrder(cid, order);
+                if (cid != null)
+                    sendControllerOrder(cid, order);
             }
         }
 
