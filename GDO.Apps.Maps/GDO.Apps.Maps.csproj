@@ -111,11 +111,50 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Control.cs" />
+    <Compile Include="Core\Coordinate.cs" />
+    <Compile Include="Core\Extent.cs" />
+    <Compile Include="Core\Feature.cs" />
+    <Compile Include="Core\Geometries\LinearRing.cs" />
+    <Compile Include="Core\Geometries\LineString.cs" />
+    <Compile Include="Core\Geometries\MultiLineString.cs" />
+    <Compile Include="Core\Geometries\MultiPoint.cs" />
+    <Compile Include="Core\Geometries\MultiPolygon.cs" />
+    <Compile Include="Core\Geometries\Point.cs" />
+    <Compile Include="Core\Geometries\Polygon.cs" />
+    <Compile Include="Core\Geometry.cs" />
+    <Compile Include="Core\Geometries\Circle.cs" />
+    <Compile Include="Core\Image.cs" />
+    <Compile Include="Core\Interaction.cs" />
+    <Compile Include="Core\Interactions\Draw.cs" />
+    <Compile Include="Core\Interactions\Select.cs" />
+    <Compile Include="Core\Layer.cs" />
+    <Compile Include="Core\Layers\Heatmap.cs" />
+    <Compile Include="Core\Layers\Image.cs" />
+    <Compile Include="Core\Layers\Tile.cs" />
+    <Compile Include="Core\Layers\Vector.cs" />
+    <Compile Include="Core\Layout.cs" />
+    <Compile Include="Core\Sources\BingMaps.cs" />
+    <Compile Include="Core\Sources\Cluster.cs" />
+    <Compile Include="Core\Sources\Image.cs" />
+    <Compile Include="Core\Sources\Images\Canvas.cs" />
+    <Compile Include="Core\Sources\Images\Static.cs" />
+    <Compile Include="Core\Sources\Images\Vector.cs" />
+    <Compile Include="Core\Sources\Tile.cs" />
+    <Compile Include="Core\Sources\Vector.cs" />
+    <Compile Include="Core\Map.cs" />
+    <Compile Include="Core\Position.cs" />
+    <Compile Include="Core\Source.cs" />
+    <Compile Include="Core\Style.cs" />
+    <Compile Include="Core\View.cs" />
     <Compile Include="MapsApp.cs" />
     <Compile Include="MapsAppHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\Controls\" />
+    <Folder Include="Core\Sources\Tiles\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4A27F694-1D9A-420A-A3A6-62521EAA047E}</Project>
