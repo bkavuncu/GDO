@@ -67,6 +67,7 @@ namespace GDO.Apps.Graph
         {
             public PartitionPos partitionPos { get; set; }
             public List<Node> nodes { get; set; }
+            public List<string> labels { get; set; }
         }
 
         public class LinkPartition
@@ -100,22 +101,26 @@ namespace GDO.Apps.Graph
         // return name of folder that stores processed data
         public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
         {
-            string nodesFilePath, linksFilePath;
+            string nodesFilePath, linksFilePath, labelsFilePath, nodesDataFilePath;
 
             // 0 means local, 1 means http
-            int inputSourceType = 1;
+            int inputSourceType = 0;
 
             if (inputSourceType == 1)
             {
                 // server file
                 nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";
                 linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/linksPos.bin";
+                labelsFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/labels.json";
+                nodesDataFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodes.json";
             }
             else
             {
                 // local file
                 nodesFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodesPos.bin";
                 linksFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\linksPos.bin";
+                labelsFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\labels.json";
+                nodesDataFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodes.json";
             }
 
 
@@ -123,9 +128,10 @@ namespace GDO.Apps.Graph
             RectDimension rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
             List<Link> links = new List<Link>();
+            List<string> labels = new List<string>();
 
             Stopwatch sw = new Stopwatch();
-            
+
 
 
             if (inputSourceType == 1)
@@ -358,6 +364,32 @@ namespace GDO.Apps.Graph
                 sw.Stop();
                 System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+
+
+                // read labels.json local file
+                sw.Restart();
+
+                System.Diagnostics.Debug.WriteLine("Reading from: " + labelsFilePath);
+
+                StreamReader file = File.OpenText(labelsFilePath);
+
+                JsonTextReader jReader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                labels = serializer.Deserialize<List<string>>(jReader);
+
+
+                // debugging
+
+                //for (int i = 0; i < labelsData.Count; i++)
+                //{
+                //    Debug.WriteLine("label " + i + ": " + labelsData[i]);
+                //}
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+
+
             }
 
 
@@ -428,7 +460,7 @@ namespace GDO.Apps.Graph
 
             // Distribute data across browser
 
-            // 1. Distribute nodes
+            // 1. Distribute nodes & labels
             sw.Restart();
 
             // Set up a 2D array to store nodes data in each partition
@@ -446,6 +478,7 @@ namespace GDO.Apps.Graph
                     nodesPartitions[i, j].partitionPos.row = i;
                     nodesPartitions[i, j].partitionPos.col = j;
                     nodesPartitions[i, j].nodes = new List<Node>();
+                    nodesPartitions[i, j].labels = new List<string>();
                 }
             }
 
@@ -454,7 +487,9 @@ namespace GDO.Apps.Graph
             {
                 PartitionPos nodePartitionPos = checkPartitionPos(nodes[i].pos);
                 nodesPartitions[nodePartitionPos.row, nodePartitionPos.col].nodes.Add(nodes[i]);
+                nodesPartitions[nodePartitionPos.row, nodePartitionPos.col].labels.Add(labels[i]);
             }
+
 
             sw.Stop();
             System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
@@ -674,25 +709,29 @@ namespace GDO.Apps.Graph
             }
 
 
-            string nodesPath, linksPath;
+            string nodesPath, linksPath, labelsPath;
 
             if (!zoomed)
             {
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\nodes");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\links");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\labels");
 
                 nodesPath = basePath + FolderNameDigit + @"\normal\nodes\\";
                 linksPath = basePath + FolderNameDigit + @"\normal\links\\";
+                labelsPath = basePath + FolderNameDigit + @"\normal\labels\\";
             }
             else
             {
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\nodes");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\links");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\labels");
 
                 nodesPath = basePath + FolderNameDigit + @"\zoomed\nodes\\";
                 linksPath = basePath + FolderNameDigit + @"\zoomed\links\\";
+                labelsPath = basePath + FolderNameDigit + @"\zoomed\labels\\";
             }
 
 
@@ -755,7 +794,24 @@ namespace GDO.Apps.Graph
             }
             */
 
+            // write labels to files
+            sw.Restart();
 
+            for (int i = 0; i < totalRows; ++i)
+            {
+                for (int j = 0; j < totalCols; ++j)
+                {
+                    StreamWriter streamWriter = new StreamWriter(labelsPath + i + @"_" + j + @".json");
+                    streamWriter.AutoFlush = true;
+                    JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(jsonWriter, nodesPartitions[i, j].labels);
+                }
+            }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
 
             // write links to files
             sw.Restart();
