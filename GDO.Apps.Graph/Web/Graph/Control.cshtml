@@ -193,7 +193,9 @@
             gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
         });
 
-
+        /* 
+        // Panning using key is disabled for now 
+        // because it's being triggered unnecessarily sometimes when typing
 
         window.addEventListener('keydown', processKeyPress, true);
 
@@ -216,6 +218,8 @@
                 gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
             }
         }
+
+        */
 
 
         $("#zoomIn").click(function () {
