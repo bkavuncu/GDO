@@ -151,6 +151,7 @@
                     <br />
                     <br />
                     <button id="show_searchLabels">Show labels</button>
+                    <button id="hide_sublinks">Hide links</button>
                     <button id="hide_search">Hide all</button>
                 </td>
             </tr>
@@ -305,6 +306,10 @@
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
 
             gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId);
+        });
+
+        $("#hide_sublinks").click(function () {
+            gdo.net.app["Graph"].server.hideSublinks(gdo.controlId);
         });
 
         $("#hide_search").click(function () {

@@ -78,10 +78,10 @@ namespace GDO.Apps.Graph
 
         public class NodeData
         {
-            public int id { get; set; }
+            public string id { get; set; }
             public string label { get; set; }
             public Pos pos { get; set; }
-            public List<int> adj { get; set; }  // adj = list of connectedNodes
+            public List<string> adj { get; set; }  // adj = list of connectedNodes
         }
 
         // init is run when 'Deploy' is clicked
@@ -938,7 +938,7 @@ namespace GDO.Apps.Graph
         // map label to index within labels array
         Dictionary<string, int> labelDict = null;
         // map node ID to index within nodes data array
-        Dictionary<int, int> nodeDict = null;
+        Dictionary<string, int> nodeDict = null;
 
         // set up label dictionary to prepare for search
         public void SetupLabelDictionary()
@@ -968,7 +968,7 @@ namespace GDO.Apps.Graph
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            nodeDict = new Dictionary<int, int>();
+            nodeDict = new Dictionary<string, int>();
 
             for (int i = 0; i < nodesData.Count; i++)
             {

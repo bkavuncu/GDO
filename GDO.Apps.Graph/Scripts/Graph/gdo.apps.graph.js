@@ -114,6 +114,9 @@ $(function () {
                         .getElementsByTagName('iframe')[0]
                         .contentDocument.getElementById("highlight");
 
+            var linksDom = highlightDom.append("g")
+                           .attr("id", "sublinks");
+
             renderSearchLinks(linksPath);
             renderSearchNodes(nodesPath);
             
@@ -171,7 +174,7 @@ $(function () {
 
                         linkList.forEach(function (link) {
 
-                            highlightDom.append("line")
+                            linksDom.append("line")
                                 .attr("x1", link.startPos.x)
                                 .attr("y1", link.startPos.y)
                                 .attr("x2", link.endPos.x)
@@ -221,6 +224,19 @@ $(function () {
         }
     }
 
+    $.connection.graphAppHub.client.hideSublinks = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var dom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("sublinks");
+
+            while (dom.firstChild) {
+                dom.removeChild(dom.firstChild);
+            }
+        }
+    }
 
     $.connection.graphAppHub.client.setRGB = function (colourScheme) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Setting colour scheme to: ' + colourScheme);
