@@ -1014,7 +1014,10 @@ namespace GDO.Apps.Graph
             NodeData centralNode = nodesData[index];
 
             SelectedNode central = new SelectedNode();
-            central.pos = centralNode.pos;
+            central.pos = new Pos();
+            central.pos.x = centralNode.pos.x;
+            central.pos.y = centralNode.pos.y;
+
             central.label = centralNode.label;
 
             nodeList.Add(central);
@@ -1029,7 +1032,10 @@ namespace GDO.Apps.Graph
                 NodeData currentNode = nodesData[currentIndex];
 
                 SelectedNode current = new SelectedNode();
-                current.pos = currentNode.pos;
+                current.pos = new Pos();
+                current.pos.x = currentNode.pos.x;
+                current.pos.y = currentNode.pos.y;
+
                 current.label = currentNode.label;
 
                 nodeList.Add(current);

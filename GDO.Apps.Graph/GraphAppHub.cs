@@ -439,6 +439,51 @@ namespace GDO.Apps.Graph
             }
         }
 
+        public void RenderSearchLabels(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Rendering labels for selected nodes.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderSearchLabels();
+                    Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to show labels.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void HideSearch(int instanceId)
+        {
+
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Removing highlight for selected nodes.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).hideHighlight();
+                    Clients.Caller.setMessage("Highlights for selected nodes are now hidden.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to remove highlights.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
 
     }
 }

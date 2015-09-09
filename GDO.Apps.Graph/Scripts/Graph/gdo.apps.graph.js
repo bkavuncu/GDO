@@ -97,9 +97,9 @@ $(function () {
 
 
     var overallFolder; // defined in renderGraph()
+    var nodeList;
 
     $.connection.graphAppHub.client.renderSearch = function (folderName) {
-
 
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             // do nothing
@@ -108,13 +108,15 @@ $(function () {
             var basePath = "\\Web\\Graph\\graph\\" + overallFolder + "\\search\\" + folderName + "\\";
             var nodesPath = basePath + "nodes.json";
             var linksPath = basePath + "links.json";
+            searchPath = nodesPath;
 
             var highlightDom = document.body
                         .getElementsByTagName('iframe')[0]
                         .contentDocument.getElementById("highlight");
 
-            renderSearchNodes(nodesPath);
             renderSearchLinks(linksPath);
+            renderSearchNodes(nodesPath);
+            
 
             function renderSearchNodes(file) {
                 var xhr = new XMLHttpRequest();
@@ -124,7 +126,7 @@ $(function () {
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        var nodeList = JSON.parse(xhr.responseText);
+                        nodeList = JSON.parse(xhr.responseText);
 
                         var radius;
                         if (!globalZoomed) {
@@ -182,12 +184,39 @@ $(function () {
                     }
                 }
             }
+        }
+    }
 
 
+    $.connection.graphAppHub.client.renderSearchLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            var highlightDom = document.body
+                                    .getElementsByTagName('iframe')[0]
+                                    .contentDocument.getElementById("highlight");
 
+            var fontSize, padding;
 
+            if (!globalZoomed) {
+                fontSize = normalFontSize;
+                padding = 3;
+            } else {
+                fontSize = zoomedFontSize;
+                padding = 4;
+            }
 
+            nodeList.forEach(function (node) {
 
+                    highlightDom.append("text")
+                        .attr("x", node.pos.x + padding)
+                        .attr("y", node.pos.y - padding)
+                        .text(node.label)
+                        .attr("font-size", fontSize)
+                        .attr("fill", "white");
+                    ;
+                
+            });
 
         }
     }
