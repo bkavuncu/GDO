@@ -484,6 +484,7 @@ namespace GDO.Apps.Graph
             }
         }
 
+
         public void HideSublinks(int instanceId)
         {
 
@@ -505,7 +506,6 @@ namespace GDO.Apps.Graph
                 }
             }
         }
-
 
 
 
