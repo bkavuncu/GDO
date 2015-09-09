@@ -95,6 +95,104 @@ $(function () {
         scroll_bottom(logDom[0]);
     }
 
+
+    var overallFolder; // defined in renderGraph()
+
+    $.connection.graphAppHub.client.renderSearch = function (folderName) {
+
+
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            // do nothing
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            var basePath = "\\Web\\Graph\\graph\\" + overallFolder + "\\search\\" + folderName + "\\";
+            var nodesPath = basePath + "nodes.json";
+            var linksPath = basePath + "links.json";
+
+            var highlightDom = document.body
+                        .getElementsByTagName('iframe')[0]
+                        .contentDocument.getElementById("highlight");
+
+            renderSearchNodes(nodesPath);
+            renderSearchLinks(linksPath);
+
+            function renderSearchNodes(file) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("GET", file, true);
+                xhr.send();
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var nodeList = JSON.parse(xhr.responseText);
+
+                        var radius;
+                        if (!globalZoomed) {
+                            radius = normalRadius + 2;
+                        } else {
+                            radius = zoomedRadius + 2;
+                        }
+
+                        nodeList.forEach(function (node) {
+
+                                highlightDom.append("circle")
+                                    .attr("r", radius)
+                                    .attr("cx", node.pos.x)
+                                    .attr("cy", node.pos.y)
+                                    .attr("fill", "rgb(" + highlightR + "," + highlightG + "," + highlightB + ")")
+                                ;
+                            
+                        });
+
+                    }
+                }
+            }
+
+
+            function renderSearchLinks(file) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("GET", file, true);
+                xhr.send();
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var linkList = JSON.parse(xhr.responseText);
+
+                        var strokeWidth;
+
+                        if (!globalZoomed) {
+                            strokeWidth = normalStrokeWidth;
+                        } else {
+                            strokeWidth = zoomedStrokeWidth;
+                        }
+
+                        linkList.forEach(function (link) {
+
+                            highlightDom.append("line")
+                                .attr("x1", link.startPos.x)
+                                .attr("y1", link.startPos.y)
+                                .attr("x2", link.endPos.x)
+                                .attr("y2", link.endPos.y)
+                                .attr("stroke-width", strokeWidth)
+                                .attr("stroke", "#333");
+
+                        });
+
+                    }
+                }
+            }
+
+
+
+
+
+
+
+        }
+    }
+
+
     $.connection.graphAppHub.client.setRGB = function (colourScheme) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Setting colour scheme to: ' + colourScheme);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -303,8 +401,6 @@ $(function () {
 
         }
     }
-
-
 
 
 
@@ -897,6 +993,7 @@ $(function () {
             var clientRow = gdo.net.node[gdo.clientId].sectionRow;
             var clientCol = gdo.net.node[gdo.clientId].sectionCol;
 
+            overallFolder = folderNameDigit;
 
             if (!zoomed) {
                 globalZoomed = false;

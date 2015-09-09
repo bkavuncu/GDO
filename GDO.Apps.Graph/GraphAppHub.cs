@@ -418,8 +418,16 @@ namespace GDO.Apps.Graph
                         Clients.Caller.setMessage("Processing of search query has completed.");
 
                         // Clients.Group to broadcast and get all clients to update graph
-                        // Clients.Group("" + instanceId).renderSearch(folderNameDigit);
-                        // Clients.Caller.setMessage("Search result is now being rendered.");
+
+                        // Clients.Group to broadcast and get all clients to update graph
+
+                        // hide all highlight
+                        Clients.Group("" + instanceId).hideHighlight();
+                        Clients.Group("" + instanceId).hideLabels();
+                        Clients.Group("" + instanceId).hideLinks();
+
+                        Clients.Group("" + instanceId).renderSearch(folderName);
+                        Clients.Caller.setMessage("Search result is now being rendered.");
                     }
                 }
                 catch (Exception e)
