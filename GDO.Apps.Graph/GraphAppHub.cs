@@ -62,6 +62,15 @@ namespace GDO.Apps.Graph
                     ga.ReadNodesData(inputFolder);
                     Clients.Caller.setMessage("Reading in nodes.json data to prepare for search function.");
 
+                    // set up label dictionary to prepare for search
+                    Clients.Caller.setMessage("Setting up label dictionary.");
+                    ga.SetupLabelDictionary();
+
+                    // set up nodes dictionary to prepare for search
+                    Clients.Caller.setMessage("Setting up nodes dictionary.");
+                    ga.SetupNodeDictionary();
+
+
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
                     ga.ProcessGraph(inputFolder, true, folderNameDigit);
