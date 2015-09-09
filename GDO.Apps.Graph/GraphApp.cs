@@ -1041,6 +1041,9 @@ namespace GDO.Apps.Graph
                 nodeList.Add(current);
             }
 
+            // log no. of connected nodes
+            GraphAppHub.self.LogTime("No. of connected nodes: " + (nodeList.Count - 1));
+
             // 2. Scale position of nodes based on GDO config, using code from above
             // (scale in advance, so there's no need to scale links later)
 
@@ -1087,6 +1090,8 @@ namespace GDO.Apps.Graph
                 nodeList[i].pos.y += totalHeight * (1 - scaleDown) / 2;
             }
 
+
+            
 
             /*
             Debug.WriteLine("Count of nodeList: " + nodeList.Count);
