@@ -76,6 +76,12 @@ namespace GDO.Apps.Graph
             public List<Link> links { get; set; }
         }
 
+        public class NodeData
+        {
+            public int id { get; set; }
+            public Pos pos { get; set; }
+            public List<int> adj { get; set; }  // adj = list of connectedNodes
+        }
 
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
@@ -97,14 +103,21 @@ namespace GDO.Apps.Graph
             return partitionPos;
         }
 
+        // ********************************************************* 
+        // Global variables
+        // *********************************************************
+        // make labels public so that it can be access by ProcessSearch()
+        public List<string> labels = null;
+        public List<NodeData> nodesData = null;
+        
+        // 0 means local, 1 means http
+        public int inputSourceType = 0;
+
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
         public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
         {
-            string nodesFilePath, linksFilePath, labelsFilePath, nodesDataFilePath;
-
-            // 0 means local, 1 means http
-            int inputSourceType = 0;
+            string nodesFilePath, linksFilePath, labelsFilePath;
 
             if (inputSourceType == 1)
             {
@@ -112,7 +125,6 @@ namespace GDO.Apps.Graph
                 nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";
                 linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/linksPos.bin";
                 labelsFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/labels.json";
-                nodesDataFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodes.json";
             }
             else
             {
@@ -120,19 +132,14 @@ namespace GDO.Apps.Graph
                 nodesFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodesPos.bin";
                 linksFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\linksPos.bin";
                 labelsFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\labels.json";
-                nodesDataFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodes.json";
             }
-
 
 
             RectDimension rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
-            List<Link> links = new List<Link>();
-            List<string> labels = new List<string>();
+            List<Link> links = new List<Link>();            
 
             Stopwatch sw = new Stopwatch();
-
-
 
             if (inputSourceType == 1)
             {
@@ -875,6 +882,59 @@ namespace GDO.Apps.Graph
 
             return this.FolderNameDigit;
         }
+
+
+        public void ReadNodesData(string inputFolder)
+        {
+            string nodesDataFilePath;
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            if (inputSourceType == 1)   // server file
+            {
+                nodesDataFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodes.json";
+
+                WebClient client = new WebClient();
+                StreamReader file = new StreamReader(client.OpenRead(nodesDataFilePath));
+                JsonTextReader reader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                nodesData = serializer.Deserialize<List<NodeData>>(reader);
+            }
+            else // local file
+            {   
+                nodesDataFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodes.json";
+
+                StreamReader file = File.OpenText(nodesDataFilePath);
+                JsonTextReader reader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                nodesData = serializer.Deserialize<List<NodeData>>(reader);
+            }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
+
+            /*
+            // debug
+            for (int i = 0; i < nodesData.Count; i++)
+            {
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].id);
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].pos.x);
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].adj.Count);
+            }
+            */
+        }
+
+
+        // @param: keywords of search query
+        // if keywords are valid, returns name of folder that stores result; otherwise returns null
+        public string ProcessSearch(string keywords)
+        {
+
+            return null;
+        }
+
     }
 }
 

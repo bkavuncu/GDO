@@ -21,6 +21,7 @@ namespace GDO.Apps.Graph
     {
         public string ControllerId { get; set; }
         public static GraphAppHub self;
+        public static GraphApp ga = null;
 
         public string Name { get; set; } = "Graph";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
@@ -34,7 +35,7 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        //TODO: Check if try, catch are implemented correctly
+ 
         public void InitiateProcessing(int instanceId, string inputFolder)
         {
             System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
@@ -47,7 +48,7 @@ namespace GDO.Apps.Graph
                     this.ControllerId = Context.ConnectionId;
 
                     // create GraphApp project and call its function to process graph
-                    GraphApp ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+                    ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
                     Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
                     string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
 
@@ -56,6 +57,10 @@ namespace GDO.Apps.Graph
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("Graph is now being rendered.");
+
+                    // read in nodes.json which stores nodes data (id, pos, connectedNodes) and store in var
+                    ga.ReadNodesData(inputFolder);
+                    Clients.Caller.setMessage("Reading in nodes.json data to prepare for search function.");
 
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
@@ -375,6 +380,39 @@ namespace GDO.Apps.Graph
                 Clients.Client(ControllerId).logTime("Error: Failed to log time.");
                 Clients.Client(ControllerId).logTime(e.ToString());
                 Debug.WriteLine(e);
+            }
+        }
+
+
+
+        public void InitiateSearch(int instanceId, string keywords)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Initiating processing of search query: " + keywords);
+                    string folderNameDigit = ga.ProcessSearch(keywords);
+
+                    if (folderNameDigit == null)
+                    {
+                        Clients.Caller.setMessage("Search query is not valid. Please input a valid label.");
+                    }
+                    else
+                    {
+                        Clients.Caller.setMessage("Processing of search query has completed.");
+
+                        // Clients.Group to broadcast and get all clients to update graph
+                        Clients.Group("" + instanceId).renderSearch(folderNameDigit);
+                        Clients.Caller.setMessage("Search result is now being rendered.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Processing of search query failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
             }
         }
 

@@ -291,6 +291,26 @@
             gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
         });
 
+
+        // Search event listeners
+
+        $("#startSearch").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
+
+            gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val());
+        });
+
+
+        $("#show_searchLabels").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
+
+            gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId);
+        });
+
+        $("#hide_search").click(function () {
+            gdo.net.app["Graph"].server.hideSearch(gdo.controlId);
+        });
+
     </script>
 
 </body>
