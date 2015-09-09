@@ -79,6 +79,7 @@ namespace GDO.Apps.Graph
         public class NodeData
         {
             public int id { get; set; }
+            public string label { get; set; }
             public Pos pos { get; set; }
             public List<int> adj { get; set; }  // adj = list of connectedNodes
         }
@@ -109,7 +110,9 @@ namespace GDO.Apps.Graph
         // make labels public so that it can be access by ProcessSearch()
         public List<string> labels = null;
         public List<NodeData> nodesData = null;
-        
+        public bool zoomedIn = false;
+        RectDimension rectDim = null;
+
         // 0 means local, 1 means http
         public int inputSourceType = 0;
 
@@ -135,9 +138,9 @@ namespace GDO.Apps.Graph
             }
 
 
-            RectDimension rectDim = new RectDimension();
+            rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
-            List<Link> links = new List<Link>();            
+            List<Link> links = new List<Link>();
 
             Stopwatch sw = new Stopwatch();
 
@@ -405,8 +408,9 @@ namespace GDO.Apps.Graph
 
 
             // set up total width and height, which differ for non-zoomed and zoomed version
-            int totalWidth, totalHeight;
+
             int totalRows, totalCols;
+            int totalWidth, totalHeight;
 
             if (!zoomed)
             {
@@ -421,8 +425,8 @@ namespace GDO.Apps.Graph
                 totalHeight = Section.Height + (2 * singleDisplayHeight);
                 totalRows = Section.Rows + 2;
                 totalCols = Section.Cols + 2;
-            }
-
+            }      
+            
 
             // transform data to GDO dimension
             Scales scales = new Scales();
@@ -902,7 +906,7 @@ namespace GDO.Apps.Graph
                 nodesData = serializer.Deserialize<List<NodeData>>(reader);
             }
             else // local file
-            {   
+            {
                 nodesDataFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodes.json";
 
                 StreamReader file = File.OpenText(nodesDataFilePath);
@@ -920,25 +924,29 @@ namespace GDO.Apps.Graph
             for (int i = 0; i < nodesData.Count; i++)
             {
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].id);
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].label);
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].pos.x);
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].adj.Count);
             }
             */
+
         }
 
         // ***********************
         // global dictionary variables
         // ***********************
         // map label to index within labels array
-        Dictionary<string, int> labelDict = new Dictionary<string, int>();
+        Dictionary<string, int> labelDict = null;
         // map node ID to index within nodes data array
-        Dictionary<int, int> nodeDict = new Dictionary<int, int>();
+        Dictionary<int, int> nodeDict = null;
 
         // set up label dictionary to prepare for search
         public void SetupLabelDictionary()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+            labelDict = new Dictionary<string, int>();
 
             for (int i = 0; i < labels.Count; i++)
             {
@@ -960,6 +968,8 @@ namespace GDO.Apps.Graph
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            nodeDict = new Dictionary<int, int>();
+
             for (int i = 0; i < nodesData.Count; i++)
             {
                 nodeDict.Add(nodesData[i].id, i);
@@ -973,16 +983,178 @@ namespace GDO.Apps.Graph
             //Debug.WriteLine("Index for node ID 4943 (2): " + nodeDict[4943]);
             //Debug.WriteLine("Index for node ID 7299 (2358): " + nodeDict[7299]);
         }
-    
+
+
+
+        public class SelectedNode
+        {
+            public Pos pos { get; set; }
+            public string label { get; set; }
+        }
+
 
         // @param: keywords of search query
         // if keywords are valid, returns name of folder that stores result; otherwise returns null
         public string ProcessSearch(string keywords)
         {
+            if (!labelDict.ContainsKey(keywords))
+            {
+                return null;
+            }
 
-            return null;
+            int index = labelDict[keywords];
+
+            List<SelectedNode> nodeList = new List<SelectedNode>();
+            // Debug
+            // GraphAppHub.self.LogTime("Search result: index " + index);
+
+            // 1. Add nodes to nodeList
+
+            // add central node, accessed using index obtained from labelDict
+            NodeData centralNode = nodesData[index];
+
+            SelectedNode central = new SelectedNode();
+            central.pos = centralNode.pos;
+            central.label = centralNode.label;
+
+            nodeList.Add(central);
+
+            //Debug.WriteLine("Central node label: " + nodeList[0].label);
+
+            // loop through connected nodes and add them to node list
+            for (int i = 0; i < centralNode.adj.Count; ++i)
+            {
+                int currentIndex = nodeDict[centralNode.adj[i]];
+
+                NodeData currentNode = nodesData[currentIndex];
+
+                SelectedNode current = new SelectedNode();
+                current.pos = currentNode.pos;
+                current.label = currentNode.label;
+
+                nodeList.Add(current);
+            }
+
+            // 2. Scale position of nodes based on GDO config, using code from above
+            // (scale in advance, so there's no need to scale links later)
+
+            int singleDisplayWidth = (int)(Section.Width / Section.Cols);
+            int singleDisplayHeight = (int)(Section.Height / Section.Rows);
+
+            // set up total width and height, which differ for non-zoomed and zoomed version
+            int totalRows, totalCols;
+            int totalWidth, totalHeight;
+
+            if (!zoomedIn)
+            {
+                totalWidth = Section.Width;
+                totalHeight = Section.Height;
+                totalRows = Section.Rows;
+                totalCols = Section.Cols;
+            }
+            else
+            { // current zooming is pre-set to include two extra rows and two extra cols (regardless of section dimension)
+                totalWidth = Section.Width + (2 * singleDisplayWidth);
+                totalHeight = Section.Height + (2 * singleDisplayHeight);
+                totalRows = Section.Rows + 2;
+                totalCols = Section.Cols + 2;
+            }
+
+
+            // transform data to GDO dimension
+            Scales scales = new Scales();
+
+            scales.x = totalWidth / rectDim.width;
+            scales.y = totalHeight / rectDim.height;
+
+            float scaleDown = (float)0.9; // to make graph smaller and nearer to (0, 0)
+
+
+            // scale nodes to full gdo dimension
+            for (int i = 0; i < nodeList.Count; ++i)
+            {
+                nodeList[i].pos.x *= scales.x * scaleDown;
+                nodeList[i].pos.y *= scales.y * scaleDown;
+
+                // add padding on x, y to centralise graph after being scaled down
+                nodeList[i].pos.x += totalWidth * (1 - scaleDown) / 2;
+                nodeList[i].pos.y += totalHeight * (1 - scaleDown) / 2;
+            }
+
+
+            /*
+            Debug.WriteLine("Count of nodeList: " + nodeList.Count);
+            for (int i = 0; i < nodeList.Count; ++i)
+            {
+                Debug.WriteLine("Node " + i + " label : " + nodeList[i].label);
+            }
+            */
+
+
+
+            // 3. Add links to linkList
+            // set central node's pos as the startPos of each link
+            // set its connectedNode's pos as the endPos
+            List<Link> linkList = new List<Link>();
+
+            for (int i = 0; i < nodeList.Count - 1; ++i)
+            {
+                Link currentLink = new Link();
+                currentLink.startPos = nodeList[0].pos;
+                currentLink.endPos = nodeList[i + 1].pos;
+                linkList.Add(currentLink);
+            }
+
+            //Debug.WriteLine("Count of linkList (nodeList count - 1): " + linkList.Count);
+
+            // 4. Write to files
+
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph\\";
+
+            Directory.CreateDirectory(basePath + FolderNameDigit + @"\search");
+            String searchPath = basePath + FolderNameDigit + @"\search\\";
+
+            // Generate random numbers as folder name
+            Random randomDigitGenerator = new Random();
+            String folderName = randomDigitGenerator.Next(10000, 99999).ToString();
+
+            while (Directory.Exists(searchPath + folderName))
+            {
+                folderName = randomDigitGenerator.Next(10000, 99999).ToString();
+            }
+
+            Directory.CreateDirectory(searchPath + folderName);
+
+            String outputPath = searchPath + folderName + @"\\";
+
+            Debug.WriteLine("Writing to nodes.json file");
+            StreamWriter streamWriter = new StreamWriter(outputPath + @"nodes.json");
+            streamWriter.AutoFlush = true;
+            JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Serialize(jsonWriter, nodeList);
+
+            Debug.WriteLine("Finished writing nodes.json file");
+
+            Debug.WriteLine("Writing to links.json file");
+            StreamWriter streamWriter2 = new StreamWriter(outputPath + @"links.json");
+            streamWriter2.AutoFlush = true;
+            JsonWriter jsonWriter2 = new JsonTextWriter(streamWriter2);
+            JsonSerializer serializer2 = new JsonSerializer();
+            serializer2.Serialize(jsonWriter2, linkList);
+
+            Debug.WriteLine("Finished writing links.json file");
+
+            Debug.WriteLine("Search folder name: " + folderName);
+
+            return folderName;
+
         }
 
+        public void UpdateZoomVar(bool value)
+        {
+            zoomedIn = value;
+        }
     }
 }
 

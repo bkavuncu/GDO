@@ -238,6 +238,9 @@ namespace GDO.Apps.Graph
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-in graph.");
 
+                    // updated zoomedIn variable within ga object
+                    ga.UpdateZoomVar(true);
+
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
@@ -264,6 +267,9 @@ namespace GDO.Apps.Graph
                 try
                 {
                     Clients.Caller.setMessage("Triggering rendering of zoomed-out graph.");
+
+                    // updated zoomedIn variable within ga object
+                    ga.UpdateZoomVar(false);
 
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, false);
@@ -401,19 +407,19 @@ namespace GDO.Apps.Graph
                 try
                 {
                     Clients.Caller.setMessage("Initiating processing of search query: " + keywords);
-                    string folderNameDigit = ga.ProcessSearch(keywords);
+                    string folderName = ga.ProcessSearch(keywords);
 
-                    if (folderNameDigit == null)
+                    if (folderName == null)
                     {
-                        Clients.Caller.setMessage("Search query is not valid. Please input a valid label.");
+                        Clients.Caller.setMessage("Search query is not valid. Please input a valid keyword(s).");
                     }
                     else
                     {
                         Clients.Caller.setMessage("Processing of search query has completed.");
 
                         // Clients.Group to broadcast and get all clients to update graph
-                        Clients.Group("" + instanceId).renderSearch(folderNameDigit);
-                        Clients.Caller.setMessage("Search result is now being rendered.");
+                        // Clients.Group("" + instanceId).renderSearch(folderNameDigit);
+                        // Clients.Caller.setMessage("Search result is now being rendered.");
                     }
                 }
                 catch (Exception e)
