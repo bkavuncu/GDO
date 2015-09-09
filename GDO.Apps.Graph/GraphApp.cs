@@ -147,7 +147,7 @@ namespace GDO.Apps.Graph
 
             rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
-            List<Link> links = new List<Link>();            
+            List<Link> links = new List<Link>();
 
             Stopwatch sw = new Stopwatch();
 
@@ -1027,13 +1027,15 @@ namespace GDO.Apps.Graph
         // map label to index within labels array
         Dictionary<string, int> labelDict = new Dictionary<string, int>();
         // map node ID to index within nodes data array
-        Dictionary<int, int> nodeDict = new Dictionary<int, int>();
+        Dictionary<int, int> nodeDict = null;
 
         // set up label dictionary to prepare for search
         public void SetupLabelDictionary()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+            labelDict = new Dictionary<string, int>();
 
             for (int i = 0; i < labels.Count; i++)
             {
@@ -1055,6 +1057,8 @@ namespace GDO.Apps.Graph
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            nodeDict = new Dictionary<int, int>();
+
             for (int i = 0; i < nodesData.Count; i++)
             {
                 nodeDict.Add(nodesData[i].id, i);
@@ -1068,7 +1072,15 @@ namespace GDO.Apps.Graph
             //Debug.WriteLine("Index for node ID 4943 (2): " + nodeDict[4943]);
             //Debug.WriteLine("Index for node ID 7299 (2358): " + nodeDict[7299]);
         }
-    
+
+
+
+        public class SelectedNode
+        {
+            public Pos pos { get; set; }
+            public string label { get; set; }
+        }
+
 
         // @param: keywords of search query
         // if keywords are valid, returns name of folder that stores result; otherwise returns null
