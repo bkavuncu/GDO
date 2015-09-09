@@ -46,6 +46,10 @@
             overflow: auto;
         }
 
+        td {
+            vertical-align: top;
+        }
+
         label {
             display: block;
             font-size: 16px;
@@ -61,6 +65,7 @@
         #mostConnected {
             display: inline;
         }
+
 
     </style>
 </head>
@@ -81,53 +86,76 @@
 
     <h2>Graph User Interface</h2>
     <fieldset id="graph_UI">
-        <button id="show_links">Show links</button>
-        <button id="hide_links">Hide links</button>   
-        <br />
-        <br />
-        <button id="show_labels">Show labels</button>
-        <button id="hide_labels">Hide labels</button>
-        <br />
-        <br />
-        <br />
-        <label> Toggle panning </label>
-        <br />
-        <span>
-            <button id="up">Up</button>
-        </span>      
-        <button id="left">Left</button>
-        <button id="down">Down</button>
-        <button id="right">Right</button>
-        <br />
-        <br />
-        <br />
-        <label> Toggle zooming </label>
-        <br />
-        <button id="zoomIn">Zoom in</button>
-        <button id="zoomOut">Zoom out</button>
-        <br />
-        <br />
-        <br />
-        <label> Colour Scheme </label>
-        <br />
-        <button id="blue">Blue</button>
-        <button id="green">Green</button>
-        <button id="yellow">Yellow</button>
-        <button id="orange">Orange</button>
-        <br />
-        <br />
-        <br />
-        <label> Most connected nodes </label>
-        <br />
-        <p id="mostConnected">Input no. of links: </p>
-        <input type="text" id="numLinks" />
-        <br />
-        <br />
-        <button id="show_mostConnectedNodes">Highlight nodes</button>
-        <button id="show_mostConnectedLabels">Show labels</button>
-        <button id="hide_mostConnected">Hide all</button>
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <label> Toggle links </label>
+                    <br />
+                    <button id="show_links">Show links</button>
+                    <button id="hide_links">Hide links</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Toggle labels </label>
+                    <br />
+                    <button id="show_labels">Show labels</button>
+                    <button id="hide_labels">Hide labels</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Toggle panning </label>
+                    <br />
+                    <span>
+                        <button id="up">Up</button>
+                    </span>
+                    <button id="left">Left</button>
+                    <button id="down">Down</button>
+                    <button id="right">Right</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Toggle zooming </label>
+                    <br />
+                    <button id="zoomIn">Zoom in</button>
+                    <button id="zoomOut">Zoom out</button>
+                    <br />
+                    <br />
+                    <br />
+                </td>
+                <td>
+                    <label> Colour Scheme </label>
+                    <br />
+                    <button id="blue">Blue</button>
+                    <button id="green">Green</button>
+                    <button id="yellow">Yellow</button>
+                    <button id="orange">Orange</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Most connected nodes </label>
+                    <br />
+                    <p id="mostConnected">Input no. of links: </p>
+                    <input type="text" id="numLinks" />
+                    <br />
+                    <br />
+                    <button id="show_mostConnectedNodes">Highlight nodes</button>
+                    <button id="show_mostConnectedLabels">Show labels</button>
+                    <button id="hide_mostConnected">Hide all</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Search Labels </label>
+                    <br />
+                    <input type="text" id="searchKeywords" />
+                    <button id="startSearch">Search</button>
+                    <br />
+                    <br />
+                    <button id="show_searchLabels">Show labels</button>
+                    <button id="hide_search">Hide all</button>
+                </td>
+            </tr>
 
-
+        </table>
     </fieldset>
 
     <br />
@@ -262,7 +290,6 @@
         $("#hide_mostConnected").click(function () {
             gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
         });
-
 
     </script>
 
