@@ -4,8 +4,11 @@
 */
 
 // ==== IF THIS NODE IS AN APP ====
+var d3;
 
-var initDD3App = function (d3) {
+var initDD3App = function () {
+
+    d3 = document.getElementById('app_frame_content').contentWindow['d3'];
 
     var utils = (function () {
         var utils = {};
@@ -321,7 +324,10 @@ var initDD3App = function (d3) {
         var signalR = {
             server: null,
             client: null,
-            syncCallback: function () { }
+            syncCallback: function () { },
+            receiveSynchronize: function () {
+                signalR.syncCallback();
+            }
         };
 
         var peer = {
@@ -365,9 +371,7 @@ var initDD3App = function (d3) {
         var initializer = (function () {
             /*
                 Connect to peer server => Get peerId
-                Connect to signalR server => Send browser information
-                                          => Receive configuration
-                Connect to data api => Get metadata [emulated in js]
+                Connect to signalR server => Send browser information, receive configuration
             */
 
             var init = function () {
@@ -382,7 +386,7 @@ var initDD3App = function (d3) {
             };
 
             init.checkLibraries = function () {
-                var toCheck = [/*'d3',*/ 'Peer', 'jQuery', ['jQuery', 'signalR']];
+                var toCheck = ['d3', 'Peer', 'jQuery', ['jQuery', 'signalR']];
 
                 var check = toCheck.some(function (lib, i) {
                     var ok = false;
@@ -489,7 +493,7 @@ var initDD3App = function (d3) {
 
                 // Define server interaction functions
                 signalR_callback[0] = init.getCaveConfiguration;
-                signalR_callback[1] = signalR.syncCallback;
+                signalR_callback[1] = signalR.receiveSynchronize;
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -775,7 +779,7 @@ var initDD3App = function (d3) {
                         dataId: dataId,
                         dataName: dataName,
                         limit: limit,
-                        orderingKey: orderingKey, // Key on which to order the data
+                        orderingKey: orderingKey || null, // Key on which to order the data
                         _keys: keys || null
                     };
 
@@ -997,7 +1001,10 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_removeHandler = function (data) {
-                return d3.select("#" + data.sendId).remove_();
+                var el = d3.select("#" + data.sendId).node();
+                while (_dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
+                    el = el.parentElement;
+                d3.select(el).remove();
             };
 
             var _dd3_propertyHandler = function (data) {
@@ -1663,9 +1670,13 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_selection_filterUnreceived = function (e) {
-                return e.filter(function (d, i) {
-                    return ([].indexOf.call(this.classList || [], 'dd3_received') < 0);
+                return e.filter(function () {
+                    return !_dd3_isReceived(this);
                 })
+            };
+
+            var _dd3_isReceived = function (e) {
+                return [].indexOf.call(e.classList || [], 'dd3_received') >= 0;
             };
 
             var _dd3_selection_filterGroup = function (e) {
@@ -2164,7 +2175,9 @@ var initDD3App = function (d3) {
 var dd3Server = $.connection.dD3AppHub;
 var signalR_callback = [];
 var main_callback; // Callback inside the html file
-var test_controller; // Callback inside the html file
+var orderTransmitter; // Callback inside the html file
+
+// Functions used for dd3 callback
 
 dd3Server.client.receiveConfiguration = function (a, b) {
     signalR_callback[0] && signalR_callback[0].apply(null, arguments);
@@ -2182,17 +2195,19 @@ dd3Server.client.receiveData = function () {
     signalR_callback[3].apply(null, arguments);
 }
 
+// Non-dd3 functions
+
 dd3Server.client.receiveGDOConfiguration = function (id) {
-    // To get configId from server (I don't find it in gdo.net.app.DD3.config)
+    // To get configId from server
     main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');
     main_callback = null;
 };
 
 dd3Server.client.receiveControllerOrder = function (orders) {
-    if (test_controller) {
+    if (orderTransmitter) {
         orders = JSON.parse(orders)
         gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
-        test_controller(orders);
+        orderTransmitter(orders);
     } else {
         gdo.consoleOut('.DD3', 4, 'No test controller defined');
     }
@@ -2210,17 +2225,16 @@ dd3Server.client.updateController = function (obj) {
 
 gdo.net.app["DD3"].displayMode = 0;
 
-gdo.net.app["DD3"].initClient = function (d3, callback, testController) {
+gdo.net.app["DD3"].initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-    main_callback = callback;
-    test_controller = testController;
-    return initDD3App(d3);
+    orderTransmitter = orderController;
+    main_callback = launcher;
+    return initDD3App();
 }
 
 gdo.net.app["DD3"].initControl = function (callback) {
-    gdo.controlId = getUrlVar("controlId");
-    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.controlId);
+    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
     dd3Server.server.defineController(gdo.management.selectedInstance);
     return gdo.management.selectedInstance;
@@ -2232,23 +2246,5 @@ gdo.net.app["DD3"].terminateClient = function () {
 }
 
 gdo.net.app["DD3"].terminateControl = function () {
-    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.controlId);
+    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 }
-
-
-//gdo.net.app["DD3"].server.requestImageName(gdo.net.node[gdo.clientId].appInstanceId);
-
-//*/
-/*
-$(function () {
-    //gdo.consoleOut('.DD3', 1, '');
-    $.connection.imageTilesAppHub.client.receiveImageName = function (imageName) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            //gdo.consoleOut('.DD3', 1, 'Instance - ' + gdo.controlId + "Doing something");
-            //$("iframe").contents().find("").attr();
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-        }
-    }
-});
-*/

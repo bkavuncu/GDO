@@ -8,6 +8,9 @@ using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.DD3
 {
@@ -33,6 +36,9 @@ namespace GDO.Apps.DD3
 
             Configuration.Json.TryGetValue("data", out value);
             this.data = value;
+
+            System.Diagnostics.Debug.WriteLine(" -- Request of data -- ");
+            webRequest();
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();
@@ -113,6 +119,33 @@ namespace GDO.Apps.DD3
         public string requestBarData(BarDataRequest request)
         {
             return request.executeWith(this.data);
+        }
+
+        public void webRequest()
+        {
+            // Create a request for the URL. 
+            WebRequest request = WebRequest.Create(
+              "http://wikisensing.org/WikiSensingServiceAPI/DCEWilliamPenneyUpperFloorzYyYFkLwEygj7B0vvQWQ/Node_1/10");
+            // If required by the server, set the credentials.
+            request.Credentials = CredentialCache.DefaultCredentials;
+            request.ContentType = "application/json; charset=utf-8";
+            // Get the response.
+            WebResponse response = request.GetResponse();
+            // Display the status.
+            System.Diagnostics.Debug.WriteLine(((HttpWebResponse)response).StatusDescription);
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Display the content.
+            JObject dynObj = (JObject)JsonConvert.DeserializeObject(responseFromServer);
+
+            System.Diagnostics.Debug.WriteLine(dynObj.ToString());
+            // Clean up the streams and the response.
+            reader.Close();
+            response.Close();
         }
 
         // Code for Connection and Control
@@ -297,7 +330,12 @@ namespace GDO.Apps.DD3
 
             var data = dataIn[dataId].ToObject<IEnumerable<JToken>>();
 
-            IEnumerable<JToken> orderedData = data.OrderBy(tryParseNumber(orderingKey));
+            IEnumerable<JToken> orderedData;
+
+            if (orderingKey != null)
+                orderedData = data.OrderBy(tryParseNumber(orderingKey));
+            else
+                orderedData = data;
 
             IEnumerable<JToken> filteredData = orderedData.Select(addOrderProperty).Where(isIn);
 
