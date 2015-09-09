@@ -147,8 +147,7 @@ namespace GDO.Apps.Graph
 
             rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
-            List<Link> links = new List<Link>();
-            List<string> labels = new List<string>();
+            List<Link> links = new List<Link>();            
 
             Stopwatch sw = new Stopwatch();
 
