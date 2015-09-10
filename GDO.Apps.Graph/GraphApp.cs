@@ -293,10 +293,10 @@ namespace GDO.Apps.Graph
 
                 // debugging
 
-                for (int i = 0; i < labels.Count; i++)
-                {
-                    Debug.WriteLine("label " + i + ": " + labels[i]);
-                }
+                //for (int i = 0; i < labels.Count; i++)
+                //{
+                //    Debug.WriteLine("label " + i + ": " + labels[i]);
+                //}
 
                 sw.Stop();
                 System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
@@ -945,7 +945,7 @@ namespace GDO.Apps.Graph
             Debug.WriteLine("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
 
-            
+            /*
             // debug
             for (int i = 0; i < nodesData.Count; i++)
             {
@@ -954,7 +954,7 @@ namespace GDO.Apps.Graph
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].pos.x);
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].adj.Count);
             }
-            
+            */
 
         }
 
