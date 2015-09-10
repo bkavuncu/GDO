@@ -114,6 +114,7 @@
     <Content Include="Configurations\DD3\Transitions.json" />
     <Content Include="Configurations\DD3\Scatterplot.json" />
     <Content Include="Configurations\DD3\Graphs.json" />
+    <Content Include="Configurations\DD3\Handmoves.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\d3.v3.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />

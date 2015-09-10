@@ -83,13 +83,13 @@
                 test_bench[0] = function () {
 
                     var svg = dd3.svgCanvas,
-	                    width = dd3.cave().svgWidth,
-	                    height = dd3.cave().svgHeight,
-	                    bwidth = dd3.browser().svgWidth,
-	                    bheight = dd3.browser().svgHeight,
+	                    width = dd3.cave.svgWidth,
+	                    height = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
                         p = dd3.position("svg", "local", "svg", "global"),
-                        c = dd3.browser().column,
-                        r = dd3.browser().row;
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
 
                     svg.append('rect')
                         .attr("x", p.left(0))
@@ -110,13 +110,13 @@
                         .attr("stroke", "black")
                         .attr("fill", "transparent");
 
-                    var circleGroup = svg.append("g").attr("id", "cg");
-                    var circleGroupDistributed = svg.append("g").attr("id", "cgd");
+                    var circleGroup = svg.append("g").attr("id", "dd3_cg");
+                    var circleGroupDistributed = svg.append("g").attr("id", "dd3_cgd");
 
-                    var rectG = svg.append('g').attr("id", "rect").append('g');
+                    var rectG = svg.append('g').attr("id", "dd3_rect").append('g');
                     var rect;
 
-                    var polygonGroupOutter = svg.append('g').attr('id', 'poly').append('g'),
+                    var polygonGroupOutter = svg.append('g').attr('id', 'dd3_poly').append('g'),
                         polygonGroupInner;
 
                     svg.append("text")
@@ -134,17 +134,15 @@
                         }
                     });
 
-                    dd3.defineAttrTween("my2Tween", function () {
-                        return function (t) {
-                            return t * 200 + 10;
-                        }
-                    });
-
                     dd3.defineStyleTween("my3Tween", function (d, i, a) {
                         var i = d3.interpolate(a, "#AAA");
                         return function (t) {
                             return i(t);
                         }
+                    });
+
+                    dd3.defineAttrTween("tweenRotation", function (d, i, a) {
+                        return d3.interpolateString(a, a.replace("rotate(0", "rotate(720"));
                     });
 
                     testController.tests['createRect'] = function () {
@@ -224,7 +222,6 @@
                             .text("test")
                             .ease("normalEase")
                             //.tween('name', 'myTween')
-                            //.attrTween('height', 'my2Tween')
                             //.styleTween('fill', 'my3Tween')
                             .transition(name)
                             .duration(5000)
@@ -288,29 +285,20 @@
                                 .ease("linear")
                                 .attr('transform', 'translate(' + p[0] + ' ' + p[1] + ')');
                         });
-                        
+
                         polygonGroupInner
                             .attr('transform', 'rotate(0 ' + [pw / 2, ph / 2] + ')')
                             .transition()
-                            .duration(2500)
-                            .ease("linear")
-                            .attr('transform', 'rotate(90 ' + [pw / 2, ph / 2] + ')')
-                            .transition()
-                            .duration(2500)
-                            .attr('transform', 'rotate(180 ' + [pw / 2, ph / 2] + ')')
-                            .transition()
-                            .duration(2500)
-                            .attr('transform', 'rotate(270 ' + [pw / 2, ph / 2] + ')')
-                            .transition()
-                            .duration(2500)
-                            .attr('transform', 'rotate(0 ' + [pw / 2, ph / 2] + ')');
+                            .attrTween('transform', 'tweenRotation')
+                            .duration(10000)
+                            .ease("linear");
 
                     };
 
                     /*
-                    init3();
+                    testController.tests['createDistributedCircles']();
                     var f = function () {
-                        start3();
+                        testController.tests['startMoveDistributedCircles']();
                         setTimeout(f, 21000);
                     };
                     dd3.synchronize(f, 5000);
@@ -329,11 +317,11 @@
                         var yDomain = [dim.y.min - coef * extent - c, dim.y.max + coef * extent + c];
 
                         // Setup x
-                        xScale = dd3.scale.linear().range([0, dd3.cave().svgWidth]);
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]);
                         xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
                         // Setup y
-                        yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]);
                         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
                         xScale.domain(xDomain);
@@ -356,16 +344,18 @@
                             return;
 
                         var svg = dd3.svgCanvas;
+                        var pathGroup = svg.append("g").attr("id", "dd3_path");
+                        var circleGroup = svg.append("g").attr("id", "dd3_circle");
 
                         // x-axis
                         svg.append("g")
                           .unwatch()
                           .attr("class", "x axis")
-                          .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
+                          .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
                           .call(xAxis)
                         .append("text")
                           .attr("class", "label")
-                          .attr("x", dd3.cave().svgWidth)
+                          .attr("x", dd3.cave.svgWidth)
                           .attr("y", -6)
                           .style("text-anchor", "end")
                           .text("X axis");
@@ -384,37 +374,8 @@
                           .style("text-anchor", "end")
                           .text("Y axis");
 
-                        /*
-                        var rGroup = svg.append('g').attr("id", "myRect");
-                        var pGroup = svg.append('g').attr("id", "myPoly");
-                        
-                        if (dd3.browser().row == 0 && dd3.browser().column == 0) {
-                            rGroup
-                                .append('rect')
-                                .attr("x", xScale(3))
-                                .attr("y", yScale(1))
-                                .attr("width", xScale(15) - xScale(3))
-                                .attr("height", yScale(0) - yScale(2))
-                                .attr("transform", "rotate(30 " + [xScale(3), yScale(1)] + ")scale(1)")
-                                .attr("stroke", "black")
-                                .attr("fill", "rgb(29, 219, 29)")
-                                .send();
-                        } else if (dd3.browser().row == 1 && dd3.browser().column == 1){
-                            pGroup
-                               .append('polygon')
-                               .attr("points", "50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180")
-                               .attr("transform", " scale(6) translate(50, -100)")
-                               .attr("stroke", "orange")
-                               .attr("stroke-width", "4")
-                               .attr("fill", "transparent")
-                               .send();
-                        } else {
-                            rGroup.attr("transform", "rotate(20)");
-                        }
-                        //*/
-
                         // Draw dots
-                        svg.selectAll(".dot")
+                        circleGroup.selectAll(".dot")
                           .data(data)
                         .enter()
                           .append("g")
@@ -432,7 +393,7 @@
                                 .interpolate("monotone");
 
                         //*
-                        svg.append("path").datum(pathData)
+                        pathGroup.append("path").datum(pathData)
                             .unwatch()
                             .attr("d", lineFunction)
                             .attr("stroke", "blue")
@@ -454,11 +415,11 @@
                         xDomain = d3.range(dim.length);
 
                         // Setup x
-                        xRange = dd3.scale.ordinal().rangeBands([0, dd3.cave().svgWidth], 0.2);
+                        xRange = dd3.scale.ordinal().rangeBands([0, dd3.cave.svgWidth], 0.2);
                         xAxis = d3.svg.axis().scale(xRange).orient("bottom");
 
                         // Setup y
-                        yScale = dd3.scale.linear().range([dd3.cave().svgHeight, 0]);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]);
                         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
                         xRange.domain(xDomain);
@@ -475,11 +436,11 @@
                         svg.append("g")
                           .unwatch()
                           .attr("class", "x axis")
-                          .attr("transform", "translate(" + [0, dd3.cave().svgHeight] + ")")
+                          .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
                           .call(xAxis)
                         .append("text")
                           .attr("class", "label")
-                          .attr("x", dd3.cave().svgWidth)
+                          .attr("x", dd3.cave.svgWidth)
                           .attr("y", -6)
                           .style("text-anchor", "middle")
                           .text("Countries");
@@ -500,7 +461,7 @@
 
                         // PLOT BAR
                         svg.append("g")
-                          .attr("id", "rect")
+                          .attr("id", "dd3_rect")
                           .selectAll('rect')
                           .data(barData)
                           .enter()
@@ -543,6 +504,64 @@
 
                 };
 
+                // Hand-moving
+                test_bench[3] = function () {
+                    var w = 682,
+                        h = 455;
+                    var svg = dd3.svgCanvas,
+	                    width = dd3.cave.svgWidth,
+	                    height = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight;
+
+                    testController.tests['createRect'] = function (id) {
+                        var rectG = svg.append('g').attr('id', "r" + id);
+                        rectG.attr("transform", "translate(" + [4 * width / 10, 4 * height / 10] + ")");
+                        //*
+                        rectG.append('rect')
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * width / 10)
+                            .attr("height", 2 * height / 10)
+                            .attr("fill", "transparent")
+                            .attr("stroke", "black");
+                        //*/
+                        rectG.append("image")
+                            .attr("xlink:href", "illustration.png")
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * width / 10)
+                            .attr("height", 2 * width / 10);
+                    };
+
+                    testController.tests['moveRect'] = function (id, x, y) {
+                        var rectG = svg.select("#r" + id);
+                        rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
+                    };
+
+                    testController.tests['frontRect'] = function (id) {
+                        var g = svg.select("#r" + id).node();
+                        g.parentElement.appendChild(g);
+                    };
+
+                    testController.tests['resizeRect'] = function (id, x, y) {
+                        var img = svg.select("#r" + id).select("image");
+                        var r = svg.select("#r" + id).select("rect");
+                        img.attr("width", x * width).attr("height", y * height);
+                        r.attr("width", x * width).attr("height", y * height);
+                    };
+
+                    testController.tests['delRect'] = function (id) {
+                        svg.select("g").remove();
+                        //svg.select("#" + id).remove();
+                    };
+
+                    testController.tests['delAllRect'] = function () {
+                        svg.selectAll("g").remove();
+                    };
+
+                };
+                
             });
         });
 
