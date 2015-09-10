@@ -114,7 +114,7 @@ namespace GDO.Apps.Graph
         RectDimension rectDim = null;
 
         // 0 means local, 1 means http
-        public int inputSourceType = 0;
+        public int inputSourceType = 1;
 
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
@@ -276,6 +276,31 @@ namespace GDO.Apps.Graph
                 sw.Stop();
                 System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+
+
+                // read labels.json from HTTP
+                sw.Restart();
+
+                System.Diagnostics.Debug.WriteLine("Reading from: " + labelsFilePath);
+
+                WebClient client = new WebClient();
+                StreamReader file = new StreamReader(client.OpenRead(labelsFilePath));
+
+                JsonTextReader jReader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                labels = serializer.Deserialize<List<string>>(jReader);
+
+
+                // debugging
+
+                for (int i = 0; i < labels.Count; i++)
+                {
+                    Debug.WriteLine("label " + i + ": " + labels[i]);
+                }
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
             }
             else
             {
@@ -390,9 +415,9 @@ namespace GDO.Apps.Graph
 
                 // debugging
 
-                //for (int i = 0; i < labelsData.Count; i++)
+                //for (int i = 0; i < labels.Count; i++)
                 //{
-                //    Debug.WriteLine("label " + i + ": " + labelsData[i]);
+                //    Debug.WriteLine("label " + i + ": " + labels[i]);
                 //}
 
                 sw.Stop();
@@ -904,6 +929,7 @@ namespace GDO.Apps.Graph
                 JsonTextReader reader = new JsonTextReader(file);
                 JsonSerializer serializer = new JsonSerializer();
                 nodesData = serializer.Deserialize<List<NodeData>>(reader);
+
             }
             else // local file
             {
@@ -919,7 +945,7 @@ namespace GDO.Apps.Graph
             Debug.WriteLine("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
 
-            /*
+            
             // debug
             for (int i = 0; i < nodesData.Count; i++)
             {
@@ -928,7 +954,7 @@ namespace GDO.Apps.Graph
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].pos.x);
                 Debug.WriteLine("nodesData " + i + " : " + nodesData[i].adj.Count);
             }
-            */
+            
 
         }
 
