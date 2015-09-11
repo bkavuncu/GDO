@@ -27,6 +27,7 @@ $(function() {
             if (gdo.clientId == nodeId) {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " visualising");
                 var doc = $("iframe").contents();
+                doc.find("#labelStatus").html("Data received; visualising...");
                 TimeV.app.data = JSON.parse(data);
                 if (TimeV.app.query_mode == "Aggregation") {
                     if (TimeV.app.data.length < 2) {
@@ -65,7 +66,7 @@ $(function() {
             if (gdo.clientId == nodeId) {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " visualising");
                 var doc = $("iframe").contents();
-
+                doc.find("#labelStatus").html("Waiting for Spark to process query...");
                 doc.find("#visualisation").removeClass("show");
                 doc.find("#visualisation").addClass("hidden");
                 doc.find("#placeholder").removeClass("hidden");
@@ -94,12 +95,16 @@ $(function() {
         // using the frame's constructor for MG's instanceof check
         data = frameWindow.JSON.parse(data);
 
+        var w = typeof (width) == "undefined" ? $(window).width() * 0.85 : width;
+        var h = typeof (height) == "undefined" ? $(window).height() * 0.85 : height;
+
         var table = MG.data_table({
                 title: title,
                 description: "Query Results",
                 data: data,
                 show_tooltips: true,
-                full_width: true
+                width: w,
+                height: h
             })
             .target(target);
         var keys = Object.keys(data[0]);
@@ -120,7 +125,7 @@ $(function() {
         // using the frame's constructor for MG's instanceof check
         series = frameWindow.JSON.parse(series);
 
-        var w = typeof (width) == "undefined" ? $(window).width() : width;
+        var w = typeof (width) == "undefined" ? $(window).width() * 0.85 : width;
         var h = typeof (height) == "undefined" ? $(window).height() * 0.85 : height;
 
         var keys = Object.keys(series[0]);
