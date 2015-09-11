@@ -99,31 +99,9 @@ namespace GDO.Apps.DD3
             return request.execute(this.data);
         }
 
-        public void webRequest()
+        public bool requestRemoteData(RemoteDataRequest request)
         {
-            // Create a request for the URL. 
-            WebRequest request = WebRequest.Create(
-              "http://wikisensing.org/WikiSensingServiceAPI/DCEWilliamPenneyUpperFloorzYyYFkLwEygj7B0vvQWQ/Node_1/10");
-            // If required by the server, set the credentials.
-            request.Credentials = CredentialCache.DefaultCredentials;
-            request.ContentType = "application/json; charset=utf-8";
-            // Get the response.
-            WebResponse response = request.GetResponse();
-            // Display the status.
-            System.Diagnostics.Debug.WriteLine(((HttpWebResponse)response).StatusDescription);
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            JObject dynObj = (JObject)JsonConvert.DeserializeObject(responseFromServer);
-
-            System.Diagnostics.Debug.WriteLine(dynObj.ToString());
-            // Clean up the streams and the response.
-            reader.Close();
-            response.Close();
+            return request.execute(ref this.data);
         }
 
         // Code for Connection and Control

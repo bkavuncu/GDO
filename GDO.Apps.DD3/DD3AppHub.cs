@@ -133,6 +133,13 @@ namespace GDO.Apps.DD3
             Clients.Client(Context.ConnectionId).dd3Receive("receiveRemoteDataReady", request.dataId, result);
         }
 
+        public void requestFromRemote(int instanceId, RemoteDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Received request for remote server data : " + request.ToString());
+            var result = ((DD3App)instances[instanceId]).requestRemoteData(request);
+            Clients.Client(Context.ConnectionId).receiveRemoteDataReady(request.dataId, Newtonsoft.Json.JsonConvert.SerializeObject(new { result = result ? "success" : "error" }));
+        }
+
         // Orders
 
         public void broadcastControllerOrder(int Id, string order)
