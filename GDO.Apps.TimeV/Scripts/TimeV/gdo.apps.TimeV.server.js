@@ -97,16 +97,16 @@ TimeV.ControlViewModel = function() {
     self.appData.newNodeId(self.appData.availableNodes()[0]);
     self.appData.selectedField(self.appData.availableFilelds()[0]);
     self.appData.selectedMethod(self.appData.availableMethods()[0]);
-    self.appData.sampleQueries = [
+    self.appData.sampleQueries = [        
+        {
+            query: "SELECT SUBSTRING(time_stamp, 1, 10) AS Day, AVG(humidity) AS avg_humidity FROM log GROUP BY SUBSTRING(time_stamp, 1, 10)",
+            x_accessor: "Day",
+            mode: "Aggregation"
+        },
         {
             query: "SELECT SUBSTRING(time_stamp, 1, 13) AS Hour, AVG(humidity) AS avg_humidity FROM log GROUP BY SUBSTRING(time_stamp, 1, 13)",
             x_accessor: "Hour",
             mode: "Aggregation"
-        },
-        {
-            query: "SELECT AVG(humidity) AS avg_humidity, SUBSTRING(time_stamp, 12, 2) AS Hour_of_Day FROM log WHERE (SUBSTRING(time_stamp, 1, 13) >= '2015-03-01 00') AND (SUBSTRING(time_stamp, 1, 13) <= '2015-05-31 24') GROUP BY SUBSTRING(time_stamp, 12, 2)",
-            x_accessor: "Hour_of_Day",
-            mode: "Custom"
         },
         {
             query: "SELECT SUBSTRING(time_stamp, 1, 7) AS Month, COUNT(*) AS log_count, MIN(humidity) AS min_humidity, MAX(temperature) As max_temperature FROM log GROUP BY SUBSTRING(time_stamp, 1, 7)",
@@ -114,10 +114,15 @@ TimeV.ControlViewModel = function() {
             mode: "Statistics"
         },
         {
-            query: "SELECT SUBSTRING(time_stamp, 1, 10) AS Day, MAX(temperature) As max_temperature FROM log GROUP BY SUBSTRING(time_stamp, 1, 10)",
-            x_accessor: "Day",
-            mode: "Aggregation"
-        }
+            query: "SELECT MAX(humidity) AS max_humidity, SUBSTRING(time_stamp, 9, 2) AS Day_of_Month FROM log WHERE (SUBSTRING(time_stamp, 1, 13) >= '2015-03-01 00') AND (SUBSTRING(time_stamp, 1, 13) <= '2015-05-31 24') GROUP BY SUBSTRING(time_stamp, 9, 2)",
+            x_accessor: "Day_of_Month",
+            mode: "Custom"
+        },
+        {
+            query: "SELECT MAX(humidity) AS max_humidity, SUBSTRING(time_stamp, 12, 2) AS Hour_of_Day FROM log WHERE (SUBSTRING(time_stamp, 1, 13) >= '2015-03-01 00') AND (SUBSTRING(time_stamp, 1, 13) <= '2015-05-31 24') GROUP BY SUBSTRING(time_stamp, 12, 2)",
+            x_accessor: "Hour_of_Day",
+            mode: "Custom"
+        }                
     ];
 
     self.handlers = {
