@@ -10,7 +10,7 @@ namespace GDO.Apps.tranSMART
     public class tranSMARTAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "tranSMART";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new tranSMARTApp().GetType();
 
         public void JoinGroup(int instanceId)

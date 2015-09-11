@@ -33,7 +33,7 @@ gdo.updateDisplayCanvas = function () {
             }
         }
         if (gdo.net.maintenanceMode) {
-            $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("<b>GDO</b> Node " + gdo.clientId + "");
+            $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("Node <b>" + gdo.clientId + "</b>");
             gdo.maintenance.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
             gdo.maintenance.drawMaintenanceTable();
             $("#maintenance").show();

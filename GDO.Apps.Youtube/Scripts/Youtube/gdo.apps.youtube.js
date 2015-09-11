@@ -65,9 +65,9 @@ $(function() {
         $("iframe").contents().find("#video_table tr").remove();
         $("iframe").contents().find("#video_table").append('' +
             '<tr id="video_table_title">' +
-                '<td><font size="3">Rank</font></td>' +
-                '<td><font size="3">Current Videos</font></td>' +
-                '<td><font size="3">Next Videos</font></td>' +
+                '<td><font size="3"><b>Rank</b></font></td>' +
+                '<td><font size="3"><b>Current Videos</b></font></td>' +
+                '<td><font size="3"><b>Next Videos</b></font></td>' +
             '</tr>');
         for (var i = 0; i < videoName.length; i++) {
             $("iframe").contents().find("#video_table").append('' +
@@ -81,10 +81,14 @@ $(function() {
     $.connection.youtubeAppHub.client.updateSearchMode = function(search_mode) {
         gdo.net.app["Youtube"].searchMode = search_mode;
         $("iframe").contents().find("#search_mode").val(search_mode);
-        if (search_mode == 0) {
-            $("iframe").contents().find("#search_mode").html("Channel Mode");
-        } else if (search_mode == 1) {
-            $("iframe").contents().find("#search_mode").html("Keywords Mode");
+        if (search_mode == 1) {
+            $("iframe").contents().find("#update_keyword_title").empty().append("<h6><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Keywords</h6>");
+            $("iframe").contents().find("#update_keyword_label").empty().append("<h6>Keywords:</h6>");
+            $("iframe").contents().find("#search_mode").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Channel Mode");
+        } else if (search_mode == 0) {
+            $("iframe").contents().find("#update_keyword_title").empty().append("<h6><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Channel</h6>");
+            $("iframe").contents().find("#update_keyword_label").empty().append("<h6>Channel:</h6>");
+            $("iframe").contents().find("#search_mode").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Keywords Mode");
         }
     }
 });

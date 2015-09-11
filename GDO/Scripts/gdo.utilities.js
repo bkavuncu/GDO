@@ -68,11 +68,15 @@ function getUrlVar(variable) {
         var pair = vars[i].split('=');
         if (pair[0] === variable) { return pair[1]; }
     }
-    query = window.frames['control_frame_content'].location.search.substring(1);
-    vars = query.split('&');
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
-        if (pair[0] === variable) { return pair[1]; }
+    if (typeof window.frames['control_frame_content'] == "undefined") {
+        return false;
+    } else {
+        query = window.frames['control_frame_content'].location.search.substring(1);
+        vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) { return pair[1]; }
+        }
     }
     return (false);
 }
@@ -86,4 +90,19 @@ function getUrlVars() {
         vars[hash[0]] = hash[1];
     }
     return vars;
+}
+
+function timeStamp() {
+    var now = new Date();
+    var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+    var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+    var suffix = (time[0] < 12) ? "AM" : "PM";
+    time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
+    time[0] = time[0] || 12;
+    for (var i = 1; i < 3; i++) {
+        if (time[i] < 10) {
+            time[i] = "0" + time[i];
+        }
+    }
+    return date.join("/") + " " + time.join(":") + " " + suffix;
 }
