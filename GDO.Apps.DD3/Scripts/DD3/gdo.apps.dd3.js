@@ -287,9 +287,18 @@ var initDD3App = function () {
         "use strict";
         var _dd3 = Object.create(d3);
         
-        var useApi = false;
+        var options = {
+            useApi: false,
+            positionByClientId: true,
+            margin: {
+                top: 20,
+                bottom: 20,
+                left: 60,
+                right: 60
+            }
+        };
 
-        if (useApi) api = api();
+        if (options.useApi) api = api();
 
         var state = (function () {
             var _state = 'loading';
@@ -415,20 +424,15 @@ var initDD3App = function () {
             };
 
             init.setBrowserConfiguration = function () {
-                /*
-                browser.initColumn = +utils.getUrlVar('column');
-                browser.initRow = +utils.getUrlVar('row');
-                */
-                browser.number = +utils.getUrlVar('clientId');
-                browser.initColumn = (browser.number - 1) % 16;
-                browser.initRow = 3 - ~~((browser.number - 1) / 16);
-
-                cave.margin = {
-                    top: 20,
-                    bottom: 20,
-                    left: 60,
-                    right: 60
-                };
+                if (options.positionByClientId) {
+                    browser.number = +utils.getUrlVar('clientId');
+                    browser.initColumn = (browser.number - 1) % 16;
+                    browser.initRow = 3 - ~~((browser.number - 1) / 16);
+                } else {
+                    browser.initColumn = +utils.getUrlVar('column');
+                    browser.initRow = +utils.getUrlVar('row');
+                    browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
+                }
             };
 
             init.connectToPeerServer = function () {
@@ -539,9 +543,9 @@ var initDD3App = function () {
                 peer.connections = d3.range(0, cave.rows).map(function () { return []; });
                 peer.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
+                cave.margin = options.margin;
                 cave.width = cave.columns * browser.width;
                 cave.height = cave.rows * browser.height;
-
                 cave.svgWidth = cave.width - cave.margin.left - cave.margin.right;
                 cave.svgHeight = cave.height - cave.margin.top - cave.margin.bottom;
 
@@ -690,7 +694,7 @@ var initDD3App = function () {
                 utils.log("Data dimensions requested for " + dataId, 1);
                 data[pr(dataId)] = {};
                 data[pr(dataId)].callback_dimensions = callback;
-                if (useApi)
+                if (options.useApi)
                     api.getDataDimensions(dataId);
                 else
                     signalR.server.getDimensions(signalR.sid, dataId);
@@ -716,7 +720,7 @@ var initDD3App = function () {
                     _keys: keys || null
                 };
 
-                if (useApi)
+                if (options.useApi)
                     api.getPointData(request);
                 else
                     signalR.server.getPointData(signalR.sid, request);
@@ -745,7 +749,7 @@ var initDD3App = function () {
                     approximation: approximation || 5
                 };
 
-                if (useApi)
+                if (options.useApi)
                     api.getPathData(request);
                 else
                     signalR.server.getPathData(signalR.sid, request);
@@ -783,7 +787,7 @@ var initDD3App = function () {
                         _keys: keys || null
                     };
 
-                    if (useApi)
+                    if (options.useApi)
                         api.getBarData(request);
                     else
                         signalR.server.getBarData(signalR.sid, request);
@@ -802,6 +806,23 @@ var initDD3App = function () {
                     if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height)
                         return api.getData(dataName, dataId);
                 return dd3_data.receiveData(dataName, dataId, "[]");
+            };
+
+            dd3_data.requestRemoteData = function (dataId, callback, address, toArray, toObject, toValues, useNames) {
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)].callback_remoteDataReady = callback;
+
+                if (!address) { utils.log("Server address must be specified - Aborting", 2); return; }
+
+                toArray = toArray || [];
+                toObject = toObject || [];
+                toValues = 
+
+                var request = {
+                    dataId: dataId,
+                    server: address,
+
+                };
             };
 
             // Data Reception
@@ -828,8 +849,15 @@ var initDD3App = function () {
                 data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
             };
 
+            dd3_data.receiveRemoteDataReady = function (dataId, result) {
+                utils.log("Received result of remote server request : " + dataId, 1);
+                result = JSON.parse(result);
+                data[pr(dataId)].callback_remoteDataReady && data[pr(dataId)].callback_remoteDataReady(result);
+            }
+
             signalR_callback[2] = dd3_data.receiveDimensions;
             signalR_callback[3] = dd3_data.receiveData;
+            signalR_callback[4] = dd3_data.receiveRemoteDataReady;
 
             /**
              * PEER FUNCTIONS
@@ -925,6 +953,8 @@ var initDD3App = function () {
                 }
 
             };
+
+            /* Functions handling data reception  */
 
             var getOrderFollower = function (g, order) {
                 var s = order.split("_");
@@ -1130,20 +1160,18 @@ var initDD3App = function () {
 
             _dd3.selection = d3.selection;
 
-            var _dd3_watchFactory = function (watcher, original, funcName) {
-                _dd3.selection.prototype[funcName + '_'] = original;
-                return watcher.apply(null, [].slice.call(arguments, 1));
-            };
+            var _dd3_factory = function (path) {
+                return function (watcher, original, funcName) {
+                    path[funcName + '_'] = original;
+                    return watcher.apply(null, [].slice.call(arguments, 1));
+                };
+            }
 
-            var _dd3_watchEnterFactory = function (watcher, original, funcName) {
-                _dd3.selection.enter.prototype[funcName + '_'] = original;
-                return watcher.apply(null, [].slice.call(arguments, 1));
-            };
+            var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
-            var _dd3_watchSelectFactory = function (watcher, original, funcName) {
-                _dd3[funcName + '_'] = original;
-                return watcher.apply(null, [].slice.call(arguments, 1));
-            };
+            var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.enter.prototype);
+
+            var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
@@ -1223,7 +1251,7 @@ var initDD3App = function () {
 
 
             /**
-            *  Function for sending data
+            *  Function for preparing and sending data
             */
 
             var _dd3_getSelections = function (newSelection, oldSelection) {
@@ -1628,12 +1656,23 @@ var initDD3App = function () {
             *  Watch methods
             */
 
+            // To go to helpers
+            var _dd3_funct = function (f, args) {
+                return function () {
+                    f.apply(this, args);
+                };
+            };
 
-            _dd3.selection.prototype.watch = function () {
-                this.each(function (d, i) {
-                    if (this.__unwatch__) delete this.__unwatch__;
-                });
+            _dd3.selection.prototype.watch = function (spread) {
+                spread = typeof spread === "undefined" ? false : spread;
+                this.each(_dd3_funct(_dd3_watch, [spread]));
                 return this;
+            };
+
+            var _dd3_watch = function () {
+                if (this.__unwatch__) delete this.__unwatch__;
+                if (this.nodeName === 'g')
+                    [].forEach.call(this.childNodes, function (_) { _dd3_watch.call(_); });
             };
 
             _dd3.selection.prototype.unwatch = function () {
@@ -1689,10 +1728,6 @@ var initDD3App = function () {
                 return e.filter(function (d, i) {
                     return (this.nodeName.toLowerCase() !== "g");
                 })
-            };
-
-            var _dd3_selection_notifyChildren = function (g) {
-                g.each(_dd3_notifyChildren);
             };
 
             var _dd3_notifyChildren = function (name) {
@@ -2146,12 +2181,6 @@ var initDD3App = function () {
         };
 
         /**
-         *  Initialize
-         */
-
-        initializer();
-
-        /**
         *  Provide listener function to listen for ready state !
         */
 
@@ -2162,6 +2191,12 @@ var initDD3App = function () {
             }
             return false;
         };
+
+        /**
+         *  Initialize
+         */
+
+        initializer();
 
         return _dd3;
     })();
@@ -2193,6 +2228,10 @@ dd3Server.client.receiveDimensions = function () {
 
 dd3Server.client.receiveData = function () {
     signalR_callback[3].apply(null, arguments);
+}
+
+dd3Server.client.receiveRemoteDataReady = function () {
+    signalR_callback[4].apply(null, arguments);
 }
 
 // Non-dd3 functions

@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
-
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
 
 namespace GDO.Apps.DD3
 {
@@ -131,6 +124,13 @@ namespace GDO.Apps.DD3
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
             var data = ((DD3App)instances[instanceId]).requestBarData(request);
             Clients.Client(Context.ConnectionId).receiveData(request.dataName, request.dataId, data);
+        }
+
+        public void requestFromRemote(int instanceId, RemoteDataRequest request)
+        {
+            System.Diagnostics.Debug.WriteLine("Received request for remote server data : " + request.ToString());
+            var result = ((DD3App)instances[instanceId]).requestRemoteData(request);
+            Clients.Client(Context.ConnectionId).receiveRemoteDataReady(request.dataId, Newtonsoft.Json.JsonConvert.SerializeObject(new { result = result ? "success" : "error" }));
         }
 
         // Orders
