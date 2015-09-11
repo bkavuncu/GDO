@@ -153,7 +153,6 @@
     <Content Include="Scripts\gdo.maintenance.js" />
     <Content Include="Scripts\gdo.node.js" />
     <Content Include="Scripts\gdo.utilities.js" />
-    <None Include="Properties\PublishProfiles\Local.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

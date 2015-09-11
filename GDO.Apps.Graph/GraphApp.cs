@@ -19,6 +19,7 @@ namespace GDO.Apps.Graph
     public class GraphApp : IAppInstance
     {
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
@@ -66,6 +67,7 @@ namespace GDO.Apps.Graph
         {
             public PartitionPos partitionPos { get; set; }
             public List<Node> nodes { get; set; }
+            public List<string> labels { get; set; }
         }
 
         public class LinkPartition
@@ -74,11 +76,19 @@ namespace GDO.Apps.Graph
             public List<Link> links { get; set; }
         }
 
+        public class NodeData
+        {
+            public string id { get; set; }
+            public string label { get; set; }
+            public Pos pos { get; set; }
+            public List<string> adj { get; set; }  // adj = list of connectedNodes
+        }
 
         // init is run when 'Deploy' is clicked
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
+            this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
             Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph");
@@ -94,37 +104,45 @@ namespace GDO.Apps.Graph
             return partitionPos;
         }
 
+        // ********************************************************* 
+        // Global variables
+        // *********************************************************
+        // make labels public so that it can be access by ProcessSearch()
+        public List<string> labels = null;
+        public List<NodeData> nodesData = null;
+        public bool zoomedIn = false;
+        RectDimension rectDim = null;
+
+        // 0 means local, 1 means http
+        public int inputSourceType = 1;
+
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
         public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
         {
-            string nodesFilePath, linksFilePath;
-
-            // 0 means local, 1 means http
-            int inputSourceType = 1;
+            string nodesFilePath, linksFilePath, labelsFilePath;
 
             if (inputSourceType == 1)
             {
                 // server file
                 nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";
                 linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/linksPos.bin";
+                labelsFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/labels.json";
             }
             else
             {
                 // local file
                 nodesFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodesPos.bin";
                 linksFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\linksPos.bin";
+                labelsFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\labels.json";
             }
 
 
-
-            RectDimension rectDim = new RectDimension();
+            rectDim = new RectDimension();
             List<Node> nodes = new List<Node>();
             List<Link> links = new List<Link>();
 
             Stopwatch sw = new Stopwatch();
-            
-
 
             if (inputSourceType == 1)
             {
@@ -258,6 +276,31 @@ namespace GDO.Apps.Graph
                 sw.Stop();
                 System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+
+
+                // read labels.json from HTTP
+                sw.Restart();
+
+                System.Diagnostics.Debug.WriteLine("Reading from: " + labelsFilePath);
+
+                WebClient client = new WebClient();
+                StreamReader file = new StreamReader(client.OpenRead(labelsFilePath));
+
+                JsonTextReader jReader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                labels = serializer.Deserialize<List<string>>(jReader);
+
+
+                // debugging
+
+                //for (int i = 0; i < labels.Count; i++)
+                //{
+                //    Debug.WriteLine("label " + i + ": " + labels[i]);
+                //}
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
             }
             else
             {
@@ -356,6 +399,32 @@ namespace GDO.Apps.Graph
                 sw.Stop();
                 System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+
+
+                // read labels.json local file
+                sw.Restart();
+
+                System.Diagnostics.Debug.WriteLine("Reading from: " + labelsFilePath);
+
+                StreamReader file = File.OpenText(labelsFilePath);
+
+                JsonTextReader jReader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                labels = serializer.Deserialize<List<string>>(jReader);
+
+
+                // debugging
+
+                //for (int i = 0; i < labels.Count; i++)
+                //{
+                //    Debug.WriteLine("label " + i + ": " + labels[i]);
+                //}
+
+                sw.Stop();
+                System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+                GraphAppHub.self.LogTime("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+
+
             }
 
 
@@ -364,8 +433,9 @@ namespace GDO.Apps.Graph
 
 
             // set up total width and height, which differ for non-zoomed and zoomed version
-            int totalWidth, totalHeight;
+
             int totalRows, totalCols;
+            int totalWidth, totalHeight;
 
             if (!zoomed)
             {
@@ -380,8 +450,8 @@ namespace GDO.Apps.Graph
                 totalHeight = Section.Height + (2 * singleDisplayHeight);
                 totalRows = Section.Rows + 2;
                 totalCols = Section.Cols + 2;
-            }
-
+            }      
+            
 
             // transform data to GDO dimension
             Scales scales = new Scales();
@@ -426,7 +496,7 @@ namespace GDO.Apps.Graph
 
             // Distribute data across browser
 
-            // 1. Distribute nodes
+            // 1. Distribute nodes & labels
             sw.Restart();
 
             // Set up a 2D array to store nodes data in each partition
@@ -444,6 +514,7 @@ namespace GDO.Apps.Graph
                     nodesPartitions[i, j].partitionPos.row = i;
                     nodesPartitions[i, j].partitionPos.col = j;
                     nodesPartitions[i, j].nodes = new List<Node>();
+                    nodesPartitions[i, j].labels = new List<string>();
                 }
             }
 
@@ -452,7 +523,9 @@ namespace GDO.Apps.Graph
             {
                 PartitionPos nodePartitionPos = checkPartitionPos(nodes[i].pos);
                 nodesPartitions[nodePartitionPos.row, nodePartitionPos.col].nodes.Add(nodes[i]);
+                nodesPartitions[nodePartitionPos.row, nodePartitionPos.col].labels.Add(labels[i]);
             }
+
 
             sw.Stop();
             System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
@@ -672,25 +745,29 @@ namespace GDO.Apps.Graph
             }
 
 
-            string nodesPath, linksPath;
+            string nodesPath, linksPath, labelsPath;
 
             if (!zoomed)
             {
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\nodes");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\links");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\labels");
 
                 nodesPath = basePath + FolderNameDigit + @"\normal\nodes\\";
                 linksPath = basePath + FolderNameDigit + @"\normal\links\\";
+                labelsPath = basePath + FolderNameDigit + @"\normal\labels\\";
             }
             else
             {
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\nodes");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\links");
+                Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\labels");
 
                 nodesPath = basePath + FolderNameDigit + @"\zoomed\nodes\\";
                 linksPath = basePath + FolderNameDigit + @"\zoomed\links\\";
+                labelsPath = basePath + FolderNameDigit + @"\zoomed\labels\\";
             }
 
 
@@ -753,7 +830,24 @@ namespace GDO.Apps.Graph
             }
             */
 
+            // write labels to files
+            sw.Restart();
 
+            for (int i = 0; i < totalRows; ++i)
+            {
+                for (int j = 0; j < totalCols; ++j)
+                {
+                    StreamWriter streamWriter = new StreamWriter(labelsPath + i + @"_" + j + @".json");
+                    streamWriter.AutoFlush = true;
+                    JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(jsonWriter, nodesPartitions[i, j].labels);
+                }
+            }
+
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
 
             // write links to files
             sw.Restart();
@@ -816,6 +910,287 @@ namespace GDO.Apps.Graph
 
 
             return this.FolderNameDigit;
+        }
+
+
+        public void ReadNodesData(string inputFolder)
+        {
+            string nodesDataFilePath;
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            if (inputSourceType == 1)   // server file
+            {
+                nodesDataFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodes.json";
+
+                WebClient client = new WebClient();
+                StreamReader file = new StreamReader(client.OpenRead(nodesDataFilePath));
+                JsonTextReader reader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                nodesData = serializer.Deserialize<List<NodeData>>(reader);
+
+            }
+            else // local file
+            {
+                nodesDataFilePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\nodes.json";
+
+                StreamReader file = File.OpenText(nodesDataFilePath);
+                JsonTextReader reader = new JsonTextReader(file);
+                JsonSerializer serializer = new JsonSerializer();
+                nodesData = serializer.Deserialize<List<NodeData>>(reader);
+            }
+
+            sw.Stop();
+            Debug.WriteLine("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to read nodes.json file: " + sw.ElapsedMilliseconds + "ms");
+
+            /*
+            // debug
+            for (int i = 0; i < nodesData.Count; i++)
+            {
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].id);
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].label);
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].pos.x);
+                Debug.WriteLine("nodesData " + i + " : " + nodesData[i].adj.Count);
+            }
+            */
+
+        }
+
+        // ***********************
+        // global dictionary variables
+        // ***********************
+        // map label to index within labels array
+        Dictionary<string, int> labelDict = null;
+        // map node ID to index within nodes data array
+        Dictionary<string, int> nodeDict = null;
+
+        // set up label dictionary to prepare for search
+        public void SetupLabelDictionary()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            labelDict = new Dictionary<string, int>();
+
+            for (int i = 0; i < labels.Count; i++)
+            {
+                labelDict.Add(labels[i], i);
+            }
+
+            sw.Stop();
+            Debug.WriteLine("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
+
+
+            //Debug.WriteLine("Index for label YLR386W (4): " + labelDict["YLR386W"]);
+            //Debug.WriteLine("Index for label YOR042W (2358): " + labelDict["YOR042W"]);
+        }
+
+
+        public void SetupNodeDictionary()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            nodeDict = new Dictionary<string, int>();
+
+            for (int i = 0; i < nodesData.Count; i++)
+            {
+                nodeDict.Add(nodesData[i].id, i);
+            }
+
+            sw.Stop();
+            Debug.WriteLine("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
+
+
+            //Debug.WriteLine("Index for node ID 4943 (2): " + nodeDict[4943]);
+            //Debug.WriteLine("Index for node ID 7299 (2358): " + nodeDict[7299]);
+        }
+
+
+
+        public class SelectedNode
+        {
+            public Pos pos { get; set; }
+            public string label { get; set; }
+        }
+
+
+        // @param: keywords of search query
+        // if keywords are valid, returns name of folder that stores result; otherwise returns null
+        public string ProcessSearch(string keywords)
+        {
+            if (!labelDict.ContainsKey(keywords))
+            {
+                return null;
+            }
+
+            int index = labelDict[keywords];
+
+            List<SelectedNode> nodeList = new List<SelectedNode>();
+            // Debug
+            // GraphAppHub.self.LogTime("Search result: index " + index);
+
+            // 1. Add nodes to nodeList
+
+            // add central node, accessed using index obtained from labelDict
+            NodeData centralNode = nodesData[index];
+
+            SelectedNode central = new SelectedNode();
+            central.pos = new Pos();
+            central.pos.x = centralNode.pos.x;
+            central.pos.y = centralNode.pos.y;
+
+            central.label = centralNode.label;
+
+            nodeList.Add(central);
+
+            //Debug.WriteLine("Central node label: " + nodeList[0].label);
+
+            // loop through connected nodes and add them to node list
+            for (int i = 0; i < centralNode.adj.Count; ++i)
+            {
+                int currentIndex = nodeDict[centralNode.adj[i]];
+
+                NodeData currentNode = nodesData[currentIndex];
+
+                SelectedNode current = new SelectedNode();
+                current.pos = new Pos();
+                current.pos.x = currentNode.pos.x;
+                current.pos.y = currentNode.pos.y;
+
+                current.label = currentNode.label;
+
+                nodeList.Add(current);
+            }
+
+            // log no. of connected nodes
+            GraphAppHub.self.LogTime("No. of connected nodes: " + (nodeList.Count - 1));
+
+            // 2. Scale position of nodes based on GDO config, using code from above
+            // (scale in advance, so there's no need to scale links later)
+
+            int singleDisplayWidth = (int)(Section.Width / Section.Cols);
+            int singleDisplayHeight = (int)(Section.Height / Section.Rows);
+
+            // set up total width and height, which differ for non-zoomed and zoomed version
+            int totalRows, totalCols;
+            int totalWidth, totalHeight;
+
+            if (!zoomedIn)
+            {
+                totalWidth = Section.Width;
+                totalHeight = Section.Height;
+                totalRows = Section.Rows;
+                totalCols = Section.Cols;
+            }
+            else
+            { // current zooming is pre-set to include two extra rows and two extra cols (regardless of section dimension)
+                totalWidth = Section.Width + (2 * singleDisplayWidth);
+                totalHeight = Section.Height + (2 * singleDisplayHeight);
+                totalRows = Section.Rows + 2;
+                totalCols = Section.Cols + 2;
+            }
+
+
+            // transform data to GDO dimension
+            Scales scales = new Scales();
+
+            scales.x = totalWidth / rectDim.width;
+            scales.y = totalHeight / rectDim.height;
+
+            float scaleDown = (float)0.9; // to make graph smaller and nearer to (0, 0)
+
+
+            // scale nodes to full gdo dimension
+            for (int i = 0; i < nodeList.Count; ++i)
+            {
+                nodeList[i].pos.x *= scales.x * scaleDown;
+                nodeList[i].pos.y *= scales.y * scaleDown;
+
+                // add padding on x, y to centralise graph after being scaled down
+                nodeList[i].pos.x += totalWidth * (1 - scaleDown) / 2;
+                nodeList[i].pos.y += totalHeight * (1 - scaleDown) / 2;
+            }
+
+
+            
+
+            /*
+            Debug.WriteLine("Count of nodeList: " + nodeList.Count);
+            for (int i = 0; i < nodeList.Count; ++i)
+            {
+                Debug.WriteLine("Node " + i + " label : " + nodeList[i].label);
+            }
+            */
+
+
+
+            // 3. Add links to linkList
+            // set central node's pos as the startPos of each link
+            // set its connectedNode's pos as the endPos
+            List<Link> linkList = new List<Link>();
+
+            for (int i = 0; i < nodeList.Count - 1; ++i)
+            {
+                Link currentLink = new Link();
+                currentLink.startPos = nodeList[0].pos;
+                currentLink.endPos = nodeList[i + 1].pos;
+                linkList.Add(currentLink);
+            }
+
+            //Debug.WriteLine("Count of linkList (nodeList count - 1): " + linkList.Count);
+
+            // 4. Write to files
+
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph\\";
+
+            Directory.CreateDirectory(basePath + FolderNameDigit + @"\search");
+            String searchPath = basePath + FolderNameDigit + @"\search\\";
+
+            // Generate random numbers as folder name
+            Random randomDigitGenerator = new Random();
+            String folderName = randomDigitGenerator.Next(10000, 99999).ToString();
+
+            while (Directory.Exists(searchPath + folderName))
+            {
+                folderName = randomDigitGenerator.Next(10000, 99999).ToString();
+            }
+
+            Directory.CreateDirectory(searchPath + folderName);
+
+            String outputPath = searchPath + folderName + @"\\";
+
+            Debug.WriteLine("Writing to nodes.json file");
+            StreamWriter streamWriter = new StreamWriter(outputPath + @"nodes.json");
+            streamWriter.AutoFlush = true;
+            JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Serialize(jsonWriter, nodeList);
+
+            Debug.WriteLine("Finished writing nodes.json file");
+
+            Debug.WriteLine("Writing to links.json file");
+            StreamWriter streamWriter2 = new StreamWriter(outputPath + @"links.json");
+            streamWriter2.AutoFlush = true;
+            JsonWriter jsonWriter2 = new JsonTextWriter(streamWriter2);
+            JsonSerializer serializer2 = new JsonSerializer();
+            serializer2.Serialize(jsonWriter2, linkList);
+
+            Debug.WriteLine("Finished writing links.json file");
+
+            Debug.WriteLine("Search folder name: " + folderName);
+
+            return folderName;
+
+        }
+
+        public void UpdateZoomVar(bool value)
+        {
+            zoomedIn = value;
         }
     }
 }

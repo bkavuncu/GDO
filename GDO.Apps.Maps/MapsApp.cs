@@ -10,6 +10,7 @@ namespace GDO.Apps.Maps
     public class MapsApp : IAppInstance
     {
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public MapPosition Position { get; set; }
@@ -17,9 +18,10 @@ namespace GDO.Apps.Maps
     public string Style { get; set; }
         public bool IsInitialized = false;
 
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
+            this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
             this.mode = false;

@@ -139,11 +139,17 @@
                 gdo.loadModule('management','management', gdo.MODULE_TYPE.CORE);
                 gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
             });
+            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+                //var space = "<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                var space = "<br /> ";
+                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+            }
             initApp = function () {
                 gdo.consoleOut('', 1, 'GDO Initialized');
                 gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
                 gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-                gdo.management.drawEmptyButtonTable(5, 1);
+                gdo.management.drawEmptyButtonTable(6, 1);
                 gdo.updateSelf();
             }
         </script>

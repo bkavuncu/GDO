@@ -14,12 +14,14 @@ namespace GDO.Apps.DD3
     public class DD3App : IAppInstance
     {
         public int Id { get; set; }
+        public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
-        public void init(int instanceId, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
+            this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
             this.Context = (IHubContext<dynamic>) GlobalHost.ConnectionManager.GetHubContext<DD3AppHub>();
@@ -310,10 +312,54 @@ namespace GDO.Apps.DD3
     {
         public int approximation { get; set; }
         protected Func<int, int, int, int> clamp = (value, min, max) => (value < min ? min : value > max ? max : value);
+        protected Func<JToken, JToken, bool> intersectLimit;
+        protected Func<JToken, JToken, double, double, double, bool> intersectX;
+        protected Func<JToken, JToken, double, double, double, bool> intersectY;
 
         public PathDataRequest(string dataId, string dataName, int approximation, dynamic limit, string xKey, string yKey, string[] _keys) : base (dataId, dataName, (object)limit, xKey, yKey, _keys)
         {
             this.approximation = approximation;
+
+            intersectX = (p1, p2, x, y1, y2) =>
+            {
+                double a = (double)p1[xKey], b = (double)p1[yKey], c = (double)p2[xKey], d = (double)p2[yKey];
+                double yMin = Math.Min(y1, y2), yMax = Math.Max(y1, y2);
+                double xPMin = Math.Min(a, c), xPMax = Math.Max(a, c);
+                double yPMin = Math.Min(b, d), yPMax = Math.Max(b, d);
+                double y;
+
+                if (a == c)
+                    return a == x && yPMin < yMax && yPMax > yMin;
+
+                y = b + (x - a) * (b - d) / (a - c);
+
+                return (y >= yMin && y <= yMax) && (xPMin <= x && xPMax >= x);
+            };
+
+            intersectY = (p1, p2, y, x1, x2) =>
+            {
+                double a = (double)p1[xKey], b = (double)p1[yKey], c = (double)p2[xKey], d = (double)p2[yKey];
+                double xMin = Math.Min(x1, x2), xMax = Math.Max(x1, x2);
+                double xPMin = Math.Min(a, c), xPMax = Math.Max(a, c);
+                double yPMin = Math.Min(b, d), yPMax = Math.Max(b, d);
+                double x;
+
+                if (b == d)
+                    return b == y && xPMin < xMax && xPMax > xMin;
+                
+                x = a + (y - b) * (a - c) / (b - d);
+
+                return (x >= xMin && x <= xMax) && (yPMin <= y && yPMax >= y);
+            };
+
+            intersectLimit = (p1, p2) =>
+            {
+                return
+                   intersectX(p1, p2, (double)limit.xmin, (double)limit.ymin, (double)limit.ymax)
+                || intersectX(p1, p2, (double)limit.xmax, (double)limit.ymin, (double)limit.ymax)
+                || intersectY(p1, p2, (double)limit.ymin, (double)limit.xmin, (double)limit.xmax)
+                || intersectY(p1, p2, (double)limit.ymax, (double)limit.xmin, (double)limit.xmax);
+            };
         }
 
         public new string executeWith(JToken dataIn)
@@ -329,9 +375,14 @@ namespace GDO.Apps.DD3
 
             for (int i = 0, l = data.Count(); i < l; i++)
             {
-                if (isIn(data[i]))
+                if (isIn(data[i]) || (i > 0 && intersectLimit (data[i-1], data[i])))
                 {
-                    var d =  clamp(approximation - counter, -approximation, 0);
+                    var d = clamp(approximation - counter, -approximation, 0);
+
+                    if ((counter - 2 * approximation > 0) && (i - counter + approximation - 1 >= 0))
+                        while ((d-1 >= approximation - counter) && intersectLimit(data[i - counter + approximation - 1], data[i + d]))
+                            d--;
+
                     for (var j = Math.Max(i + d, 0); j <= i; j++)
                     {
                         filteredData.Add(data[j]);

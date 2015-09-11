@@ -204,6 +204,7 @@ namespace GDO.Core
             lock (Cave.ServerLock)
             {
                 int instanceId = Cave.CreateAppInstance(sectionId, appName, configName);
+                Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
                 if (instanceId >= 0)
                 {
                     BroadcastAppUpdate(sectionId, appName, configName, instanceId, Cave.Apps[appName].P2PMode, true);
@@ -225,6 +226,7 @@ namespace GDO.Core
                 {
                     string appName = Cave.GetAppName(instanceId);
                     int sectionId = Cave.Apps[appName].Instances[instanceId].Section.Id;
+                    Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
                         BroadcastAppUpdate(sectionId, appName, "", instanceId, (int) Cave.P2PModes.None, false);
@@ -269,146 +271,37 @@ namespace GDO.Core
                 BroadcastNodeUpdate(nodeId);
             }
         }
-        /// <summary>
-        /// Requests all updates.
-        /// </summary>
-        public void RequestAllUpdates()
-        {
-            lock (Cave.ServerLock)
-            {
 
-                List<string> serializedNodes = new List<string>(Cave.Nodes.Count);
-                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
-                {
-                    serializedNodes.Add(GetNodeUpdate(nodeEntry.Value.Id));
-                }
-                Clients.Caller.receiveNodesUpdate(serializedNodes);
-
-                List<int> sectionIds = new List<int>(Cave.Sections.Count - 1);
-                List<bool> sectionStatuses = new List<bool>(Cave.Sections.Count - 1);
-                List<string> serializedSections = new List<string>(Cave.Sections.Count - 1);
-
-                foreach (KeyValuePair<int, Section> sectionEntry in Cave.Sections)
-                {
-                    Section section = sectionEntry.Value;
-                    if (section.Id > 0)
-                    {
-                        sectionIds.Add(section.Id);
-                        sectionStatuses.Add(true);
-                        serializedSections.Add(GetSectionUpdate(section.Id));
-                    }
-                }
-                Clients.Caller.receiveSectionsUpdate(sectionStatuses, sectionIds, serializedSections);
-
-                foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                {
-                    App app = appEntry.Value;
-                    foreach (KeyValuePair<int, IAppInstance> appInstanceEntry in app.Instances)
-                    {
-                        IAppInstance instance = appInstanceEntry.Value;
-                        Clients.Caller.receiveAppUpdate(instance.Section.Id, app.Name, instance.Configuration.Name, instance.Id, instance.Section.P2PMode, true);
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// Requests the cave map.
-        /// </summary>
-        public void RequestCaveMap()
+        public void RequestCaveUpdate(int nodeId)
         {
             lock (Cave.ServerLock)
             {
                 try
                 {
-                    Clients.Caller.receiveCaveMap(Cave.Cols, Cave.Rows, Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetCaveMap()));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Requests the section map.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        public bool RequestSectionMap(int sectionId) {
-            lock (Cave.ServerLock)
-            {
-                if (Cave.ContainsSection(sectionId))
-                {
-                    try
+                    List<string> nodes = new List<string>(Cave.Nodes.Count);
+                    foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
                     {
-                        Clients.Caller.receiveSectionMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetSectionMap(sectionId)));
-                        return true;
+                        nodes.Add(GetNodeUpdate(nodeEntry.Value.Id));
                     }
-                    catch (Exception e)
+                    List<string> sections = new List<string>(Cave.Sections.Count);
+                    foreach (KeyValuePair<int, Section> sectionEntry in Cave.Sections)
                     {
-                        Console.WriteLine(e);
-                        return false;
+                        sections.Add(GetSectionUpdate(sectionEntry.Value.Id));
                     }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Requests the neighbour map.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        public bool RequestNeighbourMap(int nodeId)
-        {
-            lock (Cave.ServerLock)
-            {
-                if (Cave.ContainsNode(nodeId))
-                {
-                    try
+                    List<string> apps = new List<string>(Cave.Apps.Count);
+                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
-                        Clients.Caller.receiveNeighbourMap(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId)));
+                        apps.Add(GetAppUpdate(appEntry.Value.Name));
                     }
-                    catch (Exception e)
+                    List<string> instances = new List<string>(Cave.Instances.Count);
+                    foreach (KeyValuePair<int, IAppInstance> instanceEntry in Cave.Instances)
                     {
-                        Console.WriteLine(e);
+                        instances.Add(GetInstanceUpdate(instanceEntry.Value.Id));
                     }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-        }
-
-        /// <summary>
-        /// Requests the application list.
-        /// </summary>
-        public void RequestAppList()
-        {
-            lock (Cave.ServerLock)
-            {
-                try
-                {
-                    Clients.Caller.receiveAppList(Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetAppList()));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestAppConfigurationList(string appName)
-        {
-            lock (Cave.ServerLock)
-            {
-                try
-                {
-                    Clients.Caller.receiveAppConfigurationList(appName, Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].GetConfigurationList()));
+                    string nodeMap = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNodeMap());
+                    string neighbourMap = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
+                    string appList = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetAppList());
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances);
                 }
                 catch (Exception e)
                 {
@@ -456,36 +349,7 @@ namespace GDO.Core
             return null;
         }
 
-        /// <summary>
-        /// Broadcasts the node update.
-        /// </summary>
-        /// <param name="nodeId">The node identifier.</param>
-        private bool BroadcastNodeUpdate(int nodeId)
-        {
-            if (Cave.ContainsNode(nodeId))
-            {
-                try
-                {
-                    string serializedNode = GetNodeUpdate(nodeId);
-                    if (serializedNode != null)
-                    {
-                        Clients.All.receiveNodeUpdate(serializedNode);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                    
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    return false;
-                } 
-            }
-            return false;
-        }
+
 
         private string GetSectionUpdate(int sectionId)
         {
@@ -507,6 +371,81 @@ namespace GDO.Core
                 Console.WriteLine(e);
                 return null;
             }
+        }
+
+        private string GetAppUpdate(string appName)
+        {
+            try
+            {
+                if (Cave.ContainsApp(appName))
+                {
+                    App app;
+                    Cave.Apps.TryGetValue(appName, out app);
+                    return app.SerializeJSON();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private string GetInstanceUpdate(int instanceId)
+        {
+            try
+            {
+                if (Cave.ContainsInstance(instanceId))
+                {
+                    IAppInstance instance;
+                    Cave.Instances.TryGetValue(instanceId, out instance);
+                    return Newtonsoft.Json.JsonConvert.SerializeObject(instance);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Broadcasts the node update.
+        /// </summary>
+        /// <param name="nodeId">The node identifier.</param>
+        private bool BroadcastNodeUpdate(int nodeId)
+        {
+            if (Cave.ContainsNode(nodeId))
+            {
+                try
+                {
+                    string serializedNode = GetNodeUpdate(nodeId);
+                    if (serializedNode != null)
+                    {
+                        Clients.All.receiveNodeUpdate(serializedNode);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
+            }
+            return false;
         }
 
         /// <summary>

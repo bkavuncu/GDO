@@ -143,9 +143,12 @@ namespace GDO.Core
                 int[,] neighbours = Cave.GetNeighbourMap(Id);
                 foreach (int neighbourId in neighbours)
                 {
-                    if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id)
+                    if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id && neighbourId > 0)
                     {
-                        AggregatedConnectionHealth = 3; return;
+                        if (Cave.Nodes[neighbourId].SectionId == SectionId)
+                        {
+                            AggregatedConnectionHealth = 3; return;
+                        }
                     }
                 }
             }

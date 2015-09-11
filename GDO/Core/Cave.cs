@@ -46,7 +46,7 @@ namespace GDO.Core
         /// </summary>
         public Cave()
         {
-            MaintenanceMode = false;
+            MaintenanceMode = true;
             Apps = new ConcurrentDictionary<string, App>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
             Nodes = new ConcurrentDictionary<int, Node>();
@@ -271,22 +271,7 @@ namespace GDO.Core
             return true;
         }
 
-        /// <summary>
-        /// Determines whether the specified section identifier contains section.
-        /// </summary>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsSection(int sectionId)
-        {
-            if (Sections.ContainsKey(sectionId))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+
 
 
         /// <summary>
@@ -304,6 +289,52 @@ namespace GDO.Core
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Determines whether the specified section identifier contains section.
+        /// </summary>
+        /// <param name="sectionId">The section identifier.</param>
+        /// <returns></returns>
+        public static bool ContainsSection(int sectionId)
+        {
+            if (Sections.ContainsKey(sectionId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool ContainsApp(string appName)
+        {
+            if (Apps.ContainsKey(appName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified instance identifier contains instance.
+        /// </summary>
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <returns></returns>
+        public static bool ContainsInstance(int instanceId)
+        {
+            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            {
+                if (appEntry.Value.Instances.ContainsKey(instanceId))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -356,17 +387,17 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Gets the cave map (Matrix of NodeIds in the Cave).
+        /// Gets the node map (Matrix of NodeIds in the Cave).
         /// </summary>
         /// <returns></returns>
-        public static int[,] GetCaveMap()
+        public static int[,] GetNodeMap()
         {
-            int[,] caveMap = new int[Cols, Rows];
+            int[,] nodeMap = new int[Cols, Rows];
             foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
             {
-                caveMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
+                nodeMap[nodeEntry.Value.Col, nodeEntry.Value.Row] = nodeEntry.Value.Id;
             }
-            return caveMap;
+            return nodeMap;
         }
 
         /// <summary>
@@ -401,7 +432,7 @@ namespace GDO.Core
             int[,] neighbours = null;
             if (Cave.ContainsNode(nodeId))
             {
-                int[,] caveMap = GetCaveMap();
+                int[,] nodeMap = GetNodeMap();
                 neighbours = new int[3, 3];
                 for (int i = -1; i < 2; i++)
                 {
@@ -411,7 +442,7 @@ namespace GDO.Core
                         int row = Nodes[nodeId].Row + j;
                         if (col >= 0 && row >= 0 && col < Cols && row < Rows)
                         {
-                            neighbours[i + 1, j + 1] = caveMap[col, row];
+                            neighbours[i + 1, j + 1] = nodeMap[col, row];
                         }
                         else
                         {
@@ -557,22 +588,7 @@ namespace GDO.Core
             return appName;
         }
 
-        /// <summary>
-        /// Determines whether the specified instance identifier contains instance.
-        /// </summary>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static bool ContainsInstance(int instanceId)
-        {
-            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-            {
-                if (appEntry.Value.Instances.ContainsKey(instanceId))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+
 
         public static void WaitReady()
         {

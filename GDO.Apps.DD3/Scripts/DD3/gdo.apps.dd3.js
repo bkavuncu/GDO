@@ -65,7 +65,7 @@ var initDD3App = function (d3) {
             var sevMessage = ["Debug", "Info", "Warning", "Error", "Critical"];
             var consoleFunction = ["debug", "log", "warn", "warn", "error"];
             utils.log.sev = typeof utils.log.sev === "undefined" ? 0 : utils.log.sev;
-            arr = (dd3 && dd3.browser) ? [dd3.browser().row, dd3.browser().column] : [];
+            arr = (dd3 && dd3.browser) ? [dd3.browser.row, dd3.browser.column] : [];
 
             sev = utils.clamp(sev || 0, 0, 4);
             if (utils.log.sev <= sev) {
@@ -97,49 +97,6 @@ var initDD3App = function (d3) {
             return container;
         }
     
-        /*
-        function copyCTMFromTo(original, copy) {
-            copy.a = original.a;
-            copy.b = original.b;
-            copy.c = original.c;
-            copy.d = original.d;
-            copy.e = original.e;
-            copy.f = original.f;
-            return copy;
-        }
-
-
-        function getRotationCenter(t) {
-            var c = /rotate\([\s]*[\d.]+(?:[\s,]+([\d.]+)[\s,]+([\d.]+))*[\s,]*\)/.exec(t);
-            return c === null ? c : [+c[1], +c[2]];
-        }
-
-        function setRotationCenter(t, c) {
-            var t2 = t.replace(/rotate\([\s]*([\d.]+)(?:[\s,]+([\d.]+)[\s,]+([\d.]+))*[\s,]*\)/, "rotate($1," + c + ")");
-            return t2;
-        }
-
-
-        function getFullPath(el) {
-
-            var path = [];
-            var actual = "";
-
-            do {
-                actual = el.nodeName;
-
-                if (el.id !== "")
-                    actual += "#" + el.id;
-
-                if (!!el.classList.length)
-                    actual += "." + [].join.call(el.classList, ".");
-
-                path.unshift(actual);
-            } while ((el.nodeName.toLowerCase() != 'html') && (el = el.parentNode));
-
-            return path.join(" ");
-        }
-        */
         return utils;
     })();
 
@@ -358,7 +315,8 @@ var initDD3App = function (d3) {
             fatal: []
         };
 
-        var data = {};
+        var dd3_data = {}, // Storing functions
+            data = {}; // Storing data
 
         var signalR = {
             server: null,
@@ -532,8 +490,6 @@ var initDD3App = function (d3) {
                 // Define server interaction functions
                 signalR_callback[0] = init.getCaveConfiguration;
                 signalR_callback[1] = signalR.syncCallback;
-                signalR_callback[2] = init.data.receiveDimensions;
-                signalR_callback[3] = init.data.receiveData;
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -598,32 +554,72 @@ var initDD3App = function (d3) {
                 launch();
             };
 
-            /*  ====  DATA  ====  */
+
+            return init;
+
+        })();
+
+        // Create all dd3 functions	
+        var launch = function () {
+
+            /**
+             * dd3.position
+             */
+
+            function sumWith(s, sign) {
+                return function (x) { return x + sign * s; };
+            }
+
+            _dd3.position = function (context1, range1, context2, range2) {
+                var p = {};
+                if (context1 === context2) {
+                    var f = dd3.position[(context1 === 'html') ? 'html' : 'svg'];
+                    var sign = (range1 == range2) ? 0 : (range1 == 'local') ? 1 : -1;
+                    p.left = sumWith(f.left, sign);
+                    p.top = sumWith(f.top, sign);
+                } else if (range1 === range2) {
+                    var f = ((range1 === 'local') ? browser : cave).margin;
+                    var sign = (context1 === 'html') ? -1 : 1;
+                    p.left = sumWith(f.left, sign);
+                    p.top = sumWith(f.top, sign);
+                } else {
+                    var f = _dd3.position(context1, range1, context1, range2);
+                    var g = _dd3.position(context1, range2, context2, range2);
+                    p.left = function (x) { return g.left(f.left(x)); };
+                    p.top = function (x) { return g.top(f.top(x)); };
+                }
+                return p;
+            };
+
+            _dd3.position.svg = {
+                left: browser.column * browser.width - cave.margin.left + browser.margin.left,
+                top: browser.row * browser.height - cave.margin.top + browser.margin.top
+            };
+
+            _dd3.position.html = {
+                left: browser.column * browser.width,
+                top: browser.row * browser.height
+            };
+
+            // Most used functions already computed ... time saving !
+            var hghl = _dd3.position('html', 'global', 'html', 'local'),
+                hlhg = _dd3.position('html', 'local', 'html', 'global'),
+                hlsg = _dd3.position('html', 'local', 'svg', 'global'),
+                sghg = _dd3.position('svg', 'global', 'html', 'global'),
+                slsg = _dd3.position('svg', 'local', 'svg', 'global');
+
+
+            /**
+             * DATA REQUEST AND RECEPTION FROM SERVER
+             */
 
             var pr = function (s) {
                 return "dd3_" + s;
             };
 
-            init.data = {};
+            dd3_data.data = data;
 
-            init.data.dataType = {
-                ALL: 0,
-                POINT: 1,
-                PATH: 2,
-                BAR: 3
-            };
-
-            init.data.getDimensions = function (dataId, callback) {
-                utils.log("Data dimensions requested for " + dataId, 1);
-                data[pr(dataId)] = {};
-                data[pr(dataId)].callback_dimensions = callback;
-                if (useApi)
-                    api.getDataDimensions(dataId);
-                else
-                    signalR.server.getDimensions(signalR.sid, dataId);
-            };
-
-            init.data.getBounds = function (dataId, scaleX, scaleY, xKey, yKey) {
+            dd3_data.getBounds = function (dataId, scaleX, scaleY, xKey, yKey) {
 
                 var d = data[pr(dataId)].dataDimensions;
                 if (!d && (!scaleX || !scaleY)) {
@@ -686,15 +682,25 @@ var initDD3App = function (d3) {
 
             // Data Request
 
-            init.data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys) {
+            dd3_data.getDimensions = function (dataId, callback) {
+                utils.log("Data dimensions requested for " + dataId, 1);
+                data[pr(dataId)] = {};
+                data[pr(dataId)].callback_dimensions = callback;
+                if (useApi)
+                    api.getDataDimensions(dataId);
+                else
+                    signalR.server.getDimensions(signalR.sid, dataId);
+            };
+
+            dd3_data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
-                
+
                 xKey = xKey || 'x';
                 yKey = yKey || 'y';
-                var limits = init.data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                var limits = dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
 
                 var request = {
@@ -714,7 +720,7 @@ var initDD3App = function (d3) {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            init.data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation) {
+            dd3_data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -722,7 +728,7 @@ var initDD3App = function (d3) {
 
                 xKey = xKey || 'x';
                 yKey = yKey || 'y';
-                var limits = init.data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                var limits = dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
 
                 var request = {
@@ -743,12 +749,12 @@ var initDD3App = function (d3) {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            init.data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation) {
+            dd3_data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation) {
 
                 orientation = orientation || "bottom";
 
                 var r = scale.range(),
-                    slsg = _dd3.position('svg', 'local', 'svg', 'global')[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
+                    toGlobal = slsg[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
                     limit = {};
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
@@ -762,8 +768,8 @@ var initDD3App = function (d3) {
                     orientation === "left" && browser.column === 0 ||
                     orientation === "right" && browser.column === cave.column - 1) {
 
-                    limit.min = d3.bisect(r, slsg(0) - scale.rangeBand() / 2);
-                    limit.max = d3.bisect(r, slsg(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
+                    limit.min = d3.bisect(r, toGlobal(0) - scale.rangeBand() / 2);
+                    limit.max = d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
 
                     var request = {
                         dataId: dataId,
@@ -778,11 +784,11 @@ var initDD3App = function (d3) {
                     else
                         signalR.server.getBarData(signalR.sid, request);
                 } else {
-                    init.data.receiveData(dataName, dataId, "[]");
+                    dd3_data.receiveData(dataName, dataId, "[]");
                 }
             };
 
-            init.data.getPieData = function (dataName, dataId, callback, centerX, centerY) {
+            dd3_data.getPieData = function (dataName, dataId, callback, centerX, centerY) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
@@ -791,12 +797,12 @@ var initDD3App = function (d3) {
                 if (sgsl.left(centerX) >= 0 && sgsl.left(centerX) < browser.width)
                     if (sgsl.top(centerY) >= 0 && sgsl.top(centerY) < browser.height)
                         return api.getData(dataName, dataId);
-                return init.data.receiveData(dataName, dataId, "[]");
+                return dd3_data.receiveData(dataName, dataId, "[]");
             };
 
             // Data Reception
 
-            init.data.receiveDimensions = function (dataId, dimensions) {
+            dd3_data.receiveDimensions = function (dataId, dimensions) {
                 utils.log("Data dimensions received for " + dataId, 1);
                 dimensions = JSON.parse(dimensions);
                 if (dimensions.error) {
@@ -807,8 +813,8 @@ var initDD3App = function (d3) {
                 data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
             };
 
-            init.data.receiveData = function (dataName, dataId, dataPoints) {
-                utils.log("Data received : " + dataName + " (" + dataId +")", 1);
+            dd3_data.receiveData = function (dataName, dataId, dataPoints) {
+                utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
                 dataPoints = JSON.parse(dataPoints);
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
@@ -818,62 +824,12 @@ var initDD3App = function (d3) {
                 data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
             };
 
-            return init;
-
-        })();
-
-        // Create all dd3 functions	
-        var launch = function () {
+            signalR_callback[2] = dd3_data.receiveDimensions;
+            signalR_callback[3] = dd3_data.receiveData;
 
             /**
-             * dd3.position
-             */
-
-            function sumWith(s, sign) {
-                return function (x) { return x + sign * s; };
-            }
-
-            _dd3.position = function (context1, range1, context2, range2) {
-                var p = {};
-                if (context1 === context2) {
-                    var f = dd3.position[(context1 === 'html') ? 'html' : 'svg'];
-                    var sign = (range1 == range2) ? 0 : (range1 == 'local') ? 1 : -1;
-                    p.left = sumWith(f.left, sign);
-                    p.top = sumWith(f.top, sign);
-                } else if (range1 === range2) {
-                    var f = ((range1 === 'local') ? browser : cave).margin;
-                    var sign = (context1 === 'html') ? -1 : 1;
-                    p.left = sumWith(f.left, sign);
-                    p.top = sumWith(f.top, sign);
-                } else {
-                    var f = _dd3.position(context1, range1, context1, range2);
-                    var g = _dd3.position(context1, range2, context2, range2);
-                    p.left = function (x) { return g.left(f.left(x)); };
-                    p.top = function (x) { return g.top(f.top(x)); };
-                }
-                return p;
-            };
-
-            _dd3.position.svg = {
-                left: browser.column * browser.width - cave.margin.left + browser.margin.left,
-                top: browser.row * browser.height - cave.margin.top + browser.margin.top
-            };
-
-            _dd3.position.html = {
-                left: browser.column * browser.width,
-                top: browser.row * browser.height
-            };
-
-            // Most used functions already computed ... time saving !
-            var hghl = _dd3.position('html', 'global', 'html', 'local'),
-                hlhg = _dd3.position('html', 'local', 'html', 'global'),
-                hlsg = _dd3.position('html', 'local', 'svg', 'global'),
-                sghg = _dd3.position('svg', 'global', 'html', 'global'),
-                slsg = _dd3.position('svg', 'local', 'svg', 'global');
-
-            /**
-             * Peer functions
-             * dataHandler
+             * PEER FUNCTIONS
+             * Data reception handling
              */
 
             peer.init = function (conn, r, c) {
@@ -1029,6 +985,11 @@ var initDD3App = function (d3) {
                     obj = g1.insert_(data.name, function () { return getOrderFollower(g1, data.attr.order); });
                 }
 
+                if (data.name == "image") {
+                    obj.attr_("xlink:href", data.attr.href);
+                    delete data.attr.href
+                }
+
                 obj.attr_(data.attr)
                    .html_(data.html)
                    .classed_('dd3_received', true)
@@ -1095,31 +1056,6 @@ var initDD3App = function (d3) {
             };
 
             /**
-            *  ! Deprecated !
-            */
-
-            var _dd3_CTMUpdater = function (obj, g, dataCtm) {
-                // Get the group container ctm and create a new matrix for the incoming svg object
-                var gCtm = g.node().getCTM(),
-                    ctm = _dd3.svgNode.node().createSVGMatrix();
-
-                // Convert the global translate parameter to local one
-                dataCtm.e = hghl.left(+dataCtm.e);
-                dataCtm.f = hghl.top(+dataCtm.f);
-
-                // ctm = data.ctm
-                copyCTMFromTo(dataCtm, ctm);
-
-                // The svg object will be placed in the group. To keep its position and orientation,
-                // we applied the inverse transformation of the one that will be applied to it
-                // by the container group transform attribute.
-                ctm = gCtm.inverse().multiply(ctm);
-
-                d3.select(utils.getContainingGroup(obj.node()))
-                  .attr("transform", "matrix(" + [ctm.a, ctm.b, ctm.c, ctm.d, ctm.e, ctm.f] + ")");
-            };
-
-            /**
              *  Hook helper functions for d3
              */
 
@@ -1180,71 +1116,6 @@ var initDD3App = function (d3) {
                     }, t || 0);
                 }
             })();
-
-
-            /**
-             *  dd3.scale : deprecated - old implementation
-             */
-
-            _dd3.scale = Object.create(d3.scale);
-
-            var _dd3_scale_toLocal = function (side, d3_scale) {
-                var a = function () {
-                    var f = _dd3.position('svg', 'global', 'svg', 'local')[side],
-                        g = _dd3.position('svg', 'local', 'svg', 'global')[side];
-
-                    var dd3_scale = function (x) {
-                        return f(d3_scale(x));
-                    };
-
-                    _dd3_hookD3Object(d3_scale, dd3_scale);
-                    dd3_scale.ticks = _dd3_hook_basic(d3_scale.ticks);
-                    dd3_scale.tickFormat = _dd3_hook_basic(d3_scale.tickFormat);
-                    dd3_scale.invert = function (x) {
-                        return d3_scale.invert(g(x));
-                    };
-
-                    return dd3_scale;
-                };
-                return a;
-            };
-
-            _dd3.scale.linear = function () {
-                var scale = d3.scale.linear();
-                scale.toLocalLeft = _dd3_scale_toLocal('left', scale);
-                scale.toLocalTop = _dd3_scale_toLocal('top', scale);
-                return scale;
-            };
-
-            /**
-             *  dd3.svg.axis : deprecated - old implementation
-             */
-
-            _dd3.svg = Object.create(d3.svg);
-
-            _dd3.svg.axis = function () {
-                var d3_axis = d3.svg.axis();
-                var f = _dd3.position('svg', 'global', 'svg', 'local');
-
-                var dd3_axis = function (g) {
-                    g.each(function () {
-                        var g = d3.select(this);
-                        var t = d3.transform(g.attr("transform"));
-                        var left = f.left(t.translate[0]),
-                            top = f.top(t.translate[1]),
-                            rotate = t.rotate,
-                            scale = t.scale;
-
-                        g.attr("transform", "translate(" + [left, top] + ") rotate(" + rotate + ") scale(" + scale + ")");
-                    });
-                    return d3_axis(g);
-                };
-
-                _dd3_hookD3Object(d3_axis, dd3_axis);
-
-                return dd3_axis;
-            };
-
 
             /**
             *  dd3.selection
@@ -1622,16 +1493,19 @@ var initDD3App = function (d3) {
                 //- Helper functions
 
                 var getParentGroups = function (elem) {
-                    var containers = [], g = elem.parentNode;
+                    var containers = [], g = elem.parentNode, obj, sdId;
 
                     do {
-                        if (g.id === "") {
-                            g.__sendId__ = g.__sendId__ || sendId++;
-                            containers.unshift({ 'id': getSendId(g.__sendId__), 'transform': g.getAttribute("transform"), 'class': (g.getAttribute("class") || "") + ' dd3_received', 'order': g.getAttribute('order'), 'transition': g.__dd3_transitions__.size() > 0 ? createTransitionsObject({ 'sendId': getSendId(g.__sendId__) }, g) : false });
+                        if (!g.id.startsWith("dd3_")) {
+                            sdId = getSendId(g.__sendId__ = g.__sendId__ || sendId++);
+                            obj = { 'id': sdId, 'transform': g.getAttribute("transform"), 'class': (g.getAttribute("class") || "") + ' dd3_received', 'order': g.getAttribute('order') };
+                            if (g.__dd3_transitions__.size() > 0)
+                                obj.transition = createTransitionsObject({ 'sendId': sdId }, g);
                         } else {
-                            containers.unshift(g.id);
+                            obj = g.id;
                         }
-                    } while (g.id === "" && (g = g.parentNode));
+                        containers.unshift(obj);
+                    } while (!g.id.startsWith("dd3_") && (g = g.parentNode));
 
                     return containers;
                 };
@@ -1811,6 +1685,9 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_notifyChildren = function (name) {
+                if (this.__unwatch__ || ([].indexOf.call(this.classList, 'dd3_received') >= 0))
+                    return;
+
                 if (this.nodeName === 'g')
                     [].forEach.call(this.childNodes, function (_) { _dd3_notifyChildren.call(_, name); });
                 else
@@ -2227,21 +2104,21 @@ var initDD3App = function (d3) {
              *  Getter
              */
 
-            _dd3.peers = function () { return utils.extend({}, peer); };
+            _dd3.peers = peer;
 
-            _dd3.cave = function () { return utils.clone(cave); };
+            _dd3.cave = cave;
 
-            _dd3.browser = function () { return utils.clone(browser); };
+            _dd3.browser = browser;
 
-            _dd3.getDataDimensions = initializer.data.getDimensions;
+            _dd3.getDataDimensions = dd3_data.getDimensions;
 
-            _dd3.getPointData = initializer.data.getPointData;
+            _dd3.getPointData = dd3_data.getPointData;
 
-            _dd3.getPathData = initializer.data.getPathData;
+            _dd3.getPathData = dd3_data.getPathData;
 
-            _dd3.getBarData = initializer.data.getBarData;
+            _dd3.getBarData = dd3_data.getBarData;
 
-            _dd3.getPieData = initializer.data.getPieData;
+            _dd3.getPieData = dd3_data.getPieData;
 
             _dd3.retrieveDimensions = function (id) {
                 return data["dd3_" + id].dataDimensions;
