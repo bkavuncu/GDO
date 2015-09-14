@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.DD3
 {
@@ -32,7 +32,31 @@ namespace GDO.Apps.DD3
             this.ConfigurationId = (int)value;
 
             Configuration.Json.TryGetValue("data", out value);
-            this.data = value;
+            if (value != null)
+                this.data = value;
+            else
+                this.data = new JObject();
+
+            /*
+            // Test For data request
+
+            var server = "http://wikisensing.org/WikiSensingServiceAPI/DCEWilliamPenneyUpperFloorzYyYFkLwEygj7B0vvQWQ/Node_1/5";
+            String[] toArray = { "sensorRecords" };
+            String[] toObject = { "sensorObject" };
+            String[][] toValues = { new string[] { "12", "value" } };
+            String[][] useNames1 = { new string[] { "useKey"} };
+            String[][] useNames2 = { new string[] { "useString", "Temp" } };
+            String[][] useNames3 = { new string[] { "useObjectField", "12", "fieldName" } };
+
+            System.Diagnostics.Debug.WriteLine(" -- Request of data 0 -- ");
+            webRequest("id", server, toArray, toObject, toValues, null);
+            System.Diagnostics.Debug.WriteLine(" -- Request of data 1 -- ");
+            webRequest("id", server, toArray, toObject, toValues, useNames1);
+            System.Diagnostics.Debug.WriteLine(" -- Request of data 2 -- ");
+            webRequest("id", server, toArray, toObject, toValues, useNames2);
+            System.Diagnostics.Debug.WriteLine(" -- Request of data 3 -- ");
+            webRequest("id", server, toArray, toObject, toValues, useNames3);
+            */
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();
@@ -99,12 +123,12 @@ namespace GDO.Apps.DD3
         {
             return this.data[request.dataId].ToString();
         }
-        //*
+
         public string requestPointData(PointDataRequest request)
         {
             return request.executeWith(this.data);
         }
-        //*/
+
         public string requestPathData(PathDataRequest request)
         {
             return request.executeWith(this.data);
@@ -113,6 +137,11 @@ namespace GDO.Apps.DD3
         public string requestBarData(BarDataRequest request)
         {
             return request.executeWith(this.data);
+        }
+
+        public string requestRemoteData(RemoteDataRequest request)
+        {
+            return JsonConvert.SerializeObject(request.execute(ref this.data));
         }
 
         // Code for Connection and Control
@@ -183,14 +212,6 @@ namespace GDO.Apps.DD3
             }
         }
     }
-
-    public enum DataType
-    {
-        ALL = 0,
-        POINT = 1,
-        PATH = 2,
-        BAR = 3
-    };
 
     public abstract class DataRequest
     {
@@ -297,7 +318,12 @@ namespace GDO.Apps.DD3
 
             var data = dataIn[dataId].ToObject<IEnumerable<JToken>>();
 
-            IEnumerable<JToken> orderedData = data.OrderBy(tryParseNumber(orderingKey));
+            IEnumerable<JToken> orderedData;
+
+            if (orderingKey != null)
+                orderedData = data.OrderBy(tryParseNumber(orderingKey));
+            else
+                orderedData = data;
 
             IEnumerable<JToken> filteredData = orderedData.Select(addOrderProperty).Where(isIn);
 
@@ -402,6 +428,154 @@ namespace GDO.Apps.DD3
             IEnumerable<JToken> responseData = createResponseObject(filteredData);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(responseData.ToArray());
+        }
+
+    }
+
+    public class RemoteDataRequest
+    {
+        public string dataId { get; set; }
+        public string server { get; set; }
+        public string[] toObject { get; set; }
+        public string[] toArray { get; set; }
+        public string[][] toValues { get; set; }
+        public string[][] useNames { get; set; }
+
+        private Func<JToken, string, JToken> tryParseNumber = (agg, next) =>
+        {
+            if (agg == null || agg is JValue)
+                return null;
+
+            int num = 0;
+            if (int.TryParse(next, out num))
+                return num < agg.Count() ? agg[num]: null;
+            else if (!(agg is JArray))
+                return agg[next];
+            else
+                return null;
+        };
+
+        public RemoteDataRequest(string dataId, string server, string[] toArray, string[] toObject, string[][] toValues, string[][] useNames)
+        {
+            this.dataId = dataId;
+            this.server = server;
+            this.toArray = toArray;
+            this.toObject = toObject;
+            this.toValues = toValues;
+            this.useNames = useNames;
+        }
+
+        private JToken requestToServer (out JToken output)
+        {
+            dynamic error = new JObject();
+            error.result = "Success";
+            error.error = "";
+
+            // Create Request
+            WebRequest request = WebRequest.Create(server);
+            request.ContentType = "application/json; charset=utf-8";
+            //request.Credentials = CredentialCache.DefaultCredentials;
+
+
+            // Get the response
+            WebResponse response;
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Getting data from : " + server);
+                response = request.GetResponse();
+            }
+            catch (WebException e)
+            {
+                output = null;
+                error.result = "Fail";
+                error.error = "Error getting data. " + e.Message;
+                return error;
+            }
+
+            // Read the response
+            System.Diagnostics.Debug.WriteLine("HTTP response : " + ((HttpWebResponse)response).StatusDescription);
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            JObject responseObject = (JObject)JsonConvert.DeserializeObject(reader.ReadToEnd());
+
+            // Clean up the streams and the response
+            reader.Close();
+            response.Close();
+
+            output = responseObject;
+            return error;
+        }
+
+        private JToken formatData (JToken responseObject, out JToken output)
+        {
+            dynamic error = new JObject();
+            error.result = "Success";
+            error.error = "";
+
+            JToken array = toArray.Aggregate(responseObject, tryParseNumber);
+            if (array == null  || !(array is JArray))
+            {
+                output = null;
+                error.result = "Fail";
+                error.error = "Error formatting data. " + "Incorrect path to array";
+                return error;
+            }
+
+            IEnumerable<JToken> data = array.Select(obj =>
+            {
+                JToken anObject = toObject.Aggregate(obj, tryParseNumber);
+                JObject dataPoint = new JObject();
+                if (anObject == null)
+                {
+                    error.result = "Warning";
+                    error.error = "Error formatting data. " + "Incorrect path to object";
+                    return dataPoint;
+                }
+
+                foreach (var d in toValues.Select((path, i) => new { i, path }))
+                {
+                    string name = d.path.Count() > 0 ? d.path[d.path.Count() - 1] : "value"; // SI value est null ahhhhhh
+
+                    if (useNames.Count() > d.i && useNames[d.i].Count() > 1 && useNames[d.i][0] != "useKey")
+                    {
+                        if (useNames[d.i][0] == "useString")
+                        {
+                            name = useNames[d.i][1];
+                        }
+                        else if (useNames[d.i][0] == "useObjectField")
+                        {
+                            name = (string)useNames[d.i].Skip(1).Aggregate(anObject, tryParseNumber) ?? name;
+                        }
+                    }
+
+                    dataPoint[name] = d.path.Aggregate(anObject, tryParseNumber);
+                }
+
+                return (JToken)dataPoint;
+            });
+
+            output = new JArray(data);
+            return error;
+        }
+
+        public JToken execute (ref JToken data)
+        {
+            JToken unformattedData, formattedData;
+
+            dynamic error = requestToServer(out unformattedData);
+
+            if (error.result == "Success")
+            {
+                error = formatData(unformattedData, out formattedData);
+
+                if (formattedData != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(formattedData.ToArray()));
+                    data[dataId] = formattedData;
+                }
+            }
+
+            return error;
         }
 
     }

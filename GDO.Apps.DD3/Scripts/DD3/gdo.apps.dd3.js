@@ -4,8 +4,11 @@
 */
 
 // ==== IF THIS NODE IS AN APP ====
+var d3;
 
-var initDD3App = function (d3) {
+var initDD3App = function () {
+
+    d3 = document.getElementById('app_frame_content').contentWindow['d3'];
 
     var utils = (function () {
         var utils = {};
@@ -284,9 +287,18 @@ var initDD3App = function (d3) {
         "use strict";
         var _dd3 = Object.create(d3);
         
-        var useApi = false;
+        var options = {
+            useApi: false,
+            positionByClientId: true,
+            margin: {
+                top: 20,
+                bottom: 20,
+                left: 60,
+                right: 60
+            }
+        };
 
-        if (useApi) api = api();
+        if (options.useApi) api = api();
 
         var state = (function () {
             var _state = 'loading';
@@ -321,7 +333,10 @@ var initDD3App = function (d3) {
         var signalR = {
             server: null,
             client: null,
-            syncCallback: function () { }
+            syncCallback: function () { },
+            receiveSynchronize: function () {
+                signalR.syncCallback();
+            }
         };
 
         var peer = {
@@ -365,9 +380,7 @@ var initDD3App = function (d3) {
         var initializer = (function () {
             /*
                 Connect to peer server => Get peerId
-                Connect to signalR server => Send browser information
-                                          => Receive configuration
-                Connect to data api => Get metadata [emulated in js]
+                Connect to signalR server => Send browser information, receive configuration
             */
 
             var init = function () {
@@ -382,7 +395,7 @@ var initDD3App = function (d3) {
             };
 
             init.checkLibraries = function () {
-                var toCheck = [/*'d3',*/ 'Peer', 'jQuery', ['jQuery', 'signalR']];
+                var toCheck = ['d3', 'Peer', 'jQuery', ['jQuery', 'signalR']];
 
                 var check = toCheck.some(function (lib, i) {
                     var ok = false;
@@ -411,20 +424,15 @@ var initDD3App = function (d3) {
             };
 
             init.setBrowserConfiguration = function () {
-                /*
-                browser.initColumn = +utils.getUrlVar('column');
-                browser.initRow = +utils.getUrlVar('row');
-                */
-                browser.number = +utils.getUrlVar('clientId');
-                browser.initColumn = (browser.number - 1) % 16;
-                browser.initRow = 3 - ~~((browser.number - 1) / 16);
-
-                cave.margin = {
-                    top: 20,
-                    bottom: 20,
-                    left: 60,
-                    right: 60
-                };
+                if (options.positionByClientId) {
+                    browser.number = +utils.getUrlVar('clientId');
+                    browser.initColumn = (browser.number - 1) % 16;
+                    browser.initRow = 3 - ~~((browser.number - 1) / 16);
+                } else {
+                    browser.initColumn = +utils.getUrlVar('column');
+                    browser.initRow = +utils.getUrlVar('row');
+                    browser.number = (3 - browser.initRow) * 16 + (browser.initColumn + 1);
+                }
             };
 
             init.connectToPeerServer = function () {
@@ -465,19 +473,14 @@ var initDD3App = function (d3) {
                 });
 
                 p.on("error", function (e) {
-                    if (e.type === "network") {
-                        utils.log("[Peer] " + e, 4);
-                        state("fatal");
-                    } else {
-                        utils.log("[Peer] " + e, 3);
-                    }
+                    utils.log("[Peer] " + e, 3);
                 });
 
                 window.onunload = window.onbeforeunload = function (e) {
                     if (!!peer.peer && !peer.peer.destroyed) {
                         peer.peer.destroy();
                     }
-                    //(signalR.connection.state === 1) && signalR.server.removeClient(signalR.sid);
+                    //signalR && signalR.connection && (signalR.connection.state === 1) && signalR.server && signalR.server.removeClient(signalR.sid);
                 };
             };
 
@@ -489,7 +492,7 @@ var initDD3App = function (d3) {
 
                 // Define server interaction functions
                 signalR_callback[0] = init.getCaveConfiguration;
-                signalR_callback[1] = signalR.syncCallback;
+                signalR_callback[1] = signalR.receiveSynchronize;
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -535,9 +538,9 @@ var initDD3App = function (d3) {
                 peer.connections = d3.range(0, cave.rows).map(function () { return []; });
                 peer.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
+                cave.margin = options.margin;
                 cave.width = cave.columns * browser.width;
                 cave.height = cave.rows * browser.height;
-
                 cave.svgWidth = cave.width - cave.margin.left - cave.margin.right;
                 cave.svgHeight = cave.height - cave.margin.top - cave.margin.bottom;
 
@@ -686,7 +689,7 @@ var initDD3App = function (d3) {
                 utils.log("Data dimensions requested for " + dataId, 1);
                 data[pr(dataId)] = {};
                 data[pr(dataId)].callback_dimensions = callback;
-                if (useApi)
+                if (options.useApi)
                     api.getDataDimensions(dataId);
                 else
                     signalR.server.getDimensions(signalR.sid, dataId);
@@ -712,7 +715,7 @@ var initDD3App = function (d3) {
                     _keys: keys || null
                 };
 
-                if (useApi)
+                if (options.useApi)
                     api.getPointData(request);
                 else
                     signalR.server.getPointData(signalR.sid, request);
@@ -741,7 +744,7 @@ var initDD3App = function (d3) {
                     approximation: approximation || 5
                 };
 
-                if (useApi)
+                if (options.useApi)
                     api.getPathData(request);
                 else
                     signalR.server.getPathData(signalR.sid, request);
@@ -775,11 +778,11 @@ var initDD3App = function (d3) {
                         dataId: dataId,
                         dataName: dataName,
                         limit: limit,
-                        orderingKey: orderingKey, // Key on which to order the data
+                        orderingKey: orderingKey || null, // Key on which to order the data
                         _keys: keys || null
                     };
 
-                    if (useApi)
+                    if (options.useApi)
                         api.getBarData(request);
                     else
                         signalR.server.getBarData(signalR.sid, request);
@@ -800,6 +803,29 @@ var initDD3App = function (d3) {
                 return dd3_data.receiveData(dataName, dataId, "[]");
             };
 
+            dd3_data.requestRemoteData = function (dataId, address, callback, toArray, toObject, toValues, useNames) {
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)].callback_remoteDataReady = callback;
+
+                if (!address) { utils.log("Server address not specified - Aborting", 2); return; }
+
+                toArray = toArray || [];
+                toObject = toObject || [];
+                toValues = toValues || [[]];
+                useNames = useNames || [];
+
+                var request = {
+                    dataId: dataId,
+                    server: address,
+                    toArray: toArray,
+                    toObject: toObject,
+                    toValues: toValues,
+                    useNames: useNames
+                };
+
+                signalR.server.requestFromRemote(signalR.sid, request);
+            };
+
             // Data Reception
 
             dd3_data.receiveDimensions = function (dataId, dimensions) {
@@ -807,7 +833,6 @@ var initDD3App = function (d3) {
                 dimensions = JSON.parse(dimensions);
                 if (dimensions.error) {
                     utils.log("Error requesting dimensions : " + dimensions.error, 3);
-                    return;
                 }
                 data[pr(dataId)].dataDimensions = dimensions;
                 data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
@@ -818,14 +843,20 @@ var initDD3App = function (d3) {
                 dataPoints = JSON.parse(dataPoints);
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
-                    return;
                 }
                 data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
                 data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
             };
 
+            dd3_data.receiveRemoteDataReady = function (dataId, result) {
+                utils.log("Received result of remote server request : " + dataId, 1);
+                result = JSON.parse(result);
+                data[pr(dataId)].callback_remoteDataReady && data[pr(dataId)].callback_remoteDataReady(result);
+            }
+
             signalR_callback[2] = dd3_data.receiveDimensions;
             signalR_callback[3] = dd3_data.receiveData;
+            signalR_callback[4] = dd3_data.receiveRemoteDataReady;
 
             /**
              * PEER FUNCTIONS
@@ -922,6 +953,8 @@ var initDD3App = function (d3) {
 
             };
 
+            /* Functions handling data reception  */
+
             var getOrderFollower = function (g, order) {
                 var s = order.split("_");
                 var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),
@@ -997,7 +1030,10 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_removeHandler = function (data) {
-                return d3.select("#" + data.sendId).remove_();
+                var el = d3.select("#" + data.sendId).node();
+                while (_dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
+                    el = el.parentElement;
+                d3.select(el).remove();
             };
 
             var _dd3_propertyHandler = function (data) {
@@ -1123,20 +1159,18 @@ var initDD3App = function (d3) {
 
             _dd3.selection = d3.selection;
 
-            var _dd3_watchFactory = function (watcher, original, funcName) {
-                _dd3.selection.prototype[funcName + '_'] = original;
-                return watcher.apply(null, [].slice.call(arguments, 1));
-            };
+            var _dd3_factory = function (path) {
+                return function (watcher, original, funcName) {
+                    path[funcName + '_'] = original;
+                    return watcher.apply(null, [].slice.call(arguments, 1));
+                };
+            }
 
-            var _dd3_watchEnterFactory = function (watcher, original, funcName) {
-                _dd3.selection.enter.prototype[funcName + '_'] = original;
-                return watcher.apply(null, [].slice.call(arguments, 1));
-            };
+            var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
-            var _dd3_watchSelectFactory = function (watcher, original, funcName) {
-                _dd3[funcName + '_'] = original;
-                return watcher.apply(null, [].slice.call(arguments, 1));
-            };
+            var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.enter.prototype);
+
+            var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
@@ -1216,7 +1250,7 @@ var initDD3App = function (d3) {
 
 
             /**
-            *  Function for sending data
+            *  Function for preparing and sending data
             */
 
             var _dd3_getSelections = function (newSelection, oldSelection) {
@@ -1621,12 +1655,23 @@ var initDD3App = function (d3) {
             *  Watch methods
             */
 
+            // To go to helpers
+            var _dd3_funct = function (f, args) {
+                return function () {
+                    f.apply(this, args);
+                };
+            };
 
-            _dd3.selection.prototype.watch = function () {
-                this.each(function (d, i) {
-                    if (this.__unwatch__) delete this.__unwatch__;
-                });
+            _dd3.selection.prototype.watch = function (spread) {
+                spread = typeof spread === "undefined" ? false : spread;
+                this.each(_dd3_funct(_dd3_watch, [spread]));
                 return this;
+            };
+
+            var _dd3_watch = function () {
+                if (this.__unwatch__) delete this.__unwatch__;
+                if (this.nodeName === 'g')
+                    [].forEach.call(this.childNodes, function (_) { _dd3_watch.call(_); });
             };
 
             _dd3.selection.prototype.unwatch = function () {
@@ -1663,9 +1708,13 @@ var initDD3App = function (d3) {
             };
 
             var _dd3_selection_filterUnreceived = function (e) {
-                return e.filter(function (d, i) {
-                    return ([].indexOf.call(this.classList || [], 'dd3_received') < 0);
+                return e.filter(function () {
+                    return !_dd3_isReceived(this);
                 })
+            };
+
+            var _dd3_isReceived = function (e) {
+                return [].indexOf.call(e.classList || [], 'dd3_received') >= 0;
             };
 
             var _dd3_selection_filterGroup = function (e) {
@@ -1678,10 +1727,6 @@ var initDD3App = function (d3) {
                 return e.filter(function (d, i) {
                     return (this.nodeName.toLowerCase() !== "g");
                 })
-            };
-
-            var _dd3_selection_notifyChildren = function (g) {
-                g.each(_dd3_notifyChildren);
             };
 
             var _dd3_notifyChildren = function (name) {
@@ -2120,6 +2165,8 @@ var initDD3App = function (d3) {
 
             _dd3.getPieData = dd3_data.getPieData;
 
+            _dd3.requestRemoteData = dd3_data.requestRemoteData;
+
             _dd3.retrieveDimensions = function (id) {
                 return data["dd3_" + id].dataDimensions;
             };
@@ -2135,12 +2182,6 @@ var initDD3App = function (d3) {
         };
 
         /**
-         *  Initialize
-         */
-
-        initializer();
-
-        /**
         *  Provide listener function to listen for ready state !
         */
 
@@ -2151,6 +2192,12 @@ var initDD3App = function (d3) {
             }
             return false;
         };
+
+        /**
+         *  Initialize
+         */
+
+        initializer();
 
         return _dd3;
     })();
@@ -2164,7 +2211,9 @@ var initDD3App = function (d3) {
 var dd3Server = $.connection.dD3AppHub;
 var signalR_callback = [];
 var main_callback; // Callback inside the html file
-var test_controller; // Callback inside the html file
+var orderTransmitter; // Callback inside the html file
+
+// Functions used for dd3 callback
 
 dd3Server.client.receiveConfiguration = function (a, b) {
     signalR_callback[0] && signalR_callback[0].apply(null, arguments);
@@ -2182,17 +2231,23 @@ dd3Server.client.receiveData = function () {
     signalR_callback[3].apply(null, arguments);
 }
 
+dd3Server.client.receiveRemoteDataReady = function () {
+    signalR_callback[4].apply(null, arguments);
+}
+
+// Non-dd3 functions
+
 dd3Server.client.receiveGDOConfiguration = function (id) {
-    // To get configId from server (I don't find it in gdo.net.app.DD3.config)
+    // To get configId from server
     main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');
     main_callback = null;
 };
 
 dd3Server.client.receiveControllerOrder = function (orders) {
-    if (test_controller) {
+    if (orderTransmitter) {
         orders = JSON.parse(orders)
         gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
-        test_controller(orders);
+        orderTransmitter(orders);
     } else {
         gdo.consoleOut('.DD3', 4, 'No test controller defined');
     }
@@ -2210,17 +2265,16 @@ dd3Server.client.updateController = function (obj) {
 
 gdo.net.app["DD3"].displayMode = 0;
 
-gdo.net.app["DD3"].initClient = function (d3, callback, testController) {
+gdo.net.app["DD3"].initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-    main_callback = callback;
-    test_controller = testController;
-    return initDD3App(d3);
+    orderTransmitter = orderController;
+    main_callback = launcher;
+    return initDD3App();
 }
 
 gdo.net.app["DD3"].initControl = function (callback) {
-    gdo.controlId = getUrlVar("controlId");
-    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.controlId);
+    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
     dd3Server.server.defineController(gdo.management.selectedInstance);
     return gdo.management.selectedInstance;
@@ -2232,23 +2286,5 @@ gdo.net.app["DD3"].terminateClient = function () {
 }
 
 gdo.net.app["DD3"].terminateControl = function () {
-    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.controlId);
+    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 }
-
-
-//gdo.net.app["DD3"].server.requestImageName(gdo.net.node[gdo.clientId].appInstanceId);
-
-//*/
-/*
-$(function () {
-    //gdo.consoleOut('.DD3', 1, '');
-    $.connection.imageTilesAppHub.client.receiveImageName = function (imageName) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            //gdo.consoleOut('.DD3', 1, 'Instance - ' + gdo.controlId + "Doing something");
-            //$("iframe").contents().find("").attr();
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-        }
-    }
-});
-*/

@@ -50,8 +50,16 @@
 
         $(function () {          
             $(document).ready(function () {
-                var gdo = parent.gdo;
-                var test_bench = [];
+                var gdo = parent.gdo,
+                    configName,
+                    configId,
+                    test_bench = {};
+
+                /*
+                // Get the configId
+                gdo.net.app.DD3.config.some(function (c) { return (gdo.net.app.DD3.config[c]) ? (configName = c, true) : false; });
+                configId = gdo.net.app.DD3.config[configName].id;
+                */
 
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
@@ -61,13 +69,15 @@
                     }
                 };
 
-                var testController = (function () {
+                var orderController = (function () {
                     var t = function (order) {
-                        testController.tests[order.name] ?
-                        testController.tests[order.name].apply(null, order.args) :
+                        orderController.orders[order.name] ?
+                        orderController.orders[order.name].apply(null, order.args) :
                         gdo.consoleOut('.DD3', 4, 'No test function corresponding to ' + order.name);
                     };
-                    t.tests = {};
+
+                    t.orders = {};
+
                     return t;
                 })();
                 
@@ -77,10 +87,11 @@
                     return;
                 }
 
-                dd3 = gdo.net.app["DD3"].initClient(d3, launcher, testController);
+                // Launch dd3 providing the orderController to receive order from the controller page
+                dd3 = gdo.net.app["DD3"].initClient(launcher, orderController);
 
                 // Transitions
-                test_bench[0] = function () {
+                test_bench['0'] = function () {
 
                     var svg = dd3.svgCanvas,
 	                    width = dd3.cave.svgWidth,
@@ -145,7 +156,7 @@
                         return d3.interpolateString(a, a.replace("rotate(0", "rotate(720"));
                     });
 
-                    testController.tests['createRect'] = function () {
+                    orderController.orders['createRect'] = function () {
                         rect = rectG.append('rect');
                         rect.attr("x", width / 10)
                             .attr("y", 4.5 * height / 10)
@@ -156,11 +167,11 @@
                             .text("None");
                     };
 
-                    testController.tests['removeRect'] = function () {
+                    orderController.orders['removeRect'] = function () {
                         rectG.selectAll("rect").remove();
                     };
 
-                    testController.tests['createCircles'] = function (number, opacity) {
+                    orderController.orders['createCircles'] = function (number, opacity) {
                         circleGroup.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('circle')
                             .attr("class", "c new");
@@ -175,12 +186,13 @@
                             .classed("new", false);
                     };
 
-                    testController.tests['removeCircles'] = function () {
+                    orderController.orders['removeCircles'] = function () {
                         circleGroup.selectAll(".c").remove();
                     };
                     
-                    testController.tests['createDistributedCircles'] = function (number, opacity) {
+                    orderController.orders['createDistributedCircles'] = function (number, opacity) {
                         circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
+                            .append('g')
                             .append('circle')
                             .attr("class", "c new");
 
@@ -194,11 +206,11 @@
                             .classed("new", false);
                     };
 
-                    testController.tests['removeDistributedCircles'] = function () {
+                    orderController.orders['removeDistributedCircles'] = function () {
                         circleGroupDistributed.selectAll(".c").remove();
                     };
 
-                    testController.tests['createPolygon'] = function () {
+                    orderController.orders['createPolygon'] = function () {
                         polygonGroupInner = polygonGroupOutter.attr('transform', 'translate(0,0)').append("g");
                         polygonGroupInner
 			               .append('polygon')
@@ -209,12 +221,12 @@
 			               .attr("fill", "transparent");
                     };
 
-                    testController.tests['removePolygon'] = function () {
+                    orderController.orders['removePolygon'] = function () {
                         polygonGroupOutter.selectAll('g').remove();
                         polygonGroupOutter.transition();
                     };
 
-                    testController.tests['startXTranslation'] = function (name) {
+                    orderController.orders['startXTranslation'] = function (name) {
                         rect.transition(name)
                             .duration(10000)
                             .style("fill", "#AAA")
@@ -229,7 +241,7 @@
                             .attr('x', width / 10);
                     };
 
-                    testController.tests['startYTranslation'] = function (name) {
+                    orderController.orders['startYTranslation'] = function (name) {
                         rect.transition(name)
                             .duration(10000)
                             .attr('y', 8 * height / 10)
@@ -238,7 +250,7 @@
                             .attr('y', 4.5 * height / 10);
                     };
 
-                    testController.tests['startRotation'] = function (name) {
+                    orderController.orders['startRotation'] = function (name) {
                         rect.transition(name)
                             .duration(3000)
                             .attr('transform', 'rotate(-40)')
@@ -250,7 +262,7 @@
                             .attr('transform', 'rotate(0)');
                     };
 
-                    testController.tests['startMoveCircles'] = function (name) {
+                    orderController.orders['startMoveCircles'] = function (name) {
                         circleGroup.selectAll(".c")
                             .transition()
                             .duration(15000)
@@ -260,7 +272,7 @@
                             .attr("r", function () { return 40 * Math.random() + 20; });
                     };
 
-                    testController.tests['startMoveDistributedCircles'] = function (name) {
+                    orderController.orders['startMoveDistributedCircles'] = function (name) {
                         circleGroupDistributed.selectAll(".c")
                             .transition()
                             .duration(15000)
@@ -270,7 +282,7 @@
                             .attr("r", function () { return 30 * Math.random() + 20; });
                     };
 
-                    testController.tests['startMovePolygon'] = function () {
+                    orderController.orders['startMovePolygon'] = function () {
                         var pw = 300, ph = 300, n = 50, period = 2;
                         var points = d3.range(n + 1).map(function (d) { var x = d * (width - pw) / n; var y =  (1 + Math.cos(d / n * 2 * Math.PI * period)) * (height - ph) / 2; return [x, y]; });
 
@@ -296,9 +308,9 @@
                     };
 
                     /*
-                    testController.tests['createDistributedCircles']();
+                    orderController.orders['createDistributedCircles']();
                     var f = function () {
-                        testController.tests['startMoveDistributedCircles']();
+                        orderController.orders['startMoveDistributedCircles']();
                         setTimeout(f, 21000);
                     };
                     dd3.synchronize(f, 5000);
@@ -306,26 +318,21 @@
                 };
                 
                 // ScatterPlot
-                test_bench[1] = function () {
-                    var xAxis, yAxis, xScale, yScale;
+                test_bench['1'] = function () {
+                    var xScale, yScale;
                     var data, pathData;
 
-                    dd3.getDataDimensions('scatterplot4000', function (d) {
-                        var dim = d;
-                        var extent = dim.x.max - dim.x.min, coef = 0., c = 1;
-                        var xDomain = [dim.x.min - coef * extent - c, dim.x.max + coef * extent + c];
-                        var yDomain = [dim.y.min - coef * extent - c, dim.y.max + coef * extent + c];
+                    dd3.getDataDimensions('scatterplot4000', function (dim) {
+                        var extentX = dim.x.max - dim.x.min,
+                            extentY = dim.y.max - dim.y.min,
+                            coef = 0.05, c = 1;
 
-                        // Setup x
-                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]);
-                        xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+                        var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
+                            yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
 
-                        // Setup y
-                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]);
-                        yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-                        xScale.domain(xDomain);
-                        yScale.domain(yDomain);
+                        // Setup Scales
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
 
                         dd3.getPointData('pointData', 'scatterplot4000', function (d) {
                             data = d;
@@ -343,9 +350,13 @@
                         if (!data || !pathData)
                             return;
 
-                        var svg = dd3.svgCanvas;
-                        var pathGroup = svg.append("g").attr("id", "dd3_path");
-                        var circleGroup = svg.append("g").attr("id", "dd3_circle");
+                        var svg = dd3.svgCanvas,
+                            pathGroup = svg.append("g").attr("id", "dd3_path"),
+                            circleGroup = svg.append("g").attr("id", "dd3_circle");
+
+                        // Setup Axis
+                        var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
+                            yAxis = d3.svg.axis().scale(yScale).orient("left");
 
                         // x-axis
                         svg.append("g")
@@ -404,7 +415,7 @@
                 };
 
                 // Graphs
-                test_bench[2] = function () {
+                test_bench['2'] = function () {
                     var dim, xDomain, xRange, xAxis, yScale, yAxis;
                     var svg = dd3.svgCanvas;
 
@@ -482,7 +493,7 @@
                     var color = d3.scale.category20(),
                         i = 0;
 
-                    testController.tests['changeValues'] = function (time) {
+                    orderController.orders['changeValues'] = function (time) {
                         var randomGDP = xDomain.map(function () { return dim.gdp.max * Math.random(); });
 
                         svg.selectAll('rect')
@@ -505,7 +516,7 @@
                 };
 
                 // Hand-moving
-                test_bench[3] = function () {
+                test_bench['3'] = function () {
                     var w = 682,
                         h = 455;
                     var svg = dd3.svgCanvas,
@@ -514,7 +525,7 @@
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight;
 
-                    testController.tests['createRect'] = function (id) {
+                    orderController.orders['createRect'] = function (id) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         rectG.attr("transform", "translate(" + [4 * width / 10, 4 * height / 10] + ")");
                         //*
@@ -534,34 +545,33 @@
                             .attr("height", 2 * width / 10);
                     };
 
-                    testController.tests['moveRect'] = function (id, x, y) {
+                    orderController.orders['moveRect'] = function (id, x, y) {
                         var rectG = svg.select("#r" + id);
                         rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
                     };
 
-                    testController.tests['frontRect'] = function (id) {
+                    orderController.orders['frontRect'] = function (id) {
                         var g = svg.select("#r" + id).node();
                         g.parentElement.appendChild(g);
                     };
 
-                    testController.tests['resizeRect'] = function (id, x, y) {
+                    orderController.orders['resizeRect'] = function (id, x, y) {
                         var img = svg.select("#r" + id).select("image");
                         var r = svg.select("#r" + id).select("rect");
                         img.attr("width", x * width).attr("height", y * height);
                         r.attr("width", x * width).attr("height", y * height);
                     };
 
-                    testController.tests['delRect'] = function (id) {
+                    orderController.orders['delRect'] = function (id) {
                         svg.select("g").remove();
                         //svg.select("#" + id).remove();
                     };
 
-                    testController.tests['delAllRect'] = function () {
+                    orderController.orders['delAllRect'] = function () {
                         svg.selectAll("g").remove();
                     };
 
                 };
-                
             });
         });
 
