@@ -155,5 +155,401 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+
+        //MapsApp 2.0 Functions
+
+        public void RequestMap(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyMap(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        //Map Level
+
+        public void AddLayer(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyLayer(int instanceId, int layerId)
+        {
+            // get all the parameters, (source and extent id not actual ones, these has to be created prior)
+            // broadcast
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestLayer(int instanceId, int layerId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RemoveLayer(int instanceId, int layerId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddView(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RemoveView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddInteraction(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyInteraction(int instanceId, int interactionId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestInteraction(int instanceId, int interactionId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RemoveInteraction(int instanceId, int interactionId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddSource(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifySource(int instanceId, int sourceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestSource(int instanceId, int sourceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RemoveSource(int instanceId, int sourceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddControl(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyControl(int instanceId, int controlId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestControl(int instanceId, int controlId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RemoveControl(int instanceId, int controlId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddStyle(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyStyle(int instanceId, int styleId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestStyle(int instanceId, int styleId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RemoveStyle(int instanceId, int styleId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
     }
 }

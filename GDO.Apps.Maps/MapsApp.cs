@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using GDO.Apps.Maps.Core;
 using GDO.Core;
 
 namespace GDO.Apps.Maps
@@ -15,6 +16,17 @@ namespace GDO.Apps.Maps
         public AppConfiguration Configuration { get; set; }
         public MapPosition Position { get; set; }
         public bool mode { get; set; }
+
+        //MapsApp 2.0 Changes
+
+        public Dictionary <int, Layer> Layers;
+        public Dictionary <int, View> Views;
+        public Dictionary <int, Interaction> Interactions;
+        public Dictionary <int, Source> Sources;
+        public Dictionary <int, Control> Controls;
+        public Dictionary <int, Style> Styles;
+
+
     public string Style { get; set; }
         public bool IsInitialized = false;
 
