@@ -1,4 +1,4 @@
-﻿var map;
+var map;
 var map3D;
 var view;
 var styles;
@@ -63,12 +63,12 @@ $(function () {
             gdo.net.instance[instanceId].map.updateSize();
             gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
                 gdo.net.app["Maps"].changeEvent(instanceId);
-                gdo.net.app["Maps"].updateCenter(instanceId);
+                setTimeout(function () { gdo.net.app["Maps"].updateCenter(instanceId); }, 70);
                 gdo.net.app["Maps"].server.updateResolution(instanceId);
             });
-            gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
+            gdo.net.instance[instanceId].map.getView().on('change:zoom', function() {
                 gdo.net.app["Maps"].changeEvent(instanceId);
-                gdo.net.app["Maps"].updateCenter(instanceId);
+                setTimeout(function() {gdo.net.app["Maps"].updateCenter(instanceId);}, 70);
                 gdo.net.app["Maps"].server.updateResolution(instanceId);
             });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
