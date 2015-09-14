@@ -23,98 +23,13 @@ namespace GDO.Apps.Maps
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void UploadMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height,  int zoom)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
-                    Clients.Caller.receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
-                    BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void UploadMapStyle(int instanceId, string style)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).Style = style;
-                    Clients.Caller.receiveMapstyle(instanceId, style);
-                    BroadcastMapStyle(instanceId, style);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestMapPosition(int instanceId, bool control)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    if (control)
-                    {
-                            MapPosition position = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetMapPosition();
-                            Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution, position.Zoom);
-                    }
-                    else
-                    {
-                        if (((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).IsInitialized)
-                        {
-                            MapPosition position = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetMapPosition();
-                            Clients.Caller.receiveMapPosition(instanceId, position.TopLeft, position.Center, position.BottomRight, position.Resolution, position.Width, position.Height, position.Zoom);
-                        }
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-        public void RequestMapStyle(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    string style = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).Style;
-                     Clients.Caller.receiveMapStyle(instanceId, style);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-        public void BroadcastMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
-        {
-            Clients.Group("" + instanceId).receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
-        }
-        public void BroadcastMapStyle(int instanceId, string style)
-        {
-            Clients.Group("" + instanceId).receiveMapstyle(instanceId, style);
-        }
-
         public void Set3DMode(int instanceId, bool mode)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).mode = mode;
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).Mode = mode;
                     Clients.Group("" + instanceId).receive3DMode(instanceId, mode);
                     Clients.Caller.receive3DMode(instanceId, mode);
                 }
@@ -132,7 +47,7 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    Clients.Caller.receive3DMode(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).mode);
+                    Clients.Caller.receive3DMode(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).Mode);
                 }
                 catch (Exception e)
                 {
@@ -237,6 +152,11 @@ namespace GDO.Apps.Maps
             }
         }
 
+        public void BroadcastLayer(int instanceId, int layerId)
+        {
+
+        }
+
         public void RemoveLayer(int instanceId, int layerId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -295,6 +215,11 @@ namespace GDO.Apps.Maps
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        public void BroadcastView(int instanceId, int viewId)
+        {
+
         }
 
         public void RemoveView(int instanceId, int viewId)
@@ -417,6 +342,11 @@ namespace GDO.Apps.Maps
             }
         }
 
+        public void BroadcastSource(int instanceId, int sourceId)
+        {
+
+        }
+
         public void RemoveSource(int instanceId, int sourceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -535,6 +465,11 @@ namespace GDO.Apps.Maps
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        public void BroadcastStyle(int instanceId, int styleId)
+        {
+
         }
 
         public void RemoveStyle(int instanceId, int styleId)

@@ -14,72 +14,126 @@ namespace GDO.Apps.Maps
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-        public MapPosition Position { get; set; }
-        public bool mode { get; set; }
-
-        //MapsApp 2.0 Changes
-
-        public Dictionary <int, Layer> Layers;
-        public Dictionary <int, View> Views;
-        public Dictionary <int, Interaction> Interactions;
-        public Dictionary <int, Source> Sources;
-        public Dictionary <int, Control> Controls;
-        public Dictionary <int, Style> Styles;
-
-
-    public string Style { get; set; }
+        public Dictionary<int, Layer> Layers { get; set; }
+        public Dictionary<int, View> Views { get; set; }
+        public Dictionary<int, Interaction> Interactions { get; set; }
+        public Dictionary<int, Source> Sources { get; set; }
+        public Dictionary<int, Control> Controls { get; set; }
+        public Dictionary<int, Style> Styles { get; set; }
         public bool IsInitialized = false;
+        public bool Mode { get; set; }
 
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-            this.mode = false;
-            this.Position = new MapPosition();
-            this.Position.Center[0] = (string)configuration.Json.SelectToken("longtitude");
-            this.Position.Center[1] = (string)configuration.Json.SelectToken("latitude");
-            this.Position.Resolution = (string)configuration.Json.SelectToken("resolution");
-            this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
+
         }
 
-        public void SetMapPosition(string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
+        public int AddLayer()
         {
-            IsInitialized = true;
-            Position = new MapPosition();
-            Position.TopLeft = topLeft;
-            Position.Center = center;
-            Position.BottomRight = bottomRight;
-            Position.Resolution = resolution;
-            Position.Width = width;
-            Position.Height = height;
-            Position.Zoom = zoom;
+
+            return -1;
         }
 
-        public MapPosition GetMapPosition()
+        public bool ModifyLayer(int layerId)
         {
-            return Position;
+
+            return false;
         }
-    }
-    public class MapPosition
-    {
-        public string[] TopLeft { get; set; }
-        public string[] Center { get; set; }
-        public string[] BottomRight { get; set; }
-        public string Resolution { get; set; }
-        public int Zoom { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public MapPosition()
+
+        public bool RemoveLayer(int layerId)
         {
-            this.TopLeft = new string[2];
-            this.Center = new string[2];
-            this.BottomRight = new string[2];
-            this.Resolution = "";
-            this.Zoom = -1;
-            this.Width = -1;
-            this.Height = -1;
+
+            return false;
+        }
+
+        public int AddView()
+        {
+
+            return -1;
+        }
+
+        public bool ModifyView(int viewId)
+        {
+
+            return false;
+        }
+
+        public bool RemoveView(int viewId)
+        {
+
+            return false;
+        }
+
+        public int AddInteraction()
+        {
+
+            return -1;
+        }
+
+        public bool ModifyInteraction(int interactionId)
+        {
+
+            return false;
+        }
+
+        public bool RemoveInteraction(int interactionId)
+        {
+
+            return false;
+        }
+
+        public int AddSource()
+        {
+
+            return -1;
+        }
+
+        public bool ModifySource(int sourceId)
+        {
+
+            return false;
+        }
+
+        public bool RemoveSource(int sourceId)
+        {
+
+            return false;
+        }
+
+        public int AddControl()
+        {
+
+            return -1;
+        }
+
+        public bool ModifyControl(int controlId)
+        {
+
+            return false;
+        }
+
+        public bool RemoveControl(int controlId)
+        {
+
+            return false;
+        }
+
+        public int AddStyle()
+        {
+
+            return -1;
+        }
+
+        public bool ModifyStyle(int styleId)
+        {
+
+            return false;
+        }
+
+        public bool RemoveStyle(int styleId)
+        {
+
+            return false;
         }
     }
 }
