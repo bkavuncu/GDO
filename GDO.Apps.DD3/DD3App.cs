@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Net;
@@ -142,9 +139,9 @@ namespace GDO.Apps.DD3
             return request.executeWith(this.data);
         }
 
-        public bool requestRemoteData(RemoteDataRequest request)
+        public string requestRemoteData(RemoteDataRequest request)
         {
-            return request.execute(ref this.data);
+            return JsonConvert.SerializeObject(request.execute(ref this.data));
         }
 
         // Code for Connection and Control
@@ -446,11 +443,16 @@ namespace GDO.Apps.DD3
 
         private Func<JToken, string, JToken> tryParseNumber = (agg, next) =>
         {
+            if (agg == null || agg is JValue)
+                return null;
+
             int num = 0;
             if (int.TryParse(next, out num))
-                return agg[num];
-            else
+                return num < agg.Count() ? agg[num]: null;
+            else if (!(agg is JArray))
                 return agg[next];
+            else
+                return null;
         };
 
         public RemoteDataRequest(string dataId, string server, string[] toArray, string[] toObject, string[][] toValues, string[][] useNames)
@@ -465,14 +467,30 @@ namespace GDO.Apps.DD3
 
         private JToken requestToServer (out JToken output)
         {
+            dynamic error = new JObject();
+            error.result = "Success";
+            error.error = "";
+
             // Create Request
             WebRequest request = WebRequest.Create(server);
             request.ContentType = "application/json; charset=utf-8";
             //request.Credentials = CredentialCache.DefaultCredentials;
 
+
             // Get the response
-            System.Diagnostics.Debug.WriteLine("Getting data from : " + server);
-            WebResponse response = request.GetResponse();
+            WebResponse response;
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Getting data from : " + server);
+                response = request.GetResponse();
+            }
+            catch (WebException e)
+            {
+                output = null;
+                error.result = "Fail";
+                error.error = "Error getting data. " + e.Message;
+                return error;
+            }
 
             // Read the response
             System.Diagnostics.Debug.WriteLine("HTTP response : " + ((HttpWebResponse)response).StatusDescription);
@@ -485,31 +503,48 @@ namespace GDO.Apps.DD3
             response.Close();
 
             output = responseObject;
-            return true;
+            return error;
         }
 
         private JToken formatData (JToken responseObject, out JToken output)
         {
+            dynamic error = new JObject();
+            error.result = "Success";
+            error.error = "";
+
             JToken array = toArray.Aggregate(responseObject, tryParseNumber);
+            if (array == null  || !(array is JArray))
+            {
+                output = null;
+                error.result = "Fail";
+                error.error = "Error formatting data. " + "Incorrect path to array";
+                return error;
+            }
 
             IEnumerable<JToken> data = array.Select(obj =>
             {
                 JToken anObject = toObject.Aggregate(obj, tryParseNumber);
                 JObject dataPoint = new JObject();
+                if (anObject == null)
+                {
+                    error.result = "Warning";
+                    error.error = "Error formatting data. " + "Incorrect path to object";
+                    return dataPoint;
+                }
 
                 foreach (var d in toValues.Select((path, i) => new { i, path }))
                 {
-                    string name = d.path[d.path.Count() - 1]; // SI value est null ahhhhhh
+                    string name = d.path.Count() > 0 ? d.path[d.path.Count() - 1] : "value"; // SI value est null ahhhhhh
 
-                    if (useNames.Count() > 0 && useNames[d.i].Count() > 1 && useNames[d.i][0] != "useKey")
+                    if (useNames.Count() > d.i && useNames[d.i].Count() > 1 && useNames[d.i][0] != "useKey")
                     {
-                        if (useNames[d.i][0] == "usestring")
+                        if (useNames[d.i][0] == "useString")
                         {
                             name = useNames[d.i][1];
                         }
                         else if (useNames[d.i][0] == "useObjectField")
                         {
-                            name = (string)useNames[d.i].Skip(1).Aggregate(anObject, tryParseNumber);
+                            name = (string)useNames[d.i].Skip(1).Aggregate(anObject, tryParseNumber) ?? name;
                         }
                     }
 
@@ -520,20 +555,27 @@ namespace GDO.Apps.DD3
             });
 
             output = new JArray(data);
-            return true;
+            return error;
         }
 
-        public bool execute (ref JToken data)
+        public JToken execute (ref JToken data)
         {
             JToken unformattedData, formattedData;
-            requestToServer(out unformattedData);
-            formatData(unformattedData, out formattedData);
 
-            // Display the new data object
-            System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(formattedData.ToArray()));
+            dynamic error = requestToServer(out unformattedData);
 
-            data[dataId] = formattedData;
-            return true;
+            if (error.result == "Success")
+            {
+                error = formatData(unformattedData, out formattedData);
+
+                if (formattedData != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(formattedData.ToArray()));
+                    data[dataId] = formattedData;
+                }
+            }
+
+            return error;
         }
 
     }

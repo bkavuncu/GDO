@@ -473,19 +473,14 @@ var initDD3App = function () {
                 });
 
                 p.on("error", function (e) {
-                    if (e.type === "network") {
-                        utils.log("[Peer] " + e, 4);
-                        state("fatal");
-                    } else {
-                        utils.log("[Peer] " + e, 3);
-                    }
+                    utils.log("[Peer] " + e, 3);
                 });
 
                 window.onunload = window.onbeforeunload = function (e) {
                     if (!!peer.peer && !peer.peer.destroyed) {
                         peer.peer.destroy();
                     }
-                    //(signalR.connection.state === 1) && signalR.server.removeClient(signalR.sid);
+                    //signalR && signalR.connection && (signalR.connection.state === 1) && signalR.server && signalR.server.removeClient(signalR.sid);
                 };
             };
 
@@ -808,21 +803,27 @@ var initDD3App = function () {
                 return dd3_data.receiveData(dataName, dataId, "[]");
             };
 
-            dd3_data.requestRemoteData = function (dataId, callback, address, toArray, toObject, toValues, useNames) {
+            dd3_data.requestRemoteData = function (dataId, address, callback, toArray, toObject, toValues, useNames) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)].callback_remoteDataReady = callback;
 
-                if (!address) { utils.log("Server address must be specified - Aborting", 2); return; }
+                if (!address) { utils.log("Server address not specified - Aborting", 2); return; }
 
                 toArray = toArray || [];
                 toObject = toObject || [];
-                toValues = 
+                toValues = toValues || [[]];
+                useNames = useNames || [];
 
                 var request = {
                     dataId: dataId,
                     server: address,
-
+                    toArray: toArray,
+                    toObject: toObject,
+                    toValues: toValues,
+                    useNames: useNames
                 };
+
+                signalR.server.requestFromRemote(signalR.sid, request);
             };
 
             // Data Reception
@@ -832,7 +833,6 @@ var initDD3App = function () {
                 dimensions = JSON.parse(dimensions);
                 if (dimensions.error) {
                     utils.log("Error requesting dimensions : " + dimensions.error, 3);
-                    return;
                 }
                 data[pr(dataId)].dataDimensions = dimensions;
                 data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
@@ -843,7 +843,6 @@ var initDD3App = function () {
                 dataPoints = JSON.parse(dataPoints);
                 if (dataPoints.error) {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
-                    return;
                 }
                 data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
                 data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
@@ -2165,6 +2164,8 @@ var initDD3App = function () {
             _dd3.getBarData = dd3_data.getBarData;
 
             _dd3.getPieData = dd3_data.getPieData;
+
+            _dd3.requestRemoteData = dd3_data.requestRemoteData;
 
             _dd3.retrieveDimensions = function (id) {
                 return data["dd3_" + id].dataDimensions;

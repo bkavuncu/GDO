@@ -130,7 +130,7 @@ namespace GDO.Apps.DD3
         {
             System.Diagnostics.Debug.WriteLine("Received request for remote server data : " + request.ToString());
             var result = ((DD3App)instances[instanceId]).requestRemoteData(request);
-            Clients.Client(Context.ConnectionId).receiveRemoteDataReady(request.dataId, Newtonsoft.Json.JsonConvert.SerializeObject(new { result = result ? "success" : "error" }));
+            Clients.Client(Context.ConnectionId).receiveRemoteDataReady(request.dataId, result);
         }
 
         // Orders
