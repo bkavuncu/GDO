@@ -8,5 +8,10 @@ namespace GDO.Apps.Maps.Core.Layers
     public class Tile : Layer
     {
         public int Preload { get; set; }
+
+        new public void Init(int preload)
+        {
+            Preload = preload;
+        }
     }
 }

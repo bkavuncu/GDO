@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Web;
+using GDO.Apps.Maps.Core;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
 
@@ -109,7 +110,22 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-                    
+                    int layerType = 1;
+                    switch (layerType)
+                    {
+                        case (int)LayerTypes.Base:
+                            break;
+                        case (int)LayerTypes.Heatmap:
+                            break;
+                        case (int)LayerTypes.Image:
+                            break;
+                        case (int)LayerTypes.Vector:
+                            break;
+                        case (int)LayerTypes.None:
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 catch (Exception e)
                 {

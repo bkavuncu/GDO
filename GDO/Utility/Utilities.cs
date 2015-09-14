@@ -15,7 +15,7 @@ namespace GDO.Utility
         public static int GetAvailableSlot<T>(ConcurrentDictionary<int, T> dictionary)
         {
             int slot = -1;
-            for (int i = 0; i < Cave.Cols * Cave.Rows; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 if (!dictionary.ContainsKey(i))
                 {
@@ -60,5 +60,49 @@ namespace GDO.Utility
                 return image;
             }
         }
+    }
+    public class GenericDictionary<U>
+    {
+        private Dictionary<int, U> _dict = new Dictionary<int, U>();
+
+        public void Add<T>(int key, T value) where T : U
+        {
+            _dict.Add(key, value);
+        }
+
+        public void Remove(int key)
+        {
+            _dict.Remove(key);
+        }
+
+        public bool Contains(int key)
+        {
+            return _dict.ContainsKey(key);
+        }
+
+        public int Count(int key)
+        {
+            return _dict.Count;
+        }
+
+        public T GetValue<T>(int key) where T : U
+        {
+            return (T)_dict[key];
+        }
+
+        public int GetAvailableSlot()
+        {
+            int slot = -1;
+            for (int i = 0; i < 1000; i++)
+            {
+                if (!_dict.ContainsKey(i))
+                {
+                    slot = i;
+                    break;
+                }
+            }
+            return slot;
+        }
+
     }
 }
