@@ -42,6 +42,11 @@ namespace GDO.Apps.Maps
             return false;
         }
 
+        public string GetLayer(int layerId)
+        {
+            return "";
+        }
+
         public bool RemoveLayer(int layerId)
         {
 
@@ -60,6 +65,11 @@ namespace GDO.Apps.Maps
         {
 
             return false;
+        }
+
+        public string GetView(int viewId)
+        {
+            return "";
         }
 
         public bool RemoveView(int viewId)
@@ -82,6 +92,11 @@ namespace GDO.Apps.Maps
             return false;
         }
 
+        public string GetInteraction(int interactionId)
+        {
+            return "";
+        }
+
         public bool RemoveInteraction(int interactionId)
         {
 
@@ -100,6 +115,11 @@ namespace GDO.Apps.Maps
         {
 
             return false;
+        }
+
+        public string GetSource(int sourceId)
+        {
+            return "";
         }
 
         public bool RemoveSource(int sourceId)
@@ -122,6 +142,11 @@ namespace GDO.Apps.Maps
             return false;
         }
 
+        public string GetControl(int controlId)
+        {
+            return "";
+        }
+
         public bool RemoveControl(int controlId)
         {
 
@@ -140,6 +165,11 @@ namespace GDO.Apps.Maps
         {
 
             return false;
+        }
+
+        public string GetStyle(int styleId)
+        {
+            return "";
         }
 
         public bool RemoveStyle(int styleId)
