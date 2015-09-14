@@ -71,8 +71,6 @@ namespace GDO.Apps.Maps
             }
         }
 
-        //MapsApp 2.0 Functions
-
         public void RequestMap(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -103,7 +101,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        //Map Level
+        //Layer
 
         public void AddLayer(int instanceId)
         {
@@ -172,6 +170,8 @@ namespace GDO.Apps.Maps
             }
         }
 
+        //View
+
         public void AddView(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -237,6 +237,8 @@ namespace GDO.Apps.Maps
             }
         }
 
+        //Interaction
+
         public void AddInteraction(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -296,6 +298,8 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+
+        //Source
 
         public void AddSource(int instanceId)
         {
@@ -362,6 +366,8 @@ namespace GDO.Apps.Maps
             }
         }
 
+        //Control
+
         public void AddControl(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -421,6 +427,8 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+
+        //Style
 
         public void AddStyle(int instanceId)
         {

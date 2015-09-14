@@ -28,6 +28,8 @@ namespace GDO.Apps.Maps
 
         }
 
+        //Layer
+
         public int AddLayer()
         {
 
@@ -45,6 +47,8 @@ namespace GDO.Apps.Maps
 
             return false;
         }
+
+        //View
 
         public int AddView()
         {
@@ -64,6 +68,8 @@ namespace GDO.Apps.Maps
             return false;
         }
 
+        //Interaction
+
         public int AddInteraction()
         {
 
@@ -81,6 +87,8 @@ namespace GDO.Apps.Maps
 
             return false;
         }
+
+        //Source
 
         public int AddSource()
         {
@@ -100,6 +108,8 @@ namespace GDO.Apps.Maps
             return false;
         }
 
+        //Control
+
         public int AddControl()
         {
 
@@ -117,6 +127,8 @@ namespace GDO.Apps.Maps
 
             return false;
         }
+
+        //Style
 
         public int AddStyle()
         {
