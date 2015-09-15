@@ -296,4 +296,3 @@
     <Copy SourceFiles="@(GDOAppBin)" DestinationFiles="@(GDOAppBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
   </Target>
 </Project>
-</Project>
