@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Net;
 using System.Web;
 using GDO.Apps.Maps.Core;
 using GDO.Core;
@@ -104,28 +105,57 @@ namespace GDO.Apps.Maps
 
         //Layer
 
-        public void AddLayer(int instanceId)
+        public void AddLayer(int instanceId, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow,
+            int weight, int preload, int styleId)
         {
             lock (Cave.AppLocks[instanceId])
             {
+                int layerId = -1;
                 try
                 {
-                    int layerType = 1;
-                    switch (layerType)
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    switch (type)
                     {
                         case (int)LayerTypes.Base:
+                            layerId = maps.AddLayer<Core.Layer>(name, (int)LayerTypes.Base, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
                             break;
                         case (int)LayerTypes.Heatmap:
+                            layerId = maps.AddLayer<Core.Layers.Heatmap>(name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution); 
+                            if (layerId >= 0)
+                            {
+                                maps.Layers.GetValue<Core.Layers.Heatmap>(layerId).Modify(gradient, radius, shadow, weight);
+                            }
                             break;
                         case (int)LayerTypes.Image:
+                            layerId = maps.AddLayer<Core.Layers.Image>(name, (int)LayerTypes.Image, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                            if (layerId >= 0)
+                            {
+                                maps.Layers.GetValue<Core.Layers.Image>(layerId).Modify();
+                            }
                             break;
                         case (int)LayerTypes.Vector:
+                            layerId = maps.AddLayer<Core.Layers.Vector>(name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                            if (layerId >= 0)
+                            {
+                                maps.Layers.GetValue<Core.Layers.Vector>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
+                            }
+                            break;
+                        case (int)LayerTypes.Tile:
+                            layerId = maps.AddLayer<Core.Layers.Tile>(name, (int)LayerTypes.Tile, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                            if (layerId >= 0)
+                            {
+                                maps.Layers.GetValue<Core.Layers.Tile>(layerId).Modify(preload);
+                            }
                             break;
                         case (int)LayerTypes.None:
                             break;
                         default:
                             break;
                     }
+                    if (layerId >= 0)
+                    {
+                        BroadcastLayer(instanceId, layerId);
+                    }  
                 }
                 catch (Exception e)
                 {
@@ -134,15 +164,38 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyLayer(int instanceId, int layerId)
+        public void ModifyLayer(int instanceId, int layerId, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow,
+            int weight, int preload, int styleId)
         {
-            // get all the parameters, (source and extent id not actual ones, these has to be created prior)
-            // broadcast
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyLayer(layerId, name, type, sourceId, brightness, contrast, saturation, hue, opacity,
+                        zIndex, visible, minResolution, maxResolution);
+                    switch (type)
+                    {
+                        case (int) LayerTypes.Base:
+                            break;
+                        case (int) LayerTypes.Heatmap:
+                            maps.Layers.GetValue<Core.Layers.Heatmap>(layerId).Modify(gradient, radius, shadow, weight);
+                            break;
+                        case (int) LayerTypes.Image:
+                            maps.Layers.GetValue<Core.Layers.Image>(layerId).Modify();
+                            break;
+                        case (int) LayerTypes.Vector:
+                            maps.Layers.GetValue<Core.Layers.Vector>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
+                            break;
+                        case (int) LayerTypes.Tile:
+                            maps.Layers.GetValue<Core.Layers.Tile>(layerId).Modify(preload);
+                            break;
+                        case (int) LayerTypes.None:
+                            break;
+                        default:
+                            break;
+                    }
+                    BroadcastLayer(instanceId,layerId);
                 }
                 catch (Exception e)
                 {
@@ -157,7 +210,9 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string layer = maps.GetLayer(layerId);
+                    Clients.Caller.receiveLayer(instanceId, layerId, layer);
                 }
                 catch (Exception e)
                 {
@@ -168,7 +223,16 @@ namespace GDO.Apps.Maps
 
         public void BroadcastLayer(int instanceId, int layerId)
         {
-
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string layer = maps.GetLayer(layerId);
+                Clients.All.receiveLayer(instanceId, layerId, layer, true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void RemoveLayer(int instanceId, int layerId)
@@ -177,7 +241,9 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveLayer(layerId);
+                    Clients.All.receiveLayer(instanceId, layerId, "", false);
                 }
                 catch (Exception e)
                 {

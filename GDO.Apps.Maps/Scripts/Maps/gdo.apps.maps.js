@@ -28,7 +28,7 @@ $(function () {
         }
     }
 
-    $.connection.mapsAppHub.client.receiveLayer = function(instanceId) {
+    $.connection.mapsAppHub.client.receiveLayer = function(instanceId, layerId, layer, enabled) {
 
     }
 

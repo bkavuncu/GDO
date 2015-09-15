@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
@@ -8,6 +7,7 @@ using GDO.Apps.Maps.Core;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Core;
 using GDO.Utility;
+using Image = GDO.Apps.Maps.Core.Sources.Image;
 
 namespace GDO.Apps.Maps
 {
@@ -40,7 +40,7 @@ namespace GDO.Apps.Maps
             {
                 int layerId = Layers.GetAvailableSlot();
                 T layer = new T();
-                layer.Init(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                layer.Modify(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
                 Layers.Add<T>(layerId, layer);
                 return layerId;
             }
@@ -51,31 +51,11 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public int AddHeatmap(string name, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow,
-            int weight)
+        public bool ModifyLayer(int id, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             try
             {
-                int layerId = AddLayer<Heatmap>(name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
-                if (layerId >= 0)
-                {
-                    Layers.GetValue<Heatmap>(layerId).Init(gradient, radius, shadow, weight);
-                }
-                return layerId;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return -1;
-            }
-        }
-
-        public bool ModifyLayer(int id, string name, int index, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
-        {
-            try
-            {
-                //TODO
+                Layers.GetValue<Core.Layer>(id).Modify(id, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
                 return true;
             }
             catch (Exception e)

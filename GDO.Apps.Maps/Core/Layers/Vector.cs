@@ -9,7 +9,7 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public Style Style{ get; set; }
 
-        new public void Init(Style style)
+        new public void Modify(Style style)
         {
             Style = style;
         }

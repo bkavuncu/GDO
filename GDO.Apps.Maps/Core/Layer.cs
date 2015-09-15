@@ -13,7 +13,8 @@ namespace GDO.Apps.Maps.Core
         Base = 0,
         Heatmap = 1,
         Image = 2,
-        Vector = 3
+        Tile = 3,
+        Vector = 4
     };
 
     public class Layer
@@ -37,7 +38,7 @@ namespace GDO.Apps.Maps.Core
         {
             
         }
-        public void Init(int id, string name, int type, Source source, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+        public void Modify(int id, string name, int type, Source source, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             Id = id;
             Name = name;

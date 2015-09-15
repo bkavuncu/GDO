@@ -12,7 +12,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public int Shadow { get; set; }
         public int Weight { get; set; }
 
-        new public void Init(string[] gradient, int radius, int shadow, int weight)
+        new public void Modify(string[] gradient, int radius, int shadow, int weight)
         {
             Gradient = gradient;
             Radius = radius;
