@@ -185,11 +185,19 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
+    <ItemGroup>
+      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*"/>
+      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*"/>
+      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*"/>
+      <GDOAppBin Include="$(ProjectDir)bin\*.*"/>
+    </ItemGroup>
+    <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
+    <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppScripts)" DestinationFiles="@(GDOAppScripts->'$(SolutionDir)GDO\Scripts\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppWeb)" DestinationFiles="@(GDOAppWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppBin)" DestinationFiles="@(GDOAppBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
   </Target>
-  -->
 </Project>
