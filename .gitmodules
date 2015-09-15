@@ -1,0 +1,3 @@
+[submodule "GDO.Apps.DD3"]
+	path = GDO.Apps.DD3
+	url = ../GDO.Apps.DD3.git
