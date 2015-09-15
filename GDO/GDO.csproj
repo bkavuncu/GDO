@@ -219,11 +219,24 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
+    <Target Name="AfterClean">
+    <ItemGroup>
+      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))"/> 
+      <GDOAppScripts Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Scripts\&quot;))"/> 
+      <GDOAppWeb Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Web\&quot;))"/> 
+      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))"/> 
+      <GDOAppBin Include="$(ProjectDir)bin\"/>
+      <GDOAppBinDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Bin\&quot;))"/> 
+    </ItemGroup>
+    <Message Text="Cleaning $(ProjectName) from Apps" Importance="high" />
+    <RemoveDir Directories="@(GDOAppConfiguration)" />
+    <RemoveDir Directories="@(GDOAppScripts)" />
+    <RemoveDir Directories="@(GDOAppWeb)" />
+    <RemoveDir Directories="@(GDOAppBin)" />
+    <RemoveDir Directories="@(GDOAppBinDirs)" />
+  </Target>
 </Project>
