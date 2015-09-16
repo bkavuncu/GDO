@@ -1,5 +1,0 @@
-Import and Clean Apps Batch Files are no longer required, these scripts are implemented in MSBUILD
-
-When you build a specific app -> it imports that app to main project
-When you build all            -> it import all apps to main project
-When you clean main project   -> It cleans the main project
