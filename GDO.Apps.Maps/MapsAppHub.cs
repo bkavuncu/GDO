@@ -801,6 +801,8 @@ namespace GDO.Apps.Maps
             }
         }
 
+        //TODO Add vector source
+
         public void ModifySource(int instanceId, int sourceId, string name)
         {
             lock (Cave.AppLocks[instanceId])
@@ -985,7 +987,7 @@ namespace GDO.Apps.Maps
         }
 
 
-        //TODO Modify Sources
+        //TODO Modify Vector Source
 
         public void RequestSource(int instanceId, int sourceId)
         {

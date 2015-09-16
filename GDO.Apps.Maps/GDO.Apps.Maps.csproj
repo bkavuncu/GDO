@@ -150,6 +150,13 @@
     <Compile Include="Core\Position.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="Core\Style.cs" />
+    <Compile Include="Core\Styles\Circle.cs" />
+    <Compile Include="Core\Styles\Fill.cs" />
+    <Compile Include="Core\Styles\Icon.cs" />
+    <Compile Include="Core\Styles\Image.cs" />
+    <Compile Include="Core\Styles\RegularShape.cs" />
+    <Compile Include="Core\Styles\Stroke.cs" />
+    <Compile Include="Core\Styles\Text.cs" />
     <Compile Include="Core\View.cs" />
     <Compile Include="MapsApp.cs" />
     <Compile Include="MapsAppHub.cs" />
