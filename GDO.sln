@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4A27F694-1D9A-420A-A3A6-62521EAA047E}"
 EndProject
@@ -10,11 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Images", "GDO.Apps.Images\GDO.Apps.Images.csproj", "{77BC15A4-E55B-46F5-BF97-CA91708661DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD4152F1-C1E9-4528-92F7-44112DF11A57}"
-	ProjectSection(SolutionItems) = preProject
-		clean_apps.bat = clean_apps.bat
-		create_browsers_local.exe = create_browsers_local.exe
-		import_apps.bat = import_apps.bat
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Maps", "GDO.Apps.Maps\GDO.Apps.Maps.csproj", "{03582490-FE29-4CBB-AFF5-98A51EC07E59}"
 EndProject
