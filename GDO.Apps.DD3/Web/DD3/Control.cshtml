@@ -1,0 +1,438 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+
+        .table_control td {
+            text-align:center;
+            border: 1px solid #FFF;
+            padding: 8px;
+            font-size:1.4em;
+
+            /* Unselectable */
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        table.table_control {
+            /*border-collapse:collapse;*/
+        }
+
+        .green {
+            background-color:#006400;
+        }
+
+        .green:active {
+            background-color:#005400;
+        }
+        
+        .red {
+            background-color:#8B0000;
+        }
+
+    </style>
+</head>
+<body>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/d3.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo,
+                    server = gdo.net.app.DD3.server;
+
+                var instanceId,
+                    confId,
+                    numClients;
+
+                var test_bench = [];
+
+                var callback = function (message) {
+                    confId = message.configurationId;
+                    numClients = message.numClient;
+                    if (message.state == 1) {
+                        test_bench[confId] && test_bench[confId]();
+                        test_bench[confId] = null;
+                        $("#wait").css("display", "none");
+                        $("#control_" + confId).css("display", "");
+                    }
+                };
+
+                var order = function (name, args) {
+                    return JSON.stringify({ name: name, args: args });
+                };
+
+                if (!gdo.net.app["DD3"].initControl) {
+                    $("#wait").css("display", "none");
+                    $("#error").css("display", "");
+                    return;
+                }
+
+                instanceId = gdo.net.app["DD3"].initControl(callback);
+
+                test_bench[0] = function () {
+                    var rect = false, circles = 0, dcircles = 0, polygon = false;
+
+                    // == Basic Moves ==
+
+                    $('#createRect').click(function () {
+                        if (!rect) {
+                            server.sendOrder(instanceId, order("createRect", []), false);
+                            $(".basic_moves .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            rect = true;
+                        }
+                    });
+
+                    $('#removeRect').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("removeRect", []), false);
+                            $(".basic_moves .green").removeClass("green").addClass("red");
+                            $('#createRect').removeClass("red").addClass("green");
+                            rect = false;
+                        }
+                    });
+
+                    $('#translationX').click(function () {
+                        rect && server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
+                    });
+
+                    $('#translationY').click(function () {
+                        rect && server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
+                    });
+
+                    $('#rotation').click(function () {
+                        rect && server.sendOrder(instanceId, order("startRotation", ['R']), false);
+                    });
+
+                    $('#allMoves').click(function () {
+                        if (rect) {
+                            server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
+                            server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
+                            server.sendOrder(instanceId, order("startRotation", ["R"]), false);
+                        }
+                    });
+
+                    // == Superposition ==
+
+                    $('#createCircles').click(function () {
+                        if (!circles) {
+                            circles = 100;
+                            server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
+                            $(".superposition.non_distributed .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            $("#spanc").text(circles)
+                        }
+                    });
+
+                    $('#createDistributedCircles').click(function () {
+                        if (!dcircles) {
+                            dcircles = 10;
+                            server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
+                            $(".superposition.distributed .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            $("#spandc").text(dcircles * numClients)
+                        }
+                    });
+
+                    $('#removeCircles').click(function () {
+                        if (!!circles) {
+                            server.sendOrder(instanceId, order("removeCircles", []), false);
+                            $(".superposition.non_distributed .green").removeClass("green").addClass("red");
+                            $('#createCircles').removeClass("red").addClass("green");
+                            circles = 0;
+                            $("#spanc").text("");
+                        }
+                    });
+
+                    $('#removeDistributedCircles').click(function () {
+                        if (!!dcircles) {
+                            server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
+                            $(".superposition.distributed .green").removeClass("green").addClass("red");
+                            $('#createDistributedCircles').removeClass("red").addClass("green");
+                            dcircles = 0;
+                            $("#spandc").text("");
+                        }
+                    });
+
+                    $("#nbAddCircles").click(function (e) { e.stopPropagation(); });
+
+                    $('#addCircles').click(function () {
+                        var n = +$("#nbAddCircles").val();
+                        circles && (server.sendOrder(instanceId, order("createCircles", [n]), false), $("#spanc").text(circles += n));
+                    });
+
+                    $("#nbAddDistributedCircles").click(function (e) { e.stopPropagation(); });
+
+                    $('#addDistributedCircles').click(function () {
+                        var n = +$("#nbAddDistributedCircles").val();
+                        dcircles && (server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true), $("#spandc").text((dcircles += n) * numClients));
+                    });
+
+                    $('#moveCircles').click(function () {
+                        circles && server.sendOrder(instanceId, order("startMoveCircles", []), false);
+                    });
+
+                    $('#moveDistributedCircles').click(function () {
+                        dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
+                    });
+
+                    // == Group Transition ==
+
+                    $('#createPolygon').click(function () {
+                        if (!polygon) {
+                            server.sendOrder(instanceId, order("createPolygon", []), false);
+                            $(".group .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            polygon = true;
+                        }
+                    });
+
+                    $('#removePolygon').click(function () {
+                        if (polygon) {
+                            server.sendOrder(instanceId, order("removePolygon", []), false);
+                            $(".group .green").removeClass("green").addClass("red");
+                            $('#createPolygon').removeClass("red").addClass("green");
+                            polygon = false;
+                        }
+                    });
+
+                    $('#movePolygon').click(function () {
+                        polygon && server.sendOrder(instanceId, order("startMovePolygon", []), false);
+                    });
+
+                };
+
+                test_bench[2] = function () {
+                    $("#changeValues").click(function () {
+                        var n = +$("#timeTr").val();
+                        server.sendOrder(instanceId, order("changeValues", [n]), true);
+                    });
+                };
+
+                test_bench[3] = function () {
+                    var id = 0;
+                    var pos = {};
+                    var posC = {};
+                    var wr = 600, hr = 300;
+                    var selected = "";
+                    d3.select("#control_3").selectAll("svg").remove();
+                    var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
+
+                    svg.append("rect").attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", wr + "px")
+                        .attr("height", hr + "px")
+                        .attr("stroke", "black")
+                        .style("fill", "#EEE")
+                        .on("click", function () {
+                            selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                            selected = "";
+                        });
+
+                    var g = svg.append("g");
+
+                    $("#addRect").click(function () {
+                        id++;
+                        server.sendOrder(instanceId, order("createRect", ['d' + id]), false);
+                        var drag = d3.behavior.drag();
+                        var dragC = d3.behavior.drag();
+
+                        drag.on("drag", moveRect);
+                        drag.on("dragstart", function () {
+                            var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            pos.x = t[0] - d3.mouse(g.node())[0];
+                            pos.y = t[1] - d3.mouse(g.node())[1];
+                        });
+
+                        dragC.on("drag", resizeRect);
+                        dragC.on("dragstart", function () {
+                            var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            posC.x = t[0] - d3.mouse(g.node())[0];
+                            posC.y = t[1] - d3.mouse(g.node())[1];
+                        });
+
+                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [wr * 4 / 10, hr * 4 / 10] + ")");
+                        var r = rg.append("rect").attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * wr / 10)
+                            .attr("height", 2 * hr / 10)
+                            .attr("stroke", "black")
+                            .attr("fill", "#EEE")
+                            .call(drag)
+                            .on("click", function () {
+                                selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                selected = this.parentElement.id;
+                                d3.select(this).style("fill", "#FDD1FD");
+                                //this.parentElement.parentElement.appendChild(this.parentElement);
+                                //server.sendOrder(instanceId, order("frontRect", [selected]), false);
+                            });
+
+                        rg.append("circle").attr("cx", wr * 2 / 10)
+                            .attr("cy", hr * 2 / 10)
+                            .attr("r", 10)
+                            .attr("stroke", "transparent")
+                            .attr("fill", "rgba(252,231,31,0.5)")
+                            .call(dragC);
+
+                        server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                    });
+
+                    var moveRect = function () {
+                        server.sendOrder(instanceId, order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]), false);
+                        d3.select(this.parentElement).attr("transform", "translate(" + [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y] + ")");
+                    };
+
+                    var resizeRect = function () {
+                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]);
+                        server.sendOrder(instanceId, order("resizeRect", [this.parentElement.id, x / wr, y / hr]), false);
+                        d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
+                        d3.select(this).attr("cx", x).attr("cy", y);
+                    };
+
+                    var delRect = function () {
+                        server.sendOrder(instanceId, order("delRect", [this.id]), false);
+                        d3.select(this).remove();
+                    };
+
+                    $("#removeAllRect").click(function () {
+                        server.sendOrder(instanceId, order("delAllRect", []), true);
+                        d3.selectAll('g.r').remove();
+                    });
+
+                    server.sendOrder(instanceId, order("delAllRect", []), true);
+                };
+
+
+            });
+        });
+    </script>
+
+    <div id="wait" style="">
+        Please wait while app is initializing...
+    </div>
+
+    <div id="error" style="display:none">
+        <p style="color: rgb(237, 20, 51);font-size: 2.5em;">
+            :(
+        </p>
+        <p style="color: rgb(237, 20, 51);font-size:2.5em;">
+            Something went wrong, please <a href="javascript:parent.location.href=parent.location.href" style="color: rgb(237, 20, 51);">reload</a> the page<br>
+            <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initControl' was not initialized</span>
+        </p>
+    </div>
+
+    <div id="control_0" style="display:none">
+        <table class="table_control">
+            <tr class="basic_moves">
+                <td colspan="3">Basic moves</td>
+            </tr>
+            <tr class="basic_moves">
+                <td rowspan="4" class="green" id="createRect">Create Rectangle</td>
+                <td class="red" id="translationX">X Translation</td>
+                <td rowspan="4" class="red" id="removeRect">Remove Rectangle</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="translationY">Y Translation</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="rotation">Rotation</td>
+            </tr>
+            <tr class="basic_moves">
+                <td class="red" id="allMoves">All</td>
+            </tr>
+            <tr class="superposition">
+                <td colspan="3">Superposition</td>
+            </tr>
+            <tr class="superposition non_distributed">
+                <td rowspan="2" class="green" id="createCircles">Create Circles</td>
+                <td class="red" id="moveCircles">Move <span id="spanc"></span> Circles</td>
+                <td rowspan="2" class="red" id="removeCircles">Remove Circles</td>
+            </tr>
+            <tr class="superposition non_distributed">
+                <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
+            </tr>
+            <tr class="superposition distributed">
+                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
+                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+            </tr>
+            <tr class="superposition distributed">
+                <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
+            </tr>
+            <tr class="group">
+                <td colspan="3">Group transition</td>
+            </tr>
+            <tr class="group">
+                <td rowspan="2" class="green" id="createPolygon">Create</td>
+                <td class="red" id="movePolygon">Test 1</td>
+                <td rowspan="2" class="red" id="removePolygon">Remove</td>
+            </tr>
+            <tr class="group">
+                <td class="red">Test 2 (not implemented)</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_1" style="display:none">
+        Here will be the control panel for test 1
+    </div>
+
+    <div id="control_2" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="changeValues">Change Values</td>
+            </tr>
+            <tr>
+                <td class="green">Transition Duration : <input id="timeTr" type="number" value="1000" style="width:60px" /></td>
+            </tr>
+        </table>            
+</div>
+
+    <div id="control_3" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="addRect">Add Rectangle</td>
+            </tr>
+            <tr>
+                <td class="green" id="removeAllRect">Remove All</td>
+            </tr>
+        </table> 
+    </div>
+
+</body>
+</html>

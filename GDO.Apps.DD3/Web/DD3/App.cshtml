@@ -1,0 +1,591 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #EEE;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+            padding : 0px;
+            margin: 0px;
+            overflow-y: hidden;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .dot {
+          stroke: #000;
+        }
+    </style>
+</head>
+<body>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/d3.js"></script>
+    <script src="../../Scripts/peer.js"></script>
+
+    <script>
+        var dd3;
+
+        $(function () {          
+            $(document).ready(function () {
+                var gdo = parent.gdo,
+                    configName,
+                    configId,
+                    test_bench = {};
+
+                /*
+                // Get the configId
+                gdo.net.app.DD3.config.some(function (c) { return (gdo.net.app.DD3.config[c]) ? (configName = c, true) : false; });
+                configId = gdo.net.app.DD3.config[configName].id;
+                */
+
+                var launcher = function (configId) {
+                    if (dd3.state() === "ready") {
+                        test_bench[configId]();
+                    } else {
+                        dd3.on('ready', test_bench[configId]);
+                    }
+                };
+
+                var orderController = (function () {
+                    var t = function (order) {
+                        orderController.orders[order.name] ?
+                        orderController.orders[order.name].apply(null, order.args) :
+                        gdo.consoleOut('.DD3', 4, 'No test function corresponding to ' + order.name);
+                    };
+
+                    t.orders = {};
+
+                    return t;
+                })();
+                
+                if (!gdo.net.app["DD3"].initClient) {
+                    $("#error").css("display", "");
+                    parent.location.reload();
+                    return;
+                }
+
+                // Launch dd3 providing the orderController to receive order from the controller page
+                dd3 = gdo.net.app["DD3"].initClient(launcher, orderController);
+
+                // Transitions
+                test_bench['0'] = function () {
+
+                    var svg = dd3.svgCanvas,
+	                    width = dd3.cave.svgWidth,
+	                    height = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
+
+                    svg.append('rect')
+                        .attr("x", p.left(0))
+                        .attr("y", p.top(0))
+                        .attr("width", bwidth)
+                        .attr("height", bheight)
+                        .attr("stroke", "brown")
+                        .attr("fill", "#BBB");
+
+                    svg.append('g')
+                        .attr("transform", "translate(20,10)")
+                        .append('rect')
+                        .unwatch()
+                        .attr("x", -20)
+                        .attr("y", -10)
+                        .attr("width", width)
+                        .attr("height", height)
+                        .attr("stroke", "black")
+                        .attr("fill", "transparent");
+
+                    var circleGroup = svg.append("g").attr("id", "dd3_cg");
+                    var circleGroupDistributed = svg.append("g").attr("id", "dd3_cgd");
+
+                    var rectG = svg.append('g').attr("id", "dd3_rect").append('g');
+                    var rect;
+
+                    var polygonGroupOutter = svg.append('g').attr('id', 'dd3_poly').append('g'),
+                        polygonGroupInner;
+
+                    svg.append("text")
+                        .unwatch()
+                        .text([r, c])
+                        .attr("font-size", 40)
+                        .attr("dominant-baseline", "text-before-edge")
+                        .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
+
+                    dd3.defineEase("normalEase", d3.ease('linear'));
+
+                    dd3.defineTween("myTween", function () {
+                        return function (t) {
+                            this.setAttribute("width", t*500);
+                        }
+                    });
+
+                    dd3.defineStyleTween("my3Tween", function (d, i, a) {
+                        var i = d3.interpolate(a, "#AAA");
+                        return function (t) {
+                            return i(t);
+                        }
+                    });
+
+                    dd3.defineAttrTween("tweenRotation", function (d, i, a) {
+                        return d3.interpolateString(a, a.replace("rotate(0", "rotate(720"));
+                    });
+
+                    orderController.orders['createRect'] = function () {
+                        rect = rectG.append('rect');
+                        rect.attr("x", width / 10)
+                            .attr("y", 4.5 * height / 10)
+                            .attr("width", width / 10)
+                            .attr("height", height / 10)
+                            .attr("stroke", "black")
+                            .style("fill", "#EEE")
+                            .text("None");
+                    };
+
+                    orderController.orders['removeRect'] = function () {
+                        rectG.selectAll("rect").remove();
+                    };
+
+                    orderController.orders['createCircles'] = function (number, opacity) {
+                        circleGroup.selectAll(".new").data(d3.range(number || 10)).enter()
+                            .append('circle')
+                            .attr("class", "c new");
+
+                        circleGroup.selectAll(".new")
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 20 * Math.random() + 20; })
+                            .attr("stroke", "black")
+                            .attr("opacity", opacity || 1)
+                            .attr("fill", "#FFF")
+                            .classed("new", false);
+                    };
+
+                    orderController.orders['removeCircles'] = function () {
+                        circleGroup.selectAll(".c").remove();
+                    };
+                    
+                    orderController.orders['createDistributedCircles'] = function (number, opacity) {
+                        circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
+                            .append('g')
+                            .append('circle')
+                            .attr("class", "c new");
+
+                        circleGroupDistributed.selectAll(".new")
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 20 * Math.random() + 20; })
+                            .attr("stroke", "black")
+                            .attr("opacity", opacity || 1)
+                            .attr("fill", "#FFF")
+                            .classed("new", false);
+                    };
+
+                    orderController.orders['removeDistributedCircles'] = function () {
+                        circleGroupDistributed.selectAll(".c").remove();
+                    };
+
+                    orderController.orders['createPolygon'] = function () {
+                        polygonGroupInner = polygonGroupOutter.attr('transform', 'translate(0,0)').append("g");
+                        polygonGroupInner
+			               .append('polygon')
+			               .attr("points", "50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180")
+			               .attr("transform", "scale(6) translate(-25 -160)")
+			               .attr("stroke", "orange")
+			               .attr("stroke-width", "4")
+			               .attr("fill", "transparent");
+                    };
+
+                    orderController.orders['removePolygon'] = function () {
+                        polygonGroupOutter.selectAll('g').remove();
+                        polygonGroupOutter.transition();
+                    };
+
+                    orderController.orders['startXTranslation'] = function (name) {
+                        rect.transition(name)
+                            .duration(10000)
+                            .style("fill", "#AAA")
+                            .attr('x', 8 * width / 10)
+                            .text("test")
+                            .ease("normalEase")
+                            //.tween('name', 'myTween')
+                            //.styleTween('fill', 'my3Tween')
+                            .transition(name)
+                            .duration(5000)
+                            .style("fill", "#EEE")
+                            .attr('x', width / 10);
+                    };
+
+                    orderController.orders['startYTranslation'] = function (name) {
+                        rect.transition(name)
+                            .duration(10000)
+                            .attr('y', 8 * height / 10)
+                            .transition(name)
+                            .duration(5000)
+                            .attr('y', 4.5 * height / 10);
+                    };
+
+                    orderController.orders['startRotation'] = function (name) {
+                        rect.transition(name)
+                            .duration(3000)
+                            .attr('transform', 'rotate(-40)')
+                            .transition(name)
+                            .duration(3000)
+                            .attr('transform', 'rotate(40)')
+                            .transition(name)
+                            .duration(3000)
+                            .attr('transform', 'rotate(0)');
+                    };
+
+                    orderController.orders['startMoveCircles'] = function (name) {
+                        circleGroup.selectAll(".c")
+                            .transition()
+                            .duration(15000)
+                            .precision(0.05)
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 40 * Math.random() + 20; });
+                    };
+
+                    orderController.orders['startMoveDistributedCircles'] = function (name) {
+                        circleGroupDistributed.selectAll(".c")
+                            .transition()
+                            .duration(15000)
+                            .precision(0.05)
+                            .attr("cx", function () { return width * Math.random(); })
+                            .attr("cy", function () { return height * Math.random(); })
+                            .attr("r", function () { return 30 * Math.random() + 20; });
+                    };
+
+                    orderController.orders['startMovePolygon'] = function () {
+                        var pw = 300, ph = 300, n = 50, period = 2;
+                        var points = d3.range(n + 1).map(function (d) { var x = d * (width - pw) / n; var y =  (1 + Math.cos(d / n * 2 * Math.PI * period)) * (height - ph) / 2; return [x, y]; });
+
+                        var tr = polygonGroupOutter
+                            .transition()
+                            .duration(1000)
+                            .attr('transform', 'translate(' + points[0][0] + ' ' + points[0][1] + ')');
+                        
+                        points.forEach(function (p) {
+                            tr = tr.transition()
+                                .duration(200)
+                                .ease("linear")
+                                .attr('transform', 'translate(' + p[0] + ' ' + p[1] + ')');
+                        });
+
+                        polygonGroupInner
+                            .attr('transform', 'rotate(0 ' + [pw / 2, ph / 2] + ')')
+                            .transition()
+                            .attrTween('transform', 'tweenRotation')
+                            .duration(10000)
+                            .ease("linear");
+
+                    };
+
+                    /*
+                    orderController.orders['createDistributedCircles']();
+                    var f = function () {
+                        orderController.orders['startMoveDistributedCircles']();
+                        setTimeout(f, 21000);
+                    };
+                    dd3.synchronize(f, 5000);
+                //*/
+                };
+                
+                // ScatterPlot
+                test_bench['1'] = function () {
+                    var xScale, yScale;
+                    var data, pathData;
+
+                    dd3.getDataDimensions('scatterplot4000', function (dim) {
+                        var extentX = dim.x.max - dim.x.min,
+                            extentY = dim.y.max - dim.y.min,
+                            coef = 0.05, c = 1;
+
+                        var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
+                            yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
+
+                        // Setup Scales
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
+
+                        dd3.getPointData('pointData', 'scatterplot4000', function (d) {
+                            data = d;
+                            draw();
+                        }, xScale, yScale);
+
+                        dd3.getPathData('pathData', 'scatterplot4000', function (d) {
+                            pathData = d;
+                            draw();
+                        }, xScale, yScale, 'x', 'y');
+
+                    });
+
+                    var draw = function () {
+                        if (!data || !pathData)
+                            return;
+
+                        var svg = dd3.svgCanvas,
+                            pathGroup = svg.append("g").attr("id", "dd3_path"),
+                            circleGroup = svg.append("g").attr("id", "dd3_circle");
+
+                        // Setup Axis
+                        var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
+                            yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                        // x-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "x axis")
+                          .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
+                          .call(xAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("x", dd3.cave.svgWidth)
+                          .attr("y", -6)
+                          .style("text-anchor", "end")
+                          .text("X axis");
+
+                        // y-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "y axis")
+                          .attr("transform", "translate(" + [0, 0] + ")")
+                          .call(yAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("transform", "rotate(-90)")
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("Y axis");
+
+                        // Draw dots
+                        circleGroup.selectAll(".dot")
+                          .data(data)
+                        .enter()
+                          .append("g")
+                          .append("circle")
+                          .attr("class", "dot")
+                          .attr("cx", function (d) { return xScale(d['x']); })
+                          .attr("cy", function (d) { return yScale(d['y']); })
+                          .attr("r", 3)
+                          .style("fill", function (d, i) { return "black"; })
+                          .style("stroke", "red");
+
+                        var lineFunction = d3.svg.line()
+                                .x(function (d) { return xScale(d['x']); })
+                                .y(function (d) { return yScale(d['y']); })
+                                .interpolate("monotone");
+
+                        //*
+                        pathGroup.append("path").datum(pathData)
+                            .unwatch()
+                            .attr("d", lineFunction)
+                            .attr("stroke", "blue")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+                        //*/
+                    };
+                };
+
+                // Graphs
+                test_bench['2'] = function () {
+                    var dim, xDomain, xRange, xAxis, yScale, yAxis;
+                    var svg = dd3.svgCanvas;
+
+                    dd3.getDataDimensions('barData', function (d) {
+                        dim = d
+                        var extent = dim.gdp.max - dim.gdp.min, coef = 0.2, c = 0;
+                        var yDomain = [0, +dim.gdp.max + coef * extent + c];
+                        xDomain = d3.range(dim.length);
+
+                        // Setup x
+                        xRange = dd3.scale.ordinal().rangeBands([0, dd3.cave.svgWidth], 0.2);
+                        xAxis = d3.svg.axis().scale(xRange).orient("bottom");
+
+                        // Setup y
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]);
+                        yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                        xRange.domain(xDomain);
+                        yScale.domain(yDomain);
+
+                        dd3.getBarData('bar', 'barData', draw, xRange, 'gdp');
+                    });
+
+                    var draw = function (barData) {
+                        barData.forEach(function (d) { xDomain[d.order] = d.country; });
+                        xRange.domain(xDomain);
+
+                        //  PLOT X AXIS
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "x axis")
+                          .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
+                          .call(xAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("x", dd3.cave.svgWidth)
+                          .attr("y", -6)
+                          .style("text-anchor", "middle")
+                          .text("Countries");
+
+                        //  PLOT Y AXIS
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "y axis")
+                          .attr("transform", "translate(" + [0, 0] + ")")
+                          .call(yAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("transform", "rotate(-90)")
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("GDP");
+
+                        // PLOT BAR
+                        svg.append("g")
+                          .attr("id", "dd3_rect")
+                          .selectAll('rect')
+                          .data(barData)
+                          .enter()
+                          .append('rect')
+                          .attr('x', function (d) { return xRange(d.country); })
+                          .attr('y', function (d) {
+                              return (yScale(d.gdp));
+                          })
+                          .attr('width', xRange.rangeBand())
+                          .attr('height', function (d) {
+                              return (yScale(0) - yScale(d.gdp));
+                          })
+                          .attr('fill', 'steelblue')
+                          .attr('stroke', 'black')
+                          .attr('stroke-width', '2');
+                    };
+
+                    var color = d3.scale.category20(),
+                        i = 0;
+
+                    orderController.orders['changeValues'] = function (time) {
+                        var randomGDP = xDomain.map(function () { return dim.gdp.max * Math.random(); });
+
+                        svg.selectAll('rect')
+                          .transition()
+                          .duration(time)
+                          .precision(0.1)
+                          .attr('fill', function () { return color(i); })
+                          .attr({
+                              'y': function (d, i) {
+                                  return (yScale(randomGDP[i]));
+                              },
+                              'height': function (d, i) {
+                                  return (yScale(0) - yScale(randomGDP[i]));
+                              }
+                          });
+
+                        i++;
+                    };
+
+                };
+
+                // Hand-moving
+                test_bench['3'] = function () {
+                    var w = 682,
+                        h = 455;
+                    var svg = dd3.svgCanvas,
+	                    width = dd3.cave.svgWidth,
+	                    height = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight;
+
+                    orderController.orders['createRect'] = function (id) {
+                        var rectG = svg.append('g').attr('id', "r" + id);
+                        rectG.attr("transform", "translate(" + [4 * width / 10, 4 * height / 10] + ")");
+                        //*
+                        rectG.append('rect')
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * width / 10)
+                            .attr("height", 2 * height / 10)
+                            .attr("fill", "transparent")
+                            .attr("stroke", "black");
+                        //*/
+                        rectG.append("image")
+                            .attr("xlink:href", "illustration.png")
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * width / 10)
+                            .attr("height", 2 * width / 10);
+                    };
+
+                    orderController.orders['moveRect'] = function (id, x, y) {
+                        var rectG = svg.select("#r" + id);
+                        rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
+                    };
+
+                    orderController.orders['frontRect'] = function (id) {
+                        var g = svg.select("#r" + id).node();
+                        g.parentElement.appendChild(g);
+                    };
+
+                    orderController.orders['resizeRect'] = function (id, x, y) {
+                        var img = svg.select("#r" + id).select("image");
+                        var r = svg.select("#r" + id).select("rect");
+                        img.attr("width", x * width).attr("height", y * height);
+                        r.attr("width", x * width).attr("height", y * height);
+                    };
+
+                    orderController.orders['delRect'] = function (id) {
+                        svg.select("g").remove();
+                        //svg.select("#" + id).remove();
+                    };
+
+                    orderController.orders['delAllRect'] = function () {
+                        svg.selectAll("g").remove();
+                    };
+
+                };
+            });
+        });
+
+    </script>
+
+    <div id="error" style="display:none">
+        <p style="color: rgb(237, 20, 51);font-size: 2.5em;">
+            :(
+        </p>
+        <p style="color: rgb(237, 20, 51);font-size:2.5em;">
+            Something went wrong, please reload the page<br>
+            <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initClient' was not initialized</span>
+        </p>
+    </div>
+
+</body>
+</html>
