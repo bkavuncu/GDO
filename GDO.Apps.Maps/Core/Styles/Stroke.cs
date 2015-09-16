@@ -21,7 +21,7 @@ namespace GDO.Apps.Maps.Core.Styles
         Miter = 3
     };
 
-    public class Stroke
+    public class Stroke : Core.Style
     {
         public string Color { get; set; }
         public int LineCap { get; set; }

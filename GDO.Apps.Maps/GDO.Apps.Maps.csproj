@@ -156,6 +156,7 @@
     <Compile Include="Core\Styles\Image.cs" />
     <Compile Include="Core\Styles\RegularShape.cs" />
     <Compile Include="Core\Styles\Stroke.cs" />
+    <Compile Include="Core\Styles\Style.cs" />
     <Compile Include="Core\Styles\Text.cs" />
     <Compile Include="Core\View.cs" />
     <Compile Include="MapsApp.cs" />

@@ -6,23 +6,36 @@ using GDO.Apps.Maps.Core.Styles;
 
 namespace GDO.Apps.Maps.Core
 {
+    public enum StyleTypes
+    {
+        None = -1,
+        Base = 0,
+        Circle = 1,
+        Fill = 2,
+        Icon = 3, 
+        Image = 4,
+        RegularShape = 5,
+        Stroke = 6,
+        Style = 7,
+        Text = 8
+    };
+
     public class Style
     {
-        public Geometry Geometry { get; set; }
-        public Fill Fill { get; set; }
-        public Styles.Image Image { get; set; }
-        public Stroke Stroke { get; set; }
-        public Text Text { get; set; }
-        public int ZIndex { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Type { get; set; }
 
-        public Style(Geometry geometry, Fill fill, Styles.Image image, Stroke stroke, Text text, int zIndex)
+        public Style()
         {
-            Geometry = geometry;
-            Fill = fill;
-            Image = image;
-            Stroke = stroke;
-            Text = text;
-            ZIndex = zIndex;
+
+        }
+
+        public void Modify(int id, string name, int type)
+        {
+            Id = id;
+            Name = name;
+            Type = type;
         }
     }
 }

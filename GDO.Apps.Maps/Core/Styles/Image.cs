@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core.Styles
 {
-    public class Image
+    public class Image : Core.Style
     {
         public float Opacity { get; set; }
         public bool RotateWithView { get; set; }
