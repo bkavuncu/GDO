@@ -126,22 +126,26 @@
     <Compile Include="Core\Geometries\Circle.cs" />
     <Compile Include="Core\Image.cs" />
     <Compile Include="Core\Interaction.cs" />
-    <Compile Include="Core\Interactions\Draw.cs" />
-    <Compile Include="Core\Interactions\Select.cs" />
+    <Compile Include="Core\Interactions\DrawInteraction.cs" />
+    <Compile Include="Core\Interactions\SelectInteraction.cs" />
     <Compile Include="Core\Layer.cs" />
-    <Compile Include="Core\Layers\Heatmap.cs" />
-    <Compile Include="Core\Layers\Image.cs" />
-    <Compile Include="Core\Layers\Tile.cs" />
-    <Compile Include="Core\Layers\Vector.cs" />
+    <Compile Include="Core\Layers\HeatmapLayer.cs" />
+    <Compile Include="Core\Layers\ImageLayer.cs" />
+    <Compile Include="Core\Layers\TileLayer.cs" />
+    <Compile Include="Core\Layers\VectorLayer.cs" />
     <Compile Include="Core\Layout.cs" />
-    <Compile Include="Core\Sources\BingMaps.cs" />
-    <Compile Include="Core\Sources\Cluster.cs" />
-    <Compile Include="Core\Sources\Image.cs" />
-    <Compile Include="Core\Sources\Images\Canvas.cs" />
-    <Compile Include="Core\Sources\Images\Static.cs" />
-    <Compile Include="Core\Sources\Images\Vector.cs" />
-    <Compile Include="Core\Sources\Tile.cs" />
-    <Compile Include="Core\Sources\Vector.cs" />
+    <Compile Include="Core\Sources\BingMapsSource.cs" />
+    <Compile Include="Core\Sources\ClusterSource.cs" />
+    <Compile Include="Core\Sources\ImageSource.cs" />
+    <Compile Include="Core\Sources\Images\CanvasImage.cs" />
+    <Compile Include="Core\Sources\Images\StaticImage.cs" />
+    <Compile Include="Core\Sources\Images\VectorImage.cs" />
+    <Compile Include="Core\Sources\TileSource.cs" />
+    <Compile Include="Core\Sources\Tiles\TileGrid.cs" />
+    <Compile Include="Core\Sources\Tiles\TileImage.cs" />
+    <Compile Include="Core\Sources\Tiles\TileJSON.cs" />
+    <Compile Include="Core\Sources\Tiles\TileVector.cs" />
+    <Compile Include="Core\Sources\VectorSource.cs" />
     <Compile Include="Core\Map.cs" />
     <Compile Include="Core\Position.cs" />
     <Compile Include="Core\Source.cs" />
@@ -153,7 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Controls\" />
-    <Folder Include="Core\Sources\Tiles\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">

@@ -301,7 +301,8 @@ namespace GDO.Core
                     string nodeMap = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNodeMap());
                     string neighbourMap = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
                     string appList = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetAppList());
-                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances);
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode,
+                        nodeMap, neighbourMap, appList, nodes, sections, apps, instances);
                 }
                 catch (Exception e)
                 {

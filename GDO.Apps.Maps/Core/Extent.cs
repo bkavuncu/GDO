@@ -11,5 +11,13 @@ namespace GDO.Apps.Maps.Core
         public double MinY { get; set; }
         public double MaxX { get; set; }
         public double MaxY { get; set; }
+
+        public Extent(double minX, double minY, double maxX, double maxY)
+        {
+            MinX = minX;
+            MinY = minY;
+            MaxX = maxX;
+            MaxY = maxY;
+        }
     }
 }

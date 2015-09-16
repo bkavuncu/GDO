@@ -7,7 +7,7 @@ using GDO.Apps.Maps.Core;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Core;
 using GDO.Utility;
-using Image = GDO.Apps.Maps.Core.Sources.Image;
+using Image = GDO.Apps.Maps.Core.Sources.ImageSource;
 
 namespace GDO.Apps.Maps
 {
@@ -33,14 +33,16 @@ namespace GDO.Apps.Maps
 
         //Layer
 
-        public int AddLayer<T> (string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution) where T : Layer, new()
+        public int AddLayer<T> (string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
+            float opacity, int zIndex, bool visible, int minResolution, int maxResolution) where T : Layer, new()
         {
 
             try
             {
                 int layerId = Layers.GetAvailableSlot();
                 T layer = new T();
-                layer.Modify(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                layer.Modify(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity,
+                    zIndex, visible, minResolution, maxResolution);
                 Layers.Add<T>(layerId, layer);
                 return layerId;
             }
@@ -51,11 +53,13 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public bool ModifyLayer(int id, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+        public bool ModifyLayer(int id, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
+            float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             try
             {
-                Layers.GetValue<Core.Layer>(id).Modify(id, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                Layers.GetValue<Core.Layer>(id).Modify(id, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation,
+                    hue, opacity, zIndex, visible, minResolution, maxResolution);
                 return true;
             }
             catch (Exception e)
@@ -77,7 +81,6 @@ namespace GDO.Apps.Maps
             {
                 return null;
             }
-
         }
 
         public bool RemoveLayer(int layerId)
@@ -174,27 +177,63 @@ namespace GDO.Apps.Maps
 
         //Source
 
-        public int AddSource()
+        public int AddSource<T>(string name, int type) where T : Source, new()
         {
-
-            return -1;
+            try
+            {
+                int sourceId = Sources.GetAvailableSlot();
+                T source = new T();
+                source.Modify(sourceId, name, type);
+                Sources.Add<T>(sourceId, source);
+                return sourceId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
         }
 
-        public bool ModifySource(int sourceId)
+        public bool ModifySource(int id, string name, int type)
         {
-
-            return false;
+            try
+            {
+                Sources.GetValue<Core.Source>(id).Modify(id, name, type);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         public string GetSource(int sourceId)
         {
-            return "";
+            Source source = Sources.GetValue<Source>(sourceId);
+            if (source != null)
+            {
+                string serializedSource = Newtonsoft.Json.JsonConvert.SerializeObject(Sources.GetValue<Source>(sourceId));
+                return serializedSource;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public bool RemoveSource(int sourceId)
         {
-
-            return false;
+            try
+            {
+                Sources.Remove(sourceId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         //Control

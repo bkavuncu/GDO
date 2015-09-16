@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web;
 using GDO.Apps.Maps.Core;
+using GDO.Apps.Maps.Core.Sources;
+using GDO.Apps.Maps.Core.Sources.Tiles;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
 
@@ -105,57 +108,21 @@ namespace GDO.Apps.Maps
 
         //Layer
 
-        public void AddLayer(int instanceId, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow,
-            int weight, int preload, int styleId)
+        public void AddLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             lock (Cave.AppLocks[instanceId])
             {
-                int layerId = -1;
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    switch (type)
-                    {
-                        case (int)LayerTypes.Base:
-                            layerId = maps.AddLayer<Core.Layer>(name, (int)LayerTypes.Base, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
-                            break;
-                        case (int)LayerTypes.Heatmap:
-                            layerId = maps.AddLayer<Core.Layers.Heatmap>(name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution); 
-                            if (layerId >= 0)
-                            {
-                                maps.Layers.GetValue<Core.Layers.Heatmap>(layerId).Modify(gradient, radius, shadow, weight);
-                            }
-                            break;
-                        case (int)LayerTypes.Image:
-                            layerId = maps.AddLayer<Core.Layers.Image>(name, (int)LayerTypes.Image, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
-                            if (layerId >= 0)
-                            {
-                                maps.Layers.GetValue<Core.Layers.Image>(layerId).Modify();
-                            }
-                            break;
-                        case (int)LayerTypes.Vector:
-                            layerId = maps.AddLayer<Core.Layers.Vector>(name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
-                            if (layerId >= 0)
-                            {
-                                maps.Layers.GetValue<Core.Layers.Vector>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
-                            }
-                            break;
-                        case (int)LayerTypes.Tile:
-                            layerId = maps.AddLayer<Core.Layers.Tile>(name, (int)LayerTypes.Tile, sourceId, brightness, contrast, saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
-                            if (layerId >= 0)
-                            {
-                                maps.Layers.GetValue<Core.Layers.Tile>(layerId).Modify(preload);
-                            }
-                            break;
-                        case (int)LayerTypes.None:
-                            break;
-                        default:
-                            break;
-                    }
+                    int layerId = -1;
+                    layerId = maps.AddLayer<Core.Layer>(name, (int)LayerTypes.Base, sourceId, brightness, contrast, saturation,
+                        hue, opacity, zIndex, visible, minResolution, maxResolution);
                     if (layerId >= 0)
                     {
                         BroadcastLayer(instanceId, layerId);
-                    }  
+                    }
                 }
                 catch (Exception e)
                 {
@@ -164,38 +131,193 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyLayer(int instanceId, int layerId, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow,
-            int weight, int preload, int styleId)
+        public void AddHeatmapLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow, int weight)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    maps.ModifyLayer(layerId, name, type, sourceId, brightness, contrast, saturation, hue, opacity,
-                        zIndex, visible, minResolution, maxResolution);
-                    switch (type)
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int layerId = -1;
+                    layerId = maps.AddLayer<Core.Layers.HeatmapLayer>(name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation,
+                        hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    if (layerId >= 0)
                     {
-                        case (int) LayerTypes.Base:
-                            break;
-                        case (int) LayerTypes.Heatmap:
-                            maps.Layers.GetValue<Core.Layers.Heatmap>(layerId).Modify(gradient, radius, shadow, weight);
-                            break;
-                        case (int) LayerTypes.Image:
-                            maps.Layers.GetValue<Core.Layers.Image>(layerId).Modify();
-                            break;
-                        case (int) LayerTypes.Vector:
-                            maps.Layers.GetValue<Core.Layers.Vector>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
-                            break;
-                        case (int) LayerTypes.Tile:
-                            maps.Layers.GetValue<Core.Layers.Tile>(layerId).Modify(preload);
-                            break;
-                        case (int) LayerTypes.None:
-                            break;
-                        default:
-                            break;
+                        maps.Layers.GetValue<Core.Layers.HeatmapLayer>(layerId).Modify(gradient, radius, shadow, weight);
+                        BroadcastLayer(instanceId, layerId);
                     }
-                    BroadcastLayer(instanceId,layerId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddImageLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int layerId = -1;
+                    layerId = maps.AddLayer<Core.Layers.ImageLayer>(name, (int)LayerTypes.Image, sourceId, brightness, contrast, saturation,
+                        hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    if (layerId >= 0)
+                    {
+                        maps.Layers.GetValue<Core.Layers.ImageLayer>(layerId).Modify();
+                        BroadcastLayer(instanceId, layerId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddVectorLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int styleId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int layerId = -1;
+                    layerId = maps.AddLayer<Core.Layers.VectorLayer>(name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation,
+                        hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    if (layerId >= 0)
+                    {
+                        maps.Layers.GetValue<Core.Layers.VectorLayer>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
+                        BroadcastLayer(instanceId, layerId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddTileLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int preload)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int layerId = -1;
+                    layerId = maps.AddLayer<Core.Layers.TileLayer>(name, (int)LayerTypes.Tile, sourceId, brightness, contrast, saturation,
+                        hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    if (layerId >= 0)
+                    {
+                        maps.Layers.GetValue<Core.Layers.TileLayer>(layerId).Modify(preload);
+                        BroadcastLayer(instanceId, layerId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyLayer(layerId, name, (int)LayerTypes.Base, sourceId, brightness, contrast, saturation, hue, opacity,
+                        zIndex, visible, minResolution, maxResolution);
+                    BroadcastLayer(instanceId, layerId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyHeatmapLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius, int shadow,
+            int weight)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyLayer(layerId, name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation, hue, opacity,
+                        zIndex, visible, minResolution, maxResolution);
+                    BroadcastLayer(instanceId, layerId);
+                    maps.Layers.GetValue<Core.Layers.HeatmapLayer>(layerId).Modify(gradient, radius, shadow, weight);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyImageLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyLayer(layerId, name, (int)LayerTypes.Image, sourceId, brightness, contrast, saturation, hue, opacity,
+                        zIndex, visible, minResolution, maxResolution);
+                    BroadcastLayer(instanceId, layerId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyVectorLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int styleId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyLayer(layerId, name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation, hue, opacity,
+                        zIndex, visible, minResolution, maxResolution);
+                    BroadcastLayer(instanceId, layerId);
+                    maps.Layers.GetValue<Core.Layers.VectorLayer>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyTileLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
+            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int preload)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyLayer(layerId, name, (int)LayerTypes.Tile, sourceId, brightness, contrast, saturation, hue, opacity,
+                        zIndex, visible, minResolution, maxResolution);
+                    BroadcastLayer(instanceId, layerId);
+                    maps.Layers.GetValue<Core.Layers.TileLayer>(layerId).Modify(preload);
                 }
                 catch (Exception e)
                 {
@@ -214,11 +336,11 @@ namespace GDO.Apps.Maps
                     string serializedLayer = maps.GetLayer(layerId);
                     if (serializedLayer != null)
                     {
-                        Clients.Caller.receiveLayer(instanceId, layerId, serializedLayer, true);
+                        Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
                     }
                     else
                     {
-                        Clients.Caller.receiveLayer(instanceId, layerId, "", false);
+                        Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
                     }
                 }
                 catch (Exception e)
@@ -236,11 +358,11 @@ namespace GDO.Apps.Maps
                 string serializedLayer = maps.GetLayer(layerId);
                 if (serializedLayer != null)
                 {
-                    Clients.All.receiveLayer(instanceId, layerId, serializedLayer, true);
+                    Clients.All.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
                 }
                 else
                 {
-                    Clients.All.receiveLayer(instanceId, layerId, "", false);
+                    Clients.All.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
                 }
             }
             catch (Exception e)
@@ -431,13 +553,19 @@ namespace GDO.Apps.Maps
 
         //Source
 
-        public void AddSource(int instanceId)
+        public void AddSource(int instanceId, string name)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Source>(name, (int)SourceTypes.Base);
+                    if (sourceId >= 0)
+                    {
+                        BroadcastSource(instanceId, sourceId);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -446,13 +574,20 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifySource(int instanceId, int sourceId)
+        public void AddBingMapsSource(int instanceId, string name, string culture, string key, string imagerySet)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.BingMapsSource>(name, (int)SourceTypes.Base);
+                    if (sourceId >= 0)
+                    {
+                        maps.Sources.GetValue<Core.Sources.BingMapsSource>(sourceId).Modify(culture, key, imagerySet);
+                        BroadcastSource(instanceId, sourceId);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -460,6 +595,216 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+
+        public void AddClusterSource(int instanceId, string name, int distance, int[] extent, int vectorSourceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.ClusterSource>(name, (int)SourceTypes.Cluster);
+                    if (sourceId >= 0)
+                    {
+                        maps.Sources.GetValue<Core.Sources.ClusterSource>(sourceId).Modify(distance, new Extent(extent[0],extent[1],extent[2],extent[3]),
+                            maps.Sources.GetValue<VectorSource>(vectorSourceId));
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void AddImageSource(int instanceId, string name)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.ImageSource>(name, (int)SourceTypes.Image);
+                    if (sourceId >= 0)
+                    {
+                        //maps.Sources.GetValue<Core.Sources.ClusterSource>(sourceId).Modify();
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddCanvasImageSource(int instanceId, string name)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.Images.CanvasImage>(name, (int)SourceTypes.ImageCanvas);
+                    if (sourceId >= 0)
+                    {
+                        //maps.Sources.GetValue<Core.Sources.ClusterSource>(sourceId).Modify();
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddStaticImageSource(int instanceId, string name, int width, int height, string url, int[] extent)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.Images.StaticImage>(name, (int)SourceTypes.ImageStatic);
+                    if (sourceId >= 0)
+                    {
+                        maps.Sources.GetValue<Core.Sources.Images.StaticImage>(sourceId).Modify(width, height,url, 
+                            new Extent(extent[0],extent[1],extent[2],extent[3]));
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        public void AddVectorImageSource(int instanceId, string name, int vectorSourceId, int styleId, double ratio)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.Images.VectorImage>(name, (int)SourceTypes.ImageVector);
+                    if (sourceId >= 0)
+                    {
+                        VectorSource vectorSource = maps.Sources.GetValue<Core.Sources.VectorSource>(vectorSourceId);
+                        Style style = maps.Styles.GetValue<Style>(styleId);
+                        maps.Sources.GetValue<Core.Sources.Images.VectorImage>(sourceId).Modify(vectorSource,style,ratio);
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddTileSource(int instanceId, string name)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.TileSource>(name, (int)SourceTypes.Tile);
+                    if (sourceId >= 0)
+                    {
+                        //maps.Sources.GetValue<Core.Sources.ClusterSource>(sourceId).Modify();
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddTileImageSource(int instanceId, string name, bool opaque)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.Tiles.TileImage>(name, (int)SourceTypes.TileImage);
+                    if (sourceId >= 0)
+                    {
+                        maps.Sources.GetValue<Core.Sources.Tiles.TileImage>(sourceId).Modify(opaque);
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddTileJsonSource(int instanceId, string name, string url)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.Tiles.TileJSON>(name, (int)SourceTypes.TileJSON);
+                    if (sourceId >= 0)
+                    {
+                        maps.Sources.GetValue<Core.Sources.Tiles.TileJSON>(sourceId).Modify(url);
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddTileVectorSource(int instanceId, string name, string url, string[] urls, double[] extent, int minZoom, int maxZoom, int tileWidth,
+            int[] tileWidths, int tileHeight, int[] tileHeights, double[] origin, float[] resolutions)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<Core.Sources.Tiles.TileJSON>(name, (int)SourceTypes.TileJSON);
+                    if (sourceId >= 0)
+                    {
+                        Extent _extent = new Extent(extent[0],extent[1],extent[2],extent[3]);
+                        Coordinate _origin = new Coordinate(origin[0],origin[1],origin[2],origin[3]);
+                        TileGrid _tileGrid = new TileGrid(_extent,minZoom,maxZoom,tileWidth,tileWidths,tileHeight,tileHeights,_origin,resolutions);
+                        maps.Sources.GetValue<Core.Sources.Tiles.TileVector>(sourceId).Modify(_tileGrid,url,urls);
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        //TODO Tile Sources
+
+        //TODO Modify Sources
 
         public void RequestSource(int instanceId, int sourceId)
         {
