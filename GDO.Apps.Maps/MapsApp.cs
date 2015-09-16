@@ -67,8 +67,17 @@ namespace GDO.Apps.Maps
 
         public string GetLayer(int layerId)
         {
-            string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId));
-            return serializedLayer;
+            Layer layer = Layers.GetValue<Layer>(layerId);
+            if (layer != null)
+            {
+                string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId));
+                return serializedLayer;
+            }
+            else
+            {
+                return null;
+            }
+
         }
 
         public bool RemoveLayer(int layerId)

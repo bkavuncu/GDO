@@ -211,8 +211,15 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string layer = maps.GetLayer(layerId);
-                    Clients.Caller.receiveLayer(instanceId, layerId, layer);
+                    string serializedLayer = maps.GetLayer(layerId);
+                    if (serializedLayer != null)
+                    {
+                        Clients.Caller.receiveLayer(instanceId, layerId, serializedLayer, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveLayer(instanceId, layerId, "", false);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -226,8 +233,15 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string layer = maps.GetLayer(layerId);
-                Clients.All.receiveLayer(instanceId, layerId, layer, true);
+                string serializedLayer = maps.GetLayer(layerId);
+                if (serializedLayer != null)
+                {
+                    Clients.All.receiveLayer(instanceId, layerId, serializedLayer, true);
+                }
+                else
+                {
+                    Clients.All.receiveLayer(instanceId, layerId, "", false);
+                }
             }
             catch (Exception e)
             {
@@ -243,7 +257,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveLayer(layerId);
-                    Clients.All.receiveLayer(instanceId, layerId, "", false);
+                    BroadcastLayer(instanceId, layerId);
                 }
                 catch (Exception e)
                 {
@@ -254,13 +268,20 @@ namespace GDO.Apps.Maps
 
         //View
 
-        public void AddView(int instanceId)
+        public void AddView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution, int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
         {
             lock (Cave.AppLocks[instanceId])
             {
+                int viewId = -1;
                 try
                 {
-
+                    Position position = new Position(topLeft,center,bottomRight,resolution,zoom);
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    viewId = maps.AddView(position, minResolution, maxResolution, minZoom, maxZoom, projection, rotation);
+                    if (viewId >= 0)
+                    {
+                        BroadcastView(instanceId, viewId);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -269,13 +290,20 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyView(int instanceId, int viewId)
+        public void ModifyView(int instanceId, int viewId, double[] topLeft, double[] center, double[] bottomRight, float resolution, int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    View view = maps.Views.GetValue<View>(viewId);
+                    Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
+                    bool result = maps.ModifyView(viewId, position, minResolution, maxResolution, minZoom, maxZoom, projection, rotation);
+                    if (result)
+                    {
+                        BroadcastView(instanceId, viewId);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -290,7 +318,16 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedView = maps.GetView(viewId);
+                    if (serializedView != null)
+                    {
+                        Clients.Caller.receiveview(instanceId, viewId, serializedView, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveview(instanceId, viewId, "", false);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -301,7 +338,16 @@ namespace GDO.Apps.Maps
 
         public void BroadcastView(int instanceId, int viewId)
         {
-
+            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            string serializedView = maps.GetView(viewId);
+            if (serializedView != null)
+            {
+                Clients.All.receiveView(instanceId, viewId, serializedView, true);
+            }
+            else
+            {
+                Clients.All.receiveLayer(instanceId, viewId, "", false);
+            }
         }
 
         public void RemoveView(int instanceId, int viewId)
@@ -310,7 +356,9 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveView(viewId);
+                    BroadcastView(instanceId, viewId);
                 }
                 catch (Exception e)
                 {
