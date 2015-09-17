@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>AllFilesInProjectFolder</FilesToIncludeForPublish>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -153,6 +154,7 @@
     <Content Include="Scripts\gdo.maintenance.js" />
     <Content Include="Scripts\gdo.node.js" />
     <Content Include="Scripts\gdo.utilities.js" />
+    <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -184,10 +186,6 @@
     <Content Include="Web\Node.cshtml" />
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Base.cshtml" />
-    <None Include="Properties\PublishProfiles\aa.pubxml" />
-    <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\FTP1.pubxml" />
     <Content Include="Web\Initialize.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
   </ItemGroup>
@@ -223,14 +221,14 @@
   </Target>
   <Target Name="AfterBuild">
   </Target>
-    <Target Name="AfterClean">
+  <Target Name="AfterClean">
     <ItemGroup>
-      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))"/> 
-      <GDOAppScripts Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Scripts\&quot;))"/> 
-      <GDOAppWeb Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Web\&quot;))"/> 
-      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))"/> 
-      <GDOAppBin Include="$(ProjectDir)bin\"/>
-      <GDOAppBinDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Bin\&quot;))"/> 
+      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))" />
+      <GDOAppScripts Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Scripts\&quot;))" />
+      <GDOAppWeb Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Web\&quot;))" />
+      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))" />
+      <GDOAppBin Include="$(ProjectDir)bin\" />
+      <GDOAppBinDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Bin\&quot;))" />
     </ItemGroup>
     <Message Text="Cleaning $(ProjectName) from Apps" Importance="high" />
     <RemoveDir Directories="@(GDOAppConfiguration)" />
