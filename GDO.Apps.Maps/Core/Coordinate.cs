@@ -15,7 +15,7 @@ namespace GDO.Apps.Maps.Core
         {
             X = x;
             Y = y;
-            Z = Z;
+            Z = z;
             M = m;
         }
     }

@@ -801,7 +801,28 @@ namespace GDO.Apps.Maps
             }
         }
 
-        //TODO Add vector source
+        public void AddVectorSource(int instanceId, string name, string url, int loadingStrategy, bool useSpatialIndex)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int sourceId = -1;
+                    sourceId = maps.AddSource<VectorSource>(name, (int)SourceTypes.Vector);
+                    if (sourceId >= 0)
+                    {
+                        maps.Sources.GetValue<VectorSource>(sourceId)
+                            .Modify(url, loadingStrategy, useSpatialIndex);
+                        BroadcastSource(instanceId, sourceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         public void ModifySource(int instanceId, int sourceId, string name)
         {
@@ -986,8 +1007,24 @@ namespace GDO.Apps.Maps
             }
         }
 
-
-        //TODO Modify Vector Source
+        public void ModifyVectorSource(int instanceId, int sourceId, string name, string url, int loadingStrategy, bool useSpatialIndex)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifySource(sourceId, name, (int)SourceTypes.Cluster);
+                    maps.Sources.GetValue<VectorSource>(sourceId)
+                        .Modify(url, loadingStrategy, useSpatialIndex);
+                    BroadcastSource(instanceId, sourceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         public void RequestSource(int instanceId, int sourceId)
         {
@@ -1050,6 +1087,14 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+
+        //Feature
+
+            //TODO AddFeature to Vector
+            //TODO Modify Feature
+            //Remove Feature
+            //
+
 
         //Control
 
@@ -1114,6 +1159,21 @@ namespace GDO.Apps.Maps
         }
 
         //Style
+
+        public void AddStyle(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         public void AddStyle(int instanceId)
         {

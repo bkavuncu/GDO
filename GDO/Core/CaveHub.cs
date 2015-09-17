@@ -573,5 +573,17 @@ namespace GDO.Core
         {
             //dummy
         }
+
+        public void TestMessageSize(double test)
+        {
+            try
+            {
+                Clients.Caller.receiveTestMessageSize(test);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
     }
 }

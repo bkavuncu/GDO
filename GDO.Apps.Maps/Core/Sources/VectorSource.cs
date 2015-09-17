@@ -7,13 +7,26 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
+    public enum LoadingStrategies
+    {
+        All = 0,
+        BBox = 1,
+        Tile = 2
+    };
+
     public class VectorSource : Source
     {
-        public GenericDictionary<Feature> Features { get; set; }
-        //TODO Maybe something more simple for JSON to pick easily or customized function
-
-
-
+        //public Dictionary<int,Feature> Features { get; set; } Not yet
+        public string Loading
+        public string Url { get; set; }
+        public int LoadingStrategy { get; set; }
         public bool UseSpatialIndex { get; set; }
+
+        new public void Modify(string url, int loadingStrategy, bool useSpatialIndex)
+        {
+            Url = url;
+            LoadingStrategy = loadingStrategy;
+            UseSpatialIndex = useSpatialIndex;
+        }
     }
 }

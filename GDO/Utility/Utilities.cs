@@ -25,6 +25,19 @@ namespace GDO.Utility
             }
             return slot;
         }
+        public static int GetAvailableSlot<T>(Dictionary<int, T> dictionary)
+        {
+            int slot = -1;
+            for (int i = 0; i < 1000000; i++)
+            {
+                if (!dictionary.ContainsKey(i))
+                {
+                    slot = i;
+                    break;
+                }
+            }
+            return slot;
+        }
         public static dynamic LoadJsonFile(string fileName)
         {
             dynamic obj = null;

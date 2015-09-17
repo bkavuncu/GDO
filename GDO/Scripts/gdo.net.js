@@ -151,6 +151,14 @@ $(function() {
         }
     }
 
+    $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config) {
+        if (gdo.net.isNodeInitialized()) {
+            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ")");
+            gdo.net.app[appName].config[configName] = JSON.parse(JSON.parse(config));
+            gdo.updateSelf();
+        }
+    }
+
 });
 
 

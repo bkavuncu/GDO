@@ -165,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Controls\" />
+    <Folder Include="Formats\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
