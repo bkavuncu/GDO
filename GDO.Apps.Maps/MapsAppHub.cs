@@ -635,7 +635,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddClusterSource(int instanceId, string name, int distance, int[] extent, int vectorSourceId)
+        public void AddClusterSource(int instanceId, string name, int distance, int[] extent, int formatId, int vectorSourceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -644,11 +644,11 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     int sourceId = -1;
                     sourceId = maps.AddSource<ClusterSource>(name, (int) SourceTypes.Cluster);
+                    Format format = maps.Formats.GetValue<Format>(formatId);
                     if (sourceId >= 0)
                     {
                         maps.Sources.GetValue<ClusterSource>(sourceId)
-                            .Modify(distance, new Extent(extent[0], extent[1], extent[2], extent[3]),
-                                maps.Sources.GetValue<VectorSource>(vectorSourceId));
+                            .Modify(distance, new Extent(extent[0], extent[1], extent[2], extent[3]), format, maps.Sources.GetValue<VectorSource>(vectorSourceId));
                         BroadcastSource(instanceId, sourceId);
                     }
                 }
@@ -813,9 +813,8 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddVectorTileSource(int instanceId, string name, string url, string[] urls, double[] extent,
-            int minZoom, int maxZoom, int tileWidth,
-            int[] tileWidths, int tileHeight, int[] tileHeights, double[] origin, float[] resolutions)
+        public void AddVectorTileSource(int instanceId, string name, string url, string[] urls, double[] extent, int formatId,
+            int minZoom, int maxZoom, int tileWidth, int[] tileWidths, int tileHeight, int[] tileHeights, double[] origin, float[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -828,9 +827,9 @@ namespace GDO.Apps.Maps
                     {
                         Extent _extent = new Extent(extent[0], extent[1], extent[2], extent[3]);
                         Coordinate _origin = new Coordinate(origin[0], origin[1], origin[2], origin[3]);
-                        TileGrid _tileGrid = new TileGrid(_extent, minZoom, maxZoom, tileWidth, tileWidths, tileHeight,
-                            tileHeights, _origin, resolutions);
-                        maps.Sources.GetValue<VectorTileSource>(sourceId).Modify(_tileGrid, url, urls);
+                        TileGrid _tileGrid = new TileGrid(_extent, minZoom, maxZoom, tileWidth, tileWidths, tileHeight, tileHeights, _origin, resolutions);
+                        Format _format = maps.Formats.GetValue<Format>(formatId);
+                        maps.Sources.GetValue<VectorTileSource>(sourceId).Modify(_tileGrid, _format, url, urls);
                         BroadcastSource(instanceId, sourceId);
                     }
                 }
@@ -841,7 +840,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddVectorSource(int instanceId, string name, string url, int loadingStrategy, bool useSpatialIndex)
+        public void AddVectorSource(int instanceId, string name, int formatId, string url, int loadingStrategy, bool useSpatialIndex)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -852,8 +851,9 @@ namespace GDO.Apps.Maps
                     sourceId = maps.AddSource<VectorSource>(name, (int) SourceTypes.Vector);
                     if (sourceId >= 0)
                     {
+                        Format format = maps.Formats.GetValue<Format>(formatId);
                         maps.Sources.GetValue<VectorSource>(sourceId)
-                            .Modify(url, loadingStrategy, useSpatialIndex);
+                            .Modify(format, url, loadingStrategy, useSpatialIndex);
                         BroadcastSource(instanceId, sourceId);
                     }
                 }
@@ -881,8 +881,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyBingMapsSource(int instanceId, int sourceId, string name, string culture, string key,
-            string imagerySet)
+        public void ModifyBingMapsSource(int instanceId, int sourceId, string name, string culture, string key, string imagerySet)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -900,8 +899,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyClusterSource(int instanceId, int sourceId, string name, int distance, int[] extent,
-            int vectorSourceId)
+        public void ModifyClusterSource(int instanceId, int sourceId, string name, int distance, int[] extent, int formatId,int vectorSourceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -909,9 +907,9 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     maps.ModifySource(sourceId, name, (int) SourceTypes.Cluster);
+                    Format format = maps.Formats.GetValue<Format>(formatId);
                     maps.Sources.GetValue<ClusterSource>(sourceId)
-                        .Modify(distance, new Extent(extent[0], extent[1], extent[2], extent[3]),
-                            maps.Sources.GetValue<VectorSource>(vectorSourceId));
+                        .Modify(distance, new Extent(extent[0], extent[1], extent[2], extent[3]), format, maps.Sources.GetValue<VectorSource>(vectorSourceId));
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -1029,10 +1027,8 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyVectorTileSource(int instanceId, int sourceId, string name, string url, string[] urls,
-            double[] extent, int minZoom,
-            int maxZoom, int tileWidth, int[] tileWidths, int tileHeight, int[] tileHeights, double[] origin,
-            float[] resolutions)
+        public void ModifyVectorTileSource(int instanceId, int sourceId, string name, string url, string[] urls, double[] extent, int formatId,
+            int minZoom, int maxZoom, int tileWidth, int[] tileWidths, int tileHeight, int[] tileHeights, double[] origin, float[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -1041,9 +1037,9 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     Extent _extent = new Extent(extent[0], extent[1], extent[2], extent[3]);
                     Coordinate _origin = new Coordinate(origin[0], origin[1], origin[2], origin[3]);
-                    TileGrid _tileGrid = new TileGrid(_extent, minZoom, maxZoom, tileWidth, tileWidths, tileHeight,
-                        tileHeights, _origin, resolutions);
-                    maps.Sources.GetValue<VectorTileSource>(sourceId).Modify(_tileGrid, url, urls);
+                    TileGrid _tileGrid = new TileGrid(_extent, minZoom, maxZoom, tileWidth, tileWidths, tileHeight, tileHeights, _origin, resolutions);
+                    Format _format = maps.Formats.GetValue<Format>(formatId);
+                    maps.Sources.GetValue<VectorTileSource>(sourceId).Modify(_tileGrid, _format, url, urls);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -1053,8 +1049,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyVectorSource(int instanceId, int sourceId, string name, string url, int loadingStrategy,
-            bool useSpatialIndex)
+        public void ModifyVectorSource(int instanceId, int sourceId, string name, int formatId, string url, int loadingStrategy, bool useSpatialIndex)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -1062,8 +1057,8 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     maps.ModifySource(sourceId, name, (int) SourceTypes.Cluster);
-                    maps.Sources.GetValue<VectorSource>(sourceId)
-                        .Modify(url, loadingStrategy, useSpatialIndex);
+                    Format format = maps.Formats.GetValue<Format>(formatId);
+                    maps.Sources.GetValue<VectorSource>(sourceId).Modify(format, url, loadingStrategy, useSpatialIndex);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)

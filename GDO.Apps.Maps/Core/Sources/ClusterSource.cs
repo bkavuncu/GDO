@@ -10,11 +10,13 @@ namespace GDO.Apps.Maps.Core.Sources
     {
         public int Distance { get; set; }
         public Extent Extent { get; set; }
+        public Format Format { get; set; }
         public VectorSource VectorSource { get; set; }
-        new public void Modify(int distance, Extent extent, VectorSource vectorSource)
+        new public void Modify(int distance, Extent extent, Format format, VectorSource vectorSource)
         {
             Distance = distance;
             Extent = extent;
+            Format = format;
             VectorSource = vectorSource;
         }
     }
