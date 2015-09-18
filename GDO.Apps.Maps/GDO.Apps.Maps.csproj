@@ -115,6 +115,7 @@
     <Compile Include="Core\Coordinate.cs" />
     <Compile Include="Core\Extent.cs" />
     <Compile Include="Core\Feature.cs" />
+    <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Geometries\LinearRing.cs" />
     <Compile Include="Core\Geometries\LineString.cs" />
     <Compile Include="Core\Geometries\MultiLineString.cs" />
@@ -159,13 +160,20 @@
     <Compile Include="Core\Styles\Style.cs" />
     <Compile Include="Core\Styles\Text.cs" />
     <Compile Include="Core\View.cs" />
+    <Compile Include="Formats\EsriJSONFormat.cs" />
+    <Compile Include="Formats\GeoJSONFormat.cs" />
+    <Compile Include="Formats\GMLFormat.cs" />
+    <Compile Include="Formats\KMLFormat.cs" />
+    <Compile Include="Formats\OSMXMLFormat.cs" />
+    <Compile Include="Formats\TopoJSONFormat.cs" />
+    <Compile Include="Formats\WFSFormat.cs" />
+    <Compile Include="Formats\XMLFormat.cs" />
     <Compile Include="MapsApp.cs" />
     <Compile Include="MapsAppHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Controls\" />
-    <Folder Include="Formats\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
