@@ -23,6 +23,7 @@ namespace GDO.Apps.Maps
         public GenericDictionary<Source> Sources { get; set; }
         public GenericDictionary<Control> Controls { get; set; }
         public GenericDictionary<Style> Styles { get; set; }
+        public GenericDictionary<Format> Formats { get; set; }
         public bool IsInitialized = false;
         public bool Mode { get; set; }
 
@@ -320,5 +321,67 @@ namespace GDO.Apps.Maps
                 return false;
             }
         }
+
+        //Format
+
+        public int AddFormat<T>(string name, int type) where T : Format, new()
+        {
+            try
+            {
+                int formatId = Formats.GetAvailableSlot();
+                T format = new T();
+                format.Modify(formatId, name, type);
+                Formats.Add<T>(formatId, format);
+                return formatId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
+        }
+
+        public bool ModifyFormat(int id, string name, int type)
+        {
+            try
+            {
+                Formats.GetValue<Format>(id).Modify(id, name, type);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public string GetFormat(int formatId)
+        {
+            Format format = Formats.GetValue<Format>(formatId);
+            if (format != null)
+            {
+                string serializedFormat = Newtonsoft.Json.JsonConvert.SerializeObject(Formats.GetValue<Format>(formatId));
+                return serializedFormat;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveFormat(int formatId)
+        {
+            try
+            {
+                Formats.Remove(formatId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
     }
 }
