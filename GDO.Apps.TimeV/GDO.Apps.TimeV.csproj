@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
       <Private>True</Private>
@@ -284,10 +288,10 @@
   </Target>
   <Target Name="AfterBuild">
     <ItemGroup>
-      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*"/>
-      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*"/>
-      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*"/>
-      <GDOAppBin Include="$(ProjectDir)bin\*.*"/>
+      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*" />
+      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*" />
+      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*" />
+      <GDOAppBin Include="$(ProjectDir)bin\*.*" />
     </ItemGroup>
     <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
     <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />

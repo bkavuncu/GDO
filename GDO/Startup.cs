@@ -1,25 +1,15 @@
 ﻿using System;
-using System.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Web;
-using System.Web.Compilation;
-using System.Web.Routing;
 using Autofac;
-using Autofac.Integration.Mef;
 using Autofac.Integration.SignalR;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin;
 using GDO.Core;
-using Microsoft.AspNet.SignalR.Infrastructure;
+using log4net;
 using Owin;
 
 [assembly: OwinStartup(typeof(GDO.Startup))]
@@ -29,18 +19,28 @@ namespace GDO
 
     public class Startup
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Startup));
+
         public void Configuration(IAppBuilder app)
         {
-            Cave.Init();
-            var builder = new ContainerBuilder();
-            var config = new HubConfiguration();
-            GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());
-            builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
-            builder.RegisterHubs(Assembly.GetExecutingAssembly());
-            var container = builder.Build();
-            config.Resolver = new AutofacDependencyResolver(container);
-            app.UseAutofacMiddleware(container);
-            app.MapSignalR("/signalr", config);
+            log4net.Config.XmlConfigurator.Configure();
+            Log.Info("Successfully started logging");
+            try {
+                Cave.Init();
+                var builder = new ContainerBuilder();
+                var config = new HubConfiguration();
+                GlobalHost.DependencyResolver.Register(typeof (IAssemblyLocator), () => new AssemblyLocator());
+                builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
+                builder.RegisterHubs(Assembly.GetExecutingAssembly());
+                var container = builder.Build();
+                config.Resolver = new AutofacDependencyResolver(container);
+                app.UseAutofacMiddleware(container);
+                app.MapSignalR("/signalr", config);
+            }
+            catch (Exception e) {
+                Log.Error("Failed to pass Startup ",e);
+            }
+            Log.Info("Successfully started GDO");
         }
     }
 

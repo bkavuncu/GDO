@@ -8,6 +8,7 @@ using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json;
 using System.Net;
+using log4net;
 
 /* transcoded from javascript distributeGraph.js
 
@@ -16,8 +17,9 @@ using System.Net;
 namespace GDO.Apps.Graph
 {
 
-    public class GraphApp : IAppInstance
-    {
+    public class GraphApp : IAppInstance {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(GraphApp));
+
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
@@ -87,19 +89,24 @@ namespace GDO.Apps.Graph
         // init is run when 'Deploy' is clicked
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph");
+            try {
+                this.Id = instanceId;
+                this.AppName = appName;
+                this.Section = section;
+                this.Configuration = configuration;
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"Web\Graph\graph");
+            }
+            catch (Exception e) {
+                Log.Error("failed to launch the Graphs App",e);
+            }
         }
 
         public PartitionPos checkPartitionPos(Pos pos)
         {
             PartitionPos partitionPos = new PartitionPos();
             // previously bug: didn't divide Section.Height by Section.Rows, which makes it divide by the dimension of whole section, hence all nodes appear in the first file
-            partitionPos.row = (int)(Math.Floor(pos.y / (Section.Height / Section.Rows))); // cast it to int; Section.Height/Section.Rows to get height of single display
-            partitionPos.col = (int)(Math.Floor(pos.x / (Section.Width / Section.Cols)));
+            partitionPos.row = (int)(Math.Floor(pos.y / (Section.Height / (double) Section.Rows))); // cast it to int; Section.Height/Section.Rows to get height of single display
+            partitionPos.col = (int)(Math.Floor(pos.x / (Section.Width / (double) Section.Cols)));
 
             return partitionPos;
         }
@@ -125,7 +132,7 @@ namespace GDO.Apps.Graph
             if (inputSourceType == 1)
             {
                 // server file
-                nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";
+                nodesFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/nodesPos.bin";//TODO make these local 
                 linksFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/linksPos.bin";
                 labelsFilePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + inputFolder + @"/labels.json";
             }
@@ -213,7 +220,7 @@ namespace GDO.Apps.Graph
                 }
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
 
                 sw.Restart();
@@ -222,66 +229,62 @@ namespace GDO.Apps.Graph
                 req = (HttpWebRequest)WebRequest.Create(linksFilePath);
                 resp = req.GetResponse();
 
-                using (Stream stream = resp.GetResponseStream())
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    int count = 0;
-                    do
-                    {
-                        byte[] buf = new byte[1024];
-                        count = stream.Read(buf, 0, 1024);
-                        ms.Write(buf, 0, count);
-                    } while (stream.CanRead && count > 0);
+                using (Stream stream = resp.GetResponseStream()) {
+                    using (MemoryStream ms = new MemoryStream()) {
+                        int count = 0;
+                        do {
+                            byte[] buf = new byte[1024];
+                            count = stream.Read(buf, 0, 1024);
+                            ms.Write(buf, 0, count);
+                        } while (stream.CanRead && count > 0);
 
-                    using (BinaryReader reader = new BinaryReader(ms))
-                    {
-                        // Set position to beginning of stream
-                        reader.BaseStream.Position = 0;
+                        using (BinaryReader reader = new BinaryReader(ms)) {
+                            // Set position to beginning of stream
+                            reader.BaseStream.Position = 0;
 
-                        // Set up variables: offset (index of byte array)  and length (no. of bytes)
-                        int offset = 0;
-                        int length = (int)reader.BaseStream.Length;
+                            // Set up variables: offset (index of byte array)  and length (no. of bytes)
+                            int offset = 0;
+                            int length = (int) reader.BaseStream.Length;
 
-                        Debug.WriteLine("links list length: " + links.Count);
+                            Debug.WriteLine("links list length: " + links.Count);
 
-                        while (offset < length)
-                        {
-                            Link link = new Link();
-                            link.startPos = new Pos();
-                            link.endPos = new Pos();
+                            while (offset < length) {
+                                Link link = new Link();
+                                link.startPos = new Pos();
+                                link.endPos = new Pos();
 
-                            link.startPos.x = reader.ReadSingle();
-                            link.startPos.y = reader.ReadSingle();
-                            link.endPos.x = reader.ReadSingle();
-                            link.endPos.y = reader.ReadSingle();
+                                link.startPos.x = reader.ReadSingle();
+                                link.startPos.y = reader.ReadSingle();
+                                link.endPos.x = reader.ReadSingle();
+                                link.endPos.y = reader.ReadSingle();
 
-                            links.Add(link);
+                                links.Add(link);
 
-                            offset += 16;
+                                offset += 16;
 
 
-                            //Debug.WriteLine("Start pos x: " + link.startPos.x);
-                            //Debug.WriteLine("Start pos y: " + link.startPos.y);
-                            //Debug.WriteLine("End pos x: " + link.endPos.x);
-                            //Debug.WriteLine("End pos y: " + link.endPos.y);
+                                //Debug.WriteLine("Start pos x: " + link.startPos.x);
+                                //Debug.WriteLine("Start pos y: " + link.startPos.y);
+                                //Debug.WriteLine("End pos x: " + link.endPos.x);
+                                //Debug.WriteLine("End pos y: " + link.endPos.y);
+
+                            }
+
+                            Debug.WriteLine("links list length: " + links.Count);
 
                         }
 
-                        Debug.WriteLine("links list length: " + links.Count);
-
                     }
-
                 }
-
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
 
 
                 // read labels.json from HTTP
                 sw.Restart();
 
-                System.Diagnostics.Debug.WriteLine("Reading from: " + labelsFilePath);
+                Debug.WriteLine("Reading from: " + labelsFilePath);
 
                 WebClient client = new WebClient();
                 StreamReader file = new StreamReader(client.OpenRead(labelsFilePath));
@@ -299,7 +302,7 @@ namespace GDO.Apps.Graph
                 //}
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+                Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
             }
             else
@@ -352,7 +355,7 @@ namespace GDO.Apps.Graph
                 }
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                Debug.WriteLine("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read nodesPos.bin file: " + sw.ElapsedMilliseconds + "ms");
 
                 sw.Restart();
@@ -397,14 +400,14 @@ namespace GDO.Apps.Graph
 
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
+                Debug.WriteLine("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read linksPos.bin file: " + sw.ElapsedMilliseconds + "ms");
 
 
                 // read labels.json local file
                 sw.Restart();
 
-                System.Diagnostics.Debug.WriteLine("Reading from: " + labelsFilePath);
+                Debug.WriteLine("Reading from: " + labelsFilePath);
 
                 StreamReader file = File.OpenText(labelsFilePath);
 
@@ -421,7 +424,7 @@ namespace GDO.Apps.Graph
                 //}
 
                 sw.Stop();
-                System.Diagnostics.Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
+                Debug.WriteLine("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
                 GraphAppHub.self.LogTime("Time taken to read labels.json file: " + sw.ElapsedMilliseconds + "ms");
 
 
@@ -490,7 +493,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
+            Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time to scale links & nodes: " + sw.ElapsedMilliseconds + "ms");
 
 
@@ -528,7 +531,7 @@ namespace GDO.Apps.Graph
 
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
+            Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds + "ms");
 
             // debugging code: check no. of nodes distributed to each partition
@@ -704,7 +707,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
+            Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
 
 
@@ -798,7 +801,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
+            Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
             /*
             // for debugging: check if writing into binary file is correct
@@ -846,7 +849,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
+            Debug.WriteLine("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write labels file: " + sw.ElapsedMilliseconds + "ms");
 
             // write links to files
@@ -874,7 +877,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
+            Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
             /*
             // for debugging: check if writing into binary file is correct
@@ -1323,7 +1326,7 @@ namespace GDO.Apps.Graph
             //string filePath = @"http://dsigdopreprod.doc.ic.ac.uk/DavidChia/" + fileName;
             string filePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\output.json";    //local file
 
-            System.Diagnostics.Debug.WriteLine("Reading from: " + filePath);
+            Debug.WriteLine("Reading from: " + filePath);
 
             WebClient client = new WebClient();
 
@@ -1338,7 +1341,7 @@ namespace GDO.Apps.Graph
             GraphCompleteData graphData = serializer.Deserialize<GraphCompleteData>(reader);
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to read input file: " + sw.ElapsedMilliseconds);
+            Debug.WriteLine("Time taken to read input file: " + sw.ElapsedMilliseconds);
 
 
             List<Node> nodes = graphData.nodes;
@@ -1381,7 +1384,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds);
+            Debug.WriteLine("Time to scale links & nodes: " + sw.ElapsedMilliseconds);
 
 
             // distribute data across browser
@@ -1413,7 +1416,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
+            Debug.WriteLine("Time taken to distribute nodes across browsers: " + sw.ElapsedMilliseconds);
 
             sw.Restart();
 
@@ -1552,7 +1555,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
+            Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds);
 
             // write to individual browser file
             // create sub-directory to store partition files
@@ -1585,7 +1588,7 @@ namespace GDO.Apps.Graph
             }
 
             sw.Stop();
-            System.Diagnostics.Debug.WriteLine("Time taken to write file: " + sw.ElapsedMilliseconds);
+            Debug.WriteLine("Time taken to write file: " + sw.ElapsedMilliseconds);
 
             return this.FolderNameDigit;
         }
