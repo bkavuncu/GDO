@@ -120,7 +120,6 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Configurations\Temperatures\Default.json" />
-    <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -153,7 +152,9 @@
       <Name>GDO</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -189,10 +190,10 @@
   </Target>
   <Target Name="AfterBuild">
     <ItemGroup>
-      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*"/>
-      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*"/>
-      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*"/>
-      <GDOAppBin Include="$(ProjectDir)bin\*.*"/>
+      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*" />
+      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*" />
+      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*" />
+      <GDOAppBin Include="$(ProjectDir)bin\*.*" />
     </ItemGroup>
     <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
     <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
