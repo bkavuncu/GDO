@@ -83,6 +83,13 @@ namespace GDO.Utility
             _dict.Add(key, value);
         }
 
+        public int AddNextAvailableSlot<T>(T value) where T : U
+        {
+            int key = this.GetAvailableSlot();
+            _dict.Add(key, value);
+            return key;
+        }
+
         public void Remove(int key)
         {
             _dict.Remove(key);

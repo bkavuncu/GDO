@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public Map Map;
         public GenericDictionary<Layer> Layers { get; set; }
         public GenericDictionary<View> Views { get; set; }
         public GenericDictionary<Interaction> Interactions { get; set; }
@@ -30,6 +31,27 @@ namespace GDO.Apps.Maps
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
 
+        }
+        //Map
+        public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view, int width, int height)
+        {
+            try
+            {
+
+                Map = new Map(layers, interactions, controls, view, width, height);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public string GetSerializedMap()
+        {
+            string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map);
+            return serializedMap;
         }
 
         //Layer
@@ -70,7 +92,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetLayer(int layerId)
+        public string GetSerializedLayer(int layerId)
         {
             Layer layer = Layers.GetValue<Layer>(layerId);
             if (layer != null)
@@ -131,7 +153,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetView(int viewId)
+        public string GetSerializedView(int viewId)
         {
             string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(viewId));
             return serializedView;
@@ -165,7 +187,7 @@ namespace GDO.Apps.Maps
             return false;
         }
 
-        public string GetInteraction(int interactionId)
+        public string GetSerializedInteraction(int interactionId)
         {
             return "";
         }
@@ -209,7 +231,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetSource(int sourceId)
+        public string GetSerializedSource(int sourceId)
         {
             Source source = Sources.GetValue<Source>(sourceId);
             if (source != null)
@@ -251,7 +273,7 @@ namespace GDO.Apps.Maps
             return false;
         }
 
-        public string GetControl(int controlId)
+        public string GetSerializedControl(int controlId)
         {
             return "";
         }
@@ -294,7 +316,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetStyle(int styleId)
+        public string GetSerializedStyle(int styleId)
         {
             Style style = Styles.GetValue<Style>(styleId);
             if (style != null)

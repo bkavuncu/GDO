@@ -84,13 +84,32 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void RequestMap(int instanceId)
+        //Map
+
+        public void InitMap(int instanceId, int[] layerIds, int[] interactionIds, int[] controlIds, int viewId, int width, int height)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    List<Layer> layers = new List<Layer>();
+                    List<Interaction> interactions = new List<Interaction>();
+                    List<Control> controls = new List<Control>();
+                    foreach (int layerId in layerIds)
+                    {
+                        layers.Add(maps.Layers.GetValue<Layer>(layerId));
+                    }
+                    foreach (int interactionId in interactionIds)
+                    {
+                        interactions.Add(maps.Interactions.GetValue<Interaction>(interactionId));
+                    }
+                    foreach (int controlId in controlIds)
+                    {
+                        controls.Add(maps.Controls.GetValue<Control>(controlId));
+                    }
+                    View view = maps.Views.GetValue<View>(viewId);
+                    maps.InitMap(layers.ToArray(), interactions.ToArray(), controls.ToArray(), view, width, height);
                 }
                 catch (Exception e)
                 {
@@ -99,18 +118,48 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyMap(int instanceId)
+        public void RequestMap(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedMap = maps.GetSerializedMap();
+                    if (serializedMap != null)
+                    {
+                        Clients.Caller.receiveMap(instanceId, serializedMap, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveMap(instanceId, "", false);
+                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
+            }
+        }
+
+        public void BroadcastMap(int instanceId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedMap = maps.GetSerializedMap();
+                if (serializedMap != null)
+                {
+                    Clients.Group("" + instanceId).receiveMap(instanceId, serializedMap, true);
+                }
+                else
+                {
+                    Clients.Group("" + instanceId).receiveMap(instanceId, serializedMap, false);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
@@ -363,7 +412,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedLayer = maps.GetLayer(layerId);
+                    string serializedLayer = maps.GetSerializedLayer(layerId);
                     if (serializedLayer != null)
                     {
                         Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type,
@@ -387,7 +436,7 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedLayer = maps.GetLayer(layerId);
+                string serializedLayer = maps.GetSerializedLayer(layerId);
                 if (serializedLayer != null)
                 {
                     Clients.Group("" + instanceId)
@@ -480,7 +529,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedView = maps.GetView(viewId);
+                    string serializedView = maps.GetSerializedView(viewId);
                     if (serializedView != null)
                     {
                         Clients.Caller.receiveview(instanceId, viewId, serializedView, true);
@@ -500,7 +549,7 @@ namespace GDO.Apps.Maps
         public void BroadcastView(int instanceId, int viewId)
         {
             MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-            string serializedView = maps.GetView(viewId);
+            string serializedView = maps.GetSerializedView(viewId);
             if (serializedView != null)
             {
                 Clients.Group("" + instanceId).receiveView(instanceId, viewId, serializedView, true);
@@ -1075,7 +1124,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedSource = maps.GetSource(sourceId);
+                    string serializedSource = maps.GetSerializedSource(sourceId);
                     if (serializedSource != null)
                     {
                         Clients.Caller.receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type,
@@ -1099,7 +1148,7 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedSource = maps.GetSource(sourceId);
+                string serializedSource = maps.GetSerializedSource(sourceId);
                 if (serializedSource != null)
                 {
                     Clients.Group("" + instanceId)
@@ -1492,7 +1541,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedStyle = maps.GetStyle(styleId);
+                    string serializedStyle = maps.GetSerializedStyle(styleId);
                     if (serializedStyle != null)
                     {
                         Clients.Caller.receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type,
@@ -1516,7 +1565,7 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedStyle = maps.GetStyle(styleId);
+                string serializedStyle = maps.GetSerializedStyle(styleId);
                 if (serializedStyle != null)
                 {
                     Clients.Group("" + instanceId)
