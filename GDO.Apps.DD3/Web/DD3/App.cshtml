@@ -321,8 +321,9 @@
                 test_bench['1'] = function () {
                     var xScale, yScale;
                     var data, pathData;
+                    var dataId = "";
 
-                    dd3.getDataDimensions('scatterplot4000', function (dim) {
+                    var requestData = function (dim) {
                         var extentX = dim.x.max - dim.x.min,
                             extentY = dim.y.max - dim.y.min,
                             coef = 0.05, c = 1;
@@ -334,17 +335,17 @@
                         xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
                         yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
 
-                        dd3.getPointData('pointData', 'scatterplot4000', function (d) {
+                        dd3.getPointData('pointData', dataId, function (d) {
                             data = d;
                             draw();
                         }, xScale, yScale);
 
-                        dd3.getPathData('pathData', 'scatterplot4000', function (d) {
+                        dd3.getPathData('pathData', dataId, function (d) {
                             pathData = d;
                             draw();
                         }, xScale, yScale, 'x', 'y');
 
-                    });
+                    };
 
                     var draw = function () {
                         if (!data || !pathData)
@@ -411,6 +412,13 @@
                             .attr("stroke-width", 2)
                             .attr("fill", "none");
                         //*/
+                    };
+
+                    orderController.orders['plot'] = function(id) {
+                        dataId = id;
+                        data = pathData = null;
+                        dd3.svgCanvas.selectAll("g").remove();
+                        dd3.getDataDimensions(dataId, requestData);
                     };
                 };
 

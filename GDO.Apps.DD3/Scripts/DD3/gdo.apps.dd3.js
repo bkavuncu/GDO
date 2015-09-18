@@ -11,96 +11,90 @@ var initDD3App = function () {
     d3 = document.getElementById('app_frame_content').contentWindow['d3'];
 
     var utils = (function () {
-        var utils = {};
+        return {
+            getUrlVar: function (variable) {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] === variable) { return pair[1]; }
+                }
+                return false;
+            },
 
-        utils.getUrlVar = function(variable) {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                if (pair[0] === variable) { return pair[1]; }
-            }
-            return false;
-        }
+            clamp: function (value, min, max) {
+                return value < min ? min : value > max ? max : value;
+            },
 
-        utils.clamp = function (value, min, max){
-            return value < min ? min : value > max ? max : value;
-        }
+            // p to true try to parse numbers
+            d: function (k, p) {
+                return function (d) { return ((p && +d[k]) || d[k]); };
+            },
 
-        // p to true try to parse numbers
-        utils.d = function(k, p) {
-            return function (d) { return ((p && +d[k]) || d[k]); };
-        };
-
-        // Basic extend
-        utils.extend = function(base, extension) {
-            if (arguments.length > 2) {
-                [].forEach.call(arguments, function (extension) {
-                    utils.extend(base, extension)
-                })
-            } else {
-                for (var k in extension)
-                    base[k] = extension[k];
-            }
-            return base;
-        }
-
-        // Basic utils.clone
-        utils.clone = function (source) {
-            var destination;
-            if (source instanceof Array) {
-                destination = [];
-            } else {
-                destination = {};
-            }
-
-            for (var property in source) {
-                if (typeof source[property] === "object" && source[property] !== null) {
-                    destination[property] = utils.clone(source[property]);
+            // Basic extend
+            extend: function (base, extension) {
+                if (arguments.length > 2) {
+                    [].forEach.call(arguments, function (extension) {
+                        utils.extend(base, extension)
+                    })
                 } else {
-                    destination[property] = source[property];
+                    for (var k in extension)
+                        base[k] = extension[k];
                 }
+                return base;
+            },
+
+            // Basic utils.clone
+            clone: function (source) {
+                var destination;
+                if (source instanceof Array) {
+                    destination = [];
+                } else {
+                    destination = {};
+                }
+
+                for (var property in source) {
+                    if (typeof source[property] === "object" && source[property] !== null) {
+                        destination[property] = utils.clone(source[property]);
+                    } else {
+                        destination[property] = source[property];
+                    }
+                }
+                return destination;
+            },
+
+            log: function (message, sev) {
+                var sevMessage = ["Debug", "Info", "Warning", "Error", "Critical"];
+                var consoleFunction = ["debug", "log", "warn", "warn", "error"];
+                utils.log.sev = typeof utils.log.sev === "undefined" ? 0 : utils.log.sev;
+                arr = (dd3 && dd3.browser) ? [dd3.browser.row, dd3.browser.column] : [];
+
+                sev = utils.clamp(sev || 0, 0, 4);
+                if (utils.log.sev <= sev) {
+                    console[consoleFunction[sev]]("(" + sevMessage[sev] + ")  [" + arr + "] " + message);
+                }
+            },
+
+            getAttr: function (el) {
+                var obj = el.attributes, objf = {};
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key) && typeof obj[key].nodeName !== "undefined") {
+                        objf[obj[key].nodeName] = obj[key].nodeValue;
+                    }
+                }
+                return objf;
+            },
+
+            // Following functions : Keeped for memory for now, will probably be deleted as not needed
+            getContainingGroup: function (el) {
+                var container;
+                while (!container && (el = el.parentNode)) {
+                    if (el.nodeName.toLowerCase() === 'g')
+                        container = el;
+                }
+                return container;
             }
-            return destination;
         };
-
-        utils.log = function (message, sev) {
-            var sevMessage = ["Debug", "Info", "Warning", "Error", "Critical"];
-            var consoleFunction = ["debug", "log", "warn", "warn", "error"];
-            utils.log.sev = typeof utils.log.sev === "undefined" ? 0 : utils.log.sev;
-            arr = (dd3 && dd3.browser) ? [dd3.browser.row, dd3.browser.column] : [];
-
-            sev = utils.clamp(sev || 0, 0, 4);
-            if (utils.log.sev <= sev) {
-                console[consoleFunction[sev]]("(" + sevMessage[sev] + ")  [" + arr + "] " + message);
-            }
-        }
-
-        utils.getAttr = function (el) {
-            var obj = el.attributes, objf = {};
-
-            for (var key in obj) {
-                if (obj.hasOwnProperty(key) && typeof obj[key].nodeName !== "undefined") {
-                    objf[obj[key].nodeName] = obj[key].nodeValue;
-                }
-            }
-
-            return objf;
-        }
-
-        // Following functions : Keeped for memory for now, will probably be deleted as not needed
-        utils.getContainingGroup = function (el) {
-            var container;
-
-            while (!container && (el = el.parentNode)) {
-                if (el.nodeName.toLowerCase() === 'g')
-                    container = el;
-            }
-
-            return container;
-        }
-    
-        return utils;
     })();
 
     var api = function () {
@@ -110,7 +104,7 @@ var initDD3App = function () {
         api.dataPoints = {};
         api.dataPoints['scatterplotCos'] = d3.range(0, 26, 0.8).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) }; });
         api.dataPoints['scatterplotParabole'] = d3.range(-10, 15, 0.5).map(function (d) { return { id: uid++, x: d, y: d * d }; });
-        api.dataPoints['testSet'] = [{ x: 1, y: 2 }, { x: 4.5, y: 3.3 }, { x: 1, y: 5 }, { x: 8, y: 2 }]
+        api.dataPoints['testSet'] = [{ x: 1, y: 2 }, { x: 4.5, y: 3.3 }, { x: 1, y: 5 }, { x: 8, y: 2 }];
         api.dataPoints['barData'] = [{ country: "USA", gdp: "17.4" }, { country: "China", gdp: "10.3" }, { country: "England", gdp: "2.9" }, { country: "France", gdp: "2.8" }, { country: "Germany", gdp: "3.8" }, { country: "Japan", gdp: "4.6" }]
         api.dataPoints['scatterplot4000'] = d3.range(0, 200, 0.05).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) * 3 }; });
 
@@ -141,14 +135,14 @@ var initDD3App = function () {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[2](dataId, JSON.stringify(dimensions));
+                dd3Server.client.dd3Receive("receiveDimensions", dataId, JSON.stringify(dimensions));
             }, 500);
         };
 
         api.getData = function (dataName, dataId) {
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](dataName, api.dataPoints[dataId]);
+                dd3Server.client.dd3Receive("receiveData", dataName, api.dataPoints[dataId]);
             }, 500);
         };
 
@@ -179,7 +173,7 @@ var initDD3App = function () {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](request.dataName, request.dataId, JSON.stringify(requestedData));
+                dd3Server.client.dd3Receive("receiveData", request.dataName, request.dataId, JSON.stringify(requestedData));
             }, 500);
         };
 
@@ -211,7 +205,7 @@ var initDD3App = function () {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](request.dataName, request.dataId, JSON.stringify(requestedData));
+                dd3Server.client.dd3Receive("receiveData", request.dataName, request.dataId, JSON.stringify(requestedData));
             }, 500);
         };
 
@@ -274,9 +268,9 @@ var initDD3App = function () {
 
             // Simulate api response time
             setTimeout(function () {
-                signalR_callback[3](request.dataName, request.dataId, JSON.stringify(requestedData));
+                dd3Server.client.dd3Receive("receiveData", request.dataName, request.dataId, JSON.stringify(requestedData));
             }, 500);
-        }
+        };
 
         return api;
     };
@@ -491,8 +485,8 @@ var initDD3App = function () {
 
 
                 // Define server interaction functions
-                signalR_callback[0] = init.getCaveConfiguration;
-                signalR_callback[1] = signalR.receiveSynchronize;
+                signalR_callback['receiveConfiguration'] = init.getCaveConfiguration;
+                signalR_callback['receiveSynchronize'] = signalR.receiveSynchronize;
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -852,11 +846,11 @@ var initDD3App = function () {
                 utils.log("Received result of remote server request : " + dataId, 1);
                 result = JSON.parse(result);
                 data[pr(dataId)].callback_remoteDataReady && data[pr(dataId)].callback_remoteDataReady(result);
-            }
+            };
 
-            signalR_callback[2] = dd3_data.receiveDimensions;
-            signalR_callback[3] = dd3_data.receiveData;
-            signalR_callback[4] = dd3_data.receiveRemoteDataReady;
+            signalR_callback['receiveDimensions'] = dd3_data.receiveDimensions;
+            signalR_callback['receiveData'] = dd3_data.receiveData;
+            signalR_callback['receiveRemoteDataReady'] = dd3_data.receiveRemoteDataReady;
 
             /**
              * PEER FUNCTIONS
@@ -954,6 +948,8 @@ var initDD3App = function () {
             };
 
             /* Functions handling data reception  */
+            var _dd3_timeoutStartReceivedTransition = d3.map();
+            var _dd3_timeoutEndReceivedTransition = d3.map();
 
             var getOrderFollower = function (g, order) {
                 var s = order.split("_");
@@ -1031,7 +1027,7 @@ var initDD3App = function () {
 
             var _dd3_removeHandler = function (data) {
                 var el = d3.select("#" + data.sendId).node();
-                while (_dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
+                while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
                     el = el.parentElement;
                 d3.select(el).remove();
             };
@@ -1048,40 +1044,55 @@ var initDD3App = function () {
             };
 
             var _dd3_transitionHandler = function (data) {
-                var obj = d3.select("#" + data.sendId);
-                obj.interrupt(data.name);
-                var trst = _dd3_hook_selection_transition.call(obj, data.name);
+                var launchTransition = function (data) {
+                    var obj = d3.select("#" + data.sendId);
+                    obj.interrupt(data.name);
+                    var trst = _dd3_hook_selection_transition.call(obj, data.name);
 
-                utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
+                    //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
+                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)")
 
-                obj.attr_(data.start.attr)
-                   .style_(data.start.style);
+                    obj.attr_(data.start.attr)
+                       .style_(data.start.style);
 
-                trst.attr(data.end.attr)
-                    .style(data.end.style)
-                    .duration(data.duration);
+                    trst.attr(data.end.attr)
+                        .style(data.end.style)
+                        .duration(data.duration);
 
-                data.tweens && data.tweens.forEach(function (o) {
-                    _dd3_tweens[o.value] && trst.tween(o.key, _dd3_tweens[o.value]);
-                });
+                    data.tweens && data.tweens.forEach(function (o) {
+                        _dd3_tweens[o.value] && trst.tween(o.key, _dd3_tweens[o.value]);
+                    });
 
-                data.attrTweens && data.attrTweens.forEach(function (o) {
-                    _dd3_tweens[o.value] && trst.attrTween(o.key, _dd3_tweens[o.value]);
-                });
+                    data.attrTweens && data.attrTweens.forEach(function (o) {
+                        _dd3_tweens[o.value] && trst.attrTween(o.key, _dd3_tweens[o.value]);
+                    });
 
-                data.styleTweens && data.styleTweens.forEach(function (o) {
-                    var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
-                    _dd3_tweens[o.value[0]] && trst.styleTween.apply(trst, args);
-                });
+                    data.styleTweens && data.styleTweens.forEach(function (o) {
+                        var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
+                        _dd3_tweens[o.value[0]] && trst.styleTween.apply(trst, args);
+                    });
 
-                if (_dd3_timeTransitionRelative)
-                    trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
-                else
-                    trst.delay(data.delay + (data.elapsed - Date.now()));
+                    if (_dd3_timeTransitionRelative)
+                        trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
+                    else
+                        trst.delay(data.delay + (data.elapsed - Date.now()));
 
 
-                if (data.ease)
-                    _dd3_eases[data.ease] ? trst.ease(_dd3_eases[data.ease]) : trst.ease(data.ease);
+                    if (data.ease)
+                        _dd3_eases[data.ease] ? trst.ease(_dd3_eases[data.ease]) : trst.ease(data.ease);
+                };
+                /**/
+                launchTransition(data);
+                /*/
+                if (data.min < Date.now())
+                    launchTransition(data);
+                else if (data.max > Date.now()) {
+                    clearTimeout(_dd3_timeoutStartReceivedTransition.get(data.sendId + data.name));
+                    _dd3_timeoutStartReceivedTransition.set(data.sendId + data.name, setTimeout(launchTransition.bind(null, data), data.min - Date.now()));
+                }
+                clearTimeout(_dd3_timeoutEndReceivedTransition.get(data.sendId + data.name));
+                _dd3_timeoutEndReceivedTransition.set(data.sendId + data.name, setTimeout(_dd3_endTransitionHandler.bind(null, {sendId : data.sendId, name: data.name, remove : false}), data.max - Date.now()));
+                //*/
             };
 
             var _dd3_endTransitionHandler = function (data) {
@@ -1276,6 +1287,8 @@ var initDD3App = function () {
 
                 ns.forEach(function (d) {
                     if ((i = contain(os, d)) >= 0) {
+                        os[i].min = d.min;
+                        os[i].max = d.max;
                         update.push(os.splice(i, 1)[0]);
                     }
                     else {
@@ -1338,11 +1351,16 @@ var initDD3App = function () {
                 var chk;
                 a.forEach(function (c) {
                     chk = b.some(function (d) {
-                        return (c[0] === d[0] && c[1] === d[1]);
+                        if (c[0] === d[0] && c[1] === d[1]) {
+                            d.min = c.min ? Math.min(d.min || c.min, c.min) : d.min;
+                            d.max = c.max ? Math.max(d.max || c.max, c.max) : d.max;
+                            return true;
+                        }
+                        return false;
                     });
 
                     if (!chk) {
-                        b.push(c);
+                        b.push(utils.clone(c));
                     }
                 });
             };
@@ -1404,6 +1422,11 @@ var initDD3App = function () {
                 // Get current recipients
                 rcpt = _dd3_getChildrenRcpts.call(this, []);
 
+                if (this.parentNode) // If the group is still in the dom, we notify children. Otherwise they will be deleted in every previous recipients dom with the group deletion anyway
+                    _dd3_notifyChildren.call(this, 'updateContainer');
+
+                var rcpt = _dd3_getSelections(_dd3_getChildrenRcpts.call(this, []), rcpt)[1];
+
                 if (rcpt.length > 0) {
                     // Create the object to send
                     objs = _dd3_dataFormatter(this, false, type, [rcpt], args, active);
@@ -1413,8 +1436,6 @@ var initDD3App = function () {
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 }
 
-                if (this.parentNode) // If the group is still in the dom, we notify children. Otherwise they will be deleted in every previous recipients dom with the group deletion anyway
-                    _dd3_notifyChildren.call(this, 'updateContainer');
                 return rcpt.length;
             };
 
@@ -1423,8 +1444,8 @@ var initDD3App = function () {
 
                 //- Functions for creating objects to be send
 
-                var createShapeObject = function (obj, elem) {
-                    var groups = getParentGroups(elem);
+                var createShapeObject = function (obj, elem, onSend) {
+                    var groups = getParentGroups(elem, onSend);
 
                     obj.type = 'shape';
                     obj.attr = utils.getAttr(elem);
@@ -1458,19 +1479,17 @@ var initDD3App = function () {
                     }
                 };
 
-                var createTransitionsObject = function (obj, elem) {
-                    var a = elem.__dd3_transitions__.values().map(function (v) {
+                var createTransitionsObject = function (obj, elem, onSend) {
+                    return [].slice.call(elem.__dd3_transitions__.values().map(function (v) {
                         var objTemp = utils.clone(obj);
-                        createTransitionObject(objTemp, v);
+                        createTransitionObject(objTemp, v, onSend);
                         return objTemp;
-                    });
+                    }));
                     // Needed for integration into GDO framework as it seems that constructor are different !
                     // And peer.js test equality with constructors to send data !
-                    a.constructor = Array;
-                    return a;
                 };
 
-                var createTransitionObject = function (obj, args) {
+                var createTransitionObject = function (obj, args, onSend) {
                     obj.type = 'transition';
 
                     obj.name = args.name;
@@ -1492,18 +1511,23 @@ var initDD3App = function () {
                             obj.end[d[0]][d[1]] = args.endValues[i];
                         }
                     });
+
+                    //*
+                    onSend.push(function (rcpt) {
+                        obj.min = rcpt.min;
+                        obj.max = rcpt.max;
+                    });
+                    //*/
                 };
 
                 var createEndTransitionsObject = function (obj, elem, remove) {
-                    var a = elem.__dd3_transitions__.values().map(function (v) {
+                    return [].slice.call(elem.__dd3_transitions__.values().map(function (v) {
                         var objTemp = utils.clone(obj);
                         createEndTransitionObject(objTemp, v.name, remove);
                         return objTemp;
-                    });
+                    }));
                     // Needed for integration into GDO framework as it seems that constructor are different !
                     // And peer.js test equality with constructors to send data !
-                    a.constructor = Array;
-                    return a;
                 };
 
                 var createEndTransitionObject = function (obj, name, remove) {
@@ -1512,21 +1536,9 @@ var initDD3App = function () {
                     obj.remove = remove;
                 };
 
-                // Deprecated
-                var createCTMObject = function (elem) {
-                    var ctm = elem.getCTM();
-
-                    // Make the translation parameter global to send it to others
-                    ctm.e = hlhg.left(ctm.e);
-                    ctm.f = hlhg.top(ctm.f);
-
-                    // Matrix CTM not sendable with peer.js, just copy the parameter into a normal object
-                    return copyCTMFromTo(ctm, {});
-                };
-
                 //- Helper functions
 
-                var getParentGroups = function (elem) {
+                var getParentGroups = function (elem, onSend) {
                     var containers = [], g = elem.parentNode, obj, sdId;
 
                     do {
@@ -1534,7 +1546,7 @@ var initDD3App = function () {
                             sdId = getSendId(g.__sendId__ = g.__sendId__ || sendId++);
                             obj = { 'id': sdId, 'transform': g.getAttribute("transform"), 'class': (g.getAttribute("class") || "") + ' dd3_received', 'order': g.getAttribute('order') };
                             if (g.__dd3_transitions__.size() > 0)
-                                obj.transition = createTransitionsObject({ 'sendId': sdId }, g);
+                                obj.transition = createTransitionsObject({ 'sendId': sdId }, g, onSend);
                         } else {
                             obj = g.id;
                         }
@@ -1555,20 +1567,21 @@ var initDD3App = function () {
                     }
 
                     var objTemp = utils.clone(obj);
+                    var onSend = [];
 
                     switch (i) {
                         case 0:  // If enter, in all cases we send a new shape
-                            createShapeObject(objTemp, elem);
+                            createShapeObject(objTemp, elem, onSend);
 
                             if (active) {
-                                objTemp = [objTemp, createTransitionsObject(utils.clone(obj), elem)];
+                                objTemp = [objTemp, createTransitionsObject(utils.clone(obj), elem, onSend)];
                             }
                             break;
 
                         case 1: // If update...
 
                             if (type === 'shape') { // If we want to send the shape...
-                                createShapeObject(objTemp, elem);
+                                createShapeObject(objTemp, elem, onSend);
                             } else if (type === 'property') { // Otherwise, if we just want to update a property ...
                                 if (typeof args.property === 'object') { // If we gave object as { property -> value, ... }
                                     objTemp = createPropertiesObject(objTemp, elem, args.function, args.property);
@@ -1578,7 +1591,7 @@ var initDD3App = function () {
                             } else if (type === "endTransition") {
                                 createEndTransitionObject(objTemp, args.name, false);
                             } else if (type === "transitions") {
-                                createTransitionObject(objTemp, elem.__dd3_transitions__.get(args.ns));
+                                createTransitionObject(objTemp, elem.__dd3_transitions__.get(args.ns), onSend);
                             } else if (type === "updateContainer") {
                                 objTemp = false;
                             }
@@ -1597,10 +1610,12 @@ var initDD3App = function () {
                             break;
                     }
 
+                    objTemp && (objTemp.onSend = onSend);
                     objs.push(objTemp);
                 };
 
                 var formatGroup = function (elem, type, selections, args, active, objs, obj) {
+                    var onSend = []
                     if (type === 'property') {
                         if (typeof args.property === 'object') { // If we gave object as { property -> value, ... }
                             obj = createPropertiesObject(obj, elem, args.function, args.property);
@@ -1609,7 +1624,7 @@ var initDD3App = function () {
                         }
                     } else if (type === 'transitions') {
                         var objTemp = utils.clone(obj);
-                        obj = createTransitionsObject(objTemp, elem, args.function, args.property);
+                        obj = createTransitionsObject(objTemp, elem, onSend);
                     } else if (type === 'endTransition') {
                         createEndTransitionObject(obj, args.name, false);
                     } else {
@@ -1617,6 +1632,7 @@ var initDD3App = function () {
                         utils.log('Not handling : type is ' + type);
                         return;
                     }
+                    obj && (obj.onSend = onSend);
                     objs.push(obj);
                 };
 
@@ -1631,6 +1647,7 @@ var initDD3App = function () {
                             sendId: getSendId(elem.__sendId__)
                         };
 
+
                     selections.forEach(function (s, i) { isElem ? formatElem(s, i, elem, type, selections, args, active, objs, obj) : formatGroup(elem, type, selections, args, active, objs, obj) });
 
                     return objs;
@@ -1643,7 +1660,13 @@ var initDD3App = function () {
                 selections.forEach(function (s, i) {
                     if (objs[i])
                         s.forEach(function (d) {
-                            peer.sendTo(d[0], d[1], objs[i], true); // true for buffering 
+                            var obj = objs[i];
+                            if (obj.onSend.length > 0) {
+                                obj.onSend.forEach(function (f) { f(d); });
+                                obj = utils.clone(obj);
+                                delete obj.onSend;
+                            }
+                            peer.sendTo(d[0], d[1], obj, true); // true for buffering 
                         });
                 });
 
@@ -1842,7 +1865,8 @@ var initDD3App = function () {
                 });
 
                 // ! Doesn't take in account order of the transitions !
-                var range = d3.range(now, max, precision * (max - now));
+                var step = precision * (max - now);
+                var range = d3.range(now, max, step);
                 range.push(max);
 
                 range.forEach(function (time) {
@@ -1857,12 +1881,15 @@ var initDD3App = function () {
                             }
                         });
                     });
-                    _dd3_mergeRecipientsIn(_dd3_findRecipients(g), rcpts);
+                    var rcpt = _dd3_findRecipients(g);
+                    rcpt.forEach(function (r) { r.min = time - step; r.max = time + step})
+                    _dd3_mergeRecipientsIn(rcpt, rcpts); 
                 });
 
                 c1.removeChild(clones[0]);
 
-                //log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
+                utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
+                //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
                 return rcpts;
             };
 
@@ -1931,8 +1958,7 @@ var initDD3App = function () {
 
                         // Needed for integration into GDO framework as it seems that constructor are different !
                         // And peer.js test equality with constructors to send data !
-                        var tweenFunctions = tweens.entries();
-                        tweenFunctions.constructor = Array;
+                        var tweenFunctions = [].slice.call(tweens.entries());
                         tweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -1942,8 +1968,7 @@ var initDD3App = function () {
                             });
                         });
 
-                        var attrTweenFunctions = attrTweens.entries();
-                        attrTweenFunctions.constructor = Array;
+                        var attrTweenFunctions = [].slice.call(attrTweens.entries());
                         attrTweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -1953,8 +1978,7 @@ var initDD3App = function () {
                             });
                         });
 
-                        var styleTweenFunctions = styleTweens.entries();
-                        styleTweenFunctions.constructor = Array;
+                        var styleTweenFunctions = [].slice.call(styleTweens.entries());
                         styleTweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2209,31 +2233,14 @@ var initDD3App = function () {
 // signalR_callback is defined later in dd3 when it is initiated.
 
 var dd3Server = $.connection.dD3AppHub;
-var signalR_callback = [];
+var signalR_callback = {};
 var main_callback; // Callback inside the html file
 var orderTransmitter; // Callback inside the html file
 
-// Functions used for dd3 callback
-
-dd3Server.client.receiveConfiguration = function (a, b) {
-    signalR_callback[0] && signalR_callback[0].apply(null, arguments);
+// Function used for dd3 callback
+dd3Server.client.dd3Receive = function (f) {
+    signalR_callback[f].apply(null, [].slice.call(arguments, 1));
 };
-
-dd3Server.client.synchronize = function () {
-    signalR_callback[1] && signalR_callback[1].apply(null, arguments);
-};
-
-dd3Server.client.receiveDimensions = function () {
-    signalR_callback[2].apply(null, arguments);
-}
-
-dd3Server.client.receiveData = function () {
-    signalR_callback[3].apply(null, arguments);
-}
-
-dd3Server.client.receiveRemoteDataReady = function () {
-    signalR_callback[4].apply(null, arguments);
-}
 
 // Non-dd3 functions
 
