@@ -21,7 +21,7 @@ namespace GDO.Apps.Maps.Core.Styles
         Miter = 3
     };
 
-    public class Stroke : Core.Style
+    public class StrokeStyle : Core.Style
     {
         public string Color { get; set; }
         public int LineCap { get; set; }
@@ -29,5 +29,15 @@ namespace GDO.Apps.Maps.Core.Styles
         public int[] LineDash { get; set; }
         public int MiterLimit { get; set; }
         public int Width { get; set; }
+
+        new public void Modify(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
+        {
+            Color = color;
+            LineCap = lineCap;
+            LineDash = lineDash;
+            LineJoin = lineJoin;
+            MiterLimit = miterLimit;
+            Width = width;
+        }
     }
 }

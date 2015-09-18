@@ -6,12 +6,15 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using GDO.Apps.Maps.Core;
+using GDO.Apps.Maps.Core.Geometries;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
 using GDO.Apps.Maps.Core.Sources.Tiles;
+using GDO.Apps.Maps.Core.Styles;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
+using Style = GDO.Apps.Maps.Core.Style;
 
 namespace GDO.Apps.Maps
 {
@@ -360,11 +363,11 @@ namespace GDO.Apps.Maps
                 string serializedLayer = maps.GetLayer(layerId);
                 if (serializedLayer != null)
                 {
-                    Clients.All.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
+                    Clients.Group("" + instanceId).receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
                 }
                 else
                 {
-                    Clients.All.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
+                    Clients.Group("" + instanceId).receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
                 }
             }
             catch (Exception e)
@@ -466,11 +469,11 @@ namespace GDO.Apps.Maps
             string serializedView = maps.GetView(viewId);
             if (serializedView != null)
             {
-                Clients.All.receiveView(instanceId, viewId, serializedView, true);
+                Clients.Group("" + instanceId).receiveView(instanceId, viewId, serializedView, true);
             }
             else
             {
-                Clients.All.receiveLayer(instanceId, viewId, "", false);
+                Clients.Group("" + instanceId).receiveLayer(instanceId, viewId, "", false);
             }
         }
 
@@ -1058,11 +1061,11 @@ namespace GDO.Apps.Maps
                 string serializedSource = maps.GetSource(sourceId);
                 if (serializedSource != null)
                 {
-                    Clients.All.receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type, serializedSource, true);
+                    Clients.Group("" + instanceId).receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type, serializedSource, true);
                 }
                 else
                 {
-                    Clients.All.receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type, "", false);
+                    Clients.Group("" + instanceId).receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type, "", false);
                 }
             }
             catch (Exception e)
@@ -1087,14 +1090,6 @@ namespace GDO.Apps.Maps
                 }
             }
         }
-
-        //Feature
-
-            //TODO AddFeature to Vector
-            //TODO Modify Feature
-            //Remove Feature
-            //
-
 
         //Control
 
@@ -1160,13 +1155,22 @@ namespace GDO.Apps.Maps
 
         //Style
 
-        public void AddStyle(int instanceId)
+        public void AddCircleStyle(int instanceId, string name, int fillId, float opacity, bool rotateWithView, float rotation, float scale, int radius, bool snapToPixel, int strokeId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int styleId = -1;
+                    styleId = maps.AddStyle<CircleStyle>(name, (int)StyleTypes.Circle);
+                    if (styleId >= 0)
+                    {
+                        FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                        StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                        maps.Styles.GetValue<CircleStyle>(styleId).Modify(fill, opacity, rotateWithView, rotation, scale, radius, snapToPixel, stroke);
+                        BroadcastStyle(instanceId, styleId);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -1175,13 +1179,20 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddStyle(int instanceId)
+        public void AddFillStyle(int instanceId, string name, string color)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int styleId = -1;
+                    styleId = maps.AddStyle<FillStyle>(name, (int)StyleTypes.Fill);
+                    if (styleId >= 0)
+                    {
+                        maps.Styles.GetValue<FillStyle>(styleId).Modify(color);
+                        BroadcastStyle(instanceId, styleId);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -1190,13 +1201,220 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyStyle(int instanceId, int styleId)
+        public void AddIconStyle(int instanceId, string name, float[] anchor, int anchorOrigin, float[] offset, int offsetOrigin, float opacity, float scale,
+            bool snapToPixel, bool rotateWithView, float rotation, int width, int height, int imageWidth, int imageHeight, string imageSource)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int styleId = -1;
+                    styleId = maps.AddStyle<IconStyle>(name, (int)StyleTypes.Icon);
+                    if (styleId >= 0)
+                    {
+                        maps.Styles.GetValue<IconStyle>(styleId).Modify(anchor, anchorOrigin,offset,offsetOrigin,opacity,scale,snapToPixel,
+                            rotateWithView,rotation, width, height, imageWidth,imageHeight,imageSource);
+                        BroadcastStyle(instanceId, styleId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
+        public void AddStrokeStyle(int instanceId, string name, string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int styleId = -1;
+                    styleId = maps.AddStyle<StrokeStyle>(name, (int)StyleTypes.Stroke);
+                    if (styleId >= 0)
+                    {
+                        maps.Styles.GetValue<StrokeStyle>(styleId).Modify(color, lineCap, lineJoin, lineDash, miterLimit, width);
+                        BroadcastStyle(instanceId, styleId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddTextStyle(int instanceId, string name, string font, int offsetX, int offsetY, float scale, float rotation, string content,
+            string textAlign, string textBaseLine, int fillId, int strokeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int styleId = -1;
+                    styleId = maps.AddStyle<TextStyle>(name, (int)StyleTypes.Text);
+                    if (styleId >= 0)
+                    {
+                        FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                        StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                        maps.Styles.GetValue<TextStyle>(styleId).Modify(font, offsetX, offsetY, scale, rotation, content, textAlign,
+                            textBaseLine, fill, stroke);
+                        BroadcastStyle(instanceId, styleId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddRegularShapeStyle(int instanceId, string name, int fillId, float opacity, bool rotateWithView, float rotation, float scale,
+            int points, int radius, int radius1, int radius2, int angle, bool snapToPixel, int strokeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int styleId = -1;
+                    styleId = maps.AddStyle<RegularShapeStyle>(name, (int)StyleTypes.RegularShape);
+                    if (styleId >= 0)
+                    {
+                        FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                        StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                        maps.Styles.GetValue<RegularShapeStyle>(styleId).Modify(fill, opacity, rotateWithView, rotation, scale, points, radius,
+                            radius1, radius2, angle, snapToPixel, stroke);
+                        BroadcastStyle(instanceId, styleId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyCircleStyle(int instanceId, int styleId, string name, int fillId, float opacity, bool rotateWithView, float rotation, float scale, int radius, bool snapToPixel, int strokeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyStyle(styleId, name, (int)StyleTypes.Circle);
+                    FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                    StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                    maps.Styles.GetValue<CircleStyle>(styleId)
+                        .Modify(fill, opacity, rotateWithView, rotation, scale, radius, snapToPixel, stroke);
+                    BroadcastStyle(instanceId, styleId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyFillStyle(int instanceId, int styleId, string name, string color)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyStyle(styleId, name, (int)StyleTypes.Fill);
+                    maps.Styles.GetValue<FillStyle>(styleId)
+                        .Modify(color);
+                    BroadcastStyle(instanceId, styleId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyIconStyle(int instanceId, int styleId, string name, float[] anchor, int anchorOrigin, float[] offset, int offsetOrigin, float opacity,
+            float scale, bool snapToPixel, bool rotateWithView, float rotation, int width, int height, int imageWidth, int imageHeight, string imageSource)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyStyle(styleId, name, (int)StyleTypes.Icon);
+                    maps.Styles.GetValue<IconStyle>(styleId)
+                        .Modify(anchor, anchorOrigin, offset, offsetOrigin, opacity, scale, snapToPixel,
+                            rotateWithView, rotation, width, height, imageWidth, imageHeight, imageSource);
+                    BroadcastStyle(instanceId, styleId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyStrokeStyle(int instanceId, int styleId, string name, string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyStyle(styleId, name, (int)StyleTypes.Stroke);
+                    maps.Styles.GetValue<StrokeStyle>(styleId)
+                        .Modify(color, lineCap, lineJoin, lineDash, miterLimit, width);
+                    BroadcastStyle(instanceId, styleId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyTextStyle(int instanceId, int styleId, string name, string font, int offsetX, int offsetY, float scale, float rotation, string content,
+            string textAlign, string textBaseLine, int fillId, int strokeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyStyle(styleId, name, (int)StyleTypes.Text);
+                    FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                    StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                    maps.Styles.GetValue<TextStyle>(styleId)
+                        .Modify(font, offsetX, offsetY, scale, rotation, content, textAlign, textBaseLine, fill, stroke);
+                    BroadcastStyle(instanceId, styleId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ModifyTextStyle(int instanceId, int styleId, string name, int fillId, float opacity, bool rotateWithView, float rotation, float scale,
+            int points, int radius, int radius1, int radius2, int angle, bool snapToPixel, int strokeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ModifyStyle(styleId, name, (int)StyleTypes.RegularShape);
+                    FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                    StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                    maps.Styles.GetValue<RegularShapeStyle>(styleId)
+                        .Modify(fill, opacity, rotateWithView, rotation, scale, points, radius, radius1, radius2, angle, snapToPixel, stroke);
+                    BroadcastStyle(instanceId, styleId);
                 }
                 catch (Exception e)
                 {
@@ -1211,7 +1429,16 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedStyle = maps.GetStyle(styleId);
+                    if (serializedStyle != null)
+                    {
+                        Clients.Caller.receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, serializedStyle, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, "", false);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -1222,7 +1449,23 @@ namespace GDO.Apps.Maps
 
         public void BroadcastStyle(int instanceId, int styleId)
         {
-
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedStyle = maps.GetStyle(styleId);
+                if (serializedStyle != null)
+                {
+                    Clients.Group("" + instanceId).receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, serializedStyle, true);
+                }
+                else
+                {
+                    Clients.Group("" + instanceId).receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, "", false);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void RemoveStyle(int instanceId, int styleId)
@@ -1231,7 +1474,9 @@ namespace GDO.Apps.Maps
             {
                 try
                 {
-
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveStyle(styleId);
+                    BroadcastStyle(instanceId, styleId);
                 }
                 catch (Exception e)
                 {

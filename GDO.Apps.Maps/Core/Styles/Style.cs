@@ -8,13 +8,13 @@ namespace GDO.Apps.Maps.Core.Styles
     public class Style : Core.Style
     {
         public Geometry Geometry { get; set; }
-        public Fill Fill { get; set; }
-        public Styles.Image Image { get; set; }
-        public Stroke Stroke { get; set; }
-        public Text Text { get; set; }
+        public FillStyle Fill { get; set; }
+        public Styles.ImageStyle Image { get; set; }
+        public StrokeStyle Stroke { get; set; }
+        public TextStyle Text { get; set; }
         public int ZIndex { get; set; }
 
-        public Style(Geometry geometry, Fill fill, Styles.Image image, Stroke stroke, Text text, int zIndex)
+        new public void Modify(Geometry geometry, FillStyle fill, Styles.ImageStyle image, StrokeStyle stroke, TextStyle text, int zIndex)
         {
             Geometry = geometry;
             Fill = fill;

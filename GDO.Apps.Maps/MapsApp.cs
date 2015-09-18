@@ -262,28 +262,63 @@ namespace GDO.Apps.Maps
         }
 
         //Style
-
-        public int AddStyle()
+        public int AddStyle<T>(string name, int type) where T : Style, new()
         {
-
-            return -1;
+            try
+            {
+                int styleId = Styles.GetAvailableSlot();
+                T style = new T();
+                style.Modify(styleId, name, type);
+                Styles.Add<T>(styleId, style);
+                return styleId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
         }
 
-        public bool ModifyStyle(int styleId)
+        public bool ModifyStyle(int id, string name, int type)
         {
-
-            return false;
+            try
+            {
+                Styles.GetValue<Style>(id).Modify(id, name, type);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         public string GetStyle(int styleId)
         {
-            return "";
+            Style style = Styles.GetValue<Style>(styleId);
+            if (style != null)
+            {
+                string serializedStyle = Newtonsoft.Json.JsonConvert.SerializeObject(Styles.GetValue<Style>(styleId));
+                return serializedStyle;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public bool RemoveStyle(int styleId)
         {
-
-            return false;
+            try
+            {
+                Styles.Remove(styleId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
     }
 }
