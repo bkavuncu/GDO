@@ -11,7 +11,8 @@ $(function () {
     gdo.consoleOut('.MAPS', 1, 'Loaded Maps JS');
     $.connection.mapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
-            gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+            gdo.net.app["Maps"].updateCenter(instanceId);
+            //gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
         }
     }
     $.connection.mapsAppHub.client.receive3DMode = function (instanceId, mode) {
@@ -51,8 +52,17 @@ $(function () {
                 gdo.net.app["Maps"].initMap(instanceId, mapCenter, mapResolution);
                 gdo.net.instance[instanceId].isInitialized = true;
             }
-            gdo.net.instance[instanceId].map.getView().setCenter(mapCenter);
-            gdo.net.instance[instanceId].map.getView().setResolution(mapResolution);
+            var duration = 70;
+            var start = +new Date();
+            var pan = ol.animation.pan({
+                duration: duration,
+                source: /** @type {ol.Coordinate} */ (view.getCenter()),
+                start: start
+            });
+            map.beforeRender(pan);
+            gdo.net.app["Maps"].update(instanceId, mapCenter, mapResolution);
+            //gdo.net.instance[instanceId].map.getView().setCenter(mapCenter);
+            //gdo.net.instance[instanceId].map.getView().setResolution(mapResolution);
         }
     }
     $.connection.mapsAppHub.client.receiveInitialMapPosition = function (instanceId, center, resolution, zoom) {
@@ -269,3 +279,9 @@ gdo.net.app["Maps"].updateCenter = function (instanceId) {
     gdo.consoleOut('.MAPS', 4, gdo.net.instance[instanceId].map.getView().getCenter());
     gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
 }
+gdo.net.app["Maps"].update = function (instanceId, mapCenter, mapResolution) {
+    gdo.consoleOut('.MAPS', 4, gdo.net.instance[instanceId].map.getView().getCenter());
+    gdo.net.instance[instanceId].map.getView().setCenter(mapCenter);
+    gdo.net.instance[instanceId].map.getView().setResolution(mapResolution);
+}
+
