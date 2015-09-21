@@ -7,6 +7,7 @@ var scene;
 var terrainProvider;
 
 
+
 $(function () {
     gdo.consoleOut('.MAPS', 1, 'Loaded Maps JS');
 
@@ -28,8 +29,15 @@ $(function () {
         }
     }
 
-    $.connection.mapsAppHub.client.receiveLayer = function(instanceId, layerId, layer, enabled) {
-
+    $.connection.mapsAppHub.client.receiveLayer = function (instanceId, layerId, serializedLayer, enabled) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId);
+        if (gdo.net.instance[instanceId].layers[layerId] == null || gdo.net.instance[instanceId].layers[layerId] == undefined) {
+            gdo.net.app["Maps"].addLayer(instanceId, layerId, JSON.parse(serializedLayer));
+            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Layer :' + layerId);
+        } else {
+            gdo.net.app["Maps"].updateLayer(instanceId, layerId, JSON.parse(serializedLayer));
+            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Layer :' + layerId);
+        }
     }
 
     $.connection.mapsAppHub.client.receiveView = function (instanceId) {
@@ -124,6 +132,7 @@ gdo.net.app["Maps"].initClient = function (clientId) {
     gdo.consoleOut('.Maps', 1, 'Initializing Maps App Instance ' + instanceId + ' Client at Node ' + clientId);
     gdo.loadModule('ui', 'maps', gdo.MODULE_TYPE.APP);
     gdo.loadModule('3d', 'maps', gdo.MODULE_TYPE.APP);
+    //TODO add other modules
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.app["Maps"].C = 156543.034;
     gdo.net.app["Maps"].R = 6378137;
@@ -212,136 +221,4 @@ gdo.net.app["Maps"].changeEvent = function (instanceId) {
 gdo.net.app["Maps"].updateCenter = function (instanceId) {
     gdo.consoleOut('.MAPS', 4, gdo.net.instance[instanceId].map.getView().getCenter());
     gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
-}
-
-//Layer
-
-gdo.net.app["Maps"].addLayer = function(instanceId) {
-
-}
-
-gdo.net.app["Maps"].modifyLayer = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].requestLayer = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].setLayer = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].removeLayer = function (instanceId) {
-
-}
-
-//View
-
-gdo.net.app["Maps"].addView = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].modifyView = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].requestView = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].setView = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].removeView = function (instanceId) {
-
-}
-
-//Interaction
-
-gdo.net.app["Maps"].addInteraction = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].modifyInteraction = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].requestInteraction = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].setInteraction = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].removeInteraction = function (instanceId) {
-
-}
-
-//Source
-
-gdo.net.app["Maps"].addSource = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].modifySource = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].requestSource = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].setSource = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].removeSource = function (instanceId) {
-
-}
-
-//Control
-
-gdo.net.app["Maps"].addControl = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].modifyControl = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].requestControl = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].setControl = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].removeControl = function (instanceId) {
-
-}
-
-//Style
-
-gdo.net.app["Maps"].addStyle = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].modifyStyle = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].requestStyle = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].setStyle = function (instanceId) {
-
-}
-
-gdo.net.app["Maps"].removeStyle = function (instanceId) {
-
 }

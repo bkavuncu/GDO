@@ -83,8 +83,15 @@
     <Content Include="Configurations\Maps\Istanbul.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\gdo.apps.maps.view.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.control.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.format.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.interaction.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.layer.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.source.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.style.js" />
     <Content Include="Scripts\Maps\ol3cesium.js.map" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
@@ -113,7 +120,6 @@
   <ItemGroup>
     <Compile Include="Core\Control.cs" />
     <Compile Include="Core\Coordinate.cs" />
-    <Compile Include="Core\Extent.cs" />
     <Compile Include="Core\Feature.cs" />
     <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Geometries\LinearRing.cs" />

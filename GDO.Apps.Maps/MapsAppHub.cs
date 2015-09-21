@@ -697,7 +697,7 @@ namespace GDO.Apps.Maps
                     if (sourceId >= 0)
                     {
                         maps.Sources.GetValue<ClusterSource>(sourceId)
-                            .Modify(distance, new Extent(extent[0], extent[1], extent[2], extent[3]), format, maps.Sources.GetValue<VectorSource>(vectorSourceId));
+                            .Modify(distance, extent, format, maps.Sources.GetValue<VectorSource>(vectorSourceId));
                         BroadcastSource(instanceId, sourceId);
                     }
                 }

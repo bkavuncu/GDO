@@ -9,7 +9,6 @@ namespace GDO.Apps.Maps.Core
 {
     public enum LayerTypes
     {
-        None = -1,
         Base = 0,
         Heatmap = 1,
         Image = 2,
@@ -30,7 +29,7 @@ namespace GDO.Apps.Maps.Core
         public float Opacity { get; set; }
         public int ZIndex { get; set; }
         public bool Visible { get; set; }
-        public Extent Extent { get; set; }
+        public float[] Extent { get; set; }
         public int MinResolution { get; set; }
         public int MaxResolution { get; set; }
 
