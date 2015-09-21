@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Timers;
+using System.Linq;
 using GDO.Utility;
-using Newtonsoft.Json;
 
 namespace GDO.Core
 {
@@ -79,11 +75,7 @@ namespace GDO.Core
             {
                 lock (ServerLock)
                 {
-                    if (Self == null)
-                    {
-                        Self = new Cave();
-                    }
-                    return Self;
+                    return Self ?? (Self = new Cave());
                 }
             }
         }
@@ -119,16 +111,12 @@ namespace GDO.Core
         /// </summary>
         /// <param name="connectionId">The connection identifier.</param>
         /// <returns></returns>
-        public static Node GetNode(string connectionId)
-        {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
-            {
-                if (connectionId == nodeEntry.Value.ConnectionId)
-                {
-                    return nodeEntry.Value;
-                }
-            }
-            return null;
+        public static Node GetNode(string connectionId) {
+            return
+                (from nodeEntry in Nodes
+                    where connectionId == nodeEntry.Value.ConnectionId
+                    select nodeEntry.Value)
+                    .FirstOrDefault();
         }
 
 
@@ -140,25 +128,17 @@ namespace GDO.Core
         /// <param name="col">The col.</param>
         /// <param name="row">The row.</param>
         /// <returns></returns>
-        public static Node DeployNode(int sectionId, int nodeId, int col, int row)
-        {
-            if (Cave.Sections.ContainsKey(sectionId) && Cave.Nodes.ContainsKey(nodeId))
-            {
+        public static Node DeployNode(int sectionId, int nodeId, int col, int row) {
+            if (Cave.Sections.ContainsKey(sectionId) && Cave.Nodes.ContainsKey(nodeId)) {
                 if (!Nodes[nodeId].IsDeployed)
                 {
                     Nodes[nodeId].Deploy(Sections[sectionId], col, row);
                     Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
                     return Nodes[nodeId];
                 }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
                 return null;
             }
+            return null;
         }
 
         /// <summary>
@@ -166,17 +146,13 @@ namespace GDO.Core
         /// </summary>
         /// <param name="nodeId">The node identifier.</param>
         /// <returns></returns>
-        public static Node FreeNode(int nodeId)
-        {
+        public static Node FreeNode(int nodeId) {
             if (Cave.Nodes.ContainsKey(nodeId))
             {
                 Nodes[nodeId].Free();
                 return Nodes[nodeId];
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         /// <summary>
@@ -243,6 +219,7 @@ namespace GDO.Core
             }
             return freedNodes;
         }
+
         /// <summary>
         /// Determines whether [is section free] [the specified col start].
         /// </summary>
@@ -251,19 +228,14 @@ namespace GDO.Core
         /// <param name="colEnd">The col end.</param>
         /// <param name="rowEnd">The row end.</param>
         /// <returns></returns>
-        public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd)
-        {
-            foreach (KeyValuePair<int, Node> nodeEntry in Nodes)
-            {
+        public static bool IsSectionFree(int colStart, int rowStart, int colEnd, int rowEnd) {
+            foreach (KeyValuePair<int, Node> nodeEntry in Nodes) {
                 Node node = nodeEntry.Value;
-                if (colStart > colEnd || rowStart > rowEnd)
-                {
+                if (colStart > colEnd || rowStart > rowEnd) {
                     return false;
                 }
-                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart)
-                {
-                    if (node.IsDeployed)
-                    {
+                if (node.Col <= colEnd && node.Col >= colStart && node.Row <= rowEnd && node.Row >= rowStart) {
+                    if (node.IsDeployed) {
                         return false;
                     }
                 }
@@ -271,24 +243,13 @@ namespace GDO.Core
             return true;
         }
 
-
-
-
         /// <summary>
         /// Determines whether the specified node identifier contains node.
         /// </summary>
         /// <param name="NodeId">The node identifier.</param>
         /// <returns></returns>
-        public static bool ContainsNode(int NodeId)
-        {
-            if (Nodes.ContainsKey(NodeId))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        public static bool ContainsNode(int NodeId) {
+            return Nodes.ContainsKey(NodeId);
         }
 
         /// <summary>
@@ -296,28 +257,12 @@ namespace GDO.Core
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <returns></returns>
-        public static bool ContainsSection(int sectionId)
-        {
-            if (Sections.ContainsKey(sectionId))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        public static bool ContainsSection(int sectionId) {
+            return Sections.ContainsKey(sectionId);
         }
 
-        public static bool ContainsApp(string appName)
-        {
-            if (Apps.ContainsKey(appName))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        public static bool ContainsApp(string appName) {
+            return Apps.ContainsKey(appName);
         }
 
         /// <summary>
@@ -325,16 +270,8 @@ namespace GDO.Core
         /// </summary>
         /// <param name="instanceId">The instance identifier.</param>
         /// <returns></returns>
-        public static bool ContainsInstance(int instanceId)
-        {
-            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-            {
-                if (appEntry.Value.Instances.ContainsKey(instanceId))
-                {
-                    return true;
-                }
-            }
-            return false;
+        public static bool ContainsInstance(int instanceId) {
+            return Cave.Apps.Any(appEntry => appEntry.Value.Instances.ContainsKey(instanceId));
         }
 
         /// <summary>
@@ -343,8 +280,7 @@ namespace GDO.Core
         /// <param name="col">The col.</param>
         /// <param name="row">The row.</param>
         /// <returns></returns>
-        public static int GetSectionId(int col, int row)
-        {
+        public static int GetSectionId(int col, int row) {
             return Cave.Nodes[GetNodeId(col, row)].SectionId;
         }
         /// <summary>
@@ -459,8 +395,7 @@ namespace GDO.Core
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="app">The application.</param>
-        public static bool RegisterApp(string name, int p2pmode, Type appType)
-        {
+        public static bool RegisterApp(string name, int p2pmode, Type appType) {
             if (!Apps.ContainsKey(name))
             {
                 App app = new App();
@@ -474,10 +409,7 @@ namespace GDO.Core
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
@@ -514,11 +446,7 @@ namespace GDO.Core
         /// <returns></returns>
         public static List<string> GetAppList()
         {
-            List<string> appList = new List<string>();
-            foreach (KeyValuePair<string, App> appEntry in Apps)
-            {
-                appList.Add(appEntry.Value.Name);
-            }
+            List<string> appList = Apps.Select(appEntry => appEntry.Value.Name).ToList();
             appList.Sort();
             return appList;
         }

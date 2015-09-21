@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using Newtonsoft.Json;
 
 namespace GDO.Core
@@ -113,16 +110,11 @@ namespace GDO.Core
         /// <summary>
         /// Aggregates the connection health.
         /// </summary>
-        public void aggregateConnectionHealth()
-        {
-            int agg = 0;
-            foreach (Node node in Nodes)
-            {
-                if (node.IsConnectedToCaveServer == false)
-                {
-                    agg += node.AggregatedConnectionHealth;
-                }
-            }
+        public void aggregateConnectionHealth() {
+            int agg =
+                (from Node node in Nodes
+                    where node.IsConnectedToCaveServer == false
+                    select node.AggregatedConnectionHealth).Sum();
             AggregatedConnectionHealth = agg / NumNodes;
 
         }

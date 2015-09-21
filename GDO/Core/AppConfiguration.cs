@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace GDO.Core
+﻿namespace GDO.Core
 {
     /// <summary>
     ///  App Configuration Class

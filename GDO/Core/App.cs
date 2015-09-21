@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Web;
-using Microsoft.AspNet.SignalR;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Reflection;
 using GDO.Utility;
 using Newtonsoft.Json;
 
@@ -41,39 +33,31 @@ namespace GDO.Core
             this.Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
-        public int CreateAppInstance(string configName, int sectionId)
-        {
-            if (Configurations.ContainsKey(configName))
-            {
-                int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-                IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
-                AppConfiguration conf;
-                Cave.Sections[sectionId].CalculateDimensions();
-                Configurations.TryGetValue(configName, out conf);
-                instance.init(instanceId, this.Name, Cave.Sections[sectionId], conf);
-                Instances.TryAdd(instanceId,instance);
-                Cave.Instances.TryAdd(instanceId,instance);
-                return instanceId;
-            }
-            else
-            {
+        public int CreateAppInstance(string configName, int sectionId) {
+            if (!Configurations.ContainsKey(configName)) {
                 return -1;
             }
+
+            int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
+            IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
+            AppConfiguration conf;
+            Cave.Sections[sectionId].CalculateDimensions();
+            Configurations.TryGetValue(configName, out conf);
+            instance.init(instanceId, this.Name, Cave.Sections[sectionId], conf);
+            Instances.TryAdd(instanceId,instance);
+            Cave.Instances.TryAdd(instanceId,instance);
+            return instanceId;
         }
 
-        public bool DisposeAppInstance(int instanceId)
-        {
-            if (Instances.ContainsKey(instanceId))
-            {
-                IAppInstance instance;
-                Instances.TryRemove(instanceId, out instance);
-                Cave.Instances.TryRemove(instanceId,out instance);
-                return true;
-            }
-            else
-            {
+        public bool DisposeAppInstance(int instanceId) {
+            if (!Instances.ContainsKey(instanceId)) {
                 return false;
             }
+
+            IAppInstance instance;
+            Instances.TryRemove(instanceId, out instance);
+            Cave.Instances.TryRemove(instanceId,out instance);
+            return true;
         }
 
         public bool LoadConfigurations()
@@ -81,13 +65,9 @@ namespace GDO.Core
             return false;
         }
 
-        public List<string> GetConfigurationList()
-        {
-            List<string> configurationList = new List<string>();
-            foreach (KeyValuePair<string, AppConfiguration> configurationEntry in Configurations)
-            {
-                configurationList.Add(configurationEntry.Value.Name);
-            }
+        public List<string> GetConfigurationList() {
+            List<string> configurationList =
+                Configurations.Select(configurationEntry => configurationEntry.Value.Name).ToList();
             configurationList.Sort();
             this.ConfigurationList = configurationList;
             return configurationList;
@@ -96,7 +76,7 @@ namespace GDO.Core
         public string SerializeJSON()
         {
             GetConfigurationList();
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

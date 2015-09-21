@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using log4net;
 using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json;
 
 namespace GDO.Core
 {
     public class CaveHub : Hub
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(CaveHub));
+
         public override System.Threading.Tasks.Task OnConnected()
         {
             return base.OnConnected();
@@ -37,6 +42,7 @@ namespace GDO.Core
             return base.OnDisconnected(stopCalled);
 
         }
+
         /// <summary>
         /// Deploys the node.
         /// </summary>
@@ -253,7 +259,7 @@ namespace GDO.Core
                 node.ConnectionId = connectionId;
                 node.PeerId = peerId;
                 node.IsConnectedToPeerServer = isConnectedToPeerServer;
-                int[] deserializedConnectedNodes = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(connectedNodes);
+                int[] deserializedConnectedNodes = JsonConvert.DeserializeObject<int[]>(connectedNodes);
                 node.ConnectedNodeList.Clear();
                 foreach (int connectedNode in deserializedConnectedNodes)
                 {
@@ -279,33 +285,21 @@ namespace GDO.Core
                 try
                 {
                     List<string> nodes = new List<string>(Cave.Nodes.Count);
-                    foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
-                    {
-                        nodes.Add(GetNodeUpdate(nodeEntry.Value.Id));
-                    }
+                    nodes.AddRange(Cave.Nodes.Select(nodeEntry => GetNodeUpdate(nodeEntry.Value.Id)));
                     List<string> sections = new List<string>(Cave.Sections.Count);
-                    foreach (KeyValuePair<int, Section> sectionEntry in Cave.Sections)
-                    {
-                        sections.Add(GetSectionUpdate(sectionEntry.Value.Id));
-                    }
+                    sections.AddRange(Cave.Sections.Select(sectionEntry => GetSectionUpdate(sectionEntry.Value.Id)));
                     List<string> apps = new List<string>(Cave.Apps.Count);
-                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                    {
-                        apps.Add(GetAppUpdate(appEntry.Value.Name));
-                    }
+                    apps.AddRange(Cave.Apps.Select(appEntry => GetAppUpdate(appEntry.Value.Name)));
                     List<string> instances = new List<string>(Cave.Instances.Count);
-                    foreach (KeyValuePair<int, IAppInstance> instanceEntry in Cave.Instances)
-                    {
-                        instances.Add(GetInstanceUpdate(instanceEntry.Value.Id));
-                    }
-                    string nodeMap = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNodeMap());
-                    string neighbourMap = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
-                    string appList = Newtonsoft.Json.JsonConvert.SerializeObject(Cave.GetAppList());
+                    instances.AddRange(Cave.Instances.Select(instanceEntry => GetInstanceUpdate(instanceEntry.Value.Id)));
+                    string nodeMap = JsonConvert.SerializeObject(Cave.GetNodeMap());
+                    string neighbourMap = JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
+                    string appList = JsonConvert.SerializeObject(Cave.GetAppList());
                     Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to prepare Cave Update ",e); 
                 }
             }
         }
@@ -319,12 +313,12 @@ namespace GDO.Core
                     if (Cave.ContainsInstance(instanceId))
                     {
                         Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId), Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Name,
-                            Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()));
+                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()));
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to prepare RequestAppConfiguration", e);
                 }
             }
         }
@@ -342,7 +336,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to GetNodeUpdate", e);
                     return null;
                 }
             }
@@ -369,6 +363,7 @@ namespace GDO.Core
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Log.Error("failed to GetNodeUpdate", e);
                 return null;
             }
         }
@@ -403,7 +398,7 @@ namespace GDO.Core
                 {
                     IAppInstance instance;
                     Cave.Instances.TryGetValue(instanceId, out instance);
-                    return Newtonsoft.Json.JsonConvert.SerializeObject(instance);
+                    return JsonConvert.SerializeObject(instance);
                 }
                 else
                 {
@@ -452,7 +447,6 @@ namespace GDO.Core
         /// Broadcasts the section update.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
-        /// <param name="exists">if set to <c>true</c> [exists].</param>
         /// <returns></returns>
         private bool BroadcastSectionUpdate(int sectionId)
         {
@@ -485,7 +479,7 @@ namespace GDO.Core
                 {
                     if (Cave.Apps.ContainsKey(appName))
                     {
-                        if (Cave.ContainsInstance(instanceId) &&Cave.Apps[appName].Configurations.ContainsKey(configName))
+                        if (Cave.ContainsInstance(instanceId) && Cave.Apps[appName].Configurations.ContainsKey(configName))
                         {
                             //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
                             Clients.All.receiveAppUpdate(sectionId, appName, configName, instanceId, p2pmode, exists);
