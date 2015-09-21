@@ -84,37 +84,41 @@ gdo.net.app["Maps"].requestLayer = function (instanceId, layerId) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Layer :' + layerId);
     gdo.net.app["Maps"].server.requestLayer(instanceId, layerId);
 }
-gdo.net.app["Maps"].uploadNewLayer = function (instanceId, layerId) {
+gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, isNew) {
     var layer = gdo.net.instance[instanceId].layers[layerId];
-    switch (gdo.net.instance[instanceId].layers[layerId].type) {
+    var type = gdo.net.instance[instanceId].layers[layerId].type;
+    if (isNew) {
+        layerId = -1;
+    }
+    switch (type) {
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Base:
-            gdo.net.app["Maps"].server.addLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(),layer.getSaturation(),
+            gdo.net.app["Maps"].server.updateLayer(instanceId, layerId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
                 layer.getHue(),layer.getOpacity(),layer.getZIndex(), layer.getVisible(),layer.getMinResolution(),layer.getMaxResolution());
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
-            gdo.net.app["Maps"].server.addHeatmapLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+            gdo.net.app["Maps"].server.updateHeatmapLayer(instanceId, layerId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
                 layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution(),
                 layer.getGradient, layer.getRadius());
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
-            gdo.net.app["Maps"].server.addImageLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+            gdo.net.app["Maps"].server.updateImageLayer(instanceId, layerId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
                 layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution());
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
-            gdo.net.app["Maps"].server.addTileLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+            gdo.net.app["Maps"].server.updateTileLayer(instanceId, layerId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
                 layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution(), layer.getPreload());
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
-            gdo.net.app["Maps"].server.addVectorLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+            gdo.net.app["Maps"].server.updateVectorLayer(instanceId, layerId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
                 layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution(),
                 layer.getStyle().Id);
             break;
         default:
-            layer = new ol.layer.Base();
+            gdo.net.app["Maps"].server.updateLayer(instanceId, layerId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+                layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution());
             break;
     }
 }
-
 
 gdo.net.app["Maps"].removeLayer = function (instanceId, layerId) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Removing Layer :' + layerId);
@@ -126,3 +130,5 @@ gdo.net.app["Maps"].setLayerVisible = function (instanceId, layerId, visible) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Setting Layer Visible:' + layerId + ': ' + visible);
     gdo.net.instance[instanceId].layers[layerId].setVisible(visible);
 }
+
+//TODO one mor function load layer from control client.
