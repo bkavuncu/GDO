@@ -237,6 +237,20 @@
 
                 };
 
+                test_bench[1] = function () {
+                    var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
+                    
+                    var table = $("#control_1 table");
+                    var send = function (value) {
+                        server.sendOrder(instanceId, order("plot", [value]), true);
+                    };
+
+                    dataIds.forEach(function (d) {
+                        table.append('<tr><td>' + d + '</td></tr>');
+                        table.find("tr:last td").addClass('green').click(send.bind(null, d));
+                    });
+                };
+
                 test_bench[2] = function () {
                     $("#changeValues").click(function () {
                         var n = +$("#timeTr").val();
@@ -246,6 +260,9 @@
 
                 test_bench[3] = function () {
                     var id = 0;
+                    var previous;
+                    var timeout = -1;
+                    var sensibility = 100;
                     var pos = {};
                     var posC = {};
                     var wr = 600, hr = 300;
@@ -275,6 +292,7 @@
                         drag.on("drag", moveRect);
                         drag.on("dragstart", function () {
                             var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            previous = Date.now();
                             pos.x = t[0] - d3.mouse(g.node())[0];
                             pos.y = t[1] - d3.mouse(g.node())[1];
                         });
@@ -282,6 +300,7 @@
                         dragC.on("drag", resizeRect);
                         dragC.on("dragstart", function () {
                             var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            previous = Date.now();
                             posC.x = t[0] - d3.mouse(g.node())[0];
                             posC.y = t[1] - d3.mouse(g.node())[1];
                         });
@@ -312,16 +331,37 @@
                         server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                     });
 
+                    $("#sens").change(function () {
+                        sensibility = +this.value;
+                    });
+
                     var moveRect = function () {
-                        server.sendOrder(instanceId, order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]), false);
-                        d3.select(this.parentElement).attr("transform", "translate(" + [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y] + ")");
+                        var o = order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
+                            tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
+
+                        var move = function () {
+                            server.sendOrder(instanceId, o, false);
+                            previous = Date.now();
+                        };
+
+                        d3.select(this.parentElement).attr("transform", "translate(" + tr + ")");
+                        clearTimeout(timeout);
+                        timeout = setTimeout(move, Math.max(0, sensibility - (Date.now() - previous)));
                     };
 
                     var resizeRect = function () {
-                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]);
-                        server.sendOrder(instanceId, order("resizeRect", [this.parentElement.id, x / wr, y / hr]), false);
+                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]),
+                            o = order("resizeRect", [this.parentElement.id, x / wr, y / hr]);
+
+                        var resize = function () {
+                            server.sendOrder(instanceId, o, false);
+                            previous = Date.now();
+                        };
+
                         d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
                         d3.select(this).attr("cx", x).attr("cy", y);
+                        clearTimeout(timeout);
+                        timeout = setTimeout(resize, Math.max(0, sensibility - (Date.now() - previous)));
                     };
 
                     var delRect = function () {
@@ -409,7 +449,9 @@
     </div>
 
     <div id="control_1" style="display:none">
-        Here will be the control panel for test 1
+        <table class="table_control">
+
+        </table>
     </div>
 
     <div id="control_2" style="display:none">
@@ -430,6 +472,9 @@
             </tr>
             <tr>
                 <td class="green" id="removeAllRect">Remove All</td>
+            </tr>
+            <tr>
+                <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width:40px" /></td>
             </tr>
         </table> 
     </div>

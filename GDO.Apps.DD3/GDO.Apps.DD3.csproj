@@ -112,6 +112,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
+    <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

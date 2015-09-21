@@ -31,12 +31,7 @@ namespace GDO.Apps.DD3
             Configuration.Json.TryGetValue("id", out value);
             this.ConfigurationId = (int)value;
 
-            Configuration.Json.TryGetValue("data", out value);
-            if (value != null)
-                this.data = value;
-            else
-                this.data = new JObject();
-
+            data = new Data(this.Configuration.Name);
             /*
             // Test For data request
 
@@ -65,83 +60,43 @@ namespace GDO.Apps.DD3
         private IHubContext<dynamic> Context;
         private string controllerId = "";
         private int ConfigurationId;
-        private JToken data;
-        private Dictionary<string, JToken> dimensions = new Dictionary<string, JToken>();
-        private Dictionary<string, object> _lockersDim = new Dictionary<string, object>();
-        private readonly object _lockerDim = new Object();
+        private Data data;
+
 
 
         // Code for Data Request and Management
 
         public string getDimensions(string dataId)
         {
-
-            lock (_lockerDim)
-            {
-                if (!this._lockersDim.ContainsKey(dataId))
-                {
-                    this._lockersDim.Add(dataId, new object());
-                }
-            }
-
-            lock (_lockersDim[dataId])
-            {
-                if (this.dimensions.ContainsKey(dataId))
-                {
-                    return this.dimensions[dataId].ToString();
-                }
-
-                var data = this.data[dataId];
-
-                if (data == null)
-                {
-                    return "{\"error\":\"incorrect_dataId\"}";
-                }
-
-                var dimensions = new JObject();
-                Func<JToken, JToken> tryParseNumber = d =>
-                {
-                    double number;
-                    return Double.TryParse(d.ToString(), out number) ? number : d;
-                };
-
-                foreach (var p in (JObject)(data[0]))
-                {
-                    dimensions[p.Key] = new JObject();
-                    dimensions[p.Key]["min"] = data.ToObject<IEnumerable<JToken>>().Min(c => tryParseNumber(c[p.Key]));
-                    dimensions[p.Key]["max"] = data.ToObject<IEnumerable<JToken>>().Max(c => tryParseNumber(c[p.Key]));
-                }
-
-                dimensions["length"] = data.Count();
-                this.dimensions.Add(dataId, dimensions);
-
-                return dimensions.ToString();
-            }
+            return data.getDimensions(dataId).ToString();
         }
 
         public string requestData(DataRequest request)
         {
-            return this.data[request.dataId].ToString();
+            return this.data.getById(request.dataId).ToString() ?? "{\"error\":\"incorrect_dataId\"}";
         }
 
         public string requestPointData(PointDataRequest request)
         {
-            return request.executeWith(this.data);
+            var dataIn = this.data.getById(request.dataId);
+            return dataIn == null ? "{\"error\":\"incorrect_dataId\"}" : request.executeWith(dataIn);
         }
 
         public string requestPathData(PathDataRequest request)
         {
-            return request.executeWith(this.data);
+            var dataIn = this.data.getById(request.dataId);
+            return dataIn == null ? "{\"error\":\"incorrect_dataId\"}" : request.executeWith(dataIn);
         }
 
         public string requestBarData(BarDataRequest request)
         {
-            return request.executeWith(this.data);
+            var dataIn = this.data.getById(request.dataId);
+            return dataIn == null ? "{\"error\":\"incorrect_dataId\"}" : request.executeWith(dataIn);
         }
 
         public string requestRemoteData(RemoteDataRequest request)
         {
-            return JsonConvert.SerializeObject(request.execute(ref this.data));
+            return request.execute(this.data);
         }
 
         // Code for Connection and Control
@@ -213,6 +168,97 @@ namespace GDO.Apps.DD3
         }
     }
 
+    public class Data
+    {
+        private Dictionary <string, JToken> data = new Dictionary<string, JToken>();
+        private Dictionary<string, JToken> dimensions = new Dictionary<string, JToken>();
+        private Dictionary<string, object> _lockersDim = new Dictionary<string, object>();
+        private readonly object _lockerDim = new Object();
+
+        public Data (string confName)
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader("Configurations/DD3/Data/File" + confName + ".txt"))
+                {
+                    System.Diagnostics.Debug.WriteLine("Reading the data file");
+                    string line = sr.ReadToEnd();
+                    JObject json = JObject.Parse(line);
+                    foreach (var p in json)
+                    {
+                        data.Add(p.Key, p.Value);
+                    }
+                    System.Diagnostics.Debug.WriteLine("Data were loaded");
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("The data file could not be read:");
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
+        }
+
+        public JToken getById(string dataId)
+        {
+            return data.ContainsKey(dataId) ? data[dataId] : null;
+        }
+
+        public void add(string dataId, JToken dataSet)
+        {
+            data.Add(dataId, dataSet);
+        }
+
+        public JToken getDimensions(string dataId)
+        {
+            lock (_lockerDim)
+            {
+                if (!this._lockersDim.ContainsKey(dataId))
+                {
+                    this._lockersDim.Add(dataId, new object());
+                }
+            }
+
+            lock (_lockersDim[dataId])
+            {
+                if (this.dimensions.ContainsKey(dataId))
+                {
+                    return this.dimensions[dataId].ToString();
+                }
+
+                if (!this.data.ContainsKey(dataId))
+                {
+                    return "{\"error\":\"incorrect_dataId\"}";
+                }
+
+                calculateDimensions(dataId);
+
+                return this.dimensions[dataId].ToString();
+            }
+        }
+
+        private void calculateDimensions (string dataId)
+        {
+            var dataSet = this.data[dataId];
+            var dimensions = new JObject();
+            Func<JToken, JToken> tryParseNumber = d =>
+            {
+                double number;
+                return Double.TryParse(d.ToString(), out number) ? number : d;
+            };
+
+            foreach (var p in (JObject)(dataSet[0]))
+            {
+                dimensions[p.Key] = new JObject();
+                dimensions[p.Key]["min"] = dataSet.ToObject<IEnumerable<JToken>>().Min(c => tryParseNumber(c[p.Key]));
+                dimensions[p.Key]["max"] = dataSet.ToObject<IEnumerable<JToken>>().Max(c => tryParseNumber(c[p.Key]));
+            }
+
+            dimensions["length"] = dataSet.Count();
+            this.dimensions.Add(dataId, dimensions);
+        }
+
+    }
+
     public abstract class DataRequest
     {
         public string dataId { get; set; }
@@ -270,12 +316,7 @@ namespace GDO.Apps.DD3
 
         public string executeWith(JToken dataIn)
         {
-            if (dataIn[dataId] == null)
-            {
-                return "{\"error\":\"incorrect_dataId\"}";
-            }
-
-            var data = dataIn[dataId].ToObject<IEnumerable<JToken>>();
+            var data = dataIn.ToObject<IEnumerable<JToken>>();
 
             IEnumerable<JToken> filteredData = data.Where(isIn);
 
@@ -311,12 +352,7 @@ namespace GDO.Apps.DD3
 
         public string executeWith(JToken dataIn)
         {
-            if (dataIn[dataId] == null)
-            {
-                return "{\"error\":\"incorrect_dataId\"}";
-            }
-
-            var data = dataIn[dataId].ToObject<IEnumerable<JToken>>();
+            var data = dataIn.ToObject<IEnumerable<JToken>>();
 
             IEnumerable<JToken> orderedData;
 
@@ -390,12 +426,7 @@ namespace GDO.Apps.DD3
 
         public new string executeWith(JToken dataIn)
         {
-            if (dataIn[dataId] == null)
-            {
-                return "{\"error\":\"incorrect_dataId\"}";
-            }
-
-            var data = dataIn[dataId].ToArray();
+            var data = dataIn.ToArray();
             List<JToken> filteredData = new List<JToken>();
             int counter = approximation;
 
@@ -558,7 +589,7 @@ namespace GDO.Apps.DD3
             return error;
         }
 
-        public JToken execute (ref JToken data)
+        public string execute (Data data)
         {
             JToken unformattedData, formattedData;
 
@@ -571,11 +602,11 @@ namespace GDO.Apps.DD3
                 if (formattedData != null)
                 {
                     System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(formattedData.ToArray()));
-                    data[dataId] = formattedData;
+                    data.add(dataId, formattedData);
                 }
             }
 
-            return error;
+            return JsonConvert.SerializeObject(error);
         }
 
     }
