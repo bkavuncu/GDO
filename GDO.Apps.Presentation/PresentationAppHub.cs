@@ -50,8 +50,11 @@ namespace GDO.Apps.Presentation
                     Clients.Caller.setMessage("Initializing presentation procession...");
                     // convert ppt to png
                     String pptPath = pa.BasePath + "\\" + pa.FileNameDigit + "\\" + pa.FileName;
+                    Clients.Caller.setMessage("starting powerpoint " + pptPath);
                     Application pptApp = new Application();
+                    Clients.Caller.setMessage("attempting to open the powerpoint from " + pptPath);
                     Microsoft.Office.Interop.PowerPoint.Presentation pptFile = pptApp.Presentations.Open(pptPath, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
+                    Clients.Caller.setMessage("opened the powerpoint from "+ pptPath);
 
                     pa.PageCount = pptFile.Slides.Count;
                     pa.CurrentPage = 0;
@@ -74,7 +77,7 @@ namespace GDO.Apps.Presentation
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Clients.Caller.setMessage(e.GetType().ToString());
+                    Clients.Caller.setMessage(e.GetType().ToString()+e );
                 }
             }
         }
