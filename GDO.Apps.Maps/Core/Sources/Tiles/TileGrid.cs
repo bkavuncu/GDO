@@ -7,7 +7,7 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
 {
     public class TileGrid
     {
-        public float[] Extent { get; set; }
+        public double[] Extent { get; set; }
         public int MinZoom { get; set; }
         public int MaxZoom { get; set; }
         public int TileWidth { get; set; }
@@ -17,7 +17,7 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
         public Coordinate Origin { get; set; }
         public float[] Resolutions { get; set; }
 
-        public TileGrid(float[] extent, int minZoom, int maxZoom, int tileWidth, int[] tileWidths, int tileHeight,
+        public TileGrid(double[] extent, int minZoom, int maxZoom, int tileWidth, int[] tileWidths, int tileHeight,
             int[] tileHeights, Coordinate origin, float[] resolutions)
         {
             Extent = extent;

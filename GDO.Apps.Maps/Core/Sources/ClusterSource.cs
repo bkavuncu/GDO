@@ -9,10 +9,10 @@ namespace GDO.Apps.Maps.Core.Sources
     public class ClusterSource : Source
     {
         public int Distance { get; set; }
-        public float[] Extent { get; set; }
+        public double[] Extent { get; set; }
         public Format Format { get; set; }
         public VectorSource VectorSource { get; set; }
-        new public void Modify(int distance, float[] extent, Format format, VectorSource vectorSource)
+        new public void Modify(int distance, double[] extent, Format format, VectorSource vectorSource)
         {
             Distance = distance;
             Extent = extent;

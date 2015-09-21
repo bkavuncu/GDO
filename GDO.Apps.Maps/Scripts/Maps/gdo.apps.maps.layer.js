@@ -31,10 +31,10 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
     }
     gdo.net.instance[instanceId].layers[layerId] = layer;
     gdo.net.instance[instanceId].map.addLayer(gdo.net.instance[instanceId].layers[layerId]);
-    gdo.net.app["Maps"].modifyLayer(instanceId, layerId, deserializedLayer);
+    gdo.net.app["Maps"].editLayer(instanceId, layerId, deserializedLayer);
 }
 
-gdo.net.app["Maps"].modifyLayer = function (instanceId, layerId, deserializedLayer) {
+gdo.net.app["Maps"].editLayer = function (instanceId, layerId, deserializedLayer) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Modifying Layer :' + deserializedLayer.Id);
     gdo.net.instance[instanceId].layers[layerId].id = deserializedLayer.Id;
     gdo.net.instance[instanceId].layers[layerId].name = deserializedLayer.Name;
@@ -81,17 +81,48 @@ gdo.net.app["Maps"].modifyLayer = function (instanceId, layerId, deserializedLay
 }
 
 gdo.net.app["Maps"].requestLayer = function (instanceId, layerId) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Layer :' + deserializedLayer.Id);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Layer :' + layerId);
     gdo.net.app["Maps"].server.requestLayer(instanceId, layerId);
 }
+gdo.net.app["Maps"].uploadNewLayer = function (instanceId, layerId) {
+    var layer = gdo.net.instance[instanceId].layers[layerId];
+    switch (gdo.net.instance[instanceId].layers[layerId].type) {
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Base:
+            gdo.net.app["Maps"].server.addLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(),layer.getSaturation(),
+                layer.getHue(),layer.getOpacity(),layer.getZIndex(), layer.getVisible(),layer.getMinResolution(),layer.getMaxResolution());
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
+            gdo.net.app["Maps"].server.addHeatmapLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+                layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution(),
+                layer.getGradient, layer.getRadius());
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
+            gdo.net.app["Maps"].server.addImageLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+                layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution());
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
+            gdo.net.app["Maps"].server.addTileLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+                layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution(), layer.getPreload());
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
+            gdo.net.app["Maps"].server.addVectorLayer(instanceId, layer.name, layer.type, layer.getBrightness(), layer.getContrast(), layer.getSaturation(),
+                layer.getHue(), layer.getOpacity(), layer.getZIndex(), layer.getVisible(), layer.getMinResolution(), layer.getMaxResolution(),
+                layer.getStyle().Id);
+            break;
+        default:
+            layer = new ol.layer.Base();
+            break;
+    }
+}
+
 
 gdo.net.app["Maps"].removeLayer = function (instanceId, layerId) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Removing Layer :' + deserializedLayer.Id);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Removing Layer :' + layerId);
     gdo.net.instance[instanceId].map.removeLayer(gdo.net.instance[instanceId].layers[layerId]);
     gdo.net.instance[instanceId].layers[layerId] = null;
 }
 
 gdo.net.app["Maps"].setLayerVisible = function (instanceId, layerId, visible) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Setting Layer Visible:' + deserializedLayer.Id + ': ' + visible);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Setting Layer Visible:' + layerId + ': ' + visible);
     gdo.net.instance[instanceId].layers[layerId].setVisible(visible);
 }

@@ -29,7 +29,7 @@ namespace GDO.Apps.Maps.Core
         public float Opacity { get; set; }
         public int ZIndex { get; set; }
         public bool Visible { get; set; }
-        public float[] Extent { get; set; }
+        public double[] extent { get; set; }
         public int MinResolution { get; set; }
         public int MaxResolution { get; set; }
 

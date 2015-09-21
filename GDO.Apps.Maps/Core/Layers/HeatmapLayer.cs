@@ -9,15 +9,15 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public string[] Gradient { get; set; }
         public int Radius { get; set; }
-        public int Shadow { get; set; }
-        public int Weight { get; set; }
+        //public int Shadow { get; set; }
+        //public int Weight { get; set; }
 
-        new public void Modify(string[] gradient, int radius, int shadow, int weight)
+        new public void Modify(string[] gradient, int radius)
         {
             Gradient = gradient;
             Radius = radius;
-            Shadow = shadow;
-            Weight = weight;
+            //Shadow = shadow;
+            //Weight = weight;
         }
     }
 }
