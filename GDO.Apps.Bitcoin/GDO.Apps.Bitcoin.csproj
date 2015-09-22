@@ -124,6 +124,10 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Configurations\Bitcoin\Default.json" />
+    <Content Include="Web\Bitcoin\controller.html" />
+    <Content Include="Web\Bitcoin\corridor.html" />
+    <Content Include="Web\Bitcoin\globe.html" />
+    <Content Include="Web\Bitcoin\mempool.html" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -137,6 +141,7 @@
     <Content Include="Scripts\Bitcoin\cropper.min.css" />
     <Content Include="Scripts\Bitcoin\cropper.min.js" />
     <Content Include="Web\Bitcoin\App.cshtml" />
+    <Content Include="Web\Bitcoin\block.html" />
     <Content Include="Web\Bitcoin\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
