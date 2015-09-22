@@ -533,7 +533,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateBingMapsSource(int instanceId, int sourceId, string name, string culture, string key, string imagerySet)
+        public void UpdateBingMapsSource(int instanceId, int sourceId, string name, string culture, string key, string imagerySet, int maxZoom)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -548,7 +548,7 @@ namespace GDO.Apps.Maps
                     {
                         maps.ModifySource(sourceId, name, (int) SourceTypes.BingMaps);
                     }
-                    maps.Sources.GetValue<BingMapsSource>(sourceId).Modify(culture, key, imagerySet);
+                    maps.Sources.GetValue<BingMapsSource>(sourceId).Modify(culture, key, imagerySet, maxZoom);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -710,7 +710,8 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateImageTileSource(int instanceId, int sourceId, string name, bool opaque)
+        public void UpdateImageTileSource(int instanceId, int sourceId, string name, bool opaque, double[] extent,
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -725,7 +726,8 @@ namespace GDO.Apps.Maps
                     {
                         maps.ModifySource(sourceId, name, (int)SourceTypes.TileImage);
                     }
-                    maps.Sources.GetValue<ImageTileSource>(sourceId).Modify(opaque);
+                    TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth,  tileHeight, resolutions);
+                    maps.Sources.GetValue<ImageTileSource>(sourceId).Modify(_tileGrid, opaque);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -735,7 +737,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateJSONTileSource(int instanceId, int sourceId, string name, string url)
+        public void UpdateJSONTileSource(int instanceId, int sourceId, string name, string url, string crossOrigin)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -750,7 +752,7 @@ namespace GDO.Apps.Maps
                     {
                         maps.ModifySource(sourceId, name, (int)SourceTypes.TileJSON);
                     }
-                    maps.Sources.GetValue<JSONTileSource>(sourceId).Modify(url);
+                    maps.Sources.GetValue<JSONTileSource>(sourceId).Modify(url, crossOrigin);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -760,16 +762,15 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateVectorTileSource(int instanceId, int sourceId, string name, string url, string[] urls, double[] extent, int formatId,
-            int minZoom, int maxZoom, int tileWidth, int[] tileWidths, int tileHeight, int[] tileHeights, double[] origin, float[] resolutions)
+        public void UpdateVectorTileSource(int instanceId, int sourceId, string name, string projection, string url, double[] extent, int formatId,
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    Coordinate _origin = new Coordinate(origin[0], origin[1], origin[2], origin[3]);
-                    TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth, tileWidths, tileHeight, tileHeights, _origin, resolutions);
+                    TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth, tileHeight, resolutions);
                     Format _format = maps.Formats.GetValue<Format>(formatId);
                     if (sourceId == -1)
                     {
@@ -779,7 +780,7 @@ namespace GDO.Apps.Maps
                     {
                         maps.ModifySource(sourceId, name, (int)SourceTypes.TileVector);
                     }
-                    maps.Sources.GetValue<VectorTileSource>(sourceId).Modify(_tileGrid, _format, url, urls);
+                    maps.Sources.GetValue<VectorTileSource>(sourceId).Modify(_tileGrid, _format, projection, url);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)

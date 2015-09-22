@@ -7,11 +7,12 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
 {
     public class ImageTileSource : TileSource
     {
+        public TileGrid TileGrid { get; set; }
         public bool Opaque { get; set; }
-        //TODO find representaion for functions in this class
 
-        new public void Modify(bool opaque)
+        new public void Modify(TileGrid tileGrid, bool opaque)
         {
+            TileGrid = tileGrid;
             Opaque = opaque;
         }
     }

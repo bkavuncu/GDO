@@ -32,6 +32,7 @@ namespace GDO.Apps.Maps
         {
 
         }
+
         //Map
         public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view, int width, int height)
         {

@@ -11,11 +11,13 @@ namespace GDO.Apps.Maps.Core.Sources
         public string Culture { get; set; }
         public string Key { get; set; }
         public string ImagerySet { get; set; }
-        new public void Modify(string culture, string key, string imagerySet)
+        public int MaxZoom { get; set; }
+        new public void Modify(string culture, string key, string imagerySet, int maxZoom)
         {
             Culture = culture;
             Key = key;
             ImagerySet = imagerySet;
+            MaxZoom = maxZoom;
         }
     }
 }
