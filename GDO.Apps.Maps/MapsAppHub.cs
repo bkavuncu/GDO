@@ -165,37 +165,8 @@ namespace GDO.Apps.Maps
 
         //Layer
 
-        public void UpdateLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast,
-            float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    if (layerId == -1)
-                    {
-                        layerId = maps.AddLayer<Layer>(name, (int) LayerTypes.Base, sourceId, brightness, contrast,
-                            saturation,
-                            hue, opacity, zIndex, visible, minResolution, maxResolution);
-                    }
-                    else
-                    {
-                        maps.ModifyLayer(layerId, name, (int)LayerTypes.Base, sourceId, brightness, contrast, saturation, hue, opacity,
-                            zIndex, visible, minResolution, maxResolution);
-                    }
-                    BroadcastLayer(instanceId, layerId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void UpdateHeatmapLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, int radius)
+        public void UpdateHeatmapLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation, float hue,
+            float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float shadow, float weight, float blur)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -212,7 +183,7 @@ namespace GDO.Apps.Maps
                         maps.ModifyLayer(layerId, name, (int)LayerTypes.Base, sourceId, brightness, contrast, saturation, hue, opacity,
                              zIndex, visible, minResolution, maxResolution);
                     }
-                        maps.Layers.GetValue<HeatmapLayer>(layerId).Modify(gradient, radius);
+                        maps.Layers.GetValue<HeatmapLayer>(layerId).Modify(gradient, radius, shadow, weight, blur);
                         BroadcastLayer(instanceId, layerId);
                 }
                 catch (Exception e)
@@ -222,7 +193,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateImageLayer(int instanceId, string name, int layerId, int sourceId, float brightness, float contrast, float saturation,
+        public void UpdateImageLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
             float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             lock (Cave.AppLocks[instanceId])
@@ -251,46 +222,17 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateVectorLayer(int instanceId, string name, int layerId, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int styleId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    if (layerId == -1)
-                    {
-                        layerId = maps.AddLayer<VectorLayer>(name, (int) LayerTypes.Vector, sourceId, brightness, contrast ,saturation,
-                            hue, opacity, zIndex, visible, minResolution, maxResolution);
-                    }
-                    else
-                    {
-                        maps.ModifyLayer(layerId, name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation, hue, opacity,
-                            zIndex, visible, minResolution, maxResolution);
-                    }
-                    maps.Layers.GetValue<VectorLayer>(layerId).Modify(maps.Styles.GetValue<Style>(styleId));
-                    BroadcastLayer(instanceId, layerId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void UpdateTileLayer(int instanceId, string name, int layerId, int sourceId, float brightness, float contrast,
-            float saturation,
+        public void UpdateTileLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation,
             float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int preload)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     if (layerId == -1)
                     {
-                        layerId = maps.AddLayer<TileLayer>(name, (int) LayerTypes.Tile, sourceId, brightness, contrast,
+                        layerId = maps.AddLayer<TileLayer>(name, (int)LayerTypes.Tile, sourceId, brightness, contrast,
                             saturation,
                             hue, opacity, zIndex, visible, minResolution, maxResolution);
                     }
@@ -308,6 +250,36 @@ namespace GDO.Apps.Maps
                 }
             }
         }
+
+        public void UpdateVectorLayer(int instanceId, int layerId, string name, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity,
+            int zIndex, bool visible, int minResolution, int maxResolution, int styleId, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    if (layerId == -1)
+                    {
+                        layerId = maps.AddLayer<VectorLayer>(name, (int) LayerTypes.Vector, sourceId, brightness, contrast ,saturation,
+                            hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    }
+                    else
+                    {
+                        maps.ModifyLayer(layerId, name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation, hue, opacity,
+                            zIndex, visible, minResolution, maxResolution);
+                    }
+                    maps.Layers.GetValue<VectorLayer>(layerId).Modify(maps.Styles.GetValue<Style>(styleId), renderBuffer, updateWhileAnimating, updateWhileInteracting);
+                    BroadcastLayer(instanceId, layerId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+
 
         public void RequestLayer(int instanceId, int layerId)
         {
@@ -509,30 +481,6 @@ namespace GDO.Apps.Maps
 
         //Source
 
-        public void UpdateSource(int instanceId, int sourceId, string name)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    if (sourceId == -1)
-                    {
-                        sourceId = maps.AddSource<Source>(name, (int) SourceTypes.Base);
-                    }
-                    else
-                    {
-                        maps.ModifySource(sourceId, name, (int)SourceTypes.Base);
-                    }
-                    BroadcastSource(instanceId, sourceId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
         public void UpdateBingMapsSource(int instanceId, int sourceId, string name, string culture, string key, string imagerySet, int maxZoom)
         {
             lock (Cave.AppLocks[instanceId])
@@ -586,54 +534,6 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateImageSource(int instanceId, int sourceId, string name)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    if (sourceId == -1)
-                    {
-                        sourceId = maps.AddSource<ImageSource>(name, (int) SourceTypes.Image);
-                    }
-                    else
-                    {
-                        maps.ModifySource(sourceId, name, (int)SourceTypes.Image);
-                    }
-                    BroadcastSource(instanceId, sourceId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void UpdateCanvasImageSource(int instanceId, int sourceId, string name)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    if (sourceId == -1)
-                    {
-                        sourceId = maps.AddSource<CanvasImageSource>(name, (int) SourceTypes.ImageCanvas);
-                    }
-                    else
-                    {
-                        maps.ModifySource(sourceId, name, (int)SourceTypes.ImageCanvas);
-                    }
-                    BroadcastSource(instanceId, sourceId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
         public void UpdateStaticImageSource(int instanceId, int sourceId, string name, int width, int height, string url, double[] extent)
         {
             lock (Cave.AppLocks[instanceId])
@@ -677,30 +577,6 @@ namespace GDO.Apps.Maps
                         maps.ModifySource(sourceId, name, (int)SourceTypes.ImageVector);
                     }
                     maps.Sources.GetValue<VectorImageSource>(sourceId).Modify(vectorSource, style, ratio);
-                    BroadcastSource(instanceId, sourceId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void UpdateTileSource(int instanceId, int sourceId, string name)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    if (sourceId == -1)
-                    {
-                        sourceId = maps.AddSource<TileSource>(name, (int) SourceTypes.Tile);
-                    }
-                    else
-                    {
-                        maps.ModifySource(sourceId, name, (int)SourceTypes.Tile);
-                    }
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -933,7 +809,7 @@ namespace GDO.Apps.Maps
 
         //Style
 
-        public void AddCircleStyle(int instanceId, int styleId, string name, int fillId, float opacity, bool rotateWithView,
+        public void UpdateCircleStyle(int instanceId, int styleId, string name, int fillId, float opacity, bool rotateWithView,
             float rotation, float scale, int radius, bool snapToPixel, int strokeId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -962,7 +838,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddFillStyle(int instanceId, int styleId, string name, string color)
+        public void UpdateFillStyle(int instanceId, int styleId, string name, string color)
         {
             lock (Cave.AppLocks[instanceId])
             {
