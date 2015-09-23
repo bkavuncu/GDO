@@ -32,25 +32,20 @@
     Zoomify: 29
 };
 
-gdo.net.app["Maps"].Source = function (instanceId, sourceId, deserializedSource) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Source :' + deserializedLayer.Id);
-    var source = {};
-    gdo.net.instance[instanceId].sources[sourceId] = source;
-    gdo.net.app["Maps"].editSource(instanceId, sourceId, deserializedSource);
-}
-
-gdo.net.app["Maps"].editSource = function(instanceId, sourceId, deserializedSource) {
-    var source = gdo.net.instance[instanceId].sources[sourceId];
+gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedSource) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Source :' + deserializedSource.Id);
+    var source;
     switch (deserializedSource.Type) {
     case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
         source = new ol.source.BingMaps({
+            culture: deserializedSource.Culture,
             key: deserializedSource.Key,
             imagerySet: deserializedSource.ImagerySet,
-            culture: deserializedSource.Culture,
             maxZoom: deserializedSource.MaxZoom
         });
         break;
-    case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Cluster:
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Cluster:
+            //TODO format and vector source?
         source = new ol.source.Cluster({
             distance: deserializedSource.Distance,
             extent: deserializedSource.Extent,
@@ -60,6 +55,7 @@ gdo.net.app["Maps"].editSource = function(instanceId, sourceId, deserializedSour
         break;
     case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
         source = new ol.source.ImageStatic({
+            crossOrigin: deserializedSource.CrossOrigin,
             imageExtent: deserializedSource.Extent,
             imageSize: [deserializedSource.Width, deserializedSource.Height],
             url: deserializedSource.URL
@@ -81,14 +77,15 @@ gdo.net.app["Maps"].editSource = function(instanceId, sourceId, deserializedSour
             tileSize: [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]
         });
         source = new ol.source.TileImage({
+            crossOrigin: deserializedSource.CrossOrigin,
             tileGrid: tileGrid,
             opaque: deserializedSource.Opaque
         });
         break;
     case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
         source = new ol.source.TileJSON({
-            url: deserializedSource.Url,
-            crossOrigin: deserializedSource.CrossOrigin
+            crossOrigin: deserializedSource.CrossOrigin,
+            url: deserializedSource.Url
         });
         break;
     case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileVector:
@@ -131,38 +128,44 @@ gdo.net.app["Maps"].requestSource = function (instanceId, sourceId) {
 //TODO IMPORTANT properties that can not be read and created internally will not be reflected to server, these have to ignorned on the client and 
 //TODO and let the ol create them internally again instead of writing a null value.
 
-gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, isNew) {
-    var source = gdo.net.instance[instanceId].source[sourceId].json;
+gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Uploading Source :' + sourceId);
+    var source = gdo.net.instance[instanceId].source[sourceId];
+    var properties = source.properties;
     var type = gdo.net.instance[instanceId].source[sourceId].type;
     if (isNew) {
         sourceId = -1;
     }
     switch (type) {
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.Culture, source.Key, source.ImagerySet, source.MaxZoom);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.Culture, properties.Key, properties.ImagerySet,
+                source.MaxZoom);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Cluster:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.Distance, source.Extent, source.FormatId, source.VectorSourceId);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.Distance, properties.Extent, properties.FormatId,
+                properties.VectorSourceId);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.Width, source.Height, source.Url, source.Extent);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.CrossOrigin, properties.Width, properties.Height,
+                properties.Url, properties.Extent);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.VectorSourceId, source.StyleId, source.Ratio);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.VectorSourceId, properties.StyleId, properties.Ratio);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.Opaque, source.Extent, source.MinZoom, source.MaxZoom,
-                source.TileWidth, source.TileHeight, source.Resolutions);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
+                properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.Url, source.CrossOrigin);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.Url, properties.CrossOrigin);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileVector:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.Name, source.Projection, source.Url, source.Extent, source.FormatId,
-                source.MinZoom, source.MaxZoom, source.TileWidth, source.TileHeight, source.Resolutions);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.Projection, properties.Url, properties.Extent,
+                properties.FormatId, properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Vector:
-            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, source.FormatId, source.Url, source.LoadingStrategy, source.UseSpatialIndex);
+            gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Name, properties.FormatId, properties.Url, properties.LoadingStrategy,
+                properties.UseSpatialIndex);
             break;
         default:
             break;

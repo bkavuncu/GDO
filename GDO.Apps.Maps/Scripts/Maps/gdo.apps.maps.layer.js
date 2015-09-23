@@ -102,6 +102,7 @@ gdo.net.app["Maps"].requestLayer = function (instanceId, layerId) {
 }
 
 gdo.net.app["Maps"].uploadLayer = function (instanceId, layerId, isNew) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Uploading Layer :' + layerId);
     var layer = gdo.net.instance[instanceId].layers[layerId];
     var properties = layer.properties;
     var type = gdo.net.instance[instanceId].layers[layerId].type;

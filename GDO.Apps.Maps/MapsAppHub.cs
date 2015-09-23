@@ -534,7 +534,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateStaticImageSource(int instanceId, int sourceId, string name, int width, int height, string url, double[] extent)
+        public void UpdateStaticImageSource(int instanceId, int sourceId, string name, string crossOrigin, int width, int height, string url, double[] extent)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -549,7 +549,7 @@ namespace GDO.Apps.Maps
                     {
                         maps.ModifySource(sourceId, name, (int)SourceTypes.ImageStatic);
                     }
-                    maps.Sources.GetValue<StaticImageSource>(sourceId).Modify(width, height, url, extent);
+                    maps.Sources.GetValue<StaticImageSource>(sourceId).Modify(crossOrigin, width, height, url, extent);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -586,7 +586,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateImageTileSource(int instanceId, int sourceId, string name, bool opaque, double[] extent,
+        public void UpdateImageTileSource(int instanceId, int sourceId, string name, string crossOrigin, bool opaque, double[] extent,
             int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
@@ -603,7 +603,7 @@ namespace GDO.Apps.Maps
                         maps.ModifySource(sourceId, name, (int)SourceTypes.TileImage);
                     }
                     TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth,  tileHeight, resolutions);
-                    maps.Sources.GetValue<ImageTileSource>(sourceId).Modify(_tileGrid, opaque);
+                    maps.Sources.GetValue<ImageTileSource>(sourceId).Modify(crossOrigin, _tileGrid, opaque);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
