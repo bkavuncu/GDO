@@ -15,10 +15,11 @@ namespace GDO.Apps.Maps.Core.Styles
     }
     public class IconStyle : Styles.ImageStyle
     {
+        public string CrossOrigin { get; set; }
         public float[] Anchor { get; set; }
-        public int AnchorOrigin { get; set; }
+        public string AnchorOrigin { get; set; }
         public float[] Offset { get; set; }
-        public int OffsetOrigin { get; set; }
+        public string OffsetOrigin { get; set; }
         public bool SnapToPixel { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
@@ -26,10 +27,11 @@ namespace GDO.Apps.Maps.Core.Styles
         public int ImageHeight { get; set; }
         public string ImageSource { get; set; }
 
-        new public void Modify(float[] anchor, int anchorOrigin, float[] offset, int offsetOrigin, float opacity, float scale, bool snapToPixel,
+        new public void Modify(string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin, float opacity, float scale, bool snapToPixel,
             bool rotateWithView, float rotation, int width, int height, int imageWidth, int imageHeight, string imageSource)
         {
             base.Modify(opacity, rotateWithView, rotation, scale);
+            CrossOrigin = crossOrigin;
             Anchor = anchor;
             AnchorOrigin = anchorOrigin;
             Offset = offset;

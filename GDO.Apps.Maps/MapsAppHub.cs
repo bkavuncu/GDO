@@ -863,7 +863,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateIconStyle(int instanceId, int styleId, string name, float[] anchor, int anchorOrigin, float[] offset,int offsetOrigin,
+        public void UpdateIconStyle(int instanceId, int styleId, string name, string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin,
             float opacity, float scale, bool snapToPixel, bool rotateWithView, float rotation, int width, int height, int imageWidth,
             int imageHeight, string imageSource)
         {
@@ -881,7 +881,7 @@ namespace GDO.Apps.Maps
                         maps.ModifyStyle(styleId, name, (int)StyleTypes.Icon);
                     }
                     maps.Styles.GetValue<IconStyle>(styleId)
-                            .Modify(anchor, anchorOrigin, offset, offsetOrigin, opacity, scale, snapToPixel,
+                            .Modify(crossOrigin, anchor, anchorOrigin, offset, offsetOrigin, opacity, scale, snapToPixel,
                                 rotateWithView, rotation, width, height, imageWidth, imageHeight, imageSource);
                     BroadcastStyle(instanceId, styleId);
                 }
@@ -919,35 +919,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateTextStyle(int instanceId, int styleId, string name, string font, int offsetX, int offsetY, float scale, float rotation,
-            string content, string textAlign, string textBaseLine, int fillId, int strokeId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
-                    StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
-                    if (styleId == -1)
-                    {
-                        styleId = maps.AddStyle<TextStyle>(name, (int) StyleTypes.Text);
-                    }
-                    else
-                    {
-                        maps.ModifyStyle(styleId, name, (int)StyleTypes.Text);
-                    }
-                    maps.Styles.GetValue<TextStyle>(styleId)
-                        .Modify(font, offsetX, offsetY, scale, rotation, content, textAlign,
-                            textBaseLine, fill, stroke);
-                    BroadcastStyle(instanceId, styleId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
+
 
         public void UpdateRegularShapeStyle(int instanceId, int styleId, string name, int fillId, float opacity, bool rotateWithView,
             float rotation, float scale,
@@ -979,7 +951,39 @@ namespace GDO.Apps.Maps
                 }
             }
         }
-        
+
+        //TODO ol.style.Style
+
+        public void UpdateTextStyle(int instanceId, int styleId, string name, string font, int offsetX, int offsetY, float scale, float rotation,
+            string content, string textAlign, string textBaseLine, int fillId, int strokeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    FillStyle fill = maps.Styles.GetValue<FillStyle>(fillId);
+                    StrokeStyle stroke = maps.Styles.GetValue<StrokeStyle>(strokeId);
+                    if (styleId == -1)
+                    {
+                        styleId = maps.AddStyle<TextStyle>(name, (int)StyleTypes.Text);
+                    }
+                    else
+                    {
+                        maps.ModifyStyle(styleId, name, (int)StyleTypes.Text);
+                    }
+                    maps.Styles.GetValue<TextStyle>(styleId)
+                        .Modify(font, offsetX, offsetY, scale, rotation, content, textAlign,
+                            textBaseLine, fill, stroke);
+                    BroadcastStyle(instanceId, styleId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void RequestStyle(int instanceId, int styleId)
         {
             lock (Cave.AppLocks[instanceId])

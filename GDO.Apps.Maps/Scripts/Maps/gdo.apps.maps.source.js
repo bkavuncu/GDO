@@ -33,7 +33,7 @@
 };
 
 gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedSource) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Source :' + deserializedSource.Id);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Source: ' + deserializedSource.Id);
     var source;
     switch (deserializedSource.Type) {
     case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
@@ -111,7 +111,8 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
             useSpatialIndex: deserializedSource.UseSpatialIndex
         });
         break;
-    default:
+        default:
+            gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Source Type: ' + deserializedSource.Type + ' for Source ' + deserializedSource.Id);
         break;
     }
     source.id = deserializedSource.Id;
@@ -121,15 +122,12 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
 }
 
 gdo.net.app["Maps"].requestSource = function (instanceId, sourceId) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Source :' + sourceId);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Source: ' + sourceId);
     gdo.net.app["Maps"].server.requestSource(instanceId, sourceId);
 }
 
-//TODO IMPORTANT properties that can not be read and created internally will not be reflected to server, these have to ignorned on the client and 
-//TODO and let the ol create them internally again instead of writing a null value.
-
 gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Uploading Source :' + sourceId);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Uploading Source: ' + sourceId);
     var source = gdo.net.instance[instanceId].source[sourceId];
     var properties = source.properties;
     var type = gdo.net.instance[instanceId].source[sourceId].type;
@@ -173,7 +171,6 @@ gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
 }
 
 gdo.net.app["Maps"].removeSource = function (instanceId, sourceId) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Removing Source :' + sourceId);
-    gdo.net.instance[instanceId].map.removeSource(gdo.net.instance[instanceId].sources[sourceId]);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Removing Source: ' + sourceId);
     gdo.net.instance[instanceId].sources[sourceId] = null;
 }
