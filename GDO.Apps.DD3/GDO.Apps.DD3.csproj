@@ -108,15 +108,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Configurations\DD3\Data\FileMapTube - Copy.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTube.txt" />
     <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
     <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
     <Content Include="packages.config" />
+    <Content Include="Web\DD3\Scripts\animation.js" />
+    <Content Include="Web\DD3\Scripts\lines.js" />
+    <Content Include="Web\DD3\Scripts\map.js" />
+    <Content Include="Web\DD3\Scripts\stations.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Transitions.json" />
     <Content Include="Configurations\DD3\Scatterplot.json" />
     <Content Include="Configurations\DD3\Graphs.json" />
     <Content Include="Configurations\DD3\Handmoves.json" />
+    <Content Include="Configurations\DD3\MapTube.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\d3.v3.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
@@ -148,6 +155,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
