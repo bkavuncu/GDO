@@ -124,6 +124,18 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Configurations\Bitcoin\Default.json" />
+    <Content Include="Scripts\Bitcoin\bitGraph.js" />
+    <Content Include="Scripts\Bitcoin\dat.gui\dat.gui.min.js" />
+    <Content Include="Scripts\Bitcoin\globe\globe.js" />
+    <Content Include="Scripts\Bitcoin\globe\third-party\three.min.js" />
+    <Content Include="Scripts\Bitcoin\globe\world.jpg" />
+    <Content Include="Scripts\Bitcoin\peerjs\peer.js" />
+    <Content Include="Scripts\Bitcoin\peerjs\peer.min.js" />
+    <Content Include="Scripts\Bitcoin\sigma.js\plugins\sigma.layout.forceAtlas2.min.js" />
+    <Content Include="Scripts\Bitcoin\sigma.js\plugins\sigma.plugins.dragNodes.min.js" />
+    <Content Include="Scripts\Bitcoin\sigma.js\plugins\sigma.plugins.filter.min.js" />
+    <Content Include="Scripts\Bitcoin\sigma.js\sigma.min.js" />
+    <Content Include="Scripts\Bitcoin\spam_evolution.js" />
     <Content Include="Web\Bitcoin\controller.html" />
     <Content Include="Web\Bitcoin\corridor.html" />
     <Content Include="Web\Bitcoin\globe.html" />
@@ -138,8 +150,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Scripts\Bitcoin\cropper.min.css" />
-    <Content Include="Scripts\Bitcoin\cropper.min.js" />
     <Content Include="Web\Bitcoin\App.cshtml" />
     <Content Include="Web\Bitcoin\block.html" />
     <Content Include="Web\Bitcoin\Control.cshtml" />
