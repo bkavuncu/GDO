@@ -24,3 +24,119 @@
     XML: 21,
     XMLFeature: 22
 };
+
+
+gdo.net.app["Maps"].updateFormat = function (instanceId, formatId, deserializedFormat) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Format :' + deserializedFormat.Id);
+    var format;
+    switch (deserializedFormat.Type) {
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.EsriJSON:
+            format = new ol.Format.EsriJSON({
+                geometryName: deserializedFormat.GeometryName
+            });
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GeoJSON:
+            format = new ol.Format.GeoJSON({
+                geometryName: deserializedFormat.GeometryName
+            });
+            break; 
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML:
+            format = new ol.Format.GML({
+                featureNS: deserializedFormat.FeatureNS,
+                featureType: deserializedFormat.FeatureType,
+                srsName: deserializedFormat.SrsName,
+                surface: deserializedFormat.Surface,
+                curve: deserializedFormat.Curve,
+                multiCurve: deserializedFormat.MultiCurve,
+                multiSurface: deserializedFormat.MultiSurface,
+                schemaLocation: deserializedFormat.SchemaLocation
+            });
+            break; 
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML2:
+            format = new ol.Format.GML2({
+                featureNS: deserializedFormat.FeatureNS,
+                featureType: deserializedFormat.FeatureType,
+                srsName: deserializedFormat.SrsName,
+                surface: deserializedFormat.Surface,
+                curve: deserializedFormat.Curve,
+                multiCurve: deserializedFormat.MultiCurve,
+                multiSurface: deserializedFormat.MultiSurface,
+                schemaLocation: deserializedFormat.SchemaLocation
+            });
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML3:
+            format = new ol.Format.GML3({
+                featureNS: deserializedFormat.FeatureNS,
+                featureType: deserializedFormat.FeatureType,
+                srsName: deserializedFormat.SrsName,
+                surface: deserializedFormat.Surface,
+                curve: deserializedFormat.Curve,
+                multiCurve: deserializedFormat.MultiCurve,
+                multiSurface: deserializedFormat.MultiSurface,
+                schemaLocation: deserializedFormat.SchemaLocation
+            });
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.KML:
+            format = new ol.Format.KML({
+                extractStyles: deserializedFormat.ExtractStyles,
+                defaultStyle: deserializedFormat.DefaultStyle
+            });
+            break; 
+        default:
+            gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Format Type:' + deserializedFormat.Type + ' for Format '  + deserializedFormat.Id);
+            break;
+    }
+    gdo.net.instance[instanceId].formats[formatId] = format;
+    format.id = deserializedFormat.Id;
+    format.name = deserializedFormat.Name;
+    format.type = deserializedFormat.Type;
+    format.properties = deserializedFormat;
+}
+
+gdo.net.app["Maps"].requestFormat = function (instanceId, formatId) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting format: ' + formatId);
+    gdo.net.app["Maps"].server.requestFormat(instanceId, formatId);
+}
+
+gdo.net.app["Maps"].uploadFormat = function (instanceId, formatId, isNew) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Uploading Format: ' + formatId);
+    var format = gdo.net.instance[instanceId].format[formatId];
+    var properties = format.properties;
+    var type = gdo.net.instance[instanceId].format[formatId].type;
+    if (isNew) {
+        formatId = -1;
+    }
+    switch (type) {
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.EsriJSON:
+            gdo.net.app["Maps"].server.updateEsriJSONFormat(instanceId, formatId, properties.Name, properties.GeometryName);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GeoJSON:
+            gdo.net.app["Maps"].server.updateGeoJSONFormat(instanceId, formatId, properties.Name, properties.GeometryName);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML:
+            gdo.net.app["Maps"].server.updateGMLFormat(instanceId, formatId, properties.Name, type,  properties.FeatureNS, properties.FeatureType,
+                properties.SrsName, properties.Surface, properties.Curve, properties.MultiCurve, properties.MultiSurface, properties.SchemaLocation);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML2:
+            gdo.net.app["Maps"].server.updateGMLFormat(instanceId, formatId, properties.Name, type,  properties.FeatureNS, properties.FeatureType,
+                properties.SrsName, properties.Surface, properties.Curve, properties.MultiCurve, properties.MultiSurface, properties.SchemaLocation);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML3:
+            gdo.net.app["Maps"].server.updateGMLFormat(instanceId, formatId, properties.Name, type,  properties.FeatureNS, properties.FeatureType,
+                properties.SrsName, properties.Surface, properties.Curve, properties.MultiCurve, properties.MultiSurface, properties.SchemaLocation);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.KML:
+            var styleIds = [];
+            var arrayLength = properties.DefaultStyle.length;
+            for (var i = 0; i < arrayLength; i++) {
+                styleIds.push(properties.DefaultStyle[i].Id);
+            }
+            gdo.net.app["Maps"].server.updateKMLFormat(instanceId, formatId, properties.Name, properties.ExtractStyles, styleIds);
+            break;
+        default:
+            break;
+    }
+}
+
+gdo.net.app["Maps"].removeFormat = function(instanceId, formatId) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Removing Format: ' + formatId);
+    gdo.net.instance[instanceId].formats[formatId] = null;
+}
