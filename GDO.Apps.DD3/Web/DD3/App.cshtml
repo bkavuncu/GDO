@@ -37,6 +37,19 @@
         .dot {
           stroke: #000;
         }
+
+        #clock {
+            position : absolute;
+            display : inline-block;
+            font-size: 1.5em;
+            font-family : clockFont;
+            color: #FFF;
+            opacity : 1;
+            border-top : solid #f4b606 0.15em;
+            padding : 0.3em 0.5em;
+            background-color: #3a3d3d;
+        }
+
     </style>
 </head>
 <body>
@@ -45,10 +58,16 @@
     <script src="../../Scripts/d3.js"></script>
     <script src="../../Scripts/peer.js"></script>
 
-    <script>
-        var dd3;
+    <!-- JS FOR TUBE VIZ-->
+    <script src="~/Web/DD3/Scripts/map.js"></script>
+    <script src="~/Web/DD3/Scripts/stations.js"></script>
+    <script src="~/Web/DD3/Scripts/lines.js"></script>
+    <script src="~/Web/DD3/Scripts/animation.js"></script>
 
-        $(function () {          
+    <script>
+        var dd3, loadMap, launchAnimation, map;
+
+        $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo,
                     configName,
@@ -80,7 +99,7 @@
 
                     return t;
                 })();
-                
+
                 if (!gdo.net.app["DD3"].initClient) {
                     $("#error").css("display", "");
                     parent.location.reload();
@@ -189,7 +208,7 @@
                     orderController.orders['removeCircles'] = function () {
                         circleGroup.selectAll(".c").remove();
                     };
-                    
+
                     orderController.orders['createDistributedCircles'] = function (number, opacity) {
                         circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('g')
@@ -290,7 +309,7 @@
                             .transition()
                             .duration(1000)
                             .attr('transform', 'translate(' + points[0][0] + ' ' + points[0][1] + ')');
-                        
+
                         points.forEach(function (p) {
                             tr = tr.transition()
                                 .duration(200)
@@ -316,7 +335,7 @@
                     dd3.synchronize(f, 5000);
                 //*/
                 };
-                
+
                 // ScatterPlot
                 test_bench['1'] = function () {
                     var xScale, yScale;
@@ -343,7 +362,7 @@
                         dd3.getPathData('pathData', dataId, function (d) {
                             pathData = d;
                             draw();
-                        }, xScale, yScale, 'x', 'y');
+                        }, xScale, yScale, ['x'], ['y']);
 
                     };
 
@@ -444,7 +463,7 @@
                         xRange.domain(xDomain);
                         yScale.domain(yDomain);
 
-                        dd3.getBarData('bar', 'barData', draw, xRange, 'gdp');
+                        dd3.getBarData('bar', 'barData', draw, xRange, ['gdp']);
                     });
 
                     var draw = function (barData) {
@@ -580,6 +599,120 @@
                     };
 
                 };
+
+                // VIZ SHANGHAI METRO
+                test_bench['4'] = function () {
+                    var svg = dd3.svgCanvas,
+                        mapGroup = svg.append('g').attr('id', 'dd3_map'),
+                        clockDiv = d3.select('#clock').unwatch(),
+	                    cwidth = dd3.cave.svgWidth,
+	                    cheight = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
+
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.right) + "px");
+
+                    loadMap = function () {
+                        var projection = d3.geo.mercator()
+		                    .translate([cwidth / 2, cheight / 2]);
+
+                        var zoom = 9;
+                        var topLeft = [-0.40, 51.76]; // LONG - LAT (of London)
+                        var bottomRight = [-0.10, 51.34]; // LONG - LAT (of London)
+
+                        var style = {
+                            earth: {
+                                fillColor: "#272a29",
+                                strokeColor: "#272a29",
+                                strokeSize: 2
+                            },
+                            water: {
+                                /*
+			                    fillColor : "#384b4c",
+			                    strokeColor : "#384b4c",
+			                    strokeSize : 1,
+			                    //*/
+                                riverbank: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                },//*
+                                ocean: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                }//*/
+                            },
+                            roads: {
+                                highway: {
+                                    strokeColor: "#555",
+                                    strokeSize: 1.2
+                                },
+                                major_road: {
+                                    strokeColor: "#555",
+                                    strokeSize: 0.7
+                                }
+                                /*,
+			                    minor_road : {
+				                    strokeColor : "#555",
+				                    strokeSize : 0.7
+			                    }
+			                    //*/
+                            },
+                            landuse: {
+                                park: {
+                                    fillColor: d3.rgb("#cedfad").darker(1)
+                                }
+                            }
+                        };
+
+                        var args = {
+                            topLeftBound: topLeft,
+                            bottomRightBound: bottomRight,
+                            zoom: zoom,
+                            svg: mapGroup,
+                            projection: projection,
+                            style: style,
+                            autoProjection: true,
+                        };
+
+                        var callbackTube = function () {
+                            tube.loadLines(function () {
+                                tube.drawLines(mapGroup, map);
+                                launchAnimation();
+                            });
+                        };
+
+                        map = mapHandler(args);
+                        tube = tubeLines(mapGroup, map);
+                        //map.load(["earth", "water", "landuse", "roads"], callbackTube);
+                        map.load(["earth", "water", "roads"], callbackTube);
+                    };
+
+                    // TEST ANIMATION
+                    launchAnimation = function () {
+                        var args = {
+                            timeStep: 1000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv
+                        };
+
+                        anim = animation(args);
+                        anim.loadData(function () {
+                            dd3.synchronize(function () {
+                                anim.start();
+                            });
+                        });
+
+                    };
+
+                    loadMap();
+                };
+
             });
         });
 
@@ -594,6 +727,8 @@
             <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initClient' was not initialized</span>
         </p>
     </div>
+
+    <div id="clock" style="display:none"></div>
 
 </body>
 </html>

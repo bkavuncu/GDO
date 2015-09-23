@@ -63,7 +63,6 @@ namespace GDO.Apps.DD3
         private Data data;
 
 
-
         // Code for Data Request and Management
 
         public string getDimensions(string dataId)
@@ -73,7 +72,8 @@ namespace GDO.Apps.DD3
 
         public string requestData(DataRequest request)
         {
-            return this.data.getById(request.dataId).ToString() ?? "{\"error\":\"incorrect_dataId\"}";
+            var dataIn = this.data.getById(request.dataId);
+            return dataIn == null ? "{\"error\":\"incorrect_dataId\"}" : JsonConvert.SerializeObject(request.createResponseObject(dataIn));
         }
 
         public string requestPointData(PointDataRequest request)
@@ -259,14 +259,28 @@ namespace GDO.Apps.DD3
 
     }
 
-    public abstract class DataRequest
+    public class DataRequest
     {
         public string dataId { get; set; }
         public string dataName { get; set; }
         public dynamic limit { get; set; }
-        public string [] _keys { get; set; }
+        public string [][] _keys { get; set; }
 
-        public DataRequest(string dataId, string dataName, dynamic limit, string [] _keys)
+        protected static Func<JToken, string, JToken> tryAggregateNumber = (agg, next) =>
+        {
+            if (agg == null || agg is JValue)
+                return null;
+
+            int num = 0;
+            if (int.TryParse(next, out num))
+                return num < agg.Count() ? agg[num] : null;
+            else if (!(agg is JArray))
+                return agg[next];
+            else
+                return null;
+        };
+
+        public DataRequest(string dataId, string dataName, dynamic limit, string [][] _keys)
         {
             this.dataId = dataId;
             this.dataName = dataName;
@@ -274,16 +288,21 @@ namespace GDO.Apps.DD3
             this._keys = _keys;
         }
 
-        protected IEnumerable<JToken> createResponseObject(IEnumerable<JToken> data)
+        public IEnumerable<JToken> createResponseObject(IEnumerable<JToken> data)
         {
             Func<JToken, JToken> mapFunction = d => {
                 dynamic obj = new JObject();
 
                 if (_keys != null)
                 {
-                    foreach (string k in _keys)
+                    foreach (string[] k in _keys)
                     {
-                        obj[k] = d[k];
+                        JToken objTemp = obj;
+                        obj[k.Last()] = k.Aggregate(d, (o, s) => {
+                            objTemp[s] = objTemp[s] ?? new JObject();
+                            objTemp = objTemp[s];
+                            return o[s];
+                        });
                     }
                 }
                 else
@@ -297,21 +316,25 @@ namespace GDO.Apps.DD3
                 return obj;
             };
 
-            return data.Select(mapFunction);
+            return data.First() is JProperty ? data.First().Parent : data.Select(mapFunction);
         }
     }
 
     public class PointDataRequest : DataRequest
     {
-        public string xKey { get; set; }
-        public string yKey { get; set; }
+        public string[] xKey { get; set; }
+        public string[] yKey { get; set; }
         protected Func<JToken, bool> isIn;
 
-        public PointDataRequest(string dataId, string dataName, dynamic limit, string xKey, string yKey, string[] _keys) : base (dataId, dataName, (object)limit, _keys)
+        public PointDataRequest(string dataId, string dataName, dynamic limit, string[] xKey, string[] yKey, string[][] _keys) : base (dataId, dataName, (object)limit, _keys)
         {
             this.xKey = xKey;
             this.yKey = yKey;
-            isIn = d => (d[xKey] >= limit.xmin && d[xKey] < limit.xmax && d[yKey] >= limit.ymin && d[yKey] < limit.ymax);
+            isIn = d => {
+                var x = xKey.Aggregate(d, tryAggregateNumber);
+                var y = yKey.Aggregate(d, tryAggregateNumber);
+                return x >= limit.xmin && x < limit.xmax && y >= limit.ymin && y < limit.ymax;
+            };
         }
 
         public string executeWith(JToken dataIn)
@@ -322,21 +345,22 @@ namespace GDO.Apps.DD3
 
             IEnumerable<JToken> responseData = createResponseObject(filteredData);
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(responseData.ToArray());
+            return JsonConvert.SerializeObject(responseData.ToArray());
         }
         
     }
 
     public class BarDataRequest : DataRequest
     {
-        public string orderingKey { get; set; }
+        public string[] orderingKey { get; set; }
         protected Func<JToken, bool> isIn;
-        protected Func<string, Func<JToken, JToken>> tryParseNumber = s =>
+        protected Func<string[], Func<JToken, dynamic>> tryParseNumber = s =>
         {
             return d =>
             {
                 double number;
-                return Double.TryParse(d[s].ToString(), out number) ? number : d[s];
+                JToken val = s.Aggregate(d, tryAggregateNumber);
+                return double.TryParse(val.ToString(), out number) ? number : val;
             };
         };
         protected Func<JToken, int, JToken> addOrderProperty = (d, i) => {
@@ -344,7 +368,7 @@ namespace GDO.Apps.DD3
             return d;
         };
 
-        public BarDataRequest(string dataId, string dataName, dynamic limit, string orderingKey, string[] _keys) : base (dataId, dataName, (object)limit, _keys)
+        public BarDataRequest(string dataId, string dataName, dynamic limit, string[] orderingKey, string[][] _keys) : base (dataId, dataName, (object)limit, _keys)
         {
             this.orderingKey = orderingKey;
             isIn = d => (d["order"] >= limit.min && d["order"] < limit.max);
@@ -365,7 +389,7 @@ namespace GDO.Apps.DD3
 
             IEnumerable<JToken> responseData = createResponseObject(filteredData);
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(responseData.ToArray());
+            return JsonConvert.SerializeObject(responseData.ToArray());
         }
         
     }
@@ -378,13 +402,14 @@ namespace GDO.Apps.DD3
         protected Func<JToken, JToken, double, double, double, bool> intersectX;
         protected Func<JToken, JToken, double, double, double, bool> intersectY;
 
-        public PathDataRequest(string dataId, string dataName, int approximation, dynamic limit, string xKey, string yKey, string[] _keys) : base (dataId, dataName, (object)limit, xKey, yKey, _keys)
+        public PathDataRequest(string dataId, string dataName, int approximation, dynamic limit, string[] xKey, string[] yKey, string[][] _keys) : base (dataId, dataName, (object)limit, xKey, yKey, _keys)
         {
             this.approximation = approximation;
 
             intersectX = (p1, p2, x, y1, y2) =>
             {
-                double a = (double)p1[xKey], b = (double)p1[yKey], c = (double)p2[xKey], d = (double)p2[yKey];
+                double a = (double)xKey.Aggregate(p1, tryAggregateNumber), b = (double)yKey.Aggregate(p1, tryAggregateNumber),
+                       c = (double)xKey.Aggregate(p2, tryAggregateNumber), d = (double)yKey.Aggregate(p2, tryAggregateNumber);
                 double yMin = Math.Min(y1, y2), yMax = Math.Max(y1, y2);
                 double xPMin = Math.Min(a, c), xPMax = Math.Max(a, c);
                 double yPMin = Math.Min(b, d), yPMax = Math.Max(b, d);
@@ -400,7 +425,8 @@ namespace GDO.Apps.DD3
 
             intersectY = (p1, p2, y, x1, x2) =>
             {
-                double a = (double)p1[xKey], b = (double)p1[yKey], c = (double)p2[xKey], d = (double)p2[yKey];
+                double a = (double)xKey.Aggregate(p1, tryAggregateNumber), b = (double)yKey.Aggregate(p1, tryAggregateNumber),
+                       c = (double)xKey.Aggregate(p2, tryAggregateNumber), d = (double)yKey.Aggregate(p2, tryAggregateNumber);
                 double xMin = Math.Min(x1, x2), xMax = Math.Max(x1, x2);
                 double xPMin = Math.Min(a, c), xPMax = Math.Max(a, c);
                 double yPMin = Math.Min(b, d), yPMax = Math.Max(b, d);
@@ -622,7 +648,7 @@ namespace GDO.Apps.DD3
 
         public string toString ()
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this);
         }
 
         public int configurationId { get; set; }

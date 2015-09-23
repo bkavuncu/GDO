@@ -690,15 +690,35 @@ var initDD3App = function () {
                     signalR.server.getDimensions(signalR.sid, dataId);
             };
 
-            dd3_data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys) {
+            dd3_data.getData = function (dataName, dataId, callback, keys) {
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
+                data[pr(dataId)][pr(dataName)].callback_data = callback;
+
+                var request = {
+                    dataId: dataId,
+                    dataName: dataName,
+                    limits : [],
+                    _keys: keys || null
+                };
+
+                if (options.useApi)
+                    api.getData(request);
+                else
+                    signalR.server.getData(signalR.sid, request);
+
+                utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
+            };
+
+            dd3_data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, limit) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
-                xKey = xKey || 'x';
-                yKey = yKey || 'y';
-                var limits = dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                xKey = xKey || ['x'];
+                yKey = yKey || ['y'];
+                var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
 
                 var request = {
@@ -718,15 +738,15 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            dd3_data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation) {
+            dd3_data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation, limit) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
-                xKey = xKey || 'x';
-                yKey = yKey || 'y';
-                var limits = dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                xKey = xKey || ['x'];
+                yKey = yKey || ['y'];
+                var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
 
                 var request = {
@@ -747,13 +767,13 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            dd3_data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation) {
+            dd3_data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation, limit) {
 
                 orientation = orientation || "bottom";
 
                 var r = scale.range(),
                     toGlobal = slsg[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
-                    limit = {};
+                    limits = limit || {};
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -766,13 +786,13 @@ var initDD3App = function () {
                     orientation === "left" && browser.column === 0 ||
                     orientation === "right" && browser.column === cave.column - 1) {
 
-                    limit.min = d3.bisect(r, toGlobal(0) - scale.rangeBand() / 2);
-                    limit.max = d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
+                    limits.min = limits.min || d3.bisect(r, toGlobal(0) - scale.rangeBand() / 2);
+                    limits.max = limits.max || d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
 
                     var request = {
                         dataId: dataId,
                         dataName: dataName,
-                        limit: limit,
+                        limit: limits,
                         orderingKey: orderingKey || null, // Key on which to order the data
                         _keys: keys || null
                     };
@@ -1889,7 +1909,7 @@ var initDD3App = function () {
 
                 c1.removeChild(clones[0]);
 
-                utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
+                //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
                 return rcpts;
             };
@@ -2181,6 +2201,8 @@ var initDD3App = function () {
             _dd3.browser = browser;
 
             _dd3.getDataDimensions = dd3_data.getDimensions;
+
+            _dd3.getData = dd3_data.getData;
 
             _dd3.getPointData = dd3_data.getPointData;
 
