@@ -9,3 +9,14 @@ gdo.net.app["Maps"].optionConstructor = function (properties) {
     }
     return options;
 }
+
+gdo.net.app["Maps"].optionChecker = function (properties) {
+    var check = true;
+    var options = {}
+    for (i = 0; i < properties.length; i++) {
+        if (values[i] == null || typeof values[i] == "undefined") {
+            check = false;
+        }
+    }
+    return check;
+}
