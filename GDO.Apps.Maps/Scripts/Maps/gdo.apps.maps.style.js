@@ -12,85 +12,97 @@
 gdo.net.app["Maps"].updateStyle = function (instanceId, styleId, deserializedStyle) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Style :' + deserializedStyle.Id);
     var style;
+    var properties;
+    var options = {};
     switch (deserializedStyle.Type) {
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Circle:
-            style = new ol.Style.Circle({
-                opacity: deserializedStyle.Opacity,
-                rotateWithView: deserializedStyle.RotateWithView,
-                rotation: deserializedStyle.Rotation,
-                scale: deserializedStyle.Scale,
-                snapToPixel: deserializedStyle.SnapToPixel,
-                fill: gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id],
-                radius: deserializedStyle.Radius,
-                stroke: gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]
-            });
+            properties = [
+                ["opacity", deserializedStyle.Opacity],
+                ["rotateWithView", deserializedStyle.RotateWithView],
+                ["rotation", deserializedStyle.Rotation],
+                ["scale", deserializedStyle.Scale],
+                ["snapToPixel", deserializedStyle.SnapToPixel],
+                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]],
+                ["radius", deserializedStyle.Radius],
+                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]]
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            style = new ol.Style.Circle(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
-            style = new ol.Style.Fill({
-                color: deserializedStyle.Color
-            });
+            properties = [
+                ["color", deserializedStyle.Color]
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            style = new ol.Style.Fill(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Icon:
-            style = new ol.Style.Icon({
-                opacity: deserializedStyle.Opacity,
-                rotateWithView: deserializedStyle.RotateWithView,
-                rotation: deserializedStyle.Rotation,
-                scale: deserializedStyle.Scale,
-                snapToPixel: deserializedStyle.SnapToPixel,
-                anchor: deserializedStyle.Anchor,
-                anchorOrigin: deserializedStyle.AnchorOrigin,
-                crossOrigin: deserializedStyle.CrossOrigin,
-                offset: deserializedStyle.Offset,
-                offsetOrigin: deserializedStyle.OffsetOrigin,
-                size: [deserializedStyle.Width, deserializedStyle.Height],
-                imgSize: [deserializedStyle.ImageWidth, deserializedStyle.ImageHeight],
-                src: deserializedStyle.ImageSource
-            });
+            properties = [
+                ["opacity", deserializedStyle.Opacity],
+                ["rotateWithView", deserializedStyle.RotateWithView],
+                ["rotation", deserializedStyle.Rotation],
+                ["scale", deserializedStyle.Scale],
+                ["snapToPixel", deserializedStyle.SnapToPixel],
+                ["anchor", deserializedStyle.Anchor],
+                ["anchorOrigin", deserializedStyle.AnchorOrigin],
+                ["crossOrigin", deserializedStyle.CrossOrigin],
+                ["offset", deserializedStyle.Offset],
+                ["offsetOrigin", deserializedStyle.OffsetOrigin],
+                ["size", [deserializedStyle.Width, deserializedStyle.Height]],
+                ["imgSize", [deserializedStyle.ImageWidth, deserializedStyle.ImageHeight]],
+                ["src", deserializedStyle.ImageSource]
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            style = new ol.Style.Icon(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
-            style = new ol.Style.RegularShape({
-                fill: gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id],
-                points: deserializedStyle.Points,
-                radius: deserializedStyle.Radius,
-                radius1: deserializedStyle.Radius1,
-                radius2: deserializedStyle.Radius2,
-                angle: deserializedStyle.Angle,
-                stroke: gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id],
-                opacity: deserializedStyle.Opacity,
-                rotateWithView: deserializedStyle.RotateWithView,
-                rotation: deserializedStyle.Rotation,
-                scale: deserializedStyle.Scale,
-                snapToPixel: deserializedStyle.SnapToPixel,
-            });
+            properties = [
+                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]],
+                ["points", deserializedStyle.Points],
+                ["radius", deserializedStyle.Radius],
+                ["radius1", deserializedStyle.Radius1],
+                ["radius2", deserializedStyle.Radius2],
+                ["angle", deserializedStyle.Angle],
+                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]],
+                ["opacity", deserializedStyle.Opacity],
+                ["rotateWithView", deserializedStyle.RotateWithView],
+                ["rotation", deserializedStyle.Rotation],
+                ["scale", deserializedStyle.Scale],
+                ["snapToPixel", deserializedStyle.SnapToPixel],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            style = new ol.Style.RegularShape(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
-            style = new ol.Style.Stroke({
-                color: deserializedStyle.Color,
-                lineCap: deserializedStyle.LineCap,
-                lineJoin: deserializedStyle.LineJoin,
-                lineDash: deserializedStyle.LineDash,
-                miterLimit: deserializedStyle.MiterLimit,
-                width: deserializedStyle.Width
-            });
+            properties = [
+                ["color", deserializedStyle.Color],
+                ["lineCap", deserializedStyle.LineCap],
+                ["lineJoin", deserializedStyle.LineJoin],
+                ["lineDash", deserializedStyle.LineDash],
+                ["miterLimit", deserializedStyle.MiterLimit],
+                ["width", deserializedStyle.Width]
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            style = new ol.Style.Stroke(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
-            style = new ol.Style.Style({
-                //TODO
-            });
+            // TODO
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
-            style = new ol.Style.Text({
-                font: deserializedStyle.Font,
-                offsetX: deserializedStyle.OffsetX,
-                offsetY: deserializedStyle.OffSetY,
-                scale: deserializedStyle.Scale,
-                rotation: deserializedStyle.Rotation,
-                text: deserializedStyle.Content,
-                textAlign: deserializedStyle.TextAlign,
-                textBaseline: deserializedStyle.TextBaseLine,
-                fill: gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id],
-                stroke: gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]
-            });
+            properties = [
+                ["font", deserializedStyle.Font],
+                ["offsetX", deserializedStyle.OffsetX],
+                ["offsetY", deserializedStyle.OffSetY],
+                ["scale", deserializedStyle.Scale],
+                ["rotation", deserializedStyle.Rotation],
+                ["text", deserializedStyle.Content],
+                ["textAlign", deserializedStyle.TextAlign],
+                ["textBaseline", deserializedStyle.TextBaseLine],
+                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]],
+                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]]
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            style = new ol.Style.Text(options);
             break;
         default:
             gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Style Type:' + deserializedStyle.Type + ' for Style '  + deserializedStyle.Id);

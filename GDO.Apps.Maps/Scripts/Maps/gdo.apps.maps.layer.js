@@ -33,7 +33,7 @@ gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLay
                 ["saturation",deserializedLayer.Saturation],
                 ["source",gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id]],
                 ["visible",deserializedLayer.Visible]
-                ];
+            ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             layer = new ol.layer.Heatmap(options);
             break;
