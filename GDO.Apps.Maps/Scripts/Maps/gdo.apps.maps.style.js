@@ -219,12 +219,11 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
                 gdo.net.app["Maps"].server.updateIconStyle(instanceId, styleId, properties.Name, properties.Opacity, properties.Rotation, properties.Scale);
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
-                gdo.net.app["Maps"].server.updateRegularShapeStyle(instanceId, styleId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
-                    properties.Rotation, properties.Scale, properties.Points, properties.Radius, properties.Radius1, properties.Radius2, properties.Angle,
-                    properties.SnapToPixel, properties.StrokeId);
+                gdo.net.app["Maps"].server.updateRegularShapeStyle(instanceId, styleId, properties.Name, properties.Opacity, properties.Rotation, properties.Scale);
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
-                gdo.net.app["Maps"].server.updateStrokeStyle(instanceId, styleId, properties.Name, properties.Opacity, properties.Rotation, properties.Scale);
+                gdo.net.app["Maps"].server.updateStrokeStyle(instanceId, properties.Name, properties.Color, properties.LineCap, properties.LineJoin,
+                    properties.LineDash, properties.MiterLimit, properties.Width);
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
                 //gdo.net.app["Maps"].server.updateStyle(instanceId, styleId, properties.Name, );
