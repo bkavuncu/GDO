@@ -86,7 +86,7 @@ namespace GDO.Apps.Maps
 
         //Map
 
-        public void InitMap(int instanceId, int[] layerIds, int[] interactionIds, int[] controlIds, int viewId, int width, int height)
+        public void UpdateMap(int instanceId, int[] layerIds, int[] interactionIds, int[] controlIds, int viewId, int width, int height)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -160,6 +160,90 @@ namespace GDO.Apps.Maps
             catch (Exception e)
             {
                 Console.WriteLine(e);
+            }
+        }
+
+        //View
+
+        public void UpdateView(int instanceId, int viewId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
+            int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
+                    if (viewId == -1)
+                    {
+                        viewId = maps.AddView(position, minResolution, maxResolution, minZoom, maxZoom, projection,
+                            rotation);
+                    }
+                    else
+                    {
+                        maps.ModifyView(viewId, position, minResolution, maxResolution, minZoom, maxZoom, projection, rotation);
+                    }
+                    BroadcastView(instanceId, viewId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedView = maps.GetSerializedView(viewId);
+                    if (serializedView != null)
+                    {
+                        Clients.Caller.receiveview(instanceId, viewId, serializedView, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveview(instanceId, viewId, "", false);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void BroadcastView(int instanceId, int viewId)
+        {
+            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            string serializedView = maps.GetSerializedView(viewId);
+            if (serializedView != null)
+            {
+                Clients.Group("" + instanceId).receiveView(instanceId, viewId, serializedView, true);
+            }
+            else
+            {
+                Clients.Group("" + instanceId).receiveLayer(instanceId, viewId, "", false);
+            }
+        }
+
+        public void RemoveView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveView(viewId);
+                    BroadcastView(instanceId, viewId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
@@ -340,90 +424,6 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveLayer(layerId);
                     BroadcastLayer(instanceId, layerId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        //View
-
-        public void UpdateView(int instanceId, int viewId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
-            int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
-                    if (viewId == -1)
-                    {
-                        viewId = maps.AddView(position, minResolution, maxResolution, minZoom, maxZoom, projection,
-                            rotation);
-                    }
-                    else
-                    {
-                        maps.ModifyView(viewId, position, minResolution, maxResolution, minZoom, maxZoom,projection, rotation);
-                    }
-                    BroadcastView(instanceId, viewId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestView(int instanceId, int viewId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedView = maps.GetSerializedView(viewId);
-                    if (serializedView != null)
-                    {
-                        Clients.Caller.receiveview(instanceId, viewId, serializedView, true);
-                    }
-                    else
-                    {
-                        Clients.Caller.receiveview(instanceId, viewId, "", false);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void BroadcastView(int instanceId, int viewId)
-        {
-            MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-            string serializedView = maps.GetSerializedView(viewId);
-            if (serializedView != null)
-            {
-                Clients.Group("" + instanceId).receiveView(instanceId, viewId, serializedView, true);
-            }
-            else
-            {
-                Clients.Group("" + instanceId).receiveLayer(instanceId, viewId, "", false);
-            }
-        }
-
-        public void RemoveView(int instanceId, int viewId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
-                    maps.RemoveView(viewId);
-                    BroadcastView(instanceId, viewId);
                 }
                 catch (Exception e)
                 {
@@ -629,6 +629,60 @@ namespace GDO.Apps.Maps
                         maps.ModifySource(sourceId, name, (int)SourceTypes.TileJSON);
                     }
                     maps.Sources.GetValue<JSONTileSource>(sourceId).Modify(url, crossOrigin);
+                    BroadcastSource(instanceId, sourceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateXYZSource(int instanceId, int sourceId, string name, string crossOrigin, bool opaque, double[] extent,
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions, string projection, string url)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    if (sourceId == -1)
+                    {
+                        sourceId = maps.AddSource<XYZSource>(name, (int)SourceTypes.XYZ);
+                    }
+                    else
+                    {
+                        maps.ModifySource(sourceId, name, (int)SourceTypes.XYZ);
+                    }
+                    TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth, tileHeight, resolutions);
+                    maps.Sources.GetValue<XYZSource>(sourceId).Modify(crossOrigin, _tileGrid, opaque, projection, url);
+                    BroadcastSource(instanceId, sourceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateStamenSource(int instanceId, int sourceId, string name, string crossOrigin, bool opaque, double[] extent,
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions, string projection, string url, string layer)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    if (sourceId == -1)
+                    {
+                        sourceId = maps.AddSource<StamenSource>(name, (int)SourceTypes.Stamen);
+                    }
+                    else
+                    {
+                        maps.ModifySource(sourceId, name, (int)SourceTypes.Stamen);
+                    }
+                    TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth, tileHeight, resolutions);
+                    maps.Sources.GetValue<StamenSource>(sourceId).Modify(crossOrigin, _tileGrid, opaque, projection, url, layer);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)

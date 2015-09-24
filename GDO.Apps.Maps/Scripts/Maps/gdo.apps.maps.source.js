@@ -82,6 +82,38 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
             opaque: deserializedSource.Opaque
         });
         break;
+    case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
+        var tileGrid = new ol.tilegrid.TileGrid({
+            extent: deserializedSource.TileGrid.Extent,
+            minZoom: deserializedSource.TileGrid.MinZoom,
+            maxZoom: deserializedSource.TileGrid.MaxZoom,
+            resolutions: deserializedSource.TileGrid.Resolutions,
+            tileSize: [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]
+        });
+        source = new ol.source.XYZ({
+            crossOrigin: deserializedSource.CrossOrigin,
+            tileGrid: tileGrid,
+            opaque: deserializedSource.Opaque,
+            projection: deserializedSource.Projection,
+            url: deserializedSource.Url
+        });
+        break;
+    case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
+        var tileGrid = new ol.tilegrid.TileGrid({
+            extent: deserializedSource.TileGrid.Extent,
+            minZoom: deserializedSource.TileGrid.MinZoom,
+            maxZoom: deserializedSource.TileGrid.MaxZoom,
+            resolutions: deserializedSource.TileGrid.Resolutions,
+            tileSize: [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]
+        });
+        source = new ol.source.Stamen({
+            crossOrigin: deserializedSource.CrossOrigin,
+            tileGrid: tileGrid,
+            opaque: deserializedSource.Opaque,
+            projection: deserializedSource.Projection,
+            url: deserializedSource.Url,
+            layer: deserializedSource.Layer
+        });
     case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
         source = new ol.source.TileJSON({
             crossOrigin: deserializedSource.CrossOrigin,
@@ -153,6 +185,15 @@ gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
             gdo.net.app["Maps"].server.updateImageTileSource(instanceId, sourceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
                 properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
+            gdo.net.app["Maps"].server.updateImageTileSource(instanceId, sourceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
+                properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions, properties.Projection, properties.Url);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
+            gdo.net.app["Maps"].server.updateImageTileSource(instanceId, sourceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
+                properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions, properties.Projection, properties.Url,
+                properties.Layer);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
             gdo.net.app["Maps"].server.updateJSONTileSource(instanceId, sourceId, properties.Name, properties.Url, properties.CrossOrigin);
