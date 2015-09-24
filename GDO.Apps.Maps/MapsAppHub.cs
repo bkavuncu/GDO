@@ -109,7 +109,7 @@ namespace GDO.Apps.Maps
                         controls.Add(maps.Controls.GetValue<Control>(controlId));
                     }
                     View view = maps.View;
-                    maps.InitMap(layers.ToArray(), interactions.ToArray(), controls.ToArray(), view, width, height);
+                    maps.InitMap(layers.ToArray(), interactions.ToArray(), controls.ToArray(), view);
                 }
                 catch (Exception e)
                 {

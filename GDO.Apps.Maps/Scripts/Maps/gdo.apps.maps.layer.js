@@ -7,7 +7,7 @@
 };
 
 gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer) {
-    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Layer: ' + deserializedLayer.Id);
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Layer: ' + deserializedLayer.Id);
     if (gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == null || typeof gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == "undefined") {
         gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedLayer.Source.Id);
         gdo.net.app["Maps"].updateSource(instanceId, deserializedLayer.Source.Id, deserializedLayer.Source);
@@ -106,6 +106,38 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
     gdo.net.instance[instanceId].map.addLayer(gdo.net.instance[instanceId].layers[layerId]);
 }
 
+gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLayer) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Layer: ' + deserializedLayer.Id);
+    var layer = gdo.net.instance[instanceId].layers[layerId];
+    layer.setBrightness(deserializedLayer.Brightness);
+    layer.setContrast(deserializedLayer.Contrast);
+    layer.setSaturation(deserializedLayer.Saturation);
+    layer.setHue(deserializedLayer.Hue);
+    layer.setOpacity(deserializedLayer.Opacity);
+    layer.setZIndex(deserializedLayer.ZIndex);
+    layer.setVisible(deserializedLayer.Visible);
+    layer.setMinResolution(deserializedLayer.MinResolution);
+    layer.setMaxResolution(deserializedLayer.MaxResolution);
+    switch (deserializedLayer.Type) {
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
+            layer.setGradient(deserializedLayer.Gradient);
+            layer.setRadius(deserializedLayer.Radius);
+            layer.setBlur(deserializedLayer.Blur);
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
+            layer.setPreload(deserializedLayer.Preload);
+            break;
+        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
+            layer.setStyle(gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id]);
+            break;
+        default:
+            gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + deserializedLayer.Type + ' for Layer ' + deserializedLayer.Id);
+            break;
+    }
+}
+
 gdo.net.app["Maps"].requestLayer = function (instanceId, layerId) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Layer: ' + layerId);
     gdo.net.app["Maps"].server.requestLayer(instanceId, layerId);
@@ -117,32 +149,57 @@ gdo.net.app["Maps"].uploadLayer = function (instanceId, layerId, isNew) {
     var properties = layer.properties;
     var type = gdo.net.instance[instanceId].layers[layerId].type;
     if (isNew) {
-        layerId = -1;
-    }
-    switch (type) {
-        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
-            gdo.net.app["Maps"].server.updateHeatmapLayer(instanceId, layerId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
-                properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
-                properties.MaxResolution, properties.Gradient, properties.Radius, properties.Shadow, properties.Weight, properties.Blur);
-            break;
-        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
-            gdo.net.app["Maps"].server.updateImageLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
-                properties.MaxResolution);
-            break;
-        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
-            gdo.net.app["Maps"].server.updateTileLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
-                properties.MaxResolution, properties.Preload);
-            break;
-        case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
-            gdo.net.app["Maps"].server.updateVectorLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
-                properties.MaxResolution, properties.StyleId, properties.RenderBuffer, properties.UpdateWhileAnimating, properties.UpdateWhileInteracting);
-            break;
-        default:
-            gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + type + ' for Layer ' + layerId);
-            break;
+        switch (type) {
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
+                gdo.net.app["Maps"].server.addHeatmapLayer(instanceId, layerId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution, properties.Gradient, properties.Radius, properties.Shadow, properties.Weight, properties.Blur);
+                break;
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
+                gdo.net.app["Maps"].server.addImageLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution);
+                break;
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
+                gdo.net.app["Maps"].server.addTileLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution, properties.Preload);
+                break;
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
+                gdo.net.app["Maps"].server.addVectorLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution, properties.StyleId, properties.RenderBuffer, properties.UpdateWhileAnimating, properties.UpdateWhileInteracting);
+                break;
+            default:
+                gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + type + ' for Layer ' + layerId);
+                break;
+        }
+    } else {
+        switch (type) {
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
+                gdo.net.app["Maps"].server.updateHeatmapLayer(instanceId, layerId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution, properties.Gradient, properties.Radius, properties.Blur);
+                break;
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
+                gdo.net.app["Maps"].server.updateImageLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution);
+                break;
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
+                gdo.net.app["Maps"].server.updateTileLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution, properties.Preload);
+                break;
+            case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
+                gdo.net.app["Maps"].server.updateVectorLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.MaxResolution, properties.StyleId);
+                break;
+            default:
+                gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + type + ' for Layer ' + layerId);
+                break;
+        }
     }
 }
 
