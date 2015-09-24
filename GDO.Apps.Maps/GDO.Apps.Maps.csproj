@@ -92,6 +92,7 @@
     <Content Include="Scripts\Maps\gdo.apps.maps.layer.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.source.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.style.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.utilities.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.view.js" />
     <Content Include="Scripts\Maps\ol3cesium.js.map" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
