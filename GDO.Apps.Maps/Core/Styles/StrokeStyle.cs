@@ -30,6 +30,15 @@ namespace GDO.Apps.Maps.Core.Styles
         public int MiterLimit { get; set; }
         public int Width { get; set; }
 
+        new public void Init(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
+        {
+            Color = color;
+            LineCap = lineCap;
+            LineDash = lineDash;
+            LineJoin = lineJoin;
+            MiterLimit = miterLimit;
+            Width = width;
+        }
         new public void Modify(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
         {
             Color = color;

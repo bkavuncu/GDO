@@ -11,12 +11,16 @@ namespace GDO.Apps.Maps.Core.Sources
         public string Projection { get; set; }
         public string Url { get; set; }
 
-        new public void Modify(string crossOrigin, TileGrid tileGrid, bool opaque, string projection, string url)
+        new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque, string projection, string url)
         {
             CrossOrigin = crossOrigin;
             TileGrid = tileGrid;
             Opaque = opaque;
             Projection = projection;
+            Url = url;
+        }
+        new public void Modify(string url)
+        {
             Url = url;
         }
     }

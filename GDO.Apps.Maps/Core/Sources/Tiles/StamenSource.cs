@@ -9,13 +9,18 @@ namespace GDO.Apps.Maps.Core.Sources
     public class StamenSource : XYZSource
     {
         public string Layer { get; set; }
-        new public void Modify(string crossOrigin, TileGrid tileGrid, bool opaque, string projection, string url, string layer)
+        new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque, string projection, string url, string layer)
         {
             Layer = layer;
             CrossOrigin = crossOrigin;
             Opaque = opaque;
             Projection = projection;
             TileGrid = tileGrid;
+            Url = url;
+        }
+
+        new public void Modify(string url)
+        {
             Url = url;
         }
     }

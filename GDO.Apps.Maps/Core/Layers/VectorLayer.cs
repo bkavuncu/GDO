@@ -12,12 +12,17 @@ namespace GDO.Apps.Maps.Core.Layers
         public bool UpdateWhileAnimating { get; set; }
         public bool UpdateWhileInteracting { get; set; }
 
-        new public void Modify(Style style, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
+        new public void Init(Style style, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
         {
             Style = style;
             RenderBuffer = renderBuffer;
             UpdateWhileAnimating = updateWhileAnimating;
             UpdateWhileInteracting = updateWhileInteracting;
+        }
+
+        new public void Modify(Style style)
+        {
+            Style = style;
         }
     }
 }

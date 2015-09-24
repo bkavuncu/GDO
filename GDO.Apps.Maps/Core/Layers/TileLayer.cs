@@ -9,6 +9,10 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public int Preload { get; set; }
 
+        new public void Init(int preload)
+        {
+            Preload = preload;
+        }
         new public void Modify(int preload)
         {
             Preload = preload;

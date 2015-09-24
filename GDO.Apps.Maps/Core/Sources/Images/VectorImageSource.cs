@@ -10,11 +10,15 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         public Sources.VectorSource VectorSource { get; set; }
         public Style Style { get; set; }
         public double Ratio { get; set; }
-        new public void Modify(Sources.VectorSource vectorSource, Style style, double ratio)
+        new public void Init(Sources.VectorSource vectorSource, Style style, double ratio)
         {
             VectorSource = vectorSource;
             Style = style;
             Ratio = ratio;
+        }
+        new public void Modify(Style style)
+        {
+            Style = style;
         }
     }
 }

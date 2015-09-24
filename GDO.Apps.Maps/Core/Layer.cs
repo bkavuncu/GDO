@@ -37,13 +37,29 @@ namespace GDO.Apps.Maps.Core
         {
             
         }
-        public void Modify(int id, string name, int type, Source source, float brightness, float contrast, float saturation, float hue,
+        public void Init(int id, string name, int type, Source source, float brightness, float contrast, float saturation, float hue,
             float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             Id = id;
             Name = name;
             Type = type;
             Source = source;
+            Brightness = brightness;
+            Contrast = contrast;
+            Saturation = saturation;
+            Hue = hue;
+            Opacity = opacity;
+            ZIndex = zIndex;
+            Visible = visible;
+            MinResolution = minResolution;
+            MaxResolution = maxResolution;
+        }
+        public void Modify(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
+            float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+        {
+            Id = id;
+            Name = name;
+            Type = type;
             Brightness = brightness;
             Contrast = contrast;
             Saturation = saturation;

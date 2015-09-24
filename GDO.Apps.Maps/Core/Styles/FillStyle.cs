@@ -13,5 +13,9 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             Color = color;
         }
+        new public void Init(string color)
+        {
+            Color = color;
+        }
     }
 }

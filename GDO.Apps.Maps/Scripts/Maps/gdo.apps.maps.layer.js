@@ -6,7 +6,7 @@
     Vector: 4
 };
 
-gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLayer) {
+gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Layer: ' + deserializedLayer.Id);
     if (gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == null || typeof gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == "undefined") {
         gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedLayer.Source.Id);

@@ -18,7 +18,7 @@ namespace GDO.Apps.Maps.Formats
         public bool MultiSurface { get; set; }
         public string SchemaLocation { get; set; }
 
-        new public void Modify(int gmlVersion, string[] featureNS, string[] featureType, string srsName, bool surface,
+        new public void Init(int gmlVersion, string[] featureNS, string[] featureType, string srsName, bool surface,
             bool curve, bool multiCurve, bool multiSurface, string schemaLocation)
         {
             GMLVersion = gmlVersion;
@@ -30,6 +30,9 @@ namespace GDO.Apps.Maps.Formats
             MultiCurve = multiCurve;
             MultiSurface = multiSurface;
             SchemaLocation = schemaLocation;
+        }
+        new public void Modify()
+        {
         }
     }
 }

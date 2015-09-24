@@ -18,12 +18,24 @@ namespace GDO.Apps.Maps.Core.Styles
         public FillStyle Fill { get; set; }
         public StrokeStyle Stroke { get; set; }
 
-        new public void Modify(string font, int offsetX, int offsetY, float scale, float rotation, string content,
+        new public void Init(string font, int offsetX, int offsetY, float scale, float rotation, string content,
             string textAlign, string textBaseLine, FillStyle fill, StrokeStyle stroke)
         {
             Font = font;
             OffsetX = offsetX;
             OffsetY = offsetY;
+            Scale = scale;
+            Rotation = rotation;
+            Content = content;
+            TextAlign = textAlign;
+            TextBaseLine = textBaseLine;
+            Fill = fill;
+            Stroke = stroke;
+        }
+        new public void Modify(string font, float scale, float rotation, string content,
+            string textAlign, string textBaseLine, FillStyle fill, StrokeStyle stroke)
+        {
+            Font = font;
             Scale = scale;
             Rotation = rotation;
             Content = content;

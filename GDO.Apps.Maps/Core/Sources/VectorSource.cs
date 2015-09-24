@@ -21,12 +21,17 @@ namespace GDO.Apps.Maps.Core.Sources
         public int LoadingStrategy { get; set; }
         public bool UseSpatialIndex { get; set; }
 
-        new public void Modify(Format format, string url, int loadingStrategy, bool useSpatialIndex)
+        new public void Init(Format format, string url, int loadingStrategy, bool useSpatialIndex)
         {
             Format = format;
             Url = url;
             LoadingStrategy = loadingStrategy;
             UseSpatialIndex = useSpatialIndex;
         }
+        new public void Modify()
+        {
+        }
+
+        //TODO add feature functions
     }
 }

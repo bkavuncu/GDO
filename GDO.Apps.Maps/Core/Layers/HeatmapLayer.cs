@@ -13,12 +13,19 @@ namespace GDO.Apps.Maps.Core.Layers
         public float Weight { get; set; }
         public float Blur { get; set; }
 
-        new public void Modify(string[] gradient, float radius, float shadow, float weight, float blur)
+        new public void Init(string[] gradient, float radius, float shadow, float weight, float blur)
         {
             Gradient = gradient;
             Radius = radius;
             Shadow = shadow;
             Weight = weight;
+            Blur = blur;
+        }
+
+        new public void Modify(string[] gradient, float radius,  float blur)
+        {
+            Gradient = gradient;
+            Radius = radius;
             Blur = blur;
         }
     }

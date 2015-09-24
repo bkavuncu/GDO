@@ -30,7 +30,12 @@ namespace GDO.Apps.Maps.Core
         {
 
         }
-
+        public void Init(int id, string name, int type)
+        {
+            Id = id;
+            Name = name;
+            Type = type;
+        }
         public void Modify(int id, string name, int type)
         {
             Id = id;

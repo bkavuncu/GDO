@@ -10,9 +10,12 @@ namespace GDO.Apps.Maps.Formats
     {
         public string GeometryName { get; set; }
 
-        new public void Modify(string geometryName)
+        new public void Init(string geometryName)
         {
             GeometryName = geometryName;
+        }
+        new public void Modify()
+        {
         }
     }
 }

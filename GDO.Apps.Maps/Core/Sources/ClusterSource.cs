@@ -12,12 +12,16 @@ namespace GDO.Apps.Maps.Core.Sources
         public double[] Extent { get; set; }
         public Format Format { get; set; }
         public VectorSource VectorSource { get; set; }
-        new public void Modify(int distance, double[] extent, Format format, VectorSource vectorSource)
+        new public void Init(int distance, double[] extent, Format format, VectorSource vectorSource)
         {
             Distance = distance;
             Extent = extent;
             Format = format;
             VectorSource = vectorSource;
         }
+        new public void Modify()
+        {
+        }
+        //TODO add feature functions
     }
 }

@@ -16,9 +16,9 @@ namespace GDO.Apps.Maps.Core.Styles
         public bool SnapToPixel { get; set; }
         public StrokeStyle Stroke { get; set; }
 
-        new public void Modify(FillStyle fill, float opacity, bool rotateWithView, float rotation, float scale, int points, int radius, int radius1, int radius2, int angle, bool snapToPixel, StrokeStyle stroke)
+        new public void Init(FillStyle fill, float opacity, bool rotateWithView, float rotation, float scale, int points, int radius, int radius1, int radius2, int angle, bool snapToPixel, StrokeStyle stroke)
         {
-            base.Modify(opacity, rotateWithView, rotation, scale);
+            base.Init(opacity, rotateWithView, rotation, scale);
             Fill = fill;
             Points = points;
             Radius = radius;
@@ -27,6 +27,10 @@ namespace GDO.Apps.Maps.Core.Styles
             Angle = angle;
             SnapToPixel = snapToPixel;
             Stroke = stroke;
+        }
+        new public void Modify(float opacity, float rotation, float scale)
+        {
+            base.Modify(opacity, rotation, scale);
         }
     }
 }

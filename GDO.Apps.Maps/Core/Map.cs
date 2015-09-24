@@ -13,10 +13,8 @@ namespace GDO.Apps.Maps.Core
         public Dictionary<int,Interaction> Interactions { get; set; }
         public Dictionary<int,Control> Controls { get; set; }
         public View View { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
 
-        public Map(Layer[] layers, Interaction[] interactions, Control[] controls, View view, int width, int height)
+        public Map(Layer[] layers, Interaction[] interactions, Control[] controls, View view)
         {
             foreach (Layer layer in layers)
             {
@@ -31,8 +29,6 @@ namespace GDO.Apps.Maps.Core
                 Controls.Add(control.Id,control);
             }
             View = view;
-            Width = width;
-            Height = height;
         }
     }
 }

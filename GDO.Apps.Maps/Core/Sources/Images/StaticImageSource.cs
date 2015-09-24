@@ -12,13 +12,16 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         public int Height { get; set; }
         public string URL { get; set; }
         public double[] Extent { get; set; }
-        new public void Modify(string crossOrigin, int width, int height, string url, double[] extent)
+        new public void Init(string crossOrigin, int width, int height, string url, double[] extent)
         {
             CrossOrigin = crossOrigin;
             Width = width;
             Height = height;
             URL = url;
             Extent = extent;
+        }
+        new public void Modify()
+        {
         }
     }
 }

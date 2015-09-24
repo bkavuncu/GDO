@@ -27,10 +27,10 @@ namespace GDO.Apps.Maps.Core.Styles
         public int ImageHeight { get; set; }
         public string ImageSource { get; set; }
 
-        new public void Modify(string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin, float opacity, float scale, bool snapToPixel,
+        new public void Init(string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin, float opacity, float scale, bool snapToPixel,
             bool rotateWithView, float rotation, int width, int height, int imageWidth, int imageHeight, string imageSource)
         {
-            base.Modify(opacity, rotateWithView, rotation, scale);
+            base.Init(opacity, rotateWithView, rotation, scale);
             CrossOrigin = crossOrigin;
             Anchor = anchor;
             AnchorOrigin = anchorOrigin;
@@ -42,6 +42,10 @@ namespace GDO.Apps.Maps.Core.Styles
             ImageWidth = imageWidth;
             ImageHeight = imageHeight;
             ImageSource = imageSource;
+        }
+        new public void Modify(float opacity, float rotation, float scale)
+        {
+            base.Modify(opacity, rotation, scale);
         }
     }
 }

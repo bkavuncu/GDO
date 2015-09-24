@@ -34,12 +34,12 @@ namespace GDO.Apps.Maps
         }
 
         //Map
-        public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view, int width, int height)
+        public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view)
         {
             try
             {
 
-                Map = new Map(layers, interactions, controls, view, width, height);
+                Map = new Map(layers, interactions, controls, view);
                 return true;
             }
             catch (Exception e)
@@ -65,7 +65,7 @@ namespace GDO.Apps.Maps
             {
                 int layerId = Layers.GetAvailableSlot();
                 T layer = new T();
-                layer.Modify(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity,
+                layer.Init(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity,
                     zIndex, visible, minResolution, maxResolution);
                 Layers.Add<T>(layerId, layer);
                 return layerId;
@@ -77,12 +77,12 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public bool ModifyLayer(int id, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
+        public bool ModifyLayer(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
             float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
         {
             try
             {
-                Layers.GetValue<Core.Layer>(id).Modify(id, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation,
+                Layers.GetValue<Core.Layer>(id).Modify(id, name, type, brightness, contrast, saturation,
                     hue, opacity, zIndex, visible, minResolution, maxResolution);
                 return true;
             }

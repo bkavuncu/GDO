@@ -7,6 +7,9 @@ namespace GDO.Apps.Maps.Core.Layers
 {
     public class ImageLayer : Layer
     {
+        new public void Init()
+        {
+        }
         new public void Modify()
         { 
         }

@@ -11,10 +11,13 @@ namespace GDO.Apps.Maps.Formats
         public bool ExtractStyles { get; set; }
         public List<Style> DefaultStyle { get; set; }
 
-        new public void Modify(List<Style> defaultStyle, bool extractStyles)
+        new public void Init(List<Style> defaultStyle, bool extractStyles)
         {
             DefaultStyle = defaultStyle;
             ExtractStyles = extractStyles;
+        }
+        new public void Modify()
+        {
         }
     }
 }
