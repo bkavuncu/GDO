@@ -175,39 +175,67 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
     var properties = style.properties;
     var type = gdo.net.instance[instanceId].style[styleId].type;
     if (isNew) {
-        styleId = -1;
-    }
-    switch (type) {
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Circle:
-            gdo.net.app["Maps"].server.updateCircleStyle(instanceId, styleId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
-                properties.Rotation, properties.Scale, properties.Radius, properties.SnapToPixel, properties.StrokeId);
-            break;
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
-            gdo.net.app["Maps"].server.updateFillStyle(instanceId, styleId, properties.Name, properties.Color);
-            break;
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Icon:
-            gdo.net.app["Maps"].server.updateIconStyle(instanceId, styleId, properties.Name, properties.CrossOrigin, properties.Anchor, properties.AnchorOrigin,
-                properties.Offset, properties.OffsetOrigin, properties.Opacity, properties.Scale, properties.SnapToPixel, properties.RotateWithView,
-                properties.Rotation, properties.Width, properties.Height, properties.ImageWidth, properties.ImageHeight, properties.ImageSource);
-            break;
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
-            gdo.net.app["Maps"].server.updateRegularShapeStyle(instanceId, styleId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
-                properties.Rotation, properties.Scale, properties.Points, properties.Radius, properties.Radius1, properties.Radius2, properties.Angle,
-                properties.SnapToPixel, properties.StrokeId);
-            break;
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
-            gdo.net.app["Maps"].server.updateStrokeStyle(instanceId, styleId, properties.Name, properties.Color, properties.LineCap, properties.LineJoin,
-                properties.LineDash,properties.MiterLimit, properties.Width);
-            break;
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
-            //gdo.net.app["Maps"].server.updateStyle(instanceId, styleId, properties.Name, );
-            break;
-        case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
-            gdo.net.app["Maps"].server.updateTextStyle(instanceId, styleId, properties.Name, properties.Font, properties.OffsetX, properties.OffsetY,
-                properties.Scale, properties.Rotation, properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillId, properties.StrokeId);
-            break;
-        default:
-            break;
+        switch (type) {
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Circle:
+                gdo.net.app["Maps"].server.addCircleStyle(instanceId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
+                    properties.Rotation, properties.Scale, properties.Radius, properties.SnapToPixel, properties.StrokeId);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
+                gdo.net.app["Maps"].server.addFillStyle(instanceId, properties.Name, properties.Color);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Icon:
+                gdo.net.app["Maps"].server.addIconStyle(instanceId, properties.Name, properties.CrossOrigin, properties.Anchor, properties.AnchorOrigin,
+                    properties.Offset, properties.OffsetOrigin, properties.Opacity, properties.Scale, properties.SnapToPixel, properties.RotateWithView,
+                    properties.Rotation, properties.Width, properties.Height, properties.ImageWidth, properties.ImageHeight, properties.ImageSource);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
+                gdo.net.app["Maps"].server.addRegularShapeStyle(instanceId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
+                    properties.Rotation, properties.Scale, properties.Points, properties.Radius, properties.Radius1, properties.Radius2, properties.Angle,
+                    properties.SnapToPixel, properties.StrokeId);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
+                gdo.net.app["Maps"].server.addStrokeStyle(instanceId, properties.Name, properties.Color, properties.LineCap, properties.LineJoin,
+                    properties.LineDash, properties.MiterLimit, properties.Width);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
+                //gdo.net.app["Maps"].server.addStyle(instanceId, properties.Name, );
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
+                gdo.net.app["Maps"].server.addTextStyle(instanceId, properties.Name, properties.Font, properties.OffsetX, properties.OffsetY,
+                    properties.Scale, properties.Rotation, properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillId, properties.StrokeId);
+                break;
+            default:
+                break;
+        }
+    } else {
+        switch (type) {
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Circle:
+                gdo.net.app["Maps"].server.updateCircleStyle(instanceId, styleId, properties.Name, properties.Opacity, properties.Rotation, properties.Scale);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
+                gdo.net.app["Maps"].server.updateFillStyle(instanceId, styleId, properties.Name, properties.Color);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Icon:
+                gdo.net.app["Maps"].server.updateIconStyle(instanceId, styleId, properties.Name, properties.Opacity, properties.Rotation, properties.Scale);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
+                gdo.net.app["Maps"].server.updateRegularShapeStyle(instanceId, styleId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
+                    properties.Rotation, properties.Scale, properties.Points, properties.Radius, properties.Radius1, properties.Radius2, properties.Angle,
+                    properties.SnapToPixel, properties.StrokeId);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
+                gdo.net.app["Maps"].server.updateStrokeStyle(instanceId, styleId, properties.Name, properties.Opacity, properties.Rotation, properties.Scale);
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
+                //gdo.net.app["Maps"].server.updateStyle(instanceId, styleId, properties.Name, );
+                break;
+            case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
+                gdo.net.app["Maps"].server.updateTextStyle(instanceId, styleId, properties.Name, properties.Font, properties.Scale, properties.Rotation,
+                    properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillId, properties.StrokeId);
+                break;
+            default:
+                break;
+        }
     }
 }
 
