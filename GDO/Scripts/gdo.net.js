@@ -125,7 +125,7 @@ $(function() {
                     gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + appName+ ', instanceId: ' + instanceId + ")");
                 }
             } else {
-                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.app[appName] != undefined) {
+                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE && typeof gdo.net.app[appName] != "undefined") {
                     gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
                     gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instanceId + ")");
                 }
@@ -456,8 +456,8 @@ gdo.net.receiveFile = function (path,name,data){
 
 
 gdo.net.isNodeInitialized = function () {
-    if (gdo.net != null && gdo.net != undefined) {
-        if (gdo.net.NodeInitialized != null && gdo.net.NodeInitialized != undefined) {
+    if (gdo.net != null && typeof gdo.net != "undefined") {
+        if (gdo.net.NodeInitialized != null && typeof gdo.net.NodeInitialized != "undefined") {
             return gdo.net.NodeInitialized;
         } else {
             return false;
