@@ -17,6 +17,7 @@
             padding : 0px;
             margin: 0px;
             overflow-y: hidden;
+            overflow-x: hidden;
         }
 
         .unselectable {
@@ -613,7 +614,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.right) + "px");
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -695,7 +696,7 @@
                     // TEST ANIMATION
                     launchAnimation = function () {
                         var args = {
-                            timeStep: 1000,
+                            timeStep: 2000,
                             map: map,
                             tubeLines: tube,
                             clock: clockDiv
@@ -703,6 +704,7 @@
 
                         anim = animation(args);
                         anim.loadData(function () {
+                            anim.init();
                             dd3.synchronize(function () {
                                 anim.start();
                             });

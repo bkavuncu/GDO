@@ -316,7 +316,7 @@ namespace GDO.Apps.DD3
                 return obj;
             };
 
-            return data.First() is JProperty ? data.First().Parent : data.Select(mapFunction);
+            return data.Count() == 0 ? data : data.First() is JProperty ? data.First().Parent : data.Select(mapFunction);
         }
     }
 

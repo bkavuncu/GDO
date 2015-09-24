@@ -51,11 +51,47 @@ var animation = function (arg) {
 			}
 
 			a.data = d3.map();
-			a.dataLength = data[Object.keys(data)[0]].entries.length;
-			data.forEach(function (d) {
-			    a.data.set(d.name, d.entries);
-			});
-			
+			a.aggregatedData = d3.map();
+			a.dataLength = 0;
+
+			if (data.length != 0) {
+			    a.dataLength = data[Object.keys(data)[0]].entries.length;
+			    data.forEach(function (d) {
+			        a.data.set(d.name, d.entries);
+			    });
+
+			    // Preparing Data
+			    console.log("Preparing Data");
+
+			    var val, tMax, max, xMax, name, pos;
+
+			    var lgth = a.data.values()[0].length,
+                    tenth = Math.floor(lgth / 10);
+
+			    d3.range(0, lgth).forEach(function (x) {
+			        if (x % a.aggregate === 0) {
+			            var array = a.data.entries().map(function (d) {
+			                name = d.key;
+			                pos = a.map.getPointAt(a.stations.getStationCoordinates(name));
+			                val = [0, 0];
+			                d3.range(x, Math.min(x + a.aggregate, d.value.length)).forEach(function (i) { val = [val[0] + d.value[i][0], val[1] + d.value[i][1]]; });
+			                tMax = (val[0] > val[1] ? val[0] : val[1]);
+			                max = tMax <= max ? max : tMax;
+			                if (max === tMax) { xMax = [x, name]; }
+			                return [pos, val[entry], name];
+			            });
+			            a.aggregatedData.set(x, array);
+			        }
+
+			        if (x % tenth === 0) {
+			            console.log(~~(x / tenth) * 10 + "%");
+			        }
+			    });
+
+			    a.maxSizeNumber = max;
+			    console.log("Data Ready\n==========");
+			}
+
 			initialized = 1;
 			console.log("Data loaded");
 			callback && callback();
@@ -66,67 +102,12 @@ var animation = function (arg) {
 		if (initialized < 2) {
 			if (initialized === 0) {
 				console.error("DATA NOT LOADED - CANNOT START ANIMATION");
-				return;
+			} else if (initialized === 1) {
+			    console.error("ANIMATION NOT INITIALIZED");
 			}
-		
-			a.svg.append('g').attr('id', 'dd3_animation');
-			
-			//Create Gradient			
-			a.svg.select('#dd3_animation').append('radialGradient').unwatch()
-				.attr('id', 'area-gradient')
-				.attr('cx', '50%').attr('cy', '50%')         
-				.attr('fx', '50%').attr('fy', '50%')         
-				.attr('r', '50%');
-				
-			var stop = a.svg.select('#area-gradient').selectAll('stop')
-				.data([
-					{offset: '0%', opacity : 1},
-					{offset: '20%', opacity : 1},
-					{offset: '100%', opacity : 0.2}
-				]);
-				
-			stop.enter().append('stop')
-				.attr('offset', function (d) { return d.offset; })
-				.attr('stop-opacity', function (d) { return d.opacity;})
-				.attr('stop-color', function (d, i) { return i === 0 ? a.color[0] : a.color[1];});
-			
-			// Preparing Data
-			console.log("Preparing Data");
-			
-			var val, tMax, max, xMax;
-			a.aggregatedData = d3.map();
-			
-			var lgth = a.data.values()[0].length,
-				tenth = Math.floor(lgth/10);
-				
-			d3.range(0, lgth).forEach(function (x) {
-				if (x % a.aggregate === 0) {
-					var array = a.data.entries().map(function (d) {
-						name = d.key;
-						pos = a.map.getPointAt(a.stations.getStationCoordinates(name));
-						val = [0,0];
-						d3.range(x, Math.min(x + a.aggregate, d.value.length)).forEach(function (i) {val = [val[0] + d.value[i][0], val[1] + d.value[i][1]] ;});
-						tMax = (val[0] > val[1] ? val[0] : val[1]);
-						max = tMax <= max ? max : tMax;
-						if (max === tMax) { xMax = [x, name]; }
-						return [pos, val[entry], name];
-					});
-					a.aggregatedData.set(x, array);
-				}
-				
-				if (x % tenth === 0) {
-					console.log(~~(x / tenth) * 10 + "%");
-				}
-			});
-			
-			a.maxSizeNumber = max;
-			
-			console.log("Data Ready\n==========");
-			
-			scale.domain([1, a.maxSizeNumber]);
-			//createScale();
-			initialized = 2;
-		}
+			return; 
+		} else if (a.aggregatedData.size() === 0)
+            return
 		
 		if (a.clock) {
 			updateClock(a.timeInterval * time);
@@ -134,10 +115,7 @@ var animation = function (arg) {
 		
 		var group = a.svg.select('#dd3_animation'),
 			circlesEnter,
-			circlesExit,
-			name,
-			val,
-			pos;
+			circlesExit;
 			
 		if (time % a.aggregate === 0) {
 			circlesEnter = group.selectAll('circle.enter.T' + time).data(a.aggregatedData.get(time));
@@ -205,11 +183,46 @@ var animation = function (arg) {
 		a.clock.text(realTime);
 	};
 	
+	var initAnim = function () {
+	    if (initialized != 1) {
+	        return;
+	    }
+
+	    a.svg.append('g').attr('id', 'dd3_animation');
+
+	    //Create Gradient			
+	    a.svg.select('#dd3_animation').append('radialGradient').unwatch()
+            .attr('id', 'area-gradient')
+            .attr('cx', '50%').attr('cy', '50%')
+            .attr('fx', '50%').attr('fy', '50%')
+            .attr('r', '50%');
+
+	    var stop = a.svg.select('#area-gradient').selectAll('stop')
+            .data([
+                { offset: '0%', opacity: 1 },
+                { offset: '20%', opacity: 1 },
+                { offset: '100%', opacity: 0.2 }
+            ]);
+
+	    stop.enter().append('stop')
+            .attr('offset', function (d) { return d.offset; })
+            .attr('stop-opacity', function (d) { return d.opacity; })
+            .attr('stop-color', function (d, i) { return i === 0 ? a.color[0] : a.color[1]; });
+
+
+	    scale.domain([1, a.maxSizeNumber]);
+	    //createScale();
+	    initialized = 2;
+	};
+
 	/* ANIMATION FUNCTIONS */	
 	
+	a.init = initAnim;
+
 	a.start = function (time) {
 		currentTime = time || currentTime;
 		running = true;
+		initAnim();
 		update(currentTime);
 	};
 	

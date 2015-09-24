@@ -1012,12 +1012,13 @@ var initDD3App = function () {
             };
 
             var _dd3_shapeHandler = function (data) {
-                var obj = d3.select("#" + data.sendId),
-                    g1 = d3.select("#" + data.containers.shift()), g2,
+                var mainId = data.containers.shift(),
+                    obj = d3.select("#" + data.sendId),
+                    g1 = d3.select("#" + mainId), g2,
                     c = false; // Whether the object was changed of group since last time
 
                 if (g1.empty()) {
-                    utils.log("The group with id received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
+                    utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
                     return;
                 }
 
