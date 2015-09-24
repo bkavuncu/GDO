@@ -151,22 +151,22 @@ gdo.net.app["Maps"].uploadLayer = function (instanceId, layerId, isNew) {
     if (isNew) {
         switch (type) {
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
-                gdo.net.app["Maps"].server.addHeatmapLayer(instanceId, layerId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
+                gdo.net.app["Maps"].server.addHeatmapLayer(instanceId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
                     properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.Gradient, properties.Radius, properties.Shadow, properties.Weight, properties.Blur);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
-                gdo.net.app["Maps"].server.addImageLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                gdo.net.app["Maps"].server.addImageLayer(instanceId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
                     properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
                     properties.MaxResolution);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
-                gdo.net.app["Maps"].server.addTileLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                gdo.net.app["Maps"].server.addTileLayer(instanceId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
                     properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.Preload);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
-                gdo.net.app["Maps"].server.addVectorLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
+                gdo.net.app["Maps"].server.addVectorLayer(instanceId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
                     properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.StyleId, properties.RenderBuffer, properties.UpdateWhileAnimating, properties.UpdateWhileInteracting);
                 break;
