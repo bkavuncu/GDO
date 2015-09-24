@@ -165,8 +165,8 @@ namespace GDO.Apps.Maps
 
         //View
 
-        public void UpdateView(int instanceId, int viewId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
-            int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
+        public void UpdateView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
+            int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation, int width, int height)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -174,16 +174,9 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
-                    if (viewId == -1)
-                    {
-                        viewId = maps.AddView(position, minResolution, maxResolution, minZoom, maxZoom, projection,
-                            rotation);
-                    }
-                    else
-                    {
-                        maps.ModifyView(viewId, position, minResolution, maxResolution, minZoom, maxZoom, projection, rotation);
-                    }
-                    BroadcastView(instanceId, viewId);
+                    maps.UpdateView(position, minResolution, maxResolution, minZoom, maxZoom, projection,
+                            rotation, width, height);
+                    BroadcastView(instanceId);
                 }
                 catch (Exception e)
                 {
@@ -192,22 +185,15 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void RequestView(int instanceId, int viewId)
+        public void RequestView(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedView = maps.GetSerializedView(viewId);
-                    if (serializedView != null)
-                    {
-                        Clients.Caller.receiveview(instanceId, viewId, serializedView, true);
-                    }
-                    else
-                    {
-                        Clients.Caller.receiveview(instanceId, viewId, "", false);
-                    }
+                    string serializedView = maps.GetSerializedView();
+                    Clients.Caller.receiveview(instanceId, serializedView);
                 }
                 catch (Exception e)
                 {
@@ -216,35 +202,11 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void BroadcastView(int instanceId, int viewId)
+        public void BroadcastView(int instanceId)
         {
             MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-            string serializedView = maps.GetSerializedView(viewId);
-            if (serializedView != null)
-            {
-                Clients.Group("" + instanceId).receiveView(instanceId, viewId, serializedView, true);
-            }
-            else
-            {
-                Clients.Group("" + instanceId).receiveLayer(instanceId, viewId, "", false);
-            }
-        }
-
-        public void RemoveView(int instanceId, int viewId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    maps.RemoveView(viewId);
-                    BroadcastView(instanceId, viewId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
+            string serializedView = maps.GetSerializedView();
+            Clients.Group("" + instanceId).receiveView(instanceId,serializedView;
         }
 
         //Layer

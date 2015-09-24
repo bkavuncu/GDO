@@ -18,8 +18,8 @@ namespace GDO.Apps.Maps
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public Map Map;
+        public View View { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
-        public GenericDictionary<View> Views { get; set; }
         public GenericDictionary<Interaction> Interactions { get; set; }
         public GenericDictionary<Source> Sources { get; set; }
         public GenericDictionary<Control> Controls { get; set; }
@@ -123,28 +123,11 @@ namespace GDO.Apps.Maps
 
         //View
 
-        public int AddView(Position position, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
+        public bool UpdateView(Position position, float rotation, int width, int height)
         {
             try
             {
-                int viewId = Views.GetAvailableSlot();
-                View view = new View(viewId,position,minResolution,maxResolution,minZoom,maxZoom,projection,rotation);
-                Views.Add<View>(viewId, view);
-                return viewId;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return -1;
-            }
-        }
-
-        public bool ModifyView(int id, Position position, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation)
-        {
-            try
-            {
-                View view = Views.GetValue<View>(id);
-                view = new View(id, position, minResolution, maxResolution, minZoom, maxZoom, projection, rotation);
+                View = new View(position, rotation, width, height);
                 return true;
             }
             catch (Exception e)
@@ -154,24 +137,10 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetSerializedView(int viewId)
+        public string GetSerializedView()
         {
-            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(viewId));
+            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(View);
             return serializedView;
-        }
-
-        public bool RemoveView(int viewId)
-        {
-            try
-            {
-                Views.Remove(viewId);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
         }
 
         //Interaction
