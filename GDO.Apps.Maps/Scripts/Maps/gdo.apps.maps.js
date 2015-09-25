@@ -21,14 +21,18 @@ $(function () {
         }
     }*/
 
-    $.connection.mapsAppHub.client.receiveLayer = function (instanceId, layerId, serializedLayer) {
-        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId);
-        if (gdo.net.instance[instanceId].layers[layerId] == null || typeof gdo.net.instance[instanceId].layers[layerId] == "undefined") {
-            gdo.net.app["Maps"].addLayer(instanceId, layerId, JSON.parse(serializedLayer));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Layer :' + layerId);
+    $.connection.mapsAppHub.client.receiveLayer = function (instanceId, layerId, serializedLayer, exists) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId + " (Exists:"+ exists+")");
+        if (exists) {
+            if (gdo.net.instance[instanceId].layers[layerId] == null || typeof gdo.net.instance[instanceId].layers[layerId] == "undefined") {
+                gdo.net.app["Maps"].addLayer(instanceId, layerId, JSON.parse(serializedLayer));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Layer :' + layerId);
+            } else {
+                gdo.net.app["Maps"].updateLayer(instanceId, layerId, JSON.parse(serializedLayer));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Layer :' + layerId);
+            }
         } else {
-            gdo.net.app["Maps"].updateLayer(instanceId, layerId, JSON.parse(serializedLayer));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Layer :' + layerId);
+            gdo.net.app["Maps"].removeLayer(instanceId, layerId);
         }
     }
 
@@ -44,14 +48,18 @@ $(function () {
 
     }
 
-    $.connection.mapsAppHub.client.receiveSource = function (instanceId, sourceId, serializedSource) {
-        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Source :' + sourceId);
-        if (gdo.net.instance[instanceId].sources[sourceId] == null || typeof gdo.net.instance[instanceId].sources[sourceId] == "undefined") {
-            gdo.net.app["Maps"].addSource(instanceId, sourceId, JSON.parse(serializedSource));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Source :' + sourceId);
+    $.connection.mapsAppHub.client.receiveSource = function (instanceId, sourceId, serializedSource, exists) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Source :' + sourceId + " (Exists:" + exists + ")");
+        if (exists) {
+            if (gdo.net.instance[instanceId].sources[sourceId] == null || typeof gdo.net.instance[instanceId].sources[sourceId] == "undefined") {
+                gdo.net.app["Maps"].addSource(instanceId, sourceId, JSON.parse(serializedSource));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Source :' + sourceId);
+            } else {
+                gdo.net.app["Maps"].updateSource(instanceId, sourceId, JSON.parse(serializedSource));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Source :' + sourceId);
+            }
         } else {
-            gdo.net.app["Maps"].updateSource(instanceId, sourceId, JSON.parse(serializedSource));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Source :' + sourceId);
+            gdo.net.app["Maps"].removeSource(instanceId, sourceId);
         }
     }
 
@@ -59,25 +67,33 @@ $(function () {
 
     }
 
-    $.connection.mapsAppHub.client.receiveStyle = function (instanceId, styleId, serializedStyle) {
-        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Style :' + styleId);
-        if (gdo.net.instance[instanceId].styles[styleId] == null || typeof gdo.net.instance[instanceId].styles[styleId] == "undefined") {
-            gdo.net.app["Maps"].addStyle(instanceId, styleId, JSON.parse(serializedStyle));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Style :' + styleId);
+    $.connection.mapsAppHub.client.receiveStyle = function (instanceId, styleId, serializedStyle, exists) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Style :' + styleId + " (Exists:" + exists + ")");
+        if (exists) {
+            if (gdo.net.instance[instanceId].styles[styleId] == null || typeof gdo.net.instance[instanceId].styles[styleId] == "undefined") {
+                gdo.net.app["Maps"].addStyle(instanceId, styleId, JSON.parse(serializedStyle));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Style :' + styleId);
+            } else {
+                gdo.net.app["Maps"].updateStyle(instanceId, styleId, JSON.parse(serializedStyle));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Style :' + styleId);
+            }
         } else {
-            gdo.net.app["Maps"].updateStyle(instanceId, styleId, JSON.parse(serializedStyle));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Style :' + styleId);
+            gdo.net.app["Maps"].removeStyle(instanceId, styleId);
         }
     }
 
-    $.connection.mapsAppHub.client.receiveFormat = function (instanceId, formatId, serializedFormat) {
-        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Format :' + formatId);
-        if (gdo.net.instance[instanceId].formats[formatId] == null || typeof gdo.net.instance[instanceId].formats[formatId] == "undefined") {
-            gdo.net.app["Maps"].addFormat(instanceId, formatId, JSON.parse(serializedFormat));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Format :' + formatId);
+    $.connection.mapsAppHub.client.receiveFormat = function (instanceId, formatId, serializedFormat, exists) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Format :' + formatId + " (Exists:" + exists + ")");
+        if (exists) {
+            if (gdo.net.instance[instanceId].formats[formatId] == null || typeof gdo.net.instance[instanceId].formats[formatId] == "undefined") {
+                gdo.net.app["Maps"].addFormat(instanceId, formatId, JSON.parse(serializedFormat));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Format :' + formatId);
+            } else {
+                gdo.net.app["Maps"].updateFormat(instanceId, formatId, JSON.parse(serializedFormat));
+                gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Format :' + formatId);
+            }
         } else {
-            gdo.net.app["Maps"].updateFormat(instanceId, formatId, JSON.parse(serializedFormat));
-            gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updated Format :' + formatId);
+            gdo.net.app["Maps"].removeFormat(instanceId, formatId);
         }
     }
 });

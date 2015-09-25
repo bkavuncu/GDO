@@ -379,7 +379,7 @@ namespace GDO.Apps.Maps
                 else
                 {
                     Clients.Group("" + instanceId)
-                        .receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
+                        .receiveLayer(instanceId, layerId, "", "", false);
                 }
             }
             catch (Exception e)
@@ -843,7 +843,7 @@ namespace GDO.Apps.Maps
                 else
                 {
                     Clients.Group("" + instanceId)
-                        .receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type, "", false);
+                        .receiveSource(instanceId, sourceId, "", "", false);
                 }
             }
             catch (Exception e)
@@ -1179,7 +1179,7 @@ namespace GDO.Apps.Maps
                 else
                 {
                     Clients.Group("" + instanceId)
-                        .receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, "", false);
+                        .receiveStyle(instanceId, styleId, "", "", false);
                 }
             }
             catch (Exception e)
@@ -1386,7 +1386,7 @@ namespace GDO.Apps.Maps
                 else
                 {
                     Clients.Group("" + instanceId)
-                        .receiveFormat(instanceId, formatId, maps.Formats.GetValue<Format>(formatId).Type, "", false);
+                        .receiveFormat(instanceId, formatId, "", "", false);
                 }
             }
             catch (Exception e)
