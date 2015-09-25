@@ -12,7 +12,6 @@ using GDO.Apps.Maps.Core.Styles;
 using GDO.Apps.Maps.Formats;
 using GDO.Core;
 using GDO.Utility;
-using Image = GDO.Apps.Maps.Core.Sources.ImageSource;
 using Style = GDO.Apps.Maps.Core.Style;
 
 namespace GDO.Apps.Maps
@@ -43,31 +42,41 @@ namespace GDO.Apps.Maps
             Styles.Init();
             Formats.Init();
 
-            //Read configuration
+            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(configuration.Json.ToString());
 
+            foreach (Format format in Map.Formats)
+            {
+                Formats.Add(format.Id,format);
+            }
+            foreach (Style style in Map.Styles)
+            {
+                Styles.Add(style.Id, style);
+            }
+            foreach (Source source in Map.Sources)
+            {
+                Sources.Add(source.Id, source);
+            }
+            foreach (Layer layer in Map.Layers)
+            {
+                Layers.Add(layer.Id, layer);
+            }
+            View = Map.View;
         }
 
         //Map
-        /*public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view)
-        {
-            try
-            {
-
-                Map = new Map(layers, interactions, controls, view);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }*/
 
         public string GetSerializedMap()
         {
             Map = new Map(View, Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map);
             return serializedMap;
+        }
+
+        public void SaveMap(string configName)
+        {
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Configurations\Maps\\";
+            String filePath = basePath + configName + ".json";
+            System.IO.File.WriteAllText(filePath, GetSerializedMap());
         }
 
         //Layer

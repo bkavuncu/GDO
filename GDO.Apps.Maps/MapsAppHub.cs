@@ -69,54 +69,7 @@ namespace GDO.Apps.Maps
             }
         }*/
 
-        public void UpdateResolution(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.updateResolution(instanceId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
         //Map
-
-        /*public void UpdateMap(int instanceId, int[] layerIds, int[] interactionIds, int[] controlIds)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    List<Layer> layers = new List<Layer>();
-                    List<Interaction> interactions = new List<Interaction>();
-                    List<Control> controls = new List<Control>();
-                    foreach (int layerId in layerIds)
-                    {
-                        layers.Add(maps.Layers.GetValue<Layer>(layerId));
-                    }
-                    foreach (int interactionId in interactionIds)
-                    {
-                        interactions.Add(maps.Interactions.GetValue<Interaction>(interactionId));
-                    }
-                    foreach (int controlId in controlIds)
-                    {
-                        controls.Add(maps.Controls.GetValue<Control>(controlId));
-                    }
-                    View view = maps.View;
-                    maps.InitMap(layers.ToArray(), interactions.ToArray(), controls.ToArray(), view);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }*/
 
         public void RequestMap(int instanceId)
         {
@@ -142,26 +95,21 @@ namespace GDO.Apps.Maps
             }
         }
 
-        /*public void BroadcastMap(int instanceId)
+        public void SaveMap(int instanceId, string configName)
         {
-            try
+            lock (Cave.AppLocks[instanceId])
             {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedMap = maps.GetSerializedMap();
-                if (serializedMap != null)
+                try
                 {
-                    Clients.Group("" + instanceId).receiveMap(instanceId, serializedMap, true);
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.SaveMap(configName);
                 }
-                else
+                catch (Exception e)
                 {
-                    Clients.Group("" + instanceId).receiveMap(instanceId, "", false);
+                    Console.WriteLine(e);
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }*/
+        }
 
         //View
 

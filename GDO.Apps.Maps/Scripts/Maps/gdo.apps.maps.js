@@ -6,8 +6,6 @@ var layers;
 var scene;
 var terrainProvider;
 
-
-
 $(function () {
     gdo.consoleOut('.MAPS', 1, 'Loaded Maps JS');
 
@@ -40,7 +38,6 @@ $(function () {
 
     $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
         gdo.net.app["Maps"].initMap(instanceId, JSON.parse(serializedMap));
-        gdo.net.instance[instanceId].isInitialized = true;
     }
 
     $.connection.mapsAppHub.client.receiveInteraction = function (instanceId) {
@@ -137,6 +134,9 @@ gdo.net.app["Maps"].initMap = function (instanceId, serializedMap) {
     gdo.net.instance[instanceId].map.on('change:target', function () {
         gdo.net.app["Maps"].changeEvent(instanceId);
     });
+
+    // Initialized
+    gdo.net.instance[instanceId].isInitialized = true;
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
@@ -147,6 +147,13 @@ gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
 gdo.net.app["Maps"].initClient = function (clientId) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.Maps', 1, 'Initializing Maps App Instance ' + instanceId + ' Client at Node ' + clientId);
+
+    //Initialize Arrays
+    gdo.net.instance[instanceId].formats = [];
+    gdo.net.instance[instanceId].styles = [];
+    gdo.net.instance[instanceId].sources = [];
+    gdo.net.instance[instanceId].layers = [];
+    gdo.net.instance[instanceId].view = {};
 
     //Load Modules
     gdo.loadModule('utilities', 'maps', gdo.MODULE_TYPE.APP);
@@ -186,6 +193,13 @@ gdo.net.app["Maps"].initClient = function (clientId) {
 
 gdo.net.app["Maps"].initControl = function (instanceId) {
     gdo.consoleOut('.MAPS', 1, 'Initializing Image Maps Control at Instance ' + instanceId);
+
+    //Initialize Arrays
+    gdo.net.instance[instanceId].formats = [];
+    gdo.net.instance[instanceId].styles = [];
+    gdo.net.instance[instanceId].sources = [];
+    gdo.net.instance[instanceId].layers = [];
+    gdo.net.instance[instanceId].view = {};
 
     //Load Modules
     gdo.loadModule('utilities', 'maps', gdo.MODULE_TYPE.APP);
