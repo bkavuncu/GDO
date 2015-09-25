@@ -76,7 +76,12 @@ namespace GDO.Utility
     }
     public class GenericDictionary<U>
     {
-        private Dictionary<int, U> _dict = new Dictionary<int, U>();
+        private Dictionary<int, U> _dict;
+
+        public void Init()
+        {
+            _dict = new Dictionary<int, U>();
+        } 
 
         public void Add<T>(int key, T value) where T : U
         {
@@ -124,5 +129,9 @@ namespace GDO.Utility
             return slot;
         }
 
+        public Dictionary<int, U> GetDictionary()
+        {
+            return _dict;
+        }
     }
 }
