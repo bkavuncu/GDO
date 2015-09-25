@@ -1,7 +1,7 @@
 var tubeLines = function (svg, map) {
 	'use strict';
 
-	var l = function () {
+	var l = function () {//TODO this needs to be modified for Shanghai - lines are numbered "1"-"13" and "Maglev" not sure what colours are...
 		l.lineNames = ["Northern","Bakerloo", "Central", "District", "Circle", "HammersmithCity", "Metropolitan", "Piccadilly", "WaterlooCity", "Victoria", "Jubilee"];
 		l.lineColors = ["black","#ae6118", "#ed1b2e", "#007229", "#FFDD00", "#f385a1", "#78004C", "#0019A8", "#76d0bd",  "#00A0E2", "#8A8C8E"];
 		l.ids = 0;
