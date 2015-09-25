@@ -133,5 +133,17 @@ namespace GDO.Utility
         {
             return _dict;
         }
+
+        public U[] ToArray()
+        {
+            int i = 0;
+            U[] array = new U[_dict.Count];
+            foreach (KeyValuePair<int,U> pair in _dict)
+            {
+                array[i] = pair.Value;
+                i++;
+            }
+            return array;
+        }
     }
 }

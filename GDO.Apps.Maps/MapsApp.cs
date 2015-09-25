@@ -32,7 +32,7 @@ namespace GDO.Apps.Maps
         public GenericDictionary<Style> Styles { get; set; }
         public GenericDictionary<Format> Formats { get; set; }
         public bool IsInitialized = false;
-        public bool Mode { get; set; }
+        //public bool Mode { get; set; }
 
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
@@ -43,13 +43,12 @@ namespace GDO.Apps.Maps
             Styles.Init();
             Formats.Init();
 
-            //read configuration
-
+            //Read configuration
 
         }
 
         //Map
-        public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view)
+        /*public bool InitMap(Layer[] layers, Interaction[] interactions, Control[] controls, View view)
         {
             try
             {
@@ -62,10 +61,11 @@ namespace GDO.Apps.Maps
                 Console.WriteLine(e);
                 return false;
             }
-        }
+        }*/
 
         public string GetSerializedMap()
         {
+            Map = new Map(View, Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map);
             return serializedMap;
         }

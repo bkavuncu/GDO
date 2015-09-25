@@ -36,7 +36,7 @@ namespace GDO.Apps.Maps
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void Set3DMode(int instanceId, bool mode)
+        /*public void Set3DMode(int instanceId, bool mode)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -67,7 +67,7 @@ namespace GDO.Apps.Maps
                     Console.WriteLine(e);
                 }
             }
-        }
+        }*/
 
         public void UpdateResolution(int instanceId)
         {
@@ -86,7 +86,7 @@ namespace GDO.Apps.Maps
 
         //Map
 
-        public void UpdateMap(int instanceId, int[] layerIds, int[] interactionIds, int[] controlIds, int viewId, int width, int height)
+        /*public void UpdateMap(int instanceId, int[] layerIds, int[] interactionIds, int[] controlIds)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -116,7 +116,7 @@ namespace GDO.Apps.Maps
                     Console.WriteLine(e);
                 }
             }
-        }
+        }*/
 
         public void RequestMap(int instanceId)
         {
@@ -142,7 +142,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void BroadcastMap(int instanceId)
+        /*public void BroadcastMap(int instanceId)
         {
             try
             {
@@ -154,14 +154,14 @@ namespace GDO.Apps.Maps
                 }
                 else
                 {
-                    Clients.Group("" + instanceId).receiveMap(instanceId, serializedMap, false);
+                    Clients.Group("" + instanceId).receiveMap(instanceId, "", false);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-        }
+        }*/
 
         //View
 
