@@ -24,7 +24,7 @@ namespace GDO.Apps.Maps.Core
         public float Saturation { get; set; }
         public float Hue { get; set; }
         public float Opacity { get; set; }
-        public int ZIndex { get; set; }
+        //public int ZIndex { get; set; }
         public bool Visible { get; set; }
         public double[] extent { get; set; }
         public int MinResolution { get; set; }
@@ -35,7 +35,7 @@ namespace GDO.Apps.Maps.Core
             
         }
         public void Init(int id, string name, int type, Source source, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+            float opacity, bool visible, int minResolution, int maxResolution)
         {
             Id = id;
             Name = name;
@@ -46,7 +46,7 @@ namespace GDO.Apps.Maps.Core
             Saturation = saturation;
             Hue = hue;
             Opacity = opacity;
-            ZIndex = zIndex;
+            //ZIndex = zIndex;
             Visible = visible;
             MinResolution = minResolution;
             MaxResolution = maxResolution;
@@ -59,14 +59,14 @@ namespace GDO.Apps.Maps.Core
             AddtoEditables(() => Saturation);
             AddtoEditables(() => Hue);
             AddtoEditables(() => Opacity);
-            AddtoEditables(() => ZIndex);
+            //AddtoEditables(() => ZIndex);
             AddtoEditables(() => Visible);
             AddtoEditables(() => MinResolution);
             AddtoEditables(() => MaxResolution);
 
         }
         public void Modify(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+            float opacity, bool visible, int minResolution, int maxResolution)
         {
             Id = id;
             Name = name;
@@ -76,7 +76,7 @@ namespace GDO.Apps.Maps.Core
             Saturation = saturation;
             Hue = hue;
             Opacity = opacity;
-            ZIndex = zIndex;
+            //ZIndex = zIndex;
             Visible = visible;
             MinResolution = minResolution;
             MaxResolution = maxResolution;

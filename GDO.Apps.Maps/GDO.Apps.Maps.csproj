@@ -173,6 +173,7 @@
     <Compile Include="Core\Styles\Style.cs" />
     <Compile Include="Core\Styles\TextStyle.cs" />
     <Compile Include="Core\View.cs" />
+    <Compile Include="Core\ZindexTable.cs" />
     <Compile Include="Formats\EsriJSONFormat.cs" />
     <Compile Include="Formats\GeoJSONFormat.cs" />
     <Compile Include="Formats\GMLFormat.cs" />
@@ -188,6 +189,7 @@
   <ItemGroup>
     <Folder Include="Configurations\Maps\Data\" />
     <Folder Include="Core\Controls\" />
+    <Folder Include="Web\Maps\Images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">

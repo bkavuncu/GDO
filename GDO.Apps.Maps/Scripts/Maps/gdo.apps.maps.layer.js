@@ -106,6 +106,9 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
     gdo.net.instance[instanceId].map.addLayer(gdo.net.instance[instanceId].layers[layerId]);
 }
 
+//TODO when a new layer is added, we need to reorder layers.
+
+
 gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLayer) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating Layer: ' + deserializedLayer.Id);
     var layer = gdo.net.instance[instanceId].layers[layerId];
@@ -114,7 +117,6 @@ gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLay
     layer.setSaturation(deserializedLayer.Saturation);
     layer.setHue(deserializedLayer.Hue);
     layer.setOpacity(deserializedLayer.Opacity);
-    layer.setZIndex(deserializedLayer.ZIndex);
     layer.setVisible(deserializedLayer.Visible);
     layer.setMinResolution(deserializedLayer.MinResolution);
     layer.setMaxResolution(deserializedLayer.MaxResolution);
@@ -138,6 +140,11 @@ gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLay
     }
 }
 
+gdo.net.app["Maps"].updateZIndexTable = function (instanceId, deserializedZIndexTable) {
+    gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Updating ZIndexes: ' + layerId);
+    //TODO for each layer set z index
+}
+
 gdo.net.app["Maps"].requestLayer = function (instanceId, layerId) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting Layer: ' + layerId);
     gdo.net.app["Maps"].server.requestLayer(instanceId, layerId);
@@ -152,22 +159,22 @@ gdo.net.app["Maps"].uploadLayer = function (instanceId, layerId, isNew) {
         switch (type) {
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
                 gdo.net.app["Maps"].server.addHeatmapLayer(instanceId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.Gradient, properties.Radius, properties.Shadow, properties.Weight, properties.Blur);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
                 gdo.net.app["Maps"].server.addImageLayer(instanceId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
                 gdo.net.app["Maps"].server.addTileLayer(instanceId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.Preload);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
                 gdo.net.app["Maps"].server.addVectorLayer(instanceId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.StyleId, properties.RenderBuffer, properties.UpdateWhileAnimating, properties.UpdateWhileInteracting);
                 break;
             default:
@@ -178,22 +185,22 @@ gdo.net.app["Maps"].uploadLayer = function (instanceId, layerId, isNew) {
         switch (type) {
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
                 gdo.net.app["Maps"].server.updateHeatmapLayer(instanceId, layerId, properties.Name, properties.Type, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.Gradient, properties.Radius, properties.Blur);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
                 gdo.net.app["Maps"].server.updateImageLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
                 gdo.net.app["Maps"].server.updateTileLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.Preload);
                 break;
             case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
                 gdo.net.app["Maps"].server.updateVectorLayer(instanceId, layerId, properties.Name, properties.SourceId, properties.Brightness, properties.Contrast,
-                    properties.Saturation, properties.Hue, properties.Opacity, properties.ZIndex, properties.Visible, properties.MinResolution,
+                    properties.Saturation, properties.Hue, properties.Opacity, properties.Visible, properties.MinResolution,
                     properties.MaxResolution, properties.StyleId);
                 break;
             default:
@@ -214,4 +221,10 @@ gdo.net.app["Maps"].setLayerVisible = function (instanceId, layerId, visible) {
     gdo.net.instance[instanceId].layers[layerId].setVisible(visible);
 }
 
-//TODO one mor function load layer from config or control client and save it.
+gdo.net.app["Maps"].isLayerVisible = function (instanceId, layerId) {
+    return gdo.net.instance[instanceId].layers[layerId].getVisible();
+}
+
+gdo.net.app["Maps"].animateLayer = function (instanceId, layerId) {
+    //TODO
+}

@@ -381,6 +381,22 @@ namespace GDO.Apps.Maps
                     Clients.Group("" + instanceId)
                         .receiveLayer(instanceId, layerId, "", "", false);
                 }
+                BroadcastZIndexTable(instanceId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void BroadcastZIndexTable(int instanceId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedZIndexTable = maps.GetSerializedZIndexTable();
+                Clients.Group("" + instanceId)
+                    .receiveZIndexTable(instanceId, serializedZIndexTable);
             }
             catch (Exception e)
             {
@@ -397,6 +413,72 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveLayer(layerId);
                     BroadcastLayer(instanceId, layerId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void MoveLayerUp(int instanceId, int layerId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ZindexTable.UpLayer(layerId);
+                    BroadcastZIndexTable(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void MoveLayerDown(int instanceId, int layerId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.ZindexTable.DownLayer(layerId);
+                    BroadcastZIndexTable(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AnimateLayer(int instanceId, int layerId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    //TODO
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void SetLayerVisible(int instanceId, int layerId, bool visible)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    //TODO
                 }
                 catch (Exception e)
                 {

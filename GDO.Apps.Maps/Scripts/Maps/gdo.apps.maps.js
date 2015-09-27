@@ -20,6 +20,10 @@ $(function () {
             gdo.net.app["Maps"].drawMapTable(instanceId);
         }
     }*/
+    $.connection.mapsAppHub.client.receiveZIndexTable = function (instanceId, serializedZIndexTable) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received ZIndex Table');
+        gdo.net.app["Maps"].updateZIndexTable(instanceId, JSON.parse(serializedZIndexTable));
+    }
 
     $.connection.mapsAppHub.client.receiveLayer = function (instanceId, layerId, serializedLayer, exists) {
         gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId + " (Exists:"+ exists+")");
@@ -165,11 +169,7 @@ gdo.net.app["Maps"].initClient = function (clientId) {
     gdo.consoleOut('.Maps', 1, 'Initializing Maps App Instance ' + instanceId + ' Client at Node ' + clientId);
 
     //Initialize Arrays
-    gdo.net.instance[instanceId].formats = [];
-    gdo.net.instance[instanceId].styles = [];
-    gdo.net.instance[instanceId].sources = [];
-    gdo.net.instance[instanceId].layers = [];
-    gdo.net.instance[instanceId].view = {};
+    gdo.net.app["Maps"].initializeArrays(instanceId);
 
     //Load Modules
     gdo.loadModule('utilities', 'maps', gdo.MODULE_TYPE.APP);
@@ -183,23 +183,7 @@ gdo.net.app["Maps"].initClient = function (clientId) {
 
     //Calculate Necessary Parameters
     gdo.net.instance[instanceId].isInitialized = false;
-    gdo.net.app["Maps"].C = 156543.034;
-    gdo.net.app["Maps"].R = 6378137;
-
-    gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width;
-    gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height;
-    gdo.net.instance[instanceId].sectionPixels = gdo.net.instance[instanceId].sectionWidth * gdo.net.instance[instanceId].sectionHeight;
-    gdo.net.instance[instanceId].sectionOffsetX = gdo.net.instance[instanceId].sectionWidth / 2;
-    gdo.net.instance[instanceId].sectionOffsetY = gdo.net.instance[instanceId].sectionHeigth / 2;
-
-    gdo.net.instance[instanceId].nodeWidth = gdo.net.node[gdo.clientId].width;
-    gdo.net.instance[instanceId].nodeHeigth = gdo.net.node[gdo.clientId].height;
-    gdo.net.instance[instanceId].nodePixels = gdo.net.instance[instanceId].nodeWidth * gdo.net.instance[instanceId].nodeHeigth;
-    gdo.net.instance[instanceId].nodeOffsetX = gdo.net.instance[instanceId].nodeWidth * (gdo.net.node[gdo.clientId].sectionCol + 1);
-    gdo.net.instance[instanceId].nodeOffsetY = gdo.net.instance[instanceId].nodeHeight * (gdo.net.node[gdo.clientId].sectionRow + 1);
-
-    gdo.net.instance[instanceId].offsetX = gdo.net.instance[instanceId].sectionOffsetX - gdo.net.instance[instanceId].nodeOffsetX;
-    gdo.net.instance[instanceId].offsetY = gdo.net.instance[instanceId].sectionOffsetY - gdo.net.instance[instanceId].nodeOffsetY;
+    gdo.net.app["Maps"].calculateClientParameters(instanceId);
 
     //Request
 
@@ -210,11 +194,7 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
     gdo.consoleOut('.MAPS', 1, 'Initializing Image Maps Control at Instance ' + instanceId);
 
     //Initialize Arrays
-    gdo.net.instance[instanceId].formats = [];
-    gdo.net.instance[instanceId].styles = [];
-    gdo.net.instance[instanceId].sources = [];
-    gdo.net.instance[instanceId].layers = [];
-    gdo.net.instance[instanceId].view = {};
+    gdo.net.app["Maps"].initializeArrays(instanceId);
 
     //Load Modules
     gdo.loadModule('utilities', 'maps', gdo.MODULE_TYPE.APP);
@@ -233,6 +213,62 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
 
     //Calculate Necessary Parameters
     gdo.net.instance[instanceId].isInitialized = false;
+    gdo.net.app["Maps"].calculateControlParameters(instanceId);
+
+    //Resize Map
+    gdo.net.app["Maps"].resizeMap(instanceId);
+
+    //Request Map
+    gdo.net.app["Maps"].server.requestMap(instanceId);
+}
+
+gdo.net.app["Maps"].initializeArrays = function(instanceId) {
+    gdo.net.instance[instanceId].formats = [];
+    gdo.net.instance[instanceId].styles = [];
+    gdo.net.instance[instanceId].sources = [];
+    gdo.net.instance[instanceId].layers = [];
+    gdo.net.instance[instanceId].view = {};
+}
+
+gdo.net.app["Maps"].switchToInstance = function (instanceId) {
+    $("#map").empty();
+    gdo.net.app["Maps"].initializeArrays(instanceId);
+    gdo.net.app["Maps"].calculateControlParameters(instanceId);
+    gdo.net.app["Maps"].resizeMap(instanceId);
+    gdo.net.app["Maps"].server.requestMap(instanceId);
+}
+
+gdo.net.app["Maps"].resizeMap = function(instanceId) {
+    if (gdo.net.app["Maps"].isAdvanced) {
+        $("iframe").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
+        $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
+    } else {
+        $("body").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
+        $("body").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
+    }
+}
+
+gdo.net.app["Maps"].calculateClientParameters = function (instanceId) {
+    gdo.net.app["Maps"].C = 156543.034;
+    gdo.net.app["Maps"].R = 6378137;
+
+    gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width;
+    gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height;
+    gdo.net.instance[instanceId].sectionPixels = gdo.net.instance[instanceId].sectionWidth * gdo.net.instance[instanceId].sectionHeight;
+    gdo.net.instance[instanceId].sectionOffsetX = gdo.net.instance[instanceId].sectionWidth / 2;
+    gdo.net.instance[instanceId].sectionOffsetY = gdo.net.instance[instanceId].sectionHeigth / 2;
+
+    gdo.net.instance[instanceId].nodeWidth = gdo.net.node[gdo.clientId].width;
+    gdo.net.instance[instanceId].nodeHeigth = gdo.net.node[gdo.clientId].height;
+    gdo.net.instance[instanceId].nodePixels = gdo.net.instance[instanceId].nodeWidth * gdo.net.instance[instanceId].nodeHeigth;
+    gdo.net.instance[instanceId].nodeOffsetX = gdo.net.instance[instanceId].nodeWidth * (gdo.net.node[gdo.clientId].sectionCol + 1);
+    gdo.net.instance[instanceId].nodeOffsetY = gdo.net.instance[instanceId].nodeHeight * (gdo.net.node[gdo.clientId].sectionRow + 1);
+
+    gdo.net.instance[instanceId].offsetX = gdo.net.instance[instanceId].sectionOffsetX - gdo.net.instance[instanceId].nodeOffsetX;
+    gdo.net.instance[instanceId].offsetY = gdo.net.instance[instanceId].sectionOffsetY - gdo.net.instance[instanceId].nodeOffsetY;
+}
+
+gdo.net.app["Maps"].calculateControlParameters = function(instanceId) {
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
@@ -248,13 +284,7 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
         gdo.net.instance[instanceId].controlHeight = gdo.net.instance[instanceId].controlMaxHeight;
         gdo.net.instance[instanceId].controlWidth = (gdo.net.instance[instanceId].sectionWidth * gdo.net.instance[instanceId].controlHeight) / gdo.net.instance[instanceId].sectionHeight;
     }
-    $("iframe").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
-    $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
-
-    //Request Map
-    gdo.net.app["Maps"].server.requestMap(instanceId);
 }
-
 gdo.net.app["Maps"].terminateClient = function (instanceId) {
     gdo.consoleOut('.MAPS', 1, 'Terminating Image Maps Client at Node ' + instanceId);
 }
