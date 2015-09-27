@@ -344,10 +344,10 @@ gdo.updateSelf = function () {
     /// Updates the self.
     /// </summary>
     /// <returns></returns>
-    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+    //if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         //gdo.net.updateNodes();
         //gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode);        
-    }
+    //}
     gdo.updateDisplayCanvas();
 }
 
