@@ -38,6 +38,13 @@ namespace GDO.Apps.Maps.Core.Styles
             LineJoin = lineJoin;
             MiterLimit = miterLimit;
             Width = width;
+
+            AddtoEditables(() => Color);
+            AddtoEditables(() => LineCap);
+            AddtoEditables(() => LineDash);
+            AddtoEditables(() => LineJoin);
+            AddtoEditables(() => MiterLimit);
+            AddtoEditables(() => Width);
         }
         new public void Modify(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
         {

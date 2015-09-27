@@ -32,11 +32,8 @@ namespace GDO.Apps.Maps.Core
         XML = 21,
         XMLFeature = 22
     };
-    public class Format
+    public class Format : Base
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Type { get; set; }
 
         public Format()
         {
@@ -47,6 +44,10 @@ namespace GDO.Apps.Maps.Core
             Id = id;
             Name = name;
             Type = type;
+
+            AddtoEditables(() => Id);
+            AddtoEditables(() => Name);
+            AddtoEditables(() => Type);
         }
         public void Modify(int id, string name, int type)
         {

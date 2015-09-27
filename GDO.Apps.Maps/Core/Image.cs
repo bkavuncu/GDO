@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class Image
+    public class Image : Base
     {
     }
 }

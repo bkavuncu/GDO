@@ -92,6 +92,7 @@
     <Content Include="Scripts\Maps\gdo.apps.maps.layer.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.source.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.style.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.ui.advanced.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.utilities.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.view.js" />
     <Content Include="Scripts\Maps\ol3cesium.js.map" />
@@ -121,6 +122,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Base.cs" />
     <Compile Include="Core\Control.cs" />
     <Compile Include="Core\Coordinate.cs" />
     <Compile Include="Core\Feature.cs" />

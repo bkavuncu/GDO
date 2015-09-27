@@ -16,11 +16,8 @@ namespace GDO.Apps.Maps.Core
         Vector = 4
     };
 
-    public class Layer
+    public class Layer : Base
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Type { get; set; }
         public Source Source { get; set; }
         public float Brightness { get; set; }
         public float Contrast { get; set; }
@@ -53,6 +50,20 @@ namespace GDO.Apps.Maps.Core
             Visible = visible;
             MinResolution = minResolution;
             MaxResolution = maxResolution;
+
+            AddtoEditables(() => Id);
+            AddtoEditables(() => Name);
+            AddtoEditables(() => Type);
+            AddtoEditables(() => Brightness);
+            AddtoEditables(() => Contrast);
+            AddtoEditables(() => Saturation);
+            AddtoEditables(() => Hue);
+            AddtoEditables(() => Opacity);
+            AddtoEditables(() => ZIndex);
+            AddtoEditables(() => Visible);
+            AddtoEditables(() => MinResolution);
+            AddtoEditables(() => MaxResolution);
+
         }
         public void Modify(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
             float opacity, int zIndex, bool visible, int minResolution, int maxResolution)

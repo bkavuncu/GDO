@@ -18,6 +18,8 @@ namespace GDO.Apps.Maps.Core.Sources
             Opaque = opaque;
             Projection = projection;
             Url = url;
+
+            AddtoEditables(() => Url);
         }
         new public void Modify(string url)
         {

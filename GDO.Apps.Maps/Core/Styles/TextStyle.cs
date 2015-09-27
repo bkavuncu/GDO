@@ -31,6 +31,15 @@ namespace GDO.Apps.Maps.Core.Styles
             TextBaseLine = textBaseLine;
             Fill = fill;
             Stroke = stroke;
+
+            AddtoEditables(() => Font);
+            AddtoEditables(() => Scale);
+            AddtoEditables(() => Rotation);
+            AddtoEditables(() => Content);
+            AddtoEditables(() => TextAlign);
+            AddtoEditables(() => TextBaseLine);
+            AddtoEditables(() => Fill);
+            AddtoEditables(() => Stroke);
         }
         new public void Modify(string font, float scale, float rotation, string content,
             string textAlign, string textBaseLine, FillStyle fill, StrokeStyle stroke)

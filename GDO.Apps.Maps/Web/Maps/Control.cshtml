@@ -56,11 +56,6 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
     function getUrlVar(variable) {
-        /// <summary>
-        /// Gets the URL variable.
-        /// </summary>
-        /// <param name="variable">The variable.</param>
-        /// <returns></returns>
         var query = window.location.search.substring(1);
         var vars = query.split('&');
         for (var i = 0; i < vars.length; i++) {
@@ -79,6 +74,7 @@
         $(document).ready(function() {
             var gdo = parent.gdo;
             gdo.controlId = getUrlVar("controlId");
+            gdo.net.app["Maps"].isAdvanced = false;
             gdo.net.app["Maps"].initControl(gdo.controlId);
         });
     });

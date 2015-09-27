@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Threading.Tasks
+@using GDO.Core
+@{
     Layout = null;
 }
 
@@ -7,11 +9,156 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title></title>
+    <title>GDO Maps App</title>
+    <style>
+        #page td {
+            padding: 0;
+            margin: 0;
+        }
+
+        #page {
+            border-collapse: collapse;
+        }
+
+        body {
+            margin: 0 auto;
+            padding: 0;
+            border: 0;
+            background-color: #000;
+            color: #222;
+            font-family: helvetica;
+            font-size: 100%;
+            width: 100%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .cell {
+            margin: 10px;
+        }
+
+        #header {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            width: 100%;
+            background-color: #000;
+            color: #DDD;
+            z-index: 10;
+            font-size: 140%;
+            width: 100%;
+        }
+
+        #header-text {
+            width: 100%;
+            background-color: #222;
+            font-size: 140%;
+        }
+
+        #divider {
+            border: 2px solid #444;
+            background-color: #444;
+        }
+
+        #content {
+            margin: auto;
+            padding: 15px;
+            border: 0;
+            background-color: #000;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 100%;
+            width: 100%;
+        }
+    </style>
+    <script>
+        var gdo = {};
+        gdo.net = {};
+        gdo.management = {};
+        gdo.maintenance = {};
+        gdo.node = {};
+        gdo.fs = {};
+        gdo.net.peer = {};
+        gdo.net.node = [];
+        gdo.net.section = [];
+        gdo.net.app = [];
+        gdo.net.apps = {}
+        gdo.net.instance = [];
+        gdo.net.nodes = {};
+        gdo.net.neighbour = {};
+        @{
+            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            {
+                @:gdo.net.app["@appEntry.Value.Name"] = {};
+                @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
+                @:gdo.@appEntry.Value.Name = {};
+            }
+            @: var a ={}
+        }
+    </script>
 </head>
-<body>
-    <div>
-    
+<body unselectable="on" class="unselectable">
+    <script src="../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../Scripts/gdo.js"></script>
+    <script src="../signalr/hubs"></script>
+    <script type="text/javascript" src="../Scripts/peer.js"></script>
+<script>
+    $(function() {
+        $(document).ready(function() {
+            var gdo = parent.gdo;
+            gdo.controlId = getUrlVar("controlId");
+            gdo.net.app["Maps"].initControl(gdo.controlId);
+        });
+    });
+    $(function () {
+        gdo.loadModule('maps','maps', gdo.MODULE_TYPE.APP);
+        $(document).ready(function() {
+            gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+        });
+    });
+    initApp = function () {
+        gdo.net.app["Maps"].isAdvanced = true;
+        gdo.net.app["Maps"].initControl(gdo.clientId);
+        //TODO Draw Empty Tables
+        gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+        gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+        gdo.management.drawEmptyButtonTable(6, 1);
+
+        gdo.updateSelf();
+    }
+</script>
+    <div id="header" unselectable="on" class="unselectable">
+        <table id="header_table" unselectable="on" class="unselectable" style="width: 100%; "></table>
+    </div>
+    <div id="divider"></div>
+    <div id="content" style="align: center" unselectable="on" class="unselectable">
+        <table id="map_table" unselectable="on" class="unselectable" style="width: 100%">
+            <tr>
+                <td id="instance_list"><table id="instance_list_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></td>
+                <td id="layer_list"><table id="layer_list_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></td>
+                <td id="property_list"><table id="property_list_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></td>
+                <td id="edit_list"><table id="edit_list_table" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></td>
+            </tr>
+        </table>
+        <br>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div id="map" class="map"></div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="../../Scripts/Maps/ol3/ol.js"></script>
+        <script src="../../Scripts/Maps/Cesium/Cesium.js"></script>
+        <script src="../../Scripts/Maps/ol3cesium.js"></script>
+        <table id="status_table" unselectable="on" class="unselectable" style="width: 100%; "></table>
     </div>
 </body>
 </html>

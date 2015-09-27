@@ -5,11 +5,8 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class Interaction
+    public class Interaction : Base
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Type { get; set; }
 
         public Interaction()
         {

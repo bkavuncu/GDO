@@ -18,6 +18,8 @@ namespace GDO.Apps.Maps.Core.Layers
             RenderBuffer = renderBuffer;
             UpdateWhileAnimating = updateWhileAnimating;
             UpdateWhileInteracting = updateWhileInteracting;
+
+            AddtoEditables(() => Style);
         }
 
         new public void Modify(Style style)

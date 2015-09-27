@@ -15,6 +15,8 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             VectorSource = vectorSource;
             Style = style;
             Ratio = ratio;
+
+            AddtoEditables(() => Style);
         }
         new public void Modify(Style style)
         {

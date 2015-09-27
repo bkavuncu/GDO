@@ -173,7 +173,6 @@ gdo.net.app["Maps"].initClient = function (clientId) {
 
     //Load Modules
     gdo.loadModule('utilities', 'maps', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('ui', 'maps', gdo.MODULE_TYPE.APP);
     gdo.loadModule('3d', 'maps', gdo.MODULE_TYPE.APP);
     gdo.loadModule('format', 'maps', gdo.MODULE_TYPE.APP);
     gdo.loadModule('interaction', 'maps', gdo.MODULE_TYPE.APP);
@@ -219,7 +218,11 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
 
     //Load Modules
     gdo.loadModule('utilities', 'maps', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('ui', 'maps', gdo.MODULE_TYPE.APP);
+    if (gdo.net.app["Maps"].isAdvanced) {
+        gdo.loadModule('ui.advanced', 'maps', gdo.MODULE_TYPE.APP);
+    } else {
+        gdo.loadModule('ui', 'maps', gdo.MODULE_TYPE.APP);
+    }
     gdo.loadModule('3d', 'maps', gdo.MODULE_TYPE.APP);
     gdo.loadModule('format', 'maps', gdo.MODULE_TYPE.APP);
     gdo.loadModule('interaction', 'maps', gdo.MODULE_TYPE.APP);

@@ -5,11 +5,8 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class Control
+    public class Control : Base
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Type { get; set; }
 
         public Control()
         {

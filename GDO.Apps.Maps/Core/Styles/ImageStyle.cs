@@ -18,6 +18,10 @@ namespace GDO.Apps.Maps.Core.Styles
             RotateWithView = rotateWithView;
             Rotation = rotation;
             Scale = scale;
+
+            AddtoEditables(() => Opacity);
+            AddtoEditables(() => Rotation);
+            AddtoEditables(() => Scale);
         }
         new public void Modify(float opacity,  float rotation, float scale)
         {

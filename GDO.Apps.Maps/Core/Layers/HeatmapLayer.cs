@@ -20,6 +20,10 @@ namespace GDO.Apps.Maps.Core.Layers
             Shadow = shadow;
             Weight = weight;
             Blur = blur;
+
+            AddtoEditables(() => Gradient);
+            AddtoEditables(() => Radius);
+            AddtoEditables(() => Blur);
         }
 
         new public void Modify(string[] gradient, float radius,  float blur)

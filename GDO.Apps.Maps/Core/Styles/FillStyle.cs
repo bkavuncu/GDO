@@ -9,11 +9,13 @@ namespace GDO.Apps.Maps.Core.Styles
     public class FillStyle : Core.Style
     {
         public string Color { get; set; }
-        new public void Modify(string color)
+
+        new public void Init(string color)
         {
             Color = color;
+            AddtoEditables(() => Color);
         }
-        new public void Init(string color)
+        new public void Modify(string color)
         {
             Color = color;
         }

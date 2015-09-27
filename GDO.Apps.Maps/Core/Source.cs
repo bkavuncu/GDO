@@ -39,12 +39,8 @@ namespace GDO.Apps.Maps.Core
         XYZ = 28,
         Zoomify = 29
     };
-    public class Source
+    public class Source : Base
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Type { get; set; }
-
         public Source()
         {
 
@@ -54,6 +50,9 @@ namespace GDO.Apps.Maps.Core
             Id = id;
             Name = name;
             Type = type;
+            AddtoEditables(() => Id);
+            AddtoEditables(() => Name);
+            AddtoEditables(() => Type);
         }
         public void Modify(int id, string name, int type)
         {

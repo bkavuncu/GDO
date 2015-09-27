@@ -1,5 +1,4 @@
-﻿
-gdo.net.app["Maps"].drawEmptyMapTable = function (maxCol, maxRow) {
+﻿gdo.net.app["Maps"].drawEmptyMapTable = function (maxCol, maxRow) {
     $("iframe").contents().find("#map_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("iframe").contents().find("#map_table").append("<tr id='map_table_row_" + i + "' row='" + i + "'></tr>");

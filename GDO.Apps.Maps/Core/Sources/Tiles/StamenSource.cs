@@ -17,6 +17,8 @@ namespace GDO.Apps.Maps.Core.Sources
             Projection = projection;
             TileGrid = tileGrid;
             Url = url;
+
+            AddtoEditables(() => Url);
         }
 
         new public void Modify(string url)

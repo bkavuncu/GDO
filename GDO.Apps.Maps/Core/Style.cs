@@ -20,12 +20,8 @@ namespace GDO.Apps.Maps.Core
         Text = 8
     };
 
-    public class Style
+    public class Style : Base
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Type { get; set; }
-
         public Style()
         {
 
@@ -35,6 +31,10 @@ namespace GDO.Apps.Maps.Core
             Id = id;
             Name = name;
             Type = type;
+
+            AddtoEditables(() => Id);
+            AddtoEditables(() => Name);
+            AddtoEditables(() => Type);
         }
         public void Modify(int id, string name, int type)
         {

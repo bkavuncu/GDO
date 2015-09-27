@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class View
+    public class View : Base
     {
         public Position Position { get; set; }
         public float Rotation { get; set; }
