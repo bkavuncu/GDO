@@ -64,7 +64,7 @@ var mapHandler = function (arg) {
 	var locale = dd3.position('svg', 'global', 'svg', 'local');
 
 	var isAbsurd = function (b) {
-	    return false; //return (locale.left(b[0][0]) < -dd3.browser.svgWidth || locale.left(b[1][0]) > 2 * dd3.browser.svgWidth || locale.top(b[0][1]) < -dd3.browser.svgHeight || locale.top(b[1][1]) > 2 * dd3.browser.svgHeight);
+	    return (locale.left(b[0][0]) < -dd3.browser.svgWidth || locale.left(b[1][0]) > 2 * dd3.browser.svgWidth || locale.top(b[0][1]) < -dd3.browser.svgHeight || locale.top(b[1][1]) > 2 * dd3.browser.svgHeight);
 	};
 	
 	var loadLayer = function (type, i, j, callback) {

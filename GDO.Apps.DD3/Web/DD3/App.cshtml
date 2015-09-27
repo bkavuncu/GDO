@@ -22,9 +22,9 @@
 
         .unselectable {
             -moz-user-select: -moz-none;
-            -khtml-user-select: none;
+            /*-khtml-user-select: none;*/
             -webkit-user-select: none;
-            -o-user-select: none;
+           /*-o-user-select: none;*/
             user-select: none;
         }
 
@@ -620,9 +620,11 @@
                         var projection = d3.geo.mercator()
 		                    .translate([cwidth / 2, cheight / 2]);
 
-                        var zoom = 9;
-                        var topLeft = [-0.40, 51.76]; // LONG - LAT (of London)
-                        var bottomRight = [-0.10, 51.34]; // LONG - LAT (of London)
+                        var zoom = 10;
+                        //var topLeft = [-0.40, 51.76]; // LONG - LAT (of London)
+                        //var bottomRight = [-0.10, 51.34]; // LONG - LAT (of London)
+                        var topLeft = [121.175589, 31.507919]; // LONG - LAT (of Shanghai)
+                        var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of Shanghai)
 
                         var style = {
                             earth: {
@@ -640,7 +642,7 @@
                                     fillColor: "#384b4c",
                                     strokeColor: "#384b4c",
                                     strokeSize: 1
-                                },//*
+                                },/*
                                 ocean: {
                                     fillColor: "#384b4c",
                                     strokeColor: "#384b4c",
