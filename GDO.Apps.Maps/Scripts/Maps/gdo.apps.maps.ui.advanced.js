@@ -1,29 +1,29 @@
 ﻿gdo.net.app["Maps"].selectedInstance = -1;
 gdo.net.app["Maps"].selectedLayer = -1;
 gdo.net.app["Maps"].selectedProperty = -1;
+gdo.net.app["Maps"].HeaderHeight = 61;
+gdo.net.app["Maps"].MapHeight = 400;
+gdo.net.app["Maps"].tableHeight = 500;
+gdo.net.app["Maps"].StatusHeight = 49;
 
-gdo.updateDisplayCanvas = function () {
-    /// <summary>
-    /// Updates the gdo canvas.
-    /// </summary>
-    /// <returns></returns>
-    //gdo.consoleOut(".DISPLAY", 2, "At Update Display");
-    gdo.net.app["Maps"].drawHeaderTable();
-    gdo.net.app["Maps"].drawMapTable();
-    gdo.net.app["Maps"].drawStatusTable();
+
+gdo.net.app["Maps"].drawHeaderTable = function(instanceId) {
+    //TODO
 }
 
 gdo.net.app["Maps"].drawMapTable = function (instanceId) {
+    gdo.net.app["Maps"].drawHeaderTable();
     gdo.net.app["Maps"].drawInstanceTable(instanceId);
     gdo.net.app["Maps"].drawLayerTable(instanceId, gdo.net.app["Maps"].selectedLayer);
     gdo.net.app["Maps"].drawPropertyTable(instanceId, gdo.net.app["Maps"].selectedLayer, gdo.net.app["Maps"].selectedProperty);
     gdo.net.app["Maps"].drawEditTable();
+    gdo.net.app["Maps"].drawStatusTable();
 }
 
 gdo.net.app["Maps"].drawInstanceTable = function (instanceId) {
     $("#instance_list_table")
         .empty()
-        .css("height", "30px")
+        .css("height", gdo.net.app["Maps"].tableHeight)
         .css("width", "7%")
         .css("border", "3px solid #444")
         .css("color", "#DDD")
@@ -56,7 +56,7 @@ gdo.net.app["Maps"].drawInstanceTable = function (instanceId) {
 gdo.net.app["Maps"].drawLayerTable = function (instanceId) {
     $("#layer_list_table")
         .empty()
-        .css("height", "30px")
+        .css("height", gdo.net.app["Maps"].tableHeight)
         .css("width", "28%")
         .css("border", "3px solid #444")
         .css("color", "#DDD")
@@ -147,7 +147,7 @@ gdo.net.app["Maps"].drawLayerTable = function (instanceId) {
 gdo.net.app["Maps"].drawPropertyTable = function (instanceId, layerId) {
     $("#property_list_table")
         .empty()
-        .css("height", "30px")
+        .css("height", gdo.net.app["Maps"].tableHeight)
         .css("width", "28%")
         .css("border", "3px solid #444")
         .css("color", "#DDD")
@@ -223,14 +223,15 @@ gdo.net.app["Maps"].drawPropertyTable = function (instanceId, layerId) {
             }
         }
     } else {
-        //TODO empty property table
+        //TODO empty property table with some kind of template
     }
+    gdo.net.app["Maps"].drawPropertyTable(instanceId, layerId, gdo.net.app["Maps"].selectedProperty);
 }
 
 gdo.net.app["Maps"].drawEditTable = function(instanceId, layerId, propertyKey) {
     $("#edit_list_table")
         .empty()
-        .css("height", "30px")
+        .css("height", gdo.net.app["Maps"].tableHeight)
         .css("width", "28%")
         .css("border", "3px solid #444")
         .css("color", "#DDD")
@@ -283,3 +284,6 @@ gdo.net.app["Maps"].drawEditTable = function(instanceId, layerId, propertyKey) {
     }   
 }
 
+gdo.net.app["Maps"].drawStatusTable = function(instanceId) {
+    //TODO
+}

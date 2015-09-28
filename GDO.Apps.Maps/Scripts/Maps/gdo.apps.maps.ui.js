@@ -9,13 +9,13 @@
 }
 
 gdo.net.app["Maps"].drawMapTable = function (instanceId) {
-    gdo.net.app["Maps"].drawEmptyMapTable(gdo.net.instance[instanceId].styles.length+1, 1);
+    gdo.net.app["Maps"].drawEmptyMapTable(2, 1);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()
         .append("<div> <b>3D</b></div>")
         .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.instance[instanceId].styles.length + 1) + "%")
+        .css("width",  "20%")
         .css("border", "3px solid #444")
         .css("background", "#222")
         .css("color", "#DDD")
@@ -33,30 +33,20 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         $("iframe").contents().find("#map_table_row_0_col_0").css("color", "lightcoral");
     }
 
-    var i, ii;
-    for (i = 0, ii = gdo.net.instance[instanceId].styles.length; i < ii; ++i) {
-        $("iframe").contents().find("#map_table_row_0_col_" + (i + 1))
-        .empty()
-        .append("<div> <b>" + gdo.net.instance[instanceId].styles[i] + "</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.instance[instanceId].styles.length + 1) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
-        .unbind()
-        .click(function () {
-            gdo.net.app["Maps"].server.uploadMapStyle(instanceId, gdo.net.instance[instanceId].styles[$(this).attr('col') - 1]);
-            gdo.net.app["Maps"].setStyle(instanceId,gdo.net.instance[instanceId].styles[$(this).attr('col') - 1]);
-            gdo.net.app["Maps"].drawMapTable(instanceId);
+    $("iframe").contents().find("#map_table_row_0_col_1")
+    .empty()
+    .append("<div> <b>Advanced</b></div>")
+    .css("height", gdo.management.button_height / 1.4)
+    .css("width", "20%")
+    .css("border", "3px solid #444")
+    .css("background", "#222")
+    .css("color", "#DDD")
+    .css('padding', gdo.management.cell_padding)
+    .attr("align", "center")
+    .css({ fontSize: gdo.management.button_font_size })
+    .unbind()
+    .click(function () {
+            window.open("\Web\Maps\Advanced.cshtml?clientId=1", '_blank');
         });
-        if (gdo.net.instance[instanceId].currentStyle == gdo.net.instance[instanceId].styles[i]) {
-            $("iframe").contents().find("#map_table_row_0_col_" + (i+1)).css("color", "lightgreen");
-        } else {
-            $("iframe").contents().find("#map_table_row_0_col_" + (i+1)).css("color", "#DDD");
-        }
-    }
 }
 

@@ -157,6 +157,8 @@ gdo.net.app["Maps"].initMap = function (instanceId, serializedMap) {
 
     // Initialized
     gdo.net.instance[instanceId].isInitialized = true;
+    gdo.net.app["Maps"].selectedInstance = instanceId;
+    gdo.net.app["Maps"].drawMapTable(gdo.net.app["Maps"].selectedInstance);
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
