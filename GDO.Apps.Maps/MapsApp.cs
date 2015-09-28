@@ -85,7 +85,7 @@ namespace GDO.Apps.Maps
         //Layer
 
         public int AddLayer<T> (string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution) where T : Layer, new()
+            float opacity, bool visible, int minResolution, int maxResolution) where T : Layer, new()
         {
 
             try
@@ -94,7 +94,7 @@ namespace GDO.Apps.Maps
                 ZindexTable.AddLayer(layerId);
                 T layer = new T();
                 layer.Init(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity,
-                    zIndex, visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution);
                 Layers.Add<T>(layerId, layer);
                 return layerId;
             }
@@ -106,12 +106,12 @@ namespace GDO.Apps.Maps
         }
 
         public bool ModifyLayer(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+            float opacity, bool visible, int minResolution, int maxResolution)
         {
             try
             {
                 Layers.GetValue<Core.Layer>(id).Modify(id, name, type, brightness, contrast, saturation,
-                    hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    hue, opacity, visible, minResolution, maxResolution);
                 return true;
             }
             catch (Exception e)
@@ -122,12 +122,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddHeatmapLayer(string name, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float shadow, float weight, float blur)
+            float opacity, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float shadow, float weight, float blur)
         {
             try
             {
                 int layerId = AddLayer<HeatmapLayer>(name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation,
-                        hue, opacity, zIndex, visible, minResolution, maxResolution);
+                        hue, opacity, visible, minResolution, maxResolution);
                 Layers.GetValue<HeatmapLayer>(layerId).Init(gradient, radius, shadow, weight, blur);
                 return layerId;
             }
@@ -139,12 +139,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyHeatmapLayer(int layerId, string name, float brightness, float contrast, float saturation, float hue,
-            float opacity, int zIndex, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float blur)
+            float opacity, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float blur)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Heatmap, brightness, contrast, saturation, hue, opacity,
-                        zIndex, visible, minResolution, maxResolution);
+                        visible, minResolution, maxResolution);
                 Layers.GetValue<HeatmapLayer>(layerId).Modify(gradient, radius, blur);
             }
             catch (Exception e)
@@ -154,12 +154,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddImageLayer(string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution)
         {
             try
             {
                 int layerId = AddLayer<ImageLayer>(name, (int)LayerTypes.Image, sourceId, brightness, contrast,
-                    saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    saturation, hue, opacity, visible, minResolution, maxResolution);
                 Layers.GetValue<ImageLayer>(layerId).Init();
                 return layerId;
             }
@@ -171,12 +171,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyImageLayer(int layerId, string name, float brightness, float contrast, float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Image, brightness, contrast, saturation, hue, opacity,
-                    zIndex, visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution);
                 Layers.GetValue<ImageLayer>(layerId).Modify();
             }
             catch (Exception e)
@@ -186,12 +186,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddTileLayer(string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int preload)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, int preload)
         {
             try
             {
                 int layerId = AddLayer<TileLayer>(name, (int)LayerTypes.Tile, sourceId, brightness, contrast,
-                    saturation, hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    saturation, hue, opacity, visible, minResolution, maxResolution);
                 Layers.GetValue<TileLayer>(layerId).Init(preload);
                 return layerId;
             }
@@ -203,12 +203,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyTileLayer(int layerId, string name, float brightness, float contrast, float saturation,
-            float hue, float opacity, int zIndex, bool visible, int minResolution, int maxResolution, int preload)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, int preload)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Tile, brightness, contrast, saturation, hue, opacity,
-                    zIndex, visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution);
                 Layers.GetValue<TileLayer>(layerId).Modify(preload);
             }
             catch (Exception e)
@@ -218,12 +218,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddVectorLayer(string name, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity,
-            int zIndex, bool visible, int minResolution, int maxResolution, int styleId, int renderBuffer, bool ModifyWhileAnimating, bool ModifyWhileInteracting)
+             bool visible, int minResolution, int maxResolution, int styleId, int renderBuffer, bool ModifyWhileAnimating, bool ModifyWhileInteracting)
         {
             try
             {
                 int layerId = AddLayer<VectorLayer>(name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation,
-                    hue, opacity, zIndex, visible, minResolution, maxResolution);
+                    hue, opacity, visible, minResolution, maxResolution);
                 Layers.GetValue<VectorLayer>(layerId).Init(Styles.GetValue<Style>(styleId), renderBuffer, ModifyWhileAnimating, ModifyWhileInteracting);
                 return layerId;
             }
@@ -235,12 +235,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyVectorLayer(int layerId, string name, float brightness, float contrast, float saturation, float hue, float opacity,
-            int zIndex, bool visible, int minResolution, int maxResolution, int styleId)
+            bool visible, int minResolution, int maxResolution, int styleId)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Vector, brightness, contrast, saturation, hue, opacity,
-                    zIndex, visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution);
                 Layers.GetValue<VectorLayer>(layerId).Modify(Styles.GetValue<Style>(styleId));
             }
             catch (Exception e)

@@ -20,6 +20,12 @@ $(function () {
             gdo.net.app["Maps"].drawMapTable(instanceId);
         }
     }*/
+
+    $.connection.mapsAppHub.client.receiveTemplate = function (serializedTemplate) {
+        gdo.consoleOut('.MAPS', 1, 'Received Template Table');
+        //TODO
+    }
+
     $.connection.mapsAppHub.client.receiveZIndexTable = function (instanceId, serializedZIndexTable) {
         gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received ZIndex Table');
         gdo.net.app["Maps"].updateZIndexTable(instanceId, JSON.parse(serializedZIndexTable));
