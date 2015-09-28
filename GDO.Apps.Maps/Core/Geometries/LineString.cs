@@ -7,7 +7,7 @@ namespace GDO.Apps.Maps.Core.Geometries
 {
     public class LineString : Geometry
     {
-        public Coordinate[] Coordinates { get; set; }
+        public double [][] Coordinates { get; set; }
         public Layout Layout { get; set; }
     }
 }

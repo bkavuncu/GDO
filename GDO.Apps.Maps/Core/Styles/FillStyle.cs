@@ -13,8 +13,14 @@ namespace GDO.Apps.Maps.Core.Styles
         new public void Init(string color)
         {
             Color = color;
-            AddtoEditables(() => Color);
+            Prepare();
         }
+        new public void Prepare()
+        {
+            AddtoEditables(() => Color);
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify(string color)
         {
             Color = color;

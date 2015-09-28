@@ -37,14 +37,14 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
                 ["geometryName", deserializedFormat.GeometryName]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            format = new ol.Format.EsriJSON(options);
+            format = new ol.format.EsriJSON(options);
             break;
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GeoJSON:
             properties = [
                 ["geometryName", deserializedFormat.GeometryName]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            format = new ol.Format.GeoJSON(options);
+            format = new ol.format.GeoJSON(options);
             break; 
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML:
             properties = [
@@ -58,7 +58,7 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
                 ["schemaLocation", deserializedFormat.SchemaLocation]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            format = new ol.Format.GML(options);
+            format = new ol.format.GML(options);
             break; 
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML2:
             properties = [
@@ -72,7 +72,7 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
                 ["schemaLocation", deserializedFormat.SchemaLocation]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            format = new ol.Format.GML2(options);
+            format = new ol.format.GML2(options);
             break;
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML3:
             properties = [
@@ -86,7 +86,7 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
                 ["schemaLocation", deserializedFormat.SchemaLocation]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            format = new ol.Format.GML3(options);
+            format = new ol.format.GML3(options);
             break;
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.KML:
             properties = [
@@ -94,7 +94,7 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
                 ["defaultStyle", deserializedFormat.DefaultStyle]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            format = new ol.Format.KML(options);
+            format = new ol.format.KML(options);
             break; 
         default:
             gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Format Type:' + deserializedFormat.Type + ' for Format '  + deserializedFormat.Id);

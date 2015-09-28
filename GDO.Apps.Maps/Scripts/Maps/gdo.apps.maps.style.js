@@ -9,7 +9,10 @@
     Text: 8
 };
 
+var st;
+
 gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle) {
+    st = deserializedStyle;
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Style :' + deserializedStyle.Id);
     var style;
     var properties;
@@ -27,14 +30,14 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            style = new ol.Style.Circle(options);
+            style = new ol.style.Circle(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
             properties = [
                 ["color", deserializedStyle.Color]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            style = new ol.Style.Fill(options);
+            style = new ol.style.Fill(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Icon:
             properties = [
@@ -53,7 +56,7 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["src", deserializedStyle.ImageSource]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            style = new ol.Style.Icon(options);
+            style = new ol.style.Icon(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
             properties = [
@@ -71,7 +74,7 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["snapToPixel", deserializedStyle.SnapToPixel],
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            style = new ol.Style.RegularShape(options);
+            style = new ol.style.RegularShape(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
             properties = [
@@ -83,7 +86,7 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["width", deserializedStyle.Width]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            style = new ol.Style.Stroke(options);
+            style = new ol.style.Stroke(options);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
             // TODO
@@ -102,7 +105,7 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            style = new ol.Style.Text(options);
+            style = new ol.style.Text(options);
             break;
         default:
             gdo.consoleOut('.MAPS', 5, 'Instance ' + instanceId + ': Invalid Style Type:' + deserializedStyle.Type + ' for Style '  + deserializedStyle.Id);

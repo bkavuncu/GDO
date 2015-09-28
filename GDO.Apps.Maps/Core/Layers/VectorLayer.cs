@@ -19,8 +19,14 @@ namespace GDO.Apps.Maps.Core.Layers
             UpdateWhileAnimating = updateWhileAnimating;
             UpdateWhileInteracting = updateWhileInteracting;
 
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
             AddtoEditables(() => Style);
         }
+
 
         new public void Modify(Style style)
         {

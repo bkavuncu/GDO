@@ -7,7 +7,7 @@ namespace GDO.Apps.Maps.Core.Geometries
 {
     public class Point : Geometry
     {
-        public Coordinate Coordinate { get; set; }
+        public double [] Coordinate { get; set; }
         public Layout Layout { get; set; }
     }
 }

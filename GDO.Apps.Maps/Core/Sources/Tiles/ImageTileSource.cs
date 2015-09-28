@@ -16,6 +16,13 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
             CrossOrigin = crossOrigin;
             TileGrid = tileGrid;
             Opaque = opaque;
+
+            Prepare();
+        }
+
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
         }
 
         new public void Modify()

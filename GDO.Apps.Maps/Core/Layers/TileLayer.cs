@@ -12,8 +12,14 @@ namespace GDO.Apps.Maps.Core.Layers
         new public void Init(int preload)
         {
             Preload = preload;
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
             AddtoEditables(() => Preload);
         }
+
         new public void Modify(int preload)
         {
             Preload = preload;

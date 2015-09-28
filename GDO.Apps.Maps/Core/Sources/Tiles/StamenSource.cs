@@ -18,6 +18,11 @@ namespace GDO.Apps.Maps.Core.Sources
             TileGrid = tileGrid;
             Url = url;
 
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
             AddtoEditables(() => Url);
         }
 

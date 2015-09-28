@@ -19,10 +19,17 @@ namespace GDO.Apps.Maps.Core.Styles
             Rotation = rotation;
             Scale = scale;
 
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+
             AddtoEditables(() => Opacity);
             AddtoEditables(() => Rotation);
             AddtoEditables(() => Scale);
         }
+
         new public void Modify(float opacity,  float rotation, float scale)
         {
             Opacity = opacity;

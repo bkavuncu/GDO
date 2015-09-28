@@ -46,10 +46,16 @@ namespace GDO.Apps.Maps.Core
             Saturation = saturation;
             Hue = hue;
             Opacity = opacity;
-            //ZIndex = zIndex;
             Visible = visible;
             MinResolution = minResolution;
             MaxResolution = maxResolution;
+
+            Prepare();
+        }
+    
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
 
             AddtoEditables(() => Id);
             AddtoEditables(() => Name);
@@ -59,12 +65,11 @@ namespace GDO.Apps.Maps.Core
             AddtoEditables(() => Saturation);
             AddtoEditables(() => Hue);
             AddtoEditables(() => Opacity);
-            //AddtoEditables(() => ZIndex);
             AddtoEditables(() => Visible);
             AddtoEditables(() => MinResolution);
             AddtoEditables(() => MaxResolution);
-
         }
+
         public void Modify(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
             float opacity, bool visible, int minResolution, int maxResolution)
         {

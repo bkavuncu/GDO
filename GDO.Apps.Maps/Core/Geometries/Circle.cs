@@ -7,7 +7,7 @@ namespace GDO.Apps.Maps.Core.Geometries
 {
     public class Circle : Geometry
     {
-        public Coordinate Center { get; set; }
+        public double [] Center { get; set; }
         public int Radius { get; set; }
         public  Layout Layout { get; set; }
     }

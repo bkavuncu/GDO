@@ -18,7 +18,14 @@ namespace GDO.Apps.Maps.Core.Sources
             Key = key;
             ImagerySet = imagerySet;
             MaxZoom = maxZoom;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
 

@@ -16,8 +16,14 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             Style = style;
             Ratio = ratio;
 
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
             AddtoEditables(() => Style);
         }
+
         new public void Modify(Style style)
         {
             Style = style;

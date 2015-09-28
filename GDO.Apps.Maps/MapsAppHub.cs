@@ -113,51 +113,12 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void RequestTemplate()
+        public void RequestTemplate(int instanceId)
         {
             try
             {
-                //Create Arrays
-                List<Format> formats = new List<Format>();
-                List<Style> styles = new List<Style>();
-                List<Source> sources = new List<Source>();
-                List<Layer> layers = new List<Layer>();
-
-                //Add Formats to Template
-                formats.Add(new EsriJSONFormat());
-                formats.Add(new GeoJSONFormat());
-                formats.Add(new GMLFormat());
-                formats.Add(new KMLFormat());
-
-                //Add Styles to Template
-                styles.Add(new CircleStyle());
-                styles.Add(new FillStyle());
-                styles.Add(new IconStyle());
-                styles.Add(new RegularShapeStyle());
-                styles.Add(new StrokeStyle());
-                styles.Add(new TextStyle());
-
-                //Add Sources to Template
-                sources.Add(new BingMapsSource());
-                sources.Add(new ClusterSource());
-                sources.Add(new StaticImageSource());
-                sources.Add(new VectorImageSource());
-                sources.Add(new ImageTileSource());
-                sources.Add(new XYZSource());
-                sources.Add(new StamenSource());
-                sources.Add(new JSONTileSource());
-                sources.Add(new VectorTileSource());
-                sources.Add(new VectorSource());
-
-                //Add Layers to Template
-                layers.Add(new HeatmapLayer());
-                layers.Add(new ImageLayer());
-                layers.Add(new TileLayer());
-                layers.Add(new VectorLayer());
-              
-
-                Map map = new Map(null,formats.ToArray(),styles.ToArray(),sources.ToArray(),layers.ToArray());
-                string serializedTemplate = Newtonsoft.Json.JsonConvert.SerializeObject(map);
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedTemplate = Newtonsoft.Json.JsonConvert.SerializeObject(maps.CreateEmptyMap());
                 Clients.Caller.receiveTemplate(serializedTemplate);
             }
             catch (Exception e)

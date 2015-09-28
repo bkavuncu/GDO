@@ -124,7 +124,6 @@
   <ItemGroup>
     <Compile Include="Core\Base.cs" />
     <Compile Include="Core\Control.cs" />
-    <Compile Include="Core\Coordinate.cs" />
     <Compile Include="Core\Feature.cs" />
     <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Geometries\LinearRing.cs" />

@@ -33,11 +33,11 @@ gdo.net.app["Maps"].updateView = function (instanceId, deserializedView) {
     gdo.net.instance[instanceId].map.getView().setRotation(rotation);
 }
 
-gdo.net.app["Maps"].pan = ol.animation.pan({
+/*gdo.net.app["Maps"].pan = ol.animation.pan({
     duration: 70,
     source: view.getCenter(),
     start: +new Date()
-});
+});*/
 
 gdo.net.app["Maps"].requestView = function (instanceId, viewId) {
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Requesting view: ' + viewId);

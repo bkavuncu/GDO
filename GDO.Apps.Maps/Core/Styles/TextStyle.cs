@@ -32,6 +32,13 @@ namespace GDO.Apps.Maps.Core.Styles
             Fill = fill;
             Stroke = stroke;
 
+            Prepare();
+        }
+
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+
             AddtoEditables(() => Font);
             AddtoEditables(() => Scale);
             AddtoEditables(() => Rotation);
@@ -41,6 +48,7 @@ namespace GDO.Apps.Maps.Core.Styles
             AddtoEditables(() => Fill);
             AddtoEditables(() => Stroke);
         }
+
         new public void Modify(string font, float scale, float rotation, string content,
             string textAlign, string textBaseLine, FillStyle fill, StrokeStyle stroke)
         {

@@ -18,7 +18,14 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
             Format = format;
             Projection = projection;
             Url = url;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

@@ -5,6 +5,7 @@ var styles;
 var layers;
 var scene;
 var terrainProvider;
+var ds;
 
 $(function () {
     gdo.consoleOut('.MAPS', 1, 'Loaded Maps JS');
@@ -47,10 +48,12 @@ $(function () {
     }
 
     $.connection.mapsAppHub.client.receiveView = function (instanceId, serializedView) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received View');
         gdo.net.app["Maps"].updateView(instanceId, JSON.parse(serializedView));
     }
 
     $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
+        gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Received Map');
         gdo.net.app["Maps"].initMap(instanceId, JSON.parse(serializedMap));
     }
 
@@ -108,22 +111,22 @@ $(function () {
     }
 });
 
-gdo.net.app["Maps"].initMap = function (instanceId, serializedMap) {
+gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
 
-    //Process Serialized Map
-    var deserializedMap = JSON.parse(serializedMap);
+    ds = deserializedMap;
+    //Process deserialized Map
     var i;
-    for (i = 0; i < deserializedMap.Formats.length; i++) {
-        gdo.net.app["Maps"].addFormat(instanceId, deserializedMap.Formats[i].Id, deserializedMap.Formats[i]);
+    for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
+        gdo.net.app["Maps"].addFormat(instanceId, deserializedMap.Formats.$values[i].Id, deserializedMap.Formats.$values[i]);
     }
-    for (i = 0; i < deserializedMap.Styles.length; i++) {
-        gdo.net.app["Maps"].addStyle(instanceId, deserializedMap.Styles[i].Id, deserializedMap.Styles[i]);
+    for (i = 0; i < deserializedMap.Styles.$values.length; i++) {
+        gdo.net.app["Maps"].addStyle(instanceId, deserializedMap.Styles.$values[i].Id, deserializedMap.Styles.$values[i]);
     }
-    for (i = 0; i < deserializedMap.Sources.length; i++) {
-        gdo.net.app["Maps"].addSource(instanceId, deserializedMap.Sources[i].Id, deserializedMap.Sources[i]);
+    for (i = 0; i < deserializedMap.Sources.$values.length; i++) {
+        gdo.net.app["Maps"].addSource(instanceId, deserializedMap.Sources.$values[i].Id, deserializedMap.Sources.$values[i]);
     }
-    for (i = 0; i < deserializedMap.Layers.length; i++) {
-        gdo.net.app["Maps"].addLayer(instanceId, deserializedMap.Layers[i].Id, deserializedMap.Layers[i]);
+    for (i = 0; i < deserializedMap.Layers.$values.length; i++) {
+        gdo.net.app["Maps"].addLayer(instanceId, deserializedMap.Layers.$values[i].Id, deserializedMap.Layers.$values[i]);
     }
     gdo.net.app["Maps"].setView(instanceId, deserializedMap.View);
 

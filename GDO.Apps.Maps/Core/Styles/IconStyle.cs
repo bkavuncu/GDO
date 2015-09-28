@@ -42,7 +42,14 @@ namespace GDO.Apps.Maps.Core.Styles
             ImageWidth = imageWidth;
             ImageHeight = imageHeight;
             ImageSource = imageSource;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify(float opacity, float rotation, float scale)
         {
             base.Modify(opacity, rotation, scale);

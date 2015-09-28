@@ -20,7 +20,14 @@ namespace GDO.Apps.Maps.Core.Styles
             Radius = radius;
             SnapToPixel = snapToPixel;
             Stroke = stroke;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
 
         new public void Modify( float opacity, float rotation, float scale)
         {

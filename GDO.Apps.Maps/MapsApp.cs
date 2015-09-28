@@ -12,12 +12,14 @@ using GDO.Apps.Maps.Core.Styles;
 using GDO.Apps.Maps.Formats;
 using GDO.Core;
 using GDO.Utility;
+using Newtonsoft.Json;
 using Style = GDO.Apps.Maps.Core.Style;
 
 namespace GDO.Apps.Maps
 {
     public class MapsApp : IAppInstance
     {
+        JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
@@ -36,6 +38,19 @@ namespace GDO.Apps.Maps
 
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
+            this.Id = instanceId;
+            this.AppName = appName;
+            this.Section = section;
+            this.Configuration = configuration;
+
+            SaveEmptyMap();
+            Layers= new GenericDictionary<Layer>();
+            Interactions = new GenericDictionary<Interaction>();
+            Sources = new GenericDictionary<Source>();
+            Controls = new GenericDictionary<Control>();
+            Styles = new GenericDictionary<Style>();
+            Formats = new GenericDictionary<Format>();
+            ZindexTable = new ZindexTable();
             Layers.Init();
             Interactions.Init();
             Sources.Init();
@@ -44,7 +59,7 @@ namespace GDO.Apps.Maps
             Formats.Init();
             ZindexTable.Init();
 
-            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(configuration.Json.ToString());
+            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(configuration.Json.ToString(), JsonSettings);
 
             foreach (Format format in Map.Formats)
             {
@@ -71,7 +86,7 @@ namespace GDO.Apps.Maps
         public string GetSerializedMap()
         {
             Map = new Map(View, Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
-            string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map);
+            string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
 
@@ -254,7 +269,7 @@ namespace GDO.Apps.Maps
             Layer layer = Layers.GetValue<Layer>(layerId);
             if (layer != null)
             {
-                string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId));
+                string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId), JsonSettings);
                 return serializedLayer;
             }
             else
@@ -264,7 +279,7 @@ namespace GDO.Apps.Maps
         }
         public string GetSerializedZIndexTable()
         {
-            string serializedZindexTable = Newtonsoft.Json.JsonConvert.SerializeObject(ZindexTable);
+            string serializedZindexTable = Newtonsoft.Json.JsonConvert.SerializeObject(ZindexTable, JsonSettings);
             return serializedZindexTable;
         }
 
@@ -301,7 +316,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedView()
         {
-            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(View);
+            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(View, JsonSettings);
             return serializedView;
         }
 
@@ -666,7 +681,7 @@ namespace GDO.Apps.Maps
             Source source = Sources.GetValue<Source>(sourceId);
             if (source != null)
             {
-                string serializedSource = Newtonsoft.Json.JsonConvert.SerializeObject(Sources.GetValue<Source>(sourceId));
+                string serializedSource = Newtonsoft.Json.JsonConvert.SerializeObject(Sources.GetValue<Source>(sourceId), JsonSettings);
                 return serializedSource;
             }
             else
@@ -952,7 +967,7 @@ namespace GDO.Apps.Maps
             Style style = Styles.GetValue<Style>(styleId);
             if (style != null)
             {
-                string serializedStyle = Newtonsoft.Json.JsonConvert.SerializeObject(Styles.GetValue<Style>(styleId));
+                string serializedStyle = Newtonsoft.Json.JsonConvert.SerializeObject(Styles.GetValue<Style>(styleId), JsonSettings);
                 return serializedStyle;
             }
             else
@@ -1152,7 +1167,7 @@ namespace GDO.Apps.Maps
             Format format = Formats.GetValue<Format>(formatId);
             if (format != null)
             {
-                string serializedFormat = Newtonsoft.Json.JsonConvert.SerializeObject(Formats.GetValue<Format>(formatId));
+                string serializedFormat = Newtonsoft.Json.JsonConvert.SerializeObject(Formats.GetValue<Format>(formatId), JsonSettings);
                 return serializedFormat;
             }
             else
@@ -1173,6 +1188,210 @@ namespace GDO.Apps.Maps
                 Console.WriteLine(e);
                 return false;
             }
+        }
+
+        //Utilities
+
+        public void SaveEmptyMap()
+        {
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Configurations\Maps\\";
+            String filePath = basePath + "template.json";
+            string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(CreateEmptyMap(), JsonSettings);
+            System.IO.File.WriteAllText(filePath, serializedMap);
+        }
+
+        public Map CreateEmptyMap()
+        {
+            List<Format> formats = new List<Format>();
+            List<Style> styles = new List<Style>();
+            List<Source> sources = new List<Source>();
+            List<Layer> layers = new List<Layer>();
+
+            double[] topLeft = { 0, 0, 0, 0 };
+            double[] bottomRight = { 0, 0, 0, 0 };
+            double[] center = { 0, 0, 0, 0 };
+            Position position = new Position(topLeft, center, bottomRight, 0, 0);
+            View view = new View(position, 0, 100, 100);
+
+            //Add Formats to Template
+            EsriJSONFormat esriJsonFormat = new EsriJSONFormat();
+            GeoJSONFormat geoJsonFormat = new GeoJSONFormat();
+            GMLFormat gmlFormat = new GMLFormat();
+            KMLFormat kmlFormat = new KMLFormat();
+
+            esriJsonFormat.Prepare();
+            esriJsonFormat.Id = 0;
+            esriJsonFormat.Type = (int)FormatTypes.EsriJSON;
+            geoJsonFormat.Prepare();
+            geoJsonFormat.Id = 1;
+            geoJsonFormat.Type = (int)FormatTypes.GeoJSON;
+            gmlFormat.Prepare();
+            gmlFormat.Id = 2;
+            gmlFormat.Type = (int)FormatTypes.GML;
+            kmlFormat.Prepare();
+            kmlFormat.Id = 3;
+            kmlFormat.Type = (int)FormatTypes.KML;
+
+            formats.Add(esriJsonFormat);
+            formats.Add(geoJsonFormat);
+            formats.Add(gmlFormat);
+            formats.Add(kmlFormat);
+
+            //Add Styles to Template
+            CircleStyle circleStyle = new CircleStyle();
+            FillStyle fillStyle = new FillStyle();
+            IconStyle iconStyle = new IconStyle();
+            RegularShapeStyle regularShapeStyle = new RegularShapeStyle();
+            StrokeStyle strokeStyle = new StrokeStyle();
+            TextStyle textStyle = new TextStyle();
+
+            fillStyle.Prepare();
+            fillStyle.Id = 1;
+            fillStyle.Type = (int)StyleTypes.Fill;
+            fillStyle.Name = fillStyle.ClassName;
+            strokeStyle.Prepare();
+            strokeStyle.Id = 4;
+            strokeStyle.Type = (int)StyleTypes.Stroke;
+            strokeStyle.Name = strokeStyle.ClassName;
+            circleStyle.Prepare();
+            circleStyle.Id = 0;
+            circleStyle.Type = (int)StyleTypes.Circle;
+            circleStyle.Name = circleStyle.ClassName;
+            circleStyle.Stroke = strokeStyle;
+            circleStyle.Fill = fillStyle;
+
+            iconStyle.Prepare();
+            iconStyle.Id = 2;
+            iconStyle.Type = (int)StyleTypes.Icon;
+            iconStyle.Name = iconStyle.ClassName;
+            regularShapeStyle.Prepare();
+            regularShapeStyle.Id = 3;
+            regularShapeStyle.Type = (int)StyleTypes.RegularShape;
+            regularShapeStyle.Name = regularShapeStyle.ClassName;
+            regularShapeStyle.Stroke = strokeStyle;
+            regularShapeStyle.Fill = fillStyle;
+
+            textStyle.Prepare();
+            textStyle.Id = 5;
+            textStyle.Type = (int)StyleTypes.Text;
+            textStyle.Name = textStyle.ClassName;
+            textStyle.Stroke = strokeStyle;
+            textStyle.Fill = fillStyle;
+
+            styles.Add(circleStyle);
+            styles.Add(fillStyle);
+            styles.Add(iconStyle);
+            styles.Add(regularShapeStyle);
+            styles.Add(strokeStyle);
+            styles.Add(textStyle);
+
+            //Add Sources to Template
+            BingMapsSource bingMapsSource = new BingMapsSource();
+            ClusterSource clusterSource = new ClusterSource();
+            StaticImageSource staticImageSource = new StaticImageSource();
+            VectorImageSource vectorImageSource = new VectorImageSource();
+            ImageTileSource imageTileSource = new ImageTileSource();
+            XYZSource xyzSource = new XYZSource();
+            StamenSource stamenSource = new StamenSource();
+            JSONTileSource jsonTileSource = new JSONTileSource();
+            VectorTileSource vectorTileSource = new VectorTileSource();
+            VectorSource vectorSource = new VectorSource();
+
+            vectorSource.Id = 9;
+            vectorSource.Type = (int)SourceTypes.Vector;
+            vectorSource.Name = vectorSource.ClassName;
+            bingMapsSource.Prepare();
+            bingMapsSource.Id = 0;
+            bingMapsSource.Type = (int)SourceTypes.BingMaps;
+            bingMapsSource.Name = bingMapsSource.ClassName;
+            clusterSource.Prepare();
+            clusterSource.Id = 1;
+            clusterSource.Type = (int)SourceTypes.Cluster;
+            clusterSource.Name = clusterSource.ClassName;
+            clusterSource.VectorSource = vectorSource;
+            clusterSource.Format = esriJsonFormat;
+            staticImageSource.Prepare();
+            staticImageSource.Id = 2;
+            staticImageSource.Type = (int)SourceTypes.ImageStatic;
+            staticImageSource.Name = staticImageSource.ClassName;
+            vectorImageSource.Prepare();
+            vectorImageSource.Id = 3;
+            vectorImageSource.Type = (int)SourceTypes.ImageVector;
+            vectorImageSource.Name = vectorImageSource.ClassName;
+            vectorImageSource.VectorSource = vectorSource;
+            imageTileSource.Prepare();
+            imageTileSource.Id = 4;
+            imageTileSource.Type = (int)SourceTypes.TileImage;
+            imageTileSource.Name = imageTileSource.ClassName;
+            imageTileSource.TileGrid = new TileGrid(null,0,0,0,0,null);
+            xyzSource.Prepare();
+            xyzSource.Id = 5;
+            xyzSource.Type = (int)SourceTypes.XYZ;
+            xyzSource.Name = xyzSource.ClassName;
+            xyzSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
+            stamenSource.Prepare();
+            stamenSource.Id = 6;
+            stamenSource.Type = (int)SourceTypes.Stamen;
+            stamenSource.Name = stamenSource.ClassName;
+            stamenSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
+            jsonTileSource.Prepare();
+            jsonTileSource.Id = 7;
+            jsonTileSource.Type = (int)SourceTypes.TileJSON;
+            jsonTileSource.Name = jsonTileSource.ClassName;
+            vectorTileSource.Prepare();
+            vectorTileSource.Id = 8;
+            vectorTileSource.Type = (int)SourceTypes.TileVector;
+            vectorTileSource.Name = vectorTileSource.ClassName;
+            vectorTileSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
+            vectorSource.Prepare();
+
+
+            sources.Add(bingMapsSource);
+            sources.Add(clusterSource);
+            sources.Add(staticImageSource);
+            sources.Add(vectorImageSource);
+            sources.Add(imageTileSource);
+            sources.Add(xyzSource);
+            sources.Add(stamenSource);
+            sources.Add(jsonTileSource);
+            sources.Add(vectorTileSource);
+            sources.Add(vectorSource);
+
+            //Add Layers to Template
+            HeatmapLayer heatmapLayer = new HeatmapLayer();
+            ImageLayer imageLayer = new ImageLayer();
+            TileLayer tileLayer = new TileLayer();
+            VectorLayer vectorLayer = new VectorLayer();
+
+            heatmapLayer.Prepare();
+            heatmapLayer.Id = 0;
+            heatmapLayer.Type = (int)LayerTypes.Heatmap;
+            heatmapLayer.Name = heatmapLayer.ClassName;
+            heatmapLayer.Source = vectorSource;
+            imageLayer.Prepare();
+            imageLayer.Id = 1;
+            imageLayer.Type = (int)LayerTypes.Image;
+            imageLayer.Name = imageLayer.ClassName;
+            imageLayer.Source = imageTileSource;
+            tileLayer.Prepare();
+            tileLayer.Id = 2;
+            tileLayer.Type = (int)LayerTypes.Tile;
+            tileLayer.Name = tileLayer.ClassName;
+            tileLayer.Source = vectorTileSource;
+            vectorLayer.Prepare();
+            vectorLayer.Id = 3;
+            vectorLayer.Type = (int)LayerTypes.Vector;
+            vectorLayer.Name = vectorLayer.ClassName;
+            vectorLayer.Source = vectorSource;
+
+
+            layers.Add(heatmapLayer);
+            layers.Add(imageLayer);
+            layers.Add(tileLayer);
+            layers.Add(vectorLayer);
+
+            Map map = new Map(view, formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            return map;
         }
 
     }

@@ -19,7 +19,14 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             Height = height;
             URL = url;
             Extent = extent;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

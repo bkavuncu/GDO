@@ -30,7 +30,13 @@ namespace GDO.Apps.Maps.Formats
             MultiCurve = multiCurve;
             MultiSurface = multiSurface;
             SchemaLocation = schemaLocation;
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

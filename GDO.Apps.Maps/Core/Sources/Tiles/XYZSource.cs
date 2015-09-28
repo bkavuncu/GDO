@@ -19,8 +19,15 @@ namespace GDO.Apps.Maps.Core.Sources
             Projection = projection;
             Url = url;
 
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+
             AddtoEditables(() => Url);
         }
+
         new public void Modify(string url)
         {
             Url = url;

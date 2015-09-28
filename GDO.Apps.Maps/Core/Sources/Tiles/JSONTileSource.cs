@@ -14,7 +14,14 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
         {
             Url = url;
             CrossOrigin = crossOrigin;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

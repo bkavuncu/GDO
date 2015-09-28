@@ -11,6 +11,7 @@ namespace GDO.Apps.Maps.Core
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ClassName { get; set; }
         public int Type { get; set; }
         public List<string> Editables { get; set; } = new List<string>();
 
@@ -18,6 +19,11 @@ namespace GDO.Apps.Maps.Core
         {
             var body = ((MemberExpression)expr.Body);
             Editables.Add(body.Member.Name);
+        }
+
+        public void Prepare()
+        {
+            
         }
     }
 }

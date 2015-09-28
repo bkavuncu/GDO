@@ -13,7 +13,13 @@ namespace GDO.Apps.Maps.Formats
         new public void Init(string geometryName)
         {
             GeometryName = geometryName;
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

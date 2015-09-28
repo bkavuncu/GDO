@@ -39,6 +39,12 @@ namespace GDO.Apps.Maps.Core.Styles
             MiterLimit = miterLimit;
             Width = width;
 
+            Prepare();
+        }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+
             AddtoEditables(() => Color);
             AddtoEditables(() => LineCap);
             AddtoEditables(() => LineDash);
@@ -46,6 +52,7 @@ namespace GDO.Apps.Maps.Core.Styles
             AddtoEditables(() => MiterLimit);
             AddtoEditables(() => Width);
         }
+
         new public void Modify(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
         {
             Color = color;

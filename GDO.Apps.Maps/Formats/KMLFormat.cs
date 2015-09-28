@@ -15,7 +15,13 @@ namespace GDO.Apps.Maps.Formats
         {
             DefaultStyle = defaultStyle;
             ExtractStyles = extractStyles;
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

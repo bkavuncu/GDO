@@ -27,7 +27,14 @@ namespace GDO.Apps.Maps.Core.Sources
             Url = url;
             LoadingStrategy = loadingStrategy;
             UseSpatialIndex = useSpatialIndex;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }

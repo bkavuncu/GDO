@@ -18,7 +18,14 @@ namespace GDO.Apps.Maps.Core.Sources
             Extent = extent;
             Format = format;
             VectorSource = vectorSource;
+
+            Prepare();
         }
+        new public void Prepare()
+        {
+            ClassName = this.GetType().Name;
+        }
+
         new public void Modify()
         {
         }
