@@ -1,4 +1,7 @@
-﻿
+﻿gdo.net.app["Maps"].selectedInstance = -1;
+gdo.net.app["Maps"].selectedLayer = -1;
+gdo.net.app["Maps"].selectedProperty = -1;
+
 gdo.updateDisplayCanvas = function () {
     /// <summary>
     /// Updates the gdo canvas.
@@ -7,26 +10,19 @@ gdo.updateDisplayCanvas = function () {
     //gdo.consoleOut(".DISPLAY", 2, "At Update Display");
     gdo.net.app["Maps"].drawHeaderTable();
     gdo.net.app["Maps"].drawMapTable();
-    gdo.net.app["Maps"].drawInstanceTable();
-    gdo.net.app["Maps"].drawLayerTable();
-    gdo.net.app["Maps"].drawContentTable();
-    gdo.net.app["Maps"].drawPropertyTable();
     gdo.net.app["Maps"].drawStatusTable();
 }
 
-//TODO empty tables
-
 gdo.net.app["Maps"].drawMapTable = function (instanceId) {
-
+    gdo.net.app["Maps"].drawInstanceTable(instanceId);
+    gdo.net.app["Maps"].drawLayerTable(instanceId, gdo.net.app["Maps"].selectedLayer);
+    gdo.net.app["Maps"].drawPropertyTable(instanceId, gdo.net.app["Maps"].selectedLayer, gdo.net.app["Maps"].selectedProperty);
+    gdo.net.app["Maps"].drawEditTable();
 }
 
-//Generic method to read data structure and edit methods
-
-//Instance Tab (will not input anything)
-
-gdo.management.drawEmptyInstanceTable = function() {
-
-    $("#instance_list")
+gdo.net.app["Maps"].drawInstanceTable = function (instanceId) {
+    $("#instance_list_table")
+        .empty()
         .css("height", "30px")
         .css("width", "7%")
         .css("border", "3px solid #444")
@@ -36,11 +32,7 @@ gdo.management.drawEmptyInstanceTable = function() {
         .attr("align", "center")
         .css("vertical-align", "top")
         .css({ fontSize: 14 });
-}
 
-gdo.net.app["Maps"].drawInstanceTable = function (instanceId) {
-    gdo.net.app["Maps"].drawEmptyInstanceTable();
-    $("#instance_list_table").empty();
     var j = 0;
     for (var i = 0; i < gdo.net.instance.length; i++) {
         if (gdo.net.instance[0].appName == "Maps") {
@@ -61,15 +53,9 @@ gdo.net.app["Maps"].drawInstanceTable = function (instanceId) {
     }
 }
 
-//List of instances on the left,
-    //Click on an instance will trigger to draw layer,property,edit table, map, status table
-    //Map how? by iframe
-
-//Layer Table ( will input instanceID)
-
-gdo.management.drawEmptyLayerTable = function () {
-
-    $("#layer_list")
+gdo.net.app["Maps"].drawLayerTable = function (instanceId) {
+    $("#layer_list_table")
+        .empty()
         .css("height", "30px")
         .css("width", "28%")
         .css("border", "3px solid #444")
@@ -79,44 +65,50 @@ gdo.management.drawEmptyLayerTable = function () {
         .attr("align", "center")
         .css("vertical-align", "top")
         .css({ fontSize: 14 });
-}
 
-gdo.net.app["Maps"].drawLayerTable = function (instanceId) {
-    gdo.net.app["Maps"].drawEmptyLayerTable();
-    $("#layer_list_table").empty();
-    var j = 0;
-    //First one add button
+    var j = 1;
+    //Add button
+    $("#layer_list_table").append("<tr id='layer_list_table_row_0 row='0'>" +
+        "<td>" +
+        "<div id='layer_list_table_add_button'>" +
+        "<img src='/Web/Maps/Images/add.png'>" +
+        "</div>" +
+        "</td>" +
+        "</tr>");
+    //Layers
     for (var i = 0; i < gdo.net.instance[instanceId].layers.length; i++) {
         $("#layer_list_table").append("<tr id='layer_list_table_row_" + j + " row='" + j + "'></tr>");
         $("#layer_list_table tr:last").append("<td id='layer_list_table_row_" + j + "_col_0' layer='" + i + "'></td>");
         $("#layer_list_table_row_" + i + "_col_0")
             .empty()
             .append("<div id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "'> " +
-                   "<table style='width: 100%;'> " +
-                        "<tr>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_id'><b>" + gdo.net.instance[instanceId].layers[i].id + "</b></td>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_name'><b>" + gdo.net.instance[instanceId].layers[i].name + "</b></td>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_visible'> <img src='/Web/Maps/Images/visible.png'> </td>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_animate'> <img src='/Web/Maps/Images/animate.png'> </td>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_up'> <img src='/Web/Maps/Images/up.png'> </td>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_down'> <img src='/Web/Maps/Images/down.png'> </td>" +
-                            "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_delete'> <img src='/Web/Maps/Images/delete.png'> </td>" +
-                        "</tr>" +
-                   "</table>" +
-                   "</div>")
+                "<table style='width: 100%;'> " +
+                "<tr>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_id'><b>" + gdo.net.instance[instanceId].layers[i].id + "</b></td>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_name'><b>" + gdo.net.instance[instanceId].layers[i].name + "</b></td>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_visible'> <img src='/Web/Maps/Images/visible.png'> </td>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_animate'> <img src='/Web/Maps/Images/animate.png'> </td>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_up'> <img src='/Web/Maps/Images/up.png'> </td>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_down'> <img src='/Web/Maps/Images/down.png'> </td>" +
+                "<td id='layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_delete'> <img src='/Web/Maps/Images/delete.png'> </td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>")
             .css("border", "2px solid #444")
             .css("color", "#DDD")
             .css("background", "#222")
-            .css('padding', 7)
+            .css('padding', 7);
 
         $("#layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_id")
             .click(function () {
-                gdo.net.instance[instanceId].layer = $(this).attr('layer');
+                gdo.net.app["Maps"].selectedLayer = $(this).attr('layer');
+                gdo.net.app["Maps"].selectedProperty = 1;
                 gdo.net.app["Maps"].drawPropertyTable(gdo.net.instance[instanceId].layer);
             });
         $("#layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_name")
             .click(function () {
-                gdo.net.instance[instanceId].layer = $(this).attr('layer');
+                gdo.net.app["Maps"].selectedLayer = $(this).attr('layer');
+                gdo.net.app["Maps"].selectedProperty = 1;
                 gdo.net.app["Maps"].drawPropertyTable(gdo.net.instance[instanceId].layer);
             });
         $("#layer_list_table_" + gdo.net.instance[instanceId].layers[i].id + "_visible")
@@ -148,23 +140,146 @@ gdo.net.app["Maps"].drawLayerTable = function (instanceId) {
             var layerId = $(this).attr('layer');
             gdo.net.app["Maps"].server.removeLayer(instanceId, layerId);
         });
+        j++;
     }
 }
 
+gdo.net.app["Maps"].drawPropertyTable = function (instanceId, layerId) {
+    $("#property_list_table")
+        .empty()
+        .css("height", "30px")
+        .css("width", "28%")
+        .css("border", "3px solid #444")
+        .css("color", "#DDD")
+        .css("background", "#222")
+        .css('padding', 7)
+        .attr("align", "center")
+        .css("vertical-align", "top")
+        .css({ fontSize: 14 });
 
-//Content Table (will input layerID)
+    //Save button
+    $("#layer_list_table").append("<tr id='property_list_table_save'>" +
+        "<td>" +
+        "<div id='property_list_table_save_button'>" +
+        "<img src='/Web/Maps/Images/save.png'>" +
+        "</div>" +
+        "</td>" +
+        "</tr>");
+    if (layerId >= 0) {
+        for (var key in gdo.net.instance[instanceId].layers[layerId].properties) {
+            if (gdo.net.instance[instanceId].layers[layerId].properties.hasOwnProperty(key)) {
+                $("#property_list_table tr:last").append("<td id='property_list_table_" + key + "'></td>");
+                $("#property_list_table_" + key)
+                    .empty()
+                    .css("border", "2px solid #444")
+                    .css("color", "#DDD")
+                    .css("background", "#222")
+                    .css('padding', 7);
 
-    //Automate layer.properties
+                if (Object.prototype.toString.call(gdo.net.instance[instanceId].layers[layerId].properties[key]) === '[object Array]') {
+                    $("#property_list_table_" + key)
+                        .append("<div id='property_list_table_" + key + "'> " +
+                            "<table style='width: 100%;'> " +
+                            "<tr>" +
+                            "<td id='property_list_table_" + key + "_key'><b>" + key + "</b></td>" +
+                            "<td id='property_list_table_" + key + "_value'>" + gdo.net.instance[instanceId].layers[layerId].properties[key] + "</td>" +
+                            "</tr>" +
+                            "</table>" +
+                            "</div>");
+                    //Put a button and select property
+                    $("#property_list_table_" + key + "")
+                        .click(function () {
+                            gdo.net.app["Maps"].selectedProperty = key;
+                            gdo.net.app["Maps"].drawEditTable(instanceId, gdo.net.app["Maps"].selectedLayer, gdo.net.app["Maps"].selectedProperty);
+                        });
 
-    //Editables list will give which are editable values
+                } else {
+                    if (contains(gdo.net.instance[instanceId].layers[layerId].properties["Editables"], key)) {
+                        $("#property_list_table_" + key)
+                            .append("<div id='property_list_table_" + key + "'> " +
+                                "<table style='width: 100%;'> " +
+                                "<tr>" +
+                                "<td id='property_list_table_" + key + "_key'><b>" + key + "</b></td>" +
+                                "<td id='property_list_table_" + key + "_value'>" +
+                                "<input type='text' id='property_list_table_" + key + "_value_input'  style='width: 100%;height: 100%;' /></input></td>" +
+                                "</tr>" +
+                                "</table>" +
+                                "</div>");
+                        $("#property_list_table_" + key + "_value_input")
+                            //.attr("onfocus", "this.value=''")
+                            .attr("value", gdo.net.instance[instanceId].layers[layerId].properties[key]);
+                    } else {
+                        $("#property_list_table_" + key)
+                            .append("<div id='property_list_table_" + key + "'> " +
+                                "<table style='width: 100%;'> " +
+                                "<tr>" +
+                                "<td id='property_list_table_" + key + "_key'><b>" + key + "</b></td>" +
+                                "<td id='property_list_table_" + key + "_value'>" + gdo.net.instance[instanceId].layers[layerId].properties[key] + "</td>" +
+                                "</tr>" +
+                                "</table>" +
+                                "</div>");
+                    }
+                }
+            }
+        }
+    } else {
+        //TODO empty property table
+    }
+}
 
-    //Plus add layer will ignore and load all the list
+gdo.net.app["Maps"].drawEditTable = function(instanceId, layerId, propertyKey) {
+    $("#edit_list_table")
+        .empty()
+        .css("height", "30px")
+        .css("width", "28%")
+        .css("border", "3px solid #444")
+        .css("color", "#DDD")
+        .css("background", "#222")
+        .css('padding', 7)
+        .attr("align", "center")
+        .css("vertical-align", "top")
+        .css({ fontSize: 14 });
 
-    //Update or Save button will appear on the bottom or top
+    if (layerId >= 0 && Object.prototype.toString.call(gdo.net.instance[instanceId].layers[layerId].properties[propertyKey]) === '[object Array]') {
+        if (contains(gdo.net.instance[instanceId].layers[layerId].properties["Editables"], propertyKey)) {
+            for (var key in gdo.net.instance[instanceId].layers[layerId].properties[propertyKey]) {
+                $("#edit_list_table tr:last").append("<td id='edit_list_table_" + key + "'></td>");
+                $("#edit_list_table_" + key)
+                    .empty()
+                    .css("border", "2px solid #444")
+                    .css("color", "#DDD")
+                    .css("background", "#222")
+                    .css('padding', 7);
 
-//Edit Table (will input property id on the list of properties)
-
-    //Only load editable list if existing
-    
-//Load full list if new
+                $("#edit_list_table_" + key)
+                    .append("<div id='edit_list_table_" + key + "'> " +
+                        "<table style='width: 100%;'> " +
+                        "<tr>" +
+                        "<td id='edit_list_table_" + key + "_key'><b>" + key + "</b></td>" +
+                        "<td id='edit_list_table_" + key + "_value'>" +
+                        "<input type='text' id='edit_list_table_" + key + "_value_input'  style='width: 100%;height: 100%;' /></input></td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "</div>");
+                $("#edit_list_table_" + key + "_value_input")
+                    //.attr("onfocus", "this.value=''")
+                    .attr("value", gdo.net.instance[instanceId].layers[layerId].properties[propertyKey][key]);
+            }
+        } else {
+            for (var key in gdo.net.instance[instanceId].layers[layerId].properties[propertyKey]) {
+                $("#edit_list_table_" + key)
+                    .append("<div id='edit_list_table_" + key + "'> " +
+                        "<table style='width: 100%;'> " +
+                        "<tr>" +
+                        "<td id='property_list_table_" + key + "_key'><b>" + key + "</b></td>" +
+                        "<td id='property_list_table_" + key + "_value'>" + gdo.net.instance[instanceId].layers[layerId].properties[propertyKey][key] + "</td>" +
+                        "</tr>" +
+                        "</table>" +
+                        "</div>");
+            }
+        }
+    } else {
+        //TODO Empty layer list
+    }   
+}
 

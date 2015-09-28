@@ -53,7 +53,6 @@ function contains(a, obj) {
         }
     }
     return false;
-
 }
 
 function getUrlVar(variable) {
