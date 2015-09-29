@@ -140,7 +140,9 @@
                     }
                 }
                 gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
-                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+                $( document ).ready(function() {
+                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+                });
             });
             window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
                 //var space = "<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
