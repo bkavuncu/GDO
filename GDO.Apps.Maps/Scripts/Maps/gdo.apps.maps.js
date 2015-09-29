@@ -15,7 +15,7 @@ $(function () {
             gdo.net.app["Maps"].set3DMode(instanceId, mode);
             gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Setting 3D Mode :' + mode);
             gdo.net.app["Maps"].drawMapTable(instanceId);
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.net.app["Maps"].selectedInstance == instanceId) {
             gdo.net.app["Maps"].set3DMode(instanceId, mode);
             gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Setting 3D Mode :' + mode);
             gdo.net.app["Maps"].drawMapTable(instanceId);
@@ -111,6 +111,10 @@ $(function () {
     }
 });
 
+gdo.updateDisplayCanvas = function () {
+
+}
+
 gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
 
     //Initialize View
@@ -174,8 +178,9 @@ gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
 
     // Initialized
     gdo.net.instance[instanceId].isInitialized = true;
-    gdo.net.app["Maps"].selectedInstance = instanceId;
-    gdo.net.app["Maps"].drawMapTable(gdo.net.app["Maps"].selectedInstance);
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.app["Maps"].drawMapTable(gdo.net.app["Maps"].selectedInstance);
+    }
     gdo.net.app["Maps"].requestView(instanceId);
 }
 
@@ -211,7 +216,11 @@ gdo.net.app["Maps"].initClient = function (clientId) {
 }
 
 gdo.net.app["Maps"].initControl = function (instanceId) {
-    gdo.consoleOut('.MAPS', 1, 'Initializing Image Maps Control at Instance ' + instanceId);
+    gdo.consoleOut('.MAPS', 1, 'Initializing Maps Control at Instance ' + instanceId);
+
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.app["Maps"].selectedInstance = instanceId;
+    }
 
     //Initialize Arrays
     gdo.net.app["Maps"].initializeArrays(instanceId);
@@ -289,8 +298,8 @@ gdo.net.app["Maps"].calculateClientParameters = function (instanceId) {
 }
 
 gdo.net.app["Maps"].calculateControlParameters = function(instanceId) {
-    gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
-    gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;
+    gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.net.app["Maps"].selectedInstance].sectionId].width;
+    gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.net.app["Maps"].selectedInstance].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
     gdo.net.instance[instanceId].controlMaxWidth = 1490;
     gdo.net.instance[instanceId].controlMaxHeight = 700;

@@ -104,19 +104,12 @@
     </script>
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script type="text/javascript" src="../Scripts/gdo.js"></script>
-    <script src="../signalr/hubs"></script>
-    <script type="text/javascript" src="../Scripts/peer.js"></script>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.js"></script>
+    <script src="../../signalr/hubs"></script>
+    <script type="text/javascript" src="../../Scripts/peer.js"></script>
 <script>
-    $(function() {
-        $(document).ready(function() {
-            var gdo = parent.gdo;
-            gdo.controlId = getUrlVar("controlId");
-            gdo.net.app["Maps"].initControl(gdo.controlId);
-        });
-    });
     $(function () {
         gdo.loadModule('maps','maps', gdo.MODULE_TYPE.APP);
         $(document).ready(function() {
@@ -126,12 +119,6 @@
     initApp = function () {
         gdo.net.app["Maps"].isAdvanced = true;
         gdo.net.app["Maps"].initControl(gdo.clientId);
-        //TODO Draw Empty Tables
-        gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
-        gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-        gdo.management.drawEmptyButtonTable(6, 1);
-
-        gdo.updateSelf();
     }
 </script>
     <div id="header" unselectable="on" class="unselectable">

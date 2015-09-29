@@ -46,7 +46,7 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
     .css({ fontSize: gdo.management.button_font_size })
     .unbind()
     .click(function () {
-            window.open("\Advanced.cshtml?clientId=1", '_blank');
+            window.open("\Advanced.cshtml?clientId=" + instanceId, '_blank');
         });
 }
 
