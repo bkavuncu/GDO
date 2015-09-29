@@ -2,8 +2,8 @@ var stations = function (svg, map) {
 	'use strict';
 
 	var s = function () {},
-		strokeWidth = 3,
-		centerWidth = 3;
+		strokeWidth = 2,
+		centerWidth = 2;
 
 	s.stations = d3.map();
 	

@@ -20,8 +20,8 @@ var animation = function (arg) {
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];
 		
-		a.realStartTime = +(new Date(Date.UTC(2012,0,1,2)));
-		a.timeInterval = min(15); // 15 min
+		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
+		a.timeInterval = min(2); // 15 min
 		
 		// To be choosen wisely =)
 		a.maxSizePixel = 15;
