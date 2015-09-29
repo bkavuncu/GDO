@@ -8,9 +8,9 @@ namespace GDO.Apps.Maps.Core.Layers
     public class VectorLayer : Layer
     {
         public Style Style { get; set; }
-        public int RenderBuffer { get; set; }
-        public bool UpdateWhileAnimating { get; set; }
-        public bool UpdateWhileInteracting { get; set; }
+        public int? RenderBuffer { get; set; }
+        public bool? UpdateWhileAnimating { get; set; }
+        public bool? UpdateWhileInteracting { get; set; }
 
         new public void Init(Style style, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
         {

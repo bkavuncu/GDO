@@ -194,7 +194,7 @@ gdo.net.app["Maps"].drawPropertyTable = function (instanceId, layerId) {
                         });
 
                 } else {
-                    if (contains(gdo.net.instance[instanceId].layers[layerId].properties["Editables"], key)) {
+                    if (contains(gdo.net.instance[instanceId].layers[layerId].properties["Editables"].$values, key)) {
                         $("#property_list_table_" + key)
                             .append("<div id='property_list_table_" + key + "'> " +
                                 "<table style='width: 100%;'> " +
@@ -242,7 +242,7 @@ gdo.net.app["Maps"].drawEditTable = function(instanceId, layerId, propertyKey) {
         .css({ fontSize: 14 });
 
     if (layerId >= 0 && Object.prototype.toString.call(gdo.net.instance[instanceId].layers[layerId].properties[propertyKey]) === '[object Array]') {
-        if (contains(gdo.net.instance[instanceId].layers[layerId].properties["Editables"], propertyKey)) {
+        if (contains(gdo.net.instance[instanceId].layers[layerId].properties["Editables"].$values, propertyKey)) {
             for (var key in gdo.net.instance[instanceId].layers[layerId].properties[propertyKey]) {
                 $("#edit_list_table tr:last").append("<td id='edit_list_table_" + key + "'></td>");
                 $("#edit_list_table_" + key)

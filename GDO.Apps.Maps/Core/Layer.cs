@@ -19,16 +19,16 @@ namespace GDO.Apps.Maps.Core
     public class Layer : Base
     {
         public Source Source { get; set; }
-        public float Brightness { get; set; }
-        public float Contrast { get; set; }
-        public float Saturation { get; set; }
-        public float Hue { get; set; }
-        public float Opacity { get; set; }
+        public float? Brightness { get; set; }
+        public float? Contrast { get; set; }
+        public float? Saturation { get; set; }
+        public float? Hue { get; set; }
+        public float? Opacity { get; set; }
         //public int ZIndex { get; set; }
-        public bool Visible { get; set; }
-        public double[] extent { get; set; }
-        public int MinResolution { get; set; }
-        public int MaxResolution { get; set; }
+        public bool? Visible { get; set; }
+        public double?[] extent { get; set; }
+        public int? MinResolution { get; set; }
+        public int? MaxResolution { get; set; }
 
         public Layer()
         {

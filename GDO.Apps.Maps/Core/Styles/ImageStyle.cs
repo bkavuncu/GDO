@@ -7,10 +7,10 @@ namespace GDO.Apps.Maps.Core.Styles
 {
     public class ImageStyle : Core.Style
     {
-        public float Opacity { get; set; }
-        public bool RotateWithView { get; set; }
-        public float Rotation { get; set; }
-        public float Scale { get; set; }
+        public float? Opacity { get; set; }
+        public bool? RotateWithView { get; set; }
+        public float? Rotation { get; set; }
+        public float? Scale { get; set; }
 
         new public void Init(float opacity, bool rotateWithView, float rotation, float scale)
         {

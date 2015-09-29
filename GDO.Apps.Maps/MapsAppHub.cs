@@ -130,7 +130,7 @@ namespace GDO.Apps.Maps
         //View
 
         public void UpdateView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
-            int zoom, int minResolution, int maxResolution, int minZoom, int maxZoom, string projection, float rotation, int width, int height)
+            int zoom, float rotation, int width, int height)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -586,7 +586,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddClusterSource(int instanceId, string name, int distance, double[] extent, int formatId, int vectorSourceId)
+        public void AddClusterSource(int instanceId, string name, int distance, double?[] extent, int formatId, int vectorSourceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -620,7 +620,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddStaticImageSource(int instanceId, string name, string crossOrigin, int width, int height, string url, double[] extent)
+        public void AddStaticImageSource(int instanceId, string name, string crossOrigin, int width, int height, string url, double?[] extent)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -689,7 +689,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddImageTileSource(int instanceId, string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -759,7 +759,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddXYZSource(int instanceId, string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions, string projection, string url)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions, string projection, string url)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -795,7 +795,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddStamenSource(int instanceId, string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions, string projection, string url, string layer)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions, string projection, string url, string layer)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -831,7 +831,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddVectorTileSource(int instanceId, string name, string projection, string url, double[] extent, int formatId,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -1086,7 +1086,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddIconStyle(int instanceId, string name, string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin,
+        public void AddIconStyle(int instanceId, string name, string crossOrigin, float?[] anchor, string anchorOrigin, float?[] offset, string offsetOrigin,
             float opacity, float scale, bool snapToPixel, bool rotateWithView, float rotation, int width, int height, int imageWidth,
             int imageHeight, string imageSource)
         {
@@ -1124,7 +1124,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AddStrokeStyle(int instanceId, string name, string color, int lineCap, int lineJoin, int[] lineDash,
+        public void AddStrokeStyle(int instanceId, string name, string color, int lineCap, int lineJoin, int?[] lineDash,
             int miterLimit, int width)
         {
             lock (Cave.AppLocks[instanceId])
@@ -1142,7 +1142,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateStrokeStyle(int instanceId, int styleId, string name, string color, int lineCap, int lineJoin, int[] lineDash,
+        public void UpdateStrokeStyle(int instanceId, int styleId, string name, string color, int lineCap, int lineJoin, int?[] lineDash,
             int miterLimit, int width)
         {
             lock (Cave.AppLocks[instanceId])

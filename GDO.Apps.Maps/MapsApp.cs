@@ -406,7 +406,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public int AddClusterSource(string name, int distance, double[] extent, int formatId, int vectorSourceId)
+        public int AddClusterSource(string name, int distance, double?[] extent, int formatId, int vectorSourceId)
         {
             try
             {
@@ -437,7 +437,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public int AddStaticImageSource(string name, string crossOrigin, int width, int height, string url, double[] extent)
+        public int AddStaticImageSource(string name, string crossOrigin, int width, int height, string url, double?[] extent)
         {
             try
             {
@@ -497,7 +497,7 @@ namespace GDO.Apps.Maps
         }
 
         public int AddImageTileSource(string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions)
         {
             try
             {
@@ -555,7 +555,7 @@ namespace GDO.Apps.Maps
         }
 
         public int AddXYZSource(string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions, string projection, string url)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions, string projection, string url)
         {
             try
             {
@@ -585,7 +585,7 @@ namespace GDO.Apps.Maps
         }
 
         public int AddStamenSource(string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions, string projection, string url, string layer)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions, string projection, string url, string layer)
         {
             try
             {
@@ -615,7 +615,7 @@ namespace GDO.Apps.Maps
         }
 
         public int AddVectorTileSource(string name, string projection, string url, double[] extent, int formatId,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float[] resolutions)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions)
         {
             try
             {
@@ -823,7 +823,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public int AddIconStyle(string name, string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin,
+        public int AddIconStyle(string name, string crossOrigin, float?[] anchor, string anchorOrigin, float?[] offset, string offsetOrigin,
             float opacity, float scale, bool snapToPixel, bool rotateWithView, float rotation, int width, int height, int imageWidth,
             int imageHeight, string imageSource)
         {
@@ -856,7 +856,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public int AddStrokeStyle(string name, string color, int lineCap, int lineJoin, int[] lineDash,
+        public int AddStrokeStyle(string name, string color, int lineCap, int lineJoin, int?[] lineDash,
             int miterLimit, int width)
         {
             try
@@ -873,7 +873,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void ModifyStrokeStyle(int styleId, string name, string color, int lineCap, int lineJoin, int[] lineDash,
+        public void ModifyStrokeStyle(int styleId, string name, string color, int lineCap, int lineJoin, int?[] lineDash,
             int miterLimit, int width)
         {
             try
@@ -1210,7 +1210,7 @@ namespace GDO.Apps.Maps
             double[] topLeft = { 0, 0, 0, 0 };
             double[] bottomRight = { 0, 0, 0, 0 };
             double[] center = { 0, 0, 0, 0 };
-            Position position = new Position(topLeft, center, bottomRight, 0, 0);
+            Position position = new Position(topLeft, center, bottomRight, 77, 11);
             View view = new View(position, 0, 100, 100);
 
             //Add Formats to Template
@@ -1297,13 +1297,13 @@ namespace GDO.Apps.Maps
             VectorTileSource vectorTileSource = new VectorTileSource();
             VectorSource vectorSource = new VectorSource();
 
-            vectorSource.Id = 9;
-            vectorSource.Type = (int)SourceTypes.Vector;
-            vectorSource.Name = vectorSource.ClassName;
             bingMapsSource.Prepare();
             bingMapsSource.Id = 0;
             bingMapsSource.Type = (int)SourceTypes.BingMaps;
             bingMapsSource.Name = bingMapsSource.ClassName;
+            bingMapsSource.MaxZoom = 19;
+            bingMapsSource.ImagerySet = "AerialWithLabels";
+            bingMapsSource.Key = "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3";
             clusterSource.Prepare();
             clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
@@ -1319,6 +1319,7 @@ namespace GDO.Apps.Maps
             vectorImageSource.Type = (int)SourceTypes.ImageVector;
             vectorImageSource.Name = vectorImageSource.ClassName;
             vectorImageSource.VectorSource = vectorSource;
+            vectorImageSource.Style = fillStyle;
             imageTileSource.Prepare();
             imageTileSource.Id = 4;
             imageTileSource.Type = (int)SourceTypes.TileImage;
@@ -1342,20 +1343,26 @@ namespace GDO.Apps.Maps
             vectorTileSource.Id = 8;
             vectorTileSource.Type = (int)SourceTypes.TileVector;
             vectorTileSource.Name = vectorTileSource.ClassName;
+            vectorTileSource.Format = esriJsonFormat;
             vectorTileSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
             vectorSource.Prepare();
+            vectorSource.Id = 9;
+            vectorSource.Type = (int)SourceTypes.Vector;
+            vectorSource.Format = esriJsonFormat;
+            vectorSource.Name = vectorSource.ClassName;
 
 
-            sources.Add(bingMapsSource);
-            sources.Add(clusterSource);
-            sources.Add(staticImageSource);
-            sources.Add(vectorImageSource);
-            sources.Add(imageTileSource);
-            sources.Add(xyzSource);
-            sources.Add(stamenSource);
-            sources.Add(jsonTileSource);
-            sources.Add(vectorTileSource);
             sources.Add(vectorSource);
+            sources.Add(bingMapsSource);
+            //sources.Add(clusterSource);
+            //sources.Add(staticImageSource);
+            //sources.Add(vectorImageSource);
+            //sources.Add(imageTileSource);
+            //sources.Add(xyzSource);
+            //sources.Add(stamenSource);
+            //sources.Add(jsonTileSource);
+            //sources.Add(vectorTileSource);
+
 
             //Add Layers to Template
             HeatmapLayer heatmapLayer = new HeatmapLayer();
@@ -1372,17 +1379,18 @@ namespace GDO.Apps.Maps
             imageLayer.Id = 1;
             imageLayer.Type = (int)LayerTypes.Image;
             imageLayer.Name = imageLayer.ClassName;
-            imageLayer.Source = imageTileSource;
+            imageLayer.Source = vectorSource;
             tileLayer.Prepare();
             tileLayer.Id = 2;
             tileLayer.Type = (int)LayerTypes.Tile;
             tileLayer.Name = tileLayer.ClassName;
-            tileLayer.Source = vectorTileSource;
+            tileLayer.Source = bingMapsSource;
             vectorLayer.Prepare();
             vectorLayer.Id = 3;
             vectorLayer.Type = (int)LayerTypes.Vector;
             vectorLayer.Name = vectorLayer.ClassName;
             vectorLayer.Source = vectorSource;
+            vectorLayer.Style = fillStyle;
 
 
             layers.Add(heatmapLayer);

@@ -8,11 +8,11 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class ClusterSource : Source
     {
-        public int Distance { get; set; }
-        public double[] Extent { get; set; }
+        public int? Distance { get; set; }
+        public double?[] Extent { get; set; }
         public Format Format { get; set; }
         public VectorSource VectorSource { get; set; }
-        new public void Init(int distance, double[] extent, Format format, VectorSource vectorSource)
+        new public void Init(int distance, double?[] extent, Format format, VectorSource vectorSource)
         {
             Distance = distance;
             Extent = extent;

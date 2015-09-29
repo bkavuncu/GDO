@@ -18,8 +18,8 @@ namespace GDO.Apps.Maps.Core.Sources
     {
         public Format Format { get; set; }
         public string Url { get; set; }
-        public int LoadingStrategy { get; set; }
-        public bool UseSpatialIndex { get; set; }
+        public int? LoadingStrategy { get; set; }
+        public bool? UseSpatialIndex { get; set; }
 
         new public void Init(Format format, string url, int loadingStrategy, bool useSpatialIndex)
         {

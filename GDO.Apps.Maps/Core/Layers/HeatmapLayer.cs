@@ -8,10 +8,10 @@ namespace GDO.Apps.Maps.Core.Layers
     public class HeatmapLayer : Layer
     {
         public string[] Gradient { get; set; }
-        public float Radius { get; set; }
-        public float Shadow { get; set; }
-        public float Weight { get; set; }
-        public float Blur { get; set; }
+        public float? Radius { get; set; }
+        public float? Shadow { get; set; }
+        public float? Weight { get; set; }
+        public float? Blur { get; set; }
 
         new public void Init(string[] gradient, float radius, float shadow, float weight, float blur)
         {

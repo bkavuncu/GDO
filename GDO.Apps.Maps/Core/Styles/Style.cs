@@ -12,7 +12,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public Styles.ImageStyle Image { get; set; }
         public StrokeStyle Stroke { get; set; }
         public TextStyle Text { get; set; }
-        public int ZIndex { get; set; }
+        public int? ZIndex { get; set; }
 
         new public void Modify(Geometry geometry, FillStyle fill, Styles.ImageStyle image, StrokeStyle stroke, TextStyle text, int zIndex)
         {

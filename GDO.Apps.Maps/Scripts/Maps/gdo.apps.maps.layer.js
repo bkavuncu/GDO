@@ -10,7 +10,7 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
     gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Layer: ' + deserializedLayer.Id);
     if (gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == null || typeof gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == "undefined") {
         gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedLayer.Source.Id);
-        gdo.net.app["Maps"].updateSource(instanceId, deserializedLayer.Source.Id, deserializedLayer.Source);
+        gdo.net.app["Maps"].addSource(instanceId, deserializedLayer.Source.Id, deserializedLayer.Source);
     }
     var layer;
     var properties;
@@ -72,7 +72,7 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
             if (gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id] == null || typeof gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id] == "undefined") {
-                gdo.net.app["Maps"].updateStyle(instanceId, deserializedLayer.Style.Id, deserializedLayer.Style);
+                gdo.net.app["Maps"].addStyle(instanceId, deserializedLayer.Style.Id, deserializedLayer.Style);
                 gdo.consoleOut('.MAPS', 1, 'Instance ' + instanceId + ': Added Style: ' + deserializedLayer.Style.Id);
             }
             properties = [

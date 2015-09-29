@@ -24,13 +24,13 @@ namespace GDO.Apps.Maps.Core.Styles
     public class StrokeStyle : Core.Style
     {
         public string Color { get; set; }
-        public int LineCap { get; set; }
-        public int LineJoin { get; set; }
-        public int[] LineDash { get; set; }
-        public int MiterLimit { get; set; }
-        public int Width { get; set; }
+        public int? LineCap { get; set; }
+        public int? LineJoin { get; set; }
+        public int?[] LineDash { get; set; }
+        public int? MiterLimit { get; set; }
+        public int? Width { get; set; }
 
-        new public void Init(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
+        new public void Init(string color, int lineCap, int lineJoin, int?[] lineDash, int miterLimit, int width)
         {
             Color = color;
             LineCap = lineCap;
@@ -53,7 +53,7 @@ namespace GDO.Apps.Maps.Core.Styles
             AddtoEditables(() => Width);
         }
 
-        new public void Modify(string color, int lineCap, int lineJoin, int[] lineDash, int miterLimit, int width)
+        new public void Modify(string color, int lineCap, int lineJoin, int?[] lineDash, int miterLimit, int width)
         {
             Color = color;
             LineCap = lineCap;

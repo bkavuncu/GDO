@@ -9,7 +9,7 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
     {
         public string CrossOrigin { get; set; }
         public TileGrid TileGrid { get; set; }
-        public bool Opaque { get; set; }
+        public bool? Opaque { get; set; }
 
         new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque)
         {

@@ -38,6 +38,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
     var properties;
     var options = {};
     var tileGrid;
+
     switch (deserializedSource.Type) {
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
             properties = [
@@ -190,6 +191,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
     source.name = deserializedSource.Name;
     source.type = deserializedSource.Type;
     source.properties = deserializedSource;
+    gdo.net.instance[instanceId].sources[source.id] = source;
 }
 
 gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedSource) {

@@ -7,7 +7,7 @@ namespace GDO.Apps.Maps.Core.Layers
 {
     public class TileLayer : Layer
     {
-        public int Preload { get; set; }
+        public int? Preload { get; set; }
 
         new public void Init(int preload)
         {
