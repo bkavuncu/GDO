@@ -377,10 +377,6 @@ gdo.net.updateNodes = function () {
     //depreciated for now
 }
 
-gdo.updateDisplayCanvas = function () {
-
-}
-
 gdo.updateSelf = function () {
     /// <summary>
     /// Updates the self.
