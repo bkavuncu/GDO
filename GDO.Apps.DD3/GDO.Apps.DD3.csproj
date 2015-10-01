@@ -128,7 +128,7 @@
     <Content Include="Configurations\DD3\Scatterplot.json" />
     <Content Include="Configurations\DD3\Graphs.json" />
     <Content Include="Configurations\DD3\Handmoves.json" />
-    <Content Include="Configurations\DD3\MapTube.json" />
+    <Content Include="Configurations\DD3\MapTubeLondon.json" />
     <Content Include="Configurations\DD3\MapTubeShanghai.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\d3.v3.js" />

@@ -602,7 +602,7 @@
                 };
 
                 // VIZ London METRO
-                test_bench['4'] = function () {
+                test_bench['4'] = function ()  {
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
@@ -610,6 +610,7 @@
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight,
+                        anim,
                         p = dd3.position("svg", "local", "svg", "global"),
                         c = dd3.browser.column,
                         r = dd3.browser.row;
@@ -621,10 +622,8 @@
 		                    .translate([cwidth / 2, cheight / 2]);
 
                         var zoom = 10;
-                        //var topLeft = [-0.40, 51.76]; // LONG - LAT (of London)
-                        //var bottomRight = [-0.10, 51.34]; // LONG - LAT (of London)
-                        var topLeft = [121.175589, 31.507919]; // LONG - LAT (of Shanghai)
-                        var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of Shanghai)
+                        var topLeft = [-0.40, 51.76]; // LONG - LAT (of London)
+                        var bottomRight = [-0.10, 51.34]; // LONG - LAT (of London)
 
                         var style = {
                             earth: {
@@ -685,23 +684,29 @@
                         var callbackTube = function () {
                             tube.loadLines(function () {
                                 tube.drawLines(mapGroup, map);
-                                launchAnimation();
                             });
                         };
 
+                        var lineNames = ["Northern","Bakerloo", "Central", "District", "Circle", "HammersmithCity", "Metropolitan", "Piccadilly", "WaterlooCity", "Victoria", "Jubilee"];
+                        var lineColors = ["black", "#ae6118", "#ed1b2e", "#007229", "#FFDD00", "#f385a1", "#78004C", "#0019A8", "#76d0bd", "#00A0E2", "#8A8C8E"];
+
                         map = mapHandler(args);
-                        tube = tubeLines(mapGroup, map);
+                        tube = tubeLines(mapGroup, map, lineNames, lineColors);
                         //map.load(["earth", "water", "landuse", "roads"], callbackTube);
                         map.load(["earth", "water", "roads"], callbackTube);
                     };
 
                     // TEST ANIMATION
-                    launchAnimation = function () {
+                    orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
+                        if (anim)
+                            anim.stop();
+
                         var args = {
                             timeStep: 2000,
                             map: map,
                             tubeLines: tube,
-                            clock: clockDiv
+                            clock: clockDiv,
+                            entry: entry
                         };
 
                         anim = animation(args);
@@ -718,7 +723,7 @@
                 };
 
                 // VIZ SHANGHAI METRO
-                test_bench["%5D"] = function () {
+                test_bench['5'] = function () {
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
@@ -726,6 +731,7 @@
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight,
+                        anim,
                         p = dd3.position("svg", "local", "svg", "global"),
                         c = dd3.browser.column,
                         r = dd3.browser.row;
@@ -737,8 +743,8 @@
 		                    .translate([cwidth / 2, cheight / 2]);
 
                         var zoom = 9;
-                        var topLeft = [31.5, 121]; // LONG - LAT (of shanghai ) 31.478256, 121.053779
-                        var bottomRight = [31, 121.9]; // LONG - LAT (of shanghai)30.908508, 121.888740
+                        var topLeft = [121.175589, 31.507919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of shanghai) 121.888740, 30.908508
 
                         var style = {
                             earth: {
@@ -756,7 +762,7 @@
                                     fillColor: "#384b4c",
                                     strokeColor: "#384b4c",
                                     strokeSize: 1
-                                },//*
+                                },/*
                                 ocean: {
                                     fillColor: "#384b4c",
                                     strokeColor: "#384b4c",
@@ -799,23 +805,29 @@
                         var callbackTube = function () {
                             tube.loadLines(function () {
                                 tube.drawLines(mapGroup, map);
-                                launchAnimation();
                             });
                         };
 
+                        var lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16", "Maglev"];
+                        var lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff", "#DEDEDE"];
+
                         map = mapHandler(args);
-                        tube = tubeLines(mapGroup, map);
+                        tube = tubeLines(mapGroup, map, lineNames, lineColors);
                         //map.load(["earth", "water", "landuse", "roads"], callbackTube);
                         map.load(["earth", "water", "roads"], callbackTube);
                     };
 
                     // TEST ANIMATION
-                    launchAnimation = function () {
+                    orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
+                        if (anim)
+                            anim.cleanup();
+
                         var args = {
                             timeStep: 2000,
                             map: map,
                             tubeLines: tube,
-                            clock: clockDiv
+                            clock: clockDiv,
+                            entry: entry
                         };
 
                         anim = animation(args);

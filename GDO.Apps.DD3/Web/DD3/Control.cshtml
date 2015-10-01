@@ -377,7 +377,25 @@
                     server.sendOrder(instanceId, order("delAllRect", []), true);
                 };
 
+                test_bench[4] = function () {
+                    $('#launchEntryAnimationLondon').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    });
 
+                    $('#launchExitAnimationLondon').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    });
+                };
+
+                test_bench[5] = function () {
+                    $('#launchEntryAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    });
+
+                    $('#launchExitAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    });
+                };
             });
         });
     </script>
@@ -477,6 +495,28 @@
                 <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width:40px" /></td>
             </tr>
         </table> 
+    </div>
+
+    <div id="control_4" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationLondon">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationLondon">Launch Animation of exit</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_5" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationShanghai">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationShanghai">Launch Animation of exit</td>
+            </tr>
+        </table>
     </div>
 
 </body>
