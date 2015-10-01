@@ -5,8 +5,7 @@ var animation = function (arg) {
 		initialized = 0,
 		running = false,
 		scale = d3.scale.log(),
-		currentTime = 0,
-		entry = 0; // 1 = out, 0 = in
+		currentTime = 0;
 		
 	var a = function (arg) {
 		// Given as Arguments	
@@ -16,6 +15,7 @@ var animation = function (arg) {
 		a.stations = a.lines.stations;
 		a.clock = arg.clock;
 		a.svg = a.map.svg;
+		a.entry = arg.entry || 0; // 1 = out, 0 = in
 		a.aggregate = arg.aggregate || 1;
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];
@@ -78,7 +78,7 @@ var animation = function (arg) {
 			                tMax = (val[0] > val[1] ? val[0] : val[1]);
 			                max = tMax <= max ? max : tMax;
 			                if (max === tMax) { xMax = [x, name]; }
-			                return [pos, val[entry], name];
+			                return [pos, val[a.entry], name];
 			            });
 			            a.aggregatedData.set(x, array);
 			        }
@@ -99,19 +99,20 @@ var animation = function (arg) {
 	};
 	
 	var update = function (time) {
-		if (initialized < 2) {
-			if (initialized === 0) {
-				console.error("DATA NOT LOADED - CANNOT START ANIMATION");
-			} else if (initialized === 1) {
-			    console.error("ANIMATION NOT INITIALIZED");
-			}
-			return; 
-		} else if (a.aggregatedData.size() === 0)
-            return
-		
 		if (a.clock) {
 			updateClock(a.timeInterval * time);
 		}
+
+		if (initialized < 2) {
+		    if (initialized === 0) {
+		        console.error("DATA NOT LOADED - CANNOT START ANIMATION");
+		    } else if (initialized === 1) {
+		        console.error("ANIMATION NOT INITIALIZED");
+		    }
+		    return;
+		} else if (a.aggregatedData.size() === 0)
+		    return;
+		
 		
 		var group = a.svg.select('#dd3_animation'),
 			circlesEnter,
@@ -231,6 +232,11 @@ var animation = function (arg) {
 		clearTimeout(currentTimeout);
 	};
 	
+	a.cleanup = function () {
+	    a.stop();
+	    a.svg.select('#dd3_animation').remove();
+	};
+
 	a.changeColor = function (color1, color2) {
 		a.svg.select('#area-gradient').selectAll('stop').attr('stop-color', function (d, i) { return i === 0 ? color1 : color2;});
 	};

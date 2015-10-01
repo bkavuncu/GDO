@@ -1,12 +1,9 @@
-var tubeLines = function (svg, map) {
+var tubeLines = function (svg, map, lineNames, lineColors) {
 	'use strict';
 
-
-	var l = function () {//TODO this needs to be modified for Shanghai - lines are numbered "1"-"13" and "Maglev" not sure what colours are...
-	    //l.lineNames = ["Northern","Bakerloo", "Central", "District", "Circle", "HammersmithCity", "Metropolitan", "Piccadilly", "WaterlooCity", "Victoria", "Jubilee"];
-	    //l.lineColors = ["black", "#ae6118", "#ed1b2e", "#007229", "#FFDD00", "#f385a1", "#78004C", "#0019A8", "#76d0bd", "#00A0E2", "#8A8C8E"];
-	    l.lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16", "Maglev"];
-	    l.lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff", "#DEDEDE"];
+	var l = function () { // TODO this needs to be modified for Shanghai - lines are numbered "1"-"13" and "Maglev" not sure what colours are...
+	    l.lineNames = lineNames;
+	    l.lineColors = lineColors;
 		l.ids = 0;
 		return l;
 	};
@@ -66,17 +63,17 @@ var tubeLines = function (svg, map) {
 			.attr("in", "offsetBlur");
 		feMerge.append("feMergeNode")
 			.attr("in", "SourceGraphic");
-		/*
+		//*
 		l.lineNames.forEach(function (name, i) {
 			var line = l.lines.get(name);
 			var color = l.lineColors[i];
-			g.append("g").attr("id", name).attr("opacity", 1);
+			g.append("g").attr("id", "line_" + name).attr("opacity", 1);
 			
 			line.forEach(function (partLine) {
 				l.stations.getStationsCoordinates(partLine).forEach(function (d,i) { if (!d) console.log("Error converting station : ", i, partLine[i]);});
 				var pLine = map.getPointsAt(l.stations.getStationsCoordinates(partLine));
 				
-				g.select("g#" + name)
+				g.select("g#line_" + name)
 					.append("path")
 					.classed("tube", true)
 					.attr("d", lineGenerator(pLine))
@@ -87,7 +84,7 @@ var tubeLines = function (svg, map) {
 					.attr("stroke-linecap", "round");
 			});
 		});
-        */
+        //*/
 		l.stations.drawStations(l);
 	};
 

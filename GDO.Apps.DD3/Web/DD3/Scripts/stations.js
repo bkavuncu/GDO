@@ -2,8 +2,8 @@ var stations = function (svg, map) {
 	'use strict';
 
 	var s = function () {},
-		strokeWidth = 2,
-		centerWidth = 2;
+		strokeWidth = 4,
+		centerWidth = 4;
 
 	s.stations = d3.map();
 	
@@ -27,7 +27,6 @@ var stations = function (svg, map) {
 	        ymax: toCoordinateTopLeft[1]
 	    };
 
-	    //dd3.getPointData("stationsLocation", "stationsData", callback, null, null, ["coordinates", 0], ["coordinates", 1], [["name"], ["coordinates"], ["lines"]], limit);
 	    dd3.getData("stationsLocation", "stationsData", callback, [["name"], ["coordinates"], ["lines"]]);
 	};
 	
