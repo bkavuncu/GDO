@@ -20,7 +20,7 @@ var animation = function (arg) {
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];
 		
-		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
+		a.realStartTime = +(new Date(Date.UTC(2015,3,1,6)));
 		a.timeInterval = min(2); // 15 min
 		
 		// == Yellow circles min and max size ==
@@ -134,7 +134,7 @@ var animation = function (arg) {
                     .precision(0.5)
                     .delay(function (d) { return Math.random() * a.timeStep * a.aggregate; })
                     .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
-                    .attr('r', function (d) { return (d[1] > 0) ? scale(d[1]) : 0; })
+                    .attr('r', 20)   //.attr('r', function (d) { return (d[1] > 0) ? scale(d[1]) : 0; })       // add to config
                     .transition()
                     .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
                     .attr('r', 0)

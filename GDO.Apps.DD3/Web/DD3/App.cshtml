@@ -39,7 +39,7 @@
           stroke: #000;
         }
 
-        #clock {
+        #viz_title, #clock {
             position : absolute;
             display : inline-block;
             font-size: 3em;
@@ -607,7 +607,8 @@
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
-	                    cwidth = dd3.cave.svgWidth,
+                        titleDiv = d3.select('#viz_title').unwatch(),
+                        cwidth = dd3.cave.svgWidth,
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight,
@@ -616,6 +617,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
+                    titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
                     clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
 
                     loadMap = function () {
@@ -728,6 +730,7 @@
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
 	                    cwidth = dd3.cave.svgWidth,
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
@@ -736,8 +739,9 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
+                    titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
                     clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
-
+                    
                     loadMap = function () {
                         var projection = d3.geo.mercator()
 		                    .translate([cwidth / 2, cheight / 2]);
@@ -814,7 +818,8 @@
                         };
 
                         var lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16", "Maglev"];
-                        var lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff", "#DEDEDE"];
+                        //var lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff", "#DEDEDE"];  //old ones
+                        var lineColors = ["#e81b38", "#8ac63f", "#fbd005", "#4f2d8b", "#9056a3", "#d7006c", "#f37120", "#009dd8", "#7ac7ea", "#bca8d1", "#7d2030", "#007c65", "#e795c0", "#8ed1c0", "#DEDEDE"];
 
                         map = mapHandler(args);
                         tube = tubeLines(mapGroup, map, lineNames, lineColors);
@@ -885,6 +890,7 @@
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
 	                    cwidth = dd3.cave.svgWidth,
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
@@ -893,8 +899,11 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
+                    if (dd3.position.html.left < 1000) {   // only draw in the appropriate browser
+                        titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+                    } 
                     clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
-
+                    
                     loadMap = function () {
                         var projection = d3.geo.mercator()
 		                    .translate([cwidth / 2, cheight / 2]);
@@ -969,7 +978,7 @@
                         };
 
                         var lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16"];
-                        var lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff"];
+                        var lineColors = ["#e81b38", "#8ac63f", "#fbd005", "#4f2d8b", "#9056a3", "#d7006c", "#f37120", "#009dd8", "#7ac7ea", "#bca8d1", "#7d2030", "#007c65", "#e795c0", "#8ed1c0"];
 
                         map = mapHandler(args);
                         tube = tubeLines(mapGroup, map, lineNames, lineColors);
@@ -1048,7 +1057,8 @@
         </p>
     </div>
 
-    <div id="clock" style="display:none"></div>
+<div id="clock" style="display: none"></div>
+<div id="viz_title" style="display:none">METRO LINES</div>
 
 </body>
 </html>
