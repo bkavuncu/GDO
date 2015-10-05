@@ -1,0 +1,11 @@
+﻿{
+  "longtitude": "13520954.074768195",
+  "latitude": "3652883.4162973217",
+  "resolution": "77",
+  "zoom": "11",
+  "styles": [
+    "Road",
+    "Aerial",
+    "AerialWithLabels"
+  ]
+}
