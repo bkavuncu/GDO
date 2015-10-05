@@ -275,7 +275,7 @@ var initDD3App = function () {
         return api;
     };
 
- //   var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
+    //var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
     var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
 
     var dd3 = (function () {
@@ -1960,12 +1960,12 @@ var initDD3App = function () {
                 args.properties = properties;
             };
 
-            var _dd3_hook_selection_transition = d3.selection.prototype.transition;
+            var _dd3_hook_selection_transition = _dd3.selection.prototype.transition_ = d3.selection.prototype.transition;
 
             var _dd3_hook_transition_transition = d3.transition.prototype.transition;
 
             _dd3.selection.prototype.transition = function (name) {
-                var t = _dd3_selection_createProperties(_dd3_selection_filterWatched(_dd3_hook_selection_transition.apply(this, arguments))),
+                var t = _dd3_selection_createProperties(_dd3_hook_selection_transition.apply(this, arguments)),
                     ns = _dd3_transitionNamespace(name),
                     ease = "cubic-in-out",
                     precision = _dd3_precision;
@@ -1974,7 +1974,7 @@ var initDD3App = function () {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
 
                     t.each("start.dd3", function (d, i) {
-                        if (!this.parentNode)
+                        if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__ )
                             return;
                         var transition = this[ns][this[ns].active];
 
@@ -2034,11 +2034,15 @@ var initDD3App = function () {
                     });
 
                     t.each("interrupt.dd3", function (d, i) {
+                        if (_dd3_isReceived(this) || this.__unwatch__)
+                            return;
                         this.__dd3_transitions__.remove(ns);
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
 
                     t.each("end.dd3", function (d, i) {
+                        if (_dd3_isReceived(this) || this.__unwatch__)
+                            return;
                         this.__dd3_transitions__.remove(ns);
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
@@ -2153,14 +2157,14 @@ var initDD3App = function () {
                 return initialize(t, ease, precision);
             };
 
-            dd3.defineEase = function (name, func) {
+            _dd3.defineEase = function (name, func) {
                 if (arguments.length < 2) return _dd3_eases['dd3_' + name];
                 if (func == null) delete _dd3_eases['dd3_' + name];
                 else _dd3_eases['dd3_' + name] = func;
                 return name;
             };
 
-            dd3.defineTween = function (name, func, spec) {
+            _dd3.defineTween = function (name, func, spec) {
                 if (arguments.length < 2) return _dd3_tweens['dd3_' + name];
                 if (func == null) delete _dd3_tweens['dd3_' + name];
                 else {
@@ -2170,12 +2174,12 @@ var initDD3App = function () {
                 return name;
             };
 
-            dd3.defineAttrTween = function (name, func) {
-                return dd3.defineTween(name, func, ".attr");
+            _dd3.defineAttrTween = function (name, func) {
+                return _dd3.defineTween(name, func, ".attr");
             };
 
-            dd3.defineStyleTween = function (name, func) {
-                return dd3.defineTween(name, func, ".style");
+            _dd3.defineStyleTween = function (name, func) {
+                return _dd3.defineTween(name, func, ".style");
             };
 
             /**

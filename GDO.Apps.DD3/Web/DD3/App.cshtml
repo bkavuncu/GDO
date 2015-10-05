@@ -42,7 +42,7 @@
         #clock {
             position : absolute;
             display : inline-block;
-            font-size: 1.5em;
+            font-size: 3em;
             font-family : clockFont;
             color: #FFF;
             opacity : 1;
@@ -64,9 +64,10 @@
     <script src="~/Web/DD3/Scripts/stations.js"></script>
     <script src="~/Web/DD3/Scripts/lines.js"></script>
     <script src="~/Web/DD3/Scripts/animation.js"></script>
+    <script src="~/Web/DD3/Scripts/animationLines.js"></script>
 
     <script>
-        var dd3, loadMap, launchAnimation, map;
+        var dd3, loadMap, launchAnimation, map, anim;
 
         $(function () {
             $(document).ready(function () {
@@ -731,7 +732,6 @@
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight,
-                        anim,
                         p = dd3.position("svg", "local", "svg", "global"),
                         c = dd3.browser.column,
                         r = dd3.browser.row;
@@ -742,9 +742,14 @@
                         var projection = d3.geo.mercator()
 		                    .translate([cwidth / 2, cheight / 2]);
 
-                        var zoom = 9;
+                        var zoom = 11;
+                        /*
                         var topLeft = [121.175589, 31.507919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
                         var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        /*/
+                        var topLeft = [121.475589, 31.357919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [121.5, 31.1]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        //*/
 
                         var style = {
                             earth: {
@@ -838,6 +843,192 @@
                             });
                         });
 
+                    };
+
+                    orderController.orders['startAnimation'] = function () {
+                        dd3.synchronize(function () {
+                            anim.start();
+                        });
+                    };
+
+                    orderController.orders['pauseAnimation'] = function () {
+                        anim.stop();
+                    };
+
+                    orderController.orders['cleanupAnimation'] = function () {
+                        anim.cleanup();
+                    };
+
+                    orderController.orders['createAnimation'] = function () {
+                        var args = {
+                            timeStep: 2000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            entry: 1
+                        };
+
+                        anim = animation(args);
+                    };
+
+                    orderController.orders['initAnimation'] = function () {
+                        anim.loadData(function () {
+                            anim.init();
+                        });
+                    };
+
+                    loadMap();
+                };
+
+                // VIZ SHANGHAI METRO LINK LOAD
+                test_bench['6'] = function () {
+                    var svg = dd3.svgCanvas,
+                        mapGroup = svg.append('g').attr('id', 'dd3_map'),
+                        clockDiv = d3.select('#clock').unwatch(),
+	                    cwidth = dd3.cave.svgWidth,
+	                    cheight = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
+
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
+
+                    loadMap = function () {
+                        var projection = d3.geo.mercator()
+		                    .translate([cwidth / 2, cheight / 2]);
+
+                        var zoom = 11;
+                        /*
+                        var topLeft = [121.175589, 31.507919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        /*/
+                        var topLeft = [121.475589, 31.357919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [121.5, 31.1]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        //*/
+
+                        var style = {
+                            earth: {
+                                fillColor: "#272a29",
+                                strokeColor: "#272a29",
+                                strokeSize: 2
+                            },
+                            water: {
+                                /*
+			                    fillColor : "#384b4c",
+			                    strokeColor : "#384b4c",
+			                    strokeSize : 1,
+			                    //*/
+                                riverbank: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                },/*
+                                ocean: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                }//*/
+                            },
+                            roads: {
+                                highway: {
+                                    strokeColor: "#555",
+                                    strokeSize: 1.2
+                                },
+                                major_road: {
+                                    strokeColor: "#555",
+                                    strokeSize: 0.7
+                                }
+                                /*,
+			                    minor_road : {
+				                    strokeColor : "#555",
+				                    strokeSize : 0.7
+			                    }
+			                    //*/
+                            },
+                            landuse: {
+                                park: {
+                                    fillColor: d3.rgb("#cedfad").darker(1)
+                                }
+                            }
+                        };
+
+                        var args = {
+                            topLeftBound: topLeft,
+                            bottomRightBound: bottomRight,
+                            zoom: zoom,
+                            svg: mapGroup,
+                            projection: projection,
+                            style: style,
+                            autoProjection: true,
+                        };
+
+                        var callbackTube = function () {
+                            tube.loadLines();
+                        };
+
+                        var lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16"];
+                        var lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff"];
+
+                        map = mapHandler(args);
+                        tube = tubeLines(mapGroup, map, lineNames, lineColors);
+                        map.load(["earth", "water", "roads"], callbackTube);
+                    };
+
+                    // TEST ANIMATION
+                    orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
+                        if (anim)
+                            anim.cleanup();
+
+                        var args = {
+                            timeStep: 500,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            entry: entry
+                        };
+
+                        anim = animationLines(args);
+                        anim.loadData(function () {
+                            anim.init();
+                            dd3.synchronize(function () {
+                                anim.start();
+                            });
+                        });
+
+                    };
+
+                    orderController.orders['startAnimation'] = function () {
+                        dd3.synchronize(function () {
+                            anim.start();
+                        });
+                    };
+
+                    orderController.orders['pauseAnimation'] = function () {
+                        anim.stop();
+                    };
+
+                    orderController.orders['cleanupAnimation'] = function () {
+                        anim.cleanup();
+                    };
+
+                    orderController.orders['createAnimation'] = function () {
+                        var args = {
+                            timeStep: 2000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            entry: 1
+                        };
+
+                        anim = animation(args);
+                    };
+
+                    orderController.orders['initAnimation'] = function () {
+                        anim.loadData(function () {
+                            anim.init();
+                        });
                     };
 
                     loadMap();
