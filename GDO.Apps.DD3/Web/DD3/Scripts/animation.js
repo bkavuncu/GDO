@@ -1,4 +1,4 @@
-var bigScreen = false;
+bigScreen = false;
 var animation = function (arg) {
 	'use strict';
 	var currentTimeout = null,
@@ -23,9 +23,9 @@ var animation = function (arg) {
 		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
 		a.timeInterval = min(2); // 15 min
 		
-		// To be choosen wisely =)
-		a.maxSizePixel = 15;
-		a.minSizePixel = 2;
+		// == Yellow circles min and max size ==
+		a.maxSizePixel = 15;//35;
+		a.minSizePixel = 3;//10
 		
 		scale.range([a.minSizePixel, a.maxSizePixel]);
 		
@@ -99,49 +99,51 @@ var animation = function (arg) {
 	};
 	
 	var update = function (time) {
-		if (a.clock) {
-			updateClock(a.timeInterval * time);
-		}
 
-		if (initialized < 2) {
-		    if (initialized === 0) {
-		        console.error("DATA NOT LOADED - CANNOT START ANIMATION");
-		    } else if (initialized === 1) {
-		        console.error("ANIMATION NOT INITIALIZED");
-		    }
-		    return;
-		} else if (a.aggregatedData.size() === 0)
-		    return;
-		
-		
-		var group = a.svg.select('#dd3_animation'),
-			circlesEnter,
-			circlesExit;
-			
-		if (time % a.aggregate === 0) {
-			circlesEnter = group.selectAll('circle.enter.T' + time).data(a.aggregatedData.get(time));
-			
-			circlesEnter.enter()
-				.append('circle')
-				.classed('T' + time, true)
-				.classed('enter', true)
-				.style('fill', 'url(#area-gradient)')
-				.attr('cx', function (d) {return d[0][0];})
-				.attr('cy', function (d) {return d[0][1];})
-				.attr('r', 0.2)
-				.transition()
-                .precision(0.5)
-				.delay(function(d) { return Math.random() * a.timeStep * a.aggregate; })
-				.duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
-				.attr('r', function (d) {return (d[1] > 0) ? scale(d[1]) : 0;})
-				.transition()
-				.duration(function (d) {return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0;} )
-				.attr('r', 0)
-				.each("end.new", function () {
-					d3.select(this).remove();
-				});
-		}
-			
+	    if (initialized < 2) {
+	        if (initialized === 0) {
+	            console.error("DATA NOT LOADED - CANNOT START ANIMATION");
+	        } else if (initialized === 1) {
+	            console.error("ANIMATION NOT INITIALIZED");
+	        }
+	        return;
+	    }
+
+	    if (a.clock) {
+	        updateClock(a.timeInterval * time);
+	    }
+
+	    if (a.aggregatedData.size() !== 0) {
+
+	        var group = a.svg.select('#dd3_animation'),
+			    circlesEnter,
+			    circlesExit;
+
+	        if (time % a.aggregate === 0) {
+	            circlesEnter = group.selectAll('circle.enter.T' + time).data(a.aggregatedData.get(time));
+
+	            circlesEnter.enter()
+                    .append('circle')
+                    .classed('T' + time, true)
+                    .classed('enter', true)
+                    .style('fill', 'url(#areaGradient)')
+                    .attr('cx', function (d) { return d[0][0]; })
+                    .attr('cy', function (d) { return d[0][1]; })
+                    .attr('r', 0.2)
+                    .transition()
+                    .precision(0.5)
+                    .delay(function (d) { return Math.random() * a.timeStep * a.aggregate; })
+                    .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
+                    .attr('r', function (d) { return (d[1] > 0) ? scale(d[1]) : 0; })
+                    .transition()
+                    .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
+                    .attr('r', 0)
+                    .each("end.new", function () {
+                        d3.select(this).remove();
+                    });
+	        }
+	    }
+
 		if (running && (currentTime + 1 < a.dataLength)) {
 			currentTime++;
 			currentTimeout = setTimeout(function () {update(currentTime);}, a.timeStep);
@@ -189,27 +191,28 @@ var animation = function (arg) {
 	        return;
 	    }
 
-	    a.svg.append('g').attr('id', 'dd3_animation');
+	    if (a.svg.select('#dd3_animation').empty()) {
+	        a.svg.append('g').attr('id', 'dd3_animation');
 
-	    //Create Gradient			
-	    a.svg.select('#dd3_animation').append('radialGradient').unwatch()
-            .attr('id', 'area-gradient')
-            .attr('cx', '50%').attr('cy', '50%')
-            .attr('fx', '50%').attr('fy', '50%')
-            .attr('r', '50%');
+	        //Create Gradient			
+	        a.svg.select('#dd3_animation').append('radialGradient').unwatch()
+                .attr('id', 'areaGradient')
+                .attr('cx', '50%').attr('cy', '50%')
+                .attr('fx', '50%').attr('fy', '50%')
+                .attr('r', '50%');
 
-	    var stop = a.svg.select('#area-gradient').selectAll('stop')
-            .data([
-                { offset: '0%', opacity: 1 },
-                { offset: '20%', opacity: 1 },
-                { offset: '100%', opacity: 0.2 }
-            ]);
+	        var stop = a.svg.select('#areaGradient').selectAll('stop')
+                .data([
+                    { offset: '0%', opacity: 1 },
+                    { offset: '20%', opacity: 1 },
+                    { offset: '100%', opacity: 0.2 }
+                ]);
 
-	    stop.enter().append('stop')
-            .attr('offset', function (d) { return d.offset; })
-            .attr('stop-opacity', function (d) { return d.opacity; })
-            .attr('stop-color', function (d, i) { return i === 0 ? a.color[0] : a.color[1]; });
-
+	        stop.enter().append('stop')
+                .attr('offset', function (d) { return d.offset; })
+                .attr('stop-opacity', function (d) { return d.opacity; })
+                .attr('stop-color', function (d, i) { return i === 0 ? a.color[0] : a.color[1]; });
+	    }
 
 	    scale.domain([1, a.maxSizeNumber]);
 	    //createScale();
@@ -234,11 +237,11 @@ var animation = function (arg) {
 	
 	a.cleanup = function () {
 	    a.stop();
-	    a.svg.select('#dd3_animation').remove();
+	    a.svg.select('#dd3_animation').selectAll('circle').remove();
 	};
 
 	a.changeColor = function (color1, color2) {
-		a.svg.select('#area-gradient').selectAll('stop').attr('stop-color', function (d, i) { return i === 0 ? color1 : color2;});
+		a.svg.select('#areaGradient').selectAll('stop').attr('stop-color', function (d, i) { return i === 0 ? color1 : color2;});
 	};
 	
 	/* HELPER FUNCTIONS */
