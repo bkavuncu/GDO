@@ -8,7 +8,7 @@
     gdo.management.table_width = 100;
     gdo.management.button_height = 61;
     gdo.management.button_cols = 6;
-    gdo.management.header_cols = 10;
+    gdo.management.header_cols = 11;
     gdo.management.cell_padding = 7;
     gdo.management.isRectangle = true;
     gdo.management.isStarted = false;
@@ -21,6 +21,7 @@
     gdo.management.toggleSectionTable = true;
     gdo.management.toggleAppTable = false;
     gdo.management.toggleInstanceTable = false;
+    gdo.management.toggleStateTable = false;
     gdo.management.toggleConsole = false;
 
     gdo.management.numToggleMenu = 2;
@@ -35,7 +36,8 @@
     gdo.loadModule("nodes","management", gdo.MODULE_TYPE.CORE);
     gdo.loadModule("sections","management", gdo.MODULE_TYPE.CORE);
     gdo.loadModule("apps","management", gdo.MODULE_TYPE.CORE);
-    gdo.loadModule("instances","management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("instances", "management", gdo.MODULE_TYPE.CORE);
+    gdo.loadModule("states", "management", gdo.MODULE_TYPE.CORE);
 });
 
 gdo.updateDisplayCanvas = function () {
@@ -86,7 +88,14 @@ gdo.updateDisplayCanvas = function () {
         $("#instance_table").hide();
         $("#instance_table_space").hide();
     }
-
+    if (gdo.management.toggleStateTable) {
+        $("#states_table").show();
+        $("#states_table_space").show();
+        gdo.management.drawStateTable();
+    } else {
+        $("#states_table").hide();
+        $("#states_table_space").hide();
+    }
     if (gdo.management.toggleConsole) {
         $("#console_area").show();
         $("#console_area_space").show();
@@ -114,7 +123,7 @@ gdo.management.drawEmptyHeaderTable = function (maxCol, maxRow) {
 }
 
 gdo.management.drawHeaderTable = function () {
-    gdo.management.drawEmptyHeaderTable(13, 1);
+    gdo.management.drawEmptyHeaderTable(15, 1);
     $("#header_table_row_0_col_0")
         .empty()
         .append("<div id='header-text' id='header-text'> <b> GDO </b>Control Panel</div>")
@@ -270,13 +279,50 @@ gdo.management.drawHeaderTable = function () {
         }
     }
     $("#header_table_row_0_col_9")
+       .empty()
+       .css("height", gdo.management.button_height)
+       .css("width", "0px")
+       .css("background-color", "#444")
+       .css("border", "1px solid #444")
+       .css({ fontSize: gdo.management.header_font_size });
+    $("#header_table_row_0_col_10")
+        .empty()
+        .append("<div id='header-text'> States </div>")
+        .css("height", gdo.management.button_height)
+        .css("width", (gdo.management.table_width / gdo.management.header_cols) + "%")
+        .css("color", "#777")
+        .css('padding', gdo.management.cell_padding)
+        .attr("align", "center")
+        .css({ fontSize: gdo.management.header_font_size })
+        .click(function () {
+            if (gdo.management.toggleStateTable) {
+                gdo.management.toggleStateTable = false;
+                gdo.management.numToggleMenu--;
+                gdo.updateDisplayCanvas();
+            } else if (gdo.management.numToggleMenu < gdo.management.maxToggleMenu) {
+                gdo.management.numToggleMenu++;
+                gdo.management.toggleStateTable = true;
+                gdo.updateDisplayCanvas();
+            }
+        });
+    if (gdo.management.toggleStateTable) {
+        $("#header_table_row_0_col_10").css("color", "lightgreen");
+    } else {
+        if (gdo.management.numToggleMenu + 1 < gdo.management.maxToggleMenu) {
+            $("#header_table_row_0_col_10").css("color", "white");
+        } else {
+            $("#header_table_row_0_col_10").css("color", "#777");
+        }
+    }
+
+    $("#header_table_row_0_col_11")
         .empty()
         .css("height", gdo.management.button_height)
         .css("width", "0px")
         .css("background-color", "#444")
         .css("border", "1px solid #444")
         .css({ fontSize: gdo.management.header_font_size });
-    $("#header_table_row_0_col_10")
+    $("#header_table_row_0_col_12")
         .empty()
         .append("<div id='header-text'> Console </div>")
         .css("height", gdo.management.button_height)
@@ -296,23 +342,24 @@ gdo.management.drawHeaderTable = function () {
                 gdo.updateDisplayCanvas();
             }
         });
+
     if (gdo.management.toggleConsole) {
-        $("#header_table_row_0_col_10").css("color", "lightgreen");
+        $("#header_table_row_0_col_12").css("color", "lightgreen");
     } else {
         if (gdo.management.numToggleMenu < gdo.management.maxToggleMenu) {
-            $("#header_table_row_0_col_10").css("color", "white");
+            $("#header_table_row_0_col_12").css("color", "white");
         } else {
-            $("#header_table_row_0_col_10").css("color", "#777");
+            $("#header_table_row_0_col_12").css("color", "#777");
         }
     }
-    $("#header_table_row_0_col_11")
+    $("#header_table_row_0_col_13")
         .empty()
         .css("height", gdo.management.button_height)
         .css("width", "0px")
         .css("background-color", "#444")
         .css("border", "1px solid #444")
         .css({ fontSize: gdo.management.header_font_size });
-    $("#header_table_row_0_col_12")
+    $("#header_table_row_0_col_14")
         .empty()
         .append("<div id='header-text'> Maintenance </div>")
         .css("height", gdo.management.button_height)
@@ -331,18 +378,18 @@ gdo.management.drawHeaderTable = function () {
             gdo.net.server.setMaintenanceMode(gdo.net.maintenanceMode);
         });
     if (gdo.net.maintenanceMode) {
-        $("#header_table_row_0_col_12").css("color", "lightgreen");
+        $("#header_table_row_0_col_14").css("color", "lightgreen");
     } else {
-        $("#header_table_row_0_col_12").css("color", "lightcoral");
+        $("#header_table_row_0_col_14").css("color", "lightcoral");
     }
-    $("#header_table_row_0_col_13")
+    $("#header_table_row_0_col_15")
         .empty()
         .css("height", gdo.management.button_height)
         .css("width", "0px")
         .css("background-color", "#444")
         .css("border", "1px solid #444")
         .css({ fontSize: gdo.management.header_font_size });
-    $("#header_table_row_0_col_14")
+    $("#header_table_row_0_col_16")
         .empty()
         .append("<div id='header-text'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>")
         .css("height", gdo.management.button_height)

@@ -40,6 +40,54 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
+        public void RequestTimeStep(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.receiveTimeStep(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void Animate(int instanceId)
+        {
+            try
+            {
+                if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating == false)
+                {
+                    ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating = true;
+                    while (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating)
+                    {
+                        System.Threading.Thread.Sleep(
+                            ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).WaitTime);
+                        if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep >= 540)
+                        {
+                            ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep = 0;
+                        }
+                        Clients.Group("" + instanceId)
+                            .receiveTimeStep(instanceId,
+                                ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
+                        ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
+                    }
+                }
+                else
+                {
+                    ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating = false;
+                }
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
         public void SetBingLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

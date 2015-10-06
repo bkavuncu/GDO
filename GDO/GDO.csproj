@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
     <Content Include="Scripts\gdo.management.instances.js" />
@@ -165,6 +166,7 @@
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery.csv-0.71.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Scripts\d3.min.js" />
     <Content Include="Scripts\gdo.fs.js" />
@@ -176,11 +178,13 @@
     <Compile Include="Core\CaveHub.cs" />
     <Compile Include="Core\AppConfiguration.cs" />
     <Compile Include="Core\App.cs" />
+    <Compile Include="Core\CaveState.cs" />
     <Compile Include="Core\IAppHub.cs" />
     <Compile Include="Core\IAppInstance.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />
+    <Compile Include="Core\AppState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utility\Utilities.cs" />

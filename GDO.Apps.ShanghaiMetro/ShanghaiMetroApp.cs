@@ -21,6 +21,10 @@ namespace GDO.Apps.ShanghaiMetro
         public bool LineLayer { get; set; }
         public bool HeatmapLayer { get; set; }
 
+        public int TimeStep { get; set; }
+        public bool IsAnimating { get; set; }
+        public int WaitTime { get; set; }
+
 
         public bool mode { get; set; }
         public string Style { get; set; }
@@ -43,6 +47,9 @@ namespace GDO.Apps.ShanghaiMetro
             this.StationLayer = true;
             this.LineLayer = true;
             this.HeatmapLayer = true;
+            this.TimeStep = 0;
+            this.IsAnimating = false;
+            this.WaitTime = 1000;
             //TODO Read CSV into data dictionaries
         }
 
