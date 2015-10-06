@@ -1,10 +1,10 @@
 bigScreen = false;
 var animation = function (arg) {
 	'use strict';
-	var currentTimeout = null,
-		initialized = 0,
-		running = false,
-		scale = d3.scale.log(),
+    var currentTimeout = null,
+        initialized = 0,
+        running = false,
+        scale = d3.scale.linear(),  //.log(),
 		currentTime = 0;
 		
 	var a = function (arg) {
@@ -24,8 +24,8 @@ var animation = function (arg) {
 		a.timeInterval = min(2); // 15 min
 		
 	    // == Yellow circles min and max size ==  //GDOCONFIG
-		a.maxSizePixel = 40; //35;
-		a.minSizePixel = 5; //10
+		a.maxSizePixel = 50; //35;
+		a.minSizePixel = 10; //10
 		
 		scale.range([a.minSizePixel, a.maxSizePixel]);
 		
