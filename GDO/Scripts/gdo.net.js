@@ -744,3 +744,16 @@ gdo.net.processState = function (state, id, exists) {
         gdo.net.state[id] = null;
     }
 }
+
+gdo.net.processState = function (state, id, exists) {
+    gdo.consoleOut('.NET', 2, 'Updating state: ' + state.Id);
+    if (exists) {
+        gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (exists)');
+        gdo.net.state[id] = {}
+        gdo.net.state[id].Id = state.Id;
+        gdo.net.state[id].Name = state.Name;
+    } else {
+        gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
+        gdo.net.state[id] = null;
+    }
+}

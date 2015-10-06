@@ -63,6 +63,9 @@ namespace GDO.Apps.ShanghaiMetro
             this.StationLayer = true;
             this.LineLayer = true;
             this.HeatmapLayer = true;
+            this.TimeStep = 0;
+            this.IsAnimating = false;
+            this.WaitTime = 1000;
             //TODO Read CSV into data dictionaries
         }
 
