@@ -20,12 +20,12 @@ var animation = function (arg) {
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];
 		
-		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
+		a.realStartTime = +(new Date(Date.UTC(2015,3,1,5))); // i.e. April 1st 2015, 06:00    // first month is 0
 		a.timeInterval = min(2); // 15 min
 		
-		// == Yellow circles min and max size ==
-		a.maxSizePixel = 15; //35;
-		a.minSizePixel = 3; //10
+	    // == Yellow circles min and max size ==  //GDOCONFIG
+		a.maxSizePixel = 40; //35;
+		a.minSizePixel = 5; //10
 		
 		scale.range([a.minSizePixel, a.maxSizePixel]);
 		
