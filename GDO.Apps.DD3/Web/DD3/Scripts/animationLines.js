@@ -1,11 +1,12 @@
-bigScreen = false;
+var cave = true;
 var animationLines = function (arg) {
 	'use strict';
 	var currentTimeout = null,
+		currentTime = 0,
 		initialized = 0,
 		running = false,
 		scale = d3.scale.log().clamp(true),
-		currentTime = 0,
+        colorScale = d3.scale.linear().clamp(true).domain([1, 2200]).interpolate(d3.interpolateRgb).range(["white", "red"]),
 	    polygonPosition;
 		
 	var a = function (arg) {
@@ -24,17 +25,12 @@ var animationLines = function (arg) {
 		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
 		a.timeInterval = min(2); // 15 min
 		
-		// == Station min and max size ==
-		a.sizeStationMin = 5; 
-		a.sizeStationMax = 20;
+	    // == Station min and max size ==
+	    //GDOCONFIG
+		a.sizeStationMin = cave ? 15 : 5;
+		a.sizeStationMax = cave ? 50 : 20;
 		
 		scale.range([a.sizeStationMin, a.sizeStationMax]);
-		
-		a.colorScale = d3.scale.linear()
-            .clamp(true)
-            .domain([1, 2200])
-            .interpolate(d3.interpolateRgb)
-            .range(["white", "red"]);
 
 		return a;
 	};
@@ -232,25 +228,40 @@ var animationLines = function (arg) {
 	                        var normPrev = scale(a.data.get(partLine[k - 1])[time][a.entry]);
 
 	                        var dPrec = array[k - 1];
-	                        var ptPrec = [dPrec[0][0] + (normPrev) * dPrec[1][0], dPrec[0][1] + (normPrev) * dPrec[1][1]];
-	                        var ptAct = [d[0][0] + (normAct) * d[1][0], d[0][1] + (normAct) * d[1][1]];
+	                        var ptPrecA = [dPrec[0][0] + (normPrev) * dPrec[1][0], dPrec[0][1] + (normPrev) * dPrec[1][1]];
+	                        var ptPrecB = [dPrec[0][0] + -(normPrev) * dPrec[1][0], dPrec[0][1] + -(normPrev) * dPrec[1][1]];
+	                        var ptActA = [d[0][0] + (normAct) * d[1][0], d[0][1] + (normAct) * d[1][1]];
+	                        var ptActB = [d[0][0] + -(normAct) * d[1][0], d[0][1] + -(normAct) * d[1][1]];
 
-	                        var id = [name, partLine[k - 1].replace(/(\s+|')/g, ''), partLine[k].replace(/(\s+|')/g, '')].join("_");
-	                        var lg = lineGroup.select("#" + "p_" + id);
+	                        var n1 = partLine[k - 1].replace(/(\s+|')/g, '');
+	                        var n2 = partLine[k].replace(/(\s+|')/g, '');
 
-	                        if (lg.empty())
-	                            lg = lineGroup.append("polygon").attr("id", "p_" + id);
+	                        var idA = [name, n1, n2].join("_");
+	                        var idB = [name, n2, n1].join("_");
+	                        var lgA = lineGroup.select("#" + "p_" + idA);
+	                        var lgB = lineGroup.select("#" + "p_" + idB);
 
-	                        var fillColor = linkLoad[id] ? a.colorScale(linkLoad[id][time]) : (console.log(id),"none");
+	                        if (lgA.empty()) 
+	                            lgA = lineGroup.append("polygon").attr("id", "p_" + idA).attr("opacity", 0.7).attr("stroke", color);
+	                        if (lgB.empty()) 
+	                            lgB = lineGroup.append("polygon").attr("id", "p_" + idB).attr("opacity", 0.7).attr("stroke", color);
 
-	                        lg.attr("opacity", 0.7)
-                                .attr("stroke", color)
-                                .attr("stroke-width", "1.5")
-                                .transition()
+	                        var fillColorA = linkLoad[idA] ? colorScale(linkLoad[idA][time]) : (console.log(idA), "none");
+	                        var fillColorB = linkLoad[idB] ? colorScale(linkLoad[idB][time]) : (console.log(idB), "none");
+
+	                        lgA.transition()
                                 .duration(a.timeStep * a.aggregate)
                                 .ease("linear")
-                                .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
-                                .attr("fill", fillColor);
+                                .attr("points", [ptPrecA, dPrec[0], d[0], ptActA].join(" "))
+	                            .attr("stroke-width", (normAct + normPrev) / 8)
+                                .attr("fill", fillColorA);
+
+	                        lgB.transition()
+                                .duration(a.timeStep * a.aggregate)
+                                .ease("linear")
+                                .attr("points", [ptPrecB, dPrec[0], d[0], ptActB].join(" "))
+	                            .attr("stroke-width", (normAct + normPrev) / 8)
+                                .attr("fill", fillColorB);
                                 
 	                    });
 	                })
@@ -285,34 +296,6 @@ var animationLines = function (arg) {
 	};
 	
 	/* INITIALISATION FUNCTIONS */
-	
-	var createScale = function () {
-		var width = parseFloat(a.scaleContainer.style('width')),
-			height = parseFloat(a.scaleContainer.style('height')),
-			o = d3.scale.ordinal().domain(d3.range(5)).rangeBands([0, width], 0.25, 0.5),
-			ov = d3.scale.ordinal().domain(d3.range(2)).rangeBands([0, height], 0.1, 1),
-			offsetRight = 20;
-
-		a.scaleGroup = a.scaleContainer.append("svg").attr("width", width).attr("height", height);
-		
-		var g1 = a.scaleGroup.append("g").attr("transform", "translate(" + 0 + "," + (ov.range()[0] + ov.rangeBand() / 3) + ")");
-		g1.append("line")
-			.attr("x1", 0.3 * width )
-			.attr("y1",  bigScreen ? -50 : -20)
-			.attr("x2", width - offsetRight)
-			.attr("y2",  bigScreen ? -50 : -20)
-			.attr("stroke-width", bigScreen ? 5 : 3)
-			.attr("stroke", "white");
-			
-		g1.append("text").text("Passengers in station").attr("x", width - offsetRight).attr("fill", "white"/*a.lines.lineColors[i]*/).attr("font-size",  bigScreen ? "6em" : "2em").attr("text-anchor", "end");
-		
-		var g2 = a.scaleGroup.append("g").attr("transform", "translate(" + (o.rangeBand() / 2) + "," + (ov.range()[1] + ov.rangeBand() / 2) + ")");
-		d3.range(5).forEach(function (i) {
-			var g = g2.append("g").attr("transform", "translate(" + (o.range()[i]) + ","  + 0 + ")");
-			g.append("circle").attr("r", scale(Math.pow(10, i))).attr("fill", a.color[1]);
-			g.append("text").attr("dy", scale(Math.pow(10, i)) + (bigScreen ? 30 : 15)).text(Math.pow(10, i)).attr("fill", a.color[1]).attr("text-anchor", "middle").attr("font-size",  bigScreen ? "3em" : "1em");
-		});
-	};
 	
 	var updateClock =  function (time) { // Interval in millisec
 		var options = {year : "numeric", month : "2-digit", day : "2-digit", hour: "2-digit", minute : "2-digit"};
@@ -349,7 +332,6 @@ var animationLines = function (arg) {
 	    }
 
 	    scale.domain([1, a.maxSizeNumber]);
-	    //createScale();
 	    initialized = 2;
 	};
 
