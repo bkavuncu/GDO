@@ -22,7 +22,7 @@ var animationLines = function (arg) {
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];
 		
-		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
+		a.realStartTime = +(new Date(Date.UTC(2015,3,1,5))); // i.e. April 1st 2015, 06:00    // first month is 0
 		a.timeInterval = min(2); // 15 min
 		
 	    // == Station min and max size ==
