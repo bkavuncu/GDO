@@ -24,8 +24,8 @@ var animation = function (arg) {
 		a.timeInterval = min(2); // 15 min
 		
 		// == Yellow circles min and max size ==
-		a.maxSizePixel = 15;//35;
-		a.minSizePixel = 3;//10
+		a.maxSizePixel = 15; //35;
+		a.minSizePixel = 3; //10
 		
 		scale.range([a.minSizePixel, a.maxSizePixel]);
 		

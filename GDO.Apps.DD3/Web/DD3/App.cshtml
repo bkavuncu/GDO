@@ -42,7 +42,7 @@
         #clock {
             position : absolute;
             display : inline-block;
-            font-size: 3em;
+            font-size: 10em;
             font-family : clockFont;
             color: #FFF;
             opacity : 1;
@@ -616,7 +616,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -982,7 +982,7 @@
                             anim.cleanup();
 
                         var args = {
-                            timeStep: 500,
+                            timeStep: 350,
                             map: map,
                             tubeLines: tube,
                             clock: clockDiv,
