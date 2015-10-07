@@ -421,13 +421,14 @@
 
                 test_bench[6] = function () {
                     var cb = $('#outterCheckbox');
+                    var cb2 = $('#widthChangingCheckbox');
 
                     $('#launchNormalAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked")]), true);
+                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked")]), true);
                     });
 
                     $('#launchDisruptedAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked")]), true);
+                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked")]), true);
                     });
                 };
             });
@@ -573,7 +574,10 @@
     <div id="control_6" style="display:none">
         <table class="table_control">
             <tr>
-                <td class="green" ><INPUT type="checkbox" name="outter" id="outterCheckbox"> With outter lines (Choose before launching)</td>
+                <td class="green"><INPUT type="checkbox" name="outter" id="outterCheckbox"> With outter lines (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChanging" id="widthChangingCheckbox" checked> Width changing (Choose before launching)</td>
             </tr>
             <tr>
                 <td class="green" id="launchNormalAnimationShanghaiLines">Launch Animation with normal data</td>
