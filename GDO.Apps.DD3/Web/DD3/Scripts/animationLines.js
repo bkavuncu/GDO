@@ -1,4 +1,4 @@
-var cave = false;
+var cave = true;
 var animationLines = function (arg) {
 	'use strict';
 	var currentTimeout = null,
