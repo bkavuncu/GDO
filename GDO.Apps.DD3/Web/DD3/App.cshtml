@@ -616,7 +616,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -976,8 +976,7 @@
                         map.load(["earth", "water", "roads"], callbackTube);
                     };
 
-                    // TEST ANIMATION
-                    orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
+                    orderController.orders['launchAnimation'] = launchAnimation = function (dis, outter) {
                         if (anim)
                             anim.cleanup();
 
@@ -986,7 +985,8 @@
                             map: map,
                             tubeLines: tube,
                             clock: clockDiv,
-                            entry: entry
+                            disrupted: dis,
+                            showOutterLine: outter,
                         };
 
                         anim = animationLines(args);
