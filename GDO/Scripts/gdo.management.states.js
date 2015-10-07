@@ -1,4 +1,4 @@
-﻿gdo.management.drawStateInputTable = function () {
+gdo.management.drawStateInputTable = function () {
 
     $("#state_table_state_list")
         .css("height", ((gdo.management.table_height) + (gdo.management.info_height))*2.8)
