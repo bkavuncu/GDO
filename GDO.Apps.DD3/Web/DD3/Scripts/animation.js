@@ -1,10 +1,10 @@
 bigScreen = false;
 var animation = function (arg) {
 	'use strict';
-	var currentTimeout = null,
-		initialized = 0,
-		running = false,
-		scale = d3.scale.log(),
+    var currentTimeout = null,
+        initialized = 0,
+        running = false,
+        scale = d3.scale.linear(),  //.log(),
 		currentTime = 0;
 		
 	var a = function (arg) {
@@ -20,12 +20,12 @@ var animation = function (arg) {
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];
 		
-		a.realStartTime = +(new Date(Date.UTC(2012,0,1,6)));
+		a.realStartTime = +(new Date(Date.UTC(2015,3,1,5))); // i.e. April 1st 2015, 06:00    // first month is 0
 		a.timeInterval = min(2); // 15 min
 		
-		// == Yellow circles min and max size ==
-		a.maxSizePixel = 15; //35;
-		a.minSizePixel = 3; //10
+	    // == Yellow circles min and max size ==  //GDOCONFIG
+		a.maxSizePixel = 50; //35;
+		a.minSizePixel = 10; //10
 		
 		scale.range([a.minSizePixel, a.maxSizePixel]);
 		
@@ -186,6 +186,7 @@ var animation = function (arg) {
 	var updateClock =  function (time) { // Interval in millisec
 		var options = {year : "numeric", month : "2-digit", day : "2-digit", hour: "2-digit", minute : "2-digit"};
 		var realTime = new Date(a.realStartTime + time).toLocaleString("en-GB", options);
+		realTime = realTime.replace(",", " ");   // for visualization purposes, remove the comma
 		a.clock.text(realTime);
 	};
 	

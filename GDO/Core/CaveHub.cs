@@ -292,10 +292,12 @@ namespace GDO.Core
                     apps.AddRange(Cave.Apps.Select(appEntry => GetAppUpdate(appEntry.Value.Name)));
                     List<string> instances = new List<string>(Cave.Instances.Count);
                     instances.AddRange(Cave.Instances.Select(instanceEntry => GetInstanceUpdate(instanceEntry.Value.Id)));
+                    List<string> states = new List<string>(Cave.States.Count);
+                    states.AddRange(Cave.States.Select(stateEntry => GetStateUpdate(stateEntry.Value.Id)));
                     string nodeMap = JsonConvert.SerializeObject(Cave.GetNodeMap());
                     string neighbourMap = JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
                     string appList = JsonConvert.SerializeObject(Cave.GetAppList());
-                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances);
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances, states);
                 }
                 catch (Exception e)
                 {
@@ -399,6 +401,28 @@ namespace GDO.Core
                     IAppInstance instance;
                     Cave.Instances.TryGetValue(instanceId, out instance);
                     return JsonConvert.SerializeObject(instance);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private string GetStateUpdate(int stateId)
+        {
+            try
+            {
+                if (Cave.ContainsState(stateId))
+                {
+                    CaveState state;
+                    Cave.States.TryGetValue(stateId, out state);
+                    return JsonConvert.SerializeObject(state);
                 }
                 else
                 {
@@ -565,6 +589,86 @@ namespace GDO.Core
         public void Initialize()
         {
             //dummy
+        }
+
+        public void SaveCaveState(string name)
+        {
+            lock (Cave.ServerLock)
+            {
+                int id = Cave.SaveCaveState(name);
+                BroadcastCaveState(id);
+            }
+        }
+        public void RemoveCaveState(int id)
+        {
+            lock (Cave.ServerLock)
+            {
+                Cave.RemoveCaveState(id);
+                BroadcastCaveState(id);
+            }
+        }
+
+        public void ClearCave()
+        {
+            lock (Cave.ServerLock)
+            {
+                foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances)
+                {
+                    CloseApp(instanceKeyValuePair.Value.Id);
+                }
+                foreach (KeyValuePair<int, Section> sectionKeyValuePair in Cave.Sections)
+                {
+                    if (sectionKeyValuePair.Key != 0)
+                    {
+                        CloseSection(sectionKeyValuePair.Value.Id);
+                    }
+                }
+            }
+        }
+
+        public void RestoreCaveState(int id)
+        {
+            lock (Cave.ServerLock)
+            {
+                CaveState caveState = Cave.States[id];
+                ClearCave();
+                foreach (AppState appState in caveState.States)
+                {
+                    CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
+                        (appState.Row + appState.Rows -1));
+                    Cave.GetSectionId(appState.Col, appState.Row);
+                    DeployApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.ConfigName);
+                }
+            }
+
+        }
+
+        public void RequestStates()
+        {
+            foreach (KeyValuePair<int, CaveState> caveState in Cave.States)
+            {
+                Clients.Caller.receiveCaveState(JsonConvert.SerializeObject(Cave.States[caveState.Value.Id]));
+            }
+        }
+
+        public void BroadcastStates()
+        {
+            foreach (KeyValuePair<int,CaveState> caveState in Cave.States)
+            {
+                BroadcastCaveState(caveState.Value.Id);
+            }
+        }
+
+        public void BroadcastCaveState(int id)
+        {
+            if (Cave.States.ContainsKey(id))
+            {
+                Clients.All.receiveCaveState(JsonConvert.SerializeObject(Cave.States[id]), id, true);
+            }
+            else
+            {
+                Clients.All.receiveCaveState("", id, false);
+            }
         }
     }
 }

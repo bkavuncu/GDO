@@ -128,6 +128,7 @@
 <body unselectable="on" class="unselectable">
     <script src="../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
@@ -200,7 +201,19 @@
         </table>
         <div id="instance_table_space"><br><br></div>
         <table id="section_table" unselectable="on" class="unselectable" style="width: 98.5%"></table>
-        <div id="section_table_space"><br></div>
+        <div id="section_table_space"><br>
+        </div>
+        <table id="states_table" unselectable="on" class="unselectable" style="width: 98.5%">
+            <tr>
+                <td id="state_table_state_header"><div state_table_state_list_div><table id="state_table_state_header_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%; height:100%; vertical-align: top"></table></div></td>
+            </tr>
+            <tr>
+                <td id="state_table_state_list">
+                    <div state_table_state_list_div><table id="state_table_state_list_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%; height: 100%; vertical-align: top"></table>
+                    </div></td>
+            </tr>
+        </table>
+        <div id="states_table_space"><br></div>
         <table id="button_table" unselectable="on" class="unselectable" style="width: 98.5%"></table>
     </div>
 </body>

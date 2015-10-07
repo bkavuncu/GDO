@@ -39,7 +39,7 @@
           stroke: #000;
         }
 
-        #clock {
+        #viz_title, #clock {
             position : absolute;
             display : inline-block;
             font-size: 10em;
@@ -607,6 +607,7 @@
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
 	                    cwidth = dd3.cave.svgWidth,
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
@@ -616,8 +617,9 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
-
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");			        
+                    titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+                    
                     loadMap = function () {
                         var projection = d3.geo.mercator()
 		                    .translate([cwidth / 2, cheight / 2]);
@@ -728,6 +730,7 @@
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
 	                    cwidth = dd3.cave.svgWidth,
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
@@ -737,6 +740,7 @@
                         r = dd3.browser.row;
 
                     clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
+                    titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -885,6 +889,7 @@
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
 	                    cwidth = dd3.cave.svgWidth,
 	                    cheight = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
@@ -894,6 +899,7 @@
                         r = dd3.browser.row;
 
                     clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
+                    titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -976,7 +982,7 @@
                         map.load(["earth", "water", "roads"], callbackTube);
                     };
 
-                    orderController.orders['launchAnimation'] = launchAnimation = function (dis, outter) {
+                    orderController.orders['launchAnimation'] = launchAnimation = function (dis, outter, widthChanging) {
                         if (anim)
                             anim.cleanup();
 
@@ -987,6 +993,7 @@
                             clock: clockDiv,
                             disrupted: dis,
                             showOutterLine: outter,
+                            widthChanging: widthChanging
                         };
 
                         anim = animationLines(args);
@@ -1048,7 +1055,8 @@
         </p>
     </div>
 
-    <div id="clock" style="display:none"></div>
+    <div id="clock" style="display: none"></div>
+    <div id="viz_title">METRO LINES</div>
 
 </body>
 </html>

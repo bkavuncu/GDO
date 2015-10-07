@@ -29,6 +29,7 @@ namespace GDO.Core
         public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
+        public static ConcurrentDictionary<int, CaveState> States { get; set; }
 
         public enum P2PModes
         {
@@ -47,6 +48,7 @@ namespace GDO.Core
             Instances = new ConcurrentDictionary<int, IAppInstance>();
             Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
+            States = new ConcurrentDictionary<int, CaveState>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
             Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
             NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
@@ -272,6 +274,11 @@ namespace GDO.Core
         /// <returns></returns>
         public static bool ContainsInstance(int instanceId) {
             return Cave.Apps.Any(appEntry => appEntry.Value.Instances.ContainsKey(instanceId));
+        }
+
+        public static bool ContainsState(int stateId)
+        {
+            return States.ContainsKey(stateId);
         }
 
         /// <summary>
@@ -516,7 +523,26 @@ namespace GDO.Core
             return appName;
         }
 
+        public static int SaveCaveState(string name)
+        {
+            int slot = Utilities.GetAvailableSlot<CaveState>(States);
+            CaveState caveState = new CaveState(slot, name);
+            States.TryAdd(slot, caveState);
+            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Instances)
+            {
+                IAppInstance instance = instaKeyValuePair.Value;
+                Section section = instance.Section;
+                AppState appState = new AppState(section.Col,section.Row,section.Cols,section.Rows,instance.AppName,instance.Configuration.Name);
+                caveState.States.Add(appState);
+            }
+            return slot;
+        }
 
+        public static void RemoveCaveState(int id)
+        {
+            CaveState caveState;
+            States.TryRemove(id, out caveState);
+        }
 
         public static void WaitReady()
         {
