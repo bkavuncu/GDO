@@ -392,6 +392,7 @@
                         server.sendOrder(instanceId, order("launchAnimation", [0]), true);
                     });
 
+                    /*
                     $('#cleanupAnimationShanghai').click(function () {
                         server.sendOrder(instanceId, order("cleanupAnimation", []), true);
                     });
@@ -411,6 +412,7 @@
                     $('#createAnimationShanghai').click(function () {
                         server.sendOrder(instanceId, order("createAnimation", []), true);
                     });
+                    //*/
 
                     $('#launchExitAnimationShanghai').click(function () {
                         server.sendOrder(instanceId, order("launchAnimation", [1]), true);
@@ -418,32 +420,14 @@
                 };
 
                 test_bench[6] = function () {
-                    $('#launchEntryAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    var cb = $('#outterCheckbox');
+
+                    $('#launchNormalAnimationShanghaiLines').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked")]), true);
                     });
 
-                    $('#cleanupAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("cleanupAnimation", []), true);
-                    });
-
-                    $('#pauseAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("pauseAnimation", []), true);
-                    });
-
-                    $('#startAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("startAnimation", []), true);
-                    });
-
-                    $('#initAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("initAnimation", []), true);
-                    });
-
-                    $('#createAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("createAnimation", []), true);
-                    });
-
-                    $('#launchExitAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    $('#launchDisruptedAnimationShanghaiLines').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked")]), true);
                     });
                 };
             });
@@ -566,7 +550,7 @@
             <tr>
                 <td class="green" id="launchExitAnimationShanghai">Launch Animation of exit</td>
             </tr>
-            <!---->
+            <!--
             <tr>
                 <td class="green" id="createAnimationShanghai">Create</td>
             </tr>
@@ -589,28 +573,14 @@
     <div id="control_6" style="display:none">
         <table class="table_control">
             <tr>
-                <td class="green" id="launchEntryAnimationShanghaiLines">Launch Animation of entries</td>
+                <td class="green" ><INPUT type="checkbox" name="outter" id="outterCheckbox"> With outter lines (Choose before launching)</td>
             </tr>
             <tr>
-                <td class="green" id="launchExitAnimationShanghaiLines">Launch Animation of exit</td>
-            </tr>
-            <!---->
-            <tr>
-                <td class="green" id="createAnimationShanghaiLines">Create</td>
+                <td class="green" id="launchNormalAnimationShanghaiLines">Launch Animation with normal data</td>
             </tr>
             <tr>
-                <td class="green" id="initAnimationShanghaiLines">Init</td>
+                <td class="green" id="launchDisruptedAnimationShanghaiLines">Launch Animation with disrupted data</td>
             </tr>
-            <tr>
-                <td class="green" id="startAnimationShanghaiLines">Start</td>
-            </tr>
-            <tr>
-                <td class="green" id="pauseAnimationShanghaiLines">Pause</td>
-            </tr>
-            <tr>
-                <td class="green" id="cleanupAnimationShanghaiLines">Cleanup</td>
-            </tr>
-            <!---->
         </table>
     </div>
 
