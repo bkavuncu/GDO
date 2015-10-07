@@ -183,6 +183,7 @@ var animation = function (arg) {
 	var updateClock =  function (time) { // Interval in millisec
 		var options = {year : "numeric", month : "2-digit", day : "2-digit", hour: "2-digit", minute : "2-digit"};
 		var realTime = new Date(a.realStartTime + time).toLocaleString("en-GB", options);
+		realTime = realTime.replace(",", " ");   // for visualization purposes, remove the comma
 		a.clock.text(realTime);
 	};
 	
