@@ -25,6 +25,7 @@ var animationLines = function (arg) {
 		a.realStartTime = +(new Date(Date.UTC(2015,3,1,5))); // i.e. April 1st 2015, 06:00    // first month is 0
 		a.timeInterval = min(2); // 2 min
 	    a.showOutterLine = arg.showOutterLine || false,
+        a.widthChanging = arg.widthChanging,  
         a.lineOpacity = arg.lineOpacity || 0.5,
 		a.lineLinkWidth = arg.lineLinkWidth || cave ? 7 : 3;
 		
@@ -217,6 +218,9 @@ var animationLines = function (arg) {
 	                var linkLoad = a.linkLoad[a.disrupted].get(name);
 	                var lineGroup = group.select("#line_" + name);
 
+                    // == if we don't want the width to change, use always the widths at time zero. ==
+	                var effectiveTime = (a.widthChanging) ? time : 0;
+
 	                line.forEach(function (partLine, j) {
 
 	                    var array = polygonPosition.get(name)[j];
@@ -224,14 +228,14 @@ var animationLines = function (arg) {
 	                        if (d === null)
 	                            return;
 
-	                        var normAct = scale(a.data.get(partLine[k])[time][a.entry]), ptActs = [];
+	                        var normAct = scale(a.data.get(partLine[k])[effectiveTime][a.entry]), ptActs = [];
 	                        ptActs[0] = [d[0][0] + (normAct) * d[1][0], d[0][1] + (normAct) * d[1][1]];
 	                        ptActs[1] = [d[0][0] - (normAct) * d[1][0], d[0][1] - (normAct) * d[1][1]];
 	                        var n2 = partLine[k].replace(/(\s+|')/g, '');
 
 	                        if (!(k == 0 || array[k - 1] === null)) {
 
-	                            var normPrev = scale(a.data.get(partLine[k - 1])[time][a.entry]);
+	                            var normPrev = scale(a.data.get(partLine[k - 1])[effectiveTime][a.entry]);
 	                            var dPrec = array[k - 1];
 
 	                            var n1 = partLine[k - 1].replace(/(\s+|')/g, '');
@@ -254,10 +258,10 @@ var animationLines = function (arg) {
 	                                var fillColor = linkLoad[id] ? colorScale(linkLoad[id][time]) : (console.log(id), "none"); // if no data, plot the name of the expected dataPoint and give none to color
 
 	                                poly.transition()
-                                        .duration(a.timeStep * a.aggregate)
-                                        .ease("linear")
-                                        .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
-                                        .attr("fill", fillColor);
+	                                    .duration(a.timeStep * a.aggregate)
+	                                    .ease("linear")
+	                                    .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
+	                                    .attr("fill", fillColor);
 	                            }
 
 	                            if (lineGroup.select("#" + "l_" + ids[0]).empty())
