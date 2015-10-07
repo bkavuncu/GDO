@@ -113,7 +113,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Data\FileMapTube.txt" />
-    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines20.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines30.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines6.txt" />
+    <Content Include="Configurations\DD3\Data\FileMapTubeShanghaiLines2.txt" />
     <Content Include="Configurations\DD3\Data\FileMapTubeShanghai.txt" />
     <Content Include="Configurations\DD3\Data\FileMapTubeLondon.txt" />
     <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
@@ -132,7 +135,10 @@
     <Content Include="Configurations\DD3\Handmoves.json" />
     <Content Include="Configurations\DD3\MapTubeLondon.json" />
     <Content Include="Configurations\DD3\MapTubeShanghai.json" />
-    <Content Include="Configurations\DD3\MapTubeShanghaiLines.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghaiLines2.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghaiLines6.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghaiLines30.json" />
+    <Content Include="Configurations\DD3\MapTubeShanghaiLines20.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\d3.v3.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />

@@ -23,7 +23,7 @@ var animationLines = function (arg) {
 		a.scaleContainer = arg.scaleContainer;
 		a.color = arg.color || ['#fed700', "#caa130"];	
 		a.realStartTime = +(new Date(Date.UTC(2015,3,1,5))); // i.e. April 1st 2015, 06:00    // first month is 0
-		a.timeInterval = min(2); // 2 min
+		a.timeInterval = arg.timeInterval || min(2); // 2 min
 	    a.showOutterLine = arg.showOutterLine || false,
         a.widthChanging = arg.widthChanging,  
         a.lineOpacity = arg.lineOpacity || 0.5,
@@ -33,7 +33,6 @@ var animationLines = function (arg) {
 	    //GDOCONFIG
 		a.sizeStationMin = cave ? 5 : 5;
 		a.sizeStationMax = cave ? 30 : 20;
-
 		
 		scale.range([a.sizeStationMin, a.sizeStationMax]);
 

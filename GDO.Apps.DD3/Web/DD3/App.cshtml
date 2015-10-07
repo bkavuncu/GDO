@@ -84,9 +84,9 @@
 
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
-                        test_bench[configId]();
+                        test_bench[configId](configId);
                     } else {
-                        dd3.on('ready', test_bench[configId]);
+                        dd3.on('ready', test_bench[configId].bind(null, configId));
                     }
                 };
 
@@ -617,7 +617,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");			        
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");			        
                     titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
                     
                     loadMap = function () {
@@ -739,7 +739,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
                     titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
@@ -831,6 +831,8 @@
                         if (anim)
                             anim.cleanup();
 
+                        titleDiv.text(entry == 0 ? "People Entering Stations: 入站人数" : "People Exiting Stations: 出站人数");
+
                         var args = {
                             timeStep: 2000,
                             map: map,
@@ -849,6 +851,7 @@
 
                     };
 
+                    /*
                     orderController.orders['startAnimation'] = function () {
                         dd3.synchronize(function () {
                             anim.start();
@@ -880,12 +883,30 @@
                             anim.init();
                         });
                     };
+                    //*/
 
                     loadMap();
                 };
 
-                // VIZ SHANGHAI METRO LINK LOAD
-                test_bench['6'] = function () {
+                // VIZ SHANGHAI METRO LINK LOAD (Different data aggregation)
+                test_bench['6'] = test_bench['7'] = test_bench['8'] = test_bench['9'] = function (configId) {
+                    switch (configId) {
+                        case 6:
+                            shanghaiViz(2 * 60 * 1000);
+                            break;
+                        case 7:
+                            shanghaiViz(6 * 60 * 1000);
+                            break;
+                        case 8:
+                            shanghaiViz(20 * 60 * 1000);
+                            break;
+                        case 9:
+                            shanghaiViz(30 * 60 * 1000);
+                            break;
+                    }
+                };
+
+                var shanghaiViz = function (timeInterval) {
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
@@ -898,8 +919,8 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", ((dd3.cave.height * 0.2) - dd3.position.html.top) + "px");
-                    titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
+                   // titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -986,6 +1007,8 @@
                         if (anim)
                             anim.cleanup();
 
+                        titleDiv.text(dis == 0 ? "People on Each Metro Line – Normal: 各地铁线上人数 – 正常状况" : "People on Each Metro Line – Disrupted: 各地铁线上人数 – 中断状况");
+
                         var args = {
                             timeStep: 350,
                             map: map,
@@ -993,6 +1016,7 @@
                             clock: clockDiv,
                             disrupted: dis,
                             showOutterLine: outter,
+                            timeInterval: timeInterval,
                             widthChanging: widthChanging
                         };
 
@@ -1006,40 +1030,9 @@
 
                     };
 
-                    orderController.orders['startAnimation'] = function () {
-                        dd3.synchronize(function () {
-                            anim.start();
-                        });
-                    };
-
-                    orderController.orders['pauseAnimation'] = function () {
-                        anim.stop();
-                    };
-
-                    orderController.orders['cleanupAnimation'] = function () {
-                        anim.cleanup();
-                    };
-
-                    orderController.orders['createAnimation'] = function () {
-                        var args = {
-                            timeStep: 2000,
-                            map: map,
-                            tubeLines: tube,
-                            clock: clockDiv,
-                            entry: 1
-                        };
-
-                        anim = animation(args);
-                    };
-
-                    orderController.orders['initAnimation'] = function () {
-                        anim.loadData(function () {
-                            anim.init();
-                        });
-                    };
-
                     loadMap();
                 };
+
             });
         });
 
@@ -1056,7 +1049,7 @@
     </div>
 
     <div id="clock" style="display: none"></div>
-    <div id="viz_title">METRO LINES</div>
+    <div id="viz_title" style="display: none">METRO LINES</div>
 
 </body>
 </html>
