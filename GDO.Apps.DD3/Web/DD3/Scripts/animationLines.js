@@ -320,10 +320,13 @@ var animationLines = function (arg) {
 	        }
 	    }
 
-		if (running && (currentTime + 1 < a.dataLength)) {
-			currentTime++;
+	    if (running) {
+	        if (currentTime + 1 < a.dataLength)
+	            currentTime++;
+	        else
+                currentTime == 0;
 			currentTimeout = setTimeout(function () {update(currentTime);}, a.timeStep);
-		}
+	    }
 	};
 	
 	/* INITIALISATION FUNCTIONS */
