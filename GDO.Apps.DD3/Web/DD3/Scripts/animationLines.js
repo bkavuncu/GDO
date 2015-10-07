@@ -25,13 +25,13 @@ var animationLines = function (arg) {
 		a.realStartTime = +(new Date(Date.UTC(2015,3,1,5))); // i.e. April 1st 2015, 06:00    // first month is 0
 		a.timeInterval = min(2); // 2 min
 	    a.showOutterLine = arg.showOutterLine || false,
-        a.lineOpacity = arg.lineOpacity || 0.7,
+        a.lineOpacity = arg.lineOpacity || 0.5,
 		a.lineLinkWidth = arg.lineLinkWidth || cave ? 7 : 3;
 		
 	    // == Station min and max size ==
 	    //GDOCONFIG
-		a.sizeStationMin = cave ? 15 : 5;
-		a.sizeStationMax = cave ? 50 : 20;
+		a.sizeStationMin = cave ? 5 : 5;
+		a.sizeStationMax = cave ? 30 : 20;
 
 		
 		scale.range([a.sizeStationMin, a.sizeStationMax]);
@@ -330,6 +330,7 @@ var animationLines = function (arg) {
 	var updateClock =  function (time) { // Interval in millisec
 		var options = {year : "numeric", month : "2-digit", day : "2-digit", hour: "2-digit", minute : "2-digit"};
 		var realTime = new Date(a.realStartTime + time).toLocaleString("en-GB", options);
+		realTime = realTime.replace(",", " ");   // for visualization purposes, remove the comma
 		a.clock.text(realTime);
 	};
 	
