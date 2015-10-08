@@ -323,7 +323,7 @@ var animationLines = function (arg) {
 	    }
 
 	    if (running) {
-	        if (currentTime + 1 < (a.dataLength/ 30))   // TODO this is nasty hack to make it work with 30 minutes steps!
+	        if (currentTime + 1 < (a.dataLength/ 15))   // TODO this is nasty hack to make it work with 30 minutes steps!
 	            currentTime++;
 	        else
                 currentTime = 0;
