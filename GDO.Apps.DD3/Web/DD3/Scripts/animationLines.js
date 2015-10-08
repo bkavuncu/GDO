@@ -6,7 +6,7 @@ var animationLines = function (arg) {
 		initialized = 0,
 		running = false,
 		scale = d3.scale.log().clamp(true),
-        colorScale = d3.scale.linear().clamp(true).domain([1, 150*1100, 150*2200]).interpolate(d3.interpolateRgb).range(["white", "green", "red"]),// GDOCONFIG TODO FIX TO MAKE BETTER
+        colorScale = d3.scale.linear().clamp(true).domain([1, 15*1100, 15*2200]).interpolate(d3.interpolateRgb).range(["white", "green", "red"]),// GDOCONFIG TODO FIX TO MAKE BETTER
 	    polygonPosition;
 		
 	var a = function (arg) {
