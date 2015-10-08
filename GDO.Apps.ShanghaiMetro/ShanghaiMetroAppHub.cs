@@ -180,21 +180,65 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void SetHeatmapLayerVisible(int instanceId)
+        public void SetEntryHeatmapLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer)
+                    if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer)
                     {
-                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer = false;
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer = false;
                     }
                     else
                     {
-                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer = true;
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer = true;
                     }
-                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Group("" + instanceId).setEntryHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        public void SetExitHeatmapLayerVisible(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).ExitHeatmapLayer)
+                    {
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).ExitHeatmapLayer = false;
+                    }
+                    else
+                    {
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).ExitHeatmapLayer = true;
+                    }
+                    Clients.Group("" + instanceId).setExitHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).ExitHeatmapLayer);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        public void SetCongestionHeatmapLayerVisible(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).CongestionHeatmapLayer)
+                    {
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).CongestionHeatmapLayer = false;
+                    }
+                    else
+                    {
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).CongestionHeatmapLayer = true;
+                    }
+                    Clients.Group("" + instanceId).setCongestionHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).CongestionHeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -263,13 +307,43 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void RequestHeatmapLayerVisible(int instanceId)
+        public void RequestEntryHeatmapLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setEntryHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestExitHeatmapLayerVisible(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setExitHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).ExitHeatmapLayer);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestCongestionHeatmapLayerVisible(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setCongestionHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).CongestionHeatmapLayer);
                 }
                 catch (Exception e)
                 {

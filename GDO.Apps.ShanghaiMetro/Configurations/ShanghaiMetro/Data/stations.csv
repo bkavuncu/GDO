@@ -1,0 +1,349 @@
+Station ID,Station Name Chinese,Station Name English,Duplicate IDS,Station Names missing,Latitude,Longitude,Lines
+1244,爱国路,Aiguo Road,,,31.279684,121.552679,12
+842,鞍山新村,Anshan Xincun,,Anshan Xincun,31.273275,121.509586,8
+1117,安亭,Anting,,Anting,31.288511,121.162097,11
+1133,白银路,Baiyin Road,,Baiyin Road,31.345276,121.245426,11
+136,宝安公路,Bao'an Highway,,Bao'an Highway,31.369561,121.430965,1
+324,宝山路,Baoshan Road,324|411,Baoshan Road,31.251564,121.476367,3|4
+411,宝山路,Baoshan Road,324|411,Baoshan Road,31.251564,121.476367,3|4
+336,宝杨路,Baoyang Road,,Baoyang Road,31.395319,121.479593,3
+507,北桥,Beiqiao,,Beiqiao,31.045038,121.410113,5
+238,北新泾,Beixinjing,,Beixinjing,31.216801,121.373538,2
+635,北洋泾路,Beiyangjing Road,,Beiyangjing Road,31.239126,121.552298,6
+639,博兴路,Boxing Road,,Boxing Road,31.263506,121.586684,6
+116,漕宝路,Caobao Road,,Caobao Road,31.168209,121.434972,1
+931,漕河泾开发区,Caohejing Hi-Tech Park,,Caohejing Hi-Tech Park,31.170634,121.397826,9
+314,漕溪路,Caoxi Road,,Caoxi Road,31.176736,121.438381,3
+320,曹杨路,Caoyang Road,320|407|1145,Caoyang Road,31.239263,121.417684,3|4|11
+407,曹杨路,Caoyang Road,320|407|1145,Caoyang Road,31.239263,121.417684,3|4|11
+1145,曹杨路,Caoyang Road,320|407|1145,Caoyang Road,31.239263,121.417684,3|4|11
+249,世纪大道,Century Avenue,249|417|632|942,Century Avenue,31.228978,121.526788,2|4|6|9
+417,世纪大道,Century Avenue,249|417|632|942,Century Avenue,31.228978,121.526788,2|4|6|9
+632,世纪大道,Century Avenue,249|417|632|942,Century Avenue,31.228978,121.526788,2|4|6|9
+942,世纪大道,Century Avenue,249|417|632|942,Century Avenue,31.228978,121.526788,2|4|6|9
+251,世纪公园,Century Park,,Century Park,31.209969,121.550774,2
+738,昌平路,Changping Road,,Changping Road,31.233876,121.442531,7
+745,长清路,Changqing Road,,Changqing Road,31.174619,121.486123,7
+737,长寿路,Changshou Road,737|1330,Changshou Road,31.240074,121.437854,7
+1330,长寿路,Changshou Road,737|1330,Changshou Road,31.240074,121.437854,7
+120,常熟路,Changshu Road,120|740,Changshu Road,31.213342,121.451075,1|7
+740,常熟路,Changshu Road,120|740,Changshu Road,31.213342,121.451075,1|7
+730,场中路,Changzhong Road,,Changzhong Road,31.303975,121.413754,7
+828,成山路,Chengshan Road,,Chengshan Road,31.170687,121.496232,8
+327,赤峰路,Chifeng Road,,Chifeng Road,31.281324,121.482497,3
+830,中华艺术宫,China Art Museum,,China Art Museum,31.185411,121.493616,8
+259,川沙,Chuansha,,Chuansha,31.186701,121.698078,2
+502,春申路,Chunshen Road,,Chunshen Road,31.098129,121.385645,5
+328,大柏树,Dabaishu,,Dabaishu,31.289552,121.483284,3
+731,大场镇,Dachang Town,,Dachang Town,31.293317,121.416545,7
+1326,大渡河路,Daduhe Road,,,31.231875,121.393404,13
+733,大华三路,Dahuasan Road,,Dahuasan Road,31.273808,121.423054,7
+414,大连路,Dalian Road,414|1240,Dalian Road,31.257936,121.513091,4
+1240,大连路,Dalian Road,414|1240,Dalian Road,31.257936,121.513091,4
+424,大木桥路,Damuqiao Road,,Damuqiao Road,31.194155,121.463671,4
+937,打浦桥,Dapuqiao,,Dapuqiao,31.206078,121.468265,9
+834,大世界,Dashijie,,Dashijie,31.22724,121.479284,8
+636,德平路,Deping Road,,Deping Road,31.245355,121.564164,6
+1633,滴水湖,Dishui lake,,,30.907129,121.929759,16
+425,东安路,Dong'an Road,,Dong'an Road,31.190815,121.45487,4|7
+742,东安路,Dong'an Road  ,,Dong'an Road,31.190815,121.45487,4|7
+325,东宝兴路,Dongbaoxing Road,,Dongbaoxing Road,31.260116,121.480351,3
+248,东昌路,Dongchang Road,,Dongchang Road,31.23331,121.515415,2
+509,东川路,Dongchuan Road,,Dongchuan Road,31.018204,121.419844,5
+923,洞泾,Dongjing,,Dongjing,31.084486,121.230472,9
+642,东靖路,Dongjing Road,,Dongjing Road,31.29065,121.588852,6
+1246,东陆路,Donglu Road,,,31.282529,121.57893,12
+626,东明路,Dongming Road,,Dongming Road,31.172743,121.510847,6
+1119,昌吉东路,East Changji Road,,East Changji Road,31.29356,121.20039,11
+1626,航头东,East Hangtou,,,31.054373,121.617134,16
+258,华夏东路,East Huaxia Road,,East Huaxia Road,31.196572,121.681107,2
+1630,惠南东,East Huinan,,,31.026813,121.794014,16
+246,南京东路,East Nanjing Road,246|1056,East Nanjing Road,31.237632,121.484857,2|10
+1056,南京东路,East Nanjing Road,246|1056,East Nanjing Road,31.237632,121.484857,2|10
+1156,三林东,East Sanlin,,,31.146504,121.523129,11
+234,徐泾东,East Xujing,,East Xujing,31.188288,121.299323,2
+1067,殷高东路,East Yingao Road,,East Yingao Road,31.321777,121.50681,10
+1624,周浦东,East Zhoupu,,,31.109083,121.606471,10
+751,芳华路,Fanghua Road,,Fanghua Road,31.19316,121.550094,7
+1144,枫桥路,Fengqiao Road,,Fengqiao Road,31.241814,121.411459,11
+1323,丰庄,Fengzhuang,,Fengzhuang,31.242542,121.355225,13
+138,富锦路,Fujin Road,,Fujin Road,31.392241,121.424665,1
+1245,复兴岛,Fuxing Island,,,31.280504,121.561123,12
+648,港城路,Gangcheng Road,,Gangcheng Road,31.353006,121.574856,6
+625,高青路,Gaoqing Road,,Gaoqing Road,31.160097,121.515674,6
+135,共富新村,Gongfu Xincun,,Gongfu Xincun,31.355404,121.434092,1
+132,共康路,Gongkang Road,,Gongkang Road,31.318955,121.447109,1
+255,广兰路,Guanglan Road,,Guanglan Road,31.211027,121.621112,2
+1115,光明路,Guangming Road,,Guangming Road,31.296312,121.117284,11
+725,顾村公园,Gucun Park,,Gucun Park,31.3448,121.372779,7
+932,桂林路,Guilin Road,,Guilin Road,31.174879,121.418553,9
+1063,国权路,Guoquan Road,,Guoquan Road,31.289657,121.510214,10
+412,海伦路,Hailun Road,412|1059,Hailun Road,31.25927,121.488675,4|10
+1059,海伦路,HaiLun Road,412|1059,Hailun Road,31.25927,121.488675,4|10
+262,海天三路,Haitiansan Road,,Haitiansan Road,31.168356,121.797035,2
+646,航津路,Hangjin Road,,Hangjin Road,31.335404,121.593976,6
+1018,航中路,Hangzhong Road,,Hangzhong Road,31.165586,121.354902,10
+125,汉中路,Hanzhong Road,,Hanzhong Road,31.241618,121.458318,1
+930,合川路,Hechuan Road,,Hechuan Road,31.166554,121.384798,9
+119,衡山路,Hengshan Road,,Hengshan Road,31.204711,121.446558,1
+1625,鹤沙航城,Heshahangcheng,,,31.077434,121.60981,16
+326,虹口足球场,Hongkou Football Stadium,326|839,Hongkou Football Stadium,31.271442,121.479268,3|8
+839,虹口足球场,Hongkou Football Stadium,326|839,Hongkou Football Stadium,31.271442,121.479268,3|8
+236,虹桥2号航站楼,Hongqiao Airport Terminal 2,236|1042,Hongqiao Airport Terminal 2,31.192922,121.326291,2|10
+1043,虹桥1号航站楼,Hongqiao Airport Terminal 1,,Hongqiao Airport Terminal 1,31.191366,121.347095,10
+1042,虹桥2号航站楼,Hongqiao Airport Terminal 2,236|1042,Hongqiao Airport Terminal 2,31.192922,121.326291,2|10
+235,虹桥火车站,Hongqiao Railway Station,235|1041,Hongqiao Railway Station,31.192672,121.321509,2|10
+1041,虹桥火车站,Hongqiao Railway Station,235|1041,Hongqiao Railway Station,31.192672,121.321509,2|10
+316,虹桥路,Hongqiao Road,316|403|1049,Hongqiao Road,31.19745,121.420775,3|4|10
+403,虹桥路,Hongqiao Road,316|403|1049,Hongqiao Road,31.19745,121.420775,3|4|10
+1049,虹桥路,Hongqiao Road,316|403|1049,Hongqiao Road,31.19745,121.420775,3|4|10
+744,后滩,Houtan,,Houtan,31.171874,121.47392,7
+,,,,Hulan Road,31.339881,121.437723,1
+753,花木路,Huamu Road,,Huamu Road,31.211212,121.562792,7
+846,黄兴公园,Huangxing Park,,Huangxing Park,31.295803,121.533146,8
+844,黄兴路,Huangxing Road,,Huangxing Road,31.278784,121.528368,8
+511,华宁路,Huaning Road,,Huaning Road,31.007379,121.395271,5
+1114,花桥,Huaqiao,,Huaqiao,31.298943,121.102407,11
+1629,惠南,Huinan,,,31.053801,121.762136,16
+134,呼兰路,Hulan Road,,,31.339971,121.437672,1
+1238,国际客运中心,International Passenger Transport Center,,,31.249963,121.498092,12
+1134,嘉定新城,Jiading Xincheng,,Jiading Xincheng,31.330062,121.254342,11
+508,剑川路,Jianchuan Road,,Jianchuan Road,31.026424,121.41653,5
+1241,江浦公园,Jiangpu Park,,,31.264585,121.523737,12
+843,江浦路,Jiangpu Road,,Jiangpu Road,31.274954,121.518448,8
+242,江苏路,Jiangsu Road,242|1147,Jiangsu Road,31.220518,121.430676,2|11
+1147,江苏路,Jiangsu Road,242|1147,Jiangsu Road,31.220518,121.430676,2|11
+1065,江湾体育场,Jiangwan Stadium,,Jiangwan Stadium,31.303177,121.514335,10
+329,江湾镇,Jiangwan Town,,Jiangwan Town,31.305514,121.485083,3
+822,江月路,Jiangyue Road,,Jiangyue Road,31.084285,121.508583,8
+1050,交通大学,Jiaotong university,1050|1148,Jiaotong University,31.202265,121.435259,10
+1148,交通大学,JiaoTong University,1050|1148,Jiaotong University,31.202265,121.435259,10
+936,嘉善路,Jiashan Road,,Jiashan Road,31.202846,121.460872,9
+243,静安寺,Jing'an Temple,243|739,Jing'an Temple,31.223201,121.446441,2|7
+739,静安寺,Jing'an Temple,243|739,Jing'an Temple,31.223201,121.446441,2|7
+1251,金海路,Jinhai Road,,,31.263446,121.638443,12
+114,锦江乐园,Jinjiang Park,,Jinjiang Park,31.14196,121.413956,1
+1249,金京路,Jinjing Road,,,31.279822,121.615501,12
+254,金科路,Jinke Road,,Jinke Road,31.204215,121.602039,2
+510,金平路,Jinping Road,,Jinping Road,31.011129,121.410182,5
+638,金桥路,Jinqiao Road,,Jinqiao Road,31.257178,121.581904,6
+319,金沙江路,Jinshajiang Road,319|406|1327,Jinshajiang Road,31.23225,121.413245,3|4|13
+406,金沙江路,Jinshajiang Road,319|406|1327,Jinshajiang Road,31.23225,121.413245,3|4|13
+1327,金沙江路,Jinshajiang Road,319|406|1327,Jinshajiang Road,31.23225,121.413245,3|4|13
+750,锦绣路,Jinxiu Road,,Jinxiu Road,31.18759,121.540035,7
+1321,金运路,Jinyun Road,,Jinyun Road,31.241074,121.320335,13
+926,九亭,Jiuting,,Jiuting,31.137548,121.319363,9
+641,巨峰路,Jufeng Road,641|1247,Jufeng Road,31.280676,121.588449,6
+1247,巨峰路,Jufeng Road,641|1247,Jufeng Road,31.280676,121.588449,6
+419,蓝村路,Lancun Road,419|630,Lancun Road,31.211848,121.527741,4|6
+630,蓝村路,Lancun Road,419|630,Lancun Road,31.211848,121.527741,4|6
+735,岚皋路,Langao Road,,Langao Road,31.255864,121.421788,7
+833,老西门,Laoximen,833|1054,Laoximen,31.218871,121.482946,8|10
+1054,老西门,Laoximen,833|1054,Laoximen,31.218871,121.482946,8|10
+821,联航路,Lianhang Road,,Lianhang Road,31.073599,121.510549,8
+113,莲花路,Lianhua Road,,Lianhua Road,31.131004,121.402943,1
+1632,临港大道,Lingang Avenue,,,30.924195,121.910075,16
+260,凌空路,Lingkong Road,,Lingkong Road,31.192637,121.722833,2
+825,凌兆新村,Lingzhao Xincun,,Lingzhao Xincun,31.141343,121.489653,8
+413,临平路,Linping Road,,Linping Road,31.260872,121.500663,4
+628,临沂新村,Linyi Xincun,,Linyi Xincun,31.193326,121.516905,6
+724,刘行,Liuhang,,Liuhang,31.357569,121.36241,7
+1141,李子园,Liziyuan,,Liziyuan,31.269025,121.389973,11
+1020,龙柏新村,LongBai Xincun,,Longbai Xincun,31.176833,121.370426,10
+313,龙漕路,Longcao Road,,Longcao Road,31.169454,121.44439,3
+1243,隆昌路,Longchang Road,,,31.275362,121.54489,12
+1146,隆德路,Longde Road,1146|1328,Longde Road,31.230513,121.423572,11
+1328,隆德路,Longde Road,1146|1328,Longde Road,31.230513,121.423572,11
+1151,龙华,Longhua,,,31.172576,121.452835,11
+1045,龙溪路,Longxi Road,,Longxi Road,31.194413,121.380057,10
+252,龙阳路,Longyang Road,252|752|1621,Longyang Road,31.203191,121.557644,2|7|Maglev
+752,龙阳路,Longyang Road,252|752|1621,Longyang Road,31.203191,121.557644,2|7|Maglev
+1621,龙阳路,Longyang Road,252|752|1621,Longyang Road,31.203191,121.557644,2|7|Maglev
+1153,龙耀路,Longyao Road,,,31.15984,121.459779,11
+240,娄山关路,Loushanguan Road,,Loushanguan Road,31.211157,121.404007,2
+423,鲁班路,Luban Road,,Luban Road,31.199192,121.474977,4
+824,芦恒路,Luheng Road,,Luheng Road,31.11917,121.497777,8
+832,陆家浜路,Lujiabang Road,832|939,Lujiabang Road,31.211763,121.486112,8|9
+939,陆家浜路,Lujiabang Road,832|939,Lujiabang Road,31.211763,121.486112,8|9
+247,陆家嘴,Lujiazui,,Lujiazui,31.238205,121.502315,2
+722,罗南新村,Luonan Xincun,,Luonan Xincun,31.388747,121.357446,7
+1160,罗山路,Luoshan Road,1160|1623,,31.152139,121.593653,11|16
+1623,罗山路,Luoshan Road,1160|1623,,31.152139,121.593653,11|16
+938,马当路,Madang Road,,Madang Road,31.209344,121.476489,9
+1135,马陆,Malu,,Malu,31.319492,121.276855,11
+721,美兰湖,Meilan Lake,,Meilan Lake,31.401735,121.350117,7
+257,创新中路,Middle Chuangxin Road,,Middle Chuangxin Road,31.213863,121.67374,2
+1622,华夏中路,Middle Huaxia Road,,,31.175139,121.583297,16
+743,龙华中路,Middle Longhua Road,,Middle Longhua Road,31.184826,121.457266,7
+943,杨高中路,Middle Yanggao Road,,Middle Yanggao Road,31.227522,121.548676,9
+845,延吉中路,Middle Yanji Road,,Middle Yanji Road,31.288331,121.534945,8
+513,闵行开发区,Minhang Development Zone,,Minhang Development Zone,31.00053,121.369781,5
+634,民生路,Minsheng Road,,Minsheng Road,31.235845,121.543573,6
+728,南陈路,Nanchen Road,,Nanchen Road,31.321743,121.398774,7
+421,南浦大桥,Nanpu Bridge,,Nanpu Bridge,31.208468,121.499378,4
+1137,南翔,Nanxiang,,Nanxiang,31.296862,121.323296,11
+848,嫩江路,Nenjiang Road,,Nenjiang Road,31.314794,121.531957,8
+1242,宁国路,Ningguo Road,,,31.268804,121.532758,12
+1131,嘉定北,North Jiading,,North Jiading,31.391516,121.237331,11
+339,江杨北路,North Jiangyang Road,,North Jiangyang Road,31.407792,121.439473,3
+1058,四川北路,North Sichuan Road,,North Sichuan Road,31.251982,121.483815,10
+647,外高桥保税区北站,North Waigaoqiao Free Trade Zone,,North Waigaoqiao Free Trade Zone,31.347831,121.586919,6
+838,西藏北路,North Xizang Road,,North Xizang Road,31.263529,121.468789,8
+1248,杨高北路,North Yanggao Road,,,31.280097,121.603246,12
+127,中山北路,North Zhongshan Road,,North Zhongshan Road,31.258764,121.459229,1
+621,东方体育中心,Oriental Sports Center,621|826|1154,Oriental Sports Center,31.152897,121.480009,6|8
+826,东方体育中心,Oriental Sports Center,621|826|1154,Oriental Sports Center,31.152897,121.480009,6|8
+1154,东方体育中心,Oriental Sports Center,621|826|1154,Oriental Sports Center,31.152897,121.480009,6|8
+723,潘广路,Panguang Road,,Panguang Road,31.364174,121.355842,7
+131,彭浦新村,Pengpu Xincun,,Pengpu Xincun,31.30659,121.448637,1
+123,人民广场,People's Square,123|245|835,People's Square,31.232812,121.475372,1|2|8
+245,人民广场,People's Square,123|245|835,People's Square,31.232812,121.475372,1|2|8
+835,人民广场,People's Square,123|245|835,People's Square,31.232812,121.475372,1|2|8
+418,浦电路,Pudian Road,418|631,Pudian Road,31.222353,121.532047,4
+631,浦电路,Pudian Road,418|631,Pudian Road,31.220152,121.529107,6
+416,浦东大道,Pudong Avenue,,Pudong Avenue,31.240008,121.519384,4
+263,浦东国际机场,Pudong International Airport,,Pudong International Airport,31.150456,121.805867,2| Maglev 
+823,浦江镇,Pujiang Town,,Pujiang Town,31.096259,121.506393,8
+1157,浦三路,Pusan Road,,,31.15085,121.538825,11
+928,七宝,Qibao,,Qibao,31.155541,121.349635,9
+726,祁华路,Qihua Road,,,31.322703,121.375804,7
+1140,祁连山路,Qilianshan Road,,Qilianshan Road,31.271643,121.375962,11
+836,曲阜路,Qufu Road,836|1236,Qufu Road,31.24233,121.471591,8
+1236,曲阜路,Qufu Road,836|1236,Qufu Road,31.24233,121.471591,8
+840,曲阳路,Quyang Road,,Quyang Road,31.276525,121.490712,8
+1155,三林,Sanlin,,,31.143027,121.510789,11
+1066,三门路,Sanmen Road,,Sanmen Road,31.313151,121.508298,10
+941,商城路,Shangcheng Road,,Shangcheng Road,31.230385,121.516188,9
+729,上大路,Shangda Road,,Shangda Road,31.314796,121.408642,7
+1118,上海汽车城,Shanghai Automobile City,,Shanghai Automobile City,31.285391,121.180824,11
+629,上海儿童医学中心,Shanghai Children's Medical Center,,Shanghai Children's Medical Center,31.203254,121.523476,6
+1120,上海赛车场,Shanghai Circuit,,Shanghai Circuit,31.331861,121.226056,11
+129,上海马戏城,Shanghai Circus World,,Shanghai Circus World,31.279554,121.452049,1
+117,上海体育馆,Shanghai Indoor Stadium,117|401,Shanghai Indoor Stadium,31.182786,121.437272,1|4
+401,上海体育馆,Shanghai Indoor Stadium,117|401,Shanghai Indoor Stadium,31.182786,121.437272,1|4
+1051,上海图书馆,Shanghai Library,,Shanghai Library,31.208057,121.444278,10
+126,上海火车站,Shanghai Railway Station,126|323|410,Shanghai Railway Station,31.24986,121.457935,1|3|4
+323,上海火车站,Shanghai Railway Station,126|323|410,Shanghai Railway Station,31.24986,121.457935,1|3|4
+410,上海火车站,Shanghai Railway Station,126|323|410,Shanghai Railway Station,31.24986,121.457935,1|3|4
+250,上海科技馆,Shanghai Science and Technology Museum,,Shanghai Science and Technology Museum,31.219641,121.54291,2
+115,上海南站,Shanghai South Railway Station,115|311,Shanghai South Railway Station,31.154832,121.430449,1|3
+311,上海南站,Shanghai South Railway Station,115|311,Shanghai South Railway Station,31.154832,121.430449,1|3
+426,上海体育场,Shanghai Stadium,,Shanghai Stadium,31.182778,121.437268,4
+1150,上海游泳馆,Shanghai Swimming Center,,,31.179461,121.441461,11
+727,上海大学,Shanghai University,,Shanghai University,31.320565,121.388824,7
+1044,上海动物园,Shanghai Zoo,,Shanghai Zoo,31.190233,121.368168,10
+623,上南路,Shangnan Road,,Shangnan Road,31.148835,121.506475,6
+820,沈杜公路,Shendu highway,,Shendu Highway,31.061386,121.512244,8
+1250,申江路,Shenjiang Road,,,31.280192,121.626778,12
+924,佘山,Sheshan,,Sheshan,31.104468,121.229723,9
+849,市光路,Shiguang Road,,Shiguang Road,31.322762,121.53195,8
+312,石龙路,Shilong Road,,Shilong Road,31.157928,121.443194,3
+335,水产路,Shuichan Road,,Shuichan Road,31.381407,121.488172,3
+1046,水城路,Shuicheng Road,,Shuicheng Road,31.199432,121.392076,10
+1631,书院,Shuyuan,,,30.95955,121.850027,16
+925,泗泾,Sijing,,Sijing,31.11832,121.260453,9
+841,四平路,Siping Road,841|1061,Siping Road,31.274878,121.501483,8|10
+1061,四平路,Siping Road,841|1061,Siping Road,31.274878,121.501483,8|10
+334,淞滨路,Songbin Road,,Songbin Road,31.371012,121.492842,3
+332,淞发路,Songfa Road,,Songfa Road,31.345143,121.500421,3
+237,淞虹路,Songhong Road,,Songhong Road,31.218195,121.359476,2
+918,松江南站,Songjiang South Railway Station,,Songjiang South Railway Station,30.984531,121.230176,9
+920,松江体育中心,Songjiang Sports Center,,Songjiang Sports Center,31.015552,121.230504,9
+922,松江大学城,Songjiang University Town,,Songjiang University Town,31.054112,121.232633,9
+921,松江新城,Songjiang Xincheng,,Songjiang Xincheng,31.030342,121.230777,9
+1048,宋园路,Songyuan Road,,Songyuan Road,31.196434,121.411705,10
+331,长江南路,South Changjiang Road,,South Changjiang Road,31.331949,121.491481,3
+122,黄陂南路,South Huangpi Road,,South Huangpi Road,31.222725,121.473295,1
+622,灵岩南路,South Lingyan Road,,South Lingyan Road,31.148761,121.495078,6
+1324,祁连山南路,South Qilianshan Road,,South Qilianshan Road,31.237803,121.367337,13
+121,陕西南路,South Shaanxi Road,121|1052,South Shaanxi Road,31.214996,121.458265,1|10
+1052,陕西南路,South Shaanxi Road,121|1052,South Shaanxi Road,31.214996,121.458265,1|10
+645,外高桥保税区南站,South Waigaoqiao Free Trade Zone,,South Waigaoqiao Free Trade Zone,31.321589,121.601988,6
+422,西藏南路,South Xizang Road,422|831,South Xizang Road,31.201968,121.489568,4|8
+831,西藏南路,South Xizang Road,422|831,South Xizang Road,31.201968,121.489568,4|8
+749,杨高南路,South Yanggao Road,,South Yanggao Road,31.187572,121.525107,7
+420,塘桥,Tangqiao,,Tangqiao,31.209794,121.518635,4
+256,唐镇,Tangzhen,,Tangzhen,31.213156,121.655579,2
+1138,桃浦新村,Taopu Xincun,,Taopu Xincun,31.281607,121.349624,11
+1057,天潼路,Tiantong Road,1057|1237,Tiantong Road,31.243904,121.482451,10
+1237,天潼路,Tiantong Road,1057|1237,Tiantong Road,31.243904,121.482451,10
+338,铁力路,Tieli Road,,Tieli Road,31.408032,121.462336,3
+1239,提篮桥,Tilan Qiao,,,31.253596,121.506629,12
+133,通河新村,Tonghe Xincun,,Tonghe Xincun,31.331253,121.441483,1
+1062,同济大学,Tongji University,,Tongji University,31.282169,121.506343,10
+112,外环路,Waihuanlu,,Waihuanlu,31.12059,121.392774,1
+239,威宁路,Weining Road,,Weining Road,31.214944,121.386927,2
+512,文井路,Wenjing Road,,Wenjing Road,31.003478,121.380743,5
+130,汶水路,Wenshui Road,,Wenshui Road,31.292616,121.450235,1
+627,高科西路,West Gaoke Road,627|748,West Gaoke Road,31.185745,121.509791,6|7
+748,高科西路,West Gaoke Road,627|748,West Gaoke Road,31.185745,121.509791,6|7
+624,华夏西路,West Huaxia Road,,West Huaxia Road,31.149855,121.514519,6
+1132,嘉定西,West Jiading,,West Jiading,31.377084,121.227868,11
+1322,金沙江西路,West Jinshajiang Road,,West Jinshajiang Road,31.241136,121.335176,13
+244,南京西路,West Nanjing Road,,West Nanjing Road,31.229755,121.459726,2
+1142,上海西站,West Shanghai Railway Station,,West Shanghai Railway Station,31.262285,121.403712,11
+317,延安西路,West Yan'an Road,317|404,West Yan'an Road,31.209598,121.41707,3|4
+404,延安西路,West Yan'an Road,317|404,West Yan'an Road,31.209598,121.41707,3|4
+330,殷高西路,West Yingao Road,,West Yingao Road,31.319967,121.484962,3
+137,友谊西路,West Youyi Road,,West Youyi Road,31.380989,121.42804,1
+1628,野生动物园,Wild Animal Park,,,31.0497,121.709389,16
+1064,五角场,Wujiaochang,,Wujiaochang,31.297805,121.514507,10
+640,五莲路,Wulian Road,,Wulian Road,31.272087,121.587994,6
+1329,武宁路,Wuning Road,,,31.233646,121.429828,13
+1139,武威路,Wuwei Road,,Wuwei Road,31.276641,121.364674,11
+643,五洲大道,Wuzhou Avenue,,Wuzhou Avenue,31.302584,121.589325,6
+847,翔殷路,Xiangyin Road,,Xiangyin Road,31.305128,121.531979,8
+940,小南门,Xiaonanmen,,Xiaonanmen,31.216698,121.498366,9
+1627,新场,Xinchang,,,31.04498,121.648854,16
+734,新村路,Xincun Road,,Xincun Road,31.264243,121.42272,7
+732,行知路,Xingzhi Road,,Xingzhi Road,31.28494,121.421487,7
+929,星中路,Xingzhong Road,,Xingzhong Road,31.15815,121.368695,9
+1068,新江湾城,Xinjiangwancheng,,Xinjiangwancheng,31.328584,121.506771,10
+1053,新天地,Xintiandi,,Xintiandi,31.216379,121.475112,10
+124,新闸路,Xinzha Road,,Xinzha Road,31.238454,121.467937,1
+111,莘庄,Xinzhuang,111|501,Xinzhuang,31.111095,121.385337,1|5
+501,莘庄,Xinzhuang   ,111|501,Xinzhuang,31.111095,121.385337,1|5
+118,徐家汇,Xujiahui,118|1149|934,Xujiahui,31.194621,121.436139,1|9
+934,徐家汇,Xujiahui,118|1149|934,Xujiahui,31.194621,121.436139,1|9
+1149,徐家汇,Xujiahui,118|1149|934,Xujiahui,31.194621,121.436139,1|9
+128,延长路,Yanchang Road,,Yanchang Road,31.271386,121.45549,1
+415,杨树浦路,Yangshupu Road,,Yangshupu Road,31.252171,121.516996,4
+827,杨思,Yangsi,,Yangsi,31.161065,121.493471,8
+1158,严御路,Yanyu Road,,Yanyu Road (Not yet open),31.136556,121.558711,11
+746,耀华路,Yaohua Road,746|829,Yaohua Road,31.178513,121.494621,7|8
+829,耀华路,Yaohua Road,746|829,Yaohua Road,31.178513,121.494621,7|8
+1047,伊犁路,Yili Road,,Yili Road,31.19893,121.40386,10
+503,银都路,Yindu Road,,Yindu Road,31.089316,121.390344,5
+315,宜山路,Yishan Road,315|402|933,Yishan Road,31.186717,121.427184,3|4|9
+402,宜山路,Yishan Road,315|402|933,Yishan Road,31.186717,121.427184,3|4|9
+933,宜山路,Yishan Road,315|402|933,Yishan Road,31.186717,121.427184,3|4|9
+1060,邮电新村,Youdian Xincun,,Youdian Xincun,31.268642,121.494499,10
+337,友谊路,Youyi Road,,Youyi Road,31.404012,121.475956,3
+261,远东大道,Yuandong Avenue,,Yuandong Avenue,31.199441,121.755374,2
+633,源深体育中心,Yuanshen Stadium,,Yuanshen Stadium,31.232985,121.534579,6
+1152,云锦路,Yunjin Road,,,31.166474,121.458505,11
+637,云山路,Yunshan Road,,Yunshan Road,31.250386,121.572737,6
+747,云台路,Yuntai Road,,Yuntai Road,31.182128,121.500379,7
+1159,御桥,Yuqiao,,,31.15831,121.57163,11
+1055,豫园,Yuyuan Garden,,Yuyuan Garden,31.228093,121.487368,10
+333,张华浜,Zhanghuabang,,Zhanghuabang,31.357981,121.498693,3
+253,张江高科,Zhangjiang Hi-Tech Park,,Zhangjiang Hi-Tech Park,31.201825,121.587687,2
+1116,兆丰路,Zhaofeng Road,,Zhaofeng Road,31.28897,121.150353,11
+741,肇嘉浜路,Zhaojiabang Road,741|935,Zhaojiabang Road,31.199513,121.450331,7|9
+935,肇嘉浜路,Zhaojiabang Road,741|935,Zhaojiabang Road,31.199513,121.450331,7|9
+1325,真北路,Zhenbei Road,,Zhenbei Road,31.232362,121.381631,13
+321,镇坪路,Zhenping Road,321|408|736,Zhenping Road,31.246509,121.430006,3|4|7
+408,镇坪路,Zhenping Road,321|408|736,Zhenping Road,31.246509,121.430006,3|4|7
+736,镇坪路,Zhenping Road,321|408|736,Zhenping Road,31.246509,121.430006,3|4|7
+1143,真如,Zhenru,,Zhenru,31.250833,121.407201,11
+927,中春路,Zhongchun Road,,Zhongchun Road,31.149431,121.33777,9
+241,中山公园,Zhongshan Park,241|318|405,Zhongshan Park,31.218001,121.415713,2|3|4
+318,中山公园,Zhongshan Park,241|318|405,Zhongshan Park,31.218001,121.415713,2|3|4
+405,中山公园,Zhongshan Park,241|318|405,Zhongshan Park,31.218001,121.415713,2|3|4
+322,中潭路,Zhongtan Road,322|409,Zhongtan Road,31.254699,121.441191,3|4
+409,中潭路,Zhongtan Road,322|409,Zhongtan Road,31.254699,121.441191,3|4
+837,中兴路,Zhongxing Road,,Zhongxing Road,31.253231,121.469031,8
+644,洲海路,Zhouhai Road,,Zhouhai Road,31.312303,121.589423,6
+505,颛桥,Zhuanqiao,,Zhuanqiao,31.066964,121.401916,5
+1019,紫藤路,Ziteng Road,,Ziteng Road,31.169535,121.364503,10
+919,醉白池,Zuibaichi Park,,Zuibaichi Park,31.001401,121.229631,9
