@@ -55,6 +55,46 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
+        public void SetProperties(int instanceId, int blur, int radius, float opacity, int line, int station)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Blur = blur;
+                    ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Radius = radius;
+                    ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Opacity = opacity;
+                    ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).StationWidth = station;
+                    ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).LineWidth = line;
+                    Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, line,station);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestProperties(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    int blur = ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Blur;
+                    int radius = ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Radius;
+                    float opacity = ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Opacity;
+                    int station = ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).StationWidth;
+                    int line = ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).LineWidth;
+                    Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, line, station);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void Animate(int instanceId)
         {
             try
@@ -180,21 +220,21 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void SetHeatmapLayerVisible(int instanceId)
+        public void SetEntryHeatmapLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer)
+                    if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer)
                     {
-                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer = false;
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer = false;
                     }
                     else
                     {
-                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer = true;
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer = true;
                     }
-                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Group("" + instanceId).setEntryHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -202,6 +242,8 @@ namespace GDO.Apps.ShanghaiMetro
                 }
             }
         }
+
+
 
         public void RequestBingLayerVisible(int instanceId)
         {
@@ -263,13 +305,13 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void RequestHeatmapLayerVisible(int instanceId)
+        public void RequestEntryHeatmapLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setEntryHeatmapLayerVisible(instanceId, ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).EntryHeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -309,11 +351,11 @@ namespace GDO.Apps.ShanghaiMetro
                     }
                     else
                     {
-                        if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsInitialized)
-                        {
+                        //if (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsInitialized)
+                        //{
                             MapPosition position = ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).GetMapPosition();
                             Clients.Caller.receiveMapPosition(instanceId, position.TopLeft, position.Center, position.BottomRight, position.Resolution, position.Width, position.Height, position.Zoom);
-                        }
+                        //}
                     }
 
                 }

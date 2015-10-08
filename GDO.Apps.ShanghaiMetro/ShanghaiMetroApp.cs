@@ -19,12 +19,16 @@ namespace GDO.Apps.ShanghaiMetro
         public bool StamenLayer { get; set; }
         public bool StationLayer { get; set; }
         public bool LineLayer { get; set; }
-        public bool HeatmapLayer { get; set; }
+        public bool EntryHeatmapLayer { get; set; }
 
         public int TimeStep { get; set; }
         public bool IsAnimating { get; set; }
+        public float Opacity { get; set; }
+        public int Blur { get; set; }
+        public int Radius { get; set; }
+        public int StationWidth { get; set; }
+        public int LineWidth { get; set; }
         public int WaitTime { get; set; }
-
 
         public bool mode { get; set; }
         public string Style { get; set; }
@@ -42,14 +46,19 @@ namespace GDO.Apps.ShanghaiMetro
             this.Position.Center[1] = (string)configuration.Json.SelectToken("latitude");
             this.Position.Resolution = (string)configuration.Json.SelectToken("resolution");
             this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
+            this.Blur = 30;
+            this.Radius = 40;
+            this.Opacity = (float) 0.7;
+            this.StationWidth = 2;
+            this.LineWidth = 7;
             this.BingLayer = true;
             this.StamenLayer = false;
             this.StationLayer = true;
             this.LineLayer = true;
-            this.HeatmapLayer = true;
+            this.EntryHeatmapLayer = false;
             this.TimeStep = 0;
             this.IsAnimating = false;
-            this.WaitTime = 1000;
+            this.WaitTime = 70;
             //TODO Read CSV into data dictionaries
         }
 

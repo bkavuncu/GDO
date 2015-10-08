@@ -88,7 +88,11 @@
                         test_bench[confId] && test_bench[confId]();
                         test_bench[confId] = null;
                         $("#wait").css("display", "none");
-                        $("#control_" + confId).css("display", "");
+                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
+                            $("#control_6").css("display", "");
+                        }else {
+                            $("#control_" + confId).css("display", "");
+                        }
                     }
                 };
 
@@ -419,7 +423,7 @@
                     });
                 };
 
-                test_bench[6] = function () {
+                test_bench[6] = test_bench[7] = test_bench[8] = test_bench[9] = function () {
                     var cb = $('#outterCheckbox');
                     var cb2 = $('#widthChangingCheckbox');
 
