@@ -42,7 +42,7 @@
         #viz_title, #clock {
             position : absolute;
             display : inline-block;
-            font-size: 4em;
+            font-size: 8em;
             font-family : clockFont;
             color: #FFF;
             opacity : 1;
@@ -740,7 +740,7 @@
                         r = dd3.browser.row;
 
                     //clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
-                    //titleDiv.text("Shanghai metro").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+                    titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
