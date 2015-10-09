@@ -42,7 +42,7 @@
         #viz_title, #clock {
             position : absolute;
             display : inline-block;
-            font-size: 10em;
+            font-size: 4em;
             font-family : clockFont;
             color: #FFF;
             opacity : 1;
@@ -895,21 +895,21 @@
                 test_bench['6'] = test_bench['7'] = test_bench['8'] = test_bench['9'] = function (configId) {
                     switch (configId) {
                         case 6:
-                            shanghaiViz(2 * 60 * 1000);
+                            shanghaiViz(2 * 60 * 1000, 1);
                             break;
                         case 7:
-                            shanghaiViz(6 * 60 * 1000);
+                            shanghaiViz(6 * 60 * 1000, 3);
                             break;
                         case 8:
-                            shanghaiViz(20 * 60 * 1000);
+                            shanghaiViz(20 * 60 * 1000, 10);
                             break;
                         case 9:
-                            shanghaiViz(30 * 60 * 1000);
+                            shanghaiViz(30 * 60 * 1000, 15);
                             break;
                     }
                 };
 
-                var shanghaiViz = function (timeInterval) {
+                var shanghaiViz = function (timeInterval, agg) {
                     var svg = dd3.svgCanvas,
                         mapGroup = svg.append('g').attr('id', 'dd3_map'),
                         clockDiv = d3.select('#clock').unwatch(),
@@ -1021,6 +1021,7 @@
                             tubeLines: tube,
                             clock: clockDiv,
                             disrupted: dis,
+                            aggregate: agg,
                             showOutterLine: outter,
                             timeInterval: timeInterval,
                             widthChanging: widthChanging

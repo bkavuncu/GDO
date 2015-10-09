@@ -6,7 +6,7 @@ var animationLines = function (arg) {
 		initialized = 0,
 		running = false,
 		scale = d3.scale.log().clamp(true),
-        colorScale = d3.scale.linear().clamp(true).domain([1, 15*1100, 15*2200]).interpolate(d3.interpolateRgb).range(["white", "green", "red"]),// GDOCONFIG TODO FIX TO MAKE BETTER
+        colorScale = d3.scale.linear().clamp(true).interpolate(d3.interpolateRgb).range(["white", "green", "red"]),// GDOCONFIG
 	    polygonPosition;
 		
 	var a = function (arg) {
@@ -41,6 +41,7 @@ var animationLines = function (arg) {
 	
 	a.loadData = function (callback) {
 	    console.log('Loading Data for Animation');
+	    var end = 3;
 
 	    var toCoordinateTopLeft = a.map.projection.invert([dd3.position.svg.left, dd3.position.svg.top]);
 	    var toCoordinateBottomRight = a.map.projection.invert([dd3.position.svg.left + dd3.browser.svgWidth, dd3.position.svg.top + dd3.browser.svgHeight]);
@@ -62,7 +63,7 @@ var animationLines = function (arg) {
 			a.dataLength = 0;
 
 			if (data.length != 0) {
-			    a.dataLength = data[Object.keys(data)[0]].entries.length;
+			    a.dataLength = data[Object.keys(data)[0]].entries.length / a.aggregate;
 			    data.forEach(function (d) {
 			        a.data.set(d.name, d.entries);
 			    });
@@ -87,7 +88,7 @@ var animationLines = function (arg) {
 			                if (max === tMax) { xMax = [x, name]; }
 			                return [pos, val[a.entry], name];
 			            });
-			            a.aggregatedData.set(x, array);
+			            a.aggregatedData.set(x / a.aggregate, array);
 			        }
 
 			        if (x % tenth === 0) {
@@ -100,18 +101,49 @@ var animationLines = function (arg) {
 			}
 
 			initialized = 1;
-			console.log("Data loaded");
-			callback && callback();
+			if (--end == 0)
+			    (console.log("Data loaded"), callback && callback());
 		}, null, null, ["coordinates", 0], ["coordinates", 1], [["name"], ["entries"]], limit);
 
 	    a.linkLoad = [];
+	    a.maxLinkLoad = [];
 
 	    dd3.getData("linesLoad", "linkLoad", function (d) {
 	        a.linkLoad[0] = d3.map(d);
+	        a.maxLinkLoad[0] = d3.max(a.linkLoad[0].values(), function (e) {
+	            var localMax = 0;
+	            for (var t in e) {
+	                var tmp = d3.max(e[t], function (d) { return +d;});
+	                localMax = tmp > localMax ? tmp : localMax;
+	            }
+	            return localMax;
+	        });
+
+            // Get dataLinesLength
+	        for (var k in d) {
+	            for (var l in d[k]) {
+	                a.dataLinesLength = l.length;
+	                break;
+	            }
+	            break;
+	        }
+
+	        if (--end == 0)
+	            (console.log("Data loaded"), callback && callback());
 	    });
 
 	    dd3.getData("linesLoadDisrupted", "linkLoadDisrupted", function (d) {
 	        a.linkLoad[1] = d3.map(d);
+	        a.maxLinkLoad[1] = d3.max(a.linkLoad[0].values(), function (e) {
+	            var localMax = 0;
+	            for (var t in e) {
+	                var tmp = d3.max(e[t], function (d) { return +d; });
+	                localMax = tmp > localMax ? tmp : localMax;
+	            }
+	            return localMax;
+	        });
+	        if (--end == 0)
+	            (console.log("Data loaded"), callback && callback());
 	    });
 
         //Sync to do to callback only when ready...
@@ -209,121 +241,99 @@ var animationLines = function (arg) {
 	            });
             }
 
-	        if (time % a.aggregate === 0) {
+            a.lines.lineNames.forEach(function (name, i) {
+	            var line = a.lines.lines.get(name);
+	            var color = a.lines.lineColors[i];
+	            var linkLoad = a.linkLoad[a.disrupted].get(name);
+	            var lineGroup = group.select("#line_" + name);
 
-	                    a.lines.lineNames.forEach(function (name, i) {
-	                var line = a.lines.lines.get(name);
-	                var color = a.lines.lineColors[i];
-	                var linkLoad = a.linkLoad[a.disrupted].get(name);
-	                var lineGroup = group.select("#line_" + name);
+                // == if we don't want the width to change, use always the widths at time zero. ==
+	            var effectiveTime = (a.widthChanging) ? time : 0;
 
-                    // == if we don't want the width to change, use always the widths at time zero. ==
-	                var effectiveTime = (a.widthChanging) ? time : 0;
+	            line.forEach(function (partLine, j) {
 
-	                line.forEach(function (partLine, j) {
+	                var array = polygonPosition.get(name)[j];
+	                array.forEach(function (d, k) {
+	                    if (d === null)
+	                        return;
 
-	                    var array = polygonPosition.get(name)[j];
-	                    array.forEach(function (d, k) {
-	                        if (d === null)
-	                            return;
+	                    var normAct = scale(a.data.get(partLine[k])[effectiveTime][a.entry]), ptActs = [];
+	                    ptActs[0] = [d[0][0] + (normAct) * d[1][0], d[0][1] + (normAct) * d[1][1]];
+	                    ptActs[1] = [d[0][0] - (normAct) * d[1][0], d[0][1] - (normAct) * d[1][1]];
+	                    var n2 = partLine[k].replace(/(\s+|')/g, '');
 
-	                        var normAct = scale(a.data.get(partLine[k])[effectiveTime][a.entry]), ptActs = [];
-	                        ptActs[0] = [d[0][0] + (normAct) * d[1][0], d[0][1] + (normAct) * d[1][1]];
-	                        ptActs[1] = [d[0][0] - (normAct) * d[1][0], d[0][1] - (normAct) * d[1][1]];
-	                        var n2 = partLine[k].replace(/(\s+|')/g, '');
+	                    if (!(k == 0 || array[k - 1] === null)) {
 
-	                        if (!(k == 0 || array[k - 1] === null)) {
+	                        var normPrev = scale(a.data.get(partLine[k - 1])[effectiveTime][a.entry]);
+	                        var dPrec = array[k - 1];
 
-	                            var normPrev = scale(a.data.get(partLine[k - 1])[effectiveTime][a.entry]);
-	                            var dPrec = array[k - 1];
+	                        var n1 = partLine[k - 1].replace(/(\s+|')/g, '');
+	                        var ids = [[name, n1, n2].join("_"), [name, n2, n1].join("_")];
 
-	                            var n1 = partLine[k - 1].replace(/(\s+|')/g, '');
-	                            var ids = [[name, n1, n2].join("_"), [name, n2, n1].join("_")];
+	                        for (i = 0; i <= 1; i++) {
+	                            var c = i == 0 ? 1 : -1, id = ids[i];
+	                            var ptPrec = [dPrec[0][0] + c * (normPrev) * dPrec[1][0], dPrec[0][1] + c * (normPrev) * dPrec[1][1]];
+	                            var ptAct = ptActs[i];
 
-	                            for (i = 0; i <= 1; i++) {
-	                                var c = i == 0 ? 1 : -1, id = ids[i];
-	                                var ptPrec = [dPrec[0][0] + c * (normPrev) * dPrec[1][0], dPrec[0][1] + c * (normPrev) * dPrec[1][1]];
-	                                var ptAct = ptActs[i];
+	                            var poly = lineGroup.select("#" + "p_" + id);
 
-	                                var poly = lineGroup.select("#" + "p_" + id);
+	                            if (poly.empty())
+	                                poly = lineGroup.append("polygon").attr("id", "p_" + id).attr({
+	                                    "opacity": a.lineOpacity,
+	                                    "stroke-width": a.lineLinkWidth,
+	                                    "stroke": a.showOutterLine ? color : ""
+	                                });
 
-	                                if (poly.empty())
-	                                    poly = lineGroup.append("polygon").attr("id", "p_" + id).attr({
-	                                        "opacity": a.lineOpacity,
-	                                        "stroke-width": a.lineLinkWidth,
-	                                        "stroke": a.showOutterLine ? color : ""
-	                                    });
+	                            var fillColor = linkLoad[id] ? colorScale(linkLoad[id][time]) : (console.log(id), "none"); // if no data, plot the name of the expected dataPoint and give none to color
 
-	                                var fillColor = linkLoad[id] ? colorScale(linkLoad[id][time]) : (console.log(id), "none"); // if no data, plot the name of the expected dataPoint and give none to color
-
-	                                poly.transition()
-	                                    .duration(a.timeStep * a.aggregate)
-	                                    .ease("linear")
-	                                    .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
-	                                    .attr("fill", fillColor);
-	                            }
-
-	                            if (lineGroup.select("#" + "l_" + ids[0]).empty())
-	                                lineGroup.append("line").attr("id", "l_" + ids[0])
-                                        .attr({
-                                            "opacity": a.lineOpacity,
-                                            "stroke-width": a.lineLinkWidth,
-                                            "stroke": color,
-                                            "x1": dPrec[0][0],
-                                            "y1": dPrec[0][1],
-                                            "x2": d[0][0],
-                                            "y2": d[0][1],
-                                        });
+	                            poly.transition()
+	                                .duration(a.timeStep)
+	                                .ease("linear")
+	                                .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
+	                                .attr("fill", fillColor);
 	                        }
 
-	                        if (!a.showOutterLine) {
-	                            var stationLine = lineGroup.select("#" + "s_" + name + "_" + n2);
-	                            if (stationLine.empty())
-	                                stationLine = lineGroup.append("line").attr("id", "s_" + name + "_" + n2)
+	                        if (lineGroup.select("#" + "l_" + ids[0]).empty())
+	                            lineGroup.append("line").attr("id", "l_" + ids[0])
+                                    .attr({
+                                        "opacity": a.lineOpacity,
+                                        "stroke-width": a.lineLinkWidth,
+                                        "stroke": color,
+                                        "x1": dPrec[0][0],
+                                        "y1": dPrec[0][1],
+                                        "x2": d[0][0],
+                                        "y2": d[0][1],
+                                    });
+	                    }
+
+	                    if (!a.showOutterLine) {
+	                        var stationLine = lineGroup.select("#" + "s_" + name + "_" + n2);
+	                        if (stationLine.empty())
+	                            stationLine = lineGroup.append("line").attr("id", "s_" + name + "_" + n2)
+                                    .attr({
+                                        "opacity": a.lineOpacity,
+                                        "stroke-width": a.lineLinkWidth,
+                                        "stroke": color
+                                    });
+
+	                        stationLine.transition()
+                                        .duration(a.timeStep)
+                                        .ease("linear")
                                         .attr({
-                                            "opacity": a.lineOpacity,
-                                            "stroke-width": a.lineLinkWidth,
-                                            "stroke": color
+                                            "x1": ptActs[0][0],
+                                            "y1": ptActs[0][1],
+                                            "x2": ptActs[1][0],
+                                            "y2": ptActs[1][1]
                                         });
-
-	                            stationLine.transition()
-                                            .duration(a.timeStep * a.aggregate)
-                                            .ease("linear")
-                                            .attr({
-                                                "x1": ptActs[0][0],
-                                                "y1": ptActs[0][1],
-                                                "x2": ptActs[1][0],
-                                                "y2": ptActs[1][1]
-                                            });
-	                        }
-	                    });
-	                })
-	            });
-
-                /*
-	            circlesEnter = group.selectAll('circle.enter.T' + time).data(a.aggregatedData.get(time));
-
-	            circlesEnter.enter()
-                    .append('circle')
-                    .classed('T' + time, true)
-                    .classed('enter', true)
-                    .style('fill', 'url(#areaGradient)')
-                    .attr('cx', function (d) { return d[0][0]; })
-                    .attr('cy', function (d) { return d[0][1]; })
-                    .attr('r', 0.2)
-                    .transition()
-                    .precision(0.5)
-                    .delay(function (d) { return Math.random() * a.timeStep * a.aggregate; })
-                    .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
-                    .attr('r', function (d) { return (d[1] > 0) ? scale(d[1]) : 0; })
-                    .transition()
-                    .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
-                */
-	        }
+	                    }
+	                });
+	            })
+	        });
+	        
 	    }
 
 	    if (running) {
-	        if (currentTime + 1 < (a.dataLength/ 15))   // TODO this is nasty hack to make it work with 30 minutes steps!
+	        if (currentTime + 1 < a.dataLength)
 	            currentTime++;
 	        else
                 currentTime = 0;
@@ -369,6 +379,7 @@ var animationLines = function (arg) {
 	    }
 
 	    scale.domain([1, a.maxSizeNumber]);
+	    colorScale.domain([1, a.maxLinkLoad[a.entry] / 2, a.maxLinkLoad[a.entry]]);
 	    initialized = 2;
 	};
 
