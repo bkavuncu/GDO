@@ -55,7 +55,7 @@ namespace GDO.Apps.ShanghaiMetro
             this.StamenLayer = false;
             this.StationLayer = true;
             this.LineLayer = true;
-            this.EntryHeatmapLayer = false;
+            this.EntryHeatmapLayer = true;
             this.TimeStep = 0;
             this.IsAnimating = false;
             this.WaitTime = 70;
