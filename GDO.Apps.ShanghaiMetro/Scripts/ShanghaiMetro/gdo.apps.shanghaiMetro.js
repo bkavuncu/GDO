@@ -88,7 +88,11 @@ $(function () {
 
     $.connection.shanghaiMetroAppHub.client.setEntryHeatmapLayerVisible = function (instanceId, visible) {
         gdo.consoleOut('.SHANGHAIMETRO', 1, 'Seting Heatmap Layer Visibility: ' + visible);
-        gdo.net.instance[instanceId].entryHeatmapLayer.setVisible(visible);
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
+            gdo.net.instance[instanceId].entryHeatmapLayer.setVisible(visible);
+        } else {
+            gdo.net.instance[instanceId].entryHeatmapLayer.setVisible(false);
+        }
     }
 
     $.connection.shanghaiMetroAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
@@ -181,8 +185,8 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
         gdo.net.app["ShanghaiMetro"].lines = data;
     });
 
-    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Configurations/ShanghaiMetro/Data/entry_exit.json');
-    $.getJSON('/Configurations/ShanghaiMetro/Data/entry_exit.json', function (data) {
+    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Configurations/ShanghaiMetro/Data/entry_exit_data.json');
+    $.getJSON('/Configurations/ShanghaiMetro/Data/entry_exit_data.json', function (data) {
         gdo.net.app["ShanghaiMetro"].entry_and_exits = data;
     });
 
@@ -213,6 +217,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
 
     map = new ol.Map({
         controls: new Array(),
+        //renderer: 'webgl',
         layers: [],
         target: 'map',
         view: gdo.net.instance[instanceId].view
@@ -225,7 +230,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
             preload: Infinity,
             source: new ol.source.BingMaps({
                 key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
-                imagerySet: 'AerialWithLabels',
+                imagerySet: 'Aerial',
                 maxZoom: 19
             })
         });
@@ -368,6 +373,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
 
         setTimeout(function() {
             gdo.net.instance[instanceId].entryHeatmapLayer = new ol.layer.Heatmap({
+                //gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
                 source: gdo.net.instance[instanceId].entrySource,
                 opacity: opacity,
                 blur: blur,
