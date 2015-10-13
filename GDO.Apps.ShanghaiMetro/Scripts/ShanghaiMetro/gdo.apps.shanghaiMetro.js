@@ -17,36 +17,37 @@ $(function () {
     }
 
     $.connection.shanghaiMetroAppHub.client.receiveTimeStep = function (timestep) {
-        gdo.consoleOut('.SHANGHAIMETRO', 1, 'Received Time Step: ' + timestep);
-        var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-        gdo.net.app["ShanghaiMetro"].timeStep = timestep;
-        if (!gdo.net.instance[instanceId].entry) {
-            gdo.net.instance[instanceId].entrySource.forEachFeature(function (feature) {
-                feature.set("weight", Math.log(parseFloat(feature.get("exits")[timestep])) / 7);
-            });
-        } else {
-            gdo.net.instance[instanceId].entrySource.forEachFeature(function (feature) {
-                feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
-            });
-        }
-        if (gdo.net.instance[instanceId].entry && gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
-            var temp = timestep * 2;
-            var hour = parseInt(temp / 60);
-            var minutes = parseInt(temp - hour * 60);
-            hour = hour + 6;
-            if (hour < 10) {
-                hour = "0" + hour;
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.SHANGHAIMETRO', 1, 'Received Time Step: ' + timestep);
+            var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+            gdo.net.app["ShanghaiMetro"].timeStep = timestep;
+            if (!gdo.net.instance[instanceId].entry) {
+                gdo.net.instance[instanceId].entrySource.forEachFeature(function (feature) {
+                    feature.set("weight", Math.log(parseFloat(feature.get("exits")[timestep])) / 7);
+                });
+            } else {
+                gdo.net.instance[instanceId].entrySource.forEachFeature(function (feature) {
+                    feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
+                });
             }
-            if (minutes < 10) {
-                minutes = "0" + minutes;
+            if (gdo.net.instance[instanceId].entry && gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
+                var temp = timestep * 2;
+                var hour = parseInt(temp / 60);
+                var minutes = parseInt(temp - hour * 60);
+                hour = hour + 6;
+                if (hour < 10) {
+                    hour = "0" + hour;
+                }
+                if (minutes < 10) {
+                    minutes = "0" + minutes;
+                }
+                $("iframe").contents().find("#timelabel")
+                    .empty()
+                    .css("visibility", "visible")
+                    .append(
+                    "&nbsp;" + hour + ":" + minutes);
             }
-            $("iframe").contents().find("#timelabel")
-                .empty()
-                .css("visibility", "visible")
-                .append(
-                "&nbsp;" + hour + ":" + minutes);
         }
-
     }
 
     $.connection.shanghaiMetroAppHub.client.receiveProperties = function (instanceId, blur, radius, opacity, line, station, entry) {
@@ -72,6 +73,13 @@ $(function () {
                     })
                 })
             }));
+        }
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
+             $('iframe').contents().find('#blur').val(blur);
+            $('iframe').contents().find('#radius').val(radius);
+            $('iframe').contents().find('#opacity').val(opacity);
+            $('iframe').contents().find('#line').val(line);
+            $('iframe').contents().find('#station').val(station);
         }
         gdo.net.app["ShanghaiMetro"].updateCenter(instanceId);
         gdo.net.instance[instanceId].entry = entry;
@@ -127,6 +135,7 @@ $(function () {
     }
 
     $.connection.shanghaiMetroAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
+        gdo.consoleOut('.SHANGHAIMETRO', 1, 'Center: ' + center + ' and TopLeft: ' + topLeft + ' BottomRight: ' + bottomRight + ' Width: ' + width + ' Height: ' + height + ' Zoom' + zoom + ' Resolution ' + resolution);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             var mapCenter = [0, 0];
             var mapResolution = parseFloat(resolution);
@@ -196,7 +205,7 @@ $(function () {
             //gdo.net.instance[instanceId].map.render();
             gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
             //gdo.net.app["ShanghaiMetro"].updateChange(instanceId);
-            gdo.net.app["ShanghaiMetro"].server.startAnimation(instanceId);
+            //gdo.net.app["ShanghaiMetro"].server.startAnimation(instanceId);
             setTimeout(function() { gdo.net.app["ShanghaiMetro"].server.updateResolution(instanceId); },700);
         }
     }
@@ -375,7 +384,8 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
             parseInt($('iframe').contents().find('#radius').val()),
             parseFloat($('iframe').contents().find('#opacity').val()),
             parseInt($('iframe').contents().find('#line').val()),
-            parseInt($('iframe').contents().find('#station').val()));
+            parseInt($('iframe').contents().find('#station').val()),
+            gdo.net.instance[instanceId].entry);
             setTimeout(function () { gdo.net.app["ShanghaiMetro"].uploadMapPosition(instanceId); }, 300);
             //gdo.net.app["ShanghaiMetro"].updateChange(instanceId);
         }
@@ -422,7 +432,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
                 gdo.net.app["ShanghaiMetro"].server.requestLineLayerVisible(instanceId);
                 gdo.net.app["ShanghaiMetro"].server.requestHeatmapLayerVisible(instanceId);
                 gdo.net.app["ShanghaiMetro"].server.requestProperties(instanceId);
-                gdo.net.app["ShanghaiMetro"].server.startAnimation(instanceId);
+                gdo.net.app["ShanghaiMetro"].server.startAnimation();
                 gdo.consoleOut('.SHANGHAIMETRO', 1, "Requests sent");
             }, 1000);
 
@@ -609,11 +619,11 @@ gdo.net.app["ShanghaiMetro"].changeEvent = function (instanceId) {
 }
 
 gdo.net.app["ShanghaiMetro"].updateCenter = function (instanceId) {
-    gdo.consoleOut('.SHANGHAIMETRO', 4, gdo.net.instance[instanceId].map.getView().getCenter());
+    //gdo.consoleOut('.SHANGHAIMETRO', 4, gdo.net.instance[instanceId].map.getView().getCenter());
     gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
 }
 gdo.net.app["ShanghaiMetro"].update = function (instanceId, mapCenter, mapResolution, zoom) {
-    gdo.consoleOut('.SHANGHAIMETRO', 4, gdo.net.instance[instanceId].map.getView().getCenter() + " Zoom " + zoom);
+    //gdo.consoleOut('.SHANGHAIMETRO', 4, gdo.net.instance[instanceId].map.getView().getCenter() + " Zoom " + zoom);
     gdo.net.instance[instanceId].map.getView().setCenter(mapCenter);
     gdo.net.instance[instanceId].map.getView().setResolution(mapResolution);
     //gdo.net.instance[instanceId].map.getView().setZoom(zoom);

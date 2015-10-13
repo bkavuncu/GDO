@@ -20,7 +20,9 @@ namespace GDO.Apps.ShanghaiMetro
         public bool StationLayer { get; set; }
         public bool LineLayer { get; set; }
         public bool HeatmapLayer { get; set; }
-
+        public int TimeStep { get; set; } = 0;
+        public bool IsAnimating { get; set; } = false;
+        public int WaitTime { get; set; } = 70;
 
         public float Opacity { get; set; }
         public int Blur { get; set; }

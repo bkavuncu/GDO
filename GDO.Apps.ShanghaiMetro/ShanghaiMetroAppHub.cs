@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Utility;
 using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.ShanghaiMetro
@@ -14,9 +15,6 @@ namespace GDO.Apps.ShanghaiMetro
         public string Name { get; set; } = "ShanghaiMetro";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new ShanghaiMetroApp().GetType();
-        public int TimeStep { get; set; } = 0;
-        public bool IsAnimating { get; set; } = false;
-        public int WaitTime { get; set; } = 70;
         public void JoinGroup(int instanceId)
         {
             Groups.Add(Context.ConnectionId, "" + instanceId);
@@ -43,13 +41,14 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void RequestTimeStep(int instanceId)
+        public void RequestTimeStep()
         {
+            int instanceId = Utilities.GetFirstKey(Cave.Apps["ShanghaiMetro"].Instances);
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.receiveTimeStep(instanceId, (this.TimeStep));
+                    Clients.Caller.receiveTimeStep(instanceId, (((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep));
                 }
                 catch (Exception e)
                 {
@@ -71,6 +70,7 @@ namespace GDO.Apps.ShanghaiMetro
                     ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).LineWidth = line;
                     ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).Entry = entry;
                     Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, line,station, entry);
+                    Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, line, station, entry);
                 }
                 catch (Exception e)
                 {
@@ -100,13 +100,15 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void StartAnimation(int instanceId)
+        public void StartAnimation()
         {
+            int instanceId = Utilities.GetFirstKey(Cave.Apps["ShanghaiMetro"].Instances);
             try
             {
-                if (this.IsAnimating == false && Cave.Apps["ShanghaiMetro"].Instances.Count < 2)
+                if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating == false &&
+                    Cave.Apps["ShanghaiMetro"].Instances.Count < 2)
                 {
-                    Animate(instanceId);
+                    Animate();
                 }
             }
             catch (Exception e)
@@ -115,29 +117,32 @@ namespace GDO.Apps.ShanghaiMetro
             }
         }
 
-        public void Animate(int instanceId)
+        public void Animate()
         {
+            int instanceId = Utilities.GetFirstKey(Cave.Apps["ShanghaiMetro"].Instances);
             try
             {
-                if (this.IsAnimating == false)
+                if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating == false)
                 {
-                    this.IsAnimating = true;
-                    while (this.IsAnimating)
+                    ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating = true;
+                    while (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating)
                     {
-                        System.Threading.Thread.Sleep(this.WaitTime);
-                        if (this.TimeStep >= 540)
+                        System.Threading.Thread.Sleep(
+                            ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).WaitTime);
+                        if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep >= 540)
                         {
-                            this.TimeStep = 0;
+                            ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep = 0;
                         }
-                        Clients.All.receiveTimeStep(this.TimeStep);
-                            this.TimeStep++;
+                        Clients.All.receiveTimeStep(
+                            ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
+                        ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
                     }
                 }
                 else
                 {
-                    this.IsAnimating = false;
+                    ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating = false;
                 }
-                
+
             }
             catch (Exception e)
             {
