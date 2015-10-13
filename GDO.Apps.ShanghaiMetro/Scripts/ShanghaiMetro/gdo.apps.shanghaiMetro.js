@@ -1,4 +1,4 @@
-var map;
+﻿var map;
 var map3D;
 var view;
 var layers;
