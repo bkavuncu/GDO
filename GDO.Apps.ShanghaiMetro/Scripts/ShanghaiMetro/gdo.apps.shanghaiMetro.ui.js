@@ -37,7 +37,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setStamenLayerVisible(instanceId);
         });*/
-    $("iframe").contents().find("#map_table_row_0_col_2")
+    $("iframe").contents().find("#map_table_row_0_col_1")
         .empty()
         .append("<div><button type='button' id='stations_button' class='btn btn-danger btn-block'>Stations</button></div>")
         .css("margin", "0px")
@@ -48,7 +48,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setStationLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_3")
+    $("iframe").contents().find("#map_table_row_0_col_2")
         .empty()
         .append("<div><button type='button' id='lines_button' class='btn btn-danger btn-block'>Lines</button></div>")
         .css("margin", "0px")
@@ -59,7 +59,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setLineLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_4")
+    $("iframe").contents().find("#map_table_row_0_col_3")
         .empty()
         .append("<div><button type='button' id='heatmap_button' class='btn btn-danger btn-block'>Heatmap</button></div>")
         .css("margin", "0px")
@@ -70,7 +70,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setHeatmapLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_5")
+    $("iframe").contents().find("#map_table_row_0_col_4")
         .empty()
         .append("<div><button type='button' id='animate_button' class='btn btn-primary btn-block'><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Animate</button></div>")
         .css("margin", "0px")
