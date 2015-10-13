@@ -1,4 +1,4 @@
-var map;
+﻿var map;
 var map3D;
 var view;
 var layers;
@@ -18,7 +18,6 @@ $(function () {
 
     $.connection.shanghaiMetroAppHub.client.receiveTimeStep = function (timestep) {
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.SHANGHAIMETRO', 1, 'Received Time Step: ' + timestep);
             var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
             gdo.net.app["ShanghaiMetro"].timeStep = timestep;
             if (!gdo.net.instance[instanceId].entry) {
@@ -30,7 +29,7 @@ $(function () {
                     feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
                 });
             }
-            if (gdo.net.instance[instanceId].entry && gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
+            if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
                 var temp = timestep * 2;
                 var hour = parseInt(temp / 60);
                 var minutes = parseInt(temp - hour * 60);
@@ -45,7 +44,7 @@ $(function () {
                     .empty()
                     .css("visibility", "visible")
                     .append(
-                    "&nbsp;" + hour + ":" + minutes);
+                    "" + hour + ":" + minutes);
             }
         }
     }
@@ -91,13 +90,13 @@ $(function () {
                     .empty()
                     .css("visibility", "visible")
                     .append(
-                    "&nbsp;Entries");
+                    "People Entering Stations: 入站人数");
             } else {
                 $("iframe").contents().find("#datalabel")
                 .empty()
                 .css("visibility", "visible")
                 .append(
-                "&nbsp;Exits");
+                "People Exiting Stations: 出站人数");
             }
 
         } 

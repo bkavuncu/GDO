@@ -105,8 +105,7 @@ namespace GDO.Apps.ShanghaiMetro
             int instanceId = Utilities.GetFirstKey(Cave.Apps["ShanghaiMetro"].Instances);
             try
             {
-                if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating == false &&
-                    Cave.Apps["ShanghaiMetro"].Instances.Count < 2)
+                if (((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).IsAnimating == false)
                 {
                     Animate();
                 }
