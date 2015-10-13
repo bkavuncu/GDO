@@ -433,10 +433,10 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
                 gdo.net.app["ShanghaiMetro"].server.requestProperties(instanceId);
                 gdo.net.app["ShanghaiMetro"].server.startAnimation();
                 gdo.consoleOut('.SHANGHAIMETRO', 1, "Requests sent");
-            }, 1000);
+            }, 700);
 
-        }, 1000);
-    }, 1000);
+        }, 700);
+    }, 700);
 
 
     
