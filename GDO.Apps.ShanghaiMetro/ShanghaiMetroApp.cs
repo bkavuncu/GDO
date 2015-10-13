@@ -19,17 +19,15 @@ namespace GDO.Apps.ShanghaiMetro
         public bool StamenLayer { get; set; }
         public bool StationLayer { get; set; }
         public bool LineLayer { get; set; }
-        public bool EntryHeatmapLayer { get; set; }
+        public bool HeatmapLayer { get; set; }
 
-        public int TimeStep { get; set; }
-        public bool IsAnimating { get; set; }
+
         public float Opacity { get; set; }
         public int Blur { get; set; }
         public int Radius { get; set; }
         public int StationWidth { get; set; }
         public int LineWidth { get; set; }
-        public int WaitTime { get; set; }
-
+        public bool Entry { get; set; }
         public bool mode { get; set; }
         public string Style { get; set; }
         public bool IsInitialized = false;
@@ -42,23 +40,27 @@ namespace GDO.Apps.ShanghaiMetro
             this.Configuration = configuration;
             this.mode = false;
             this.Position = new MapPosition();
-            this.Position.Center[0] = (string)configuration.Json.SelectToken("longtitude");
-            this.Position.Center[1] = (string)configuration.Json.SelectToken("latitude");
+            this.Position.Center[0] = (string)configuration.Json.SelectToken("center[0]");
+            this.Position.Center[1] = (string)configuration.Json.SelectToken("center[1]");
+            this.Position.TopLeft[0] = (string)configuration.Json.SelectToken("topLeft[0]");
+            this.Position.TopLeft[1] = (string)configuration.Json.SelectToken("topLeft[1]");
+            this.Position.BottomRight[0] = (string)configuration.Json.SelectToken("bottomRight[0]");
+            this.Position.BottomRight[1] = (string)configuration.Json.SelectToken("bottomRight[1]");
             this.Position.Resolution = (string)configuration.Json.SelectToken("resolution");
             this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
-            this.Blur = 30;
-            this.Radius = 40;
-            this.Opacity = (float) 0.7;
-            this.StationWidth = 2;
-            this.LineWidth = 7;
+            this.Position.Width = (int)configuration.Json.SelectToken("width");
+            this.Position.Height = (int)configuration.Json.SelectToken("height");
+            this.Blur = (int)configuration.Json.SelectToken("blur");
+            this.Radius = (int)configuration.Json.SelectToken("radius");
+            this.Opacity = (float) configuration.Json.SelectToken("opacity");
+            this.StationWidth = (int)configuration.Json.SelectToken("station");
+            this.LineWidth = (int)configuration.Json.SelectToken("line");
+            this.Entry = (bool)configuration.Json.SelectToken("entry");
             this.BingLayer = true;
             this.StamenLayer = false;
             this.StationLayer = true;
             this.LineLayer = true;
-            this.EntryHeatmapLayer = true;
-            this.TimeStep = 0;
-            this.IsAnimating = false;
-            this.WaitTime = 70;
+            this.HeatmapLayer = true;
             //TODO Read CSV into data dictionaries
         }
 

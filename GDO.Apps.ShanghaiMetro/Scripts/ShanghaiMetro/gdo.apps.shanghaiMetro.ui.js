@@ -30,7 +30,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setBingLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_1")
+    /*$("iframe").contents().find("#map_table_row_0_col_1")
         .empty()
         .append("<div> <b>Stamen Maps</b></div>")
         .css("height", gdo.management.button_height / 1.4)
@@ -44,7 +44,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setStamenLayerVisible(instanceId);
-        });
+        });*/
     $("iframe").contents().find("#map_table_row_0_col_2")
         .empty()
         .append("<div> <b>Stations</b></div>")
@@ -88,7 +88,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         .css({ fontSize: gdo.management.button_font_size })
         .unbind()
         .click(function () {
-            gdo.net.app["ShanghaiMetro"].server.setEntryHeatmapLayerVisible(instanceId);
+            gdo.net.app["ShanghaiMetro"].server.setHeatmapLayerVisible(instanceId);
         });
     $("iframe").contents().find("#map_table_row_0_col_5")
         .empty()
