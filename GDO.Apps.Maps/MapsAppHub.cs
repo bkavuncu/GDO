@@ -130,7 +130,7 @@ namespace GDO.Apps.Maps
         //View
 
         public void UpdateView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
-            int zoom, float rotation, int width, int height)
+            int zoom, string projection, float rotation, int width, int height)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -138,7 +138,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
-                    maps.ModifyView(position, rotation, width, height);
+                    maps.ModifyView(position, projection, rotation, width, height);
                     BroadcastView(instanceId);
                 }
                 catch (Exception e)
@@ -689,7 +689,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddImageTileSource(int instanceId, string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions, string projection)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -697,7 +697,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     int sourceId = maps.AddImageTileSource(name, crossOrigin, opaque, extent, minZoom, maxZoom,
-                        tileWidth, tileHeight, resolutions);
+                        tileWidth, tileHeight, resolutions, projection);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)

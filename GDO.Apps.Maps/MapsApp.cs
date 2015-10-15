@@ -97,6 +97,12 @@ namespace GDO.Apps.Maps
             System.IO.File.WriteAllText(filePath, GetSerializedMap());
         }
 
+        //Feature / Animation
+
+            //TODO Functions 
+
+
+
         //Layer
 
         public int AddLayer<T> (string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
@@ -300,11 +306,11 @@ namespace GDO.Apps.Maps
 
         //View
 
-        public bool ModifyView(Position position, float rotation, int width, int height)
+        public bool ModifyView(Position position, string projection, float rotation, int width, int height)
         {
             try
             {
-                View = new View(position, rotation, width, height);
+                View = new View(position, projection, rotation, width, height);
                 return true;
             }
             catch (Exception e)
@@ -497,13 +503,13 @@ namespace GDO.Apps.Maps
         }
 
         public int AddImageTileSource(string name, string crossOrigin, bool opaque, double[] extent,
-            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions)
+            int minZoom, int maxZoom, int tileWidth, int tileHeight, float?[] resolutions, string projection)
         {
             try
             {
                 int sourceId = AddSource<ImageTileSource>(name, (int)SourceTypes.TileImage);
                 TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth, tileHeight, resolutions);
-                Sources.GetValue<ImageTileSource>(sourceId).Init(crossOrigin, _tileGrid, opaque);
+                Sources.GetValue<ImageTileSource>(sourceId).Init(crossOrigin, _tileGrid, opaque, projection);
                 return sourceId;
             }
             catch (Exception e)
@@ -1211,7 +1217,7 @@ namespace GDO.Apps.Maps
             double[] bottomRight = { 0, 0, 0, 0 };
             double[] center = { 0, 0, 0, 0 };
             Position position = new Position(topLeft, center, bottomRight, 77, 11);
-            View view = new View(position, 0, 100, 100);
+            View view = new View(position, "EPSG:4326",0, 100, 100);
 
             //Add Formats to Template
             EsriJSONFormat esriJsonFormat = new EsriJSONFormat();
@@ -1247,16 +1253,20 @@ namespace GDO.Apps.Maps
 
             fillStyle.Prepare();
             fillStyle.Id = 1;
+            fillStyle.Color = "white";
             fillStyle.Type = (int)StyleTypes.Fill;
             fillStyle.Name = fillStyle.ClassName;
             strokeStyle.Prepare();
             strokeStyle.Id = 4;
+            strokeStyle.Color = "black";
+            strokeStyle.Width = 2;
             strokeStyle.Type = (int)StyleTypes.Stroke;
             strokeStyle.Name = strokeStyle.ClassName;
             circleStyle.Prepare();
             circleStyle.Id = 0;
             circleStyle.Type = (int)StyleTypes.Circle;
             circleStyle.Name = circleStyle.ClassName;
+            circleStyle.Radius = 7;
             circleStyle.Stroke = strokeStyle;
             circleStyle.Fill = fillStyle;
 
@@ -1278,12 +1288,13 @@ namespace GDO.Apps.Maps
             textStyle.Stroke = strokeStyle;
             textStyle.Fill = fillStyle;
 
-            styles.Add(circleStyle);
+            
             styles.Add(fillStyle);
-            styles.Add(iconStyle);
-            styles.Add(regularShapeStyle);
+            //styles.Add(iconStyle);
+            //styles.Add(regularShapeStyle);
             styles.Add(strokeStyle);
-            styles.Add(textStyle);
+            //styles.Add(textStyle);
+            styles.Add(circleStyle);
 
             //Add Sources to Template
             BingMapsSource bingMapsSource = new BingMapsSource();
@@ -1304,6 +1315,7 @@ namespace GDO.Apps.Maps
             bingMapsSource.MaxZoom = 19;
             bingMapsSource.ImagerySet = "AerialWithLabels";
             bingMapsSource.Key = "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3";
+            bingMapsSource.Projection = "EPSG:4326";
             clusterSource.Prepare();
             clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
@@ -1348,8 +1360,9 @@ namespace GDO.Apps.Maps
             vectorSource.Prepare();
             vectorSource.Id = 9;
             vectorSource.Type = (int)SourceTypes.Vector;
-            vectorSource.Format = esriJsonFormat;
+            vectorSource.Format = geoJsonFormat;
             vectorSource.Name = vectorSource.ClassName;
+            vectorSource.Url = "/Configurations/Maps/Data/stations.json";
 
 
             sources.Add(vectorSource);
@@ -1390,11 +1403,11 @@ namespace GDO.Apps.Maps
             vectorLayer.Type = (int)LayerTypes.Vector;
             vectorLayer.Name = vectorLayer.ClassName;
             vectorLayer.Source = vectorSource;
-            vectorLayer.Style = fillStyle;
+            vectorLayer.Style = circleStyle;
 
 
-            layers.Add(heatmapLayer);
-            layers.Add(imageLayer);
+            //layers.Add(heatmapLayer);
+            //layers.Add(imageLayer);
             layers.Add(tileLayer);
             layers.Add(vectorLayer);
 

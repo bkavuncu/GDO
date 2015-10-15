@@ -10,12 +10,14 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
         public string CrossOrigin { get; set; }
         public TileGrid TileGrid { get; set; }
         public bool? Opaque { get; set; }
+        public string Projection { get; set; }
 
-        new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque)
+        new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque, string projection)
         {
             CrossOrigin = crossOrigin;
             TileGrid = tileGrid;
             Opaque = opaque;
+            Projection = projection;
 
             Prepare();
         }

@@ -81,8 +81,19 @@
   <ItemGroup>
     <Content Include="Configurations\Maps\London.json" />
     <Content Include="Configurations\Maps\Shangai.json" />
+    <Content Include="Scripts\Maps\bootstrap.js" />
+    <Content Include="Web\Maps\CSS\bootstrap-theme.css" />
+    <Content Include="Web\Maps\CSS\bootstrap.css" />
+    <Content Include="Web\Maps\Fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Web\Maps\Fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Web\Maps\Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Web\Maps\Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Web\Maps\Fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Web\Maps\CSS\bootstrap-theme.css.map" />
+    <Content Include="Web\Maps\CSS\bootstrap.css.map" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\Maps\bootstrap.min.js" />
     <Content Include="Scripts\gdo.apps.maps.view.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

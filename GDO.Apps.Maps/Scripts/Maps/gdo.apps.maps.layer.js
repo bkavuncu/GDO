@@ -78,11 +78,12 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
             properties = [
                 ["brightness",deserializedLayer.Brightness],
                 ["contrast",deserializedLayer.Contrast],
-                ["hue",deserializedLayer.Hue],
+                ["hue", deserializedLayer.Hue],
+                ["features", gdo.net.instance[instanceId].formats[deserializedLayer.Source.Format.Id].readFeatures(gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id])],
                 ["extent",deserializedLayer.Extent],
                 ["minResolution",deserializedLayer.MinResolution],
                 ["maxResolution",deserializedLayer.MaxResolution],
-                ["opacity",deserializedLayer.Opacity]
+                ["opacity",deserializedLayer.Opacity],
                 ["renderBuffer",deserializedLayer.RenderBuffer],
                 ["saturation",deserializedLayer.Saturation],
                 ["source",gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id]],

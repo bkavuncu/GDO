@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
+using GDO.Apps.Maps.Core.Sources.Tiles;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class BingMapsSource : Source
+    public class BingMapsSource : ImageTileSource
     {
         public string Culture { get; set; }
         public string Key { get; set; }

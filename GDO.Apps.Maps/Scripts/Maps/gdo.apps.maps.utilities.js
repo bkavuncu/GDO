@@ -1,5 +1,10 @@
-﻿gdo.net.app["Maps"].optionConstructor = function (properties) {
+﻿var opt;
+var prop;
+
+gdo.net.app["Maps"].optionConstructor = function (properties) {
     var options = {}
+    prop = properties;
+    opt = options;
     for (var i = 0; i < properties.length; i++) {
         if (properties[i][1] != null && typeof properties[i][1] != "undefined") {
             if(typeof properties[i][1] == "string")
