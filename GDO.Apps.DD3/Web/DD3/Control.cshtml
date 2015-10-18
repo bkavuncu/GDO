@@ -426,13 +426,14 @@
                 test_bench[6] = test_bench[7] = test_bench[8] = test_bench[9] = function () {
                     var cb = $('#outterCheckbox');
                     var cb2 = $('#widthChangingCheckbox');
+                    var cb3 = $('#widthChangingLinkLoadCheckbox');
 
                     $('#launchNormalAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked")]), true);
+                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
                     });
 
                     $('#launchDisruptedAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked")]), true);
+                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
                     });
                 };
             });
@@ -582,6 +583,9 @@
             </tr>
             <tr>
                 <td class="green"><INPUT type="checkbox" name="widthChanging" id="widthChangingCheckbox" checked> Width changing (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChangingLinkLoad" id="widthChangingLinkLoadCheckbox"> Width represents link load (Choose before launching)</td>
             </tr>
             <tr>
                 <td class="green" id="launchNormalAnimationShanghaiLines">Launch Animation with normal data</td>
