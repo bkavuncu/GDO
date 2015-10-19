@@ -132,15 +132,9 @@ namespace GDO.Apps.ShanghaiMetro
                         {
                             ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep = 0;
                         }
-                        foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances)
-                        {
-                            if (instanceKeyValuePair.Value.AppName == "ShanghaiMetro")
-                            {
-                                Clients.Group("" + instanceKeyValuePair.Value.Id).receiveTimeStep(
-                                    ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
-                                ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
-                            }
-                        }
+                        Clients.All.receiveTimeStep(
+                            ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
                     }
                 }
                 else
