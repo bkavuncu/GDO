@@ -1,4 +1,4 @@
-var cave = false;
+var cave = true;
 var animationLines = function (arg) {
 	'use strict';
 	var currentTimeout = null,
@@ -33,8 +33,8 @@ var animationLines = function (arg) {
 		
 	    // == Station min and max size ==
 	    //GDOCONFIG
-		a.sizeStationMin = cave ? 5 : 5;
-		a.sizeStationMax = cave ? 30 : 20;
+		a.sizeStationMin = cave ? 10 : 5;
+		a.sizeStationMax = cave ? 30 : 15;
 		
 		scale.range([a.sizeStationMin, a.sizeStationMax]);
 		linkScale.range([a.sizeStationMin, a.sizeStationMax]);
