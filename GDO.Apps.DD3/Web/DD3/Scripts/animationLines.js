@@ -7,7 +7,7 @@ var animationLines = function (arg) {
 		running = false,
 		scale = d3.scale.log().clamp(true),
 		linkScale = d3.scale.linear().clamp(true),
-        colorScale = d3.scale.linear().clamp(true).interpolate(d3.interpolateRgb).range(["white", "green", "red"]),// GDOCONFIG
+        colorScale = d3.scale.linear().clamp(true).interpolate(d3.interpolateRgb).range(["green", "red"]),  // GDOCONFIG
 	    polygonPosition;
 		
 	var a = function (arg) {
@@ -289,7 +289,11 @@ var animationLines = function (arg) {
 	                                    "stroke": a.showOutterLine ? color : ""
 	                                });
 
-	                            var fillColor = linkLoad[id] ? colorScale(linkLoad[id][time]) : (console.log(id), "none"); // if no data, plot the name of the expected dataPoint and give none to color
+	                            //var fillColor = linkLoad[id] ? colorScale(linkLoad[id][time]) : (console.log(id), "none"); // if no data, plot the name of the expected dataPoint and give none to color
+	                            var fillColor = linkLoad[id]   // if there is data...
+                                        ? ((linkLoad[id][time] == 0) ? "black" : colorScale(linkLoad[id][time]))  // and it is zero -> color = black;  if not zero, calculate color 
+                                        : (console.log(id), "none"); // if no data, plot the name of the expected dataPoint and give none to color
+
 
 	                            poly.transition()
                                     .duration(a.timeStep)
