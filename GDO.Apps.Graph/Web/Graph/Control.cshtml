@@ -46,6 +46,10 @@
             overflow: auto;
         }
 
+        td {
+            vertical-align: top;
+        }
+
         label {
             display: block;
             font-size: 16px;
@@ -62,6 +66,7 @@
             display: inline;
         }
 
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -71,7 +76,7 @@
     <div>
         <h1>Distributed Graph Rendering</h1>
         <br />
-        <h2>Input folder name: </h2>
+        <h2>Input folder name (e.g. "marvel_heroes"): </h2>
         <input type="text" id="folderName" />
         <button id="update_folderName">Render Graph</button>
     </div>
@@ -81,53 +86,77 @@
 
     <h2>Graph User Interface</h2>
     <fieldset id="graph_UI">
-        <button id="show_links">Show links</button>
-        <button id="hide_links">Hide links</button>   
-        <br />
-        <br />
-        <button id="show_labels">Show labels</button>
-        <button id="hide_labels">Hide labels</button>
-        <br />
-        <br />
-        <br />
-        <label> Toggle panning </label>
-        <br />
-        <span>
-            <button id="up">Up</button>
-        </span>      
-        <button id="left">Left</button>
-        <button id="down">Down</button>
-        <button id="right">Right</button>
-        <br />
-        <br />
-        <br />
-        <label> Toggle zooming </label>
-        <br />
-        <button id="zoomIn">Zoom in</button>
-        <button id="zoomOut">Zoom out</button>
-        <br />
-        <br />
-        <br />
-        <label> Colour Scheme </label>
-        <br />
-        <button id="blue">Blue</button>
-        <button id="green">Green</button>
-        <button id="yellow">Yellow</button>
-        <button id="orange">Orange</button>
-        <br />
-        <br />
-        <br />
-        <label> Most connected nodes </label>
-        <br />
-        <p id="mostConnected">Input no. of links: </p>
-        <input type="text" id="numLinks" />
-        <br />
-        <br />
-        <button id="show_mostConnectedNodes">Highlight nodes</button>
-        <button id="show_mostConnectedLabels">Show labels</button>
-        <button id="hide_mostConnected">Hide all</button>
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <label> Toggle links </label>
+                    <br />
+                    <button id="show_links">Show links</button>
+                    <button id="hide_links">Hide links</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Toggle labels </label>
+                    <br />
+                    <button id="show_labels">Show labels</button>
+                    <button id="hide_labels">Hide labels</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Toggle panning </label>
+                    <br />
+                    <span>
+                        <button id="up">Up</button>
+                    </span>
+                    <button id="left">Left</button>
+                    <button id="down">Down</button>
+                    <button id="right">Right</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Toggle zooming </label>
+                    <br />
+                    <button id="zoomIn">Zoom in</button>
+                    <button id="zoomOut">Zoom out</button>
+                    <br />
+                    <br />
+                    <br />
+                </td>
+                <td>
+                    <label> Colour Scheme </label>
+                    <br />
+                    <button id="blue">Blue</button>
+                    <button id="green">Green</button>
+                    <button id="yellow">Yellow</button>
+                    <button id="orange">Orange</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Most connected nodes </label>
+                    <br />
+                    <p id="mostConnected">Input no. of links: </p>
+                    <input type="text" id="numLinks" />
+                    <br />
+                    <br />
+                    <button id="show_mostConnectedNodes">Highlight nodes</button>
+                    <button id="show_mostConnectedLabels">Show labels</button>
+                    <button id="hide_mostConnected">Hide all</button>
+                    <br />
+                    <br />
+                    <br />
+                    <label> Search Labels </label>
+                    <br />
+                    <input type="text" id="searchKeywords" />
+                    <button id="startSearch">Search</button>
+                    <br />
+                    <br />
+                    <button id="show_searchLabels">Show labels (e.g. "IRON MAN/TONY STARK")</button>
+                    <button id="hide_sublinks">Hide links</button>
+                    <button id="hide_search">Hide all</button>
+                </td>
+            </tr>
 
-
+        </table>
     </fieldset>
 
     <br />
@@ -193,7 +222,9 @@
             gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
         });
 
-
+        /* 
+        // Panning using key is disabled for now 
+        // because it's being triggered unnecessarily sometimes when typing
 
         window.addEventListener('keydown', processKeyPress, true);
 
@@ -216,6 +247,8 @@
                 gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
             }
         }
+
+        */
 
 
         $("#zoomIn").click(function () {
@@ -259,6 +292,29 @@
             gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
         });
 
+
+        // Search event listeners
+
+        $("#startSearch").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
+
+            gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val());
+        });
+
+
+        $("#show_searchLabels").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
+
+            gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId);
+        });
+
+        $("#hide_sublinks").click(function () {
+            gdo.net.app["Graph"].server.hideSublinks(gdo.controlId);
+        });
+
+        $("#hide_search").click(function () {
+            gdo.net.app["Graph"].server.hideSearch(gdo.controlId);
+        });
 
     </script>
 

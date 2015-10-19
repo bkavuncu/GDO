@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,6 +18,19 @@ namespace GDO.Utility
             for (int i = 0; i < 1000; i++)
             {
                 if (!dictionary.ContainsKey(i))
+                {
+                    slot = i;
+                    break;
+                }
+            }
+            return slot;
+        }
+        public static int GetFirstKey<T>(ConcurrentDictionary<int, T> dictionary)
+        {
+            int slot = -1;
+            for (int i = 0; i < 1000; i++)
+            {
+                if (dictionary.ContainsKey(i))
                 {
                     slot = i;
                     break;

@@ -29,6 +29,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <includesetaclproviderondestination>False</includesetaclproviderondestination>
+    <FilesToIncludeForPublish>AllFilesInProjectFolder</FilesToIncludeForPublish>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +39,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <includesetaclproviderondestination>False</includesetaclproviderondestination>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
@@ -53,6 +56,10 @@
     </Reference>
     <Reference Include="Autofac.Integration.SignalR, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.SignalR.3.0.2\lib\net40\Autofac.Integration.SignalR.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -144,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
     <Content Include="Scripts\gdo.management.instances.js" />
@@ -153,9 +161,12 @@
     <Content Include="Scripts\gdo.maintenance.js" />
     <Content Include="Scripts\gdo.node.js" />
     <Content Include="Scripts\gdo.utilities.js" />
+    <None Include="Properties\PublishProfiles\PreProd.pubxml" />
+    <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery.csv-0.71.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Scripts\d3.min.js" />
     <Content Include="Scripts\gdo.fs.js" />
@@ -167,11 +178,13 @@
     <Compile Include="Core\CaveHub.cs" />
     <Compile Include="Core\AppConfiguration.cs" />
     <Compile Include="Core\App.cs" />
+    <Compile Include="Core\CaveState.cs" />
     <Compile Include="Core\IAppHub.cs" />
     <Compile Include="Core\IAppInstance.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />
+    <Compile Include="Core\AppState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utility\Utilities.cs" />
@@ -184,10 +197,6 @@
     <Content Include="Web\Node.cshtml" />
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Base.cshtml" />
-    <None Include="Properties\PublishProfiles\aa.pubxml" />
-    <None Include="Properties\PublishProfiles\FTP Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\FTP1.pubxml" />
     <Content Include="Web\Initialize.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
   </ItemGroup>
@@ -219,11 +228,24 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
+  <Target Name="AfterClean">
+    <ItemGroup>
+      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))" />
+      <GDOAppScripts Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Scripts\&quot;))" />
+      <GDOAppWeb Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Web\&quot;))" />
+      <GDOAppConfiguration Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Configurations\&quot;))" />
+      <GDOAppBin Include="$(ProjectDir)bin\" />
+      <GDOAppBinDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDir)\Bin\&quot;))" />
+    </ItemGroup>
+    <Message Text="Cleaning $(ProjectName) from Apps" Importance="high" />
+    <RemoveDir Directories="@(GDOAppConfiguration)" />
+    <RemoveDir Directories="@(GDOAppScripts)" />
+    <RemoveDir Directories="@(GDOAppWeb)" />
+    <RemoveDir Directories="@(GDOAppBin)" />
+    <RemoveDir Directories="@(GDOAppBinDirs)" />
+  </Target>
 </Project>

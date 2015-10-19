@@ -27,6 +27,7 @@ $(function() {
             if (gdo.clientId == nodeId) {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " visualising");
                 var doc = $("iframe").contents();
+                doc.find("#labelStatus").html("Data received; visualising...");
                 TimeV.app.data = JSON.parse(data);
                 if (TimeV.app.query_mode == "Aggregation") {
                     if (TimeV.app.data.length < 2) {
@@ -65,7 +66,7 @@ $(function() {
             if (gdo.clientId == nodeId) {
                 gdo.consoleOut(".TIMEV", 1, "Instance - " + gdo.clientId + " visualising");
                 var doc = $("iframe").contents();
-
+                doc.find("#labelStatus").html("Waiting for Spark to process query...");
                 doc.find("#visualisation").removeClass("show");
                 doc.find("#visualisation").addClass("hidden");
                 doc.find("#placeholder").removeClass("hidden");
@@ -94,12 +95,16 @@ $(function() {
         // using the frame's constructor for MG's instanceof check
         data = frameWindow.JSON.parse(data);
 
+        var w = typeof (width) == "undefined" ? $(window).width() * 0.85 : width;
+        var h = typeof (height) == "undefined" ? $(window).height() * 0.85 : height;
+
         var table = MG.data_table({
                 title: title,
                 description: "Query Results",
                 data: data,
                 show_tooltips: true,
-                full_width: true
+                width: w,
+                height: h
             })
             .target(target);
         var keys = Object.keys(data[0]);
@@ -120,8 +125,8 @@ $(function() {
         // using the frame's constructor for MG's instanceof check
         series = frameWindow.JSON.parse(series);
 
-        var w = typeof (width) == "undefined" ? 540 : width;
-        var h = typeof (height) == "undefined" ? 240 : height;
+        var w = typeof (width) == "undefined" ? $(window).width() * 0.85 : width;
+        var h = typeof (height) == "undefined" ? $(window).height() * 0.85 : height;
 
         var keys = Object.keys(series[0]);
         var index = keys.indexOf(TimeV.app.x_accessor);
@@ -162,12 +167,11 @@ $(function() {
             legend_target: "#legend",
             x_accessor: TimeV.app.x_accessor,
             y_accessor: keys,
-            interpolate: "monotone",
-            full_width: true,
-            full_height: true,
+            interpolate: "monotone",            
             brushing: (keys.length < 2),
             brushing_history: (keys.length < 2),
-            missing_is_hidden: (keys.length < 2)
+            missing_is_hidden: (keys.length < 2),
+            xax_start_at_min: true
         });
     };
 

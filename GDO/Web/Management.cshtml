@@ -1,4 +1,4 @@
-﻿@using System.Threading.Tasks
+@using System.Threading.Tasks
 @using GDO.Core
 @{
     Layout = null;
@@ -29,6 +29,9 @@
             font-family: helvetica;
             font-size: 100%;
             width: 100%;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .unselectable {
@@ -86,8 +89,8 @@
 
         iframe {
             border: 0 none;
-            width: 99%;
-            height: 99%;
+            width: 98.5%;
+            height: 98.5%;
             display: block;
         }
 
@@ -125,43 +128,44 @@
 <body unselectable="on" class="unselectable">
     <script src="../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
     <script>
-        $(function() {
-            @{
-                foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                {
-                    @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+            $(function () {
+                @{
+                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                    {
+                        @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                    }
                 }
-            }
-            gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
-            $( document ).ready(function() {
-                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+                gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
+                $( document ).ready(function() {
+                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+                });
             });
-        });
-        window.onerror = function(errorMsg, url, lineNumber, column, errorObj) {
-            //var space = "<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-            var space = "<br /> ";
-            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-        }
-        initApp = function() {
-            gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
-            gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-            gdo.management.drawEmptyButtonTable(6, 1);
-            gdo.updateSelf();
-        }
+            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+                //var space = "<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                var space = "<br /> ";
+                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+            }
+            initApp = function () {
+                gdo.consoleOut('', 1, 'GDO Initialized');
+                gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+                gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+                gdo.management.drawEmptyButtonTable(6, 1);
+                gdo.updateSelf();
+            }
     </script>
     <div id="header" unselectable="on" class="unselectable">
-        <table id="header_table" unselectable="on" class="unselectable" style="width: 100%;"></table>
+        <table id="header_table" unselectable="on" class="unselectable" style="width: 100%; "></table>
     </div>
     <div id="divider"></div>
     <div id="content" style="align: center" unselectable="on" class="unselectable">
         <br>
-        <table id="selected_node" style="width: 99%">
+        <table id="selected_node" style="width: 98.5%">
             <tr>
                 <td id="selected_node_id"><b>Node Id:</b></td>
                 <td id="selected_node_col"><b>Col:</b></td>
@@ -175,39 +179,42 @@
             </tr>
         </table>
         <br>
-        <table id="node_table" unselectable="on" class="unselectable" style="width: 100%"></table>
-        <div id="node_table_space"><br>
-        </div>
-        <div id="console_area" style="width: 99.5%; height: 430px; overflow-y: scroll; border: 4px solid #444; background-color: #222; color: #FFF"></div>
-        <div id="console_area_space"><br>
-        </div>
-        <table id="app_table" unselectable="on" class="unselectable" style="width: 100%">
+        <table id="node_table" unselectable="on" class="unselectable" style="width: 98.5%"></table>
+        <div id="node_table_space"><br></div>
+        <div id="console_area" style="width: 98%; height: 430px; overflow-y:scroll; overflow-y:hidden; border:4px solid #444; background-color: #222; color: #FFF"></div>
+        <div id="console_area_space"><br></div>
+        <table id="app_table" unselectable="on" class="unselectable" style="width: 98.5%">
             <tr>
                 <td id="app_table_select_app"></td>
-                <td id="app_table_app_list"><table id="app_table_app_table" unselectable="on" class="unselectable" style="width: 100%; vertical-align: top"></table></td>
+                <td id="app_table_app_list"><table id="app_table_app_table" unselectable="on" class="unselectable" style="width: 98.5%;vertical-align:top"></table></td>
                 <td id="app_table_select_configuration"></td>
-                <td id="app_table_configuration_list"><table id="app_table_configuration_table" unselectable="on" class="unselectable" style="width: 100%; vertical-align: top"></table></td>
+                <td id="app_table_configuration_list"><table id="app_table_configuration_table" unselectable="on" class="unselectable" style="width: 98.5%;vertical-align:top"></table></td>
                 <td id="app_table_deploy_button"></td>
             </tr>
         </table>
-        <div id="app_table_space"><br>
-        </div>
-        <table id="instance_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%; overflow: hidden">
+        <div id="app_table_space"><br></div>
+        <table id="instance_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 98.5%;overflow:hidden">
             <tr>
-                <td id="instance_table_app_list">
-                    <div instance_table_app_div><table id="instance_table_app_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%; vertical-align: top"></table>
-                    </div></td>
-                <td id="instance_table_control_frame">
-                    <div id="control_frame"><iframe id="control_frame_content" name="control_frame_content" width="100%" height="100%"></iframe>
+                <td id="instance_table_app_list"><div instance_table_app_div><table id="instance_table_app_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%;vertical-align:top"></table></div></td>
+                <td id="instance_table_control_frame"><div id="control_frame"><iframe id="control_frame_content" name="control_frame_content" width="98.5%" height="100%"></iframe></div></td>
+            </tr>
+        </table>
+        <div id="instance_table_space"><br><br></div>
+        <table id="section_table" unselectable="on" class="unselectable" style="width: 98.5%"></table>
+        <div id="section_table_space"><br>
+        </div>
+        <table id="states_table" unselectable="on" class="unselectable" style="width: 98.5%">
+            <tr>
+                <td id="state_table_state_header"><div state_table_state_list_div><table id="state_table_state_header_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%; height:100%; vertical-align: top"></table></div></td>
+            </tr>
+            <tr>
+                <td id="state_table_state_list">
+                    <div state_table_state_list_div><table id="state_table_state_list_table" cellspacing="0" cellpadding="0" unselectable="on" class="unselectable" style="width: 100%; height: 100%; vertical-align: top"></table>
                     </div></td>
             </tr>
         </table>
-        <div id="instance_table_space"><br><br>
-        </div>
-        <table id="section_table" unselectable="on" class="unselectable" style="width: 100%"></table>
-        <div id="section_table_space"><br>
-        </div>
-        <table id="button_table" unselectable="on" class="unselectable" style="width: 100%"></table>
+        <div id="states_table_space"><br></div>
+        <table id="button_table" unselectable="on" class="unselectable" style="width: 98.5%"></table>
     </div>
 </body>
 </html>
