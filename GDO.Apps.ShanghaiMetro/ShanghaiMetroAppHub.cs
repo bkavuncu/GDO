@@ -132,7 +132,7 @@ namespace GDO.Apps.ShanghaiMetro
                         {
                             ((ShanghaiMetroApp) Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep = 0;
                         }
-                        Clients.All.receiveTimeStep(
+                        Clients.Group("" + instanceId).receiveTimeStep(
                             ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
                         ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
                     }
