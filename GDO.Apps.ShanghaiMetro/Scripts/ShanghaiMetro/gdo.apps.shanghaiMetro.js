@@ -17,7 +17,7 @@ $(function () {
     }
 
     $.connection.shanghaiMetroAppHub.client.receiveTimeStep = function (timestep) {
-        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].appName == "ShanghaiMetro") {
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
             var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
             gdo.net.app["ShanghaiMetro"].timeStep = timestep;
             if (!gdo.net.instance[instanceId].entry) {
