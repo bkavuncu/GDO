@@ -3978,11 +3978,15 @@
             "Damuqiao Road", 
             "Dongan Road", 
 <<<<<<< HEAD
+<<<<<<< HEAD
             "Shanghai Stadium"]
 =======
             "Shanghai Stadium"
         ]
 >>>>>>> 740c9c6... New, and hopefully ok, good link-data, usual and disrupted, 2 and 30 minutes.
+=======
+            "Shanghai Stadium"]
+>>>>>>> c6216d3... Added station "Yanyu Road" (NOTE: its entry/exit data is a copy of Pusan Road's ones, its coordinates are no accurate).
     ], 
     "5": [[  "Xinzhuang", 
             "Chunshen Road", 
@@ -4180,11 +4184,16 @@
             "Sanlin", 
             "Sanlin East", 
 <<<<<<< HEAD
+<<<<<<< HEAD
             "Pusan Road",
 			"Yanyu Road", 
 =======
             "Pusan Road", 
 >>>>>>> 740c9c6... New, and hopefully ok, good link-data, usual and disrupted, 2 and 30 minutes.
+=======
+            "Pusan Road",
+			"Yanyu Road", 
+>>>>>>> c6216d3... Added station "Yanyu Road" (NOTE: its entry/exit data is a copy of Pusan Road's ones, its coordinates are no accurate).
             "Yuqiao", 
             "Luoshan Road"]
     ], 
