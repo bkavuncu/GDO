@@ -827,7 +827,6 @@
                         map.load(["earth", "water", "roads"], callbackTube);
                     };
 
-                    // TEST ANIMATION
                     orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
                         if (anim)
                             anim.cleanup();
@@ -923,8 +922,7 @@
                         c = dd3.browser.column,
                         r = dd3.browser.row;
 
-                   // clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
-                     titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+                    titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
                         var projection = d3.geo.mercator()
@@ -1007,7 +1005,7 @@
                         map.load(["earth", "water", "roads"], callbackTube);
                     };
 
-                    orderController.orders['launchAnimation'] = launchAnimation = function (dis, outter, widthChanging) {
+                    orderController.orders['launchAnimation'] = launchAnimation = function (dis, outter, widthChanging, widthWithLinkLoad) {
                         if (anim)
                             anim.cleanup();
 
@@ -1025,7 +1023,8 @@
                             aggregate: agg,
                             showOutterLine: outter,
                             timeInterval: timeInterval,
-                            widthChanging: widthChanging
+                            widthChanging: widthChanging,
+                            widthWithLinkLoad: widthWithLinkLoad
                         };
 
                         anim = animationLines(args);
