@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GDO.Apps.BitCoin")]
+[assembly: AssemblyTitle("GDO.Apps.Bitcoin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CSG")]
-[assembly: AssemblyProduct("GDO.Apps.BitCoin")]
+[assembly: AssemblyProduct("GDO.Apps.Bitcoin")]
 [assembly: AssemblyCopyright("Copyright © CSG 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

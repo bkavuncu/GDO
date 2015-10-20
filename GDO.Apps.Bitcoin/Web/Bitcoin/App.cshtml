@@ -33,52 +33,10 @@
         $(function () {          
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.net.app["BitCoins"].initClient();
+                gdo.net.app["Bitcoin"].initClient();
             });
         });
-
-        var tileIdDictionary = {};
-
-        function setTiles(BitCoinNameDigit, rotate, blockWidth, blockHeight, tilesJson) {
-            tmpTileIdDic = {}
-            widthScale = $(window).width() / blockWidth;
-            heightScale = $(window).height() / blockHeight;
-            for (i = 0 ; i < tilesJson.length ; i++) {
-                key = BitCoinNameDigit + '_' + tilesJson[i].tileIdCol + '_' + tilesJson[i].tileIdRow;
-                tmpTileIdDic[key] = true;
-                if (tileIdDictionary != null && tileIdDictionary[key] != null) {
-                    // if tiles already shown in current block then update its position information
-                    //$("#" + key).css("position", "absolute");
-                    $("#" + key).css("left", tilesJson[i].displayLeft * widthScale);
-                    $("#" + key).css("top", tilesJson[i].displayTop * heightScale);
-                    $("#" + key).css("width", tilesJson[i].displayWidth * widthScale);
-                    $("#" + key).css("height", tilesJson[i].displayHeight * heightScale);
-                    //$("#" + key).css("transform-origin", "left top");
-                    $("#" + key).css("transform", "rotate(" + rotate + "deg)");
-                } else {
-                    // create new tile element and set position information
-                    $("#BitCoin-tiles").append('<img id="' + key + '" src=""/>');
-                    $("#" + key).attr("src", "\\Web\\BitCoins\\BitCoins\\" + BitCoinNameDigit + "\\" + "crop" + "_" + tilesJson[i].tileIdCol + "_" + tilesJson[i].tileIdRow + ".png")
-                    $("#" + key).css("position", "absolute");
-                    $("#" + key).css("left", tilesJson[i].displayLeft * widthScale);
-                    $("#" + key).css("top", tilesJson[i].displayTop * heightScale);
-                    $("#" + key).css("width", tilesJson[i].displayWidth * widthScale);
-                    $("#" + key).css("height", tilesJson[i].displayHeight * heightScale);
-                    $("#" + key).css("transform-origin", "left top");
-                    $("#" + key).css("transform", "rotate(" + rotate + "deg)");
-                }
-            }
-            // remove tiles that are not in the new tiles list
-            for (i = 0 ; i < Object.keys(tileIdDictionary).length ; i++) {
-                key = Object.keys(tileIdDictionary)[i];
-                if (tmpTileIdDic[key] == null) {
-                    $("#" + key).remove();
-                }
-            }
-            tileIdDictionary = tmpTileIdDic; // update tiles dictionary
-        }
     </script>
-    <div id="BitCoin-tiles">
-    </div>
+    <div></div>
 </body>
 </html>

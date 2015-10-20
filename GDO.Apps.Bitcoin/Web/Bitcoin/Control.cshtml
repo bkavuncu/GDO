@@ -33,7 +33,7 @@
             margin: 10px 5px 0 0;
         }
 
-        #submit_BitCoin {
+        #submit_Bitcoin {
             color: #DDD;
             background: #222;
             font-size: 21px;
@@ -114,7 +114,7 @@
             line-height: 70px;
         }
 
-        #select_BitCoin {
+        #select_Bitcoin {
             color: #DDD;
             background: #222;
             font-size: 28px;
@@ -151,7 +151,7 @@
             filter: alpha(opacity=0);
         }
 
-        #BitCoin_digit_button {
+        #Bitcoin_digit_button {
             color: #DDD;
             background: #222;
             font-size: 21px;
@@ -169,8 +169,6 @@
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/BitCoins/cropper.min.js"></script>
-    <link href="../../Scripts/BitCoins/cropper.min.css" rel="stylesheet" />
     <script>
         $(function () {
 
@@ -182,394 +180,73 @@
 
             var gdo = parent.gdo;
 
-            $("#BitCoin_digit_button").click(function (){
-                var gdo = parent.gdo;
-                gdo.net.app["BitCoins"].server.findDigits(gdo.controlId, $("#BitCoin_digit").val());
-            });
-
-            $("#BitCoin_digit").keypress(function (e) {
-                if (e.keyCode == 13) {
-                    $("#BitCoin_digit_button").click();
-                }
-            });
-
-            $("#fit_mode").click(function() {
-                var gdo = parent.gdo;
-                if (gdo.net.app["BitCoins"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
-                    //gdo.net.app["BitCoins"].display_mode = 1 - gdo.net.app["BitCoins"].display_mode;
-                    gdo.consoleOut('.BitCoins', 1, 'Control: ' + gdo.controlId + ', Update display mode: FIT MODE');
-                    //gdo.net.app["BitCoins"].server.setDisplayMode(gdo.controlId, gdo.net.app["BitCoins"].display_mode);
-                    //gdo.net.app["BitCoins"].setDisplayModeSelect();
-                    setThumbNailDisplayMode(0);
-                }
-            });
-
-            $("#fill_mode").click(function() {
-                var gdo = parent.gdo;
-                if (gdo.net.app["BitCoins"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
-                    //gdo.net.app["BitCoins"].display_mode = 1 - gdo.net.app["BitCoins"].display_mode;
-                    gdo.consoleOut('.BitCoins', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
-                    //gdo.net.app["BitCoins"].server.setDisplayMode(gdo.controlId, gdo.net.app["BitCoins"].display_mode);
-                    //gdo.net.app["BitCoins"].setDisplayModeSelect();
-                    setThumbNailDisplayMode(1);
-                }
-            });
-
-            $("#active_control").click(function() {
-                if ($('#thumbnail_control > img').attr("src") != "") {
-                    var gdo = parent.gdo;
-                    gdo.net.app["BitCoins"].control_status = 1;
-                    updateControlButtonBackground();
-                    //gdo.net.app["BitCoins"].server.setDisplayMode(gdo.controlId, gdo.net.app["BitCoins"].display_mode);
-                    //gdo.net.app["BitCoins"].setDisplayModeSelect();
-                }
-            });
-
-            $("#disable_control").click(function () {
-                if ($('#thumbnail_control > img').attr("src") != "") {
-                    var gdo = parent.gdo;
-                    gdo.net.app["BitCoins"].control_status = 0;
-                    updateControlButtonBackground();
-                }
-            });
-
-            $("#rotate_control").click(function () {
-                var gdo = parent.gdo;
-                if (gdo.net.app["BitCoins"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
-                    $('#thumbnail_control > img').cropper('rotate', 90);
-                    updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
-                }
-            });
-
-            $('#thumbnail_control').width($(window).width() / 1.2);
-            $('#thumbnail_control').height($(window).width() / 1.8);
 
             $("body").keypress(function(e) {
                 var gdo = parent.gdo;
-                if (gdo.net.app["BitCoins"].control_status == 1) {
+                if (gdo.net.app["Bitcoin"].control_status == 1) {
                     var canvasData = $('#thumbnail_control > img').cropper('getCanvasData');
                     if(e.keyCode == 97) { // A left
                         //alert("left");
                         $('#thumbnail_control > img').cropper('setCanvasData', {
                             left: canvasData.left - 1
                         });
-                        updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
+                        updateThumbNailBitcoinInfo($('#thumbnail_control > img'));
                     } else if (e.keyCode == 115) { // S down
                         $('#thumbnail_control > img').cropper('setCanvasData', {
                             top: canvasData.top + 1
                         });
-                        updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
+                        updateThumbNailBitcoinInfo($('#thumbnail_control > img'));
                     } else if (e.keyCode == 100) { // D right
                         $('#thumbnail_control > img').cropper('setCanvasData', {
                             left: canvasData.left + 1
                         });
-                        updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
+                        updateThumbNailBitcoinInfo($('#thumbnail_control > img'));
                     } else if (e.keyCode == 119) { // W up
                         $('#thumbnail_control > img').cropper('setCanvasData', {
                             top: canvasData.top - 1
                         });
-                        updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
+                        updateThumbNailBitcoinInfo($('#thumbnail_control > img'));
                     }
                 } 
             });
             
-            gdo.net.app["BitCoins"].initControl();
-            //updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
+            gdo.net.app["Bitcoin"].initControl();
             updateControlButtonBackground();
         });
 
         function updateControlButtonBackground() {
             var gdo = parent.gdo;
-            if (gdo.net.app["BitCoins"].control_status == 0) {
+            if (gdo.net.app["Bitcoin"].control_status == 0) {
                 $("#active_control").css("background", "darkgreen");
                 $("#disable_control").css("background", "#222");
                 $("#rotate_control").css("background", "#222");
                 $("#fit_mode").css("background", "#222");
                 $("#fill_mode").css("background", "#222");
-            } else if (gdo.net.app["BitCoins"].control_status == 1) {
+            } else if (gdo.net.app["Bitcoin"].control_status == 1) {
                 $("#active_control").css("background", "#222");
                 $("#disable_control").css("background", "darkred");
                 $("#rotate_control").css("background", "darkgreen");
                 $("#fit_mode").css("background", "darkgreen");
                 $("#fill_mode").css("background", "darkgreen");
             }
-            updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
         }
 
-        function initializeCropper() {
-            var gdo = parent.gdo;
-
-            $('#thumbnail_control > img').cropper({
-                aspectRatio: 1920 / 1080,
-                autoCropArea: 0.65,
-                strict: false,
-                guides: false,
-                highlight: false,
-                dragCrop: false,
-                cropBoxMovable: false,
-                cropBoxResizable: false
-            });
-
-            $('#thumbnail_control > img').on('cropmove.cropper', function (e) {
-                var gdo = parent.gdo;
-                if (gdo.net.app["BitCoins"].control_status == 0) {
-                    e.preventDefault();
-                } else if (gdo.net.app["BitCoins"].control_status == 1) {
-                    updateThumbNailBitCoinInfo($(this));
-                }
-            });
-
-            $('#thumbnail_control > img').on('zoom.cropper', function (e) {
-                var gdo = parent.gdo;
-                if (gdo.net.app["BitCoins"].control_status == 0) {
-                    e.preventDefault();
-                } else if (gdo.net.app["BitCoins"].control_status == 1) {
-                    updateThumbNailBitCoinInfo($(this));
-                }
-            });
-
-            gdo.net.app["BitCoins"].server.requestSectionSize(gdo.controlId);
-            gdo.net.app["BitCoins"].server.requestThumbNailBitCoinInfo(gdo.controlId);
-        }
-
-        function updateThumbNailBitCoinInfo(object) {
-            var gdo = parent.gdo;
-            if (gdo.net.app["BitCoins"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
-                var BitCoinData = object.cropper('getBitCoinData');
-                var cropboxData = object.cropper('getCropBoxData');
-                var canvasData = object.cropper('getCanvasData');
-                var data = {}
-                data.BitCoinData = {};
-                data.BitCoinData.aspectRatio = cropboxData.width / cropboxData.height; //actually this is cropbox width/height ratio
-                if (BitCoinData.rotate != null) {
-                    data.BitCoinData.rotate = BitCoinData.rotate % 360;
-                } else {
-                    data.BitCoinData.rotate = 0;
-                }
-                data.BitCoinData.naturalWidth = BitCoinData.naturalWidth;
-                data.BitCoinData.naturalHeight = BitCoinData.naturalHeight;
-                data.BitCoinData.left = BitCoinData.left;
-                data.BitCoinData.top = BitCoinData.top;
-                data.BitCoinData.width = BitCoinData.width;
-                data.BitCoinData.height = BitCoinData.height;
-                data.cropboxData = {};
-                data.cropboxData.left = cropboxData.left;
-                data.cropboxData.top = cropboxData.top;
-                data.cropboxData.width = cropboxData.width;
-                data.cropboxData.height = cropboxData.height;
-                data.canvasData = {};
-                data.canvasData.left = canvasData.left;
-                data.canvasData.top = canvasData.top;
-                data.canvasData.width = canvasData.width;
-                data.canvasData.height = canvasData.height;
-                gdo.net.app["BitCoins"].server.setThumbNailBitCoinInfo(gdo.controlId, JSON.stringify(data));
-                $("#canvas_data_width").html(data.canvasData.width);
-                $("#canvas_data_height").html(data.canvasData.height);
-                $("#canvas_data_left").html(data.canvasData.left);
-                $("#canvas_data_top").html(data.canvasData.top);
-                $("#cropbox_data_width").html(data.cropboxData.width);
-                $("#cropbox_data_height").html(data.cropboxData.height);
-                $("#cropbox_data_left").html(data.cropboxData.left);
-                $("#cropbox_data_top").html(data.cropboxData.top);
-                $("#BitCoin_data_aspect_ratio").html(data.BitCoinData.aspectRatio);
-                $("#BitCoin_data_rotate").html(data.BitCoinData.rotate);
-            }
-        }
-
-        function setThumbNailBitCoinInfo(BitCoinJson) {
-            if ($('#thumbnail_control > img').attr("src") != "") {
-                var gdo = parent.gdo;
-                $("#thumbnail_control > img").cropper('setAspectRatio', BitCoinJson.BitCoinData.aspectRatio);
-                $("#thumbnail_control > img").cropper('setCropBoxData', {
-                    left: BitCoinJson.cropboxData.left,
-                    top: BitCoinJson.cropboxData.top,
-                    width: BitCoinJson.cropboxData.width,
-                    height: BitCoinJson.cropboxData.height
-                });
-                //gdo.consoleOut('.BitCoins', 1, 'Set thumbnail BitCoin rotate configuration');
-                $("#thumbnail_control > img").cropper('rotate', BitCoinJson.BitCoinData.rotate);
-                $("#thumbnail_control > img").cropper('setCanvasData', {
-                    left: BitCoinJson.canvasData.left,
-                    top: BitCoinJson.canvasData.top,
-                    width: BitCoinJson.canvasData.width,
-                    height: BitCoinJson.canvasData.height
-                });
-            }
-        }
 
         function getSectionSize(section_width, section_height) {
             if ($('#thumbnail_control > img').attr("src") != "") {
                 var gdo = parent.gdo;
-                gdo.consoleOut('.BitCoins', 1, 'Set aspectRatio configuration');
+                gdo.consoleOut('.Bitcoin', 1, 'Set aspectRatio configuration');
                 $("#thumbnail_control > img").cropper('setAspectRatio', section_width/section_height);
-            }
-        }
-
-        function setThumbNailDisplayMode(display_mode) {
-            if ($('#thumbnail_control > img').attr("src") != "") {
-                var gdo = parent.gdo;
-                var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
-                var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
-                var scalewidth = cropboxData.width / canvasData.width;
-                var scaleheight = cropboxData.height / canvasData.height;
-                if (scalewidth > scaleheight && display_mode == 1 ||
-                    scalewidth < scaleheight && display_mode == 0) {
-                    $("#thumbnail_control > img").cropper('setCanvasData', {
-                        left: cropboxData.left,
-                        top: cropboxData.top,
-                        width: cropboxData.width
-                    });
-                } else {
-                    $("#thumbnail_control > img").cropper('setCanvasData', {
-                        left: cropboxData.left,
-                        top: cropboxData.top,
-                        height: cropboxData.height
-                    });
-                }
-                updateThumbNailBitCoinInfo($('#thumbnail_control > img'));
             }
         }
 
     </script>
     <div>
-        @{
-            var path = "";
-            var filename = "";
-            if (IsPost)
-            {
-
-                HttpPostedFileBase file = Request.Files[0];
-                if (file != null)
-                {
-                    filename = Path.GetFileName(file.FileName);
-                    //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\BitCoins\BitCoins");
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\BitCoins\BitCoins\" + filename;
-                    file.SaveAs(path);
-                }
-            }
-        }
-
         <div>
-            <h1>Upload BitCoin</h1>
-            <form id="submit_BitCoin_form" action="" method="post" enctype="multipart/form-data">
-                <fieldset>
-                    <table>
-                        <tr>
-                            <td>
-                                <div class="file_upload">
-                                    <span>Choose File</span>
-                                    <input type="file" name="BitCoin" class="upload" id="select_BitCoin"/>
-                                </div>
-                            </td>
-                            <td>
-                                <input id="submit_BitCoin" type="submit" value="Submit"/>
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-                <br/>
-
-                 <h1>Find Processed BitCoin</h1>
-                 <fieldset>
-                    <table>
-                        <tr>
-                            <td>
-                                Digits: <input type="text" id="BitCoin_digit">
-                            </td>
-                            <td>
-                                 <div id="BitCoin_digit_button">Submit</div>
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-                <br/>
-
-                <h1>Message</h1>
-                <fieldset>
-                    <p id="message_from_server"></p>
-                </fieldset>
-
-                <br/>
-                <h1>Thumbnail</h1>
-                <fieldset>
-                    <table>
-                        <tr>
-                            <td>
-                                <div id="active_control">
-                                    <span>Activate Control</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div id="disable_control">
-                                    <span>Disable Control</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div id="fit_mode">
-                                    <span>FIT</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div id="fill_mode">
-                                    <span>FILL</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div id="rotate_control">
-                                    <span>Rotate</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </fieldset>
-                <fieldset>
-                    <table style="width:100%">
-                        <tr>
-                            <td>Canvas Info</td>
-                            <td>width:<span id="canvas_data_width"></span></td>
-                            <td>height:<span id="canvas_data_height"></span></td>
-                            <td>left:<span id="canvas_data_left"></span></td>
-                            <td>top:<span id="canvas_data_top"></span></td>
-                        </tr>
-                        <tr>
-                            <td>Cropbox Info</td>   
-                            <td>width:<span id="cropbox_data_width"></span></td>
-                            <td>height:<span id="cropbox_data_height"></span></td>
-                            <td>left:<span id="cropbox_data_left"></span></td>
-                            <td>top:<span id="cropbox_data_top"></span></td>
-                        </tr>
-                        <tr>
-                            <td>BitCoin Info</td>
-                            <td>aspectRatio:<span id="BitCoin_data_aspect_ratio"></span></td>
-                            <td>rotate:<span id="BitCoin_data_rotate"></span></td>
-                        </tr>
-                    </table>
-                </fieldset>
-                <h4>KeyPress Note: A [Left] | S [Down] | W [Up] | D [Right]</h4>
-                <div id="thumbnail_control" style="margin-top:10px">
-                    <img src="">
-                </div>
-
+            <form id="submit_Bitcoin_form" action="" method="post" enctype="multipart/form-data">
+                <input type="button"> Some button
             </form>
-
         </div>
     </div>
-    @if (path != "")
-    {
-        <script>
-            $(function () {
-                $(document).ready(function () {
-                    var gdo = parent.gdo;
-                    gdo.consoleOut('.BitCoins', 1, 'Instance ' + gdo.controlId + ": Uploaded BitCoin " + "@filename");
-                    gdo.net.app["BitCoins"].server.processBitCoin(gdo.controlId, "@filename");
-                    //gdo.net.app["BitCoins"].server.requestBitCoinName(gdo.controlId);
-                });
-
-            });
-        </script>
-    }
 </body>
 </html>

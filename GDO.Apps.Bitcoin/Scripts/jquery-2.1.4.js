@@ -1998,7 +1998,7 @@ Expr = Sizzle.selectors = {
 Expr.pseudos["nth"] = Expr.pseudos["eq"];
 
 // Add button/input type pseudos
-for ( i in { radio: true, checkbox: true, file: true, password: true, BitCoin: true } ) {
+for ( i in { radio: true, checkbox: true, file: true, password: true, Bitcoin: true } ) {
 	Expr.pseudos[ i ] = createInputPseudo( i );
 }
 for ( i in { submit: true, reset: true } ) {
@@ -4586,7 +4586,7 @@ jQuery.event = {
 
 	special: {
 		load: {
-			// Prevent triggered BitCoin.load events from bubbling to window.load
+			// Prevent triggered Bitcoin.load events from bubbling to window.load
 			noBubble: true
 		},
 		focus: {
@@ -8417,7 +8417,7 @@ jQuery.expr.filters.visible = function( elem ) {
 var r20 = /%20/g,
 	rbracket = /\[\]$/,
 	rCRLF = /\r?\n/g,
-	rsubmitterTypes = /^(?:submit|button|BitCoin|reset|file)$/i,
+	rsubmitterTypes = /^(?:submit|button|Bitcoin|reset|file)$/i,
 	rsubmittable = /^(?:input|select|textarea|keygen)/i;
 
 function buildParams( prefix, obj, traditional, add ) {

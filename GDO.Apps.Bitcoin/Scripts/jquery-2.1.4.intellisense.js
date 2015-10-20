@@ -1528,8 +1528,8 @@ intellisense.annotate(jQuery.fn, {
     ///   <param name="id" type="String">An ID to search for, specified via the id attribute of an element.</param>
     /// </signature>
   },
-  'BitCoin': function() {
-    /// <summary>Selects all elements of type BitCoin.</summary>
+  'Bitcoin': function() {
+    /// <summary>Selects all elements of type Bitcoin.</summary>
   },
   'index': function() {
     /// <signature>

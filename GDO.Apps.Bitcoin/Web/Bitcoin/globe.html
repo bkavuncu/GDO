@@ -32,8 +32,8 @@
 </body>
 
 
-<script src="./js/globe/third-party/three.min.js"></script>
-<script src="./js/globe/globe.js"></script>
+<script src="../../Scripts/Bitcoin/globe/third-party/three.min.js"></script>
+<script src="../../Scripts/Bitcoin/globe/globe.js"></script>
 <script>
 
 	var container = document.getElementById('globecontainer');
@@ -72,7 +72,7 @@
 
 		xmlhttp.open("GET", url, true);
 		xmlhttp.send();
-		console.log('Retrieved current backbone nodes')
+	    console.log('Retrieved current backbone nodes');
 	}
 
 	function getNodeLocns(nodeArr){
