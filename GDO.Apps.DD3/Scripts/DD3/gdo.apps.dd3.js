@@ -275,7 +275,7 @@ var initDD3App = function () {
         return api;
     };
 
- //   var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
+    //var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
     var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
 
     var dd3 = (function () {
@@ -690,15 +690,35 @@ var initDD3App = function () {
                     signalR.server.getDimensions(signalR.sid, dataId);
             };
 
-            dd3_data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys) {
+            dd3_data.getData = function (dataName, dataId, callback, keys) {
+                data[pr(dataId)] = data[pr(dataId)] || {};
+                data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
+                data[pr(dataId)][pr(dataName)].callback_data = callback;
+
+                var request = {
+                    dataId: dataId,
+                    dataName: dataName,
+                    limits : [],
+                    _keys: keys || null
+                };
+
+                if (options.useApi)
+                    api.getData(request);
+                else
+                    signalR.server.getData(signalR.sid, request);
+
+                utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
+            };
+
+            dd3_data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, limit) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
-                xKey = xKey || 'x';
-                yKey = yKey || 'y';
-                var limits = dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                xKey = xKey || ['x'];
+                yKey = yKey || ['y'];
+                var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
 
                 var request = {
@@ -718,15 +738,15 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            dd3_data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation) {
+            dd3_data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation, limit) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
                 data[pr(dataId)][pr(dataName)].callback_data = callback;
 
-                xKey = xKey || 'x';
-                yKey = yKey || 'y';
-                var limits = dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
+                xKey = xKey || ['x'];
+                yKey = yKey || ['y'];
+                var limits = limit || dd3_data.getBounds(dataId, scaleX, scaleY, xKey, yKey);
                 if (!limits) return;
 
                 var request = {
@@ -747,13 +767,13 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-            dd3_data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation) {
+            dd3_data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation, limit) {
 
                 orientation = orientation || "bottom";
 
                 var r = scale.range(),
                     toGlobal = slsg[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
-                    limit = {};
+                    limits = limit || {};
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -766,13 +786,13 @@ var initDD3App = function () {
                     orientation === "left" && browser.column === 0 ||
                     orientation === "right" && browser.column === cave.column - 1) {
 
-                    limit.min = d3.bisect(r, toGlobal(0) - scale.rangeBand() / 2);
-                    limit.max = d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
+                    limits.min = limits.min || d3.bisect(r, toGlobal(0) - scale.rangeBand() / 2);
+                    limits.max = limits.max || d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
 
                     var request = {
                         dataId: dataId,
                         dataName: dataName,
-                        limit: limit,
+                        limit: limits,
                         orderingKey: orderingKey || null, // Key on which to order the data
                         _keys: keys || null
                     };
@@ -992,12 +1012,13 @@ var initDD3App = function () {
             };
 
             var _dd3_shapeHandler = function (data) {
-                var obj = d3.select("#" + data.sendId),
-                    g1 = d3.select("#" + data.containers.shift()), g2,
+                var mainId = data.containers.shift(),
+                    obj = d3.select("#" + data.sendId),
+                    g1 = d3.select("#" + mainId), g2,
                     c = false; // Whether the object was changed of group since last time
 
                 if (g1.empty()) {
-                    utils.log("The group with id received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
+                    utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
                     return;
                 }
 
@@ -1889,7 +1910,7 @@ var initDD3App = function () {
 
                 c1.removeChild(clones[0]);
 
-                utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
+                //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
                 return rcpts;
             };
@@ -1939,12 +1960,12 @@ var initDD3App = function () {
                 args.properties = properties;
             };
 
-            var _dd3_hook_selection_transition = d3.selection.prototype.transition;
+            var _dd3_hook_selection_transition = _dd3.selection.prototype.transition_ = d3.selection.prototype.transition;
 
             var _dd3_hook_transition_transition = d3.transition.prototype.transition;
 
             _dd3.selection.prototype.transition = function (name) {
-                var t = _dd3_selection_createProperties(_dd3_selection_filterWatched(_dd3_hook_selection_transition.apply(this, arguments))),
+                var t = _dd3_selection_createProperties(_dd3_hook_selection_transition.apply(this, arguments)),
                     ns = _dd3_transitionNamespace(name),
                     ease = "cubic-in-out",
                     precision = _dd3_precision;
@@ -1953,7 +1974,7 @@ var initDD3App = function () {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
 
                     t.each("start.dd3", function (d, i) {
-                        if (!this.parentNode)
+                        if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__ )
                             return;
                         var transition = this[ns][this[ns].active];
 
@@ -2013,11 +2034,15 @@ var initDD3App = function () {
                     });
 
                     t.each("interrupt.dd3", function (d, i) {
+                        if (_dd3_isReceived(this) || this.__unwatch__)
+                            return;
                         this.__dd3_transitions__.remove(ns);
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
 
                     t.each("end.dd3", function (d, i) {
+                        if (_dd3_isReceived(this) || this.__unwatch__)
+                            return;
                         this.__dd3_transitions__.remove(ns);
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
@@ -2132,14 +2157,14 @@ var initDD3App = function () {
                 return initialize(t, ease, precision);
             };
 
-            dd3.defineEase = function (name, func) {
+            _dd3.defineEase = function (name, func) {
                 if (arguments.length < 2) return _dd3_eases['dd3_' + name];
                 if (func == null) delete _dd3_eases['dd3_' + name];
                 else _dd3_eases['dd3_' + name] = func;
                 return name;
             };
 
-            dd3.defineTween = function (name, func, spec) {
+            _dd3.defineTween = function (name, func, spec) {
                 if (arguments.length < 2) return _dd3_tweens['dd3_' + name];
                 if (func == null) delete _dd3_tweens['dd3_' + name];
                 else {
@@ -2149,12 +2174,12 @@ var initDD3App = function () {
                 return name;
             };
 
-            dd3.defineAttrTween = function (name, func) {
-                return dd3.defineTween(name, func, ".attr");
+            _dd3.defineAttrTween = function (name, func) {
+                return _dd3.defineTween(name, func, ".attr");
             };
 
-            dd3.defineStyleTween = function (name, func) {
-                return dd3.defineTween(name, func, ".style");
+            _dd3.defineStyleTween = function (name, func) {
+                return _dd3.defineTween(name, func, ".style");
             };
 
             /**
@@ -2181,6 +2206,8 @@ var initDD3App = function () {
             _dd3.browser = browser;
 
             _dd3.getDataDimensions = dd3_data.getDimensions;
+
+            _dd3.getData = dd3_data.getData;
 
             _dd3.getPointData = dd3_data.getPointData;
 

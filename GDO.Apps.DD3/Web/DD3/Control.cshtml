@@ -88,7 +88,11 @@
                         test_bench[confId] && test_bench[confId]();
                         test_bench[confId] = null;
                         $("#wait").css("display", "none");
-                        $("#control_" + confId).css("display", "");
+                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
+                            $("#control_6").css("display", "");
+                        }else {
+                            $("#control_" + confId).css("display", "");
+                        }
                     }
                 };
 
@@ -377,7 +381,61 @@
                     server.sendOrder(instanceId, order("delAllRect", []), true);
                 };
 
+                test_bench[4] = function () {
+                    $('#launchEntryAnimationLondon').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    });
 
+                    $('#launchExitAnimationLondon').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    });
+                };
+
+                test_bench[5] = function () {
+                    $('#launchEntryAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                    });
+
+                    /*
+                    $('#cleanupAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("cleanupAnimation", []), true);
+                    });
+
+                    $('#pauseAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("pauseAnimation", []), true);
+                    });
+
+                    $('#startAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("startAnimation", []), true);
+                    });
+
+                    $('#initAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("initAnimation", []), true);
+                    });
+
+                    $('#createAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("createAnimation", []), true);
+                    });
+                    //*/
+
+                    $('#launchExitAnimationShanghai').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                    });
+                };
+
+                test_bench[6] = test_bench[7] = test_bench[8] = test_bench[9] = function () {
+                    var cb = $('#outterCheckbox');
+                    var cb2 = $('#widthChangingCheckbox');
+                    var cb3 = $('#widthChangingLinkLoadCheckbox');
+
+                    $('#launchNormalAnimationShanghaiLines').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
+                    });
+
+                    $('#launchDisruptedAnimationShanghaiLines').click(function () {
+                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
+                    });
+                };
             });
         });
     </script>
@@ -477,6 +535,65 @@
                 <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width:40px" /></td>
             </tr>
         </table> 
+    </div>
+
+    <div id="control_4" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationLondon">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationLondon">Launch Animation of exit</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="control_5" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="launchEntryAnimationShanghai">Launch Animation of entries</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchExitAnimationShanghai">Launch Animation of exit</td>
+            </tr>
+            <!--
+            <tr>
+                <td class="green" id="createAnimationShanghai">Create</td>
+            </tr>
+            <tr>
+                <td class="green" id="initAnimationShanghai">Init</td>
+            </tr>
+            <tr>
+                <td class="green" id="startAnimationShanghai">Start</td>
+            </tr>
+            <tr>
+                <td class="green" id="pauseAnimationShanghai">Pause</td>
+            </tr>
+            <tr>
+                <td class="green" id="cleanupAnimationShanghai">Cleanup</td>
+            </tr>
+            <!---->
+        </table>
+    </div>
+    
+    <div id="control_6" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="outter" id="outterCheckbox"> With outter lines (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChanging" id="widthChangingCheckbox" checked> Width changing (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green"><INPUT type="checkbox" name="widthChangingLinkLoad" id="widthChangingLinkLoadCheckbox"> Width represents link load (Choose before launching)</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchNormalAnimationShanghaiLines">Launch Animation with normal data</td>
+            </tr>
+            <tr>
+                <td class="green" id="launchDisruptedAnimationShanghaiLines">Launch Animation with disrupted data</td>
+            </tr>
+        </table>
     </div>
 
 </body>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace GDO.Core
@@ -124,7 +120,8 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)
                     {
-                        AggregatedConnectionHealth = 3; return;
+                        AggregatedConnectionHealth = 3;
+                        return;
                     }
                 }
             }
@@ -134,7 +131,8 @@ namespace GDO.Core
                 {
                     if (!ConnectedNodeList.Contains(node.Id) && node.Id != Id)
                     {
-                        AggregatedConnectionHealth = 3; return;
+                        AggregatedConnectionHealth = 3;
+                        return;
                     }
                 }
             }
@@ -147,7 +145,8 @@ namespace GDO.Core
                     {
                         if (Cave.Nodes[neighbourId].SectionId == SectionId)
                         {
-                            AggregatedConnectionHealth = 3; return;
+                            AggregatedConnectionHealth = 3;
+                            return;
                         }
                     }
                 }

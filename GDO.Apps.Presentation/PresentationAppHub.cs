@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
+using log4net;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
@@ -23,6 +14,8 @@ namespace GDO.Apps.Presentation
     [Export(typeof(IAppHub))]
     public class PresentationAppHub : Hub, IAppHub
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(PresentationAppHub));
+
         public string Name { get; set; } = "Presentation";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new PresentationApp().GetType();
@@ -75,8 +68,8 @@ namespace GDO.Apps.Presentation
                     Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                {                  
+                    Log.Error("failed to load presentation ",e);
                     Clients.Caller.setMessage(e.GetType().ToString()+e );
                 }
             }
@@ -93,7 +86,7 @@ namespace GDO.Apps.Presentation
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to get presentation info", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
@@ -111,7 +104,7 @@ namespace GDO.Apps.Presentation
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to get refresh info", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }   
@@ -141,7 +134,7 @@ namespace GDO.Apps.Presentation
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to get previous page", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
@@ -171,7 +164,7 @@ namespace GDO.Apps.Presentation
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Log.Error("failed to get next page", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }

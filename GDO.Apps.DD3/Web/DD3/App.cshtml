@@ -17,13 +17,14 @@
             padding : 0px;
             margin: 0px;
             overflow-y: hidden;
+            overflow-x: hidden;
         }
 
         .unselectable {
             -moz-user-select: -moz-none;
-            -khtml-user-select: none;
+            /*-khtml-user-select: none;*/
             -webkit-user-select: none;
-            -o-user-select: none;
+           /*-o-user-select: none;*/
             user-select: none;
         }
 
@@ -37,6 +38,19 @@
         .dot {
           stroke: #000;
         }
+
+        #viz_title, #clock {
+            position : absolute;
+            display : inline-block;
+            font-size: 8em;
+            font-family : clockFont;
+            color: #FFF;
+            opacity : 1;
+            border-top : solid #f4b606 0.15em;
+            padding : 0.3em 0.5em;
+            background-color: #3a3d3d;
+        }
+
     </style>
 </head>
 <body>
@@ -45,10 +59,17 @@
     <script src="../../Scripts/d3.js"></script>
     <script src="../../Scripts/peer.js"></script>
 
-    <script>
-        var dd3;
+    <!-- JS FOR TUBE VIZ-->
+    <script src="~/Web/DD3/Scripts/map.js"></script>
+    <script src="~/Web/DD3/Scripts/stations.js"></script>
+    <script src="~/Web/DD3/Scripts/lines.js"></script>
+    <script src="~/Web/DD3/Scripts/animation.js"></script>
+    <script src="~/Web/DD3/Scripts/animationLines.js"></script>
 
-        $(function () {          
+    <script>
+        var dd3, loadMap, launchAnimation, map, anim;
+
+        $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo,
                     configName,
@@ -63,9 +84,9 @@
 
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
-                        test_bench[configId]();
+                        test_bench[configId](configId);
                     } else {
-                        dd3.on('ready', test_bench[configId]);
+                        dd3.on('ready', test_bench[configId].bind(null, configId));
                     }
                 };
 
@@ -80,7 +101,7 @@
 
                     return t;
                 })();
-                
+
                 if (!gdo.net.app["DD3"].initClient) {
                     $("#error").css("display", "");
                     parent.location.reload();
@@ -189,7 +210,7 @@
                     orderController.orders['removeCircles'] = function () {
                         circleGroup.selectAll(".c").remove();
                     };
-                    
+
                     orderController.orders['createDistributedCircles'] = function (number, opacity) {
                         circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('g')
@@ -290,7 +311,7 @@
                             .transition()
                             .duration(1000)
                             .attr('transform', 'translate(' + points[0][0] + ' ' + points[0][1] + ')');
-                        
+
                         points.forEach(function (p) {
                             tr = tr.transition()
                                 .duration(200)
@@ -316,7 +337,7 @@
                     dd3.synchronize(f, 5000);
                 //*/
                 };
-                
+
                 // ScatterPlot
                 test_bench['1'] = function () {
                     var xScale, yScale;
@@ -343,7 +364,7 @@
                         dd3.getPathData('pathData', dataId, function (d) {
                             pathData = d;
                             draw();
-                        }, xScale, yScale, 'x', 'y');
+                        }, xScale, yScale, ['x'], ['y']);
 
                     };
 
@@ -444,7 +465,7 @@
                         xRange.domain(xDomain);
                         yScale.domain(yDomain);
 
-                        dd3.getBarData('bar', 'barData', draw, xRange, 'gdp');
+                        dd3.getBarData('bar', 'barData', draw, xRange, ['gdp']);
                     });
 
                     var draw = function (barData) {
@@ -580,6 +601,445 @@
                     };
 
                 };
+
+                // VIZ London METRO
+                test_bench['4'] = function ()  {
+                    var svg = dd3.svgCanvas,
+                        mapGroup = svg.append('g').attr('id', 'dd3_map'),
+                        clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
+	                    cwidth = dd3.cave.svgWidth,
+	                    cheight = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
+                        anim,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
+
+                    clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.70) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");			        
+                    titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+                    
+                    loadMap = function () {
+                        var projection = d3.geo.mercator()
+		                    .translate([cwidth / 2, cheight / 2]);
+
+                        var zoom = 10;
+                        var topLeft = [-0.40, 51.76]; // LONG - LAT (of London)
+                        var bottomRight = [-0.10, 51.34]; // LONG - LAT (of London)
+
+                        var style = {
+                            earth: {
+                                fillColor: "#272a29",
+                                strokeColor: "#272a29",
+                                strokeSize: 2
+                            },
+                            water: {
+                                /*
+			                    fillColor : "#384b4c",
+			                    strokeColor : "#384b4c",
+			                    strokeSize : 1,
+			                    //*/
+                                riverbank: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                },/*
+                                ocean: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                }//*/
+                            },
+                            roads: {
+                                highway: {
+                                    strokeColor: "#555",
+                                    strokeSize: 1.2
+                                },
+                                major_road: {
+                                    strokeColor: "#555",
+                                    strokeSize: 0.7
+                                }
+                                /*,
+			                    minor_road : {
+				                    strokeColor : "#555",
+				                    strokeSize : 0.7
+			                    }
+			                    //*/
+                            },
+                            landuse: {
+                                park: {
+                                    fillColor: d3.rgb("#cedfad").darker(1)
+                                }
+                            }
+                        };
+
+                        var args = {
+                            topLeftBound: topLeft,
+                            bottomRightBound: bottomRight,
+                            zoom: zoom,
+                            svg: mapGroup,
+                            projection: projection,
+                            style: style,
+                            autoProjection: true,
+                        };
+
+                        var callbackTube = function () {
+                            tube.loadLines(function () {
+                                tube.drawLines(mapGroup, map);
+                            });
+                        };
+
+                        var lineNames = ["Northern","Bakerloo", "Central", "District", "Circle", "HammersmithCity", "Metropolitan", "Piccadilly", "WaterlooCity", "Victoria", "Jubilee"];
+                        var lineColors = ["black", "#ae6118", "#ed1b2e", "#007229", "#FFDD00", "#f385a1", "#78004C", "#0019A8", "#76d0bd", "#00A0E2", "#8A8C8E"];
+
+                        map = mapHandler(args);
+                        tube = tubeLines(mapGroup, map, lineNames, lineColors);
+                        //map.load(["earth", "water", "landuse", "roads"], callbackTube);
+                        map.load(["earth", "water", "roads"], callbackTube);
+                    };
+
+                    // TEST ANIMATION
+                    orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
+                        if (anim)
+                            anim.stop();
+
+                        var args = {
+                            timeStep: 2000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            entry: entry
+                        };
+
+                        anim = animation(args);
+                        anim.loadData(function () {
+                            anim.init();
+                            dd3.synchronize(function () {
+                                anim.start();
+                            });
+                        });
+
+                    };
+
+                    loadMap();
+                };
+
+                // VIZ SHANGHAI METRO
+                test_bench['5'] = function () {
+                    var svg = dd3.svgCanvas,
+                        mapGroup = svg.append('g').attr('id', 'dd3_map'),
+                        clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
+	                    cwidth = dd3.cave.svgWidth,
+	                    cheight = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
+
+                    //clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
+                    titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+
+                    loadMap = function () {
+                        var projection = d3.geo.mercator()
+		                    .translate([cwidth / 2, cheight / 2]);
+
+                        var zoom = 11;
+                        /*
+                        var topLeft = [121.175589, 31.507919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        /*/
+                        var topLeft = [121.475589, 31.357919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [121.5, 31.1]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        //*/
+
+                        var style = {
+                            earth: {
+                                fillColor: "#272a29",
+                                strokeColor: "#272a29",
+                                strokeSize: 2
+                            },
+                            water: {
+                                /*
+			                    fillColor : "#384b4c",
+			                    strokeColor : "#384b4c",
+			                    strokeSize : 1,
+			                    //*/
+                                riverbank: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                },/*
+                                ocean: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                }//*/
+                            },
+                            roads: {
+                                highway: {
+                                    strokeColor: "#555",
+                                    strokeSize: 1.2
+                                },
+                                major_road: {
+                                    strokeColor: "#555",
+                                    strokeSize: 0.7
+                                }
+                                /*,
+			                    minor_road : {
+				                    strokeColor : "#555",
+				                    strokeSize : 0.7
+			                    }
+			                    //*/
+                            },
+                            landuse: {
+                                park: {
+                                    fillColor: d3.rgb("#cedfad").darker(1)
+                                }
+                            }
+                        };
+
+                        var args = {
+                            topLeftBound: topLeft,
+                            bottomRightBound: bottomRight,
+                            zoom: zoom,
+                            svg: mapGroup,
+                            projection: projection,
+                            style: style,
+                            autoProjection: true,
+                        };
+
+                        var callbackTube = function () {
+                            tube.loadLines(function () {
+                                tube.drawLines(mapGroup, map);
+                            });
+                        };
+
+                        var lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16", "Maglev"];
+                        //var lineColors = ["#CC3333", "#009900", "#FFCC00", "#73418a", "#e232a0", "#ed597e", "#f07f19", "#0066cc", "#00cccc", "#ff99ff", "#5d492b", "#669999", "#cccc00", "#66ccff", "#DEDEDE"];
+                        var lineColors = ["#e81b38", "#8ac63f", "#fbd005", "#4f2d8b", "#9056a3", "#d7006c", "#f37120", "#009dd8", "#7ac7ea", "#bca8d1", "#7d2030", "#007c65", "#e795c0", "#8ed1c0", "#DEDEDE"];
+
+                        map = mapHandler(args);
+                        tube = tubeLines(mapGroup, map, lineNames, lineColors);
+                        //map.load(["earth", "water", "landuse", "roads"], callbackTube);
+                        map.load(["earth", "water", "roads"], callbackTube);
+                    };
+
+                    orderController.orders['launchAnimation'] = launchAnimation = function (entry) {
+                        if (anim)
+                            anim.cleanup();
+
+                        clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
+
+                        titleDiv.text(entry == 0 ? "People Entering Stations: 入站人数" : "People Exiting Stations: 出站人数")
+                                    .style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+
+                        var args = {
+                            timeStep: 2000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            entry: entry
+                        };
+
+                        anim = animation(args);
+                        anim.loadData(function () {
+                            anim.init();
+                            dd3.synchronize(function () {
+                                anim.start();
+                            });
+                        });
+
+                    };
+
+                    /*
+                    orderController.orders['startAnimation'] = function () {
+                        dd3.synchronize(function () {
+                            anim.start();
+                        });
+                    };
+
+                    orderController.orders['pauseAnimation'] = function () {
+                        anim.stop();
+                    };
+
+                    orderController.orders['cleanupAnimation'] = function () {
+                        anim.cleanup();
+                    };
+
+                    orderController.orders['createAnimation'] = function () {
+                        var args = {
+                            timeStep: 2000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            entry: 1
+                        };
+
+                        anim = animation(args);
+                    };
+
+                    orderController.orders['initAnimation'] = function () {
+                        anim.loadData(function () {
+                            anim.init();
+                        });
+                    };
+                    //*/
+
+                    loadMap();
+                };
+
+                // VIZ SHANGHAI METRO LINK LOAD (Different data aggregation)
+                test_bench['6'] = test_bench['7'] = test_bench['8'] = test_bench['9'] = function (configId) {
+                    switch (configId) {
+                        case 6:
+                            shanghaiViz(2 * 60 * 1000, 1);
+                            break;
+                        case 7:
+                            shanghaiViz(6 * 60 * 1000, 3);
+                            break;
+                        case 8:
+                            shanghaiViz(20 * 60 * 1000, 10);
+                            break;
+                        case 9:
+                            shanghaiViz(30 * 60 * 1000, 15);
+                            break;
+                    }
+                };
+
+                var shanghaiViz = function (timeInterval, agg) {
+                    var svg = dd3.svgCanvas,
+                        mapGroup = svg.append('g').attr('id', 'dd3_map'),
+                        clockDiv = d3.select('#clock').unwatch(),
+                        titleDiv = d3.select('#viz_title').unwatch(),
+	                    cwidth = dd3.cave.svgWidth,
+	                    cheight = dd3.cave.svgHeight,
+	                    bwidth = dd3.browser.svgWidth,
+	                    bheight = dd3.browser.svgHeight,
+                        p = dd3.position("svg", "local", "svg", "global"),
+                        c = dd3.browser.column,
+                        r = dd3.browser.row;
+
+                    titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+
+                    loadMap = function () {
+                        var projection = d3.geo.mercator()
+		                    .translate([cwidth / 2, cheight / 2]);
+
+                        var zoom = 11;
+                        /*
+                        var topLeft = [121.175589, 31.507919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [122.000013, 30.866975]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        /*/
+                        var topLeft = [121.475589, 31.357919]; // LONG - LAT (of shanghai ) 121.053779, 31.478256
+                        var bottomRight = [121.5, 31.1]; // LONG - LAT (of shanghai) 121.888740, 30.908508
+                        //*/
+
+                        var style = {
+                            earth: {
+                                fillColor: "#272a29",
+                                strokeColor: "#272a29",
+                                strokeSize: 2
+                            },
+                            water: {
+                                /*
+			                    fillColor : "#384b4c",
+			                    strokeColor : "#384b4c",
+			                    strokeSize : 1,
+			                    //*/
+                                riverbank: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                },/*
+                                ocean: {
+                                    fillColor: "#384b4c",
+                                    strokeColor: "#384b4c",
+                                    strokeSize: 1
+                                }//*/
+                            },
+                            roads: {
+                                highway: {
+                                    strokeColor: "#555",
+                                    strokeSize: 1.2
+                                },
+                                major_road: {
+                                    strokeColor: "#555",
+                                    strokeSize: 0.7
+                                }
+                                /*,
+			                    minor_road : {
+				                    strokeColor : "#555",
+				                    strokeSize : 0.7
+			                    }
+			                    //*/
+                            },
+                            landuse: {
+                                park: {
+                                    fillColor: d3.rgb("#cedfad").darker(1)
+                                }
+                            }
+                        };
+
+                        var args = {
+                            topLeftBound: topLeft,
+                            bottomRightBound: bottomRight,
+                            zoom: zoom,
+                            svg: mapGroup,
+                            projection: projection,
+                            style: style,
+                            autoProjection: true,
+                        };
+
+                        var callbackTube = function () {
+                            tube.loadLines();
+                        };
+
+                        var lineNames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "16"];
+                        var lineColors = ["#e81b38", "#8ac63f", "#fbd005", "#4f2d8b", "#9056a3", "#d7006c", "#f37120", "#009dd8", "#7ac7ea", "#bca8d1", "#7d2030", "#007c65", "#e795c0", "#8ed1c0", "#DEDEDE"];
+
+                        map = mapHandler(args);
+                        tube = tubeLines(mapGroup, map, lineNames, lineColors);
+                        map.load(["earth", "water", "roads"], callbackTube);
+                    };
+
+                    orderController.orders['launchAnimation'] = launchAnimation = function (dis, outter, widthChanging, widthWithLinkLoad) {
+                        if (anim)
+                            anim.cleanup();
+
+                        clockDiv.style("display", "").style("left", ((dd3.cave.width * 0.85) - dd3.position.html.left) + "px").style("top", dd3.position.html.top + "px");
+
+                        titleDiv.html(dis == 0 ? "Load on Each Metro Line – Normal: <br />  各地铁线负载 – 正常状况" : "Load on Each Metro Line – Disrupted:  <br /> 各地铁线负载 – 事故状况")
+                                    .style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
+
+                        var args = {
+                            timeStep: 1000,
+                            map: map,
+                            tubeLines: tube,
+                            clock: clockDiv,
+                            disrupted: dis,
+                            aggregate: agg,
+                            showOutterLine: outter,
+                            timeInterval: timeInterval,
+                            widthChanging: widthChanging,
+                            widthWithLinkLoad: widthWithLinkLoad
+                        };
+
+                        anim = animationLines(args);
+                        anim.loadData(function () {
+                            anim.init();
+                            dd3.synchronize(function () {
+                                anim.start();
+                            });
+                        });
+
+                    };
+
+                    loadMap();
+                };
+
             });
         });
 
@@ -594,6 +1054,9 @@
             <span style="color:firebrick;font-size:0.7em;font-style:italic"> Error : the function 'initClient' was not initialized</span>
         </p>
     </div>
+
+    <div id="clock" style="display: none"></div>
+    <div id="viz_title" style="display: none">METRO LINES</div>  
 
 </body>
 </html>
