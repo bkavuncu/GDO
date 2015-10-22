@@ -142,6 +142,7 @@
                 }
                 gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
                 $( document ).ready(function() {
+                    gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
                 });
             });

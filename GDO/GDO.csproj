@@ -929,6 +929,8 @@
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
     <Content Include="Scripts\peer.js" />
+    <Content Include="Web\Nodex77.cshtml" />
+    <Content Include="Web\Managementx77.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CaveHub.cs" />

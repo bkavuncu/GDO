@@ -26,7 +26,6 @@ gdo.initGDO = function (clientMode) {
     gdo.loadModule('utilities', 'utilities', gdo.MODULE_TYPE.CORE);
     gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
     gdo.clientMode = clientMode;
-    gdo.clientId = getUrlVar('clientId');
     $("title").append(" :" + gdo.clientId);
     gdo.updateInterval = 21000;
 
