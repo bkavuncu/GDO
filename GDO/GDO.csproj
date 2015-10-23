@@ -931,6 +931,10 @@
     <Content Include="Scripts\peer.js" />
     <Content Include="Web\Nodex77.cshtml" />
     <Content Include="Web\Managementx77.cshtml" />
+    <Content Include="Web\Nodes.cshtml" />
+    <Content Include="Web\Sections.cshtml" />
+    <Content Include="Web\States.cshtml" />
+    <Content Include="Web\Console.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CaveHub.cs" />

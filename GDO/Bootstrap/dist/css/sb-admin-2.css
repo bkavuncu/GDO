@@ -4,28 +4,33 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
-body {
-    background-color: #f8f8f8;
-}
+
+
+
 
 #wrapper {
     width: 100%;
 }
 
 #page-wrapper {
-    padding: 0 15px;
+    padding-left: 350px;
     min-height: 568px;
-    background-color: #fff;
+}
+
+#page-content-wrapper {
+      padding-left: 350px;
 }
 
 @media(min-width:768px) {
     #page-wrapper {
-        position: inherit;
+        width: 86%;
         margin: 0 0 0 250px;
-        padding: 0 30px;
-        border-left: 1px solid #e7e7e7;
+        padding-left: 121px;
+        border-left: 1px solid #fff;
     }
 }
+
+
 
 .navbar-top-links {
     margin-right: 0;
@@ -88,6 +93,7 @@ body {
 .sidebar .sidebar-nav.navbar-collapse {
     padding-right: 0;
     padding-left: 0;
+
 }
 
 .sidebar .sidebar-search {
@@ -95,11 +101,11 @@ body {
 }
 
 .sidebar ul li {
-    border-bottom: 1px solid #e7e7e7;
+    border-bottom: 1px solid #333;
 }
 
 .sidebar ul li a.active {
-    background-color: #eee;
+    background-color: #222;
 }
 
 .sidebar .arrow {
@@ -127,12 +133,21 @@ body {
     padding-left: 52px;
 }
 
+
 @media(min-width:768px) {
     .sidebar {
         z-index: 1;
-        position: absolute;
-        width: 250px;
+        position: fixed;
+        width: 350px;
+        height: 100%;
         margin-top: 51px;
+
+    }
+    .navbar{
+                position: fixed;
+    }
+    .navbar-left{
+        width: 352px;
     }
 
     .navbar-top-links .dropdown-messages,
@@ -148,32 +163,14 @@ body {
     transition: all .5s;
 }
 
-.btn-primary.btn-outline {
-    color: #428bca;
-}
 
-.btn-success.btn-outline {
-    color: #5cb85c;
-}
-
-.btn-info.btn-outline {
-    color: #5bc0de;
-}
-
-.btn-warning.btn-outline {
-    color: #f0ad4e;
-}
-
-.btn-danger.btn-outline {
-    color: #d9534f;
-}
 
 .btn-primary.btn-outline:hover,
 .btn-success.btn-outline:hover,
 .btn-info.btn-outline:hover,
 .btn-warning.btn-outline:hover,
 .btn-danger.btn-outline:hover {
-    color: #fff;
+    color: #333;
 }
 
 .chat {
@@ -279,7 +276,6 @@ table.dataTable thead .sorting:after {
     width: 70px;
     height: 70px;
     padding: 10px 16px;
-    border-radius: 35px;
     font-size: 24px;
     line-height: 1.33;
 }
@@ -288,7 +284,7 @@ table.dataTable thead .sorting:after {
     padding-top: 10px;
     padding-bottom: 10px;
     border: 1px solid #ddd;
-    background-color: #eee!important;
+    background-color: #222!important;
 }
 
 .show-grid {

@@ -75,37 +75,7 @@
     </script>
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
-    <script type="text/javascript" src="../Scripts/gdo.js"></script>
-    <script src="../signalr/hubs"></script>
-    <script type="text/javascript" src="../Scripts/peer.js"></script>
 
-    <script>
-            $(function () {
-                @{
-                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                    {
-                        @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
-                    }
-                }
-                gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
-                $( document ).ready(function() {
-                    gdo.clientId = 1;
-                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-                });
-            });
-            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                var space = "<br /> ";
-                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-            }
-            initApp = function () {
-                gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.updateSelf();
-            }
-    </script>
     <div id="wrapper">
             <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
@@ -204,14 +174,38 @@
         </div>
     </div>
     <!-- /#wrapper -->
-
-        <!--<script src="..//Bootstrap/bower_components/jquery/dist/jquery.min.js"></script>-->
-        <!-- Bootstrap Core JavaScript -->
-        <script src="../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <!-- Metis Menu Plugin JavaScript -->
-        <script src="../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-        <!-- Custom Theme JavaScript -->
-        <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
-
+    <script src="../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <script src="../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript" src="../Scripts/gdo.js"></script>
+    <script src="../signalr/hubs"></script>
+    <script type="text/javascript" src="../Scripts/peer.js"></script>
+    <script>
+            $(function () {
+                $( document ).ready(function() {
+                    @{
+                        foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                        {
+                            @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                        }
+                    }
+                    gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
+                    gdo.clientId = 1;
+                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+                });
+            });
+            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+                var space = "<br /> ";
+                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+            }
+            initApp = function () {
+                gdo.consoleOut('', 1, 'GDO Initialized');
+                gdo.updateSelf();
+            }
+    </script>
 </body>
 </html>
