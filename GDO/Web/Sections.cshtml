@@ -83,6 +83,11 @@
     <script type="text/javascript" src="../Scripts/peer.js"></script>
 
     <script>
+            gdo.updateDisplayCanvas = function () {
+                gdo.management.drawSectionTable();
+                gdo.management.drawButtonTable();
+                gdo.management.drawAppTable();
+            }
             $(function () {
                 @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
@@ -90,7 +95,8 @@
                         @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
                     }
                 }
-                gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
+                gdo.loadModule('sections', 'management', gdo.MODULE_TYPE.CORE);
+                gdo.loadModule("apps","management", gdo.MODULE_TYPE.CORE);
                 $( document ).ready(function() {
                     gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
@@ -103,6 +109,9 @@
             }
             initApp = function () {
                 gdo.consoleOut('', 1, 'GDO Initialized');
+                gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+                gdo.management.drawEmptyButtonTable(6, 1);
+                gdo.management.drawAppTable();
                 gdo.updateSelf();
             }
     </script>
@@ -197,10 +206,24 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Dashboard</h1>
+                    <h3>Sections</h3>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+            <table id="app_table" unselectable="on" class="unselectable" style="background:#222;width: 99.5%">
+                <tr>
+                    <td id="app_table_select_app"></td>
+                    <td id="app_table_app_list"><table id="app_table_app_table" unselectable="on" class="unselectable" style="background:#222;width: 98.5%;vertical-align:top"></table></td>
+                    <td id="app_table_select_configuration"></td>
+                    <td id="app_table_configuration_list"><table id="app_table_configuration_table" unselectable="on" class="unselectable" style="background:#222;width: 98.5%;vertical-align:top"></table></td>
+                </tr>
+            </table>
+            <div id="app_table_space"><br></div>
+            <table id="section_table" unselectable="on" class="unselectable" style="width: 99.5%;height:40vh;border-collapse: separate; border-spacing: 2px;"></table>
+            <div id="section_table_space">
+                <br>
+            </div>
+            <table id="button_table" unselectable="on" class="unselectable" style="background:#222;width: 99.5%;height:7vh;"></table>
         </div>
     </div>
     <!-- /#wrapper -->

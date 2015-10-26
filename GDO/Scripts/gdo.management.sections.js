@@ -1,4 +1,9 @@
-﻿
+﻿$(function () {
+    gdo.management.selectedSection = -1;
+    gdo.management.selectedApp = null;
+    gdo.management.selectedConfiguration = null;
+    gdo.management.selectedInstance = -1;
+});
 
 gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
     /// <summary>
@@ -227,11 +232,11 @@ gdo.management.drawButtonTable = function () {
     $("#button_table_row_0_col_0")
     .empty()
     .append("<div id='button_Enter_coordinates'> " +
-            "<table id='section_coordinate_table' style='width: 99%'>" + 
+            "<table id='section_coordinate_table' style='width: 99%;background:#222; ' >" +
                 "<tr>"+
-                    "<td id='section_coordinate_table_start'' style='width:28%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='width: 100%;height: 100%;' maxlength='2'/></input></td>" +
-                    "<td id='section_coordinate_table_end' style='width:28%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='width: 100%;height: 100%;' maxlength='2' /></input></td>" +
-                    "<td id='section_coordinate_table_select' style='width:42%;'></td>" +
+                    "<td id='section_coordinate_table_start'' style='width:28%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2'/></input></td>" +
+                    "<td id='section_coordinate_table_end' style='width:28%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2' /></input></td>" +
+                    "<td id='section_coordinate_table_select' style='background:#222; width:42%;'></td>" +
                 "</tr>" +
             "</table>")
     .css("height", gdo.management.button_height)
@@ -245,7 +250,7 @@ gdo.management.drawButtonTable = function () {
 
     $("#section_coordinate_table_start_input")
         .css("height", "100%")
-        .css("width", "50%")
+        .css("width", "70%")
         .css("border", "3px solid #444")
         .css("background", "#333")
         .css("color", "#FFF")
@@ -257,7 +262,7 @@ gdo.management.drawButtonTable = function () {
 
     $("#section_coordinate_table_end_input")
         .css("height", "100%")
-        .css("width", "50%")
+        .css("width", "70%")
         .css("border", "3px solid #444")
         .css("background", "#333")
         .css("color", "#FFF")
@@ -335,15 +340,17 @@ gdo.management.drawButtonTable = function () {
         .css('padding', gdo.management.cell_padding)
         .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size })
+        .unbind()
         .click(function () {
-            if (gdo.management.selectedSection > -1) {
-                if (!gdo.management.toggleAppTable && gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
-                    gdo.management.toggleNodeTable = false;
-                    gdo.management.toggleAppTable = true;
-                    gdo.management.toggleInstanceTable = false;
-                    gdo.management.toggleConsole = false;
-                    gdo.management.toggleSectionTable = true;
+            if (gdo.net.section[gdo.management.selectedSection] != null) {
+                if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
+                    gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedApp + " at Section " + gdo.management.selectedSection + " with Configuration " + gdo.management.selectedConfiguration);
+                    gdo.management.selectedSection = -1;
+                    gdo.management.selectedApp = null;
+                    gdo.management.selectedConfiguration = null;
                     gdo.updateDisplayCanvas();
+
                 }
             }
         });

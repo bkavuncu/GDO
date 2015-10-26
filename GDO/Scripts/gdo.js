@@ -11,7 +11,7 @@ gdo.MODULE_TYPE = {
 $(function () {
     /// <summary>
     /// Registering Event Handlers on load
-
+    gdo.loadModule('utilities', 'utilities', gdo.MODULE_TYPE.CORE);
     /// </summary>
     /// <returns></returns>
 });
@@ -22,8 +22,6 @@ gdo.initGDO = function (clientMode) {
     /// <returns></returns>
     gdo.consoleOut('', 1, 'Initializing GDO');
 
-    //gdo.loadModule('fs');
-    gdo.loadModule('utilities', 'utilities', gdo.MODULE_TYPE.CORE);
     gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
     gdo.clientMode = clientMode;
     $("title").append(" :" + gdo.clientId);
@@ -75,32 +73,32 @@ gdo.consoleOut = function (module, type, msg) {
     }
     if (type == 0) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:green; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:green; font-size:11; font-family:Courier New, Courier, monospace;">' + timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 1) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:lightskyblue; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:lightskyblue; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 2) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#FFF; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:#FFF; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 3) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:gray; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:gray; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } else if (type == 4) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:yellow; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:yellow; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.warn('GDO' + moduleConsole + ': ' + msg);
     } else if (type == 5) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:coral; font-size:11; font-family:Courier New, Courier, monospace;">GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:coral; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.error('GDO' + moduleConsole + ': ' + msg);
     }
@@ -136,3 +134,17 @@ gdo.loadModule = function (submodule, module, moduleType) {
     }
 }
 
+gdo.timeStamp = function() {
+    var now = new Date();
+    var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+    var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+    var suffix = (time[0] < 12) ? "AM" : "PM";
+    time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
+    time[0] = time[0] || 12;
+    for (var i = 1; i < 3; i++) {
+        if (time[i] < 10) {
+            time[i] = "0" + time[i];
+        }
+    }
+    return date.join("/") + " " + time.join(":") + " " + suffix;
+}

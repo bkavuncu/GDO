@@ -601,13 +601,13 @@
     <Content Include="Bootstrap\pages\tables.html" />
     <Content Include="Bootstrap\pages\typography.html" />
     <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\gdo.management.nodes.js" />
+    <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
     <Content Include="Scripts\gdo.management.instances.js" />
-    <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.sections.js" />
-    <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.maintenance.js" />
     <Content Include="Scripts\gdo.node.js" />
     <Content Include="Scripts\gdo.utilities.js" />
@@ -929,7 +929,6 @@
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
     <Content Include="Scripts\peer.js" />
-    <Content Include="Web\Nodex77.cshtml" />
     <Content Include="Web\Managementx77.cshtml" />
     <Content Include="Web\Nodes.cshtml" />
     <Content Include="Web\Sections.cshtml" />

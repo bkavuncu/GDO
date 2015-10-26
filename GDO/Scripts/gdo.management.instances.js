@@ -1,4 +1,8 @@
-﻿gdo.management.drawEmptyInstanceTable = function () {
+﻿$(function () {
+    gdo.management.selectedInstance = -1;
+});
+
+gdo.management.drawEmptyInstanceTable = function () {
 
     $("#instance_table_app_list")
         .css("height", ((gdo.management.table_height * 2.5) + (gdo.management.info_height * 3.5)))

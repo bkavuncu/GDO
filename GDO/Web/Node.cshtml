@@ -86,6 +86,7 @@
                                     }
                 }
                 $(document).ready(function () {
+                    gdo.clientId = getUrlVar('clientId');
                     gdo.initGDO(gdo.CLIENT_MODE.NODE);
                 });
             });
