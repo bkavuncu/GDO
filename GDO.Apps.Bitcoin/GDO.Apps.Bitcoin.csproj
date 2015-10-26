@@ -123,7 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Configurations\Bitcoin\Default.json" />
+    <Content Include="Configurations\Bitcoin\Globe.json" />
+    <Content Include="Configurations\Bitcoin\Block.json" />
+    <Content Include="Configurations\Bitcoin\Mempool.json" />
     <Content Include="Scripts\Bitcoin\bitGraph.js" />
     <Content Include="Scripts\Bitcoin\dat.gui\dat.gui.min.js" />
     <Content Include="Scripts\Bitcoin\globe\globe.js" />

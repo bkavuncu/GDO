@@ -25,7 +25,7 @@ DAT.Globe = function(container, opts) {
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
     return c;
   };
-  var imgDir = opts.imgDir || './js/globe/';
+  var imgDir = opts.imgDir || '../../Scripts/Bitcoin/globe/';
 
   var Shaders = {
     'earth' : {

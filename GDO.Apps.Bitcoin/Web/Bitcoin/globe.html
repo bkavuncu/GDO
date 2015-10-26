@@ -50,7 +50,7 @@
 	function initNodes(){
 
 		var xmlhttp = new XMLHttpRequest();
-		var url = "https://getaddr.bitnodes.io/api/v1/snapshots/latest/"
+		var url = "http://cors.io/?u=https://getaddr.bitnodes.io/api/v1/snapshots/latest/";   //FIX added to prevent error  "No 'Access-Control-Allow-Origin' header is present on the requested resource."
 
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {

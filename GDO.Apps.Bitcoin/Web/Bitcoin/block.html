@@ -72,8 +72,8 @@
 </body>
 
 <script src="../../Scripts/Bitcoin/sigma.js/sigma.min.js"></script>
-<script src="../../Scripts/Bitcoin/sigma.layout.forceAtlas2.min.js"></script>
-<script src="../../Scripts/Bitcoin/sigma.plugins.filter.min.js"></script>
+<script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.layout.forceAtlas2.min.js"></script>
+<script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.plugins.filter.min.js"></script>
 
 <script src="../../Scripts/Bitcoin/peerjs/peer.min.js"></script>
 
@@ -130,7 +130,7 @@
                 }
             };
 
-            xmlhttp.open("GET", 'https://api.biteasy.com/blockchain/v1/blocks?height=' + queryparam + '&type=BEST_CHAIN', true);
+            xmlhttp.open("GET", 'http://cors.io/?u=https://api.biteasy.com/blockchain/v1/blocks?height=' + queryparam + '&type=BEST_CHAIN', true);    //FIX added to prevent error  "No 'Access-Control-Allow-Origin' header is present on the requested resource."
             xmlhttp.send();
         }
         else {
