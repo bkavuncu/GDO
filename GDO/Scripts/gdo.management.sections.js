@@ -22,24 +22,6 @@ gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.management.drawEmptyButtonTable = function (maxCol, maxRow) {
-    /// <summary>
-    /// Draws the button table.
-    /// </summary>
-    /// <param name="maxRow">The maximum row.</param>
-    /// <param name="maxCol">The maximum col.</param>
-    /// <returns></returns>
-    //gdo.consoleOut('.MANAGEMENT', 1, 'Drawing Empty Button Table with ' + maxRow + ',' + maxCol);
-    $("#button_table").empty();
-    for (var i = 0; i < maxRow; i++) {
-        $("#button_table").append("<tr id='button_table_row_" + i + "' row='" + i + "'></tr>");
-        for (var j = 0; j < maxCol; j++) {
-            $("#button_table tr:last").append("<td id='button_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>");
-        }
-    }
-}
-
-
 gdo.management.drawSectionTable =  function (){
     /// <summary>
     /// Draws the section table.
@@ -55,14 +37,16 @@ gdo.management.drawSectionTable =  function (){
             $("#section_table_row_" + node.row + "_col_" + node.col)
                     .empty()
                     .unbind()
-                    .append("<div id='section_table_node_" + node.id + "_i'> <b>ID:</b> " + node.id + "</div>")
-                    .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+                    .css("vertical-align", "top")
+                    .append("<div id='section_table_node_" + node.id + "_i' style='text-align:center;background:#444'> <font size='4px'><b> " + node.id + "</b></font></div>")
+                    .append("</br>")
+                    .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
                     .css("height", (gdo.management.table_height / gdo.net.rows) + "")
                     .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
-                    .css("border", "4px solid #444")
+                    .css("border", "1px solid #333")
                     .css("background", "#222")
                     .css({ fontSize: gdo.management.section_font_size })
-                    .css('padding', gdo.management.cell_padding)
+                    .css('padding', 0)
                     .click(function () {
                         var id = gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'));
                         if (gdo.net.node[id].isSelected) {
@@ -81,23 +65,28 @@ gdo.management.drawSectionTable =  function (){
                 .attr('colspan', gdo.net.section[sectionId].cols)
                 .attr('rowspan', gdo.net.section[sectionId].rows)
                 .css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
-                .css("width", ((100 / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
-                .css("border", "4px solid #333")
+                .css("width", ((gdo.management.table_width / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
+                .css("border", "1px solid #4C6F8E")
                 .css("background", "#2A4E6C")
-                .css('padding', gdo.management.cell_padding)
-                .append("<div id='section_table_section_" + sectionId + "_s'> <b>Section ID:</b> " + sectionId + "</div>")
-                .append("<b>Start: </b> (" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")")
-                .append("<br><b>End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")");
+                .css('padding', 0)
+                .css("vertical-align", "top")
+                .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#4C6F8E'> <font size='4px'><b> " + sectionId + "</b></font></div>")
+                .append("</br>")
+                .append("<b>&nbsp;Start: </b> (" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")")
+                .append("<br><b>&nbsp;End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")");
                 //.append("</br>(" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")->(" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
             if (gdo.net.section[sectionId].appInstanceId >= 0) {
                 $("#section_table_row_" + node.row + "_col_" + node.col)
-                    .append("<div id='section_table_section_" + sectionId + "_a'> <b>Application:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
-                    .append("<div id='section_table_section_" + sectionId + "_i'> <b>Instance:</b> " + gdo.net.section[sectionId].appInstanceId + "</div>")
-                    .append("<div id='section_table_section_" + sectionId + "_c'> <b>Configuration:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
+                    .append("</br>")
+                    .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;Application:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
+                    .append("<div id='section_table_section_" + sectionId + "_i'> <b>&nbsp;Instance:</b> " + gdo.net.section[sectionId].appInstanceId + "</div>")
+                    .append("<div id='section_table_section_" + sectionId + "_c'> <b>&nbsp;Configuration:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
                     .css("background", "#003300");
+                $("#section_table_section_" + sectionId + "_i").css("background", "#225522");
+                $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #225522");
             }
             $("#section_table_row_" + node.row + "_col_" + node.col)
-                .append("<div id='section_table_section_" + sectionId + "_h'> <b>Section Health</b></div>")
+                .append("<div id='section_table_section_" + sectionId + "_h'> <b>&nbsp;Section Health</b></div>")
                 .css({ fontSize: gdo.management.section_font_size })
                 .click(function () {
                     var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
@@ -115,9 +104,11 @@ gdo.management.drawSectionTable =  function (){
                 });
             if (gdo.management.selectedSection == sectionId) {
                 if (gdo.net.section[sectionId].appInstanceId >= 0) {
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#006B00");
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#225522").css("border", "1px solid #447744");
+                    $("#section_table_section_" + sectionId + "_i").css("background", "#447744");
                 } else {
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#6699FF");
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#4C6F8E").css("border", "1px solid #6E8FAF");
+                    $("#section_table_section_" + sectionId + "_i").css("background", "#6E8FAF");
                 }
 
             }
@@ -136,7 +127,8 @@ gdo.management.drawSectionTable =  function (){
             $("#section_table_row_" + node.row + "_col_" + node.col).hide();
         }
         if (node.isSelected) {
-            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#333");
+            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#333").css("border","1px solid #555");
+            $("#section_table_node_" + node.id + "_i").css("background-color", "#555");
         }
     }
 }
@@ -184,21 +176,17 @@ gdo.management.drawButtonTable = function () {
 
     //Create Section
 
-    $("#button_table_row_0_col_1")
+    $("#create_section_button_div")
         .empty()
-        .append("<div id='button_Create_section'> <b>Create Section</b></div>")
-        .css("height", gdo.management.button_height)
+        .append("<button type='button' id='create_section_button' class='btn btn-default disabled btn-lg btn-block'>Create Section</button>")
+        .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#777")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size });
+        .css('padding', 0)
+        .attr("align", "center");
 
     gdo.management.selectNodes();
-    $("#button_table_row_0_col_1").unbind();
-    $("#button_table_row_0_col_1").click(function () {
+    $("#create_section_button_div").unbind();
+    $("#create_section_button_div").click(function () {
         if (gdo.management.isRectangle && gdo.management.isStarted) {
             gdo.net.server.createSection(gdo.management.colStart, gdo.management.rowStart, gdo.management.colEnd, gdo.management.rowEnd);
             for (var i = gdo.management.colStart; i <= gdo.management.colEnd; i++) {
@@ -214,17 +202,22 @@ gdo.management.drawButtonTable = function () {
     });
     if (gdo.management.isStarted) {
         if (gdo.management.isRectangle) {
-            $("#button_table_row_0_col_1")
-                .css("background", "darkgreen")
-                .css("color", "#FFF");
+            $("#create_section_button")
+                .removeClass("disabled")
+                .removeClass("btn-default")
+                .addClass("btn-success");
         } else {
-            $("#button_table_row_0_col_1")
-                .css("background", "darkred")
-                .css("color", "#FFF");
+            $("#create_section_button")
+                .removeClass("disabled")
+                .removeClass("btn-default")
+                .addClass("btn-danger");
         }
     } else {
-        $("#button_table_row_0_col_1")
-            .css("background", "#222");
+        $("#create_section_button")
+            .addClass("disabled")
+            .addClass("btn-default")
+            .removeClass("btn-danger")
+            .removeClass("btn-sucess");
     }
 
     //Enter Section Coordinates
@@ -304,17 +297,13 @@ gdo.management.drawButtonTable = function () {
 
     //Close Section
 
-    $("#button_table_row_0_col_2")
+    $("#close_section_button_div")
         .empty()
-        .append("<div id='button_close_section'> <b>Close Section</b></div>")
-        .css("height", gdo.management.button_height)
+        .append("<button type='button' id='close_section_button' class='btn btn-default disabled btn-lg btn-block'>Close Section</button>")
+        .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-        .css("border", "3px solid #444")
-        .css("color", "#777")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
+        .css('padding', 0)
         .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
             if (gdo.management.selectedSection > -1) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
@@ -327,7 +316,16 @@ gdo.management.drawButtonTable = function () {
     if (gdo.management.selectedSection > -1) {
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
             $("#button_table_row_0_col_2").css("background", "darkred").css("color", "#FFF");
+            $("#close_section_button")
+                .removeClass("disabled")
+                .removeClass("btn-default")
+                .addClass("btn-warning");
         }
+    } else {
+        $("#close_section_button")
+            .addClass("disabled")
+            .addClass("btn-default")
+            .removeClass("btn-warning");
     }
     $("#button_table_row_0_col_3")
         .empty()

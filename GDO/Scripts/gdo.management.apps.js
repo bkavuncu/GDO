@@ -5,17 +5,6 @@
 
 gdo.management.drawEmptyAppTable = function () {
 
-    $("#app_table_select_app")
-        .empty()
-        .append("<div id='app_table_select_app_text'> <b>Select Application</b></div>")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height*3.5)))
-        .css("width", "7%")
-        .css("border", "3px solid #444")
-        .css("color", "#DDD")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size });
     $("#app_table_app_list")
         .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
         .css("width", "36%")
@@ -25,17 +14,6 @@ gdo.management.drawEmptyAppTable = function () {
         .css('padding', gdo.management.cell_padding)
         .attr("align", "top")
         .css("vertical-align", "top")
-        .css({ fontSize: gdo.management.button_font_size });
-    $("#app_table_select_configuration")
-        .empty()
-        .append("<div id='app_table_select_configuration_text'> <b>Select Configuration</b></div>")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
-        .css("width", "7%")
-        .css("border", "3px solid #444")
-        .css("color", "#DDD")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
         .css({ fontSize: gdo.management.button_font_size });
     $("#app_table_configuration_list")
         .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
@@ -53,11 +31,11 @@ gdo.management.drawAppTable = function () {
     gdo.management.drawEmptyAppTable();
     if (gdo.management.selectedSection > -1){
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
-            $("#app_table_select_app").css("background-color", "#006B00");
+            $("#app_table_app_table_panel").removeClass("panel-success");
+            $("#app_table_app_table_panel").addClass("panel-danger");
             gdo.management.drawAppListTable();
             if (gdo.management.selectedApp != null) {
                 gdo.management.drawConfigurationListTable();
-                $("#app_table_select_configuration").css("background-color", "#006B00");
                 if (gdo.management.selectedConfiguration != null) {
                     $("#button_table_row_0_col_3").css("background-color", "#006B00")
                     .unbind()
@@ -74,13 +52,19 @@ gdo.management.drawAppTable = function () {
                             }
                         }
                     });
-
+                    $("#app_table_configuration_panel").removeClass("panel-danger");
+                    $("#app_table_configuration_panel").addClass("panel-success");
                 } else {
                     $("#button_table_row_0_col_3").css("background-color", "#800000").unbind();
+                    $("#app_table_configuration_panel").removeClass("panel-success");
+                    $("#app_table_configuration_panel").addClass("panel-danger");
                 }
+                $("#app_table_app_table_panel").removeClass("panel-danger");
+                $("#app_table_app_table_panel").addClass("panel-success");
             } else {
                 $("#button_table_row_0_col_3").css("background-color", "#800000").unbind();
-                $("#app_table_select_configuration").css("background-color", "#800000");
+                $("#app_table_app_table_panel").removeClass("panel-success");
+                $("#app_table_app_table_panel").addClass("panel-danger");
             }
         } else {
             $("#app_table_app_table").empty();

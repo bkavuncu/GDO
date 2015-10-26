@@ -73,32 +73,32 @@ gdo.consoleOut = function (module, type, msg) {
     }
     if (type == 0) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:green; font-size:11; font-family:Courier New, Courier, monospace;">' + timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:green; font-size:10; font-family: monospace;">' + timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 1) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:lightskyblue; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:lightskyblue; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 2) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#FFF; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:#FFF; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 3) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:gray; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:gray; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.log('GDO' + moduleConsole + ': ' + msg);
     } else if (type == 4) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:yellow; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:yellow; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.warn('GDO' + moduleConsole + ': ' + msg);
     } else if (type == 5) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:coral; font-size:11; font-family:Courier New, Courier, monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:coral; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
         console.error('GDO' + moduleConsole + ': ' + msg);
     }

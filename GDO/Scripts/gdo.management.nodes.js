@@ -39,7 +39,8 @@ gdo.management.drawNodeTable = function (nodeId) {
         var node = gdo.net.node[i];
         $("#node_table_row_" + node.row + "_col_" + node.col)
              .empty()
-             .append("<div id='node_table_node_" + node.id + "_i'> <b>ID:</b> " + node.id + "</div>")
+             .css("vertical-align","top")
+             .append("<div id='node_table_node_" + node.id + "_i' style='text-align:center;background:#444'> <font size='4px'><b> " + node.id + "</b></font></div>")
              .append("<b>Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
              .append("<div id='node_table_node_" + node.id + "_s'> <b>Section ID:</b> " + node.sectionId + "</div>")
              //.append("<div id='node_table_node_" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
@@ -50,7 +51,7 @@ gdo.management.drawNodeTable = function (nodeId) {
              .css("height", (gdo.management.table_height / gdo.net.rows) + "")
              .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
              .css({ fontSize: gdo.management.table_font_size })
-             .css('padding', gdo.management.cell_padding);
+             .css('padding', 0);
         if (node.id == gdo.nodeId) {
             $("#selected_node_id").empty().append("<b>Node Id:</b> " + node.id).css("width", 7 + "%").css("height", gdo.management.info_height);
             $("#selected_node_col").empty().append("<b>Col:</b> " + node.col).css("width", 5 + "%").css("height", gdo.management.info_height);
@@ -126,13 +127,16 @@ gdo.management.drawNodeTable = function (nodeId) {
             $("#node_table_node_" + node.id + '_s').css("background", "darkred");
         }
         if (node.id == nodeId) {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #333");
+            $("#node_table_node_" + node.id + "_i").css("background", "#7492aa");
             $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#527088");
         } else if (gdo.net.isNeighbourOf(node.id, nodeId)) {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #333");
+            $("#node_table_node_" + node.id + "_i").css("background", "#527088");
             $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#2A4E6C");
         } else {
-            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "4px solid #444");
+            $("#node_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #333");
+            $("#node_table_node_" + node.id + "_i").css("background", "#333");
             $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#222");
         }
     }

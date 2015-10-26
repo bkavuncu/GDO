@@ -112,6 +112,7 @@
             }
     </script>
     <div id="wrapper">
+        <div style="position: absolute; top: 7px; right:7px; z-index:1000"><button type="button" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></div>
             <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -120,44 +121,44 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="~/Web/Managementx77.cshtml"><b>GDO</b> Management</a>
+                    <a class="navbar-brand" href="~/Web/Management.cshtml"><font color="#fff" size="5.5px"><b>GDO</b> Management</font></a>
                 </div>
                 <!-- /.navbar-header -->
                 <!-- /.navbar-top-links -->
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="divider"></li>
                     <li>
-                        <div style="position: relative; bottom: -7px; "><button type="button" class="btn btn-primary">Maintenance</button></div>
+
 
                     </li>
                 </ul>
                 <div class="navbar-default sidebar" role="navigation">
-                    <div class="sidebar-nav navbar-collapse">
+                    <div class="sidebar-nav navbar-collapse" >
                         <ul class="nav" id="side-menu">
 
                             <li>
-                                <a href="~/Web/Nodes.cshtml"><i class="fa fa-th fa-fw"></i><font color="#fff">&nbsp;Nodes</font></a>
+                                <a href="~/Web/Nodes.cshtml"><i class="fa fa-th fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Nodes</font></a>
                             </li>
                             <li>
-                                <a href="~/Web/Sections.cshtml"><i class="fa fa-th-large fa-fw"></i><font color="#fff">&nbsp;Sections</font></a>
+                                <a href="~/Web/Sections.cshtml"><i class="fa fa-th-large fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Sections</font></a>
                             </li>
 
 
                             <li>
-                                <a href="#"><i class="fa fa-list  fa-fw"></i> <font color="#fff">&nbsp;Instances</font><span class="fa arrow"></span></a>
-                                <ul class="nav nav-second-level">
+                                <a href="#"><i class="fa fa-list  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Instances</font><span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level" id="instances">
                                     @{
                                         foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                                         {
                                             if (appEntry.Value.Instances.Count > 0)
                                             {
                                                 <li>
-                                                    <a href="#"><font color="#fff">@appEntry.Value.Name</font> <span class="fa arrow"></span></a>
+                                                    <a href="#"><font color="#fff" size="3px">&nbsp;@appEntry.Value.Name</font> <span class="fa arrow"></span></a>
                                                     <ul class="nav nav-third-level">
                                                         @foreach (KeyValuePair<int, IAppInstance> instanceEntry in appEntry.Value.Instances)
                                                         {
                                                             <li>
-                                                                <a href="~/Web/Instances.cshtml?id=@instanceEntry.Value.Id"> <font color="#fff">@instanceEntry.Value.Id - @instanceEntry.Value.Configuration.Name</font></a>
+                                                                <a href="~/Web/Instances.cshtml?id=@instanceEntry.Value.Id"> <font color="#fff" size="3px">&nbsp;@instanceEntry.Value.Id - @instanceEntry.Value.Configuration.Name</font></a>
                                                             </li>
                                                         }
                                                     </ul>
@@ -170,28 +171,28 @@
                                 <!-- /.nav-second-level -->
                             </li>
                             <li>
-                                <a href="~/Web/States.cshtml"><i class="fa fa-save fa-fw"></i> <font color="#fff">&nbsp;States</font></a>
+                                <a href="~/Web/States.cshtml"><i class="fa fa-save fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;States</font></a>
                             </li>
                             <li>
-                                <a href="~/Web/Console.cshtml"><i class="fa fa-terminal fa-fw"></i><font color="#fff">&nbsp;Console</font></a>
+                                <a href="~/Web/Console.cshtml"><i class="fa fa-terminal fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Console</font></a>
                             </li>
                             <li>
-                                <a href="~/Web/Maps/Maps.cshtml"><i class="fa fa-map-marker fa-fw"></i> <font color="#fff">&nbsp;Maps</font><span class="fa arrow"></a>
+                                <a href="~/Web/Maps/Maps.cshtml"><i class="fa fa-map-marker fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Maps</font><span class="fa arrow"></a>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="~/Web/Maps/Visualisation.cshtml"><i class="fa fa-sliders fa-fw"></i> <font color="#fff">&nbsp;Visualisation</font></a>
+                                        <a href="~/Web/Maps/Visualisation.cshtml"><i class="fa fa-sliders fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Visualisation</font></a>
                                     </li>
                                     <li>
-                                        <a href="~/Web/Maps/Storage.cshtml"><i class="fa fa-database fa-fw"></i> <font color="#fff">&nbsp;Storage</font></a>
+                                        <a href="~/Web/Maps/Storage.cshtml"><i class="fa fa-database fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Storage</font></a>
                                     </li>
                                     <li>
-                                        <a href="~/Web/Maps/Processing.cshtml"><i class="fa fa-gears fa-fw"></i> <font color="#fff">&nbsp;Processing</font></a>
+                                        <a href="~/Web/Maps/Processing.cshtml"><i class="fa fa-gears fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Processing</font></a>
                                     </li>
                                 </ul>
                                 <!-- /.nav-second-level -->
                             </li>
                             <li>
-                                <a href="~/Web/DD3/d3.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff"> &nbsp;D3</font></a>
+                                <a href="~/Web/DD3/d3.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff" size="3.5px">&nbsp; &nbsp;D3</font></a>
                             </li>
                         </ul>
                     </div>
@@ -220,9 +221,9 @@
                 </tr>
             </table>
             <br>
-            <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height:42vh;border-collapse: separate; border-spacing: 2px;" ></table>
+            <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height:42vh;border-collapse: separate; border-spacing: 3px;" ></table>
             <div id="node_table_space"><br></div>
-            <div id="console_area" style="width: 99.5%; height: 42vh; overflow-y:scroll; overflow-y:hidden; border:4px solid #444;background-color: #222; color: #FFF"></div>
+            <div id="console_area" style="font-size:10;width: 99.5%; height: 42vh; overflow-y:scroll; overflow-y:hidden; border:1px solid #333;background-color: #222; color: #FFF"></div>
             <div id="console_area_space"><br></div>
         </div>
     </div>
