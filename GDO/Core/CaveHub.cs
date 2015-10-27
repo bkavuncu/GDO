@@ -513,7 +513,7 @@ namespace GDO.Core
                 }
                 else
                 {
-                    Clients.All.receiveAppUpdate(sectionId, -1, -1, instanceId, exists);
+                    Clients.All.receiveAppUpdate(sectionId, appName, -1, instanceId, p2pmode, exists);
                     return true;
                 }
             }

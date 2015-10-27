@@ -116,7 +116,7 @@ gdo.management.drawAppListTable = function() {
                 gdo.updateDisplayCanvas();
             });
         if (gdo.net.apps[j] == gdo.management.selectedApp) {
-            $("#app_table_app_table_row_" + j + "_col_1").css("color", "lightgreen");
+            $("#app_table_app_table_row_" + j + "_col_1").css("color", "#99D522");
         } else {
             $("#app_table_app_table_row_" + j + "_col_1").css("color", "#DDD");
         }
@@ -139,7 +139,7 @@ gdo.management.drawConfigurationListTable = function () {
                 gdo.updateDisplayCanvas();
             });
         if (gdo.net.app[gdo.management.selectedApp].config[j] == gdo.management.selectedConfiguration) {
-            $("#app_table_configuration_table_row_" + j + "_col_1").css("color", "lightgreen");
+            $("#app_table_configuration_table_row_" + j + "_col_1").css("color", "#99D522");
         } else {
             $("#app_table_configuration_table_row_" + j + "_col_1").css("color", "#DDD");
         }

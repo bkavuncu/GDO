@@ -138,8 +138,12 @@ $(function() {
                     gdo.net.app[appName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
                     gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + appName+ ', instanceId: ' + instanceId + ")");
                 }
+                gdo.net.app[appName].instances[instanceId] = {};
+                gdo.net.app[appName].instances[instanceId].id = instanceId;
+                gdo.net.app[appName].instances[instanceId].config = configName;
+                gdo.net.app[appName].instances[instanceId].exists = true;
             } else {
-                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE && typeof gdo.net.app[appName] != "undefined") {
+                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                     gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
                     gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instanceId + ")");
                 }
@@ -151,6 +155,7 @@ $(function() {
                         gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = -1;
                     }
                 }
+                gdo.net.app[appName].instances[instanceId].exists = false;
             }
             setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 700 + Math.floor((Math.random() * 21000) + 1));
             gdo.updateSelf();
@@ -482,6 +487,7 @@ gdo.net.isNodeInitialized = function () {
 gdo.net.initializeArrays = function (num) {
     gdo.net.state = new Array(num);
     gdo.net.node = new Array(num);
+    gdo.net.app = {};
     for (var i = 0; i < num; i++) {
         gdo.net.node[i] = {};
         gdo.net.node[i].col = -1;
@@ -678,6 +684,7 @@ gdo.net.processApp = function (app) {
     for (var i = 0; i < app.ConfigurationList.length; i++) {
         gdo.net.app[app.Name].config[i] = app.ConfigurationList[i];
     }
+    gdo.net.app[app.Name].instances = [];
 }
 
 gdo.net.processInstance = function (instance) {
@@ -701,6 +708,10 @@ gdo.net.processInstance = function (instance) {
         gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
         gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
     }
+    gdo.net.app[instance.AppName].instances[instance.Id] = {};
+    gdo.net.app[instance.AppName].instances[instance.Id].id = instance.Id;
+    gdo.net.app[instance.AppName].instances[instance.Id].config = instance.Configuration.Name;
+    gdo.net.app[instance.AppName].instances[instance.Id].exists = true;
 }
 
 gdo.net.processState = function (state, id, exists) {

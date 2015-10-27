@@ -15,7 +15,7 @@
     $("#state_table_state_header_table").append("<tr id='state_table_state_header_table_head'></tr>");
     $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_input'><input type='text' id='state_table_input'  value='Enter State Name' style='width: 95%;height: 100%;'/></input></td>");
     $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_save'><button type='button' id='state_table_save' class='btn btn-primary '>Save</button></td>");
-    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger'>Clear</button></td>");
+    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger'>Clear Cave</button></td>");
     $("#state_table_input")
         .css("width", "100%")
         .css("height", "42px")

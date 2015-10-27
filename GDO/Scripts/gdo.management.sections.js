@@ -27,12 +27,13 @@ gdo.management.drawSectionTable =  function (){
     /// Draws the section table.
     /// </summary>
     /// <returns></returns>
-    gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+    gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows+1);
+
 
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
         var sectionId = node.sectionId;
-
+        $("#section_table_row_" + gdo.net.rows).css("height", 0);
         if (sectionId == 0) {
             $("#section_table_row_" + node.row + "_col_" + node.col)
                     .empty()
@@ -66,11 +67,11 @@ gdo.management.drawSectionTable =  function (){
                 .attr('rowspan', gdo.net.section[sectionId].rows)
                 .css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
                 .css("width", ((gdo.management.table_width / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
-                .css("border", "1px solid #4C6F8E")
-                .css("background", "#2A4E6C")
+                .css("border", "1px solid #2A9FD6")
+                .css("background", "#087DB4")
                 .css('padding', 0)
                 .css("vertical-align", "top")
-                .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#4C6F8E'> <font size='4px'><b> " + sectionId + "</b></font></div>")
+                .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>")
                 .append("</br>")
                 .append("<b>&nbsp;Start: </b> (" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")")
                 .append("<br><b>&nbsp;End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")");
@@ -81,9 +82,9 @@ gdo.management.drawSectionTable =  function (){
                     .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;Application:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
                     .append("<div id='section_table_section_" + sectionId + "_i'> <b>&nbsp;Instance:</b> " + gdo.net.section[sectionId].appInstanceId + "</div>")
                     .append("<div id='section_table_section_" + sectionId + "_c'> <b>&nbsp;Configuration:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
-                    .css("background", "#003300");
-                $("#section_table_section_" + sectionId + "_i").css("background", "#225522");
-                $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #225522");
+                    .css("background", "#559100");
+                $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
+                $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");
             }
             $("#section_table_row_" + node.row + "_col_" + node.col)
                 .append("<div id='section_table_section_" + sectionId + "_h'> <b>&nbsp;Section Health</b></div>")
@@ -104,24 +105,24 @@ gdo.management.drawSectionTable =  function (){
                 });
             if (gdo.management.selectedSection == sectionId) {
                 if (gdo.net.section[sectionId].appInstanceId >= 0) {
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#225522").css("border", "1px solid #447744");
-                    $("#section_table_section_" + sectionId + "_i").css("background", "#447744");
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
+                    $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
                 } else {
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#4C6F8E").css("border", "1px solid #6E8FAF");
-                    $("#section_table_section_" + sectionId + "_i").css("background", "#6E8FAF");
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#2A9FD6").css("border", "1px solid #4CBFF8");
+                    $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");
                 }
 
             }
             if (gdo.net.section[sectionId].health >= 4) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "darkgreen");
+                $("#section_table_section_" + sectionId + '_h').css("background", "#559100");
             } else if (gdo.net.section[sectionId].health >= 3) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "goldenrod");
+                $("#section_table_section_" + sectionId + '_h').css("background", "#DD7700");
             } else if (gdo.net.section[sectionId].health >= 2) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "coral");
+                $("#section_table_section_" + sectionId + '_h').css("background", "#FF8800");
             } else if (gdo.net.section[sectionId].health >= 1) {
-                $("#section_table_section_" + sectionId + '_h').css("background", "darkred");
+                $("#section_table_section_" + sectionId + '_h').css("background", "#CC0000");
             } else {
-                $("#section_table_section_" + sectionId + '_h').css("background", "darkred");
+                $("#section_table_section_" + sectionId + '_h').css("background", "#CC0000");
             }
         } else if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
             $("#section_table_row_" + node.row + "_col_" + node.col).hide();
@@ -398,12 +399,7 @@ gdo.management.drawButtonTable = function () {
         .click(function () {
             if (gdo.management.selectedSection > -1) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
-                    gdo.management.toggleNodeTable = false;
-                    gdo.management.toggleAppTable = false;
-                    gdo.management.toggleInstanceTable = true;
-                    gdo.management.toggleConsole = false;
-                    gdo.management.toggleSectionTable = false;
-                    gdo.updateDisplayCanvas();
+                    window.location.replace("Instances.cshtml?id=" + gdo.net.section[gdo.management.selectedSection].appInstanceId);
                 }
             }
         });

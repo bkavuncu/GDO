@@ -18,4 +18,55 @@
     gdo.management.rowEnd = -1;
 });
 
-//TODO add button functionality for maintanance mode
+gdo.management.updateMaintenanceButton = function () {
+    if (gdo.net.maintenanceMode) {
+        $("#maintenanceButton")
+            .empty()
+            .removeClass("btn-primary")
+            .removeClass("btn-danger")
+            .addClass("btn-success")
+            .append("Maintenance ON");
+    } else {
+        $("#maintenanceButton")
+            .empty()
+            .removeClass("btn-primary")
+            .removeClass("btn-sucess")
+            .addClass("btn-danger")
+            .append("Maintenance OFF");
+    }
+    $("#maintenanceButton")
+        .unbind()
+        .click(function () {
+            if (gdo.net.maintenanceMode) {
+                gdo.net.maintenanceMode = false;
+            } else {
+                gdo.net.maintenanceMode = true;
+            }
+            gdo.updateDisplayCanvas();
+            gdo.net.server.setMaintenanceMode(gdo.net.maintenanceMode);
+        });
+}
+
+gdo.management.updateInstancesMenu = function () {
+    $("#nav_instances")
+        .empty();
+    for (var appName in gdo.net.app) {
+        if (gdo.net.app.hasOwnProperty(appName)) {
+            var count = 0;
+            $("#nav_instances").append("<li id='nav_li_" + gdo.net.app[appName].name + "'><a href='#'><i class='fa fa-cube  fa-fw'></i><font color='#fff' size='3px'>&nbsp;" + gdo.net.app[appName].name + "</font> <span class='fa arrow'></span></a>"
+               + "<ul class='nav nav-third-level' id='nav_" + gdo.net.app[appName].name + "'></ul></li>");
+            for (var instanceId in gdo.net.app[appName].instances) {
+                if (gdo.net.app[appName].instances.hasOwnProperty(instanceId) && gdo.net.app[appName].instances[instanceId].exists) {
+                    count++;
+                    $("#nav_" + gdo.net.app[appName].name)
+                   .append("<li><a href='Instances.cshtml?id=" + gdo.net.app[appName].instances[instanceId].id + "'>"
+                       + "<font size='3px'>&nbsp;<b>" + gdo.net.app[appName].instances[instanceId].id + "</b>&nbsp;&nbsp;<font color='#fff'>" + gdo.net.app[appName].instances[instanceId].config + "</font></font></a></li>");
+                }
+            }
+            if (count == 0) {
+                $("#nav_li_" + gdo.net.app[appName].name).empty();
+            }
+        }
+    }
+}
+

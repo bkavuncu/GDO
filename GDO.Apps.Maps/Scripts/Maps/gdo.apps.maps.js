@@ -111,10 +111,6 @@ $(function () {
     }
 });
 
-gdo.updateDisplayCanvas = function () {
-
-}
-
 gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
 
     //Initialize View

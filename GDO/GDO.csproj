@@ -929,11 +929,11 @@
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
     <Content Include="Scripts\peer.js" />
-    <Content Include="Web\Managementx77.cshtml" />
     <Content Include="Web\Nodes.cshtml" />
     <Content Include="Web\Sections.cshtml" />
     <Content Include="Web\States.cshtml" />
     <Content Include="Web\Console.cshtml" />
+    <Content Include="Web\Instances.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CaveHub.cs" />
@@ -956,7 +956,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Web\Node.cshtml" />
-    <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Base.cshtml" />
     <Content Include="Web\Initialize.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />

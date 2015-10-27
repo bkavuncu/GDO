@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>GDO Management Panel</title>
+    <title>GDO States</title>
     <!-- Bootstrap Core CSS -->
     <link href="../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
@@ -86,7 +86,9 @@
     <script type="text/javascript" src="../Scripts/peer.js"></script>
 
     <script>
-            gdo.updateDisplayCanvas = function () {
+        gdo.updateDisplayCanvas = function () {
+                gdo.management.updateMaintenanceButton();
+                gdo.management.updateInstancesMenu();
                 gdo.management.drawStateTable();
             }
             $(function () {
@@ -114,7 +116,7 @@
             }
     </script>
     <div id="wrapper">
-        <div style="position: absolute; top: 7px; right:7px; z-index:1000"><button type="button" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></div>
+        <div style="position: absolute; top: 7px; right:7px; z-index:1000"><button type="button"  id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></div>
         <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -144,32 +146,9 @@
                         <li>
                             <a href="~/Web/Sections.cshtml"><i class="fa fa-th-large fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Sections</font></a>
                         </li>
-
-
                         <li>
-                            <a href="#"><i class="fa fa-list  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Instances</font><span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                @{
-                                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                                    {
-                                        if (appEntry.Value.Instances.Count > 0)
-                                        {
-                                            <li>
-                                                <a href="#"><font color="#fff" size="3px">&nbsp;@appEntry.Value.Name</font> <span class="fa arrow"></span></a>
-                                                <ul class="nav nav-third-level">
-                                                    @foreach (KeyValuePair<int, IAppInstance> instanceEntry in appEntry.Value.Instances)
-                                                    {
-                                                        <li>
-                                                            <a href="~/Web/Instances.cshtml?id=@instanceEntry.Value.Id"> <font color="#fff" size="3px">&nbsp;@instanceEntry.Value.Id - @instanceEntry.Value.Configuration.Name</font></a>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                                <!-- /.nav-third-level -->
-                                            </li>
-                                        }
-                                    }
-                                }
-                            </ul>
+                            <a href="#"><i class="fa fa-cubes  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Instances</font><span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level" id="nav_instances"></ul>
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
@@ -177,6 +156,12 @@
                         </li>
                         <li>
                             <a href="~/Web/Console.cshtml"><i class="fa fa-terminal fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Console</font></a>
+                        </li>
+                        <li>
+                            <a href="~/Web/Connections.cshtml"><i class="fa fa-expand fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;App Connections</font></a>
+                        </li>
+                        <li>
+                            <a href="~/Web/Scenario.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
                         </li>
                         <li>
                             <a href="~/Web/Maps/Maps.cshtml"><i class="fa fa-map-marker fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Maps</font><span class="fa arrow"></a>
@@ -194,7 +179,10 @@
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="~/Web/DD3/d3.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff" size="3.5px">&nbsp; &nbsp;D3</font></a>
+                            <a href="~/Web/DD3/d3.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;D3</font></a>
+                        </li>
+                        <li>
+                            <a href="~/Web/Wiki.cshtml"><i class="fa fa-file-text fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Wiki</font></a>
                         </li>
                     </ul>
                 </div>
@@ -202,7 +190,6 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
-
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
