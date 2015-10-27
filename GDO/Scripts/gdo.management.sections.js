@@ -181,7 +181,7 @@ gdo.management.drawButtonTable = function () {
         .append("<button type='button' id='create_section_button' class='btn btn-default disabled btn-lg btn-block'>Create Section</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-        .css('padding', 0)
+        .css('padding', 1)
         .attr("align", "center");
 
     gdo.management.selectNodes();
@@ -208,7 +208,6 @@ gdo.management.drawButtonTable = function () {
                 .addClass("btn-success");
         } else {
             $("#create_section_button")
-                .removeClass("disabled")
                 .removeClass("btn-default")
                 .addClass("btn-danger");
         }
@@ -222,32 +221,32 @@ gdo.management.drawButtonTable = function () {
 
     //Enter Section Coordinates
 
-    $("#button_table_row_0_col_0")
+    $("#select_section_div")
     .empty()
     .append("<div id='button_Enter_coordinates'> " +
-            "<table id='section_coordinate_table' style='width: 99%;background:#222; ' >" +
+            "<table id='section_coordinate_table' style='width: 99%;' >" +
                 "<tr>"+
                     "<td id='section_coordinate_table_start'' style='width:28%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2'/></input></td>" +
                     "<td id='section_coordinate_table_end' style='width:28%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2' /></input></td>" +
-                    "<td id='section_coordinate_table_select' style='background:#222; width:42%;'></td>" +
+                    "<td id='section_coordinate_table_select' style='width:42%;'></td>" +
                 "</tr>" +
             "</table>")
-    .css("height", gdo.management.button_height)
     .css("width", (gdo.management.table_width / gdo.management.button_cols)+ "%")
-    .css("border", "3px solid #444")
-    .css("background", "#222")
     .css("color", "#FFF")
-    .css('padding', gdo.management.cell_padding)
+    .css('padding', 0)
     .attr("align", "center")
     .css({ fontSize: gdo.management.button_font_size});
 
     $("#section_coordinate_table_start_input")
         .css("height", "100%")
-        .css("width", "70%")
-        .css("border", "3px solid #444")
+        .css("width", "98%")
+        .css("border", "0px solid #333")
         .css("background", "#333")
         .css("color", "#FFF")
-        .css('padding', gdo.management.cell_padding)
+        .css('padding', 0)
+        .css('margin-top', 1)
+        .css('padding-bottom', 1)
+        .css('text-align','center')
         .attr("align", "center")
         .attr("onfocus", "this.value=''")
         .attr("value", gdo.net.getNodeId(gdo.management.colStart, gdo.management.rowEnd))
@@ -255,11 +254,14 @@ gdo.management.drawButtonTable = function () {
 
     $("#section_coordinate_table_end_input")
         .css("height", "100%")
-        .css("width", "70%")
-        .css("border", "3px solid #444")
+        .css("width", "98%")
+        .css("border", "0px solid #333")
         .css("background", "#333")
         .css("color", "#FFF")
-        .css('padding', gdo.management.cell_padding)
+        .css('padding', 0)
+        .css('margin-top', 1)
+        .css('padding-bottom', 1)
+        .css('text-align', 'center')
         .attr("align", "center")
         .attr("onfocus", "this.value=''")
         .attr("value",  gdo.net.getNodeId(gdo.management.colEnd, gdo.management.rowStart))
@@ -267,16 +269,14 @@ gdo.management.drawButtonTable = function () {
 
     $("#section_coordinate_table_select")
         .empty()
-        .append("Select")
+        .append("<button type='button' id='select_button' class='btn btn-default disabled btn-lg btn-block'>Select</button>")
         .css("height", "100%")
         .css("width", "100%")
         .css("color", "#FFF")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css("font-weight", "bold")
-        .css({ fontSize: gdo.management.button_font_size });
-    $("#section_coordinate_table_select").unbind();
-    $("#section_coordinate_table_select").click(function () {
+        .css('padding-top', 1)
+        .attr("align", "center");
+    $("#select_button").unbind();
+    $("#select_button").click(function () {
         var nodeStart = parseInt(document.getElementById('section_coordinate_table_start_input').value);
         var nodeEnd = parseInt(document.getElementById('section_coordinate_table_end_input').value);
         if (nodeEnd >= nodeStart && nodeStart <= gdo.net.cols * gdo.net.rows && nodeEnd <= gdo.net.cols * gdo.net.rows && nodeStart > 0 && nodeEnd > 0) {
@@ -293,7 +293,19 @@ gdo.management.drawButtonTable = function () {
             gdo.updateDisplayCanvas();
         }
     });
-
+    var nodeStart = parseInt(document.getElementById('section_coordinate_table_start_input').value);
+    var nodeEnd = parseInt(document.getElementById('section_coordinate_table_end_input').value);
+    if (nodeEnd >= nodeStart && nodeStart <= gdo.net.cols * gdo.net.rows && nodeEnd <= gdo.net.cols * gdo.net.rows && nodeStart > 0 && nodeEnd > 0) {
+        $("#select_button")
+            .removeClass("disabled")
+            .removeClass("btn-default")
+            .addClass("btn-primary");
+    } else {
+        $("#select_button")
+            .addClass("disabled")
+            .addClass("btn-default")
+            .removeClass("btn-primary");
+    }
 
     //Close Section
 
@@ -302,7 +314,7 @@ gdo.management.drawButtonTable = function () {
         .append("<button type='button' id='close_section_button' class='btn btn-default disabled btn-lg btn-block'>Close Section</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-        .css('padding', 0)
+        .css('padding', 1)
         .attr("align", "center")
         .click(function () {
             if (gdo.management.selectedSection > -1) {
@@ -315,7 +327,6 @@ gdo.management.drawButtonTable = function () {
         });
     if (gdo.management.selectedSection > -1) {
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
-            $("#button_table_row_0_col_2").css("background", "darkred").css("color", "#FFF");
             $("#close_section_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
@@ -327,17 +338,16 @@ gdo.management.drawButtonTable = function () {
             .addClass("btn-default")
             .removeClass("btn-warning");
     }
-    $("#button_table_row_0_col_3")
+
+    //Deploy App
+
+    $("#deploy_app_button_div")
         .empty()
-        .append("<div id='button_deploy_app'> <b>Deploy App</b></div>")
-        .css("height", gdo.management.button_height)
+        .append("<button type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block'>Deploy App</button>")
+        .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-        .css("border", "3px solid #444")
-        .css("color", "#777")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
+        .css('padding', 1)
         .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
         .unbind()
         .click(function () {
             if (gdo.net.section[gdo.management.selectedSection] != null) {
@@ -348,26 +358,43 @@ gdo.management.drawButtonTable = function () {
                     gdo.management.selectedApp = null;
                     gdo.management.selectedConfiguration = null;
                     gdo.updateDisplayCanvas();
-
                 }
             }
         });
     if (gdo.management.selectedSection > -1) {
-        if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
-            $("#button_table_row_0_col_3").css("background", "darkgreen").css("color", "#FFF");
+        if (gdo.management.selectedConfiguration !=null) {
+            $("#deploy_app_button")
+                .removeClass("disabled")
+                .removeClass("btn-default")
+                .removeClass("btn-danger")
+                .addClass("btn-success");
+        } else if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1){
+            $("#deploy_app_button")
+                .removeClass("btn-default")
+                .removeClass("btn-sucess")
+                .addClass("btn-danger")
+                .addClass("disabled");
+        } else {
+            $("#deploy_app_button")
+                .addClass("disabled")
+                .addClass("btn-default")
+                .removeClass("btn-sucess")
+                .removeClass("btn-danger");
         }
+    } else {
+        $("#deploy_app_button")
+            .addClass("disabled")
+            .addClass("btn-default")
+            .removeClass("btn-sucess")
+            .removeClass("btn-danger");
     }
-    $("#button_table_row_0_col_4")
+    $("#control_app_button_div")
         .empty()
-        .append("<div id='button_control_app'> <b>Control App</b></div>")
-        .css("height", gdo.management.button_height)
+        .append("<button type='button' id='control_app_button' class='btn btn-default disabled btn-lg btn-block'>Control App</button>")
+        .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-        .css("border", "3px solid #444")
-        .css("color", "#777")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
+        .css('padding', 1)
         .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
         .click(function () {
             if (gdo.management.selectedSection > -1) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
@@ -382,20 +409,30 @@ gdo.management.drawButtonTable = function () {
         });
     if (gdo.management.selectedSection > -1) {
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
-            $("#button_table_row_0_col_4").css("background", "darkgreen").css("color", "#FFF");
+            $("#control_app_button")
+                .removeClass("disabled")
+                .removeClass("btn-default")
+                .removeClass("btn-danger")
+                .addClass("btn-success");
+        } else {
+            $("#control_app_button")
+                .addClass("disabled")
+                .addClass("btn-default")
+                .removeClass("btn-success");
         }
+    } else {
+        $("#control_app_button")
+            .addClass("disabled")
+            .addClass("btn-default")
+            .removeClass("btn-success");
     }
-    $("#button_table_row_0_col_5")
+    $("#close_app_button_div")
     .empty()
-    .append("<div id='button_close_app'> <b>Close App</b></div>")
-    .css("height", gdo.management.button_height)
+    .append("<button type='button' id='close_app_button' class='btn btn-default disabled btn-lg btn-block'>Close App</button>")
+    .css("height", "100%")
     .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-    .css("border", "3px solid #444")
-    .css("color", "#777")
-    .css("background", "#222")
-    .css('padding', gdo.management.cell_padding)
+    .css('padding', 1)
     .attr("align", "center")
-    .css({ fontSize: gdo.management.button_font_size })
     .click(function () {
             if (gdo.management.selectedSection > -1) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {                  
@@ -407,7 +444,21 @@ gdo.management.drawButtonTable = function () {
     });
     if (gdo.management.selectedSection > -1) {
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
-            $("#button_table_row_0_col_5").css("background", "darkred").css("color", "#FFF");
+            $("#close_app_button")
+                .removeClass("disabled")
+                .removeClass("btn-default")
+                .removeClass("btn-danger")
+                .addClass("btn-warning");
+        } else {
+            $("#close_app_button")
+                .addClass("disabled")
+                .addClass("btn-default")
+                .removeClass("btn-warning");
         }
+    } else {
+        $("#close_app_button")
+            .addClass("disabled")
+            .addClass("btn-default")
+            .removeClass("btn-warning");
     }
 }

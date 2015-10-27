@@ -52,37 +52,50 @@ gdo.management.drawAppTable = function () {
                             }
                         }
                     });
+                    $("#app_table_configuration_panel").removeClass("panel-default");
                     $("#app_table_configuration_panel").removeClass("panel-danger");
                     $("#app_table_configuration_panel").addClass("panel-success");
                 } else {
-                    $("#button_table_row_0_col_3").css("background-color", "#800000").unbind();
+                    $("#button_table_row_0_col_3").unbind();
+                    $("#app_table_configuration_panel").removeClass("panel-default");
                     $("#app_table_configuration_panel").removeClass("panel-success");
                     $("#app_table_configuration_panel").addClass("panel-danger");
                 }
+                $("#app_table_app_table_panel").removeClass("panel-default");
                 $("#app_table_app_table_panel").removeClass("panel-danger");
                 $("#app_table_app_table_panel").addClass("panel-success");
             } else {
-                $("#button_table_row_0_col_3").css("background-color", "#800000").unbind();
+                $("#button_table_row_0_col_3").unbind();
+                $("#app_table_app_table_panel").removeClass("panel-default");
                 $("#app_table_app_table_panel").removeClass("panel-success");
                 $("#app_table_app_table_panel").addClass("panel-danger");
+                $("#app_table_configuration_panel").removeClass("panel-default");
+                $("#app_table_configuration_panel").removeClass("panel-success");
+                $("#app_table_configuration_panel").addClass("panel-danger");
             }
         } else {
             $("#app_table_app_table").empty();
             $("#app_table_configuration_table").empty();
             gdo.management.selectedApp = null;
             gdo.management.selectedConfiguration = null;
-            $("#app_table_deploy_button").css("background-color", "#800000");
-            $("#app_table_select_configuration").css("background-color", "#800000");
-            $("#app_table_select_app").css("background-color", "#800000");
+            $("#app_table_app_table_panel").removeClass("panel-danger");
+            $("#app_table_app_table_panel").removeClass("panel-success");
+            $("#app_table_app_table_panel").addClass("panel-default");
+            $("#app_table_configuration_panel").removeClass("panel-danger");
+            $("#app_table_configuration_panel").removeClass("panel-success");
+            $("#app_table_configuration_panel").addClass("panel-default");
         }
     } else if (gdo.management.selectedSection == -1) {
         $("#app_table_app_table").empty();
         $("#app_table_configuration_table").empty();
         gdo.management.selectedApp = null;
         gdo.management.selectedConfiguration = null;
-        $("#app_table_deploy_button").css("background-color", "#800000");
-        $("#app_table_select_configuration").css("background-color", "#800000");
-        $("#app_table_select_app").css("background-color", "#800000");
+        $("#app_table_app_table_panel").removeClass("panel-danger");
+        $("#app_table_app_table_panel").removeClass("panel-success");
+        $("#app_table_app_table_panel").addClass("panel-default");
+        $("#app_table_configuration_panel").removeClass("panel-danger");
+        $("#app_table_configuration_panel").removeClass("panel-success");
+        $("#app_table_configuration_panel").addClass("panel-default");
     }
 }
 
