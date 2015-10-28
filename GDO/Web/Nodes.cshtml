@@ -96,6 +96,7 @@
                     }
                 }
                 gdo.loadModule("nodes","management", gdo.MODULE_TYPE.CORE);
+                gdo.loadModule("console","management", gdo.MODULE_TYPE.CORE);
                 $( document ).ready(function() {
                     gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
@@ -110,6 +111,7 @@
                 gdo.consoleOut('', 1, 'GDO Initialized');
                 gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
                 gdo.management.drawNodeTable(gdo.nodeId);
+                gdo.management.drawConsoleInput();
                 gdo.updateSelf();
             }
     </script>
@@ -169,16 +171,20 @@
                                         <a href="~/Web/Maps/Visualisation.cshtml"><i class="fa fa-sliders fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Visualisation</font></a>
                                     </li>
                                     <li>
+                                        <a href="~/Web/Charts/Charts.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Charts</font></a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Web/Timeseries/Timeseries.cshtml"><i class="fa fa-superscript fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Timeseries</font></a>
+                                    </li>
+                                    <li>
                                         <a href="~/Web/Maps/Storage.cshtml"><i class="fa fa-database fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Storage</font></a>
                                     </li>
                                     <li>
                                         <a href="~/Web/Maps/Processing.cshtml"><i class="fa fa-gears fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Processing</font></a>
                                     </li>
+
                                 </ul>
                                 <!-- /.nav-second-level -->
-                            </li>
-                            <li>
-                                <a href="~/Web/DD3/d3.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;D3</font></a>
                             </li>
                             <li>
                                 <a href="~/Web/Wiki.cshtml"><i class="fa fa-file-text fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Wiki</font></a>
@@ -212,8 +218,13 @@
             <br>
             <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height:42vh;border-collapse: separate; border-spacing: 3px;" ></table>
             <div id="node_table_space"><br></div>
-            <div id="console_area" style="font-size:10;width: 99.5%; height: 42vh; overflow-y:scroll; overflow-y:hidden; border:1px solid #333;background-color: #222; color: #FFF"></div>
+            <div id="console_area" style="font-size:10;width: 99.5%; height: 35vh; overflow-y:scroll; overflow-y:hidden; border:1px solid #333;background-color: #222; color: #FFF"></div>
             <div id="console_area_space"><br></div>
+            <div style="width: 99.5%;">
+                <div class="col-lg-8" id="console_input_div"></div>
+                <!-- /.col-lg-12 -->
+                <div class="col-lg-4" id="console_submit_div"></div>
+            </div>
         </div>
     </div>
     <!-- /#wrapper -->

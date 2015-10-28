@@ -18,7 +18,7 @@
     $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger'>Clear Cave</button></td>");
     $("#state_table_input")
         .css("width", "100%")
-        .css("height", "42px")
+        .css("height", "40px")
         .css("border", "1px solid #333")
         .css("background", "#333")
         .css("color", "#FFF")
@@ -32,13 +32,13 @@
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", "60%")
-        .css("height", "42px");
+        .css("height", "40px");
 
     $("#state_table_state_header_table_row_save")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", "20%")
-        .css("height", "42px")
+        .css("height", "40px")
         .css("background", "#444");
     $("#state_table_save")
         .css("width", "100%")
@@ -49,7 +49,7 @@
         .css("margin", "0px")
         .css("padding", "0px")
         .css("background", "#444")
-        .css("height", "42px");
+        .css("height", "40px");
     $("#state_table_clear")
         .css("width", "100%")
         .attr("onfocus", "this.value=''")

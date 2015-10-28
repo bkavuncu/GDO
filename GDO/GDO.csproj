@@ -603,6 +603,7 @@
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
+    <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
