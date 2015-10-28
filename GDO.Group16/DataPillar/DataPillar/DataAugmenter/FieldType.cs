@@ -14,8 +14,6 @@ namespace DataPillar.DataAugmenter
         Boolean,
         Alphabetic,
         Alphanumeric,
-        Time,
-        Date,
         DateTime,
         Enum,
         GPSCoords,

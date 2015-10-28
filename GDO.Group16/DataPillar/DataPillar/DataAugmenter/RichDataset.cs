@@ -45,5 +45,69 @@ namespace DataPillar.DataAugmenter
             // Type inference, statistical analysis...
             return null; 
         }
+
+        private FieldType GetFieldType(String value)
+        {
+            //Integer
+            int integer;
+            if (int.TryParse(value, out integer))
+            {
+                return FieldType.Integral;
+            }
+
+            //Float
+            double floating;
+            if (double.TryParse(value, out floating))
+            {
+                return FieldType.Floating;
+            }
+
+            //Boolean
+            bool boolean;
+            if (bool.TryParse(value, out boolean))
+            {
+                return FieldType.Boolean;
+            }
+
+            //DateTime
+            DateTime dateTime;
+            if (DateTime.TryParse(value, out dateTime))
+            {
+                return FieldType.DateTime;
+            }
+
+            //GeoCoordinates
+            String[] geoValues = value.Split(new[] {' ', '|', ','});
+            double latitude;
+            double longitude;
+            if (geoValues.Length == 2 && double.TryParse(geoValues[0], out latitude) && double.TryParse(geoValues[1], out longitude)) 
+            {
+                return FieldType.GPSCoords;
+            }
+
+            //URL(URI)
+            try {
+                Uri uri = new Uri(value);
+                return FieldType.URL;
+            } catch
+            {
+            }
+
+            //Alphabetic or Alphanumeric
+            if (!value.Select(Char.IsLetterOrDigit).Contains(false))
+            {
+                if (!value.Select(Char.IsDigit).Contains(true))
+                {
+                    return FieldType.Alphabetic;
+                }
+                else
+                {
+                    return FieldType.Alphanumeric;    
+                }
+
+            }
+
+            return FieldType.Unknown;
+        }
     }
 }
