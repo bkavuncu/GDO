@@ -89,6 +89,7 @@
         gdo.updateDisplayCanvas = function () {
                 gdo.management.updateMaintenanceButton();
                 gdo.management.updateInstancesMenu();
+                gdo.management.updateSmartCityMenu();
                 gdo.management.drawStateTable();
             }
             $(function () {
@@ -161,28 +162,11 @@
                             <a href="~/Web/Connections.cshtml"><i class="fa fa-expand fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;App Connections</font></a>
                         </li>
                         <li>
-                            <a href="~/Web/Scenario.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
+                            <a href="~/Web/Scenarios.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
                         </li>
                         <li>
-                            <a href="~/Web/Maps/Maps.cshtml"><i class="fa fa-map-marker fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Maps</font><span class="fa arrow"></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="~/Web/Maps/Visualisation.cshtml"><i class="fa fa-sliders fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Visualisation</font></a>
-                                </li>
-                                <li>
-                                    <a href="~/Web/Charts/Charts.cshtml"><i class="fa fa-bar-chart-o fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Charts</font></a>
-                                </li>
-                                <li>
-                                    <a href="~/Web/Timeseries/Timeseries.cshtml"><i class="fa fa-superscript fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Timeseries</font></a>
-                                </li>
-                                <li>
-                                    <a href="~/Web/Maps/Storage.cshtml"><i class="fa fa-database fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Storage</font></a>
-                                </li>
-                                <li>
-                                    <a href="~/Web/Maps/Processing.cshtml"><i class="fa fa-gears fa-fw"></i> <font color="#fff" size="3px">&nbsp;&nbsp;Processing</font></a>
-                                </li>
-
-                            </ul>
+                            <a href="~/Web/Maps/Maps.cshtml"><i class="fa fa-map-marker fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Smart City</font><span class="fa arrow"></a>
+                            <ul class="nav nav-second-level" id="nav_smart_city"></ul>
                             <!-- /.nav-second-level -->
                         </li>
 

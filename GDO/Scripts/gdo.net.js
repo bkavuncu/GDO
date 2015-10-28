@@ -487,7 +487,6 @@ gdo.net.isNodeInitialized = function () {
 gdo.net.initializeArrays = function (num) {
     gdo.net.state = new Array(num);
     gdo.net.node = new Array(num);
-    gdo.net.app = {};
     for (var i = 0; i < num; i++) {
         gdo.net.node[i] = {};
         gdo.net.node[i].col = -1;

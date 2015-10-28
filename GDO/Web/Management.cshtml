@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>GDO Console</title>
+    <title>GDO Management</title>
     <!-- Bootstrap Core CSS -->
     <link href="../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
@@ -141,16 +141,9 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h3>Console</h3>
+                    <h2>GDO Management Console</h2>
                 </div>
                 <!-- /.col-lg-12 -->
-            </div>
-            <div id="console_area" style="width: 99.5%; height: 77vh; overflow-y:scroll; border:1px solid #333;background-color: #222; color: #FFF"></div>
-            <div id="console_area_space"><br></div>
-            <div style="width: 99.5%;">
-                <div class="col-lg-8" id="console_input_div"></div>
-                <!-- /.col-lg-12 -->
-                <div class="col-lg-4" id="console_submit_div"></div>
             </div>
         </div>
     </div>
@@ -169,7 +162,6 @@
                 gdo.management.updateMaintenanceButton();
                 gdo.management.updateInstancesMenu();
                 gdo.management.updateSmartCityMenu();
-                gdo.management.drawConsoleInput();
             }
             $(function () {
                 $( document ).ready(function() {
