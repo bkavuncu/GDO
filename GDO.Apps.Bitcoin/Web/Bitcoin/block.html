@@ -11,9 +11,9 @@
     <title></title>
     <style type="text/css">
         #graphcontainer {
-            max-width: 3840px;
-            height: 3840px;
-            margin: auto;
+            max-width: 1000px;
+            height: 1000px;
+            margin: 0;
         }
         #textarea {
             color: #ffffff;
@@ -102,9 +102,45 @@
         bindEvents(queryparam);
 
         //if we're given a height rather than hash
-        if(queryparam.length<=6){
-
+        if (queryparam.length <= 6) {
             var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+                    console.log('Retrieved block details successfully');
+                    var resObj = JSON.parse(xmlhttp.responseText);
+                    
+                    for (var i = 0; i < resObj.blocks.length; i++) {
+                        if (resObj.blocks[i].main_chain) {
+                            handleTxs(resObj.blocks[i].tx);
+                        }
+                    }
+                }
+            };
+            xmlhttp.open("GET", 'https://crossorigin.me/https://blockchain.info/block-height/'+queryparam+'?format=json', true);
+            xmlhttp.send();
+
+        }
+
+        function handleTxs(txArray) {
+            for (var i = 1; i < txArray.length; i++) {
+                var msg = {};
+                msg["op"] = "utx";
+                msg["x"] = txArray[i];
+
+                if (paused) {
+                    msgBuf.push(msg);
+                    return;
+                }
+
+                else {
+                    processMsg(msg);
+                }
+
+            }
+            
+        }
+/*            var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
@@ -232,6 +268,7 @@
             }
         }
 
+        */
         applyFilters();
         renderGraph();
 
