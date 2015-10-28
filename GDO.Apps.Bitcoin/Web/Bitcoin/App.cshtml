@@ -50,6 +50,7 @@
     <div id="graphcontainer"></div>
     <div id="textarea"></div>
 
+
 <!--globe-->
 <script src="../../Scripts/jquery-2.1.4.min.js"></script>
 <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
@@ -67,15 +68,15 @@
     
     $(function () {
 
-
         $(document).ready(function() {
             var gdo = parent.gdo;
             gdo.net.app["Bitcoin"].initClient();
+
             var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
             var configName = gdo.net.instance[instanceId].configName;
             var container = document.getElementById('graphcontainer');
             var textarea = document.getElementById('textarea');
-
+            var textarea2 = document.getElementById('textarea2');
 
 
             switch (configName) {
@@ -132,7 +133,7 @@
                     function initNodes() {
 
                         var xmlhttp = new XMLHttpRequest();
-                        var url = "http://cors.io/?u=https://getaddr.bitnodes.io/api/v1/snapshots/latest/"; //FIX added to prevent error  "No 'Access-Control-Allow-Origin' header is present on the requested resource."
+                        var url = "https://bitnodes.21.co/api/v1/snapshots/latest"; 
 
                         xmlhttp.onreadystatechange = function () {
                             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -215,10 +216,8 @@
 
 
                 case "Mempool":
-                   // $("#graphcontainer").text("THIS IS MEMPOOL!");
 
                     function populateTextAreas_mempool() {
-                        var textarea2 = document.getElementById('textarea2');
                         textarea2.innerHTML =
                             '<div id="peerID" style="display:inline-block;">Not connected to controller</div><br>' +
                             'Time since observation start: <div id="obsTimer" style="display:inline-block;"></div><br>' +
@@ -378,7 +377,6 @@
                     // $("#graphcontainer").text("THIS IS BLOCK!");
 
                     function populateTextAreas_block() {
-                        var textarea2 = document.getElementById('textarea2');
                         textarea2.innerHTML =
                             '<div id="peerID" style="display:inline-block;">Not connected to controller</div>';
 
@@ -431,37 +429,6 @@
                         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
                                 results = regex.exec(location.search);
                         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-                    }
-
-                    //recursively call api until no more pages of txs left
-                    function getPagedTxs(uri, page, txs) {
-                        var xmlhttp = new XMLHttpRequest();
-
-                        xmlhttp.onreadystatechange = function () {
-                            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                                console.log('Retrieved block details, page:' + page);
-                                var resObj = JSON.parse(xmlhttp.responseText);
-
-                                for (var i = 0; i < resObj.data.transactions.length; i++)
-                                    txs.push(resObj.data.transactions[i]);
-
-                                console.log('next_page is:' + resObj.data.pagination.next_page);
-                                if (resObj.data.pagination.next_page)
-                                    getPagedTxs(uri, resObj.data.pagination.next_page, txs);
-                                else
-                                    handleTxs(txs);
-
-                            }
-                            else {
-                            }
-                        };
-
-                        xmlhttp.open("GET", uri + page, true);
-
-                        //limit requests to 4 per second to avoid biteasy limiter
-                        setTimeout(function () {
-                            xmlhttp.send();
-                        }, 250);
                     }
 
                     function handleTxs(txArray) {
@@ -542,6 +509,34 @@
                         document.getElementById('txAvgFeeDens').innerHTML = (txTotalFee / txTotalSize).toLocaleString() + 'sat/byte';
                     }
 
+                    //recursively call api until no more pages of txs left
+                    function getPagedTxs(uri, page, txs) {
+                        var xmlhttp = new XMLHttpRequest();
+
+                        xmlhttp.onreadystatechange = function () {
+                            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                                console.log('Retrieved block details, page:' + page);
+                                var resObj = JSON.parse(xmlhttp.responseText);
+
+                                for (var i = 0; i < resObj.data.transactions.length; i++)
+                                    txs.push(resObj.data.transactions[i]);
+
+                                console.log('next_page is:' + resObj.data.pagination.next_page);
+                                if (resObj.data.pagination.next_page)
+                                    getPagedTxs(uri, resObj.data.pagination.next_page, txs);
+                                else
+                                    handleTxs(txs);
+                            }
+                        };
+
+                        xmlhttp.open("GET", uri + page, true);
+
+                        //limit requests to 4 per second to avoid biteasy limiter
+                        setTimeout(function () {
+                            xmlhttp.send();
+                        }, 250);
+                    }
+
                     //get transactions for given block hash in maximum 200tx chunks
                     function initBlock() {
 
@@ -572,21 +567,19 @@
                                         return;
                                     }
 
-                                    var uri = "https://api.biteasy.com/blockchain/v2/transactions?block_hash=" + blockhash + "&per_page=200&page=";
+                                    var uri = "http://cors.io/?u=https://api.biteasy.com/v2/btc/mainnet/transactions?block_hash=" + blockhash + "&per_page=200&page=";
                                     var txArray = [];
                                     getPagedTxs(uri, 1, txArray);
                                 }
-                                else {
-                                }
                             };
 
-                            xmlhttp.open("GET", 'http://cors.io/?u=https://api.biteasy.com/blockchain/v2/blocks?height=' + queryparam + '&type=BEST_CHAIN', true);    //FIX added to prevent error  "No 'Access-Control-Allow-Origin' header is present on the requested resource."
+                            xmlhttp.open("GET", 'http://cors.io/?u=https://api.biteasy.com/v2/btc/mainnet/blocks?height=' + queryparam + '&type=BEST_CHAIN', true);    //FIX added to prevent error  "No 'Access-Control-Allow-Origin' header is present on the requested resource."
                             xmlhttp.send();
                         }
                         else {
                             blockhash = queryparam;
 
-                            var uri = "https://api.biteasy.com/blockchain/v2/transactions?block_hash=" + blockhash + "&per_page=200&page="
+                            var uri = "http://cors.io/?u=https://api.biteasy.com/v2/btc/mainnet/transactions?block_hash=" + blockhash + "&per_page=200&page=";
                             var txArray = [];
 
                             getPagedTxs(uri, 1, txArray);
@@ -597,6 +590,7 @@
                     populateTextAreas_block();
                     initBlock();
                     break;
+
 
                 default:
                     $("#graphcontainer").text("THIS IS A WRONG CONFIGURATION!");
