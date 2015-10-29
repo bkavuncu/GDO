@@ -112,6 +112,7 @@
                     
                     for (var i = 0; i < resObj.blocks.length; i++) {
                         if (resObj.blocks[i].main_chain) {
+
                             handleTxs(resObj.blocks[i].tx);
 
                             applyFilters();
@@ -126,8 +127,25 @@
         }
 
         function handleTxs(txArray) {
+
+            //handle block coinbase tx (assumes first output is always coinbase)
+            var msg = {};
+            msg["op"] = "utx";
+            msg["x"] = txArray[0];
+            msg.x["is_coinbase"] = true;
+            msg.x["inputs"] = [];
+            msg.x.inputs.prev_out={};
+            if (paused) {
+                msgBuf.push(msg);
+                return;
+            }
+            else {
+                processMsg(msg);
+            }
+
+            //handle all subsequent txs
             for (var i = 1; i < txArray.length; i++) {
-                var msg = {};
+                msg = {};
                 msg["op"] = "utx";
                 msg["x"] = txArray[i];
 
@@ -135,13 +153,10 @@
                     msgBuf.push(msg);
                     return;
                 }
-
                 else {
                     processMsg(msg);
                 }
-
             }
-            
         }
 /*            var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
