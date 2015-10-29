@@ -1,4 +1,4 @@
-﻿gdo.management.drawEmptyStateTable = function () {
+﻿gdo.management.drawStateInputTable = function () {
 
     $("#state_table_state_list")
         .css("height", ((gdo.management.table_height) + (gdo.management.info_height))*2.8)
@@ -69,7 +69,6 @@
 }
 
 gdo.management.drawStateTable = function () {
-    gdo.management.drawEmptyStateTable();
     $("#state_table_state_list_table")
         .empty();
     for (var i = 0; i < gdo.net.state.length; i++) {

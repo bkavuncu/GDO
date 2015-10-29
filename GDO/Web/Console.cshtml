@@ -169,7 +169,6 @@
                 gdo.management.updateMaintenanceButton();
                 gdo.management.updateInstancesMenu();
                 gdo.management.updateSmartCityMenu();
-                gdo.management.drawConsoleInput();
             }
             $(function () {
                 $( document ).ready(function() {
@@ -191,6 +190,7 @@
             }
             initApp = function () {
                 gdo.consoleOut('', 1, 'GDO Initialized');
+                gdo.management.drawConsoleInput();
                 gdo.updateSelf();
             }
     </script>

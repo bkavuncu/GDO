@@ -68,11 +68,15 @@ function getUrlVar(variable) {
         var pair = vars[i].split('=');
         if (pair[0] === variable) { return pair[1]; }
     }
-    query = window.frames['control_frame_content'].location.search.substring(1);
-    vars = query.split('&');
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
-        if (pair[0] === variable) { return pair[1]; }
+    if (typeof window.frames['control_frame_content'] == "undefined") {
+        return false;
+    } else {
+        query = window.frames['control_frame_content'].location.search.substring(1);
+        vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) { return pair[1]; }
+        }
     }
     return (false);
 }
