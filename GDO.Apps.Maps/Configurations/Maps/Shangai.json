@@ -1,51 +1,15 @@
 ﻿{
-  "View": {
-    "Position": {
-      "TopLeft": {
-        "X": "",
-        "Y": ""
-      },
-      "Center": {
-        "X": "",
-        "Y": ""
-      },
-      "BottomRight": {
-        "X": "",
-        "Y": ""
-      },
-      "Resolution": "77",
-      "Zoom": "11"
-    },
-    "Rotation": "",
-    "Width": "",
-    "Height": ""
-  },
-  "Formats": [
-    { },
-    { },
-    { }
-  ],
-  "Styles": [
-    { },
-    { },
-    { }
-  ],
-  "Sources": [
-    {
-      "Id": "1",
-      "Name": "BingMaps Aerial with Labels",
-      "Type": "1",
-      "Culture": "",
-      "Key": "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3",
-      "ImagerySet": "AerialWithLabels",
-      "MaxZoom": "19" 
-    },
-    { },
-    { }
-  ],
-  "Layers": [
-    { },
-    { },
-    { }
-  ]
+  "topLeft": ["13473260.9590737","3687046.38894347"],
+  "center": ["13520804.7906671","3660369.86607194"],
+  "bottomRight": ["13568348.6222605","3633540.46914384"],
+  "resolution": "77",
+  "zoom": "11",
+  "width": 1244,
+  "height": 700,
+  "opacity": 0.7,
+  "radius": 70,
+  "blur": 70,
+  "station": 4,
+  "line": 10,
+  "entry": true
 }

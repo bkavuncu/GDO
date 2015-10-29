@@ -1,0 +1,145 @@
+﻿@using System.Threading.Tasks
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GDO SmartCity App</title>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <style>
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+       
+ 
+    </style>
+    <script>
+        var gdo = {};
+        gdo.net = {};
+        gdo.management = {};
+        gdo.maintenance = {};
+        gdo.node = {};
+        gdo.fs = {};
+        gdo.net.peer = {};
+        gdo.net.node = [];
+        gdo.net.section = [];
+        gdo.net.app = [];
+        gdo.net.apps = {}
+        gdo.net.instance = [];
+        gdo.net.nodes = {};
+        gdo.net.neighbour = {};
+        @{
+            foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+            {
+                @:gdo.net.app["@appEntry.Value.Name"] = {};
+                @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
+                @:gdo.@appEntry.Value.Name = {};
+            }
+            @: var a ={}
+        }
+    </script>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/gdo.js"></script>
+    <script src="../../signalr/hubs"></script>
+    <script type="text/javascript" src="../../Scripts/peer.js"></script>
+    <script>
+        $(function() {
+            gdo.loadModule('smartCity', 'smartCity', gdo.MODULE_TYPE.APP);
+            $(document).ready(function() {
+                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+            });
+        });
+        initApp = function() {
+            gdo.net.app["SmartCity"].isAdvanced = true;
+            gdo.net.app["SmartCity"].initControl(gdo.clientId);
+        }
+    </script>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                    GDO SmartCity App
+                </a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                   <!-- <li>
+                        <a href="#">a</a>
+                    </li>
+                    <li>
+                        <a href="#">b</a>
+                    </li>
+                    <li>
+                        <a href="#">c</a>
+                    </li>-->
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <br><br/>
+    <br><br />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-1">
+                <div id="instances">
+                    Instances
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div id="layers">
+                    Layers
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div id="properties">
+                    Properties
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div id="edits">
+                    Edits
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container-fluid column">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div id="map" class="map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../Scripts/SmartCity/ol3/ol.js"></script>
+    <script src="../../Scripts/SmartCity/Cesium/Cesium.js"></script>
+    <script src="../../Scripts/SmartCity/ol3cesium.js"></script>
+    <script src="../../Scripts/SmartCity/bootstrap.min.js"></script>
+</body>
+</html>

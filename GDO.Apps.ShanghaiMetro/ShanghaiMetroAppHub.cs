@@ -138,9 +138,9 @@ namespace GDO.Apps.ShanghaiMetro
                             {
                                 Clients.Group("" + instanceKeyValuePair.Value.Id).receiveTimeStep(
                                     ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep);
-                                ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
                             }
                         }
+                        ((ShanghaiMetroApp)Cave.Apps["ShanghaiMetro"].Instances[instanceId]).TimeStep++;
                     }
                 }
                 else

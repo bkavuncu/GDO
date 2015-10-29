@@ -10,10 +10,8 @@
     <title></title>
     <style>
         body {
-            background: #222;
+            background: #181818;
             color: #FFF;
-            font-family: helvetica;
-            font-size: 70%;
         }
 
         .unselectable {
@@ -54,8 +52,14 @@
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
     <script>
     function getUrlVar(variable) {
+        /// <summary>
+        /// Gets the URL variable.
+        /// </summary>
+        /// <param name="variable">The variable.</param>
+        /// <returns></returns>
         var query = window.location.search.substring(1);
         var vars = query.split('&');
         for (var i = 0; i < vars.length; i++) {
@@ -74,7 +78,6 @@
         $(document).ready(function() {
             var gdo = parent.gdo;
             gdo.controlId = getUrlVar("controlId");
-            gdo.net.app["Maps"].isAdvanced = false;
             gdo.net.app["Maps"].initControl(gdo.controlId);
         });
     });
