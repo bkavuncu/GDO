@@ -27,9 +27,16 @@
 			color: #ffffff;
 			font-family: verdana, sans-serif;
 		}
+        .centeredAndBig{
+            margin:auto;
+            padding-left:35%;
+            font-size:800%;
+        }
 	</style>
 </head>
 <body bgcolor="#000000" oncontextmenu="return false;">
+    <div id="titleDIV" class="centeredAndBig">Realtime Bitcoin Transactions</div>
+
 <div id="textarea2">
 	<div id="peerID" style="display:inline-block;">Not connected to controller</div><br>
 	Time since observation start: <div id="obsTimer" style="display:inline-block;"></div><br>
@@ -77,6 +84,7 @@
 		</tr>
 	</table>
 </div>
+    <div id="footerDIV" class="centeredAndBig">Centre for Cryptocurrency Research and Engineering</div>
 </body>
 
 <script src="../../Scripts/Bitcoin/sigma.js/sigma.min.js"></script>

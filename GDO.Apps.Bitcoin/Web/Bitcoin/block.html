@@ -23,9 +23,15 @@
             color: #ffffff;
             font-family: verdana, sans-serif;
         }
+        .centeredAndBig{
+            margin:auto;
+            padding-left:35%;
+            font-size:800%;
+        }
     </style>
 </head>
 <body bgcolor="#000000" oncontextmenu="return false;">
+    <div id="titleDIV" class="centeredAndBig">Historical Bitcoin Transactions</div>
 <div id="peerID" style="display:inline-block;">Not connected to controller</div>
 <div id="graphcontainer"></div>
 <div id="textarea">
@@ -69,6 +75,7 @@
         </tr>
     </table>
 </div>
+    <div id="footerDIV" class="centeredAndBig">Centre for Cryptocurrency Research and Engineering</div>
 </body>
 
 <script src="../../Scripts/Bitcoin/sigma.js/sigma.min.js"></script>
@@ -109,6 +116,7 @@
 
                     console.log('Retrieved block details successfully');
                     var resObj = JSON.parse(xmlhttp.responseText);
+                    document.getElementById('createdAt').innerHTML = resObj.blocks[0].time;
                     
                     for (var i = 0; i < resObj.blocks.length; i++) {
                         if (resObj.blocks[i].main_chain) {
@@ -160,7 +168,6 @@
 
             //update DOM elements
             document.getElementById('blkNum').innerHTML = queryparam;
-            document.getElementById('createdAt').innerHTML = resObj.blocks[0].time;
 
             document.getElementById('txMaxVal').innerHTML = (txMaxVal / 100000000).toLocaleString() + 'B';
             document.getElementById('txTotalVal').innerHTML = (txTotalVal / 100000000).toLocaleString() + 'B';
