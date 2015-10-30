@@ -159,6 +159,9 @@
             }
 
             //update DOM elements
+            document.getElementById('blkNum').innerHTML = queryparam;
+            document.getElementById('createdAt').innerHTML = resObj.blocks[0].time;
+
             document.getElementById('txMaxVal').innerHTML = (txMaxVal / 100000000).toLocaleString() + 'B';
             document.getElementById('txTotalVal').innerHTML = (txTotalVal / 100000000).toLocaleString() + 'B';
             document.getElementById('txAvgVal').innerHTML = ((txTotalVal / numTx) * 1000 / 100000000).toLocaleString() + 'mB';
