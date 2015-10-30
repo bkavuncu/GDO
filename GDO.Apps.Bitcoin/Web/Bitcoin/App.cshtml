@@ -42,13 +42,20 @@
             -o-user-select: none;
             user-select: none;
         }
+        .centeredAndBig{
+            margin:auto;
+            padding-left:35%;
+            font-size:800%;
+        }
 
     </style>
 </head>
 <body unselectable="on" class="unselectable">
+    <div id="titleDIV"  class="centeredAndBig"></div>
     <div id="textarea2"></div>
     <div id="graphcontainer"></div>
     <div id="textarea"></div>
+    <div id="footerDIV"  class="centeredAndBig">Centre for Cryptocurrency Research and Engineering</div>
 
 
 <!--globe-->
@@ -77,12 +84,14 @@
             var container = document.getElementById('graphcontainer');
             var textarea = document.getElementById('textarea');
             var textarea2 = document.getElementById('textarea2');
+            var titleDIV = document.getElementById('titleDIV');
 
 
             switch (configName) {
             case "Globe":
 
                 function populateTextArea_globe() {
+                    titleDIV.innerHTML = "Live Global Bitcoin Network Activity";
                     textarea.innerHTML =
                         "NumNodes: <div id='numNodes' style='display:inline-block;'></div><br>" +
                         "BlockHeight: <div id='blkHeight' style='display:inline-block;'></div><br>" +
@@ -218,7 +227,9 @@
             case "Mempool":
 
                 function populateTextAreas_mempool() {
-                    textarea2.innerHTML =
+                    titleDIV.innerHTML = "Realtime Bitcoin Transactions";
+
+                    textarea2.innerHTML = 
                         '<div id="peerID" style="display:inline-block;">Not connected to controller</div><br>' +
                         'Time since observation start: <div id="obsTimer" style="display:inline-block;"></div><br>' +
                         'Time since last block<div id="lastBlk" style="display:inline-block;"></div>' +
@@ -373,6 +384,8 @@
                 // $("#graphcontainer").text("THIS IS BLOCK!");
 
                 function populateTextAreas_block() {
+                    titleDIV.innerHTML = "Historical Bitcoin Transactions";
+
                     textarea2.innerHTML =
                         '<div id="peerID" style="display:inline-block;">Not connected to controller</div>';
 
