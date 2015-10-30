@@ -109,9 +109,9 @@ $(function () {
         gdo.net.instance[instanceId].bingLayer.setVisible(visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
-                $("iframe").contents().find("#bing_button").removeClass("btn-outline");
+                $("iframe").contents().find("#bing_button").removeClass("btn-danger").addClass("btn-success");
             } else {
-                $("iframe").contents().find("#bing_button").addClass("btn-outline");
+                $("iframe").contents().find("#bing_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
@@ -121,9 +121,9 @@ $(function () {
         gdo.net.instance[instanceId].stamenLayer.setVisible(visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
-                $("iframe").contents().find("#stamen_button").removeClass("btn-outline");
+                $("iframe").contents().find("#stamen_button").removeClass("btn-danger").addClass("btn-success");
             } else {
-                $("iframe").contents().find("#stamen_button").addClass("btn-outline");
+                $("iframe").contents().find("#stamen_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
@@ -133,9 +133,9 @@ $(function () {
         gdo.net.instance[instanceId].stationsLayer.setVisible(visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
-                $("iframe").contents().find("#stations_button").removeClass("btn-outline");
+                $("iframe").contents().find("#stations_button").removeClass("btn-danger").addClass("btn-success");
             } else {
-                $("iframe").contents().find("#stations_button").addClass("btn-outline");
+                $("iframe").contents().find("#stations_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
@@ -145,9 +145,9 @@ $(function () {
         gdo.net.instance[instanceId].linesLayer.setVisible(visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
-                $("iframe").contents().find("#lines_button").removeClass("btn-outline");
+                $("iframe").contents().find("#lines_button").removeClass("btn-danger").addClass("btn-success");
             } else {
-                $("iframe").contents().find("#lines_button").addClass("btn-outline");
+                $("iframe").contents().find("#lines_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
@@ -161,9 +161,9 @@ $(function () {
         }
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
-                $("iframe").contents().find("#heatmap_button").removeClass("btn-outline");
+                $("iframe").contents().find("#heatmap_button").removeClass("btn-danger").addClass("btn-success");
             } else {
-                $("iframe").contents().find("#heatmap_button").addClass("btn-outline");
+                $("iframe").contents().find("#heatmap_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
