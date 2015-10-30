@@ -9,98 +9,74 @@ gdo.net.app["ShanghaiMetro"].drawEmptyMapTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.net.app["ShanghaiMetro"].numButtons =6;
+gdo.net.app["ShanghaiMetro"].numButtons =7;
 
 
 gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
-    gdo.net.app["ShanghaiMetro"].drawEmptyMapTable(6, 1);
+    gdo.net.app["ShanghaiMetro"].drawEmptyMapTable(7, 1);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()
-        .append("<div> <b>Bing Maps</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.app["ShanghaiMetro"].numButtons) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
+        .append("<div><button type='button' id='bing_button' class='btn btn-primary btn-outline btn-block'>Bing Maps</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("height", "40px")
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setBingLayerVisible(instanceId);
         });
-    /*$("iframe").contents().find("#map_table_row_0_col_1")
+    $("iframe").contents().find("#map_table_row_0_col_1")
         .empty()
-        .append("<div> <b>Stamen Maps</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.app["ShanghaiMetro"].numButtons) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
+        .append("<div><button type='button' id='stamen_button' class='btn btn-primary btn-outline btn-block'>Stamen Maps</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("height", "40px")
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setStamenLayerVisible(instanceId);
-        });*/
-    $("iframe").contents().find("#map_table_row_0_col_1")
+        });
+    $("iframe").contents().find("#map_table_row_0_col_2")
         .empty()
-        .append("<div> <b>Stations</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.app["ShanghaiMetro"].numButtons) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
+        .append("<div><button type='button' id='stations_button' class='btn btn-primary btn-outline btn-block'>Stations</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("height", "40px")
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setStationLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_2")
+    $("iframe").contents().find("#map_table_row_0_col_3")
         .empty()
-        .append("<div> <b>Lines</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.app["ShanghaiMetro"].numButtons) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
+        .append("<div><button type='button' id='lines_button' class='btn btn-primary btn-outline btn-block'>Lines</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("height", "40px")
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setLineLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_3")
+    $("iframe").contents().find("#map_table_row_0_col_4")
         .empty()
-        .append("<div> <b>Entry</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.app["ShanghaiMetro"].numButtons) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
+        .append("<div><button type='button' id='heatmap_button' class='btn btn-primary btn-outline btn-block'>Heatmap</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("height", "40px")
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.setHeatmapLayerVisible(instanceId);
         });
-    $("iframe").contents().find("#map_table_row_0_col_4")
+    $("iframe").contents().find("#map_table_row_0_col_5")
         .empty()
-        .append("<div> <b>Animate</b></div>")
-        .css("height", gdo.management.button_height / 1.4)
-        .css("width", (gdo.management.table_width / gdo.net.app["ShanghaiMetro"].numButtons) + "%")
-        .css("border", "3px solid #444")
-        .css("background", "#222")
-        .css("color", "#DDD")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css({ fontSize: gdo.management.button_font_size })
+        .append("<div><button type='button' id='animate_button' class='btn btn-success btn-block'>Animate</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("height", "40px")
         .unbind()
         .click(function () {
             gdo.net.app["ShanghaiMetro"].server.animate();

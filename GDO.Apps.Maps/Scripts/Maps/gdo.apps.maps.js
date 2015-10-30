@@ -21,10 +21,15 @@ $(function () {
         gdo.consoleOut('.Maps', 1, 'Setting Layer ' + id + ' Visible');
         for (var i = 0; i < gdo.net.app["Maps"].numLayers; i++) {
             gdo.net.instance[instanceId].layers[i].setVisible(false);
-            $("iframe").contents().find("#maps_layer_" + i).addClass("btn-outline");
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                $("iframe").contents().find("#maps_layer_" + i).addClass("btn-outline");
+            }
         }
         gdo.net.instance[instanceId].layers[id].setVisible(true);
-        $("iframe").contents().find("#maps_layer_" + id).removeClass("btn-outline");
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            $("iframe").contents().find("#maps_layer_" + id).removeClass("btn-outline");
+        }
+
     }
 
     $.connection.mapsAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
