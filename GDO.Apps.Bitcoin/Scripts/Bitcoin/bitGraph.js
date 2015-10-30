@@ -228,10 +228,10 @@ function bindEvents(blkid){
     //simple messaging protocol
     conn.on('data', function(data) {
         if (data.type == 'newBlock' && data.value >= 0)
-            window.open('/block.html?block=' + data.value, '_self');
+            window.open("/Web/Bitcoin/block.html?block=" + data.value, '_self');
 
         if (data.type == 'newBlock' && data.value < 0)
-            window.open('/mempool.html', '_self');
+            window.open("/Web/Bitcoin/mempool.html", '_self');
 
         if (data.type == 'connComp') {
             if (data.value)
