@@ -1,0 +1,410 @@
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="background-color:black">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        body {
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 70%;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        #container {
+            max-width: 500px;
+            height: 500px;
+            margin: 0;
+        }
+        #textarea {
+            color: #FFFFFF;
+            font-family: verdana, sans-serif;
+        }
+
+        .table_control td {
+            text-align:center;
+            border: 1px solid #FFF;
+            padding: 8px;
+            font-size:1.4em;
+
+            /* Unselectable */
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .green {
+            background-color:#006400;
+        }
+
+        .green:active {
+            background-color:#005400;
+        }
+        
+        .red {
+            background-color:#8B0000;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script>
+    $(function() {
+
+        var gdo = parent.gdo;
+        gdo.net.app["Bitcoin"].initControl();
+    });
+
+</script>
+    <div id="container"></div>
+    <div id="textarea">
+        <TABLE id="txTable">
+            <TR>
+                <TD>Hash</TD>
+                <TD>Value</TD>
+                <TD>Fee</TD>
+                <TD>Size</TD>
+                <TD>Fee Density</TD>
+                <TD>Relayed By</TD>
+                <TD>
+                    <TABLE>
+                        <TR><TD>Inputs</TD></TR>
+                        <TR><TD>Address</TD><TD>Amount</TD></TR>
+                    </TABLE>
+                </TD>
+                <TD>
+                    <TABLE>
+                        <TR><TD>Outputs</TD></TR>
+                        <TR><TD>Address</TD><TD>Amount</TD></TR>
+                    </TABLE>
+                </TD>
+                <TD>
+                    <TABLE>
+                        <TR><TD>SharedInOut</TD></TR>
+                        <TR><TD>Address</TD><TD>Amount</TD></TR>
+                    </TABLE>
+                </TD>
+            </TR>
+        </TABLE>
+    </div>
+<!-- <div>
+    <table class="table_control">
+        <tr>
+            <td class="green" id="launchGlobe">Show globe</td>
+        </tr>
+        <tr>
+            <td class="green" id="launchBlock">Block data</td>
+        </tr>
+        <tr>
+            <td class="green" id="launchMempool">Mempool</td>
+        </tr>
+    </table>
+</div> -->
+
+
+    <script src="../../Scripts/Bitcoin/sigma.js/sigma.min.js"></script>
+    <script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.layout.forceAtlas2.min.js"></script>
+    <script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.plugins.filter.min.js"></script>
+    <script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.plugins.dragNodes.min.js"></script>
+
+    <script src="../../Scripts/Bitcoin/peerjs/peer.min.js"></script>
+
+    <script src="../../Scripts/Bitcoin/dat.gui/dat.gui.min.js"></script>
+
+    <script>
+
+    sigma.classes.graph.addMethod('findNbrs', function(e, txInputs, txOutputs, txInOuts) {
+
+        //get all the nodes neighbours
+        var index = this.allNeighborsIndex[e.id];
+
+        for (var k in index) {
+            var nbrType = this.nodesIndex[k].type;
+            if (nbrType == 'input')
+                txInputs.push(this.nodesIndex[k]);
+            if (nbrType == 'output')
+                txOutputs.push(this.nodesIndex[k]);
+            if (nbrType == 'InOut')
+                txInOuts.push(this.nodesIndex[k]);
+        }
+    });
+
+    var s = new sigma({
+        renderer: {
+            container: document.getElementById('container'),
+            type: 'canvas'
+        },
+        settings: {
+            verbose: true,
+            scalingMode: 'inside',
+            batchEdgesDrawing: false,
+            webglEdgesBatchSize: 50,
+            hideEdgesOnMove: true,
+            webglOversamplingRatio: 2,
+            labelThreshold: 100000000,
+            labelHoverBGColor: 'node',
+            singleHover: true,
+            minNodeSize: 1,
+            maxNodeSize: 8,
+            animationsTime: 3000
+        }
+    });
+    //for drag node event
+    var draglistener = new sigma.plugins.dragNodes(s, s.renderers[0]);
+    s.bind('clickStage', function(evt) {
+        if (s.isForceAtlas2Running())
+            s.killForceAtlas2();
+        else {
+            s.startForceAtlas2({
+                linLogMode: false,
+                outboundAttractionDistribution: false,
+                adjustSizes: false,
+                edgeWeightInfluence: 1,
+                scalingRatio: 0.01,
+                strongGravityMode: true,
+                gravity: 1,
+                barnesHutOptimize: true,
+                barnesHutTheta: 0.9,
+                slowDown: 20,
+                startingIterations: 1,
+                iterationsPerRender: 1,
+                worker: true
+            });
+        }
+    });
+
+    s.bind('clickNode', function(evt) {
+        //if click on a transaction, highlight table red
+        if (evt.data.node.type == 'tx') {
+            var rows = document.getElementById('txTable').getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; i++)
+                rows[i].style.backgroundColor = '#FFFFFF';
+            document.getElementById(evt.data.node.id).style.backgroundColor = '#FF0000';
+        }
+    });
+
+    var peer = new Peer('controller', { key: '3dp2kjnfd9kq33di' });
+    var guis = {};
+
+    peer.on('connection', function(conn) {
+        conn.on('open', function() {
+            //new gui
+            var cnxn = conn.peer;
+            guis[cnxn] = {};
+            guis[cnxn]["params"] = new setParams();
+            guis[cnxn]["gui"] = new dat.GUI();
+            guis[cnxn]["actions"] = {};
+
+            guis[cnxn].gui.add(guis[cnxn].params, 'connection').name('ID:' + cnxn);
+
+            var blockAct = guis[cnxn].gui.add(guis[cnxn].params, 'block').name("BlockNum").listen();
+            blockAct.onFinishChange(function(v) {
+                conn.send({ type: 'newBlock', value: v });
+            });
+
+            var minValAct = guis[cnxn].gui.add(guis[cnxn].params, 'minVals').min(0).max(999999999).step(1).name("MinVal(mB)");
+            minValAct.onFinishChange(function(v) {
+                conn.send({ type: 'minValConstraint', value: v * 100000000 / 1000 });
+            });
+
+            var maxValAct = guis[cnxn].gui.add(guis[cnxn].params, 'maxVals').min(0).max(999999999).step(1).name("MaxVal(mB)");
+            maxValAct.onFinishChange(function(v) {
+                conn.send({ type: 'maxValConstraint', value: v * 100000000 / 1000 });
+            });
+
+            var minFeeAct = guis[cnxn].gui.add(guis[cnxn].params, 'minFees').min(0).max(999.9).step(0.01).name("MinFee(mB)");
+            minFeeAct.onFinishChange(function(v) {
+                conn.send({ type: 'minFeeConstraint', value: v * 100000000 / 1000 });
+            });
+
+            var maxFeeAct = guis[cnxn].gui.add(guis[cnxn].params, 'maxFees').min(0.0).max(999.9).step(0.01).name("MaxFee(mB)");
+            maxFeeAct.onFinishChange(function(v) {
+                conn.send({ type: 'maxFeeConstraint', value: v * 100000000 / 1000 });
+            });
+
+            var addrFilterAct = guis[cnxn].gui.add(guis[cnxn].params, 'addressFilter').name("FilterByAddress");
+            addrFilterAct.onFinishChange(function(v) {
+                conn.send({ type: 'addrFilter', value: v });
+            });
+
+            var txFilterAct = guis[cnxn].gui.add(guis[cnxn].params, 'txFilter').name("FilterByTxID");
+            txFilterAct.onFinishChange(function(v) {
+                conn.send({ type: 'txFilter', value: v });
+            });
+
+            var connCompAct = guis[cnxn].gui.add(guis[cnxn].params, 'connCompOnly').name("ConnectedComponentsOnly");
+            connCompAct.onFinishChange(function(v) {
+                conn.send({ type: 'connComp', value: v });
+            });
+
+            console.log(guis);
+
+            // Receive messages
+            conn.on('data', function(data) {
+                if (data.peertype === 'msg')
+                    handleMsg(data);
+                if (data.peertype === 'clear')
+                    handleClear();
+                if (data.peertype === 'node')
+                    handleNode(data);
+                if (data.peertype === 'edge')
+                    handleEdge(data);
+                if (data.peertype === 'updatetable')
+                    handleTable();
+                if (data.peertype === 'block')
+                    guis[conn.peer].params.block = data.peerpayload;
+            });
+        });
+
+        conn.on('close', function() {
+            var cnxn = conn.peer;
+            guis[cnxn].gui.destroy();
+            delete guis[cnxn];
+            console.log(cnxn + 'lost');
+        });
+    });
+
+
+    function setParams() {
+        this.connection = function() {};
+        this.block = '000000';
+        this.minVals = 0;
+        this.maxVals = 999999999;
+        this.minFees = 0.0;
+        this.maxFees = 999.9;
+        this.addressFilter = "";
+        this.txFilter = "";
+        this.connCompOnly = false;
+    }
+
+    function handleMsg(data) {
+        console.log('Received ' + data.peerpayload);
+    }
+
+    function handleClear() {
+        var tableRows = document.getElementById('txTable').rows.length;
+        for (var i = 1; i < tableRows; i++) {
+            document.getElementById('txTable').deleteRow(-1);
+        }
+        s.graph.clear();
+    }
+
+    function handleNode(data) {
+        var n = JSON.parse(data.peerpayload);
+
+        if (n.type == 'tx') {
+
+            //change node color from white to grey given new white background
+            n.color = '#777777';
+            n.origcolor = '#777777';
+        }
+        n.x = -0.5 + Math.random();
+        n.y = -0.5 + Math.random();
+
+        s.graph.addNode(n);
+        renderGraph();
+    }
+
+    function handleEdge(data) {
+        var e = JSON.parse(data.peerpayload);
+        s.graph.addEdge(e);
+        renderGraph();
+    }
+
+    function handleTable(n) {
+        s.graph.nodes().forEach(function(n) {
+            if (n.type == 'tx') {
+
+                var row = document.getElementById('txTable').insertRow(-1);
+                row.id = n.id;
+                row.insertCell(0).innerHTML = '<a href="https://blockchain.info/tx/' +
+                    n.label.substr(n.label.length - 64, n.label.length) + '" target="_blank">' +
+                    n.label.substr(n.label.length - 64, 5) + '...</a>';
+                row.insertCell(1).innerHTML = (n.outVals * 1000 / 100000000).toLocaleString() + 'mB';
+                row.insertCell(2).innerHTML = (n.fee * 1000 / 100000000).toLocaleString() + 'mB';
+                row.insertCell(3).innerHTML = (n.bytesize).toLocaleString() + 'Bytes';
+                row.insertCell(4).innerHTML = (n.fee / n.bytesize).toLocaleString() + 's/B';
+                row.insertCell(5).innerHTML = n.relayer;
+                row.insertCell(6).innerHTML = '<TABLE id="inputsTable' + n.id + '"></TABLE>';
+                row.insertCell(7).innerHTML = '<TABLE id="outputsTable' + n.id + '"></TABLE>';
+                row.insertCell(8).innerHTML = '<TABLE id="inoutsTable' + n.id + '"></TABLE>';
+
+                var txInputs = [];
+                var txOutputs = [];
+                var txInOuts = [];
+                s.graph.findNbrs(n, txInputs, txOutputs, txInOuts);
+
+                txInputs.forEach(function(txInput) {
+                    var inRow = document.getElementById('inputsTable' + n.id).insertRow(-1);
+                    inRow.insertCell(0).innerHTML = '<a href="https://blockchain.info/address/' +
+                        txInput.addr + '" target="_blank">' +
+                        txInput.addr + '</a>';
+                    inRow.insertCell(1).innerHTML = (txInput.size * 1000 / 100000000).toLocaleString() + 'mB';
+                });
+                txOutputs.forEach(function(txOutput) {
+                    var outRow = document.getElementById('outputsTable' + n.id).insertRow(-1);
+                    outRow.insertCell(0).innerHTML = '<a href="https://blockchain.info/address/' +
+                        txOutput.addr + '" target="_blank">' +
+                        txOutput.addr + '</a>';
+                    outRow.insertCell(1).innerHTML = (txOutput.size * 1000 / 100000000).toLocaleString() + 'mB';
+                });
+                txInOuts.forEach(function(txInOut) {
+                    var inoutRow = document.getElementById('inoutsTable' + n.id).insertRow(-1);
+                    inoutRow.insertCell(0).innerHTML = '<a href="https://blockchain.info/address/' +
+                        txInOut.addr + '" target="_blank">' +
+                        txInOut.addr + '</a>';
+                    inoutRow.insertCell(1).innerHTML = (txInOut.size * 1000 / 100000000).toLocaleString() + 'mB';
+                });
+            }
+        });
+    }
+
+    function renderGraph() {
+        if (s.isForceAtlas2Running()) {
+            s.killForceAtlas2();
+        }
+
+        s.startForceAtlas2({
+            linLogMode: false,
+            outboundAttractionDistribution: false,
+            adjustSizes: false,
+            edgeWeightInfluence: 1,
+            scalingRatio: 0.01, //1 doesn't change it
+            strongGravityMode: true,
+            gravity: 1,
+            barnesHutOptimize: true,
+            barnesHutTheta: 0.9, //0.5 doesn;t change it
+            slowDown: 20,
+            startingIterations: 1,
+            iterationsPerRender: 1,
+            worker: true
+        });
+        //setTimeout(function(){s.stopForceAtlas2();},30000);
+    }
+
+
+    </script>
+
+
+
+</body>
+</html>

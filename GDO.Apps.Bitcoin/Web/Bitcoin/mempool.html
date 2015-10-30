@@ -1,0 +1,228 @@
+﻿<!--
+/**
+ * Created by dm214 MSc Computing Science Sep2015.
+ * Realtime force directed graph visualization of transactions
+ * as they are broadcast on the P2P network for entry into rawMemPool
+-->
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<style type="text/css">
+  		#graphcontainer {
+			max-width: 1000px;
+			height: 1000px;
+			margin: 0;
+  		}
+  		#textarea {
+	  		color: #ffffff;
+	  		font-family: verdana, sans-serif;
+  		}
+		#textarea2{
+			color: #ffffff;
+			font-family: verdana, sans-serif;
+		}
+		#peerID {
+			color: #ffffff;
+			font-family: verdana, sans-serif;
+		}
+	</style>
+</head>
+<body bgcolor="#000000" oncontextmenu="return false;">
+<div id="textarea2">
+	<div id="peerID" style="display:inline-block;">Not connected to controller</div><br>
+	Time since observation start: <div id="obsTimer" style="display:inline-block;"></div><br>
+	Time since last block<div id="lastBlk" style="display:inline-block;"></div>
+	: <div id="blkTimer" style="display:inline-block;">pending</div><br>
+	<div id="blkAlert" >&nbsp</div>
+</div>
+<div id="graphcontainer"></div>
+<div id="textarea">
+	<table>
+		<tr>
+			<td width="200">TxRate: <div id="statTxRate" style="display:inline-block;"></div>tps</td>
+			<td width="300"><B>Value</B></td>
+			<td width="300"><B>Fees</B></td>
+			<td width="300"><B>Size</B></td>
+			<td width="300"><B>Fee Density</B></td>
+		</tr>
+		<tr>
+			<td>NumTx: <div id="statNumTx" style="display:inline-block;"></div></td>
+			<td>Max: <div id="txMaxVal" style="display:inline-block;"></div></td>
+			<td>Max: <div id="txMaxFee" style="display:inline-block;"></div></td>
+			<td>Max: <div id="txMaxSize" style="display:inline-block;"></div>bytes</td>
+			<td><div id="txMaxFeeDens" style="display:inline-block;"></div></td>
+		</tr>
+		<tr>
+			<td>NumIn: <div id="statNumIn" style="display:inline-block;"></div></td>
+			<td>Total: <div id="txTotalVal" style="display:inline-block;"></div></td>
+			<td>Total: <div id="txTotalFee" style="display:inline-block;"></div></td>
+			<td>Total: <div id="txTotalSize" style="display:inline-block;"></div>bytes</td>
+			<td><div id="txTotalFeeDens" style="display:inline-block;"></div></td>
+		</tr>
+		<tr>
+			<td>NumOut: <div id="statNumOut" style="display:inline-block;"></div></td>
+			<td>Avg: <div id="txAvgVal" style="display:inline-block;"></div></td>
+			<td>Avg: <div id="txAvgFee" style="display:inline-block;"></div></td>
+			<td>Avg: <div id="txAvgSize" style="display:inline-block;"></div>bytes</td>
+			<td>Avg: <div id="txAvgFeeDens" style="display:inline-block;"></div></td>
+		</tr>
+		<tr>
+			<td>NumNodes: <div id="statNumNodes" style="display:inline-block;"></div></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</table>
+</div>
+</body>
+
+<script src="../../Scripts/Bitcoin/sigma.js/sigma.min.js"></script>
+<script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.layout.forceAtlas2.min.js"></script>
+<script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.plugins.filter.min.js"></script>
+
+<script src="../../Scripts/Bitcoin/peerjs/peer.js"></script>
+
+<script src="../../Scripts/Bitcoin/bitGraph.js"></script>
+
+<script>
+	/**
+	 * bitcoin api
+	 */
+	var ws="wss://ws.blockchain.info/inv";
+
+	/**
+	 * initialise page
+	 */
+	window.addEventListener("load", init, false);
+
+	/**
+	 * functions
+	 */
+
+	function startTimers(){
+		var obsStart = Date.now();
+		var obsTimer = setInterval(timeObs, 1000, [obsStart]);
+		//setInterval(function(){processMsg({op:'block',x:{height:Math.random()}})},10000);
+	}
+
+	function timeObs(time){
+		var diff = Date.now()-time;
+		document.getElementById('obsTimer').innerHTML = Math.floor((diff%3600000)/60000)+'m'+
+				Math.floor((diff%60000)/1000)+'s';
+	}
+
+	function timeBlock(time){
+		var diff = Date.now()-time;
+		document.getElementById('blkTimer').innerHTML = Math.floor((diff%3600000)/60000)+'m'+
+				Math.floor((diff%60000)/1000)+'s';
+	}
+
+	function getFX(){
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var resObj = JSON.parse(xmlhttp.responseText);
+				currUSDBTC = resObj.USD.last;
+				console.log('USD FX Rate='+currUSDBTC);
+			}
+			else{
+			}
+		};
+
+		xmlhttp.open("GET", 'https://api.bitcoinaverage.com/ticker/global/all', true);
+		xmlhttp.send();
+	}
+
+	function init() {
+
+		startTimers();
+		getFX();
+		/**
+		 * Handle events
+		 */
+		//peerConnect(-1);
+		bindEvents(-1);
+
+		/**
+		 * Get Transactions
+		 */
+		runWebSocket();
+	}
+
+	/**
+	 * websocket stuff
+	 */
+	function runWebSocket() {
+		bcWebsocket = new WebSocket(ws);
+		bcWebsocket.onopen = function(openEvent) { onOpen(openEvent) };
+		bcWebsocket.onmessage = function(msgEvent) { onMessage(msgEvent) };
+	}
+	
+	function onOpen(openEvent) {
+		console.log("connecting");
+		//subscribe to realtime transaction notifications
+		transmit({"op":"unconfirmed_sub"});
+		console.log("subscribed to unconfirmed transactions");
+		//subscribe to realtime block notifications
+		transmit({"op":"blocks_sub"});
+		console.log("subscribed to new block notifications");
+	}
+
+	function transmit(payload) {
+		bcWebsocket.send(JSON.stringify(payload));
+	}
+
+	function onMessage(msgEvent) {
+
+		var msg = JSON.parse(msgEvent.data);
+
+		if (paused) {
+			msgBuf.push(msg);
+		}
+
+		else {
+
+			processMsg(msg);
+			applyFilters();
+			renderGraph();
+
+			document.getElementById('txMaxVal').innerHTML = (txMaxVal/100000000).toLocaleString()+'B / $'+
+											(currUSDBTC * txMaxVal/100000000).toLocaleString();
+			document.getElementById('txTotalVal').innerHTML = (txTotalVal/100000000).toLocaleString()+'B / $'+
+											(currUSDBTC * txTotalVal/100000000).toLocaleString();
+			document.getElementById('txAvgVal').innerHTML = ((txTotalVal/numTx)*1000/100000000).toLocaleString()+'mB / $'+
+											((currUSDBTC * txTotalVal/numTx)/100000000).toLocaleString();
+
+			document.getElementById('txMaxFee').innerHTML = (txMaxFee*1000/100000000).toLocaleString()+'mB / $'+
+											(currUSDBTC * txMaxFee/100000000).toLocaleString();
+			document.getElementById('txTotalFee').innerHTML = (txTotalFee/100000000).toLocaleString()+'B / $'+
+											(currUSDBTC * txTotalFee/100000000).toLocaleString();
+			document.getElementById('txAvgFee').innerHTML = ((txTotalFee/numTx)*1000/100000000).toLocaleString()+'mB / $'+
+											((currUSDBTC * txTotalFee/numTx)/100000000).toLocaleString();
+
+			document.getElementById('txMaxSize').innerHTML = (txMaxSize).toLocaleString();
+			document.getElementById('txTotalSize').innerHTML = (txTotalSize).toLocaleString();
+			document.getElementById('txAvgSize').innerHTML = (txTotalSize/numTx).toLocaleString();
+
+			document.getElementById('txMaxFeeDens').innerHTML = "";
+			document.getElementById('txTotalFeeDens').innerHTML = "";
+			document.getElementById('txAvgFeeDens').innerHTML = (txTotalFee/txTotalSize).toLocaleString()+'sat/byte / $'+
+					(currUSDBTC * 1024 * txTotalFee/(txTotalSize*100000000)).toLocaleString() + '/kB';
+
+            //update tx rate every 10 transactions
+            if(msg.op=='utx') {
+                if ((numTx - lastRateTx) % 10 == 0) {
+                    txRate = 10 / ((Date.now() - timeOfLastTx) / 1000);
+                    document.getElementById('statTxRate').innerHTML = txRate.toLocaleString();
+                    timeOfLastTx = Date.now();
+                    lastRateTx = numTx;
+                }
+            }
+		}
+	}
+
+</script>
+</html>

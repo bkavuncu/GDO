@@ -1,0 +1,375 @@
+﻿<!--
+/**
+ * Created by dm214 MSc Computing Science Sep2015.
+ * Realtime graph and geoip visualization of transactions
+ * as they are first relayed by full-nodes into the P2P network
+-->
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        #graphcontainer {
+            display: inline-block;
+            width: 1400px;
+            height: 1400px;
+            margin: 0px;
+        }
+        #globecontainer {
+            display: inline-block;
+            width: 1400px;
+            height: 1400px;
+            margin: 0px;
+        }
+        #textarea {
+            color: #ffffff;
+            font-family: verdana, sans-serif;
+        }
+        #textarea2{
+            color: #ffffff;
+            font-family: verdana, sans-serif;
+        }
+        #textarea3{
+            display: inline-block;
+            vertical-align: top;
+            width: 800px;
+            height: 800px;
+            margin: 0px;
+            color: #ffffff;
+            font-family: verdana, sans-serif;
+        }
+        #peerID {
+            color: #ffffff;
+            font-family: verdana, sans-serif;
+        }
+    </style>
+</head>
+<body bgcolor="#000000" oncontextmenu="return false;">
+<div id="textarea2">
+    <H1>DSI <img src="./img/BC_Logotype_Reverse.png" height="40"> Observatory</H1>
+    <p>Dan McGinn dm214@ic.ac.uk MSc Computing Science</p>
+    <!--<div id="peerID" style="display:inline-block;">Not connected to controller</div><br>-->
+    Time since observation start: <div id="obsTimer" style="display:inline-block;"></div><br>
+    Time since last block<div id="lastBlk" style="display:inline-block;"></div>:
+    <div id="blkTimer" style="display:inline-block;">pending</div><br>
+    <div id="blkAlert" >&nbsp</div>
+</div>
+<div id="graphcontainer"></div>
+<div id="globecontainer"></div>
+<div id="textarea3">There is no such thing as a bitcoin!<br><br>
+    Bitcoin is a system composed primarily of three components:
+    a protocol agreed upon by consensus, a peer-to-peer network, and a publicly appendable database
+    known as the blockchain.<br><br>
+    The manifestation of Bitcoin is the ever growing 50GB blockchain, recording changes in control of amounts of bitcoin.<br><br>
+    A transaction is the datastructure that actions this transfer of control.<br><br>
+    Transactions are broadcast to all participating computers in the network using a gossip protocol in order that they
+    can be verified by a majority.  Transactions are permanently recorded into the blockchain approximately every 10 minutes through
+    the process of mining.<br><br>
+    This visualization shows transactions occurring in realtime,
+    both how transactions are associated to each other and where they are first broadcast into the network,
+    before they are verified and recorded into the blockchain through the process of mining.<br><br>
+    A transaction consists of <span style="color:#FF9933">inputs</span> and <span style="color:#003399">outputs</span>.  An
+    input is simply a pointer to a previously unspent output, hence chains of spends develop.  Transactions can also be associated
+    by the same bitcoin address, in this case by a <span style="color:#555555">grey</span> edge.<br><br>
+    To watch <span style="color:#00FF00">your transaction</span> mined into a block live, point your Bitcoin wallet here:<br><br>
+    <img src="./img/dsi_address.png" height="150" width="150" style="display:block;margin-left:auto;margin-right:auto;"><br><br>
+    (Note: Page resets when graph vertex count reaches 2,000)<br><br>
+    For more info go to www.ic.ac.uk/bitcoin
+</div>
+<div id="textarea">
+    <table>
+        <tr>
+            <td width="200">TxRate: <div id="statTxRate" style="display:inline-block;"></div>tps</td>
+            <td width="300"><B>Value</B></td>
+            <td width="300"><B>Fees</B></td>
+            <td width="300"><B>Size</B></td>
+            <td width="300"><B>Fee Density</B></td>
+        </tr>
+        <tr>
+            <td>#Tx: <div id="statNumTx" style="display:inline-block;"></div></td>
+            <td>Max: <div id="txMaxVal" style="display:inline-block;"></div></td>
+            <td>Max: <div id="txMaxFee" style="display:inline-block;"></div></td>
+            <td>Max: <div id="txMaxSize" style="display:inline-block;"></div>bytes</td>
+            <td><div id="txMaxFeeDens" style="display:inline-block;"></div></td>
+        </tr>
+        <tr>
+            <td>#Inputs: <div id="statNumIn" style="display:inline-block;"></div></td>
+            <td>Total: <div id="txTotalVal" style="display:inline-block;"></div></td>
+            <td>Total: <div id="txTotalFee" style="display:inline-block;"></div></td>
+            <td>Total: <div id="txTotalSize" style="display:inline-block;"></div>bytes</td>
+            <td><div id="txTotalFeeDens" style="display:inline-block;"></div></td>
+        </tr>
+        <tr>
+            <td>#Outputs: <div id="statNumOut" style="display:inline-block;"></div></td>
+            <td>Avg: <div id="txAvgVal" style="display:inline-block;"></div></td>
+            <td>Avg: <div id="txAvgFee" style="display:inline-block;"></div></td>
+            <td>Avg: <div id="txAvgSize" style="display:inline-block;"></div>bytes</td>
+            <td>Avg: <div id="txAvgFeeDens" style="display:inline-block;"></div></td>
+        </tr>
+        <tr>
+            <td>#Vertices: <div id="statNumNodes" style="display:inline-block;"></div></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr><td colspan="2">Peer Snapshot at: <div id="time" style="display:inline-block;"></div>
+            at block: <div id="blkHeight" style="display:inline-block;"></div></td></tr>
+        <tr><td colspan="2">#Backbone Peers Online: <div id="numNodes" style="display:inline-block;"></div></td></tr>
+        <tr><td>#IPv4 Txs: <div id="numTxs" style="display:inline-block;"></div></td></tr>
+    </table>
+</div>
+</body>
+
+<script src="../../Scripts/Bitcoin/sigma.js/sigma.min.js"></script>
+<script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.layout.forceAtlas2.min.js"></script>
+<script src="../../Scripts/Bitcoin/sigma.js/plugins/sigma.plugins.filter.min.js"></script>
+
+<script src="../../Scripts/Bitcoin/bitGraph.js"></script>
+
+<script src="../../Scripts/Bitcoin/globe/third-party/three.min.js"></script>
+<script src="../../Scripts/Bitcoin/globe/globe.js"></script>
+<script src="../../Scripts/Bitcoin/peerjs/peer.min.js"></script>
+<script>
+
+    //globestuff
+    var container = document.getElementById('globecontainer');
+    var globe = new DAT.Globe(container);
+    var allIPv4Nodes={};
+    var numTxs=0;
+    //var renderer= s.renderers[0];
+
+    /**
+     * bitcoin api
+     */
+    var ws="wss://ws.blockchain.info/inv";
+
+    /**
+     * initialise page
+     */
+    window.addEventListener("load", init, false);
+
+    /**
+     * functions
+     */
+
+    function initNodes(){
+
+        var xmlhttp = new XMLHttpRequest();
+        var url = "https://getaddr.bitnodes.io/api/v1/snapshots/latest/"
+
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+                var resObj = JSON.parse(xmlhttp.responseText);
+                //console.log(resObj);
+                var allNodeLocns = getNodeLocns(resObj.nodes);
+                document.getElementById('numNodes').innerHTML = resObj.total_nodes;
+                document.getElementById('blkHeight').innerHTML = resObj.latest_height;
+                var timestamp = new Date(resObj.timestamp*1000);
+
+                //blkTimer = setInterval(timeBlock, 1000, [resObj.timestamp*1000]);;
+
+                document.getElementById('time').innerHTML = timestamp.getHours()+':'+ timestamp.getMinutes()+':'+
+                        timestamp.getSeconds();
+                globe.addData(allNodeLocns, {format: 'magnitude', name:'allNodeLocns', animated: false});
+                globe.createPoints();
+                globe.animate();
+            }
+        }
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+        console.log('Retrieved current backbone nodes')
+    }
+
+    function getNodeLocns(nodeArr){
+
+        var nodeLocns=[];
+        for (var k in nodeArr){
+            var node = nodeArr[k];
+
+            // create global object for ipv4 addresses only
+            if (k.substring(0,1)!='[') {
+                var addr = k.substring(0, k.indexOf(':'));
+                var newnode={
+                    "proto_ver":node[0], //70002
+                    "user_agent":node[1], //Satoshi:11.0.0
+                    "cnxn_since":node[2], //unix epoch time
+                    //services
+                    "block_height":node[4],
+                    "hostname":node[5],
+                    "city":node[6],
+                    "country":node[7],
+                    "lat":node[8],
+                    "long":node[9],
+                    "timezone":node[10],
+                    "asn":node[11],
+                    "org":node[12],
+                    "mag":0
+                }
+                allIPv4Nodes[addr]=newnode;
+            }
+
+            //create array to display all nodes
+            nodeLocns.push(node[8]);
+            nodeLocns.push(node[9]);
+            nodeLocns.push(0.00);
+        }
+        //console.log(allIPv4Nodes);
+        return nodeLocns;
+    }
+
+    function startTimers(){
+        var obsStart = Date.now();
+        var obsTimer = setInterval(timeObs, 1000, [obsStart]);
+        //setInterval(function(){processMsg({op:'block',x:{height:Math.random()}})},10000);
+    }
+
+    function timeObs(time){
+        var diff = Date.now()-time;
+        document.getElementById('obsTimer').innerHTML = Math.floor((diff%3600000)/60000)+'m'+
+                Math.floor((diff%60000)/1000)+'s';
+    }
+
+    function timeBlock(time){
+        var diff = Date.now()-time;
+        document.getElementById('blkTimer').innerHTML = Math.floor((diff%3600000)/60000)+'m'+
+                Math.floor((diff%60000)/1000)+'s';
+    }
+
+    function getFX(){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var resObj = JSON.parse(xmlhttp.responseText);
+                currUSDBTC = resObj.USD.last;
+                console.log('USD FX Rate='+currUSDBTC);
+            }
+            else{
+                //console.log('Error response from biteasy block api.  Terminating. https://api.biteasy.com/blockchain/v1/blocks?height=' + queryparam + '&type=BEST_CHAIN');
+                //return;
+            }
+        }
+        xmlhttp.open("GET", 'https://api.bitcoinaverage.com/ticker/global/all', true);
+        xmlhttp.send();
+    }
+
+    function init() {
+
+        startTimers();
+        getFX();
+        initNodes();
+        /**
+         * Handle events
+         */
+        bindEvents();
+
+        /**
+         * Get Transactions
+         */
+        runWebSocket();
+    }
+
+
+
+    /**
+     * websocket stuff
+     */
+    function runWebSocket() {
+        bcWebsocket = new WebSocket(ws);
+        bcWebsocket.onopen = function(openEvent) { onOpen(openEvent) };
+        bcWebsocket.onmessage = function(msgEvent) { onMessage(msgEvent) };
+    }
+
+    function onOpen(openEvent) {
+        console.log("connecting");
+        //subscribe to realtime transaction notifications
+        transmit({"op":"unconfirmed_sub"});
+        console.log("subscribed to unconfirmed transactions");
+        //subscribe to realtime block notifications
+        transmit({"op":"blocks_sub"});
+        console.log("subscribed to new block notifications");
+    }
+
+    function transmit(payload) {
+        bcWebsocket.send(JSON.stringify(payload));
+    }
+
+    function onMessage(msgEvent) {
+
+        var msg = JSON.parse(msgEvent.data);
+
+        if (paused) {
+            msgBuf.push(msg);
+            return;
+        }
+
+        else {
+
+            //update tx rate every 10 transactions
+            if(msg.op=='utx') {
+                if ((numTx - lastRateTx) % 10 == 0) {
+                    txRate = 10 / ((Date.now() - timeOfLastTx) / 1000);
+                    document.getElementById('statTxRate').innerHTML = txRate.toLocaleString();
+                    timeOfLastTx = Date.now();
+                    lastRateTx = numTx;
+                }
+
+                var pointData=[]
+                var tx_addr = msg.x.relayed_by;
+                console.log('new tx relayed by: ' + tx_addr);
+                if (tx_addr != undefined && tx_addr != '127.0.0.1'  &&
+                        tx_addr !='0.0.0.0' && tx_addr.substring(0,1)!='['){
+
+                    console.log('--in '+allIPv4Nodes[msg.x.relayed_by].city+','+allIPv4Nodes[msg.x.relayed_by].country);
+
+                    pointData.push(allIPv4Nodes[msg.x.relayed_by].lat)
+                    pointData.push(allIPv4Nodes[msg.x.relayed_by].long)
+                    pointData.push((++allIPv4Nodes[msg.x.relayed_by].mag) / 10);
+
+                    globe.addData(pointData, {format: 'magnitude', name:'allNodeLocns', animated: false});
+                    globe.createPoints();
+                    //globe.animate();
+
+                    document.getElementById('numTxs').innerHTML = ++numTxs;
+                }
+            }
+
+            processMsg(msg);
+            applyFilters();
+            renderGraph();
+
+            document.getElementById('txMaxVal').innerHTML = (txMaxVal/100000000).toLocaleString()+'B / $'+
+                    (currUSDBTC * txMaxVal/100000000).toLocaleString();
+            document.getElementById('txTotalVal').innerHTML = (txTotalVal/100000000).toLocaleString()+'B / $'+
+                    (currUSDBTC * txTotalVal/100000000).toLocaleString();
+            document.getElementById('txAvgVal').innerHTML = ((txTotalVal/numTx)*1000/100000000).toLocaleString()+'mB / $'+
+                    ((currUSDBTC * txTotalVal/numTx)/100000000).toLocaleString();
+
+            document.getElementById('txMaxFee').innerHTML = (txMaxFee*1000/100000000).toLocaleString()+'mB / $'+
+                    (currUSDBTC * txMaxFee/100000000).toLocaleString();
+            document.getElementById('txTotalFee').innerHTML = (txTotalFee/100000000).toLocaleString()+'B / $'+
+                    (currUSDBTC * txTotalFee/100000000).toLocaleString();
+            document.getElementById('txAvgFee').innerHTML = ((txTotalFee/numTx)*1000/100000000).toLocaleString()+'mB / $'+
+                    ((currUSDBTC * txTotalFee/numTx)/100000000).toLocaleString();
+
+            document.getElementById('txMaxSize').innerHTML = (txMaxSize).toLocaleString();
+            document.getElementById('txTotalSize').innerHTML = (txTotalSize).toLocaleString();
+            document.getElementById('txAvgSize').innerHTML = (txTotalSize/numTx).toLocaleString();
+
+            document.getElementById('txMaxFeeDens').innerHTML = "";
+            document.getElementById('txTotalFeeDens').innerHTML = "";
+            document.getElementById('txAvgFeeDens').innerHTML = (txTotalFee/txTotalSize).toLocaleString()+'sat/byte / $'+
+                    (currUSDBTC * 1024 * txTotalFee/(txTotalSize*100000000)).toLocaleString() + '/kB';
+
+            //refresh page when number of graph vertices >2000
+            if (numNodes>2000)
+                window.open('/corridor.html', '_self');
+        }
+    }
+
+
+
+</script>
+</html>
