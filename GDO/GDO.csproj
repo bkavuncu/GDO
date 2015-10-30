@@ -967,6 +967,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />
+    <Folder Include="Img\" />
+    <Folder Include="Wiki\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -41,21 +41,15 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void SetBingLayerVisible(int instanceId)
+        public void SetLayerVisible(int instanceId, int id)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).BingLayer)
-                    {
-                        ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).BingLayer = false;
-                    }
-                    else
-                    {
-                        ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]).BingLayer = true;
-                    }
-                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).BingLayer);
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetLayerVisible(id);
+                    Clients.Caller.setLayerVisible(instanceId, id);
+                    Clients.Group("" + instanceId).setLayerVisible(instanceId, id);
                 }
                 catch (Exception e)
                 {
@@ -64,51 +58,17 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void SetStamenLayerVisible(int instanceId)
+        public void RequestLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).StamenLayer)
+                    int id = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetLayerVisible();
+                    if (id >= 0)
                     {
-                        ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).StamenLayer = false;
+                        Clients.Caller.setLayerVisible(instanceId, id);
                     }
-                    else
-                    {
-                        ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).StamenLayer = true;
-                    }
-                    Clients.Group("" + instanceId).setStamenLayerVisible(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).StamenLayer);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestBingLayerVisible(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setBingLayerVisible(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).BingLayer);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestStamenLayerVisible(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setStamenLayerVisible(instanceId, ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).StamenLayer);
                 }
                 catch (Exception e)
                 {
@@ -148,10 +108,6 @@ namespace GDO.Apps.Maps
         public void BroadcastMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
         {
             Clients.Group("" + instanceId).receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
-        }
-        public void BroadcastMapStyle(int instanceId, string style)
-        {
-            Clients.Group("" + instanceId).receiveMapstyle(instanceId, style);
         }
 
         public void UpdateResolution(int instanceId)

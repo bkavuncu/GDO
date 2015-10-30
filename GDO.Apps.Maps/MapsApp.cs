@@ -14,9 +14,8 @@ namespace GDO.Apps.Maps
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public MapPosition Position { get; set; }
-        
-        public bool BingLayer { get; set; }
-        public bool StamenLayer { get; set; }
+        public int MaxLayers { get; set; } = 35;
+        public bool[] LayerVisibility { get; set; }
 
         public bool IsInitialized = false;
 
@@ -38,9 +37,29 @@ namespace GDO.Apps.Maps
             this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
             this.Position.Width = (int)configuration.Json.SelectToken("width");
             this.Position.Height = (int)configuration.Json.SelectToken("height");
-            this.BingLayer = true;
-            this.StamenLayer = false;
+            SetLayerVisible(1);
+        }
 
+        public void SetLayerVisible(int id)
+        {
+            LayerVisibility = new bool[MaxLayers];
+            for (int i = 0; i < MaxLayers; i++)
+            {
+                LayerVisibility[i] = false;
+            }
+            LayerVisibility[id] = true;
+        }
+
+        public int GetLayerVisible()
+        {
+            for (int i = 0; i < MaxLayers; i++)
+            {
+                if (LayerVisibility[i])
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public void SetMapPosition(string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)

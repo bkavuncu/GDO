@@ -8,6 +8,7 @@ var terrainProvider;
 
 $(function () {
     gdo.consoleOut('.Maps', 1, 'Loaded Maps JS');
+    gdo.net.app["Maps"].numLayers = 13;
     $.connection.mapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["Maps"].updateCenter(instanceId);
@@ -16,20 +17,17 @@ $(function () {
         }
     }
 
-
-    $.connection.mapsAppHub.client.setBingLayerVisible = function (instanceId, visible) {
-        gdo.consoleOut('.Maps', 1, 'Seting Bing Maps Layer Visibility: ' + visible);
-        gdo.net.instance[instanceId].bingLayer.setVisible(visible);
+    $.connection.mapsAppHub.client.setLayerVisible = function (instanceId, id) {
+        gdo.consoleOut('.Maps', 1, 'Setting Layer ' + id + ' Visible');
+        for (var i = 0; i < gdo.net.app["Maps"].numLayers; i++) {
+            gdo.net.instance[instanceId].layers[i].setVisible(false);
+            $("iframe").contents().find("#maps_layer_" + i).addClass("btn-outline");
+        }
+        gdo.net.instance[instanceId].layers[id].setVisible(true);
+        $("iframe").contents().find("#maps_layer_" + id).removeClass("btn-outline");
     }
-
-    $.connection.mapsAppHub.client.setStamenLayerVisible = function (instanceId, visible) {
-        gdo.consoleOut('.Maps', 1, 'Seting Stamen Maps Layer Visibility: ' + visible);
-        gdo.net.instance[instanceId].stamenLayer.setVisible(visible);
-    }
-
 
     $.connection.mapsAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
-        gdo.consoleOut('.Maps', 1, 'Center: ' + center + ' and TopLeft: ' + topLeft + ' BottomRight: ' + bottomRight + ' Width: ' + width + ' Height: ' + height + ' Zoom' + zoom + ' Resolution ' + resolution);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             var mapCenter = [0, 0];
             var mapResolution = parseFloat(resolution);
@@ -45,10 +43,6 @@ $(function () {
                 gdo.net.instance[instanceId].isInitialized = true;
             }
             gdo.net.app["Maps"].update(instanceId, mapCenter, mapResolution, zoom);
-            //gdo.net.instance[instanceId].map.getView().setZoom(zoom);
-            //gdo.net.instance[instanceId].map.getView().setCenter(mapCenter);
-            //gdo.net.instance[instanceId].map.getView().setResolution(mapResolution);
-            //gdo.net.instance[instanceId].map.render();
         }
     }
     $.connection.mapsAppHub.client.receiveInitialMapPosition = function (instanceId, center, resolution, zoom) {
@@ -56,9 +50,7 @@ $(function () {
             gdo.net.instance[instanceId].isInitialized = true;
             zoom = parseInt(zoom);
             gdo.net.app["Maps"].initMap(instanceId, center, resolution, zoom);
-            gdo.consoleOut('.SHANGAIMETRO', 1, 'c Zoom ' + zoom);
             gdo.net.instance[instanceId].map.getView().setZoom(zoom);
-            gdo.consoleOut('.SHANGAIMETRO', 1, 'f Zoom ' + gdo.net.instance[instanceId].map.getView().getZoom());
             gdo.net.instance[instanceId].map.updateSize();
             gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
                 gdo.net.app["Maps"].changeEvent(instanceId);
@@ -100,47 +92,18 @@ $(function () {
             setTimeout(function() { gdo.net.app["Maps"].server.updateResolution(instanceId); },700);
         }
     }
-
-
 });
 
 gdo.net.app["Maps"].initMap = function (instanceId, center, resolution, zoom) {
-    view = new ol.View({
+    gdo.net.instance[instanceId].view = new ol.View({
         center: [parseFloat(center[0]), parseFloat(center[1])],
         resolution: parseFloat(resolution),
         zoom: parseInt(zoom)
     });
-    gdo.net.instance[instanceId].view = view;
-    //$("iframe")[0].contentWindow.view = view;
-    //$("iframe")[0].contentWindow.styles = styles;
-    layers = [];
-    gdo.net.instance[instanceId].layers = layers;
-    //$("iframe")[0].contentWindow.layers = layers;
-
-    var i, ii;
-    /*for (i = 0, ii = gdo.net.instance[instanceId].styles.length; i < ii; ++i) {
-        gdo.net.instance[instanceId].layers.push(new ol.layer.Tile({
-            visible: false,
-            preload: Infinity,
-            source: new ol.source.BingMaps({
-                key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
-                imagerySet: gdo.net.instance[instanceId].styles[i],
-                maxZoom: 19
-            })
-        }));
-    }*/
-
-    map = new ol.Map({
-        controls: new Array(),
-        //renderer: 'webgl',
-        layers: [],
-        target: 'map',
-        view: gdo.net.instance[instanceId].view
-    });
-    gdo.net.instance[instanceId].map = map;
-    gdo.net.instance[instanceId].bingLayer = new ol.layer.Tile({
-        visible: false,
+    gdo.net.instance[instanceId].layers = [];
+    gdo.net.instance[instanceId].layers[0] = new ol.layer.Tile({
         preload: Infinity,
+        visible: false,
         source: new ol.source.BingMaps({
             key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
             imagerySet: 'Aerial',
@@ -148,11 +111,118 @@ gdo.net.app["Maps"].initMap = function (instanceId, center, resolution, zoom) {
         })
     });
 
-    gdo.net.instance[instanceId].stamenLayer = new ol.layer.Tile({
+    gdo.net.instance[instanceId].layers[1] = new ol.layer.Tile({
+        preload: Infinity,
+        visible: false,
+        source: new ol.source.BingMaps({
+            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            imagerySet: 'AerialWithLabels',
+            maxZoom: 19
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[2] = new ol.layer.Tile({
+        preload: Infinity,
+        visible: false,
+        source: new ol.source.BingMaps({
+            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            imagerySet: 'Road',
+            maxZoom: 19
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[3] = new ol.layer.Tile({
+        preload: Infinity,
+        visible: false,
+        source: new ol.source.BingMaps({
+            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            imagerySet: 'collinsBart',
+            maxZoom: 19
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[4] = new ol.layer.Tile({
+        preload: Infinity,
+        visible: false,
+        source: new ol.source.BingMaps({
+            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            imagerySet: 'ordnanceSurvey',
+            maxZoom: 19
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[5] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.MapQuest({ layer: 'osm' })
+    });
+
+    gdo.net.instance[instanceId].layers[6] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.MapQuest({ layer: 'sat' })
+    });
+
+    gdo.net.instance[instanceId].layers[7] = new ol.layer.Tile({
+        visible: false,
         source: new ol.source.Stamen({
             layer: 'toner'
         })
     });
+
+    gdo.net.instance[instanceId].layers[8] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.Stamen({
+            layer: 'terrain'
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[9] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.Stamen({
+            layer: 'watercolor'
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[10] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM()
+    });
+
+    gdo.net.instance[instanceId].layers[11] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
+        })
+    });
+
+    gdo.net.instance[instanceId].layers[12] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].controls = new Array();
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.instance[instanceId].controls = [];
+        gdo.net.instance[instanceId].controls[0] = new ol.control.OverviewMap({collapsed:false,collapsible:false});
+        gdo.net.instance[instanceId].controls[1] = new ol.control.Zoom();
+        gdo.net.instance[instanceId].controls[2] = new ol.control.MousePosition({
+            coordinateFormat: ol.coordinate.createStringXY(7),
+            projection: 'EPSG:4326',
+            //className: 'custom-mouse-position',
+            //target: document.getElementById('control_frame_content').contentWindow.document.getElementById('mouse-position'),
+            undefinedHTML: '&nbsp;'
+        });
+        //gdo.net.instance[instanceId].controls[2] = new ol.control.Rotate();
+    }
+    map = new ol.Map({
+        controls: gdo.net.instance[instanceId].controls,
+        layers: gdo.net.instance[instanceId].layers,
+        target: 'map',
+        view: gdo.net.instance[instanceId].view
+    });
+    gdo.net.instance[instanceId].map = map;
+    gdo.net.app["Maps"].server.requestLayerVisible(instanceId);
 }
 
 gdo.net.app["Maps"].calculateLocalCenter = function (topLeft, bottomRight) {
@@ -187,6 +257,7 @@ gdo.net.app["Maps"].initClient = function (clientId) {
     gdo.net.instance[instanceId].offsetY = gdo.net.instance[instanceId].sectionOffsetY - gdo.net.instance[instanceId].nodeOffsetY;
 
     gdo.net.app["Maps"].server.requestMapPosition(instanceId, false);
+
 }
 
 gdo.net.app["Maps"].initControl = function (instanceId) {
@@ -212,11 +283,11 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
     $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
 
     gdo.net.app["Maps"].server.requestMapPosition(instanceId, true);
-    gdo.consoleOut('.Maps', 1, 'Initializing Image Maps Control at Instance ' + instanceId);
+    gdo.consoleOut('.Maps', 1, 'Initializing Maps Control at Instance ' + instanceId);
 }
 
 gdo.net.app["Maps"].terminateClient = function (instanceId) {
-    gdo.consoleOut('.Maps', 1, 'Terminating Image Maps Client at Node ' + instanceId);
+    gdo.consoleOut('.Maps', 1, 'Terminating Maps Client at Node ' + instanceId);
 }
 
 gdo.net.app["Maps"].terminateControl = function (instanceId) {
