@@ -12,7 +12,7 @@ using GDO.Core;
 using GDO.Utility;
 using Newtonsoft.Json;
 
-namespace GDO.Apps.Youtube
+namespace GDO.Apps.Hercules
 {
     enum Mode
     {
