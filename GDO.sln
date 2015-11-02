@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.TimeV", "GDO.Apps.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.ShanghaiMetro", "GDO.Apps.ShanghaiMetro\GDO.Apps.ShanghaiMetro.csproj", "{2159FF04-A104-4830-BAB4-86F1F0202967}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Hercules", "GDO.Apps.Youtube2\GDO.Apps.Hercules.csproj", "{4B5B7588-261A-4A7A-8E1A-80A9EA1B77A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Hercules", "GDO.Apps.Hercules\GDO.Apps.Hercules.csproj", "{4B5B7588-261A-4A7A-8E1A-80A9EA1B77A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
