@@ -68,6 +68,7 @@ gdo.management.updateInstancesMenu = function () {
             }
         }
     }
+    $("#side-menu").metisMenu();
 }
 
 gdo.management.updateSmartCityMenu = function () {
