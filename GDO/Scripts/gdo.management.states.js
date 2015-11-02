@@ -14,8 +14,8 @@
         .empty().css("border", "1px solid #333");
     $("#state_table_state_header_table").append("<tr id='state_table_state_header_table_head'></tr>");
     $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_input'><input type='text' id='state_table_input'  value='Enter State Name' style='width: 95%;height: 100%;'/></input></td>");
-    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_save'><button type='button' id='state_table_save' class='btn btn-primary '>Save</button></td>");
-    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger'>Clear Cave</button></td>");
+    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_save'><button type='button' id='state_table_save' class='btn btn-primary '><i class='fa fa-save fa-fw'></i>&nbsp;Save</button></td>");
+    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger'><i class='fa fa-th fa-fw'></i>&nbsp;Clear Cave</button></td>");
     $("#state_table_input")
         .css("width", "100%")
         .css("height", "40px")
@@ -76,8 +76,8 @@ gdo.management.drawStateTable = function () {
             $("#state_table_state_list_table").append("<tr id='state_table_state_list_table_row_" + i + " row='" + i + "'></tr>");
             $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_0' col='0' row='" + i + "'>" + gdo.net.state[i].Id + "</td>");
             $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_1' col='1' row='" + i + "'>" + gdo.net.state[i].Name + "</td>");
-            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_2' col='2' row='" + i + "'><button type='button' class='btn btn-success' style='width:100%;'>Restore</button></td>");
-            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_3' col='3' row='" + i + "'><button type='button' class='btn btn-danger' style='width:100%;'>Remove</button></td>");
+            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_2' col='2' row='" + i + "'><button type='button' class='btn btn-success' style='width:100%;'><i class='fa fa-repeat fa-fw'></i>&nbsp;Restore</button></td>");
+            $("#state_table_state_list_table tr:last").append("<td id='state_table_state_list_table_row_" + i + "_col_3' col='3' row='" + i + "'><button type='button' class='btn btn-danger' style='width:100%;'><i class='fa fa-times fa-fw'></i>&nbsp;Remove</button></td>");
         }
         $("#state_table_state_list_table_row_" + i + "_col_0")
             .css("width", "10%")

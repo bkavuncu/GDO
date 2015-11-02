@@ -232,13 +232,13 @@
             var gdo = parent.gdo;
             if (gdo.net.app["Images"].control_status == 0) {
                 $("#thumbnail_panel").addClass("panel-default").removeClass("panel-success");
-                $("#active_control").addClass("btn-success").removeClass("btn-danger").empty().append("Activate");
+                $("#active_control").addClass("btn-success").removeClass("btn-danger").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate");
                 $("#rotate_control").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
                 $("#fit_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
                 $("#fill_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
             } else if (gdo.net.app["Images"].control_status == 1) {
                 $("#thumbnail_panel").addClass("panel-success").removeClass("panel-default");
-                $("#active_control").removeClass("btn-success").addClass("btn-danger").empty().append("Deactivate");
+                $("#active_control").removeClass("btn-success").addClass("btn-danger").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Deactivate");
                 $("#rotate_control").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
                 $("#fit_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
                 $("#fill_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
@@ -381,7 +381,7 @@
         }
 
     </script>
-    <div class="wrapper">
+    <div class="wrapper" style="width:97%">
         @{
             var path = "";
             var filename = "";
@@ -402,11 +402,11 @@
         <br />
         <div>
             <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
-                <div class="row" style="width:95%">
+                <div class="row">
                     <div class="col-lg-4">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h6>Upload Image</h6>
+                                <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Image</h6>
                             </div>
                             <div class="panel-body">
                                 <fieldset>
@@ -414,11 +414,11 @@
                                         <tr>
                                             <td>
                                                 <div>
-                                                    <span class="btn btn-primary btn-file btn-block" style="border-color:transparent;">Choose File <input type="file" name="Image" class="upload" id="select_image"></span>
+                                                    <span class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-picture-o fa-fw'></i>&nbsp;Choose File <input type="file" name="Image" class="upload" id="select_image"></span>
                                                 </div>
                                             </td>
                                             <td>
-                                                <input id="submit_image" class="btn btn-primary btn-block" style="border-color:transparent;" type="submit" value="Submit" />
+                                                <input id="submit_image" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="Submit"></input>
                                             </td>
                                         </tr>
                                     </table>
@@ -429,20 +429,20 @@
                     <div class="col-lg-4">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h6>Find Processed Image</h6>
+                                <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Find Processed Image</h6>
                             </div>
                             <div class="panel-body">
                                 <fieldset>
                                     <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
                                         <tr>
                                             <td>
-                                                <div style="background-color"><h6>Digits:</h6></div>
+                                                <div style="background-color:transparent"><h6>Digits:</h6></div>
                                             </td>
                                             <td>
                                                 <div class="input_field_div"><input type="text" class="input_field" id="image_digit"></div>
                                             </td>
                                             <td>
-                                                <button type='button' id="image_digit_button" class='btn btn-primary btn-block'>Submit</button>
+                                                <button type='button' id="image_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
                                             </td>
                                         </tr>
                                     </table>
@@ -453,7 +453,7 @@
                     <div class="col-lg-4" style="height:100%">
                         <div class="panel panel-info" style="height:100%">
                             <div class="panel-heading">
-                                <h6>Message</h6>
+                                <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>
                             </div>
                             <div class="panel-body">
                                 <fieldset>
@@ -463,20 +463,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="width:95%">
+                <div class="row">
                     <div class="col-lg-12">
                         <div class="panel panel-default" id="thumbnail_panel">
                             <div class="panel-heading">
                                 <div class="row">
-                                    <div class="col-lg-11">
-                                        <h4>Thumbnail</h4>
+                                    <div class="col-lg-10">
+                                        <h5><i class='fa  fa-picture-o fa-fw'></i>&nbsp;Thumbnail</h5>
                                     </div>
-                                    <div class="col-lg-1">
+                                    <div class="col-lg-2">
                                         <fieldset>
-                                            <table style="border-collapse: separate; border-spacing: 3px;border:none;padding:0px;background-color:transparent;">
+                                            <table style="border-collapse: separate; border-spacing: 3px;border:none;padding:0px;background-color:transparent;"  align="right">
                                                 <tr>
                                                     <td>
-                                                        <button type='button' id="active_control" style="border-color:transparent;" class='btn btn-sucess btn-block'>Activate Control</button>
+                                                        <button type='button' id="active_control" style="border-color:transparent;" class='btn btn-sucess btn-block'><i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Control</button>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -493,13 +493,13 @@
                                             <table style="border-collapse: separate; border-spacing: 3px;border:none;padding:0px;width:100%;background-color:transparent;">
                                                 <tr>
                                                     <td>
-                                                        <button type='button' id="fit_mode" style="border-color:transparent;" class='btn btn-default disabled btn-block'>Fit</button>
+                                                        <button type='button' id="fit_mode" style="border-color:transparent;" class='btn btn-default disabled btn-block'><i class='fa  fa-expand fa-fw'></i>&nbsp;Fit</button>
                                                     </td>
                                                     <td>
-                                                        <button type='button' id="fill_mode" style="border-color:transparent;" class='btn btn-default disabled btn-block'>Fill</button>
+                                                        <button type='button' id="fill_mode" style="border-color:transparent;" class='btn btn-default disabled btn-block'><i class='fa  fa-arrows fa-fw'></i>&nbsp;Fill</button>
                                                     </td>
                                                     <td>
-                                                        <button type='button' id="rotate_control" style="border-color:transparent;" class='btn btn-default disabled btn-block'>Rotate</button>
+                                                        <button type='button' id="rotate_control" style="border-color:transparent;" class='btn btn-default disabled btn-block'><i class='fa  fa-rotate-right fa-fw'></i>&nbsp;Rotate</button>
                                                     </td>
                                                 </tr>
                                             </table>

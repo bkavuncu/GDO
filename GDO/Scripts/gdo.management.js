@@ -25,14 +25,14 @@ gdo.management.updateMaintenanceButton = function () {
             .removeClass("btn-primary")
             .removeClass("btn-danger")
             .addClass("btn-success")
-            .append("Maintenance ON");
+            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance ON");
     } else {
         $("#maintenanceButton")
             .empty()
             .removeClass("btn-primary")
             .removeClass("btn-sucess")
             .addClass("btn-danger")
-            .append("Maintenance OFF");
+            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance OFF");
     }
     $("#maintenanceButton")
         .unbind()

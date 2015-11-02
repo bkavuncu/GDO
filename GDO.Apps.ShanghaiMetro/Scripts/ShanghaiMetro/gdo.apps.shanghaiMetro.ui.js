@@ -72,7 +72,7 @@ gdo.net.app["ShanghaiMetro"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_0_col_5")
         .empty()
-        .append("<div><button type='button' id='animate_button' class='btn btn-primary btn-block'>Animate</button></div>")
+        .append("<div><button type='button' id='animate_button' class='btn btn-primary btn-block'><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Animate</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")

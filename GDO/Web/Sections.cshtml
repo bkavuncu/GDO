@@ -117,7 +117,7 @@
                 gdo.updateSelf();
             }
     </script>
-    <div id="wrapper">
+    <div id="wrapper" >
         <div style="position: absolute; top: 7px; right:7px; z-index:1000"><button type="button"  id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></div>
         <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
@@ -160,9 +160,6 @@
                             <a href="~/Web/Console.cshtml"><i class="fa fa-terminal fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Console</font></a>
                         </li>
                         <li>
-                            <a href="~/Web/Connections.cshtml"><i class="fa fa-expand fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;App Connections</font></a>
-                        </li>
-                        <li>
                             <a href="~/Web/Scenarios.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
                         </li>
                         <li>
@@ -189,7 +186,7 @@
             <div class="col-lg-6" style="padding:7px;">
                 <div id="app_table_app_table_panel" class="panel panel-default" style="height:40vh;">
                     <div class="panel-heading">
-                        <h6>Select App</h6>
+                        <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
                     </div>
                     <div class="panel-body">
                         <table id="app_table_app_table" unselectable="on" class="unselectable" style="background:#222;width: 98.5%;vertical-align:top"></table>
@@ -199,7 +196,7 @@
             <div class="col-lg-6" style="padding:7px;">
                 <div id="app_table_configuration_panel" class="panel panel-default" style="height:40vh;">
                     <div class="panel-heading">
-                        <h6>Select Configuration</h6>
+                        <h6><i class='fa  fa-gears fa-fw'></i>&nbsp;Select Configuration</h6>
                     </div>
                     <div class="panel-body">
                         <table id="app_table_configuration_table" unselectable="on" class="unselectable" style="background:#222;width: 98.5%;vertical-align:top"></table>

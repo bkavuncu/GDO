@@ -30,7 +30,7 @@
         .css("height", "40px")
         .css("background", "#444")
         .empty()
-        .append("<button type='button' id='console_submit' class='btn btn-primary btn-block'>Execute</button>");
+        .append("<button type='button' id='console_submit' class='btn btn-primary btn-block'><i class='fa fa-check-circle fa-fw'></i>&nbsp;Execute</button>");
     $("#console_submit")
         .css("width", "100%")
         .attr("onfocus", "this.value=''")

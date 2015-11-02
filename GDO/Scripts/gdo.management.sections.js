@@ -179,7 +179,7 @@ gdo.management.drawButtonTable = function () {
 
     $("#create_section_button_div")
         .empty()
-        .append("<button type='button' id='create_section_button' class='btn btn-default disabled btn-lg btn-block'>Create Section</button>")
+        .append("<button type='button' id='create_section_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-plus-circle fa-fw'></i>&nbsp;Create Section</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
@@ -270,7 +270,7 @@ gdo.management.drawButtonTable = function () {
 
     $("#section_coordinate_table_select")
         .empty()
-        .append("<button type='button' id='select_button' class='btn btn-default disabled btn-lg btn-block'>Select</button>")
+        .append("<button type='button' id='select_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-expand fa-fw'></i>&nbsp;Select</button>")
         .css("height", "100%")
         .css("width", "100%")
         .css("color", "#FFF")
@@ -312,7 +312,7 @@ gdo.management.drawButtonTable = function () {
 
     $("#close_section_button_div")
         .empty()
-        .append("<button type='button' id='close_section_button' class='btn btn-default disabled btn-lg btn-block'>Close Section</button>")
+        .append("<button type='button' id='close_section_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Close Section</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
@@ -344,7 +344,7 @@ gdo.management.drawButtonTable = function () {
 
     $("#deploy_app_button_div")
         .empty()
-        .append("<button type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block'>Deploy App</button>")
+        .append("<button type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-cloud-upload fa-fw'></i>&nbsp;Deploy App</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
@@ -391,7 +391,7 @@ gdo.management.drawButtonTable = function () {
     }
     $("#control_app_button_div")
         .empty()
-        .append("<button type='button' id='control_app_button' class='btn btn-default disabled btn-lg btn-block'>Control App</button>")
+        .append("<button type='button' id='control_app_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-keyboard-o fa-fw'></i>&nbsp;Control App</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
@@ -424,7 +424,7 @@ gdo.management.drawButtonTable = function () {
     }
     $("#close_app_button_div")
     .empty()
-    .append("<button type='button' id='close_app_button' class='btn btn-default disabled btn-lg btn-block'>Close App</button>")
+    .append("<button type='button' id='close_app_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Close App</button>")
     .css("height", "100%")
     .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
     .css('padding', 1)

@@ -14,22 +14,22 @@
             if (fileNameDigit == "" || pageCount == 0) {
                 gdo.consoleOut('.Presentation', 1, 'PPT is not ready! [Control]');
                 $("iframe").contents().find("#ppt_thumbnail").attr("src", "");
-                $("iframe").contents().find("#previous_page").prop('disabled', true);
-                $("iframe").contents().find("#next_page").prop('disabled', true);
+                $("iframe").contents().find("#previous_page").prop('disabled', true).addClass("disabled");
+                $("iframe").contents().find("#next_page").prop('disabled', true).addClass("disabled");
                 $("iframe").contents().find("#current_page_number").html(0);
                 $("iframe").contents().find("#page_count").html(0);
             } else {
                 gdo.consoleOut('.Presentation', 1, 'Instance - ' + gdo.controlId + ": Downloading PPT thumbnail, page: " + currentPage);
                 $("iframe").contents().find("#ppt_thumbnail").attr("src", "\\Web\\Presentation\\PPTs\\" + fileNameDigit + "\\thumb_" + currentPage + ".png");
                 if (currentPage == 0) {
-                    $("iframe").contents().find("#previous_page").prop('disabled', true);
+                    $("iframe").contents().find("#previous_page").prop('disabled', true).addClass("disabled");
                 } else {
-                    $("iframe").contents().find("#previous_page").prop('disabled', false);
+                    $("iframe").contents().find("#previous_page").prop('disabled', false).removeClass("disabled");
                 }
                 if (currentPage == (pageCount - 1)) {
-                    $("iframe").contents().find("#next_page").prop('disabled', true);
+                    $("iframe").contents().find("#next_page").prop('disabled', true).addClass("disabled");
                 } else {
-                    $("iframe").contents().find("#next_page").prop('disabled', false);
+                    $("iframe").contents().find("#next_page").prop('disabled', false).removeClass("disabled");
                 }
                 $("iframe").contents().find("#current_page_number").html(currentPage + 1);
                 $("iframe").contents().find("#page_count").html(pageCount);
@@ -70,8 +70,8 @@ gdo.net.app["Presentation"].initControl = function () {
     gdo.consoleOut('.Presentation', 1, 'Initializing Presentation App Control at Node ' + gdo.controlId);
     gdo.controlId = getUrlVar("controlId");
     $("iframe").contents().find("#ppt_thumbnail").attr("src", "");
-    $("iframe").contents().find("#previous_page").prop('disabled', true);
-    $("iframe").contents().find("#next_page").prop('disabled', true);
+    $("iframe").contents().find("#previous_page").prop('disabled', true).addClass("disabled");
+    $("iframe").contents().find("#next_page").prop('disabled', true).addClass("disabled");
     $("iframe").contents().find("#current_page_number").html(0);
     $("iframe").contents().find("#page_count").html(0);
     gdo.net.app["Presentation"].server.requestPptInfo(gdo.controlId);
