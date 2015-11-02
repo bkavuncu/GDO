@@ -9,3 +9,4 @@ gdo.management.loadControlFrame = function (appName, instanceId, configName) {
     $('iframe').attr('src', "/Web/" + appName + "/control.cshtml?controlId=" + instanceId);
     $('iframe').fadeIn();
 }
+
