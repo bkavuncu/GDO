@@ -21,7 +21,8 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
-    <NuGetPackageImportStamp>21f66d43</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -188,7 +189,15 @@
     </None>
     <Content Include="packages.config" />
     <Content Include="Configurations\Hercules\default.json" />
+    <None Include="compilerconfig.json" />
+    <Content Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\build\test.js" />
+    <Content Include="Scripts\build\test.min.js">
+      <DependentUpon>test.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
@@ -198,7 +207,7 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Scripts\Test\test.jsx" />
+    <None Include="Scripts\src\test.jsx" />
     <Content Include="Scripts\react\JSXTransformer-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.min.js" />
@@ -260,6 +269,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\BuildWebCompiler.1.8.273\build\BuildWebCompiler.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BuildWebCompiler.1.8.273\build\BuildWebCompiler.targets'))" />
   </Target>
   <Target Name="BeforeBuild">
   </Target>
@@ -276,4 +286,5 @@
     <Copy SourceFiles="@(GDOAppWeb)" DestinationFiles="@(GDOAppWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(GDOAppBin)" DestinationFiles="@(GDOAppBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
   </Target>
+  <Import Project="..\packages\BuildWebCompiler.1.8.273\build\BuildWebCompiler.targets" Condition="Exists('..\packages\BuildWebCompiler.1.8.273\build\BuildWebCompiler.targets')" />
 </Project>
