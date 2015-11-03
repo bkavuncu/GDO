@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.TimeV", "GDO.Apps.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.ShanghaiMetro", "GDO.Apps.ShanghaiMetro\GDO.Apps.ShanghaiMetro.csproj", "{2159FF04-A104-4830-BAB4-86F1F0202967}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Bitcoin", "GDO.Apps.Bitcoin\GDO.Apps.Bitcoin.csproj", "{157EAF14-7710-448E-8260-6708F0917B7B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Maps", "GDO.Apps.Maps\GDO.Apps.Maps.csproj", "{A7A00D99-5A23-40F7-8ABC-A0B6B215282D}"
 EndProject
 Global
@@ -89,6 +91,10 @@ Global
 		{A7A00D99-5A23-40F7-8ABC-A0B6B215282D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7A00D99-5A23-40F7-8ABC-A0B6B215282D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7A00D99-5A23-40F7-8ABC-A0B6B215282D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{157EAF14-7710-448E-8260-6708F0917B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{157EAF14-7710-448E-8260-6708F0917B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{157EAF14-7710-448E-8260-6708F0917B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{157EAF14-7710-448E-8260-6708F0917B7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
