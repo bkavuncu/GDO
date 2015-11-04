@@ -170,7 +170,6 @@
     <Content Include="Bootstrap\bower_components\bootstrap-social\.gitignore" />
     <Content Include="Bootstrap\bower_components\bootstrap-social\bootstrap-social.css" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\css\bootstrap-theme.css" />
-    <Content Include="Bootstrap\bower_components\bootstrap\dist\css\bootstrap-theme.min.css" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\css\bootstrap.css" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\css\bootstrap.min.css" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\fonts\glyphicons-halflings-regular.svg" />
@@ -617,6 +616,7 @@
     <Content Include="Bootstrap\pages\panels-wells.html" />
     <Content Include="Bootstrap\pages\tables.html" />
     <Content Include="Bootstrap\pages\typography.html" />
+    <Content Include="Img\gdo.png" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
@@ -638,7 +638,6 @@
     <Content Include="Bootstrap\bower_components\bootstrap-social\README.md" />
     <Content Include="Bootstrap\bower_components\bootstrap\.bower.json" />
     <Content Include="Bootstrap\bower_components\bootstrap\bower.json" />
-    <Content Include="Bootstrap\bower_components\bootstrap\dist\css\bootstrap-theme.css.map" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\css\bootstrap.css.map" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Bootstrap\bower_components\bootstrap\dist\fonts\glyphicons-halflings-regular.ttf" />
@@ -983,7 +982,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />
-    <Folder Include="Img\" />
     <Folder Include="Wiki\" />
   </ItemGroup>
   <PropertyGroup>

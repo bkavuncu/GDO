@@ -84,10 +84,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\Maps\Shangai.json" />
+    <Content Include="Configurations\Maps\China.json" />
+    <Content Include="Configurations\Maps\Europe.json" />
+    <Content Include="Configurations\Maps\Istanbul.json" />
+    <Content Include="Configurations\Maps\London.json" />
+    <Content Include="Configurations\Maps\New York.json" />
+    <Content Include="Configurations\Maps\World.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery.csv-0.71.min.js" />
     <Content Include="Scripts\Maps\jquery.csv-0.71.min.js" />
     <Content Include="Scripts\Maps\ol3cesium.js.map" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
