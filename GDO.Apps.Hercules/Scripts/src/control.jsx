@@ -1,4 +1,6 @@
-﻿var tabList = [
+﻿'use strict';
+
+var tabList = [
 { 'id': 1, 'name': 'Section Deployment', 'url': '/sectionDeployment' },
 { 'id': 2, 'name': 'Data Explorer', 'url': '/dataExplorer' },
 { 'id': 3, 'name': 'Data Enricher', 'url': '/dataEnricher' },
@@ -26,7 +28,7 @@ var Tabs = React.createClass({
     },
     render: function () {
         return (
-        <nav>   
+        <nav>
         <ul>
             {this.props.tabList.map(function(tab) {
             return (
@@ -96,7 +98,66 @@ var App = React.createClass({
 );
     }
 });
+
+function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+class GoFullscreen extends React.Component {
+    render() {
+        var containerStyle = {
+            display: "flex",
+            justifyItems: "center"
+        },
+            buttonStyle = {
+                padding: "100px",
+                boxShadow: "0 0 10px gray"
+        };
+
+        return <div style={containerStyle}>
+            <div onClick={this.onClick} style={buttonStyle}>
+                Launch Apollo
+            </div>
+        </div>;
+    }
+    onClick() {
+        var win = window.open(window.location.href + '&fullscreen=true', '_blank');
+        win.focus();
+    }
+}
+
+class Start extends React.Component {
+    constructor(props) {
+        super(props);
+        var params = getQueryParams(window.location.search);
+        console.log('Hello World', params);
+
+        if (params.fullscreen)
+            this.state = { fullscreen: true };
+        else
+            this.state = {};
+    }
+
+    render() {
+        console.log('This State', this.state);
+        if (this.state.fullscreen)
+            return <App />;
+        else
+            return <GoFullscreen />;
+    }
+}
+
 React.render(
-<App />,
+<Start />,
 document.getElementById("react-target")
 );
