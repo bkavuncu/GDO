@@ -15,7 +15,8 @@ namespace DataPillar
             RichDataset rich = RichDatasetFactory.FromPlainDataset(plainTest);
             for (int i = 0; i < rich.AugmentedColumns.Length; ++i)
             {
-                System.Diagnostics.Debug.WriteLine(rich.AugmentedColumns[i].FieldType.ToString());
+
+                System.Diagnostics.Debug.WriteLine(String.Format("#{0} | {1}", i, rich.AugmentedColumns[i].ToString()));
             }
         }
     }

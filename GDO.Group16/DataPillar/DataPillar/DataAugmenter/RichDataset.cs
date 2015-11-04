@@ -22,9 +22,9 @@ namespace DataPillar.DataAugmenter
     {
         public PlainDataset SourceDataset;
         public dynamic[][] TypedColumns;
-        public AugmentedColumn[] AugmentedColumns;   
-  
-        public RichDataset (PlainDataset sourceDataset, dynamic[][] typedColumns, AugmentedColumn[] augmentedColumns)
+        public AugmentedColumn[] AugmentedColumns;
+
+        public RichDataset(PlainDataset sourceDataset, dynamic[][] typedColumns, AugmentedColumn[] augmentedColumns)
         {
             SourceDataset = sourceDataset;
             TypedColumns = typedColumns;
@@ -48,10 +48,11 @@ namespace DataPillar.DataAugmenter
         /// </summary>
         /// <param name="plainDataset"></param>
         /// <returns></returns>
-        public static RichDataset FromPlainDataset (PlainDataset sourceDataset)
+        public static RichDataset FromPlainDataset(PlainDataset sourceDataset)
         {
             string[][] rawData = sourceDataset.Columns;
-            int numCols = sourceDataset.Headers.Length;
+            string[] headers = sourceDataset.Headers;
+            int numCols = headers.Length;
             int numRows = rawData[0].Length;
 
             dynamic[][] typedCols = new dynamic[numCols][];
@@ -59,25 +60,26 @@ namespace DataPillar.DataAugmenter
 
             for (int i = 0; i < numCols; i++)
             {
-                augCols[i] = new AugmentedColumn ();
+                augCols[i] = new AugmentedColumn();
                 typedCols[i] = new dynamic[numRows];
                 for (int j = 0; j < numRows; j++)
                 {
-                    FieldType cellType = GetFieldType (rawData[i][j], out typedCols[i][j]);
+                    FieldType cellType = GetFieldType(rawData[i][j], out typedCols[i][j]);
 
-                    augCols[i].FieldType = UnifyFieldTypes (augCols[i].FieldType, cellType);
+                    augCols[i].FieldType = UnifyFieldTypes(augCols[i].FieldType, cellType);
                 }
+                augCols[i].Name = headers[i];
             }
 
-            ComputeStats (typedCols, augCols);
-            RichDataset richDataset = new RichDataset (sourceDataset, typedCols, augCols);
+            ComputeStats(typedCols, augCols);
+            RichDataset richDataset = new RichDataset(sourceDataset, typedCols, augCols);
             return richDataset;
         }
 
 
 
 
-        private static void ComputeStats (dynamic[][] typedCols, AugmentedColumn[] augCols)
+        private static void ComputeStats(dynamic[][] typedCols, AugmentedColumn[] augCols)
         {
             int numCols = typedCols.Length;
             int numRows = numCols > 0 ? typedCols[0].Length : 0;
@@ -88,17 +90,19 @@ namespace DataPillar.DataAugmenter
                 AugmentedColumn augCol = augCols[i];
 
                 double min = 0, max = 0, sum = 0, mean = 0;
+                bool amIenum = false;
 
                 switch (augCol.FieldType)
                 {
                     case FieldType.Integral:
                         long[] longs = new long[numRows];
-                        typedCol.CopyTo (longs, 0);
-                        Array.Sort (longs);
+                        typedCol.CopyTo(longs, 0);
+                        Array.Sort(longs);
                         min = longs[0];
                         max = longs[numRows - 1];
-                        sum = longs.Sum ();
+                        sum = longs.Sum();
                         mean = sum / numRows;
+                        amIenum = GetEnums(longs);
                         break;
 
                     case FieldType.Floating:
@@ -110,44 +114,82 @@ namespace DataPillar.DataAugmenter
                         Array.Sort(doubles);
                         min = doubles[0];
                         max = doubles[numRows - 1];
-                        sum = doubles.Sum ();
+                        sum = doubles.Sum();
                         mean = sum / numRows;
+                        amIenum = GetEnums(doubles);
                         break;
 
                     case FieldType.DateTime:
                         long[] dates = new long[numRows];
-                        typedCol.CopyTo (dates, 0);
-                        Array.Sort (dates);
+                        typedCol.CopyTo(dates, 0);
+                        Array.Sort(dates);
                         min = dates[0];
                         max = dates[numRows - 1];
-                        sum = dates.Sum ();
+                        sum = dates.Sum();
                         mean = sum / numRows;
+                        amIenum = GetEnums(dates);
                         break;
 
                     case FieldType.GPSCoords:
                         GeoCoordinate[] coords = new GeoCoordinate[numRows];
-                        typedCol.CopyTo (coords, 0);
-                        //Array.Sort (coords);
+                        typedCol.CopyTo(coords, 0);
+                        Array.Sort (coords);
+                        amIenum = GetEnums(coords);
                         break;
 
                     default:
                         string[] texts = new string[numRows];
-                        typedCol.CopyTo (texts, 0);
-                        Array.Sort(texts, (me, you) => me.Length.CompareTo (you.Length));
+                        typedCol.CopyTo(texts, 0);
+                        Array.Sort(texts, (me, you) => me.Length.CompareTo(you.Length));
                         min = texts[0].Length;
                         max = texts[numRows - 1].Length;
+
+                        Array.Sort(texts);
+                        amIenum = GetEnums(texts);
                         break;
                 }
 
                 augCol.Min = min;
                 augCol.Max = max;
-                augCol.Mean = mean; 
+                augCol.Mean = mean;
+                augCol.Enum = amIenum;
             }
-            
+
 
         }
 
-        private static FieldType UnifyFieldTypes (FieldType curr, FieldType next)
+        private static bool GetEnums<T>(T[] arr) where T : IEquatable<T>
+        {
+            if (arr.Length == 0)
+                return false;
+
+            Dictionary<T, int> enums = new Dictionary<T, int>();
+
+            T prev = arr[0];
+            int count = 1;
+            for (int i = 1; i < arr.Length; i++)
+            {
+                T curr = arr[i];
+                if (curr.Equals(prev))
+                    count++;
+                else
+                {
+                    enums.Add(prev, count);
+                    count = 1;
+                }
+                prev = curr;
+            }
+
+            return isEnum(enums.Count, arr.Length);
+        }
+
+        private static bool isEnum (int actualSize, int totalSize)
+        {
+            double desiredSize = 12.5 * Math.Pow(2, (Math.Log10(totalSize) - 2));
+            return actualSize <= desiredSize;
+        }
+
+        private static FieldType UnifyFieldTypes(FieldType curr, FieldType next)
         {
             if (curr == FieldType.Unknown)
             {
@@ -169,7 +211,7 @@ namespace DataPillar.DataAugmenter
         }
 
 
-        private static FieldType GetFieldType (String value, out dynamic output)
+        private static FieldType GetFieldType(String value, out dynamic output)
         {
             //Integer
             long integer;
@@ -204,10 +246,10 @@ namespace DataPillar.DataAugmenter
             }
 
             //GeoCoordinates
-            String[] geoValues = value.Split(new[] {' ', '|', ','});
+            String[] geoValues = value.Split(new[] { ' ', '|', ',' });
             double latitude;
             double longitude;
-            if (geoValues.Length == 2 && double.TryParse(geoValues[0], out latitude) && double.TryParse(geoValues[1], out longitude)) 
+            if (geoValues.Length == 2 && double.TryParse(geoValues[0], out latitude) && double.TryParse(geoValues[1], out longitude))
             {
                 output = new GeoCoordinate(latitude, longitude);
                 return FieldType.GPSCoords;
@@ -216,17 +258,17 @@ namespace DataPillar.DataAugmenter
             //URL(URI)
             if (Uri.IsWellFormedUriString(value, UriKind.Absolute))
             {
-                Uri uri = new Uri (value);
+                Uri uri = new Uri(value);
                 output = value; // T
                 return FieldType.URL;
-            } 
-            else 
+            }
+            else
             {
                 output = value;
                 return FieldType.Text;
             }
         }
-    
-    
+
+
     }
 }
