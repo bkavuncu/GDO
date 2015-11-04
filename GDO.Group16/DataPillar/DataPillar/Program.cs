@@ -11,11 +11,11 @@ namespace DataPillar
     {
         static void Main(string[] args)
         {
-            PlainDataset plainTest = PlainDatasetFactory.FromFile("test.csv");
+            PlainDataset plainTest = PlainDatasetFactory.FromFile("allah.csv");
             RichDataset rich = RichDatasetFactory.FromPlainDataset(plainTest);
             for (int i = 0; i < rich.AugmentedColumns.Length; ++i)
             {
-                System.Diagnostics.Debug.WriteLine(rich.AugmentedColumns[i].Mean.ToString());
+                System.Diagnostics.Debug.WriteLine(rich.AugmentedColumns[i].FieldType.ToString());
             }
         }
     }

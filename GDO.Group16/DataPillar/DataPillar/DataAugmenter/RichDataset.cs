@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Device.Location;
 
 using DataPillar.DataConverter;
 
@@ -101,9 +102,12 @@ namespace DataPillar.DataAugmenter
                         break;
 
                     case FieldType.Floating:
-                        double[] doubles = new double[numRows]; 
-                        typedCol.CopyTo (doubles, 0);
-                        Array.Sort (doubles);
+                        double[] doubles = new double[numRows];
+                        for (int j = 0; j < numRows; j++)
+                        {
+                            doubles[j] = (double)typedCol[j];
+                        }
+                        Array.Sort(doubles);
                         min = doubles[0];
                         max = doubles[numRows - 1];
                         sum = doubles.Sum ();
@@ -121,9 +125,9 @@ namespace DataPillar.DataAugmenter
                         break;
 
                     case FieldType.GPSCoords:
-                        double[,] coords = new double[numRows, 2];
+                        GeoCoordinate[] coords = new GeoCoordinate[numRows];
                         typedCol.CopyTo (coords, 0);
-                        Array.Sort (coords);
+                        //Array.Sort (coords);
                         break;
 
                     default:
@@ -205,23 +209,22 @@ namespace DataPillar.DataAugmenter
             double longitude;
             if (geoValues.Length == 2 && double.TryParse(geoValues[0], out latitude) && double.TryParse(geoValues[1], out longitude)) 
             {
-                output = new double[2] { latitude, longitude };
+                output = new GeoCoordinate(latitude, longitude);
                 return FieldType.GPSCoords;
             }
 
             //URL(URI)
-            try  
+            if (Uri.IsWellFormedUriString(value, UriKind.Absolute))
             {
                 Uri uri = new Uri (value);
                 output = value; // T
                 return FieldType.URL;
             } 
-            catch 
+            else 
             {
                 output = value;
                 return FieldType.Text;
             }
-
         }
     
     
