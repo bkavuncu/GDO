@@ -26,7 +26,7 @@ var Tabs = React.createClass({
     },
     render: function () {
         return (
-        <nav>
+        <nav>   
         <ul>
             {this.props.tabList.map(function(tab) {
             return (

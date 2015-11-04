@@ -194,10 +194,7 @@
       <DependentUpon>compilerconfig.json</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\build\test.js" />
-    <Content Include="Scripts\build\test.min.js">
-      <DependentUpon>test.js</DependentUpon>
-    </Content>
+    <Content Include="Scripts\build\control.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
@@ -207,12 +204,13 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Scripts\src\test.jsx" />
+    <None Include="Scripts\src\control.jsx" />
     <Content Include="Scripts\react\JSXTransformer-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.min.js" />
     <Content Include="Scripts\react\react-with-addons-0.13.1.js" />
     <Content Include="Scripts\react\react-with-addons-0.13.1.min.js" />
+    <Content Include="Style\Control.css" />
     <Content Include="Web\Hercules\App.cshtml" />
     <Content Include="Web\Hercules\Control.cshtml" />
   </ItemGroup>

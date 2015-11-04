@@ -1,6 +1,9 @@
 ﻿[
   {
-    "outputFile": "Scripts/build/test.js",
-    "inputFile": "Scripts/src/test.jsx"
+    "outputFile": "Scripts/build/control.js",
+    "inputFile": "Scripts/src/control.jsx",
+    "minify": {
+        "enabled": false
+    }
   }
 ]
