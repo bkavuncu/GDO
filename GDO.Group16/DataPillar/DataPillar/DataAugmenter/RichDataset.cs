@@ -20,8 +20,15 @@ namespace DataPillar.DataAugmenter
     class RichDataset
     {
         public PlainDataset SourceDataset;
-        public List<dynamic[]> TypedRows;
-        public AugmentedColumn[] AugmentedColumns;     
+        public dynamic[][] TypedColumns;
+        public AugmentedColumn[] AugmentedColumns;   
+  
+        public RichDataset (PlainDataset sourceDataset, dynamic[][] typedColumns, AugmentedColumn[] augmentedColumns)
+        {
+            SourceDataset = sourceDataset;
+            TypedColumns = typedColumns;
+            AugmentedColumns = augmentedColumns;
+        }
     }
 
     class RichDatasetFactory
@@ -40,18 +47,131 @@ namespace DataPillar.DataAugmenter
         /// </summary>
         /// <param name="plainDataset"></param>
         /// <returns></returns>
-        public static RichDataset FromPlainDataset(PlainDataset plainDataset)
+        public static RichDataset FromPlainDataset (PlainDataset sourceDataset)
         {
-            // Type inference, statistical analysis...
-            return null; 
+            string[][] rawData = sourceDataset.Columns;
+            int numCols = sourceDataset.Headers.Length;
+            int numRows = rawData[0].Length;
+
+            dynamic[][] typedCols = new dynamic[numCols][];
+            AugmentedColumn[] augCols = new AugmentedColumn[numCols];
+
+            for (int i = 0; i < numCols; i++)
+            {
+                augCols[i] = new AugmentedColumn ();
+                typedCols[i] = new dynamic[numRows];
+                for (int j = 0; j < numRows; j++)
+                {
+                    FieldType cellType = GetFieldType (rawData[i][j], out typedCols[i][j]);
+
+                    augCols[i].FieldType = UnifyFieldTypes (augCols[i].FieldType, cellType);
+                }
+            }
+
+            ComputeStats (typedCols, augCols);
+            RichDataset richDataset = new RichDataset (sourceDataset, typedCols, augCols);
+            return richDataset;
         }
 
-        private FieldType GetFieldType(String value)
+
+
+
+        private static void ComputeStats (dynamic[][] typedCols, AugmentedColumn[] augCols)
+        {
+            int numCols = typedCols.Length;
+            int numRows = numCols > 0 ? typedCols[0].Length : 0;
+
+            for (int i = 0; i < numCols; i++)
+            {
+                dynamic[] typedCol = typedCols[i];
+                AugmentedColumn augCol = augCols[i];
+
+                double min = 0, max = 0, sum = 0, mean = 0;
+
+                switch (augCol.FieldType)
+                {
+                    case FieldType.Integral:
+                        long[] longs = new long[numRows];
+                        typedCol.CopyTo (longs, 0);
+                        Array.Sort (longs);
+                        min = longs[0];
+                        max = longs[numRows - 1];
+                        sum = longs.Sum ();
+                        mean = sum / numRows;
+                        break;
+
+                    case FieldType.Floating:
+                        double[] doubles = new double[numRows]; 
+                        typedCol.CopyTo (doubles, 0);
+                        Array.Sort (doubles);
+                        min = doubles[0];
+                        max = doubles[numRows - 1];
+                        sum = doubles.Sum ();
+                        mean = sum / numRows;
+                        break;
+
+                    case FieldType.DateTime:
+                        long[] dates = new long[numRows];
+                        typedCol.CopyTo (dates, 0);
+                        Array.Sort (dates);
+                        min = dates[0];
+                        max = dates[numRows - 1];
+                        sum = dates.Sum ();
+                        mean = sum / numRows;
+                        break;
+
+                    case FieldType.GPSCoords:
+                        double[,] coords = new double[numRows, 2];
+                        typedCol.CopyTo (coords, 0);
+                        Array.Sort (coords);
+                        break;
+
+                    default:
+                        string[] texts = new string[numRows];
+                        typedCol.CopyTo (texts, 0);
+                        Array.Sort(texts, (me, you) => me.Length.CompareTo (you.Length));
+                        min = texts[0].Length;
+                        max = texts[numRows - 1].Length;
+                        break;
+                }
+
+                augCol.Min = min;
+                augCol.Max = max;
+                augCol.Mean = mean; 
+            }
+            
+
+        }
+
+        private static FieldType UnifyFieldTypes (FieldType curr, FieldType next)
+        {
+            if (curr == FieldType.Unknown)
+            {
+                return next;
+            }
+            if (curr == FieldType.Integral && next == FieldType.Floating)
+            {
+                return FieldType.Floating;
+            }
+            if (curr == FieldType.Floating && next == FieldType.Integral)
+            {
+                return FieldType.Floating;
+            }
+            if (curr != next)
+            {
+                return FieldType.Text;
+            }
+            return curr;
+        }
+
+
+        private static FieldType GetFieldType (String value, out dynamic output)
         {
             //Integer
-            int integer;
-            if (int.TryParse(value, out integer))
+            long integer;
+            if (long.TryParse(value, out integer))
             {
+                output = integer;
                 return FieldType.Integral;
             }
 
@@ -59,6 +179,7 @@ namespace DataPillar.DataAugmenter
             double floating;
             if (double.TryParse(value, out floating))
             {
+                output = floating;
                 return FieldType.Floating;
             }
 
@@ -66,6 +187,7 @@ namespace DataPillar.DataAugmenter
             bool boolean;
             if (bool.TryParse(value, out boolean))
             {
+                output = boolean;
                 return FieldType.Boolean;
             }
 
@@ -73,6 +195,7 @@ namespace DataPillar.DataAugmenter
             DateTime dateTime;
             if (DateTime.TryParse(value, out dateTime))
             {
+                output = dateTime.Ticks;
                 return FieldType.DateTime;
             }
 
@@ -82,32 +205,25 @@ namespace DataPillar.DataAugmenter
             double longitude;
             if (geoValues.Length == 2 && double.TryParse(geoValues[0], out latitude) && double.TryParse(geoValues[1], out longitude)) 
             {
+                output = new double[2] { latitude, longitude };
                 return FieldType.GPSCoords;
             }
 
             //URL(URI)
-            try {
-                Uri uri = new Uri(value);
+            try  
+            {
+                Uri uri = new Uri (value);
+                output = value; // T
                 return FieldType.URL;
-            } catch
+            } 
+            catch 
             {
+                output = value;
+                return FieldType.Text;
             }
 
-            //Alphabetic or Alphanumeric
-            if (!value.Select(Char.IsLetterOrDigit).Contains(false))
-            {
-                if (!value.Select(Char.IsDigit).Contains(true))
-                {
-                    return FieldType.Alphabetic;
-                }
-                else
-                {
-                    return FieldType.Alphanumeric;    
-                }
-
-            }
-
-            return FieldType.Unknown;
         }
+    
+    
     }
 }

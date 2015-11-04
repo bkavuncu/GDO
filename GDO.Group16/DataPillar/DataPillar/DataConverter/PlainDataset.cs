@@ -3,23 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using DataPillar.Common;
+using DataPillar.DataAugmenter;
 
 namespace DataPillar.DataConverter
 {
 
-    /// <summary>
-    /// A PlainDataset is the common intermediate representation of a dataset.
-    /// It contains the name of each column (columnNames) and the raw data as 
-    /// a list of rows, each row as an array of fields (DataRows). 
-    /// </summary>
-    class PlainDataset
-    {
-        public long DatasetUID;
-        public string[] ColumnNames;
-        public List<string[]> DataRows;
-    }
+
 
     /// <summary>
     /// This is the entry point for the DataConverter. Use this class to convert 
@@ -41,19 +33,21 @@ namespace DataPillar.DataConverter
         public static PlainDataset FromFile(string filePath)
         {
             SupportedFormat format = ParseSupportedFormat(filePath);
-            string streamData = TODO.UNIMPLEMENTED();
-            return FromStrean(streamData, format);
+            Stream stream = new FileStream(filePath, FileMode.Open);
+            return FromStream(stream, format);
         }
 
-        public static PlainDataset FromStrean(string streamData, SupportedFormat format)
+        public static PlainDataset FromStream(Stream stream, SupportedFormat format)
         {
+            ConverterOutcome outcome;
+
             switch (format)
             {
-                case SupportedFormat.CSV:  return CSVConverter.convertStream(streamData);
-                case SupportedFormat.TSV:  return TSVConverter.convertStream(streamData);
-                case SupportedFormat.XML:  return XMLConverter.convertStream(streamData);
-                case SupportedFormat.JSON: return JSONConverter.convertStream(streamData);
-                default:                   return TODO.UNIMPLEMENTED();
+                case SupportedFormat.CSV: return TextFieldConverter.ConvertCSV(stream, out outcome);
+                case SupportedFormat.TSV: return TextFieldConverter.ConvertTSV(stream, out outcome);
+                //case SupportedFormat.XML:  return XMLConverter.convertStream(streamData);
+                //case SupportedFormat.JSON: return JSONConverter.convertStream(streamData);
+                default: return TODO.UNIMPLEMENTED();
             }
         }
 

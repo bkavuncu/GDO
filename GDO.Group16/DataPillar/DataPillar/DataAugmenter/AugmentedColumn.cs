@@ -15,6 +15,7 @@ namespace DataPillar.DataAugmenter
         public double Variance;
         public double StdDev;
         public double[] Modes;
-        public FieldType FieldType;
+        public FieldType FieldType; 
     }
+
 }

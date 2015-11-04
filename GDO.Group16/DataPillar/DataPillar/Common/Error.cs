@@ -9,7 +9,7 @@ namespace DataPillar.Common
     enum ErrorType
     {
         FileNotFound,
-        FileMalformed,
+        MalformedLine,
         EmptyStream, 
         StreamMalformed,
         ApplicationException,

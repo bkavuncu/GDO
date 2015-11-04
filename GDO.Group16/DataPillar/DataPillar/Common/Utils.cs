@@ -11,7 +11,12 @@ namespace DataPillar.Common
 
         public static string ExtractFileExtension(string filePath)
         {
-            return TODO.UNIMPLEMENTED();
+            int indexAfterDot = filePath.LastIndexOf(".") + 1;
+            if (indexAfterDot > filePath.Length)
+            {
+                indexAfterDot = filePath.Length;
+            }
+            return filePath.Substring(indexAfterDot);
         }
 
     }

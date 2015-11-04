@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace DataPillar.DataConverter
 {
 
-    class TSVConverter
-    {
-        public static PlainDataset convertStream(string dataStream)
-        {
-            return TextFieldConverter.convertStream(dataStream, "\t");
-        }
-    }
+    //////////class TSVConverter
+    //////////{
+    //////////    public static PlainDataset convertStream(string dataStream)
+    //////////    {
+    //////////        return TextFieldConverter.convertStream(dataStream, "\t");
+    //////////    }
+    //////////}
 
 }

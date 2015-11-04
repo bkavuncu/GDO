@@ -9,16 +9,15 @@ namespace DataPillar.DataAugmenter
 
     enum FieldType
     {
+        Unknown,
+        Text,    
         Integral,
         Floating,
-        Boolean,
-        Alphabetic,
-        Alphanumeric,
         DateTime,
         Enum,
+        Boolean,
         GPSCoords,
-        URL,
-        Unknown        
+        URL
     }
 
 }

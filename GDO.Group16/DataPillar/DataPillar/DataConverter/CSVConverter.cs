@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace DataPillar.DataConverter
 {
 
-    class CSVConverter
-    {
-        public static PlainDataset convertStream(string dataStream)
-        {
-            return TextFieldConverter.convertStream(dataStream, ",");
-        }
-    }
+    //class CSVConverter
+    //{
+    //    public static PlainDataset convertStream(string dataStream)
+    //    {
+    //        return TextFieldConverter.convertStream(dataStream, ",");
+    //    }
+    //}
 
 }
