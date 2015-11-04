@@ -6,11 +6,11 @@
 
 
 
-document.body
-.getElementsByTagName('iframe')[0]
-.onload = function () {
-    console.log("Time after rendering (using onload): " + window.performance.now());
-};
+//document.body
+//.getElementsByTagName('iframe')[0]
+//.onload = function () {
+ //   console.log("Time after rendering (using onload): " + window.performance.now());
+//};
 
 
 

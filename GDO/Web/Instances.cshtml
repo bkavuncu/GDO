@@ -84,39 +84,7 @@
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
-    <script>
-        gdo.updateDisplayCanvas = function () {
-            gdo.management.updateMaintenanceButton();
-            gdo.management.updateInstancesMenu();
-            gdo.management.updateSmartCityMenu();
-        }
-        $(function () {
-            @{
-                        foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                        {
-                            @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
-                        }
-                    }
-            gdo.loadModule('instances', 'management', gdo.MODULE_TYPE.CORE);
-            $( document ).ready(function() {
-                gdo.clientId = 1;
-                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-            });
-        });
-        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-            var space = "<br /> ";
-            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-        }
-        initApp = function () {
-            gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.updateSelf();
-            var instanceId = getUrlVar('id');
-            if(gdo.net.instance[instanceId] != null && typeof gdo.net.instance[instanceId] != "undefined"){
-                gdo.management.loadControlFrame(gdo.net.instance[instanceId].appName, instanceId, gdo.net.instance[instanceId].configName);
-            }
-        }
-    </script>
+
     <div id="wrapper" >
         <div style="position: absolute; top: 7px; right:7px; z-index:1000"><button type="button"  id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></div>
         <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
@@ -190,6 +158,38 @@
         </div>
     </div>
     <!-- /#wrapper -->
-
+    <script>
+        gdo.updateDisplayCanvas = function () {
+            gdo.management.updateMaintenanceButton();
+            gdo.management.updateInstancesMenu();
+            gdo.management.updateSmartCityMenu();
+        }
+        $(function () {
+            @{
+                        foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                        {
+                            @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                        }
+                    }
+            gdo.loadModule('instances', 'management', gdo.MODULE_TYPE.CORE);
+            $( document ).ready(function() {
+                gdo.clientId = 1;
+                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+            });
+        });
+        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+            var space = "<br /> ";
+            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+        }
+        initApp = function () {
+            gdo.consoleOut('', 1, 'GDO Initialized');
+            gdo.updateSelf();
+            var instanceId = getUrlVar('id');
+            if(gdo.net.instance[instanceId] != null && typeof gdo.net.instance[instanceId] != "undefined"){
+                gdo.management.loadControlFrame(gdo.net.instance[instanceId].appName, instanceId, gdo.net.instance[instanceId].configName);
+            }
+        }
+    </script>
 </body>
 </html>

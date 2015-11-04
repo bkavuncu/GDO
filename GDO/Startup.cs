@@ -11,6 +11,7 @@ using Microsoft.Owin;
 using GDO.Core;
 using log4net;
 using Owin;
+using Microsoft.Owin.Cors;
 
 [assembly: OwinStartup(typeof(GDO.Startup))]
 
@@ -29,13 +30,25 @@ namespace GDO
                 Cave.Init();
                 var builder = new ContainerBuilder();
                 var config = new HubConfiguration();
+
+
+
                 GlobalHost.DependencyResolver.Register(typeof (IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
                 config.Resolver = new AutofacDependencyResolver(container);
                 app.UseAutofacMiddleware(container);
-                app.MapSignalR("/signalr", config);
+                //app.MapSignalR("/signalr", config);
+                app.Map("/signalr", map =>
+                {
+                    map.UseCors(CorsOptions.AllowAll);
+                    var hubConfiguration = new HubConfiguration
+                    {
+                        EnableJSONP = true
+                    };
+                    map.RunSignalR(config);
+                });
             }
             catch (Exception e) {
                 Log.Error("Failed to pass Startup ",e);
