@@ -158,7 +158,7 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
     $("iframe").contents().find("#map_input")
         .css("width", "100%")
         .css("height", "40px")
-        .css("border", "1px solid #333")
+        //.css("border", "1px solid #333")
         .css("background", "#333")
         //.css("color", "#FFF")
         .css("padding", "0px")
