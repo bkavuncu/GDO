@@ -41,6 +41,23 @@ namespace GDO.Apps.Maps
             }
         }
 
+        public void UploadMarkerPosition(int instanceId, string[] pos)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetMarkerPosition(pos);
+                    Clients.Caller.receiveMarkerPosition(instanceId, pos);
+                    BroadcastMarkerPosition(instanceId, pos);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void SetLayerVisible(int instanceId, int id)
         {
             lock (Cave.AppLocks[instanceId])
@@ -105,9 +122,30 @@ namespace GDO.Apps.Maps
             }
         }
 
+        public void RequestMarkerPosition(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    string[] position = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).GetMarkerPosition();
+                    Clients.Caller.receiveMarkerPosition(instanceId, position);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void BroadcastMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
         {
             Clients.Group("" + instanceId).receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
+        }
+
+        public void BroadcastMarkerPosition(int instanceId, string[] pos)
+        {
+            Clients.Group("" + instanceId).receiveMarkerPosition(instanceId, pos);
         }
 
         public void UpdateResolution(int instanceId)

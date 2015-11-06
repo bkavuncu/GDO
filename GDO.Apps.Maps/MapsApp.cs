@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public MapPosition Position { get; set; }
+        public string[] MarkerPosition { get; set; }
         public int MaxLayers { get; set; } = 35;
         public bool[] LayerVisibility { get; set; }
 
@@ -75,9 +76,18 @@ namespace GDO.Apps.Maps
             Position.Zoom = zoom;
         }
 
+        public void SetMarkerPosition(string[] pos)
+        {
+            MarkerPosition = pos;
+        }
+
         public MapPosition GetMapPosition()
         {
             return Position;
+        }
+        public string[] GetMarkerPosition()
+        {
+            return MarkerPosition;
         }
     }
     public class MapPosition

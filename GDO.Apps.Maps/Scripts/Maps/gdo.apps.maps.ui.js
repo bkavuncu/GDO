@@ -147,5 +147,66 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["Maps"].server.setLayerVisible(instanceId, 6);
         });
+    //Search
+    $("iframe").contents().find("#map_input_div")
+    .css("margin", "0px")
+    .css("padding", "0px")
+    .css("width", "60%")
+    .css("height", "40px")
+    .empty()
+    .append("<input type='text'  class='form-control' id='map_input' value='Enter Location' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
+    $("iframe").contents().find("#map_input")
+        .css("width", "100%")
+        .css("height", "40px")
+        .css("border", "1px solid #333")
+        .css("background", "#333")
+        //.css("color", "#FFF")
+        .css("padding", "0px")
+        .css("display", "inline-block")
+        .css("position", "relative")
+        .attr("text-align", "center")
+        .attr("onfocus", "gdo.net.app['Maps'].clearInput()")
+        .focus(gdo.net.app['Maps'].clearInput)
+        .css({ fontSize: gdo.management.button_font_size * 0.7 });
+    $("iframe").contents().find("#map_input").keyup(function (event) {
+        if (event.keyCode == 13) {
+            $("iframe").contents().find("#map_submit").click();
+        }
+    });
+    $("iframe").contents().find("#map_submit_div")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", "20%")
+        .css("height", "40px")
+        .css("background", "#444")
+        .empty()
+        .append("<button type='button' id='map_submit' class='btn btn-success btn-block'><i class='fa fa-check-circle fa-fw'></i>&nbsp;Search</button>");
+    $("iframe").contents().find("#map_submit")
+        .css("width", "100%")
+        .attr("onfocus", "gdo.net.app['Maps'].clearInput()")
+        .focus(gdo.net.app['Maps'].clearInput)
+        .css({ fontSize: gdo.management.button_font_size * 0.7 })
+        .unbind()
+        .click(function () {
+            gdo.consoleOut(".Maps", 1, "Finding: " + $("iframe").contents().find('#map_input').val());
+            gdo.net.app["Maps"].searchGeoCode(instanceId, $("iframe").contents().find('#map_input').val());
+            gdo.net.app["Maps"].displayPositionMarker(instanceId, coordinates);
+            gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, coordinates);
+        });
+    $("iframe").contents().find("#map_clear_div")
+       .css("margin", "0px")
+       .css("padding", "0px")
+       .css("width", "20%")
+       .css("height", "40px")
+       .css("background", "#444")
+       .empty()
+       .append("<button type='button' id='map_clear' class='btn btn-danger btn-block'><i class='fa fa-times-circle fa-fw'></i>&nbsp;Clear Marker</button>");
+    $("iframe").contents().find("#map_clear")
+        .css("width", "100%")
+        .css({ fontSize: gdo.management.button_font_size * 0.7 })
+        .unbind()
+        .click(function () {
+            gdo.net.app["Maps"].clearPositionMarker(instanceId);
+        });
 }
 

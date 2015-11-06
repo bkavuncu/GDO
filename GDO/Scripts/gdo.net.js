@@ -32,6 +32,9 @@ $(function() {
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);
         gdo.updateDisplayCanvas();
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.initBaseFrame();
+        }
     }
     $.connection.caveHub.client.setBlankMode = function (blankMode) {
         gdo.net.blankMode = blankMode;

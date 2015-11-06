@@ -6,6 +6,9 @@ var scene;
 var terrainProvider;
 
 
+
+
+
 $(function () {
     gdo.consoleOut('.Maps', 1, 'Loaded Maps JS');
     gdo.net.app["Maps"].numLayers = 13;
@@ -50,6 +53,13 @@ $(function () {
             gdo.net.app["Maps"].update(instanceId, mapCenter, mapResolution, zoom);
         }
     }
+
+    $.connection.mapsAppHub.client.receiveMarkerPosition = function (instanceId, pos) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
+            gdo.net.app["Maps"].displayPositionMarker(instanceId, pos);
+        }
+    }
+
     $.connection.mapsAppHub.client.receiveInitialMapPosition = function (instanceId, center, resolution, zoom) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.instance[instanceId].isInitialized = true;
@@ -98,6 +108,42 @@ $(function () {
         }
     }
 });
+var t;
+gdo.net.app["Maps"].searchGeoCode = function (instanceId, address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'address': address}, function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            $("iframe").contents().find("#map_input_div").removeClass("has-error").addClass("has-success");
+            gdo.consoleOut(".Maps", 4, results[0].geometry.location);
+            t = results[0].geometry.location;
+            var coordinates = ol.proj.transform([results[0].geometry.location.K, results[0].geometry.location.G], 'EPSG:4326', 'EPSG:3857');
+            map.getView().setCenter(coordinates);
+            setTimeout(function() {
+                gdo.net.app["Maps"].uploadMapPosition(instanceId);
+                gdo.net.app["Maps"].displayPositionMarker(instanceId, coordinates);
+                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, coordinates);
+            }, 70);
+            
+        } else {
+            gdo.consoleOut(".Maps",4,'Geocode was not successful for the following reason: ' + status);
+            $("iframe").contents().find("#map_input_div").removeClass("has-success").addClass("has-error");
+        }
+    });
+}
+
+gdo.net.app["Maps"].displayPositionMarker = function (instanceId, coordinates) {
+    gdo.net.instance[instanceId].positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+}
+
+gdo.net.app["Maps"].clearPositionMarker = function (instanceId) {
+    gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, null);
+    gdo.net.app["Maps"].displayPositionMarker(instanceId, null);
+}
+
+gdo.net.app["Maps"].clearInput = function () {
+    $('iframe').contents().find('#map_input_div').removeClass('has-error').removeClass('has-success');
+    $("iframe").contents().find("#map_input").val('');
+}
 
 gdo.net.app["Maps"].initMap = function (instanceId, center, resolution, zoom) {
     gdo.net.instance[instanceId].view = new ol.View({
@@ -226,8 +272,31 @@ gdo.net.app["Maps"].initMap = function (instanceId, center, resolution, zoom) {
         target: 'map',
         view: gdo.net.instance[instanceId].view
     });
+
+    gdo.net.instance[instanceId].positionFeature = new ol.Feature();
+    gdo.net.instance[instanceId].positionFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 14,
+            fill: new ol.style.Fill({
+                color: '#3399CC'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#222',
+                width: 4.9
+            })
+        })
+    }));
+
+    var featuresOverlay = new ol.layer.Vector({
+        map: map,
+        source: new ol.source.Vector({
+            features: [gdo.net.instance[instanceId].positionFeature]
+        })
+    });
+
     gdo.net.instance[instanceId].map = map;
     gdo.net.app["Maps"].server.requestLayerVisible(instanceId);
+    gdo.net.app["Maps"].server.requestMarkerPosition(instanceId);
 }
 
 gdo.net.app["Maps"].calculateLocalCenter = function (topLeft, bottomRight) {
