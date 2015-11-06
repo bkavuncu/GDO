@@ -297,7 +297,7 @@ namespace GDO.Core
                     string nodeMap = JsonConvert.SerializeObject(Cave.GetNodeMap());
                     string neighbourMap = JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
                     string appList = JsonConvert.SerializeObject(Cave.GetAppList());
-                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances, states);
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances, states);
                 }
                 catch (Exception e)
                 {
@@ -577,6 +577,25 @@ namespace GDO.Core
                 Clients.All.setMaintenanceMode(Cave.MaintenanceMode);
             }
         }
+
+        public void SetBlankMode(bool mode)
+        {
+            lock (Cave.ServerLock)
+            {
+                Cave.BlankMode = mode;
+                Clients.All.setBlankMode(mode);
+                //  Clients.All.reloadNodeIFrame(mode); TODO This is showing up a concurrency bug which is crashing the server and some nodes! possibly related to issue #15
+            }
+        }
+
+        public void RequestBlankMode()
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.All.setBlankMode(Cave.BlankMode);
+            }
+        }
+
         public void JoinGroup(int sectionId)
         {
             Groups.Add(Context.ConnectionId, "" + sectionId);

@@ -249,18 +249,18 @@ $(function () {
 
 gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution, zoom) {
     gdo.net.app["ShanghaiMetro"].timeStep = 0;
-    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Configurations/ShanghaiMetro/Data/stations.json');
-    $.getJSON('/Configurations/ShanghaiMetro/Data/stations.json', function (data) {
+    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Data/ShanghaiMetro/stations.json');
+    $.getJSON('/Data/ShanghaiMetro/stations.json', function (data) {
         gdo.net.app["ShanghaiMetro"].stations = data;
     });
 
-    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Configurations/ShanghaiMetro/Data/lines.json');
-    $.getJSON('/Configurations/ShanghaiMetro/Data/lines.json', function (data) {
+    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Data/ShanghaiMetro/lines.json');
+    $.getJSON('/Data/ShanghaiMetro/lines.json', function (data) {
         gdo.net.app["ShanghaiMetro"].lines = data;
     });
 
-    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Configurations/ShanghaiMetro/Data/entry_exit_data.json');
-    $.getJSON('/Configurations/ShanghaiMetro/Data/entry_exit_data.json', function (data) {
+    gdo.consoleOut('.SHANGAIMETRO', 1, 'Loading ' + '/Data/ShanghaiMetro/entry_exit_data.json');
+    $.getJSON('/Data/ShanghaiMetro/entry_exit_data.json', function (data) {
         gdo.net.app["ShanghaiMetro"].entry_and_exits = data;
     });
 

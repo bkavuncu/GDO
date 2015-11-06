@@ -33,6 +33,14 @@ $(function() {
         gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);
         gdo.updateDisplayCanvas();
     }
+    $.connection.caveHub.client.setBlankMode = function (blankMode) {
+        gdo.net.blankMode = blankMode;
+        gdo.consoleOut('.NET', 1, 'Blank Mode:' + blankMode);
+        gdo.updateDisplayCanvas();
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.initBaseFrame();
+        }
+    }
     $.connection.caveHub.client.reloadNodeIFrame = function () {
         gdo.consoleOut('.NET', 1, 'Reload Node IFrame');
         gdo.reloadNodeIFrame();
@@ -45,9 +53,10 @@ $(function() {
         }
         gdo.updateSelf();
     }
-    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,p2pmode,nodeMap,neighbourMap,appList,nodes,sections,apps,instances,states) {
+    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,appList,nodes,sections,apps,instances,states) {
         gdo.consoleOut('.NET', 1, 'Received the image of the Cave');
         gdo.net.maintenanceMode = maintenanceMode;
+        gdo.net.blankMode = blankMode;
         gdo.net.p2pmode = p2pmode;
         gdo.net.processNodeMap(cols, rows, nodeMap);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -87,6 +96,9 @@ $(function() {
         }
         gdo.net.NodeInitialized = true;
         gdo.updateSelf();
+        if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.management.updateInstancesMenu();
+        }
     }
 
     $.connection.caveHub.client.receiveNodeUpdate = function (serializedNode) {
@@ -159,6 +171,9 @@ $(function() {
             }
             setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 700 + Math.floor((Math.random() * 21000) + 1));
             gdo.updateSelf();
+            if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                gdo.management.updateInstancesMenu();
+            }
         }
     }
 
@@ -193,6 +208,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     /// <returns></returns>
     gdo.consoleOut('.NET', 2, 'Initializing Net');
     gdo.net.maintenanceMode = true;
+    gdo.net.blankMode = false;
     gdo.net.initializeArrays(100);
     gdo.net.initHub();
     gdo.net.clientMode = clientMode;

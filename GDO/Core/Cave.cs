@@ -20,6 +20,7 @@ namespace GDO.Core
         public static readonly List<object> AppLocks = new List<object>();
 
         public static bool MaintenanceMode { get; set; }
+        public static bool BlankMode { get; set; }
         public static int Cols { get; set; }
         public static int Rows { get; set; }
         public static int NodeWidth { get; set; }
@@ -44,6 +45,7 @@ namespace GDO.Core
         public Cave()
         {
             MaintenanceMode = true;
+            BlankMode = false;
             Apps = new ConcurrentDictionary<string, App>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
             Nodes = new ConcurrentDictionary<int, Node>();

@@ -30,7 +30,7 @@ gdo.management.updateMaintenanceButton = function () {
         $("#maintenanceButton")
             .empty()
             .removeClass("btn-primary")
-            .removeClass("btn-sucess")
+            .removeClass("btn-success")
             .addClass("btn-danger")
             .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance OFF");
     }
@@ -44,6 +44,32 @@ gdo.management.updateMaintenanceButton = function () {
             }
             gdo.updateDisplayCanvas();
             gdo.net.server.setMaintenanceMode(gdo.net.maintenanceMode);
+        });
+    if (gdo.net.blankMode) {
+        $("#blankButton")
+            .empty()
+            .removeClass("btn-primary")
+            .removeClass("btn-danger")
+            .addClass("btn-success")
+            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Blank ON");
+    } else {
+        $("#blankButton")
+            .empty()
+            .removeClass("btn-primary")
+            .removeClass("btn-success")
+            .addClass("btn-danger")
+            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Blank OFF");
+    }
+    $("#blankButton")
+        .unbind()
+        .click(function () {
+            if (gdo.net.blankMode) {
+                gdo.net.blankMode = false;
+            } else {
+                gdo.net.blankMode = true;
+            }
+            gdo.updateDisplayCanvas();
+            gdo.net.server.setBlankMode(gdo.net.blankMode);
         });
 }
 
@@ -59,7 +85,7 @@ gdo.management.updateInstancesMenu = function () {
                 if (gdo.net.app[appName].instances.hasOwnProperty(instanceId) && gdo.net.app[appName].instances[instanceId].exists) {
                     count++;
                     $("#nav_" + gdo.net.app[appName].name)
-                   .append("<li><a href='Instances.cshtml?id=" + gdo.net.app[appName].instances[instanceId].id + "'>"
+                   .append("<li id='nav_li_" + gdo.net.app[appName].instances[instanceId].id + "'><a href='Instances.cshtml?id=" + gdo.net.app[appName].instances[instanceId].id + "'>"
                        + "<font size='3px'>&nbsp;<b>" + gdo.net.app[appName].instances[instanceId].id + "</b>&nbsp;&nbsp;<font color='#fff'>" + gdo.net.app[appName].instances[instanceId].config + "</font></font></a></li>");
                 }
             }

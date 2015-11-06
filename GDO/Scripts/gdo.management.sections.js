@@ -217,7 +217,7 @@ gdo.management.drawButtonTable = function () {
             .addClass("disabled")
             .addClass("btn-default")
             .removeClass("btn-danger")
-            .removeClass("btn-sucess");
+            .removeClass("btn-success");
     }
 
     //Enter Section Coordinates
@@ -341,21 +341,21 @@ gdo.management.drawButtonTable = function () {
     }
 
     //Deploy App
-
     $("#deploy_app_button_div")
         .empty()
-        .append("<button type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-cloud-upload fa-fw'></i>&nbsp;Deploy App</button>")
+        .append("<button type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block deploy_app_button'><i class='fa  fa-cloud-upload fa-fw'></i>&nbsp;Deploy App</button>")
         .css("height", "100%")
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
-        .attr("align", "center")
+        .attr("align", "center");
+    $(".deploy_app_button")
         .unbind()
         .click(function () {
             if (gdo.net.section[gdo.management.selectedSection] != null) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
                     gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
                     gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedApp + " at Section " + gdo.management.selectedSection + " with Configuration " + gdo.management.selectedConfiguration);
-                    gdo.management.selectedSection = -1;
+                    //gdo.management.selectedSection = -1;
                     gdo.management.selectedApp = null;
                     gdo.management.selectedConfiguration = null;
                     gdo.updateDisplayCanvas();
@@ -364,29 +364,29 @@ gdo.management.drawButtonTable = function () {
         });
     if (gdo.management.selectedSection > -1) {
         if (gdo.management.selectedConfiguration !=null) {
-            $("#deploy_app_button")
+            $(".deploy_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
                 .removeClass("btn-danger")
                 .addClass("btn-success");
         } else if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1){
-            $("#deploy_app_button")
+            $(".deploy_app_button")
                 .removeClass("btn-default")
-                .removeClass("btn-sucess")
+                .removeClass("btn-success")
                 .addClass("btn-danger")
                 .addClass("disabled");
         } else {
-            $("#deploy_app_button")
+            $(".deploy_app_button")
                 .addClass("disabled")
                 .addClass("btn-default")
-                .removeClass("btn-sucess")
+                .removeClass("btn-success")
                 .removeClass("btn-danger");
         }
     } else {
-        $("#deploy_app_button")
+        $(".deploy_app_button")
             .addClass("disabled")
             .addClass("btn-default")
-            .removeClass("btn-sucess")
+            .removeClass("btn-success")
             .removeClass("btn-danger");
     }
     $("#control_app_button_div")

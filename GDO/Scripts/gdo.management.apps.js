@@ -110,9 +110,10 @@ gdo.management.drawAppListTable = function() {
         $("#app_table_app_table_row_" + j + "_col_1")
             .empty()
             .css("background", "#222")
-            .append("<div id='app_table_app_table_" + gdo.net.apps[j] + "'>" + gdo.net.apps[j] + "</div>")
+            .append("<div id='app_table_app_table_" + gdo.net.apps[j] + "'><font size='3px'>" + gdo.net.apps[j] + "</font></div>")
             .click(function () {
                 gdo.management.selectedApp = gdo.net.apps[$(this).attr('row')];
+                gdo.management.selectedConfiguration = gdo.net.app[gdo.management.selectedApp].config[0];
                 gdo.updateDisplayCanvas();
             });
         if (gdo.net.apps[j] == gdo.management.selectedApp) {
@@ -133,7 +134,7 @@ gdo.management.drawConfigurationListTable = function () {
     for (var j = 0; j < gdo.net.app[gdo.management.selectedApp].config.length; j++) {
         $("#app_table_configuration_table_row_" + j + "_col_1")
             .empty()
-            .append("<div id='app_table_configuration_table_" + gdo.net.app[gdo.management.selectedApp].config[j] + "'>" + gdo.net.app[gdo.management.selectedApp].config[j] + "</div>")
+            .append("<div id='app_table_configuration_table_" + gdo.net.app[gdo.management.selectedApp].config[j] + "'><font size='3px'>" + gdo.net.app[gdo.management.selectedApp].config[j] + "</font></div>")
             .click(function () {
                 gdo.management.selectedConfiguration = gdo.net.app[gdo.management.selectedApp].config[$(this).attr('row')];
                 gdo.updateDisplayCanvas();

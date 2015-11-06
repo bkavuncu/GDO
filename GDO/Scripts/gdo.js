@@ -32,6 +32,7 @@ gdo.initGDO = function (clientMode) {
         gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
     } else {
         gdo.loadModule('node', 'node', gdo.MODULE_TYPE.CORE);
+        gdo.loadModule('base', 'node', gdo.MODULE_TYPE.CORE);
         gdo.loadModule('maintenance', 'maintenance', gdo.MODULE_TYPE.CORE);
     }
     if (gdo.clientId > 0) {
@@ -70,6 +71,9 @@ gdo.consoleOut = function (module, type, msg) {
             moduleBrowser = moduleBrowser + "&nbsp;";
             moduleConsole = moduleConsole + " ";
         }
+    }
+    if ($("#console_area").text().length > 1000000) {
+        $("#console_area").empty();
     }
     if (type == 0) {
         if ($("#console_area").length > 0) {
