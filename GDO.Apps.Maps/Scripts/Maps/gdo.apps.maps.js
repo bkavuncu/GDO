@@ -108,20 +108,25 @@ $(function () {
         }
     }
 });
-var t;
+
 gdo.net.app["Maps"].searchGeoCode = function (instanceId, address) {
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({'address': address}, function(results, status) {
         if (status === google.maps.GeocoderStatus.OK) {
             $("iframe").contents().find("#map_input_div").removeClass("has-error").addClass("has-success");
             gdo.consoleOut(".Maps", 4, results[0].geometry.location);
-            t = results[0].geometry.location;
-            var coordinates = ol.proj.transform([results[0].geometry.location.K, results[0].geometry.location.G], 'EPSG:4326', 'EPSG:3857');
-            map.getView().setCenter(coordinates);
+            var center = ol.proj.transform([results[0].geometry.location.K, results[0].geometry.location.G], 'EPSG:4326', 'EPSG:3857');
+            //results[0].geometry.viewport.getSouthWest(), 
+            //results[0].geometry.viewport.getNorthEast() ..etc
+            //transform projection
+            //var boundingBox = new ol.source ...
+            //var extent = boundingBox.getExtent();
+            //map.getView().fit(extent, map.getSize());
+            map.getView().setCenter(center);
             setTimeout(function() {
                 gdo.net.app["Maps"].uploadMapPosition(instanceId);
-                gdo.net.app["Maps"].displayPositionMarker(instanceId, coordinates);
-                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, coordinates);
+                gdo.net.app["Maps"].displayPositionMarker(instanceId, center);
+                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, center);
             }, 70);
             
         } else {
