@@ -7,6 +7,10 @@ module.exports = {
   module: {
       loaders: [
         {
+            test: /\.css$/,
+            loader: "style!css"
+        },
+        {
             test: /\.jsx$|.js$/,
             loader: 'babel',
             query: {
