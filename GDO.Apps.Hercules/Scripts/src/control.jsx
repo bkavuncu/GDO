@@ -1,32 +1,67 @@
 ﻿'use strict';
+var _ = require('underscore');
+
+class DeployerNode extends React.Component {
+    render () {
+        var nodeStyle = {
+            display: "flex",
+            justifyItems: "center"
+        };
+        return <div id={'node' + this.props.id } className="node" style={nodeStyle}>
+            {this.props.id}
+        </div>;
+    }
+}
+
+class DeployerGrid extends React.Component {
+    render() {
+        const NODE_NUMBER = 64;
+        var nodeList = _.range(64).map((i) => <DeployerNode id={i} />);
+
+        return <div>{nodeList}</div>;
+    }
+}
+
+var SectionDeployer = React.createClass({
+    render: function () {
+        return <div>
+        <div> Dis da section deployer </div>
+        <DeployerGrid />
+    </div>;
+    }
+});
 
 var tabList = [
 { 'id': 1, 'name': 'Section Deployment', 'url': '/sectionDeployment' },
 { 'id': 2, 'name': 'Data Explorer', 'url': '/dataExplorer' },
 { 'id': 3, 'name': 'Data Enricher', 'url': '/dataEnricher' },
 { 'id': 4, 'name': 'Data Filter', 'url': '/dataFilter' },
-{ 'id': 5, 'name': 'Graph Control', 'url': '/graphControl' }
+{ 'id': 5, 'name': 'Graph Control boiiii!', 'url': '/graphControl' }
 ];
 var Tab = React.createClass({
     handleClick: function (e) {
         e.preventDefault();
         this.props.handleClick();
     },
+
     render: function () {
         return (
-        <li className={this.props.isCurrent ? 'current' : null}>
-    <a onClick={this.handleClick} href={this.props.url}>
-        {this.props.name}
-    </a>
+        <li className={this.props.isCurrent ? 'current' : null} >
+            <a onClick={this.handleClick} href={this.props.url}>
+                {this.props.name}
+            </a>
         </li>
 );
     }
 });
+
 var Tabs = React.createClass({
     handleClick: function (tab) {
         this.props.changeTab(tab);
     },
     render: function () {
+       
+
         return (
         <nav>
         <ul>
@@ -36,7 +71,7 @@ var Tabs = React.createClass({
                  key={tab.id}
                  url={tab.url}
                  name={tab.name}
-                 isCurrent={(this.props.currentTab === tab.id)} />
+                 isCurrent={(this.props.currentTab === tab.id)}/>
             );
             }.bind(this))}
         </ul>
@@ -50,7 +85,7 @@ var Content = React.createClass({
         <div className="content">
             {this.props.currentTab === 1 ?
         <div>
-            Section Deployer!
+            <SectionDeployer />
         </div>
             :null}
             {this.props.currentTab === 2 ?
