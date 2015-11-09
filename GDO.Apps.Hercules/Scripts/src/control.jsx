@@ -3,6 +3,8 @@ var _ = require('underscore');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var View = require('./ui/View.jsx');
+
 class DeployerNode extends React.Component {
     render () {
         var w = this.props.width,
@@ -42,26 +44,14 @@ class DeployerGrid extends React.Component {
 
         switch (this.state.step) {
             case MEASURE:
-                var containerStyle = {
-                    width: '100%',
-                    height: '100%'
-                };
-
-                return <div style={containerStyle} />;
+                return <View/>;
                 break;
             case RENDER:
                 var nW = this.state.width / ROWS,
                     nH = this.state.height / COLUMNS;
                 var nodeList = _.range(64).map((i) => <DeployerNode key={i} id={i} width={nW} height={nH} />);
 
-                var containerStyle = {
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexWrap: 'wrap'
-                };
-
-                return <div style={containerStyle}>{nodeList}</div>;
+                return <View>{nodeList}</View>;
                 break;
         }
     }
@@ -69,10 +59,7 @@ class DeployerGrid extends React.Component {
 
 var SectionDeployer = React.createClass({
     render: function () {
-        return <div>
-        <div> Dis da section deployer </div>
-        <DeployerGrid />
-    </div>;
+        return <View><DeployerGrid /></View>;
     }
 });
 
