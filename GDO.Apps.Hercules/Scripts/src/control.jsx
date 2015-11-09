@@ -9,15 +9,16 @@ class DeployerNode extends React.Component {
     render () {
         var w = this.props.width,
             h = this.props.height;
+            
         var nodeStyle = {
             display: "flex",
             justifyItems: "center",
             width: w + 'px',
             height: h + 'px'
         };
-        return <div id={'node' + this.props.id } className="node" style={nodeStyle}>
+        return <View id={'node' + this.props.id } className="node" style={nodeStyle}>
             {this.props.id}
-        </div>;
+        </View>;
     }
 }
 
@@ -30,9 +31,15 @@ class DeployerGrid extends React.Component {
         };
     }
     componentDidMount () {
+        window.addEventListener('resize', () => this.resize());
+        this.resize();
+    }
+    componentWillUnmount () {
+        window.removeEventListener('resize', () => this.resize());
+    }
+    resize () {
         var el = ReactDOM.findDOMNode(this);
 
-        console.log(el);
         this.setState({
             step: RENDER,
             width: el.offsetWidth,
@@ -41,16 +48,18 @@ class DeployerGrid extends React.Component {
     }
     render() {
         const NODE_NUMBER = 64,
-            ROWS = 4, COLUMNS = NODE_NUMBER / ROWS;
+            ROWS = 4, 
+            COLUMNS = NODE_NUMBER / ROWS;
 
         switch (this.state.step) {
             case MEASURE:
                 return <View/>;
                 break;
             case RENDER:
-                var nW = this.state.width / ROWS,
-                    nH = this.state.height / COLUMNS;
-                var nodeList = _.range(64).map((i) => <DeployerNode key={i} id={i} width={nW} height={nH} />);
+                var nW = this.state.width / COLUMNS,
+                    nH = this.state.height / ROWS;
+
+                var nodeList = _.range(1, NODE_NUMBER + 1).map((i) => <DeployerNode key={i} id={i} width={nW} height={nH} />);
 
                 return <View>{nodeList}</View>;
                 break;
@@ -157,12 +166,12 @@ var App = React.createClass({
     },
     render: function () {
         return (
-        <div>
+        <View>
         <Tabs currentTab={this.state.currentTab}
               tabList={this.state.tabList}
               changeTab={this.changeTab} />
 <Content currentTab={this.state.currentTab} />
-        </div>
+        </View>
 );
     }
 });
