@@ -32,6 +32,7 @@ class DeployerGrid extends React.Component {
     componentDidMount () {
         var el = ReactDOM.findDOMNode(this);
 
+        console.log(el);
         this.setState({
             step: RENDER,
             width: el.offsetWidth,
@@ -114,11 +115,11 @@ var Tabs = React.createClass({
 var Content = React.createClass({
     render: function () {
         return (
-        <div className="content">
+        <View className="content">
             {this.props.currentTab === 1 ?
-        <div>
+        <View>
             <SectionDeployer />
-        </div>
+        </View>
             :null}
             {this.props.currentTab === 2 ?
 <div>
@@ -140,7 +141,7 @@ var Content = React.createClass({
     Graph Control!
 </div>
             :null}
-        </div>
+        </View>
 );
     }
 });
