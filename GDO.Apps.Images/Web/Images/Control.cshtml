@@ -44,27 +44,31 @@
             border: 1px solid #000;
             margin: 10px 5px 0 0;
         }
+
         .btn-file {
-          position: relative;
-          overflow: hidden;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-file input[type=file] {
-          position: absolute;
-          top: 0;
-          right: 0;
-          min-width: 100%;
-          min-height: 100%;
-          font-size: 100px;
-          text-align: right;
-          filter: alpha(opacity=0);
-          opacity: 0;
-          cursor: inherit;
-          display: block;
-        }
+
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
+
         input[readonly] {
-          background-color: #555 !important;
-          cursor: text !important;
+            background-color: #555 !important;
+            cursor: text !important;
         }
+
         .file_upload input.upload {
             position: absolute;
             top: 0;
@@ -232,13 +236,13 @@
             var gdo = parent.gdo;
             if (gdo.net.app["Images"].control_status == 0) {
                 $("#thumbnail_panel").addClass("panel-default").removeClass("panel-success");
-                $("#active_control").addClass("btn-success").removeClass("btn-danger").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate");
+                $("#active_control").addClass("btn-success").removeClass("btn-danger");
                 $("#rotate_control").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
                 $("#fit_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
                 $("#fill_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
             } else if (gdo.net.app["Images"].control_status == 1) {
                 $("#thumbnail_panel").addClass("panel-success").removeClass("panel-default");
-                $("#active_control").removeClass("btn-success").addClass("btn-danger").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Deactivate");
+                $("#active_control").removeClass("btn-success").addClass("btn-danger");
                 $("#rotate_control").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
                 $("#fit_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
                 $("#fill_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
@@ -473,10 +477,10 @@
                                     </div>
                                     <div class="col-lg-2">
                                         <fieldset>
-                                            <table style="border-collapse: separate; border-spacing: 3px;border:none;padding:0px;background-color:transparent;"  align="right">
+                                            <table style="border-collapse: separate; border-spacing: 3px;border:none;padding:0px;background-color:transparent;" align="right">
                                                 <tr>
                                                     <td>
-                                                        <button type='button' id="active_control" style="border-color:transparent;" class='btn btn-success btn-block'><i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Control</button>
+                                                        <button type='button' id="active_control" style="border-color:transparent;align-content: left" class='btn btn-success center-block  btn-lg'><i align="center" class='fa  fa-power-off fa-fw'></i></button>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -512,7 +516,7 @@
                                         </div>
                                     </div>
                                 </fieldset>
-                                <br/>
+                                <br />
                                 <div id="thumbnail_control" style="width:100%;height:55vh;">
                                     <img src="">
                                 </div>

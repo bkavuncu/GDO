@@ -47,25 +47,25 @@
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-<script>
+    <script>
     $(function() {
         var gdo = parent.gdo;
         gdo.consoleOut('.Temperatures', 1, 'Init Control');
         gdo.net.app["Temperatures"].initControl();
     });
 
-</script>
+    </script>
     <div class="wrapper" style="width:97%">
-        <br/>
+        <br />
         <div class="row">
-            <div class="col-lg-7">
+            <div class="col-lg-3">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h6><i class='fa  fa-refresh fa-fw'></i>&nbsp;Update Temperatures</h6>
                     </div>
                     <div class="panel-body">
                         <fieldset>
-                            <button id="btnRefresh_submit" class="btn btn-success btn-block format_button">Update</button>
+                            <button id="btnRefresh_submit" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-refresh fa-fw'></i></button>
                         </fieldset>
                     </div>
                     <div class="panel-footer">
@@ -80,13 +80,13 @@
     </div>
 
 
-        <script>
+    <script>
             $("#btnRefresh_submit").click(function () {
                 var gdo = parent.gdo;
                 gdo.consoleOut('.Temperatures', 1, 'Refreshing Temperatures');
                 gdo.net.app['Temperatures'].server.refreshAllTemps(gdo.controlId);
             });
-        </script>
+    </script>
 
 </body>
 

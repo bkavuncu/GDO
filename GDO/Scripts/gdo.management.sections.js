@@ -45,6 +45,7 @@ gdo.management.drawSectionTable =  function (){
                     .css("height", (gdo.management.table_height / gdo.net.rows) + "")
                     .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
                     .css("border", "1px solid #333")
+                    .css('overflow', 'hidden')
                     .css("background", "#222")
                     .css({ fontSize: gdo.management.section_font_size })
                     .css('padding', 0)
@@ -70,6 +71,7 @@ gdo.management.drawSectionTable =  function (){
                 .css("border", "1px solid #2A9FD6")
                 .css("background", "#087DB4")
                 .css('padding', 0)
+                .css('overflow', 'hidden')
                 .css("vertical-align", "top")
                 .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>")
                 .append("</br>")
@@ -79,6 +81,7 @@ gdo.management.drawSectionTable =  function (){
             if (gdo.net.section[sectionId].appInstanceId >= 0) {
                 $("#section_table_row_" + node.row + "_col_" + node.col)
                     .append("</br>")
+                    .css('overflow', 'hidden')
                     .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;Application:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
                     .append("<div id='section_table_section_" + sectionId + "_i'> <b>&nbsp;Instance:</b> " + gdo.net.section[sectionId].appInstanceId + "</div>")
                     .append("<div id='section_table_section_" + sectionId + "_c'> <b>&nbsp;Configuration:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
