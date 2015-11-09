@@ -165,7 +165,6 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         .css("display", "inline-block")
         .css("position", "relative")
         .attr("text-align", "center")
-        .attr("onfocus", "gdo.net.app['Maps'].clearInput()")
         .focus(gdo.net.app['Maps'].clearInput)
         .css({ fontSize: gdo.management.button_font_size * 0.7 });
     $("iframe").contents().find("#map_input").keyup(function (event) {
@@ -183,15 +182,12 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         .append("<button type='button' id='map_submit' class='btn btn-success btn-block'><i class='fa fa-check-circle fa-fw'></i>&nbsp;Search</button>");
     $("iframe").contents().find("#map_submit")
         .css("width", "100%")
-        .attr("onfocus", "gdo.net.app['Maps'].clearInput()")
         .focus(gdo.net.app['Maps'].clearInput)
         .css({ fontSize: gdo.management.button_font_size * 0.7 })
         .unbind()
         .click(function () {
             gdo.consoleOut(".Maps", 1, "Finding: " + $("iframe").contents().find('#map_input').val());
             gdo.net.app["Maps"].searchGeoCode(instanceId, $("iframe").contents().find('#map_input').val());
-            gdo.net.app["Maps"].displayPositionMarker(instanceId, coordinates);
-            gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, coordinates);
         });
     $("iframe").contents().find("#map_clear_div")
        .css("margin", "0px")
