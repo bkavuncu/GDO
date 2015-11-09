@@ -1,5 +1,7 @@
 ﻿'use strict';
 var _ = require('underscore');
+var $ = require('jquery');
+var React = require('react');
 
 class DeployerNode extends React.Component {
     render () {
