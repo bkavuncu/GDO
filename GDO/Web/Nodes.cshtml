@@ -85,7 +85,6 @@
     <script>
             gdo.updateDisplayCanvas = function () {
                 gdo.management.updateMaintenanceButton();
-                gdo.management.updateSmartCityMenu();
                 gdo.management.drawNodeTable(gdo.nodeId);
             }
             $(function () {
@@ -162,11 +161,6 @@
                             </li>
                             <li>
                                 <a href="~/Web/Scenarios.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
-                            </li>
-                            <li>
-                                <a href="~/Web/Maps/Maps.cshtml"><i class="fa fa-map-marker fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Smart City</font><span class="fa arrow"></a>
-                                <ul class="nav nav-second-level" id="nav_smart_city"></ul>
-                                <!-- /.nav-second-level -->
                             </li>
                             <li>
                                 <a href="~/Web/Wiki.cshtml"><i class="fa fa-file-text fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Wiki</font></a>

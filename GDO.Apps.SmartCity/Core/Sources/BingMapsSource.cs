@@ -7,7 +7,7 @@ using GDO.Apps.SmartCity.Core.Sources.Tiles;
 
 namespace GDO.Apps.SmartCity.Core.Sources
 {
-    public class BingSmartCitySource : ImageTileSource
+    public class BingMapsSource : ImageTileSource
     {
         public string Culture { get; set; }
         public string Key { get; set; }

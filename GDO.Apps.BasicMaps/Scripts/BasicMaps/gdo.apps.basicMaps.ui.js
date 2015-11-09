@@ -1,5 +1,4 @@
-﻿
-gdo.net.app["Maps"].drawEmptyMapTable = function (maxCol, maxRow) {
+﻿gdo.net.app["BasicMaps"].drawEmptyMapTable = function (maxCol, maxRow) {
     $("iframe").contents().find("#map_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("iframe").contents().find("#map_table").append("<tr id='map_table_row_" + i + "' row='" + i + "'></tr>");
@@ -9,143 +8,143 @@ gdo.net.app["Maps"].drawEmptyMapTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.net.app["Maps"].numButtons =6;
+gdo.net.app["BasicMaps"].numButtons =6;
 
 
-gdo.net.app["Maps"].drawMapTable = function (instanceId) {
-    gdo.net.app["Maps"].drawEmptyMapTable(6, 2);
+gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
+    gdo.net.app["BasicMaps"].drawEmptyMapTable(6, 2);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()
-        .append("<div><button type='button' id='maps_layer_0' class='btn btn-primary btn-outline btn-block'>Bing Maps (Aerial)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_0' class='btn btn-primary btn-outline btn-block'>Bing Maps (Aerial)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 0);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 0);
         });
     $("iframe").contents().find("#map_table_row_0_col_1")
         .empty()
-        .append("<div><button type='button' id='maps_layer_1' class='btn btn-primary btn-outline btn-block'>Bing Maps (Aerial with Labels)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_1' class='btn btn-primary btn-outline btn-block'>Bing Maps (Aerial with Labels)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 1);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 1);
         });
     $("iframe").contents().find("#map_table_row_0_col_2")
         .empty()
-        .append("<div><button type='button' id='maps_layer_2' class='btn btn-primary btn-outline btn-block'>Bing Maps (Road)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_2' class='btn btn-primary btn-outline btn-block'>Bing Maps (Road)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 2);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 2);
         });
     $("iframe").contents().find("#map_table_row_0_col_3")
         .empty()
-        .append("<div><button type='button' id='maps_layer_3' class='btn btn-primary btn-outline btn-block'>Bing Maps (Collins Bart)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_3' class='btn btn-primary btn-outline btn-block'>Bing Maps (Collins Bart)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 3);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 3);
         });
     $("iframe").contents().find("#map_table_row_0_col_4")
         .empty()
-        .append("<div><button type='button' id='maps_layer_4' class='btn btn-primary btn-outline btn-block'>Bing Maps (Ordnance Survey)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_4' class='btn btn-primary btn-outline btn-block'>Bing Maps (Ordnance Survey)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 4);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 4);
         });
     $("iframe").contents().find("#map_table_row_0_col_5")
         .empty()
-        .append("<div><button type='button' id='maps_layer_5' class='btn btn-primary btn-outline btn-block'>Map Quest</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_5' class='btn btn-primary btn-outline btn-block'>Map Quest</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 5);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 5);
         });
     $("iframe").contents().find("#map_table_row_1_col_0")
       .empty()
-      .append("<div><button type='button' id='maps_layer_7' class='btn btn-primary btn-outline btn-block'>Stamen Maps (Toner)</button></div>")
+      .append("<div><button type='button' id='basicMaps_layer_7' class='btn btn-primary btn-outline btn-block'>Stamen BasicMaps (Toner)</button></div>")
       .css("margin", "0px")
       .css("padding", "0px")
-      .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+      .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
       .css("height", "40px")
       .unbind()
       .click(function () {
-          gdo.net.app["Maps"].server.setLayerVisible(instanceId, 7);
+          gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 7);
       });
     $("iframe").contents().find("#map_table_row_1_col_1")
         .empty()
-        .append("<div><button type='button' id='maps_layer_8' class='btn btn-primary btn-outline btn-block'>Stamen Maps (Terrain)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_8' class='btn btn-primary btn-outline btn-block'>Stamen BasicMaps (Terrain)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 8);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 8);
         });
     $("iframe").contents().find("#map_table_row_1_col_2")
         .empty()
-        .append("<div><button type='button' id='maps_layer_9' class='btn btn-primary btn-outline btn-block'>Stamen Maps (Water Color)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_9' class='btn btn-primary btn-outline btn-block'>Stamen BasicMaps (Water Color)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 9);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 9);
         });
     $("iframe").contents().find("#map_table_row_1_col_3")
         .empty()
-        .append("<div><button type='button' id='maps_layer_10' class='btn btn-primary btn-outline btn-block'>Open Street Map</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_10' class='btn btn-primary btn-outline btn-block'>Open Street Map</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 10);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 10);
         });
     $("iframe").contents().find("#map_table_row_1_col_4")
         .empty()
-        .append("<div><button type='button' id='maps_layer_11' class='btn btn-primary btn-outline btn-block'>Open Cycle Map</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_11' class='btn btn-primary btn-outline btn-block'>Open Cycle Map</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100/gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100/gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 11);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 11);
         });
     $("iframe").contents().find("#map_table_row_1_col_5")
         .empty()
-        .append("<div><button type='button' id='maps_layer_6' class='btn btn-primary btn-outline btn-block'>Map Quest (Satellite)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_6' class='btn btn-primary btn-outline btn-block'>Map Quest (Satellite)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
-        .css("width", 100 / gdo.net.app["Maps"].numButtons + "%")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].server.setLayerVisible(instanceId, 6);
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 6);
         });
     //Search
     $("iframe").contents().find("#map_input_div")
@@ -165,7 +164,7 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         .css("display", "inline-block")
         .css("position", "relative")
         .attr("text-align", "center")
-        .focus(gdo.net.app['Maps'].clearInput)
+        .focus(gdo.net.app['BasicMaps'].clearInput)
         .css({ fontSize: gdo.management.button_font_size * 0.7 });
     $("iframe").contents().find("#map_input").keyup(function (event) {
         if (event.keyCode == 13) {
@@ -182,12 +181,12 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         .append("<button type='button' id='map_submit' class='btn btn-success btn-block'><i class='fa fa-check-circle fa-fw'></i>&nbsp;Search</button>");
     $("iframe").contents().find("#map_submit")
         .css("width", "100%")
-        .focus(gdo.net.app['Maps'].clearInput)
+        .focus(gdo.net.app['BasicMaps'].clearInput)
         .css({ fontSize: gdo.management.button_font_size * 0.7 })
         .unbind()
         .click(function () {
-            gdo.consoleOut(".Maps", 1, "Finding: " + $("iframe").contents().find('#map_input').val());
-            gdo.net.app["Maps"].searchGeoCode(instanceId, $("iframe").contents().find('#map_input').val());
+            gdo.consoleOut(".BasicMaps", 1, "Finding: " + $("iframe").contents().find('#map_input').val());
+            gdo.net.app["BasicMaps"].searchGeoCode(instanceId, $("iframe").contents().find('#map_input').val());
         });
     $("iframe").contents().find("#map_clear_div")
        .css("margin", "0px")
@@ -202,7 +201,7 @@ gdo.net.app["Maps"].drawMapTable = function (instanceId) {
         .css({ fontSize: gdo.management.button_font_size * 0.7 })
         .unbind()
         .click(function () {
-            gdo.net.app["Maps"].clearPositionMarker(instanceId);
+            gdo.net.app["BasicMaps"].clearPositionMarker(instanceId);
         });
 }
 

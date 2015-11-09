@@ -5,9 +5,9 @@ using System.Linq;
 using System.Web;
 using GDO.Core;
 
-namespace GDO.Apps.Maps
+namespace GDO.Apps.BasicMaps
 {
-    public class MapsApp : IAppInstance
+    public class BasicMapsApp : IAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }

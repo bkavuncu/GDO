@@ -384,12 +384,12 @@ namespace GDO.Apps.SmartCity
             }
         }
 
-        public int AddBingSmartCitySource(string name, string culture, string key, string imagerySet, int maxZoom)
+        public int AddBingMapsSource(string name, string culture, string key, string imagerySet, int maxZoom)
         {
             try
             {
-                int sourceId = AddSource<BingSmartCitySource>(name, (int)SourceTypes.BingSmartCity);
-                Sources.GetValue<BingSmartCitySource>(sourceId).Init(culture, key, imagerySet, maxZoom);
+                int sourceId = AddSource<BingMapsSource>(name, (int)SourceTypes.BingMaps);
+                Sources.GetValue<BingMapsSource>(sourceId).Init(culture, key, imagerySet, maxZoom);
                 return sourceId;
             }
             catch (Exception e)
@@ -399,12 +399,12 @@ namespace GDO.Apps.SmartCity
             }
         }
 
-        public void ModifyBingSmartCitySource(int sourceId, string name)
+        public void ModifyBingMapsSource(int sourceId, string name)
         {
             try
             {
-                ModifySource(sourceId, name, (int)SourceTypes.BingSmartCity);
-                Sources.GetValue<BingSmartCitySource>(sourceId).Modify();
+                ModifySource(sourceId, name, (int)SourceTypes.BingMaps);
+                Sources.GetValue<BingMapsSource>(sourceId).Modify();
             }
             catch (Exception e)
             {
@@ -1297,7 +1297,7 @@ namespace GDO.Apps.SmartCity
             styles.Add(circleStyle);
 
             //Add Sources to Template
-            BingSmartCitySource bingSmartCitySource = new BingSmartCitySource();
+            BingMapsSource BingMapsSource = new BingMapsSource();
             ClusterSource clusterSource = new ClusterSource();
             StaticImageSource staticImageSource = new StaticImageSource();
             VectorImageSource vectorImageSource = new VectorImageSource();
@@ -1308,14 +1308,14 @@ namespace GDO.Apps.SmartCity
             VectorTileSource vectorTileSource = new VectorTileSource();
             VectorSource vectorSource = new VectorSource();
 
-            bingSmartCitySource.Prepare();
-            bingSmartCitySource.Id = 0;
-            bingSmartCitySource.Type = (int)SourceTypes.BingSmartCity;
-            bingSmartCitySource.Name = bingSmartCitySource.ClassName;
-            bingSmartCitySource.MaxZoom = 19;
-            bingSmartCitySource.ImagerySet = "AerialWithLabels";
-            bingSmartCitySource.Key = "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3";
-            bingSmartCitySource.Projection = "EPSG:4326";
+            BingMapsSource.Prepare();
+            BingMapsSource.Id = 0;
+            BingMapsSource.Type = (int)SourceTypes.BingMaps;
+            BingMapsSource.Name = BingMapsSource.ClassName;
+            BingMapsSource.MaxZoom = 19;
+            BingMapsSource.ImagerySet = "AerialWithLabels";
+            BingMapsSource.Key = "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3";
+            BingMapsSource.Projection = "EPSG:4326";
             clusterSource.Prepare();
             clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
@@ -1366,7 +1366,7 @@ namespace GDO.Apps.SmartCity
 
 
             sources.Add(vectorSource);
-            sources.Add(bingSmartCitySource);
+            sources.Add(BingMapsSource);
             //sources.Add(clusterSource);
             //sources.Add(staticImageSource);
             //sources.Add(vectorImageSource);
@@ -1397,7 +1397,7 @@ namespace GDO.Apps.SmartCity
             tileLayer.Id = 2;
             tileLayer.Type = (int)LayerTypes.Tile;
             tileLayer.Name = tileLayer.ClassName;
-            tileLayer.Source = bingSmartCitySource;
+            tileLayer.Source = BingMapsSource;
             vectorLayer.Prepare();
             vectorLayer.Id = 3;
             vectorLayer.Type = (int)LayerTypes.Vector;

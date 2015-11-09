@@ -552,14 +552,14 @@ namespace GDO.Apps.SmartCity
 
         //Source
 
-        public void AddBingSmartCitySource(int instanceId, string name, string culture, string key, string imagerySet, int maxZoom)
+        public void AddBingMapsSource(int instanceId, string name, string culture, string key, string imagerySet, int maxZoom)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     SmartCityApp smartCity = ((SmartCityApp)Cave.Apps["SmartCity"].Instances[instanceId]);
-                    int sourceId = smartCity.AddBingSmartCitySource(name, culture, key, imagerySet, maxZoom);
+                    int sourceId = smartCity.AddBingMapsSource(name, culture, key, imagerySet, maxZoom);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)
@@ -569,14 +569,14 @@ namespace GDO.Apps.SmartCity
             }
         }
 
-        public void UpdateBingSmartCitySource(int instanceId, int sourceId, string name)
+        public void UpdateBingMapsSource(int instanceId, int sourceId, string name)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     SmartCityApp smartCity = ((SmartCityApp) Cave.Apps["SmartCity"].Instances[instanceId]);
-                    smartCity.ModifyBingSmartCitySource(sourceId, name);
+                    smartCity.ModifyBingMapsSource(sourceId, name);
                     BroadcastSource(instanceId, sourceId);
                 }
                 catch (Exception e)

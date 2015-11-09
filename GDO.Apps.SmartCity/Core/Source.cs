@@ -9,7 +9,7 @@ namespace GDO.Apps.SmartCity.Core
     {
         None = -1,
         Base = 0,
-        BingSmartCity = 1,
+        BingMaps = 1,
         Cluster = 2,
         Image = 3,
         ImageCanvas = 4,

@@ -91,7 +91,8 @@
     <Content Include="Scripts\SmartCity\gdo.apps.smartcity.layer.js" />
     <Content Include="Scripts\SmartCity\gdo.apps.smartcity.source.js" />
     <Content Include="Scripts\SmartCity\gdo.apps.smartcity.style.js" />
-    <Content Include="Scripts\SmartCity\gdo.apps.smartcity.ui.advanced.js" />
+    <Content Include="Scripts\SmartCity\gdo.apps.smartcity.ui.map.js" />
+    <Content Include="Scripts\SmartCity\gdo.apps.smartcity.ui.visualisation.js" />
     <Content Include="Scripts\SmartCity\gdo.apps.smartcity.utilities.js" />
     <Content Include="Scripts\SmartCity\gdo.apps.smartcity.view.js" />
     <Content Include="Scripts\SmartCity\ol3cesium.js.map" />
@@ -113,7 +114,6 @@
     <Content Include="Scripts\SmartCity\ol3\ol.js" />
     <Content Include="Web\SmartCity\App.cshtml" />
     <Content Include="Web\SmartCity\Control.cshtml" />
-    <Content Include="Web\SmartCity\Advanced.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />

@@ -97,13 +97,4 @@ gdo.management.updateInstancesMenu = function () {
     $("#side-menu").metisMenu();
 }
 
-gdo.management.updateSmartCityMenu = function () {
-    $("#nav_smart_city").empty().append(
-        "<li><a href='/Web/Maps/Visualisation.cshtml'><i class='fa fa-sliders fa-fw'></i> <font color='#fff' size='3px'>&nbsp;&nbsp;Visualisation</font></a></li>" +
-        "<li><a href='/Web/Charts/Charts.cshtml'><i class='fa fa-bar-chart-o fa-fw'></i> <font color='#fff' size='3.5px'>&nbsp;&nbsp;Charts</font></a></li>" + 
-        "<li><a href='/Web/Timeseries/Timeseries.cshtml'><i class='fa fa-superscript fa-fw'></i> <font color='#fff' size='3.5px'>&nbsp;&nbsp;Timeseries</font></a></li>" +
-        "<li><a href='/Web/Maps/Storage.cshtml'><i class='fa fa-database fa-fw'></i> <font color='#fff' size='3px'>&nbsp;&nbsp;Storage</font></a></li>" +
-        "<li><a href='/Web/Maps/Processing.cshtml'><i class='fa fa-gears fa-fw'></i> <font color='#fff' size='3px'>&nbsp;&nbsp;Processing</font></a></li>" 
-    );
-}
                                 

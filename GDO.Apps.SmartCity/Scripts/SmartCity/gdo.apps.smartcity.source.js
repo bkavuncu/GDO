@@ -1,7 +1,7 @@
 ﻿gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM = {
     None: -1,
     Base: 0,
-    BingSmartCity: 1,
+    BingMaps: 1,
     Cluster: 2,
     Image: 3,
     ImageCanvas: 4,
@@ -40,7 +40,7 @@ gdo.net.app["SmartCity"].addSource = function (instanceId, sourceId, deserialize
     var tileGrid;
 
     switch (deserializedSource.Type) {
-        case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingSmartCity:
+        case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingMaps:
             properties = [
                 ["culture",deserializedSource.Culture],
                 ["key",deserializedSource.Key],
@@ -48,7 +48,7 @@ gdo.net.app["SmartCity"].addSource = function (instanceId, sourceId, deserialize
                 ["maxZoom",deserializedSource.MaxZoom]
             ];
             options = gdo.net.app["SmartCity"].optionConstructor(properties);
-            source = new ol.source.BingSmartCity(options);
+            source = new ol.source.BingMaps(options);
             break;
         case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.Cluster:
             properties = [
@@ -198,7 +198,7 @@ gdo.net.app["SmartCity"].updateSource = function (instanceId, sourceId, deserial
     gdo.consoleOut('.SmartCity', 1, 'Instance ' + instanceId + ': Updating Source: ' + deserializedSource.Id);
     var source = gdo.net.instance[instanceId].sources[sourceId];
     switch (deserializedSource.Type) {
-        case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingSmartCity:
+        case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingMaps:
             break;
         case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.Cluster:
             break;
@@ -239,8 +239,8 @@ gdo.net.app["SmartCity"].uploadSource = function (instanceId, sourceId, isNew) {
     var type = gdo.net.instance[instanceId].source[sourceId].type;
     if (isNew) {
         switch (type) {
-            case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingSmartCity:
-                gdo.net.app["SmartCity"].server.addBingSmartCitySource(instanceId, properties.Name, properties.Culture, properties.Key, properties.ImagerySet,
+            case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingMaps:
+                gdo.net.app["SmartCity"].server.addBingMapsSource(instanceId, properties.Name, properties.Culture, properties.Key, properties.ImagerySet,
                     source.MaxZoom);
                 break;
             case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.Cluster:
@@ -283,8 +283,8 @@ gdo.net.app["SmartCity"].uploadSource = function (instanceId, sourceId, isNew) {
         }
     } else {
         switch (type) {
-            case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingSmartCity:
-                gdo.net.app["SmartCity"].server.updateBingSmartCitySource(instanceId, sourceId, properties.Name);
+            case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.BingMaps:
+                gdo.net.app["SmartCity"].server.updateBingMapsSource(instanceId, sourceId, properties.Name);
                 break;
             case gdo.net.app["SmartCity"].SOURCE_TYPES_ENUM.Cluster:
                 gdo.net.app["SmartCity"].server.updateClusterSource(instanceId, sourceId, properties.Name);

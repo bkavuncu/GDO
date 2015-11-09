@@ -223,11 +223,6 @@ gdo.net.app["SmartCity"].initControl = function (instanceId) {
 
     //Load Modules
     gdo.loadModule('utilities', 'smartCity', gdo.MODULE_TYPE.APP);
-    if (gdo.net.app["SmartCity"].isAdvanced) {
-        gdo.loadModule('ui.advanced', 'smartCity', gdo.MODULE_TYPE.APP);
-    } else {
-        gdo.loadModule('ui', 'smartCity', gdo.MODULE_TYPE.APP);
-    }
     gdo.loadModule('3d', 'smartCity', gdo.MODULE_TYPE.APP);
     gdo.loadModule('format', 'smartCity', gdo.MODULE_TYPE.APP);
     gdo.loadModule('interaction', 'smartCity', gdo.MODULE_TYPE.APP);
@@ -235,6 +230,9 @@ gdo.net.app["SmartCity"].initControl = function (instanceId) {
     gdo.loadModule('source', 'smartCity', gdo.MODULE_TYPE.APP);
     gdo.loadModule('style', 'smartCity', gdo.MODULE_TYPE.APP);
     gdo.loadModule('view', 'smartCity', gdo.MODULE_TYPE.APP);
+    gdo.loadModule('ui.visualisation', 'smartCity', gdo.MODULE_TYPE.APP);
+    gdo.loadModule('ui.map', 'smartCity', gdo.MODULE_TYPE.APP);
+    gdo.loadModule('ui', 'smartCity', gdo.MODULE_TYPE.APP);
 
     //Calculate Necessary Parameters
     gdo.net.instance[instanceId].isInitialized = false;
@@ -264,13 +262,8 @@ gdo.net.app["SmartCity"].switchToInstance = function (instanceId) {
 }
 
 gdo.net.app["SmartCity"].resizeMap = function(instanceId) {
-    if (gdo.net.app["SmartCity"].isAdvanced) {
-        $("body").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
-        $("body").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
-    } else {
-        $("iframe").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
-        $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
-    }
+    $("iframe").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
+    $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
 }
 
 gdo.net.app["SmartCity"].calculateClientParameters = function (instanceId) {
