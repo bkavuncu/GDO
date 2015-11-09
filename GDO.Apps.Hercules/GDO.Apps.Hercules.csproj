@@ -2922,6 +2922,7 @@
     <Content Include="node_modules\babel-core\node_modules\source-map\README.md" />
     <Content Include="node_modules\babel-core\package.json" />
     <Content Include="node_modules\babel-core\README.md" />
+    <Content Include="Scripts\build\index.html" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\build\control.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

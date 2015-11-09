@@ -63,28 +63,20 @@ module.exports = function (grunt) {
             }
         },
         copy: {
-            dist: {
+            main: {
                 files: [
                     {
-                        flatten: true,
                         expand: true,
-                        src: ['Web/Management.cshtml'],
-                        dest: '<%= pkg.dist %>/index.html',
-                        filter: 'isFile'
+                        flatten: true,
+                        src: ['./Web'],
+                        dest: '<%= pkg.dist %>'
                     }
                 ]
             }
         },
 
         clean: {
-            dist: {
-                files: [{
-                    dot: true,
-                    src: [
-                        '<%= pkg.dist %>'
-                    ]
-                }]
-            }
+            folder: '<%= pkg.dist %>'
         }
     });
 
@@ -101,7 +93,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['karma']);
 
-    grunt.registerTask('build', ['clean', 'copy', 'webpack']);
+    grunt.registerTask('build', [ 'clean', 'copy:dist', 'webpack']);
 
     grunt.registerTask('default', ['serve']);
 };

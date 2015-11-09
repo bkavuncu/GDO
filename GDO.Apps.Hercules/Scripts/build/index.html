@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Hercules</title>
+    <style>
+        body, html, #react-target {
+            background-color: white;
+            color: black;
+        }
+    </style>
+
+</head>
+<body>
+    <script src="~/Scripts/jquery-2.1.4.min.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {
+            console.log(parent, parent.gdo);
+            var gdo = parent.gdo;
+            gdo.consoleOut('.Hercules', 1, 'Init Control');
+            gdo.net.app["Hercules"].initControl();
+        });
+
+    </script>
+    <div id="react-target"></div>
+    <script src="~/Scripts/react/react-with-addons-0.13.1.min.js"></script>
+    <script src="~/Scripts/build/control.js"></script>
+</body>
+</html>
