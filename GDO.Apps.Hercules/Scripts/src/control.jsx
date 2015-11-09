@@ -4,74 +4,14 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var View = require('./ui/View.jsx');
-
-class DeployerNode extends React.Component {
-    render () {
-        var w = this.props.width,
-            h = this.props.height;
-            
-        var nodeStyle = {
-            display: "flex",
-            justifyItems: "center",
-            width: w + 'px',
-            height: h + 'px'
-        };
-        return <View id={'node' + this.props.id } className="node" style={nodeStyle}>
-            {this.props.id}
-        </View>;
-    }
-}
-
-let [MEASURE, RENDER] = [0,1];
-class DeployerGrid extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            step: MEASURE
-        };
-    }
-    componentDidMount () {
-        window.addEventListener('resize', () => this.resize());
-        this.resize();
-    }
-    componentWillUnmount () {
-        window.removeEventListener('resize', () => this.resize());
-    }
-    resize () {
-        var el = ReactDOM.findDOMNode(this);
-
-        this.setState({
-            step: RENDER,
-            width: el.offsetWidth,
-            height: el.offsetHeight
-        });
-    }
-    render() {
-        const NODE_NUMBER = 64,
-            ROWS = 4, 
-            COLUMNS = NODE_NUMBER / ROWS;
-
-        switch (this.state.step) {
-            case MEASURE:
-                return <View/>;
-                break;
-            case RENDER:
-                var nW = this.state.width / COLUMNS,
-                    nH = this.state.height / ROWS;
-
-                var nodeList = _.range(1, NODE_NUMBER + 1).map((i) => <DeployerNode key={i} id={i} width={nW} height={nH} />);
-
-                return <View>{nodeList}</View>;
-                break;
-        }
-    }
-}
+var DeployerGrid = require('./DeployerGrid.jsx');
 
 var SectionDeployer = React.createClass({
     render: function () {
         return <View><DeployerGrid /></View>;
     }
-});
+}); 
+
 
 var tabList = [
 { 'id': 1, 'name': 'Section Deployment', 'url': '/sectionDeployment' },
