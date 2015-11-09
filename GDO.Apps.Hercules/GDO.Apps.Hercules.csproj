@@ -2924,7 +2924,6 @@
     <Content Include="node_modules\babel-core\README.md" />
     <Content Include="Scripts\build\index.html" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\build\control.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />

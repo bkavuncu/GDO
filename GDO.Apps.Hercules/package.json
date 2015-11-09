@@ -15,6 +15,7 @@
     "babel-preset-react": "^6.0.15",
     "jquery": "^2.1.4",
     "react": "^0.14.2",
+    "react-dom": "^0.14.2",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

@@ -1,13 +1,17 @@
 ﻿'use strict';
 var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react');
+var ReactDOM = require('react-dom');
 
 class DeployerNode extends React.Component {
     render () {
+        var w = this.props.width,
+            h = this.props.height;
         var nodeStyle = {
             display: "flex",
-            justifyItems: "center"
+            justifyItems: "center",
+            width: w + 'px',
+            height: h + 'px'
         };
         return <div id={'node' + this.props.id } className="node" style={nodeStyle}>
             {this.props.id}
@@ -15,12 +19,51 @@ class DeployerNode extends React.Component {
     }
 }
 
+let [MEASURE, RENDER] = [0,1];
 class DeployerGrid extends React.Component {
-    render() {
-        const NODE_NUMBER = 64;
-        var nodeList = _.range(64).map((i) => <DeployerNode id={i} />);
+    constructor (props) {
+        super(props);
+        this.state = {
+            step: MEASURE
+        };
+    }
+    componentDidMount () {
+        var el = ReactDOM.findDOMNode(this);
 
-        return <div>{nodeList}</div>;
+        this.setState({
+            step: RENDER,
+            width: el.offsetWidth,
+            height: el.offsetHeight
+        });
+    }
+    render() {
+        const NODE_NUMBER = 64,
+            ROWS = 4, COLUMNS = NODE_NUMBER / ROWS;
+
+        switch (this.state.step) {
+            case MEASURE:
+                var containerStyle = {
+                    width: '100%',
+                    height: '100%'
+                };
+
+                return <div style={containerStyle} />;
+                break;
+            case RENDER:
+                var nW = this.state.width / ROWS,
+                    nH = this.state.height / COLUMNS;
+                var nodeList = _.range(64).map((i) => <DeployerNode key={i} id={i} width={nW} height={nH} />);
+
+                var containerStyle = {
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    flexWrap: 'wrap'
+                };
+
+                return <div style={containerStyle}>{nodeList}</div>;
+                break;
+        }
     }
 }
 
@@ -186,7 +229,7 @@ class Start extends React.Component {
     }
 
     render() {
-        console.log('This State', this.state);
+        console.log('his State', this.state);
         if (this.state.fullscreen)
             return <App />;
         else
@@ -194,7 +237,7 @@ class Start extends React.Component {
     }
 }
 
-React.render(
+ReactDOM.render(
 <Start />,
 document.getElementById("react-target")
 );
