@@ -2,7 +2,8 @@
   "name": "hercules",
   "version": "1.0.0",
   "description": "Mhhh Data",
-  "main": "index.js",
+  "src": "Scripts/src",
+  "dist": "Scripts/build",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +19,8 @@
     "babel-loader": "^6.0.1",
     "babel-preset-es2015": "^6.1.2",
     "babel-preset-react": "^6.1.2",
+    "grunt": "^0.4.5",
+    "load-grunt-tasks": "^3.3.0",
     "webpack": "^1.12.3"
   }
 }
