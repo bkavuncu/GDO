@@ -14,28 +14,14 @@ class View extends React.Component {
         super(props);
 
         this.state = {
-            style: initialStyle
+            style: _.extend({}, initialStyle, this.props.style)
         };
-
-        if (props.style) {
-            this.mergeStyle(props.style);
-        }
-    }
-
-    componentWIllReceiveProps (props) {
-        if (props.style) {
-            this.mergeStyle(props.style);
-        }
-    }
-
-    mergeStyle(newStyle) {
-        this.setState({
-            style: _.extend(this.state.style, newStyle)
-        });
     }
 
     render () {
-        return <div style={this.state.style}>
+        var newStyle = _.extend({}, this.state.style, this.props.style);
+
+        return <div style={newStyle}>
             {this.props.children}    
         </div>;    
     }
