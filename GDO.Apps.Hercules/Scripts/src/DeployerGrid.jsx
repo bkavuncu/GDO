@@ -43,12 +43,14 @@ class DeployerGrid extends React.Component {
         };
     }
     componentDidMount () {
-        window.addEventListener('resize', () => this.resize());
+    	var listener = () => this.resize();
+    	this.setState({listener});
+        window.addEventListener('resize', listener);
         this.resize();
     }
     componentWillUnmount () {
     	console.log('yoooo');
-        window.removeEventListener('resize', () => this.resize());
+        window.removeEventListener('resize', this.state.listener);
     }
     resize () {
         var el = ReactDOM.findDOMNode(this);
