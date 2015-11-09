@@ -9,14 +9,26 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.css" rel="stylesheet">
+    <!-- Timeline CSS -->
+    <link href="../../Bootstrap/dist/css/timeline.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../Bootstrap/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <style>
         body {
-            background: #222;
             color: #FFF;
-            font-family: helvetica;
-            font-size: 70%;
         }
 
         .unselectable {
@@ -26,31 +38,15 @@
             -o-user-select: none;
             user-select: none;
         }
-
-        .thumb {
-            height: 75px;
-            border: 1px solid #000;
-            margin: 10px 5px 0 0;
-        }
-        .format_text {
-            color: #DDD;
-            font-size: 21px;
-        }
-        .format_button {
-            color: #DDD;
-            background: #222;
-            font-size: 21px;
-            width: 200px;
-            height: 35px;
-            border: 3px solid #444;
-            margin: 0;
-            padding: 0;
-        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
-<script src="../../Scripts/jquery-2.1.4.min.js"></script>
-<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 <script>
     $(function() {
         var gdo = parent.gdo;
@@ -59,31 +55,38 @@
     });
 
 </script>
-<div>
-    <h1>GDO Temps App Control</h1>
-    <div class="format_text">
-        <b>Update Temperatures</b>
-        <br>
-        <fieldset>
-           <button id="btnRefresh_submit" class="format_button">Update</button>
-        </fieldset>
+    <div class="wrapper" style="width:97%">
         <br/>
-        <b>Message</b>
-        <fieldset>
-            <p id="message_from_server"></p>
-        </fieldset>
-        <br/>       
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h6><i class='fa  fa-refresh fa-fw'></i>&nbsp;Update Temperatures</h6>
+                    </div>
+                    <div class="panel-body">
+                        <fieldset>
+                            <button id="btnRefresh_submit" class="btn btn-success btn-block format_button">Update</button>
+                        </fieldset>
+                    </div>
+                    <div class="panel-footer">
+                        <b>Message:</b>
+                        <fieldset>
+                            <p id="message_from_server"></p>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-</div>
 
-<script> 
-    $("#btnRefresh_submit").click(function () {
-        var gdo = parent.gdo;
-        gdo.consoleOut('.Temperatures', 1, 'Refreshing Temperatures');
-        gdo.net.app['Temperatures'].server.refreshAllTemps(gdo.controlId);
-    });    
-</script>
+
+        <script>
+            $("#btnRefresh_submit").click(function () {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.Temperatures', 1, 'Refreshing Temperatures');
+                gdo.net.app['Temperatures'].server.refreshAllTemps(gdo.controlId);
+            });
+        </script>
 
 </body>
 

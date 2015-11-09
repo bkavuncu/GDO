@@ -115,18 +115,23 @@ gdo.net.app["Maps"].searchGeoCode = function (instanceId, address) {
         if (status === google.maps.GeocoderStatus.OK) {
             $("iframe").contents().find("#map_input_div").removeClass("has-error").addClass("has-success");
             gdo.consoleOut(".Maps", 4, results[0].geometry.location);
-            var center = ol.proj.transform([results[0].geometry.location.K, results[0].geometry.location.G], 'EPSG:4326', 'EPSG:3857');
-            //results[0].geometry.viewport.getSouthWest(), 
-            //results[0].geometry.viewport.getNorthEast() ..etc
-            //transform projection
-            //var boundingBox = new ol.source ...
-            //var extent = boundingBox.getExtent();
-            //map.getView().fit(extent, map.getSize());
-            map.getView().setCenter(center);
+            var centerCoordinate = ol.proj.transform([results[0].geometry.location.K, results[0].geometry.location.G], 'EPSG:4326', 'EPSG:3857');
+            var southWestCoordinate = ol.proj.transform([results[0].geometry.viewport.getSouthWest().K, results[0].geometry.viewport.getSouthWest().G], 'EPSG:4326', 'EPSG:3857');
+            var northEastCoordinate = ol.proj.transform([results[0].geometry.viewport.getNorthEast().K, results[0].geometry.viewport.getNorthEast().G], 'EPSG:4326', 'EPSG:3857');
+            var southWestFeature = new ol.Feature();
+            southWestFeature.setGeometry(southWestCoordinate ? new ol.geom.Point(southWestCoordinate) : null);
+            var northEastFeature = new ol.Feature();
+            northEastFeature.setGeometry(northEastCoordinate ? new ol.geom.Point(northEastCoordinate) : null);
+            var boundingBox = new ol.source.Vector({
+                features: [southWestFeature, northEastFeature]
+            });
+            var extent = boundingBox.getExtent();
+            map.getView().fit(extent, map.getSize());
+            map.getView().setCenter(centerCoordinate);
             setTimeout(function() {
                 gdo.net.app["Maps"].uploadMapPosition(instanceId);
-                gdo.net.app["Maps"].displayPositionMarker(instanceId, center);
-                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, center);
+                gdo.net.app["Maps"].displayPositionMarker(instanceId, centerCoordinate);
+                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, centerCoordinate);
             }, 70);
             
         } else {

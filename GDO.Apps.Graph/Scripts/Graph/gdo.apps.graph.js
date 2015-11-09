@@ -76,7 +76,7 @@ $(function () {
 
             var logDom = $("iframe").contents().find("#message_from_server");
             // append new "p" element for each msg, instead of replacing existing one
-            logDom.append("<p>" + message + "</p>");
+            logDom.empty().append("<p>" + message + "</p>");
 
             scroll_bottom(logDom[0]);
 
@@ -90,7 +90,7 @@ $(function () {
 
         var logDom = $("iframe").contents().find("#message_from_server");
         // append new "p" element for each msg, instead of replacing existing one
-        logDom.append("<p>" + message + "</p>");
+        logDom.empty().append("<p>" + message + "</p>");
 
         scroll_bottom(logDom[0]);
     }
