@@ -6,7 +6,8 @@ const React = require('react'),
 const NODE_PADDING = 3;
 class DeployerNode extends React.Component {
     render () {
-        var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING;
+        var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
+            fontSize = Math.floor(Math.min(edge / 2, 30));
 
         var outerStyle = {
                 display: "flex",
@@ -23,7 +24,7 @@ class DeployerNode extends React.Component {
                 backgroundColor: 'darkgray',
                 boxShadow: '0 0 3px black',
                 color: 'white',
-                fontSize: '30px',
+                fontSize: fontSize + 'px',
                 borderRadius: '0px'
             };
         return <View id={'node' + this.props.id } className="node" style={outerStyle}>
