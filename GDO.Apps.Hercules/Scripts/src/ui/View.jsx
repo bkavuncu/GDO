@@ -6,7 +6,7 @@ const initialStyle = {
     height: '100%',
     display: 'flex',
     flexWrap: 'wrap',
-    justifyElements: 'center'
+    justifyContent: 'center'
 };
 
 class View extends React.Component {
