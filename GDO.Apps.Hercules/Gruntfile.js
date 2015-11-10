@@ -26,7 +26,7 @@ module.exports = function (grunt) {
                 port: 8000,
                 webpack: webpackDevConfig,
                 publicPath: '/assets/',
-                contentBase: './<%= pkg.dist %>/'
+                contentBase: './<%= pkg.src %>/'
             },
 
             start: {
@@ -63,20 +63,28 @@ module.exports = function (grunt) {
             }
         },
         copy: {
-            main: {
+            dist: {
                 files: [
                     {
                         expand: true,
                         flatten: true,
-                        src: ['./Web'],
-                        dest: '<%= pkg.dist %>'
+                        src: ['<%= pkg.src %>/*'],
+                        dest: '<%= pkg.dist %>',
+                        filter: 'isFile'
                     }
                 ]
             }
         },
 
         clean: {
-            folder: '<%= pkg.dist %>'
+            dist: {
+                files: [{
+                    dot: true,
+                    src: [
+                        '<%= pkg.dist %>'
+                    ]
+                }]
+            }
         }
     });
 
@@ -93,7 +101,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['karma']);
 
-    grunt.registerTask('build', [ 'clean', 'copy:dist', 'webpack']);
+    grunt.registerTask('build', [ 'clean', 'copy', 'webpack']);
 
     grunt.registerTask('default', ['serve']);
 };

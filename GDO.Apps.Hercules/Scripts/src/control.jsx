@@ -10,7 +10,7 @@ var SectionDeployer = React.createClass({
     render: function () {
         return <View><DeployerGrid /></View>;
     }
-}); 
+});
 
 
 var tabList = [
@@ -42,7 +42,7 @@ var Tabs = React.createClass({
         this.props.changeTab(tab);
     },
     render: function () {
-       
+
 
         return (
         <nav>
@@ -175,6 +175,6 @@ class Start extends React.Component {
 }
 
 ReactDOM.render(
-<Start />,
+<App />,
 document.getElementById("react-target")
 );
