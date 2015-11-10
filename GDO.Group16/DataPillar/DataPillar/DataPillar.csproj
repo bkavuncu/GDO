@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DataPillar</RootNamespace>
     <AssemblyName>DataPillar</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,13 +53,8 @@
     <Compile Include="Common\Error.cs" />
     <Compile Include="DataAugmenter\AugmentedColumn.cs" />
     <Compile Include="DataAugmenter\FieldType.cs" />
-    <Compile Include="DataConverter\CSVConverter.cs" />
-    <Compile Include="DataConverter\JSONConverter.cs" />
     <Compile Include="DataConverter\TextFieldConverter.cs" />
-    <Compile Include="DataConverter\TSVConverter.cs" />
-    <Compile Include="DataConverter\XMLConverter.cs" />
     <Compile Include="Common\Utils.cs" />
-    <Compile Include="DataConverter\SupportedFormat.cs" />
     <Compile Include="DataConverter\PlainDataset.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

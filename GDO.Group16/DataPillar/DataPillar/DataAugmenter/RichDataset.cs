@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Device.Location;
+using Newtonsoft.Json;
 
 using DataPillar.DataConverter;
+using DataPillar.Common;
+
 
 namespace DataPillar.DataAugmenter
 {
+
+
+
     /// <summary>
     /// We have a reference to the original source PlainDataset to obtain the data.
     /// When we are done, the RichDataset will have a list of 'dynamic' rows.
@@ -23,6 +30,7 @@ namespace DataPillar.DataAugmenter
         public PlainDataset SourceDataset;
         public dynamic[][] TypedColumns;
         public AugmentedColumn[] AugmentedColumns;
+    
 
         public RichDataset(PlainDataset sourceDataset, dynamic[][] typedColumns, AugmentedColumn[] augmentedColumns)
         {
@@ -30,10 +38,41 @@ namespace DataPillar.DataAugmenter
             TypedColumns = typedColumns;
             AugmentedColumns = augmentedColumns;
         }
-    }
 
-    class RichDatasetFactory
-    {
+        public static void Serialize (RichDataset rich)
+        {
+            string columns = JsonConvert.SerializeObject(rich.AugmentedColumns);
+            string hope = JsonConvert.SerializeObject(rich.TypedColumns);
+            //StringBuilder sb = new StringBuilder();
+            //StringWriter sw = new StringWriter(sb);
+            //JsonWriter writer = new JsonTextWriter(sw);
+            //{
+            //    writer.Formatting = Formatting.Indented;
+            
+            //    writer.WriteStartObject();
+
+            //    // Write the typed columns
+
+            //    writer.WritePropertyName("columns");
+            //    writer.WriteValue("Intel");
+            //    writer.WritePropertyName("PSU");
+            //    writer.WriteValue("500W");
+            //    writer.WritePropertyName("Drives");
+
+            //    writer.WriteStartArray();
+            //    writer.WriteValue("DVD read/writer");
+            //    writer.WriteComment("(broken)");
+            //    writer.WriteValue("500 gigabyte hard drive");
+            //    writer.WriteValue("200 gigabype hard drive");
+            //    writer.WriteEnd();
+
+            //    writer.WriteEndObject();
+            //}
+            
+
+            System.Diagnostics.Debug.WriteLine(hope);
+        }
+
         /// <summary>
         /// Stuff happens here. Given the PlainDataset, go through each row, and for 
         /// each row go through each field. Figure out which type the filed is and see
@@ -71,12 +110,20 @@ namespace DataPillar.DataAugmenter
                 augCols[i].Name = headers[i];
             }
 
+            SanitizeColumns(typedCols, augCols);
             ComputeStats(typedCols, augCols);
             RichDataset richDataset = new RichDataset(sourceDataset, typedCols, augCols);
             return richDataset;
         }
 
-
+        private static void SanitizeColumns(dynamic[][] typedCols, AugmentedColumn[] augCols)
+        {
+            int numCols = typedCols.Length;
+            for (int i = 0; i < numCols; i++)
+            {
+                  
+            }
+        }
 
 
         private static void ComputeStats(dynamic[][] typedCols, AugmentedColumn[] augCols)
@@ -89,7 +136,7 @@ namespace DataPillar.DataAugmenter
                 dynamic[] typedCol = typedCols[i];
                 AugmentedColumn augCol = augCols[i];
 
-                double min = 0, max = 0, sum = 0, mean = 0;
+                double min = 0, max = 0, sum = 0, mean = 0, median = 0;
                 bool amIenum = false;
 
                 switch (augCol.FieldType)
@@ -102,6 +149,7 @@ namespace DataPillar.DataAugmenter
                         max = longs[numRows - 1];
                         sum = longs.Sum();
                         mean = sum / numRows;
+                        median = Utils.LongMedian(longs);
                         amIenum = GetEnums(longs);
                         break;
 
@@ -116,6 +164,7 @@ namespace DataPillar.DataAugmenter
                         max = doubles[numRows - 1];
                         sum = doubles.Sum();
                         mean = sum / numRows;
+                        median = Utils.DoubleMedian(doubles);
                         amIenum = GetEnums(doubles);
                         break;
 
@@ -127,13 +176,14 @@ namespace DataPillar.DataAugmenter
                         max = dates[numRows - 1];
                         sum = dates.Sum();
                         mean = sum / numRows;
+                        median = Utils.LongMedian(dates);
                         amIenum = GetEnums(dates);
                         break;
 
                     case FieldType.GPSCoords:
                         GeoCoordinate[] coords = new GeoCoordinate[numRows];
                         typedCol.CopyTo(coords, 0);
-                        Array.Sort (coords);
+                        Array.Sort(coords);
                         amIenum = GetEnums(coords);
                         break;
 
@@ -143,7 +193,6 @@ namespace DataPillar.DataAugmenter
                         Array.Sort(texts, (me, you) => me.Length.CompareTo(you.Length));
                         min = texts[0].Length;
                         max = texts[numRows - 1].Length;
-
                         Array.Sort(texts);
                         amIenum = GetEnums(texts);
                         break;
@@ -183,7 +232,7 @@ namespace DataPillar.DataAugmenter
             return isEnum(enums.Count, arr.Length);
         }
 
-        private static bool isEnum (int actualSize, int totalSize)
+        private static bool isEnum(int actualSize, int totalSize)
         {
             double desiredSize = 12.5 * Math.Pow(2, (Math.Log10(totalSize) - 2));
             return actualSize <= desiredSize;
@@ -211,7 +260,7 @@ namespace DataPillar.DataAugmenter
         }
 
 
-        private static FieldType GetFieldType(String value, out dynamic output)
+        private static FieldType GetFieldType(string value, out dynamic output)
         {
             //Integer
             long integer;
@@ -269,6 +318,7 @@ namespace DataPillar.DataAugmenter
             }
         }
 
-
     }
+
+
 }

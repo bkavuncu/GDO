@@ -11,58 +11,136 @@ using DataPillar.DataAugmenter;
 namespace DataPillar.DataConverter
 {
 
+    /// <summary>
+    /// What happened after we tried to parse a plain Datasettete?
+    /// if NiceAndClean is true, then everything went alright, no need to check the other fields.
+    /// Else, a few things may have gone wrong.
+    /// Unsupported format only contains a non-empty string when the file type provided is not a 
+    /// supported one. If that is the case then the PlainDataset could not be parsed and is returned empty.
+    /// IOError only contains a non-empty string when a file/stream-related exception was caught whilst parsing.
+    /// If that is the case then the PlainDataset could not be parsed and is returned empty.
+    /// Else, things are looking up for us: the file/stream could be opened.
+    /// However, the first line may be malformed. If that is the case, MalformedHeaders is true,
+    /// and the PlainDataset returned is empty.
+    /// If one or more other lines were malformed, those have been collected in MalformedLines
+    /// toghether with the line number, the total number of which is SkippedLines.
+    /// The PlainDataset returned only contains those lines that are not malformed.
+    /// The name of the source file is saved in... SourceFile! This is initially set to the 
+    /// string "<stream>".
+    /// </summary>
+    class ConverterOutcome
+    {
+        public bool NiceAndClean = true;
+        public bool MalformedHeaders = false;
+        public Dictionary<string, long> MalformedLines = new Dictionary<string, long>();
+        public long SkippedLines = 0;
+
+        public string UnsupportedFormat = "";
+        public string IOError = "";
+        public string SourceFile = "<stream>";
+    }
 
 
     /// <summary>
-    /// This is the entry point for the DataConverter. Use this class to convert 
-    /// a file containing tabular data into a PlainDataset. 
-    /// Supported formats are CSV, TSV, XML and JSON. 
-    /// If the file is stored onto disk, use PlainDataset.FromFile(path) to read 
-    /// and convert the file at location path.
-    /// If the data has already been read and is availabled as a stream (string),
-    /// use PlainDataset.FromStream(dataStream, format) to perform the conversion.
-    /// In this case, the format must be provided explicitely and must not be 
-    /// SupportedFormat.Unsupported.
-    /// 
-    /// If FromFile is called, the entire contents of the file are read as a string
-    /// first, then passed onto FromString.
+    /// A PlainDataset is the common intermediate representation of a dataset.
+    /// It contains the name of each column (Headers) and the raw data as 
+    /// an array of columns, each column as an array of fields (Columns). 
+    /// Additionally is has a unique identifier (UID).
     /// </summary>
-    class PlainDatasetFactory
+    class PlainDataset
     {
+        private static long NextUID = 0;
 
-        public static PlainDataset FromFile(string filePath)
+        public long UID;
+        public string[] Headers;
+        public string[][] Columns;
+
+        private PlainDataset(long uid, string[] headers, string[][] columns)
         {
-            SupportedFormat format = ParseSupportedFormat(filePath);
-            Stream stream = new FileStream(filePath, FileMode.Open);
-            return FromStream(stream, format);
+            UID = uid;
+            Headers = headers;
+            Columns = columns;
         }
 
-        public static PlainDataset FromStream(Stream stream, SupportedFormat format)
+        /// <summary>
+        /// Creates and returns a new PlainDataset containing the data provided.
+        /// </summary>
+        /// <param name="headers"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public static PlainDataset FromData(string[] headers, string[][] columns)
         {
-            ConverterOutcome outcome;
+            return new PlainDataset(NextUID++, headers, columns);
+        }
 
-            switch (format)
+        /// <summary>
+        /// Creates and returns an empty PlainDataset: no headers and no columns.
+        /// Any DataSet created this way has UID = -1.
+        /// </summary>
+        /// <returns></returns>
+        public static PlainDataset Empty()
+        {
+            return new PlainDataset(-1, new string[0], new string[0][]);
+        }
+
+
+        /// <summary>
+        /// Converts a file stored at filePath and containing tabular data into a PlainDataset. 
+        /// Supported formats are CSV, TSV, XML and JSON. 
+        /// FromFile will read the file contents as a Stream and call FromStream.
+        /// </summary>
+        public static PlainDataset FromFile(string filePath, ref ConverterOutcome outcome)
+        {
+            try
             {
-                case SupportedFormat.CSV: return TextFieldConverter.ConvertCSV(stream, out outcome);
-                case SupportedFormat.TSV: return TextFieldConverter.ConvertTSV(stream, out outcome);
-                //case SupportedFormat.XML:  return XMLConverter.convertStream(streamData);
-                //case SupportedFormat.JSON: return JSONConverter.convertStream(streamData);
-                default: return TODO.UNIMPLEMENTED();
+                outcome.SourceFile = filePath;
+                Stream stream = new FileStream(filePath, FileMode.Open);
+                string fileExt = Utils.ExtractFileExtension(filePath);
+                return FromStream(stream, fileExt, ref outcome);
+            }
+            catch (Exception ex)
+            {
+                outcome.IOError = ex.Message;
+                return PlainDataset.Empty();
             }
         }
 
-        private static SupportedFormat ParseSupportedFormat(string filePath)
+        /// <summary>
+        /// Converts a Stream containing tabular data into a PlainDataset. 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="fileExt">This is needed to make sure the steram is interpreted correctly
+        /// Supported file extensions are CSV, TSV, XML and JSON. </param>
+        /// <param name="outcome"></param>
+        /// <returns></returns>
+        public static PlainDataset FromStream(Stream stream, string fileExt, ref ConverterOutcome outcome)
         {
-            string fileExtension = Utils.ExtractFileExtension(filePath);
-            switch (fileExtension.ToUpper())
+            switch (fileExt.ToUpper())
             {
-                case "CSV": return SupportedFormat.CSV;
-                case "TSV": return SupportedFormat.TSV;
-                case "XML": return SupportedFormat.XML;
-                case "JSON": return SupportedFormat.JSON;
-                default: return SupportedFormat.Unsupported;
+                case "CSV":
+                    return TextFieldConverter.ConvertCSV(stream, ref outcome);
+                case "TSV":
+                    return TextFieldConverter.ConvertCSV(stream, ref outcome);
+                case "XML":
+                case "JSON":
+                default:
+                    outcome.UnsupportedFormat = fileExt;
+                    return PlainDataset.Empty();
             }
         }
     }
-
 }
+
+
+
+///// <summary>
+///// The dataset file formats supported by the application.
+///// </summary>
+//enum SupportedFormat
+//{
+//    CSV,
+//    TSV,
+//    XML,
+//    JSON,
+//    Unsupported
+//}
