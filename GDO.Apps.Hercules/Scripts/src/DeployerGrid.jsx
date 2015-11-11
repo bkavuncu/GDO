@@ -21,8 +21,8 @@ class DeployerNode extends React.Component {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: 'darkgray',
-                boxShadow: '0 0 3px black',
+                backgroundColor: '#1976D2',
+                boxShadow: '0 0 7px gray',
                 color: 'white',
                 fontSize: fontSize + 'px',
                 borderRadius: '0px'
@@ -72,7 +72,8 @@ class DeployerGrid extends React.Component {
             alignContent: 'flex-start',
             flexGrow: 1,
             height: 'auto',
-            padding: PADDING + 'px'
+            padding: PADDING + 'px',
+            backgroundColor: '#80cbc4'
         };
 
         switch (this.state.step) {

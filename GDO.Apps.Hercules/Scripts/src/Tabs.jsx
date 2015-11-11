@@ -9,7 +9,7 @@ var DeployerGrid = require('./DeployerGrid.jsx'),
 class Tab extends React.Component {
     render () {
         var name = this.props.name,
-            color = this.props.active? '#00BCD4' : '#009688',
+            color = this.props.active? '#80cbc4' : '#009688',
             tabStyle = {
                 flexGrow: 1,
                 width: 'auto',
@@ -18,7 +18,7 @@ class Tab extends React.Component {
                 flexDirection: 'column',
                 alignItems: 'center',
                 backgroundColor: color,
-                transition: 'background-color ease-in 0.3s'
+                transition: 'background-color ease-in 0.2s'
             };
 
         return (
