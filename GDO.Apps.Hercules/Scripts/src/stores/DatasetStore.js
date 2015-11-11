@@ -12,7 +12,6 @@ class DatasetStore extends BaseStore {
     }
 
     _registerToActions (action) {
-        console.log(action);
         switch (action.actionType) {
             case 'addMiniset':
                 var miniset = action.data;
@@ -35,7 +34,6 @@ class DatasetStore extends BaseStore {
     }
 
     getAllSets () {
-        console.log(this.miniSets, this.miniSets.toList());
         return this.miniSets.toList();
     }
 }
