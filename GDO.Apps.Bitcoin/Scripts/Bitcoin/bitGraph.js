@@ -211,7 +211,7 @@ var s = new sigma({
 function bindEvents(blkid){
 //function peerConnect(blkid){
     //establish connection to controller
-    var peer = new Peer({key: '3dp2kjnfd9kq33di'});
+    var peer = new Peer({ host: "dsigdopreprod.doc.ic.ac.uk", port: 55555 });
     var conn = peer.connect('controller');
 
     //update DOM with connection string

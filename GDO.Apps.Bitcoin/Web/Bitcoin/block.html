@@ -11,8 +11,8 @@
     <title></title>
     <style type="text/css">
         #graphcontainer {
-            max-width: 5840px;
-            height: 3640px;
+			max-width: 5760px;
+			height: 3240px;
             margin: 0;
         }
         #textarea {
@@ -119,7 +119,7 @@
 
                     console.log('Retrieved block details successfully');
                     var resObj = JSON.parse(xmlhttp.responseText);
-                    document.getElementById('createdAt').innerHTML = resObj.blocks[0].time;
+                    document.getElementById('createdAt').innerHTML = new Date(resObj.blocks[0].time);
                     
                     for (var i = 0; i < resObj.blocks.length; i++) {
                         if (resObj.blocks[i].main_chain) {
