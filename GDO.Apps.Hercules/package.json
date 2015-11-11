@@ -20,6 +20,7 @@
     "js-schema": "^1.0.1",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
+    "react-tap-event-plugin": "^0.2.1",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

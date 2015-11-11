@@ -1,5 +1,7 @@
+'use strict';
 const React = require('react'),
-    View = require('./ui/View.jsx');
+    View = require('./ui/View.jsx'),
+    _ = require('underscore');
 
 
 var DeployerGrid = require('./DeployerGrid.jsx'),
@@ -19,10 +21,11 @@ class Tab extends React.Component {
                 alignItems: 'center',
                 backgroundColor: color,
                 transition: 'background-color ease-in 0.2s'
-            };
+            },
+            handler = () => this.props.handleClick(name);
 
         return (
-            <View style={tabStyle} onClick={() => this.props.handleClick(name)}>
+            <View style={tabStyle} onTouchTap={handler}>
                 {name}
             </View>
         );
@@ -73,10 +76,12 @@ class Tabs extends React.Component {
             contentStyle = {
                 height: 'auto',
                 flexGrow: '1'
-            };
+            },
+            unselectable = require('./ui/styles').unselectable,
+            newPageStyle = _.extend({}, pageStyle, unselectable);
 
         return (
-            <div style={pageStyle}>
+            <div style={newPageStyle}>
                 <View style={tabsStyle}>
                     {Object.keys(TABS).map( function(tabKey) {
                         return (

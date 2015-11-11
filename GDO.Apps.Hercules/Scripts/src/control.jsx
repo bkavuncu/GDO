@@ -5,6 +5,9 @@ var ReactDOM = require('react-dom');
 
 var View = require('./ui/View.jsx'),
     Tabs = require('./Tabs.jsx');
+
+require('react-tap-event-plugin')();
+
 var App = React.createClass({
     render: function () {
         return <View>

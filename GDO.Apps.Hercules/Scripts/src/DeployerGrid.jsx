@@ -5,6 +5,18 @@ const React = require('react'),
 
 const NODE_PADDING = 3;
 class DeployerNode extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            selected: false
+        }
+    }
+    _onTap () {
+        this.setState({
+            selected: !this.state.selected
+        });
+    }
     render () {
         var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
             fontSize = Math.floor(Math.min(edge / 2, 30));
@@ -21,15 +33,19 @@ class DeployerNode extends React.Component {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: '#1976D2',
+                backgroundColor: this.state.selected? '#00BCD4' : '#1976D2',
                 boxShadow: '0 0 7px gray',
                 color: 'white',
                 fontSize: fontSize + 'px',
                 borderRadius: '0px'
-            };
-        return <View id={'node' + this.props.id } className="node" style={outerStyle}>
+            },
+            unselectable = require('./ui/styles').unselectable;
+
+        return <View id={'node' + this.props.id }
+                     onTouchTap={() => this._onTap()}
+                     style={outerStyle}>
             <View style={innerStyle}>
-                {this.props.id}
+                <div style={unselectable}>{this.props.id}</div>
             </View>
         </View>;
     }
