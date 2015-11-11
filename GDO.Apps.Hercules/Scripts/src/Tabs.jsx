@@ -3,7 +3,8 @@ const React = require('react'),
 
 
 var DeployerGrid = require('./DeployerGrid.jsx'),
-    DataExplorer, DataEnricher, DataFilter, GraphControl;
+    DataExplorer = require('./Explorer'),
+    DataEnricher, DataFilter, GraphControl;
 
 class Tab extends React.Component {
     render () {
@@ -58,7 +59,8 @@ class Tabs extends React.Component {
                 flexDirection: 'column',
                 height: '100%',
                 width: '100%',
-                alignItems: 'flex-start'
+                alignItems: 'flex-start',
+                fontFamily: 'sans-serif'
             },
             tabsStyle = {
                 display: 'flex',
