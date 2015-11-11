@@ -1,4 +1,5 @@
-const Dispatcher = require('../Dispatcher');
+const Dispatcher = require('../Dispatcher'),
+    schemas = require('../schemas/Dataset');
 
 var datasets = [
     {
@@ -8,12 +9,24 @@ var datasets = [
         fields: [
             {
                 name: 'lemon',
-                type: 'enum'
+                description: 'lemons m8',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
             },{
                 name: 'orange',
-                type: 'number'
+                description: 'citruses m9',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
             }
-        ]
+        ],
+        disabled: false,
+        length: 500,
+        source: {
+            type: 'URL',
+            url: 'http://deez.nuts/data.csv'
+        }
     },{
         id: 2,
         name: 'Sam Lemon',
@@ -21,30 +34,61 @@ var datasets = [
         fields: [
             {
                 name: 'lemon',
-                type: 'enum'
+                description: 'lemons m8',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
             },{
                 name: 'orange',
-                type: 'number'
+                description: 'citruses m9',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
             }
-        ]
-    },{
+        ],
+        disabled: false,
+        length: 500,
+        source: {
+            type: 'URL',
+            url: 'http://deez.nuts/data.csv'
+        }
+    }, {
         id: 3,
         name: 'Gina Lemon',
         description: 'a family friend',
         fields: [
             {
                 name: 'lemon',
-                type: 'enum'
+                description: 'lemons m8',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
             },{
                 name: 'orange',
-                type: 'number'
+                description: 'citruses m9',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
             }
-        ]
+        ],
+        disabled: false,
+        length: 500,
+        source: {
+            type: 'URL',
+            url: 'http://deez.nuts/data.csv'
+        }
     }
 ];
 
 export function requestMinisets () {
     datasets.map ((d) => {
+        var valid = schemas.validMiniset;
+
+        if (valid(d)) {
+            console.log('Una bomba');
+        } else {
+            console.error(valid.errors(d))
+        }
         Dispatcher.dispatch({
             actionType: 'addMiniset',
             data: d
