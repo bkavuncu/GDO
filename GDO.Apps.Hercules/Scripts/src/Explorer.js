@@ -6,18 +6,39 @@ const React = require('react'),
     DatasetStore = require('./stores/DatasetStore'),
     ExplorerActions = require('./actions/ExplorerActions');
 
-const W_PAPER = 200,
-    H_PAPER = 300,
+const W_PAPER = 210,
+    H_PAPER = 310,
     P_PAPER = 5;
 
 class Paper extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            width: W_PAPER,
+            height: H_PAPER
+        }
+    }
+
+    changeSize (width, height, animate) {
+        this.setState({width, height});
+    }
+
+    resetSize () {
+        this.setState({
+            width: W_PAPER,
+            height: H_PAPER
+        });
+    }
+
     render () {
-        var outerStyle = {
-                padding: '5px'
+        var {width, height} = this.state,
+            outerStyle = {
+                padding: P_PAPER + 'px',
             },
             innerStyle = {
-                width: W_PAPER + 'px',
-                height: H_PAPER + 'px',
+                width: width + 'px',
+                height: height + 'px',
                 boxShadow: '0 0 10px gray',
                 backgroundColor: 'white',
                 display: 'flex',
@@ -46,7 +67,36 @@ class AddNew extends React.Component {
     }
 }
 
+let [MINI, EXPAND, FULL, COLLAPSE] = [1,2,3,4];
 class Dataset extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            step: MINI
+        };
+    }
+
+    _expand () {
+        const MAX_WIDTH = 600,
+            MAX_HEIGHT = 310;
+
+        switch(this.state.step){
+            case MINI:
+                var width = Math.min(this.props.parentSize.width, MAX_WIDTH),
+                    height = Math.min(this.props.parentSize.height, MAX_HEIGHT);
+
+                this.refs.paper.changeSize(width, height, false);
+                this.setState({step: FULL});
+                break;
+            case FULL:
+                this.refs.paper.resetSize();
+                this.setState({step: MINI});
+                break;
+        }
+
+    }
+
     render () {
         var d = this.props.data,
             nameStyle = {
@@ -66,12 +116,57 @@ class Dataset extends React.Component {
                 border: '1px solid gray'
             };
 
-        return <Paper>
+        return <Paper ref="paper" onTouchTap={() => this._expand()}>
             <div style={nameStyle}>{d.name}</div>
             <div>{d.description}</div>
             <div style={separator} />
             <div style={fieldStyle}>{d.fields.length} fields</div>
         </Paper>;
+    }
+}
+
+
+class Explorer extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {};
+    }
+    componentDidMount () {
+        var el = ReactDOM.findDOMNode(this);
+
+        this.setState({
+            width: el.offsetWidth,
+            height: el.offsetHeight
+        })
+    }
+
+    render () {
+        const PADDING = 5;
+        var outerStyle = {
+            backgroundColor: '#80CBC4',
+            alignContent: 'flex-start',
+            flexGrow: 1,
+            height: 'auto',
+            padding: PADDING + 'px'
+        },
+            pSize = null;
+
+        if ('width' in this.state) {
+            pSize = {
+                width: this.state.width - 2 * PADDING,
+                height: this.state.height - 2 * PADDING
+            }
+        }
+
+        return <View style={outerStyle}>
+            <AddNew />
+            {this.props.minisets
+                .map((d) => <Dataset
+                    key={d.name}
+                    data={d}
+                    parentSize={pSize}/>)}
+        </View>;
     }
 }
 
@@ -88,6 +183,8 @@ class ExplorerWrapper extends React.Component {
         var listener = this._onChange.bind(this);
         DatasetStore.addChangeListener(listener);
         this.setState({listener});
+
+        ExplorerActions.requestMinisets();
     }
 
     componentWillUnmount () {
@@ -102,26 +199,6 @@ class ExplorerWrapper extends React.Component {
 
     render () {
         return <Explorer minisets={this.state.minisets} />;
-    }
-}
-
-class Explorer extends React.Component {
-    componentWillMount () {
-        ExplorerActions.requestMinisets();
-    }
-    render () {
-        var outerStyle = {
-            backgroundColor: '#80CBC4',
-            alignContent: 'flex-start',
-            flexGrow: 1,
-            height: 'auto',
-            padding: '5px'
-        };
-
-        return <View style={outerStyle}>
-            <AddNew />
-            {this.props.minisets.map((d) => <Dataset key={d.name} data={d} />)}
-        </View>;
     }
 }
 

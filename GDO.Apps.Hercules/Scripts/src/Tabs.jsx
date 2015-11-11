@@ -69,13 +69,16 @@ class Tabs extends React.Component {
                 display: 'flex',
                 height: '40px',
                 flexGrow: 0,
+                flexShrink: 0,
                 textTransform: 'capitalize',
                 color: 'white',
                 fontFamily: 'sans-serif'
             },
             contentStyle = {
                 height: 'auto',
-                flexGrow: '1'
+                flexGrow: '1',
+                overflow: 'auto',
+                backgroundColor: '#80CBC4'
             },
             unselectable = require('./ui/styles').unselectable,
             newPageStyle = _.extend({}, pageStyle, unselectable);
