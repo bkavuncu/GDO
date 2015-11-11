@@ -2,7 +2,9 @@
 const React = require('react'),
     View = require('./ui/View.jsx'),
     ReactDOM = require('react-dom'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    DatasetStore = require('./stores/DatasetStore'),
+    ExplorerActions = require('./actions/ExplorerActions');
 
 const W_PAPER = 200,
     H_PAPER = 300,
@@ -34,46 +36,6 @@ class Paper extends React.Component {
         </div>;
     }
 }
-
-var datasets = [
-    {
-        name: 'George Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                type: 'enum'
-            },{
-                name: 'orange',
-                type: 'number'
-            }
-        ]
-    },{
-        name: 'Sam Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                type: 'enum'
-            },{
-                name: 'orange',
-                type: 'number'
-            }
-        ]
-    },{
-        name: 'Gina Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                type: 'enum'
-            },{
-                name: 'orange',
-                type: 'number'
-            }
-        ]
-    }
-];
 
 class AddNew extends React.Component {
     render () {
@@ -113,10 +75,43 @@ class Dataset extends React.Component {
     }
 }
 
+class ExplorerWrapper extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            minisets: []
+        };
+    }
+
+    componentWillMount () {
+        var listener = this._onChange.bind(this);
+        DatasetStore.addChangeListener(listener);
+        this.setState({listener});
+    }
+
+    componentWillUnmount () {
+        DatasetStore.removeChangeListener(this.state.listener);
+    }
+
+    _onChange () {
+        this.setState({
+            minisets: DatasetStore.getAllSets()
+        });
+    }
+
+    render () {
+        return <Explorer minisets={this.state.minisets} />;
+    }
+}
+
 class Explorer extends React.Component {
+    componentWillMount () {
+        ExplorerActions.requestMinisets();
+    }
     render () {
         var outerStyle = {
-            backgroundColor: 'beige',
+            backgroundColor: '#80CBC4',
             alignContent: 'flex-start',
             flexGrow: 1,
             height: 'auto',
@@ -125,9 +120,9 @@ class Explorer extends React.Component {
 
         return <View style={outerStyle}>
             <AddNew />
-            {datasets.map((d) => <Dataset key={d.name} data={d} />)}
+            {this.props.minisets.map((d) => <Dataset key={d.name} data={d} />)}
         </View>;
     }
 }
 
-module.exports = Explorer;
+module.exports = ExplorerWrapper;
