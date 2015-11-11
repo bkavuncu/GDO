@@ -1,5 +1,5 @@
-﻿const React = require('react');
-const _ = require('underscore');
+﻿const React = require('react'),
+    _ = require('underscore');
 
 const initialStyle = {
     width: '100%',
@@ -19,11 +19,13 @@ class View extends React.Component {
     }
 
     render () {
-        var newStyle = _.extend({}, this.state.style, this.props.style);
+        var newStyle = _.extend({}, this.state.style, this.props.style),
+            // pass all props down except style
+            other = _.omit(this.props, 'style');
 
-        return <div style={newStyle}>
-            {this.props.children}    
-        </div>;    
+        return <div style={newStyle} {...other}>
+            {this.props.children}
+        </div>;
     }
 }
 

@@ -51,7 +51,6 @@ class DeployerGrid extends React.Component {
         this.resize();
     }
     componentWillUnmount () {
-        console.log('yoooo');
         window.removeEventListener('resize', this.state.listener);
     }
     resize () {
@@ -71,12 +70,14 @@ class DeployerGrid extends React.Component {
 
         var style = {
             alignContent: 'flex-start',
+            flexGrow: 1,
+            height: 'auto',
             padding: PADDING + 'px'
         };
 
         switch (this.state.step) {
             case MEASURE:
-                return <View/>;
+                return <View style={style}/>;
                 break;
             case RENDER:
                 var width = this.state.width - 2 * PADDING,
@@ -89,7 +90,7 @@ class DeployerGrid extends React.Component {
                         key={i} id={i}
                         width={nW} height={nH} />);
 
-                return <View style={style}>{nodeList}</View>;
+                return <View id="grid" style={style}>{nodeList}</View>;
                 break;
         }
     }

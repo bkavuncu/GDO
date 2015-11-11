@@ -5,25 +5,31 @@ const React = require('react'),
 var DeployerGrid = require('./DeployerGrid.jsx'),
     DataExplorer, DataEnricher, DataFilter, GraphControl;
 
-class SectionDeployer extends React.Component {
-    render () {
-        return <View><DeployerGrid /></View>;
-    }
-}
-
 class Tab extends React.Component {
     render () {
-        var name = this.props.name;
+        var name = this.props.name,
+            color = this.props.active? '#00BCD4' : '#009688',
+            tabStyle = {
+                flexGrow: 1,
+                width: 'auto',
+                height: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                backgroundColor: color,
+                transition: 'background-color ease-in 0.3s'
+            };
+
         return (
-            <div onClick={() => this.props.handleClick(name)}>
+            <View style={tabStyle} onClick={() => this.props.handleClick(name)}>
                 {name}
-            </div>
+            </View>
         );
     }
 }
 
 let TABS = {
-    "Section Deployment": SectionDeployer,
+    "Section Deployment": DeployerGrid,
     "Data Explorer": DataExplorer,
     "Data Enricher": DataEnricher,
     "Data Filter": DataFilter,
@@ -35,32 +41,54 @@ class Tabs extends React.Component {
         super();
 
         this.state = {
-            component: SectionDeployer
+            active: "Section Deployment"
         };
     }
 
-    handleClick (tabName) {
-        this.setState({
-            component: TABS[tabName]
-        });
-    }
-
     render () {
-        var SelectedComponent = this.state.component || 'TODO';
+        var activeTab = this.state.active,
+            SelectedComponent = TABS[activeTab] || 'TODO',
+            handleClick = (tabName) => {
+                this.setState({
+                    active: tabName
+                });
+            },
+            pageStyle = {
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                width: '100%',
+                alignItems: 'flex-start'
+            },
+            tabsStyle = {
+                display: 'flex',
+                height: '40px',
+                flexGrow: 0,
+                textTransform: 'capitalize',
+                color: 'white',
+                fontFamily: 'sans-serif'
+            },
+            contentStyle = {
+                height: 'auto',
+                flexGrow: '1'
+            };
 
         return (
-            <View>
-                <div>
+            <div style={pageStyle}>
+                <View style={tabsStyle}>
                     {Object.keys(TABS).map( function(tabKey) {
                         return (
-                            <Tab handleClick={this.handleClick}
+                            <Tab active={tabKey === activeTab}
+                                 handleClick={handleClick}
                                  key={tabKey}
                                  name={tabKey}/>
                         );
                     }.bind(this))}
-                </div>
-                <SelectedComponent />
-            </View>
+                </View>
+                <View style={contentStyle} id='content'>
+                    {typeof SelectedComponent == 'function'? <SelectedComponent /> : <View>{SelectedComponent}</View>}
+                </View>
+            </div>
         );
     }
 }
