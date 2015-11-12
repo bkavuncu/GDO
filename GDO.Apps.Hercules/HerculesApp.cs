@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using GDO.Core;
 using Newtonsoft.Json;
+using DP.src.Augment;
 
 namespace GDO.Apps.Hercules
 {
@@ -20,7 +21,6 @@ namespace GDO.Apps.Hercules
 
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
-            System.Diagnostics.Debug.Write("YOOOO SUPPPPP");
             this.Id = instanceId;
             this.AppName = appName;
             this.Section = section;
