@@ -9,13 +9,13 @@ var datasets = [
         fields: [
             {
                 name: 'lemon',
-                description: 'lemons m8',
+                description: 'lemons',
                 disabled: false,
                 origin: 'native',
                 type: 'Enum'
             },{
                 name: 'orange',
-                description: 'citruses m9',
+                description: 'citruses',
                 disabled: true,
                 origin: 'artificial',
                 type: 'Integer'
@@ -34,13 +34,13 @@ var datasets = [
         fields: [
             {
                 name: 'lemon',
-                description: 'lemons m8',
+                description: 'lemons',
                 disabled: false,
                 origin: 'native',
                 type: 'Enum'
             },{
                 name: 'orange',
-                description: 'citruses m9',
+                description: 'citruses',
                 disabled: true,
                 origin: 'artificial',
                 type: 'Integer'
@@ -59,13 +59,88 @@ var datasets = [
         fields: [
             {
                 name: 'lemon',
-                description: 'lemons m8',
+                description: 'lemons',
                 disabled: false,
                 origin: 'native',
                 type: 'Enum'
             },{
                 name: 'orange',
-                description: 'citruses m9',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            }
+        ],
+        disabled: false,
+        length: 500,
+        source: {
+            type: 'URL',
+            url: 'http://deez.nuts/data.csv'
+        }
+    },{
+        id: 4,
+        name: 'Jeremiah Lemon',
+        description: 'a family friend',
+        fields: [
+            {
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            }
+        ],
+        disabled: false,
+        length: 500,
+        source: {
+            type: 'URL',
+            url: 'http://deez.nuts/data.csv'
+        }
+    },{
+        id: 5,
+        name: 'Jermaine Lemon',
+        description: 'a family friend',
+        fields: [
+            {
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            }
+        ],
+        disabled: false,
+        length: 500,
+        source: {
+            type: 'URL',
+            url: 'http://deez.nuts/data.csv'
+        }
+    }, {
+        id: 6,
+        name: 'Geoffrey Lemon',
+        description: 'a family friend',
+        fields: [
+            {
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
                 disabled: true,
                 origin: 'artificial',
                 type: 'Integer'

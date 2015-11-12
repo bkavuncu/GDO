@@ -67,6 +67,25 @@ class AddNew extends React.Component {
     }
 }
 
+class Field extends React.Component {
+    render () {
+        var f = this.props.data,
+            rowStyle = {
+                paddingTop: '15px',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-around'
+            };
+
+        return <div style={rowStyle}>
+            <div>{f.name}</div>
+            <div>{f.description}</div>
+            <div>{f.type}</div>
+            <div>{f.origin}</div>
+        </div>;
+    }
+}
+
 let [MINI, EXPAND, FULL, COLLAPSE] = [1,2,3,4];
 class Dataset extends React.Component {
     constructor (props) {
@@ -116,11 +135,22 @@ class Dataset extends React.Component {
                 border: '1px solid gray'
             };
 
+        var fields = [<div key="name" style={nameStyle}>{d.name}</div>,
+            <div key="desc">{d.description}</div>,
+            <div key="sep" style={separator} />,
+            <div key="fieldCount" style={fieldStyle}>{d.fields.length} fields</div>,
+            <div key="length" style={fieldStyle}>{d.length} rows</div>
+        ];
+
+        if (this.state.step === FULL) {
+            fields = fields.concat(
+                [<div style={{paddingTop: '15px'}}><big>Fields</big></div>],
+                  d.fields.map((f) => <Field data={f} />)
+            );
+        }
+
         return <Paper ref="paper" onTouchTap={() => this._expand()}>
-            <div style={nameStyle}>{d.name}</div>
-            <div>{d.description}</div>
-            <div style={separator} />
-            <div style={fieldStyle}>{d.fields.length} fields</div>
+            {fields}
         </Paper>;
     }
 }
