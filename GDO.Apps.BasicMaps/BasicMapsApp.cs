@@ -51,16 +51,17 @@ namespace GDO.Apps.BasicMaps
             LayerVisibility[id] = true;
         }
 
-        public int GetLayerVisible()
+        public List<int> GetLayersVisible()
         {
+            List<int> list = new List<int>();
             for (int i = 0; i < MaxLayers; i++)
             {
                 if (LayerVisibility[i])
                 {
-                    return i;
+                    list.Add(i);
                 }
             }
-            return -1;
+            return list;
         }
 
         public void SetMapPosition(string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)

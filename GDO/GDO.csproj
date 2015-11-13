@@ -616,6 +616,8 @@
     <Content Include="Bootstrap\pages\panels-wells.html" />
     <Content Include="Bootstrap\pages\tables.html" />
     <Content Include="Bootstrap\pages\typography.html" />
+    <Content Include="Img\gdo.png" />
+    <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
@@ -953,6 +955,7 @@
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Wiki.cshtml" />
     <Content Include="Web\Scenarios.cshtml" />
+    <Content Include="Wiki\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CaveHub.cs" />
@@ -982,8 +985,6 @@
   <ItemGroup>
     <Folder Include="Configurations\" />
     <Folder Include="Data\" />
-    <Folder Include="Img\" />
-    <Folder Include="Wiki\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -22,17 +22,30 @@ $(function () {
 
     $.connection.basicMapsAppHub.client.setLayerVisible = function (instanceId, id) {
         gdo.consoleOut('.BasicMaps', 1, 'Setting Layer ' + id + ' Visible');
-        for (var i = 0; i < gdo.net.app["BasicMaps"].numLayers; i++) {
-            gdo.net.instance[instanceId].layers[i].setVisible(false);
+        if (gdo.net.instance[instanceId].layers[id].wms) {
+            if (gdo.net.instance[instanceId].layers[id].getVisible()) {
+                if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                    $("iframe").contents().find("#basicMaps_layer_" + id).addClass("btn-danger").removeClass("btn-success");
+                }
+                gdo.net.instance[instanceId].layers[id].setVisible(false);
+            } else {
+                if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                    $("iframe").contents().find("#basicMaps_layer_" + id).removeClass("btn-danger").addClass("btn-success");
+                }
+                gdo.net.instance[instanceId].layers[id].setVisible(true);
+            }
+        } else {       
+            for (var i = 0; i < gdo.net.app["BasicMaps"].numLayers; i++) {
+                gdo.net.instance[instanceId].layers[i].setVisible(false);
+                if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                    $("iframe").contents().find("#basicMaps_layer_" + i).addClass("btn-outline");
+                }
+            }
+            gdo.net.instance[instanceId].layers[id].setVisible(true);
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                $("iframe").contents().find("#basicMaps_layer_" + i).addClass("btn-outline");
+                $("iframe").contents().find("#basicMaps_layer_" + id).removeClass("btn-outline");
             }
         }
-        gdo.net.instance[instanceId].layers[id].setVisible(true);
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            $("iframe").contents().find("#basicMaps_layer_" + id).removeClass("btn-outline");
-        }
-
     }
 
     $.connection.basicMapsAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
@@ -171,6 +184,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             maxZoom: 19
         })
     });
+    gdo.net.instance[instanceId].layers[0].wms = false;
 
     gdo.net.instance[instanceId].layers[1] = new ol.layer.Tile({
         preload: Infinity,
@@ -181,6 +195,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             maxZoom: 19
         })
     });
+    gdo.net.instance[instanceId].layers[1].wms = false;
 
     gdo.net.instance[instanceId].layers[2] = new ol.layer.Tile({
         preload: Infinity,
@@ -191,6 +206,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             maxZoom: 19
         })
     });
+    gdo.net.instance[instanceId].layers[2].wms = false;
 
     gdo.net.instance[instanceId].layers[3] = new ol.layer.Tile({
         preload: Infinity,
@@ -201,6 +217,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             maxZoom: 19
         })
     });
+    gdo.net.instance[instanceId].layers[3].wms = false;
 
     gdo.net.instance[instanceId].layers[4] = new ol.layer.Tile({
         preload: Infinity,
@@ -211,16 +228,19 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             maxZoom: 19
         })
     });
+    gdo.net.instance[instanceId].layers[4].wms = false;
 
     gdo.net.instance[instanceId].layers[5] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.MapQuest({ layer: 'osm' })
     });
+    gdo.net.instance[instanceId].layers[5].wms = false;
 
     gdo.net.instance[instanceId].layers[6] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.MapQuest({ layer: 'sat' })
     });
+    gdo.net.instance[instanceId].layers[6].wms = false;
 
     gdo.net.instance[instanceId].layers[7] = new ol.layer.Tile({
         visible: false,
@@ -228,6 +248,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             layer: 'toner'
         })
     });
+    gdo.net.instance[instanceId].layers[7].wms = false;
 
     gdo.net.instance[instanceId].layers[8] = new ol.layer.Tile({
         visible: false,
@@ -235,6 +256,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             layer: 'terrain'
         })
     });
+    gdo.net.instance[instanceId].layers[8].wms = false;
 
     gdo.net.instance[instanceId].layers[9] = new ol.layer.Tile({
         visible: false,
@@ -242,11 +264,13 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             layer: 'watercolor'
         })
     });
+    gdo.net.instance[instanceId].layers[9].wms = false;
 
     gdo.net.instance[instanceId].layers[10] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.OSM()
     });
+    gdo.net.instance[instanceId].layers[10].wms = false;
 
     gdo.net.instance[instanceId].layers[11] = new ol.layer.Tile({
         visible: false,
@@ -254,6 +278,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
         })
     });
+    gdo.net.instance[instanceId].layers[11].wms = false;
 
     gdo.net.instance[instanceId].layers[12] = new ol.layer.Tile({
         visible: false,
@@ -262,6 +287,63 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             url: 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png'
         })
     });
+    gdo.net.instance[instanceId].layers[12].wms = false;
+
+    gdo.net.instance[instanceId].layers[13] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.TileWMS({
+            url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
+            params: { 'LAYERS': "BGS_EN_Bedrock_and_Superficial_Geology" },
+            serverType: 'geoserver',
+            crossOrigin: null
+        })
+    });
+    gdo.net.instance[instanceId].layers[13].wms = true;
+
+    gdo.net.instance[instanceId].layers[14] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.TileWMS({
+            url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
+            params: { 'LAYERS': "GBR_BGS_625k_BA" },
+            serverType: 'geoserver',
+            crossOrigin: null
+        })
+    });
+    gdo.net.instance[instanceId].layers[14].wms = true;
+
+    gdo.net.instance[instanceId].layers[15] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.TileWMS({
+            url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
+            params: { 'LAYERS': "GBR_BGS_625k_SLT" },
+            serverType: 'geoserver',
+            crossOrigin: null
+        })
+    });
+    gdo.net.instance[instanceId].layers[15].wms = true;
+
+    gdo.net.instance[instanceId].layers[16] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.TileWMS({
+            url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
+            params: { 'LAYERS': "GBR_BGS_625k_SLS" },
+            serverType: 'geoserver',
+            crossOrigin: null
+        })
+    });
+    gdo.net.instance[instanceId].layers[16].wms = true;
+
+    gdo.net.instance[instanceId].layers[17] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.TileWMS({
+            url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
+            params: { 'LAYERS': "UKCoShelf_BGS_1M_SBS" },
+            serverType: 'geoserver',
+            crossOrigin: null
+        })
+    });
+    gdo.net.instance[instanceId].layers[17].wms = true;
+
     gdo.net.instance[instanceId].controls = new Array();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.instance[instanceId].controls = [];

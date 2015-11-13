@@ -12,7 +12,7 @@ gdo.net.app["BasicMaps"].numButtons =6;
 
 
 gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
-    gdo.net.app["BasicMaps"].drawEmptyMapTable(6, 2);
+    gdo.net.app["BasicMaps"].drawEmptyMapTable(6,3);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()
@@ -137,7 +137,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_1_col_5")
         .empty()
-        .append("<div><button type='button' id='basicMaps_layer_6' class='btn btn-primary btn-outline btn-block'>Map Quest (Satellite)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_12' class='btn btn-primary btn-outline btn-block'>Map Quest (Satellite)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
@@ -145,6 +145,61 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .unbind()
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 6);
+        });
+    $("iframe").contents().find("#map_table_row_2_col_0")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_13' class='btn btn-danger btn-outline btn-block'>Bedrock and Superficial Geology</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 13);
+        });
+    $("iframe").contents().find("#map_table_row_2_col_1")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_14' class='btn btn-danger btn-outline btn-block'>Bedrock Age</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 14);
+        });
+    $("iframe").contents().find("#map_table_row_2_col_2")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_15' class='btn btn-danger btn-outline btn-block'>Superficial Bedrock Lithology</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 15);
+        });
+    $("iframe").contents().find("#map_table_row_2_col_3")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_16' class='btn btn-danger btn-outline btn-block'>Superficial Bedrock Lithostratigraphy</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 16);
+        });
+    $("iframe").contents().find("#map_table_row_2_col_4")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_17' class='btn btn-danger btn-outline btn-block'>Seabed Sediments</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 17);
         });
     //Search
     $("iframe").contents().find("#map_input_div")

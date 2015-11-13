@@ -30,16 +30,16 @@ namespace GDO
                 Cave.Init();
                 var builder = new ContainerBuilder();
                 var config = new HubConfiguration();
-
-
-
                 GlobalHost.DependencyResolver.Register(typeof (IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
                 config.Resolver = new AutofacDependencyResolver(container);
+                app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
                 app.UseAutofacMiddleware(container);
                 //app.MapSignalR("/signalr", config);
+                //config.EnableCors(new EnableCorsAttribute("*", "*", "GET, POST, OPTIONS, PUT, DELETE"));
+                //WebApiConfig.Register(config);
                 app.Map("/signalr", map =>
                 {
                     map.UseCors(CorsOptions.AllowAll);

@@ -81,10 +81,10 @@ namespace GDO.Apps.BasicMaps
             {
                 try
                 {
-                    int id = ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetLayerVisible();
-                    if (id >= 0)
+                    List<int> visible = ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetLayersVisible();
+                    foreach (int layer in visible)
                     {
-                        Clients.Caller.setLayerVisible(instanceId, id);
+                        Clients.Caller.setLayerVisible(instanceId, layer);
                     }
                 }
                 catch (Exception e)
