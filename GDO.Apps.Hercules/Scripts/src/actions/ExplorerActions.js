@@ -19,6 +19,66 @@ var datasets = [
                 disabled: true,
                 origin: 'artificial',
                 type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Boolean'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
+            },{
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Boolean'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
+            },{
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Boolean'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
             }
         ],
         disabled: false,

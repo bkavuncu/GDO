@@ -19,7 +19,7 @@ class DeployerNode extends React.Component {
     }
     render () {
         var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
-            fontSize = Math.floor(Math.min(edge / 2, 30));
+            fontSize = Math.floor(Math.max(8, Math.min(edge / 2, 30)));
 
         var outerStyle = {
                 display: "flex",

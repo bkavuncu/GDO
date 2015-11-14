@@ -1,9 +1,15 @@
+/**
+ * Schema specifications for the Hercules Data Exchange.
+ *
+ * Docs for js-schema:
+ *  https://github.com/molnarg/js-schema
+ * */
 var schema = require('js-schema');
 
 export var validField = schema({
     name: String,
     description: [null, String],
-    type: ['String', 'Integer', 'Float', 'Datetime', 'URL', 'Enum'],
+    type: ['String', 'Integer', 'Float', 'Datetime', 'URL', 'Enum', 'Boolean'],
     origin: ['native', 'artificial'],
     disabled: Boolean
 });

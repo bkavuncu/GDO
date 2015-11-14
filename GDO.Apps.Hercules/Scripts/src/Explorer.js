@@ -44,7 +44,7 @@ class Paper extends React.Component {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                padding: P_PAPER + 'px',
+                //padding: P_PAPER + 'px',
                 color: 'gray',
                 justifyContent: 'center'
             },
@@ -67,21 +67,42 @@ class AddNew extends React.Component {
     }
 }
 
+const keys = ['name', 'description', 'type', 'origin'],
+    substitutes = {
+        name: 'column'
+    },
+    headers = keys.map(k => substitutes[k] || k),
+    rowStyle = {
+        padding: '5px',
+        display: 'flex',
+        flexGrow: 0,
+        flexShrink: 0,
+        justifyContent: 'space-around'
+    },
+    headerStyle = {
+        color: 'black',
+        fontSize: '11px',
+        textTransform: 'uppercase'
+    },
+    cellStyle = {
+        flexGrow: 1
+    },
+    FieldHeader = () => {
+        return <div style={rowStyle}>
+            {headers.map(k => <div style={headerStyle}>{k}</div>)}
+            </div>
+    };
+
 class Field extends React.Component {
     render () {
         var f = this.props.data,
-            rowStyle = {
-                paddingTop: '15px',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-around'
-            };
+            even = this.props.even,
+            style = even? rowStyle : _.extend({}, rowStyle, {
+                backgroundColor: '#EDE7F6'
+            });
 
-        return <div style={rowStyle}>
-            <div>{f.name}</div>
-            <div>{f.description}</div>
-            <div>{f.type}</div>
-            <div>{f.origin}</div>
+        return <div style={style}>
+            {keys.map(k => <div style={cellStyle} key={k}>{f[k]}</div>)}
         </div>;
     }
 }
@@ -118,39 +139,63 @@ class Dataset extends React.Component {
 
     render () {
         var d = this.props.data,
+            fullView = this.state.step === FULL,
             nameStyle = {
                 fontSize: '24px',
                 paddingBottom: '5px',
                 color: 'black'
-            },
-            separator = {
+            }, separator = {
                 marginTop: '15px',
                 marginBottom: '15px',
                 width: '100px',
                 borderTop: '1px solid gray'
-            },
-            fieldStyle = {
+            }, fieldStyle = {
                 borderRadius: '2px',
                 padding: '4px',
                 border: '1px solid gray'
-            };
+            }, infoStyle = {
+                display: 'flex',
+                justifyContent: 'space-around',
+                padding: '5px',
+                width: '80%'
+            }, stretchStyle ={
+                flexGrow: 1,
+                flexShrink: 0,
+                flexBasis: 'auto',
+                alignSelf: 'stretch',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }, tableStyle = _.extend({}, stretchStyle, {
+                alignItems: 'stretch',
+                justifyContent: 'flex-start',
+                flexShrink: 1,
+                overflow: 'auto'
+            });
 
         var fields = [<div key="name" style={nameStyle}>{d.name}</div>,
             <div key="desc">{d.description}</div>,
-            <div key="sep" style={separator} />,
-            <div key="fieldCount" style={fieldStyle}>{d.fields.length} fields</div>,
-            <div key="length" style={fieldStyle}>{d.length} rows</div>
-        ];
+                fullView ? null : <div key="sep" style={separator} />,
+            <div style={infoStyle}>
+                <div key="fieldCount" style={fieldStyle}>{d.fields.length} fields</div>
+                <div key="length" style={fieldStyle}>{d.length} rows</div>
+            </div>
+        ],
+            extraFullInfo = null;
 
-        if (this.state.step === FULL) {
-            fields = fields.concat(
-                [<div style={{paddingTop: '15px'}}><big>Fields</big></div>],
-                  d.fields.map((f) => <Field data={f} />)
-            );
+        if (fullView) {
+            extraFullInfo = <div style={tableStyle}>
+                <FieldHeader />
+                {d.fields.map((f, i) => <Field data={f} key={i} even={(i%2) == 0}/>)}
+            </div>;
         }
 
         return <Paper ref="paper" onTouchTap={() => this._expand()}>
-            {fields}
+            <div style={stretchStyle}>
+                {fields}
+            </div>
+                {extraFullInfo}
         </Paper>;
     }
 }
