@@ -72,37 +72,43 @@ const keys = ['name', 'description', 'type', 'origin'],
         name: 'column'
     },
     headers = keys.map(k => substitutes[k] || k),
-    rowStyle = {
-        padding: '5px',
-        display: 'flex',
-        flexGrow: 0,
-        flexShrink: 0,
-        justifyContent: 'space-around'
-    },
     headerStyle = {
         color: 'black',
         fontSize: '11px',
         textTransform: 'uppercase'
     },
     cellStyle = {
-        flexGrow: 1
+        flexGrow: 1,
+        flexShrink: 0
+    }, rowStyle = {
+        padding: '5px',
+        display: 'flex',
+        flexGrow: 0,
+        flexShrink: 0,
+        justifyContent: 'space-around'
     },
     FieldHeader = () => {
         return <div style={rowStyle}>
-            {headers.map(k => <div style={headerStyle}>{k}</div>)}
+            {headers.map((k, i) => <div key={i} style={headerStyle}>{k}</div>)}
             </div>
     };
 
-class Field extends React.Component {
+class Row extends React.Component {
     render () {
-        var f = this.props.data,
+        var data = this.props.data,
             even = this.props.even,
-            style = even? rowStyle : _.extend({}, rowStyle, {
-                backgroundColor: '#EDE7F6'
+            cellWidth = this.props.cellWidth,
+            style = _.extend({}, rowStyle, {
+                justifyContent: 'flex-start',
+                backgroundColor: even? '#EDE7F6' : 'none'
+            }),
+            newCellStyle = _.extend({}, cellStyle, {
+                width: cellWidth + 'px'
             });
 
+
         return <div style={style}>
-            {keys.map(k => <div style={cellStyle} key={k}>{f[k]}</div>)}
+            {keys.map(k => <div style={newCellStyle} key={k}>{data[k]}</div>)}
         </div>;
     }
 }
@@ -127,13 +133,17 @@ class Dataset extends React.Component {
                     height = Math.min(this.props.parentSize.height, MAX_HEIGHT);
 
                 this.refs.paper.changeSize(width, height, false);
-                this.setState({step: FULL});
+                this.setState({step: FULL, width: width});
                 break;
             case FULL:
                 this.refs.paper.resetSize();
                 this.setState({step: MINI});
                 break;
         }
+
+    }
+
+    componentDidUpdate () {
 
     }
 
@@ -177,7 +187,7 @@ class Dataset extends React.Component {
         var fields = [<div key="name" style={nameStyle}>{d.name}</div>,
             <div key="desc">{d.description}</div>,
                 fullView ? null : <div key="sep" style={separator} />,
-            <div style={infoStyle}>
+            <div key="info" style={infoStyle}>
                 <div key="fieldCount" style={fieldStyle}>{d.fields.length} fields</div>
                 <div key="length" style={fieldStyle}>{d.length} rows</div>
             </div>
@@ -185,9 +195,15 @@ class Dataset extends React.Component {
             extraFullInfo = null;
 
         if (fullView) {
+            var cellWidth = (this.state.width - 20 /* PADDING */) / keys.length;
+
             extraFullInfo = <div style={tableStyle}>
                 <FieldHeader />
-                {d.fields.map((f, i) => <Field data={f} key={i} even={(i%2) == 0}/>)}
+                {d.fields.map(
+                    (f, i) =>
+                        <Row cellWidth={cellWidth}
+                             data={f} key={i}
+                             even={(i%2) == 0}/>)}
             </div>;
         }
 
