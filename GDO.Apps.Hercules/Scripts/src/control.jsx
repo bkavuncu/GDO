@@ -8,13 +8,13 @@ var View = require('./ui/View.jsx'),
 
 require('react-tap-event-plugin')();
 
-var App = React.createClass({
-    render: function () {
+class App  extends React.Component {
+    render () {
         return <View>
             <Tabs />
         </View>;
     }
-});
+}
 
 function getQueryParams(qs) {
     qs = qs.split('+').join(' ');
@@ -66,7 +66,6 @@ class Start extends React.Component {
     }
 
     render() {
-        console.log('his State', this.state);
         if (this.state.fullscreen)
             return <App />;
         else

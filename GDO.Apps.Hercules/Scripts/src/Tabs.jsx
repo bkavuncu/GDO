@@ -1,7 +1,9 @@
 'use strict';
 const React = require('react'),
     View = require('./ui/View.jsx'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    screenfull = require('screenfull');
+
 
 
 var DeployerGrid = require('./DeployerGrid.jsx'),
@@ -29,6 +31,52 @@ class Tab extends React.Component {
                 {name}
             </View>
         );
+    }
+}
+
+class FullscreenToggle extends React.Component {
+    constructor () {
+        super();
+
+        this.state = {
+            active: false,
+            iconName: 'fullscreen',
+            enabled: screenfull.enabled
+        };
+    }
+    _toggle () {
+        if (!this.state.active) {
+            screenfull.request();
+            console.log('yooooooo');
+            this.setState({
+                active: true,
+                iconName: 'fullscreen_exit'
+            })
+        } else {
+            screenfull.exit();
+            this.setState({
+                active: false,
+                iconName: 'fullscreen'
+            })
+        }
+    }
+
+    render () {
+        if (!this.state.enabled)
+            return <span />;
+
+        var handler = this._toggle.bind(this),
+            style = {
+                backgroundColor: '#009688',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                flex: '0 0 30px'
+            };
+
+        return <View style={style} onTouchTap={handler}>
+            <i className="material-icons">{this.state.iconName}</i>
+        </View>;
     }
 }
 
@@ -94,6 +142,7 @@ class Tabs extends React.Component {
                                  name={tabKey}/>
                         );
                     }.bind(this))}
+                    <FullscreenToggle />
                 </View>
                 <View style={contentStyle} id='content'>
                     {typeof SelectedComponent == 'function'? <SelectedComponent /> : <View>{SelectedComponent}</View>}
