@@ -1,40 +1,36 @@
 const React = require('react'),
     View = require('./ui/View.jsx'),
     ReactDOM = require('react-dom'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    DeployerStore = require('./stores/DeployerStore'),
+    DeployerActions = require('./actions/DeployerActions');
 
 const NODE_PADDING = 3;
 class DeployerNode extends React.Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {
-            selected: false
-        }
-    }
     _onTap () {
-        this.setState({
-            selected: !this.state.selected
-        });
+        DeployerActions.toggleNode(this.props.id);
     }
     render () {
         var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
             fontSize = Math.floor(Math.max(8, Math.min(edge / 2, 30)));
 
-        var outerStyle = {
+        var selected = this.props.selected,
+            outerStyle = {
                 display: "flex",
                 justifyContent: "center",
                 width: edge + 'px',
                 height: edge + 'px',
                 padding: NODE_PADDING + 'px'
-            },
+            }, color = selected? '#00BCD4' : '#1976D2',
+            boxShadowDepth = selected? 15 : 5,
             innerStyle = {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: this.state.selected? '#00BCD4' : '#1976D2',
-                boxShadow: '0 0 7px gray',
+                backgroundColor: color,
+                boxShadow: '0 0 '+ boxShadowDepth +'px gray',
+                transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
                 color: 'white',
                 fontSize: fontSize + 'px',
                 borderRadius: '0px'
@@ -102,9 +98,11 @@ class DeployerGrid extends React.Component {
                     nW = width / COLUMNS,
                     nH = height / ROWS;
 
-                var nodeList = _.range(1, NODE_NUMBER + 1)
+                var nodeSet = this.props.selectedNodes,
+                    nodeList = _.range(1, NODE_NUMBER + 1)
                     .map((i) => <DeployerNode
                         key={i} id={i}
+                        selected={nodeSet.contains(i)}
                         width={nW} height={nH} />);
 
                 return <View id="grid" style={style}>{nodeList}</View>;
@@ -112,4 +110,27 @@ class DeployerGrid extends React.Component {
         }
     }
 }
-module.exports = DeployerGrid;
+
+class GridWrapper extends React.Component {
+    componentWillMount () {
+        var listener = this._onChange.bind(this);
+        DeployerStore.addChangeListener(listener);
+        this.setState({listener});
+        this._onChange();
+    }
+
+    componentWillUnmount () {
+        DeployerStore.removeChangeListener(this.state.listener);
+    }
+
+    _onChange () {
+        this.setState({
+            selectedNodes: DeployerStore.getSelectedNodes()
+        });
+    }
+
+    render () {
+        return <DeployerGrid selectedNodes={this.state.selectedNodes} />
+    }
+}
+module.exports = GridWrapper;

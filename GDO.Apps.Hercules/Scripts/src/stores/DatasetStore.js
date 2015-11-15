@@ -17,7 +17,7 @@ class DatasetStore extends BaseStore {
                 var miniset = action.data;
                 this.miniSets = this.miniSets.set(miniset.id, miniset);
                 break;
-            case addFullset:
+            case 'addFullset':
                 var fullset = action.data;
                 this.fullSets = this.fullSets.set(fullset.id, fullset);
                 break;
