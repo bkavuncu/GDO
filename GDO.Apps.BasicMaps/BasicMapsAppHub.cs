@@ -75,7 +75,7 @@ namespace GDO.Apps.BasicMaps
             }
         }
 
-        public void RequestLayerVisible(int instanceId)
+        public void RequestLayersVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {

@@ -38,17 +38,24 @@ namespace GDO.Apps.BasicMaps
             this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
             this.Position.Width = (int)configuration.Json.SelectToken("width");
             this.Position.Height = (int)configuration.Json.SelectToken("height");
-            SetLayerVisible(1);
-        }
-
-        public void SetLayerVisible(int id)
-        {
             LayerVisibility = new bool[MaxLayers];
             for (int i = 0; i < MaxLayers; i++)
             {
                 LayerVisibility[i] = false;
             }
-            LayerVisibility[id] = true;
+            SetLayerVisible(1);
+        }
+
+        public void SetLayerVisible(int id)
+        {
+            if (LayerVisibility[id])
+            {
+                LayerVisibility[id] = false;
+            }
+            else
+            {
+                LayerVisibility[id] = true;
+            }
         }
 
         public List<int> GetLayersVisible()

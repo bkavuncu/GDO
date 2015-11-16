@@ -137,7 +137,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_1_col_5")
         .empty()
-        .append("<div><button type='button' id='basicMaps_layer_12' class='btn btn-primary btn-outline btn-block'>Map Quest (Satellite)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_6' class='btn btn-primary btn-outline btn-block'>Map Quest (Satellite)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")

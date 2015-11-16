@@ -955,7 +955,6 @@
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Wiki.cshtml" />
     <Content Include="Web\Scenarios.cshtml" />
-    <Content Include="Wiki\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CaveHub.cs" />

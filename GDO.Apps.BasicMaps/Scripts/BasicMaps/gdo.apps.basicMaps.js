@@ -387,7 +387,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
 
     gdo.net.instance[instanceId].map = map;
-    gdo.net.app["BasicMaps"].server.requestLayerVisible(instanceId);
+    gdo.net.app["BasicMaps"].server.requestLayersVisible(instanceId);
     gdo.net.app["BasicMaps"].server.requestMarkerPosition(instanceId);
 }
 
