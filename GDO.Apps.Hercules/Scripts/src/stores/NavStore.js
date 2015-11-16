@@ -1,13 +1,13 @@
 var BaseStore = require('./BaseStore'),
     Immutable = require('immutable');
 
-export default class NavStore extends BaseStore {
+class NavStore extends BaseStore {
     constructor() {
         super();
 
         this.validRoutes = Immutable.List(['CREATE', 'VIEW']);
         this.history = Immutable.Stack();
-        this.history = history.push('VIEW');
+        this.history = this.history.push('VIEW');
 
         this.subscribe(() => this._registerToActions.bind(this))
     }
@@ -15,8 +15,8 @@ export default class NavStore extends BaseStore {
     _registerToActions (action) {
         switch (action.actionType) {
             case 'changeRoute':
-                var newRoute = action.validRoutes.toUppercase();
-                if(newRoute != this.route && this.validRoutes.contains(newRoute)) {
+                var newRoute = action.route.toUpperCase();
+                if(newRoute != this.getRoute() && this.validRoutes.contains(newRoute)) {
                     this.history = this.history.push(newRoute);
                     this.emitChange();
                 }
@@ -32,3 +32,5 @@ export default class NavStore extends BaseStore {
         return this.history.peek();
     }
 }
+
+module.exports = new NavStore();
