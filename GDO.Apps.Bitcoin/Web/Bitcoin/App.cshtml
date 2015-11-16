@@ -24,16 +24,13 @@
 
         #textarea {
             color: #ffffff;
+			padding-left: 100px;
             font-family: verdana, sans-serif;
             font-size:120%;
         }
         #textarea2{
 			color: #ffffff;
-			font-family: verdana, sans-serif;
-            font-size:120%;
-		}
-		#peerID {
-			color: #ffffff;
+			padding-left: 100px;
 			font-family: verdana, sans-serif;
             font-size:120%;
 		}
@@ -46,10 +43,14 @@
             user-select: none;
         }
         .centeredAndBig{
-            margin:auto;
-            padding-left:35%;
             font-size:800%;
             color:#ffffff;
+            text-align:center;
+            z-index:10;
+            position:fixed;
+            left:50%;
+            margin-right:-50%;
+            transform : translate(-50%,0)
         }
 
     </style>
@@ -243,11 +244,11 @@
                     textarea.innerHTML =
                         '<table>' +
                         '<tr>' +
-                        '<td width="200">TxRate: <div id="statTxRate" style="display:inline-block;"></div>tps</td>' +
-                        '<td width="300"><B>Value</B></td>' +
-                        '<td width="300"><B>Fees</B></td>' +
-                        '<td width="300"><B>Size</B></td>' +
-                        '<td width="300"><B>Fee Density</B></td>' +
+                        '<td width="250">TxRate: <div id="statTxRate" style="display:inline-block;"></div>tps</td>' +
+                        '<td width="450"><B>Value</B></td>' +
+                        '<td width="350"><B>Fees</B></td>' +
+                        '<td width="325"><B>Size</B></td>' +
+                        '<td width="450"><B>Fee Density</B></td>' +
                         '</tr>' +
                         '<tr>' +
                         '<td>NumTx: <div id="statNumTx" style="display:inline-block;"></div></td>' +
@@ -325,14 +326,14 @@
                         applyFilters();
                         renderGraph();
 
-                        $("txMaxVal").innerHTML = (txMaxVal / 100000000).toLocaleString() + 'B / $' +
+                        document.getElementById("txMaxVal").innerHTML = (txMaxVal / 100000000).toLocaleString() + 'B / $' +
                         (currUSDBTC * txMaxVal / 100000000).toLocaleString();
-                        $("txTotalVal").innerHTML = (txTotalVal / 100000000).toLocaleString() + 'B / $' +
+                        document.getElementById("txTotalVal").innerHTML = (txTotalVal / 100000000).toLocaleString() + 'B / $' +
                         (currUSDBTC * txTotalVal / 100000000).toLocaleString();
-                        $("txAvgVal").innerHTML = ((txTotalVal / numTx) * 1000 / 100000000).toLocaleString() + 'mB / $' +
+                        document.getElementById("txAvgVal").innerHTML = ((txTotalVal / numTx) * 1000 / 100000000).toLocaleString() + 'mB / $' +
                         ((currUSDBTC * txTotalVal / numTx) / 100000000).toLocaleString();
 
-                        $("#txMaxFee").innerHTML = (txMaxFee * 1000 / 100000000).toLocaleString() + 'mB / $' +
+                        document.getElementById("txMaxFee").innerHTML = (txMaxFee * 1000 / 100000000).toLocaleString() + 'mB / $' +
                         (currUSDBTC * txMaxFee / 100000000).toLocaleString();
                         document.getElementById('txTotalFee').innerHTML = (txTotalFee / 100000000).toLocaleString() + 'B / $' +
                         (currUSDBTC * txTotalFee / 100000000).toLocaleString();
@@ -357,6 +358,16 @@
                                 lastRateTx = numTx;
                             }
                         }
+                        //refresh page when number of graph vertices >5000
+                        if (numNodes > 5000) {
+                            console.log("Reloading page because we have many graph vertices");
+                            location.reload(true);  //this reload the iframe
+                            /* the following don't work because this page does not know it will be within an iframe */
+                            // document.getElementById('app_frame_content').contentWindow.location.reload(true);
+                            //document.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
+                            //document.body.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
+
+                        }
                     }
                 }
 
@@ -374,7 +385,7 @@
                     getFX();
                     // Handle events
                     //peerConnect(-1);
-                    bindEvents(-1);
+                    bindEvents(-1, parent.gdo.clientId);  // pass the clientId of function caller
 
                     // Get Transactions
                     runWebSocket();
@@ -499,7 +510,7 @@
                     var queryparam = getParameterByName('block');
 
                     //peerConnect(queryparam)
-                    bindEvents(queryparam);
+                    bindEvents(queryparam, parent.gdo.clientId);  // pass the clientId of function caller
 
                     //if we're given a height rather than hash
                     if (queryparam.length <= 6) {
@@ -509,6 +520,7 @@
 
                                 console.log('Retrieved block details successfully');
                                 var resObj = JSON.parse(xmlhttp.responseText);
+                                document.getElementById('createdAt').innerHTML = new Date(1000 * resObj.blocks[0].time);
 
                                 for (var i = 0; i < resObj.blocks.length; i++) {
                                     if (resObj.blocks[i].main_chain) {
