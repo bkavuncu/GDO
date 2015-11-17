@@ -1,4 +1,4 @@
-﻿using DP.src.Parser;
+﻿using GDO.Apps.Hercules.BackEnd.Parser;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Device.Location;
 //private dynamic[][] ValueCols = null;
 //private AType[][] TypeCols = null;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.Augment
 {
 
     public class RichDS
@@ -23,7 +23,6 @@ namespace DP.src.Augment
         private int NRows = 0;
 
         private int NPruned = 0;
-        private int NValid = 0;
 
         private List<long> MalformedLines = new List<long>();
 
