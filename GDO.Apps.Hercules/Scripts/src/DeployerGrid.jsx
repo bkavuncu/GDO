@@ -3,7 +3,8 @@ const React = require('react'),
     ReactDOM = require('react-dom'),
     _ = require('underscore'),
     DeployerStore = require('./stores/DeployerStore'),
-    DeployerActions = require('./actions/DeployerActions');
+    DeployerActions = require('./actions/DeployerActions'),
+    colors = require('colors');
 
 const NODE_PADDING = 3;
 class DeployerNode extends React.Component {
@@ -16,8 +17,8 @@ class DeployerNode extends React.Component {
 
         var selected = this.props.selected,
             mergeable = this.props.mergeable,
-            backgroundColor = (selected && mergeable)? '#76FF03'
-                : (selected? '#00BCD4' : '#1976D2'),
+            backgroundColor = (selected && mergeable)? colors.NODE_FOCUS
+                : (selected? colors.NODE_SELECT : colors.NODE),
             outerStyle = {
                 display: "flex",
                 justifyContent: "center",
@@ -94,12 +95,13 @@ class DeployerGrid extends React.Component {
 
         var nonNullRows = nodesPerRow.filter((a) => a.length > 0);
 
-        console.log(nonNullRows);
+        if (nonNullRows.length === 0)
+            return false;
+
         var prevRowStartIndex = null;
         var prevRowLength = null;
         for (var i = 0; i < nonNullRows.length; i++) {
             var row = nonNullRows[i];
-            console.log(row);
             var startIndex = row[0] % COLUMNS;
 
             // Check continuity
@@ -107,8 +109,7 @@ class DeployerGrid extends React.Component {
                 return false;
             }
 
-            console.log(prevRowStartIndex, startIndex);
-            // Check row starts at same index as previous row (if any)
+            // Check row starts at same index as previous row (if any) and has same length
             if (prevRowStartIndex === null) {
                 prevRowStartIndex = startIndex;
                 prevRowLength = row.length;
@@ -117,17 +118,23 @@ class DeployerGrid extends React.Component {
             }
         }
 
-        console.log(nodesPerRow);
         return true;
     }
     render() {
-        var style = {
-            alignContent: 'flex-start',
-            flexGrow: 1,
-            height: 'auto',
-            padding: PADDING + 'px',
-            backgroundColor: '#80cbc4'
-        };
+        var outerStyle = {
+                padding: 0,
+                alignItems: 'stretch',
+                display: 'flex',
+                flexDirection: 'column'
+            },
+            style = {
+                alignContent: 'flex-start',
+                flexGrow: 1,
+                height: 'auto',
+                padding: PADDING + 'px',
+                backgroundColor: '#80cbc4',
+                width: 'auto'
+            };
 
         switch (this.state.step) {
             case MEASURE:
@@ -148,9 +155,117 @@ class DeployerGrid extends React.Component {
                         mergeable={mergeable}
                         width={nW} height={nH} />);
 
-                return <View id="grid" style={style}>{nodeList}</View>;
+                return <View style={outerStyle}>
+                    <View  id="grid" style={style}>
+                        {nodeList}
+                    </View>
+                    <SectionManager selectedNodes={nodeSet} mergeable={mergeable}/>
+                    <SectionViewer />
+                </View>;
                 break;
         }
+    }
+}
+
+class SectionManager extends React.Component {
+    _createSection () {
+        if (!this.props.mergeable)
+            return;
+        DeployerActions.createSection(this.props.selectedNodes.toOrderedSet().toArray());
+    }
+
+    render () {
+        var style = {
+            display: 'flex',
+            alignSelf: 'stretch',
+            flex: '0 0 60px',
+            width: 'auto',
+            justifyContent: 'flex-start',
+            padding: '0 10px 0 10px',
+        }, mergeable = this.props.mergeable,
+            nodeSet = this.props.selectedNodes;
+
+        return <View style={style}>
+            <CreateSection handler={this._createSection.bind(this)} mergeable={mergeable}/>
+            <ClearSelection clearable={nodeSet.size > 0} />
+        </View>;
+    }
+}
+
+class DeployerButton extends React.Component {
+    getText () {
+        return 'placeholder';
+    }
+
+    getStyle () {
+        return {};
+    }
+
+    handleTap () {
+        return null;
+    }
+
+    render () {
+        var initialStyle = {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexBasis: '200px',
+            color: 'white',
+            marginRight: '5px',
+            boxShadow: '0 0 10px gray',
+            backgroundColor: colors.NODE,
+            width: 'auto',
+            height: 'auto'
+        }, finalStyle = _.extend({}, initialStyle, this.getStyle());
+
+        return <View style={finalStyle} onTouchTap={this.handleTap}>
+            {this.getText()}
+        </View>;
+    }
+
+
+}
+
+class CreateSection extends DeployerButton {
+    getText () {
+        return 'Create Section';
+    }
+
+    getStyle () {
+        var buttonColor = this.props.mergeable? colors.NODE_FOCUS : colors.MAIN;
+        return {
+            backgroundColor: buttonColor
+        };
+    }
+}
+
+class ClearSelection extends DeployerButton {
+    getText () {
+        return 'Clear Selection';
+    }
+
+    getStyle () {
+        var buttonColor = this.props.clearable? colors.NODE_FOCUS : colors.MAIN;
+        return {
+            backgroundColor: buttonColor
+        };
+    }
+
+    handleTap () {
+        DeployerActions.clearSelection();
+    }
+}
+
+class SectionViewer extends React.Component {
+    render () {
+        var style = {
+            flexGrow: 1
+        }
+
+        return <div style={style}>
+
+        </div>;
     }
 }
 
