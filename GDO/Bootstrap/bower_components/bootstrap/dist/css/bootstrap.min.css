@@ -2999,7 +2999,6 @@ select[multiple].input-lg {
   font-size: 14px;
   line-height: 1.42857143;
   border-radius: 0px;
-  -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
@@ -3010,9 +3009,7 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
-  outline: thin dotted;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+
 }
 .btn:hover,
 .btn:focus,
@@ -6932,3 +6929,5 @@ a.list-group-item-danger.active:focus {
 .jumbotron h6 {
   color: #fff;
 }
+
+.btn:focus {outline: none;box-shadow: none;border:2px solid transparent;}

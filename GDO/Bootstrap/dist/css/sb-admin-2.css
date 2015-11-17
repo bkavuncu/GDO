@@ -374,3 +374,5 @@ table.dataTable thead .sorting:after {
     cursor: inherit;
     display: block;
 }
+
+.btn:focus {outline: none;box-shadow: none;border:2px solid transparent;}
