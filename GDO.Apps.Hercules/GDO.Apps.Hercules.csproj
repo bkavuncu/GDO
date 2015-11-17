@@ -226,7 +226,6 @@
   <ItemGroup>
     <Compile Include="App_Start\ReactConfig.cs" />
     <Compile Include="BackEnd\Augment\AColumn.cs" />
-    <Compile Include="BackEnd\Augment\EType.cs" />
     <Compile Include="BackEnd\Augment\RichDS.cs" />
     <Compile Include="BackEnd\Common.cs" />
     <Compile Include="BackEnd\Parser\IParser.cs" />

@@ -10,13 +10,7 @@ namespace DP.src
     // Statistics about an array of data.
     class Stats<T>
     {
-
-        // The original data.
-        public T[] Data = new T[0];
-
-        // The same as Data, just sorted.
-        public T[] SortedData = new T[0];
-
+        
         // What are the minimum and maximum elements of Data?
         public T Min, Max;
 
@@ -33,8 +27,7 @@ namespace DP.src
         public double Sum = 0, Mean = 0, Median = 0, Variance = 0, StdDev = 0;
 
 
-        // Can't create Stats objects directly, use DynamicStats instead.
-        private Stats() { }
+        public Stats() { }
 
 
         // Computes a bunch of statistics about some array of data @arr.
@@ -67,7 +60,6 @@ namespace DP.src
                 stats.Max = sorted[len - 1];
                 stats.Modes = DynamicModes(sorted);
                 stats.Enum = IsEnum(stats.Modes.Count, len);
-                stats.SortedData = sorted;
 
                 if (numeric) {
                     stats.Sum = DynamicSum(arr);
@@ -77,8 +69,6 @@ namespace DP.src
                     stats.StdDev = Math.Sqrt(stats.Variance);
                 }
             }
-
-            stats.Data = arr;
 
             return stats;
         }
@@ -133,6 +123,7 @@ namespace DP.src
                 double diff = arr[i] - mean;
                 sum += diff * diff;
             }
+
             return sum / len;
         }
 
@@ -150,6 +141,7 @@ namespace DP.src
 
             dynamic prev = arr[0];
             int count = 1;
+
             for (int i = 1; i < arr.Length; i++) {
                 dynamic curr = arr[i];
                 if (curr.Equals(prev))
