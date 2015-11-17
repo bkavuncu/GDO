@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Device.Location;
+using Newtonsoft.Json;
 //using Newtonsoft.Json;
 
 
@@ -99,7 +100,7 @@ namespace DP.src.Augment
             }
 
             Rows = new List<dynamic[]>();
-            Types  = new List<AType[]>(); 
+            Types = new List<AType[]>(); 
 
             Utils.Say("Initialized {0} columns", NColumns);
         }
@@ -320,8 +321,7 @@ namespace DP.src.Augment
         //
         public void Serialize(string path)
         {
-            //string hope = JsonConvert.SerializeObject(AColumns);
-            //System.Console.WriteLine(hope);
+            
         }
 
         
@@ -334,11 +334,5 @@ namespace DP.src.Augment
             }
             //System.Console.WriteLine(AColumns.ToString());
         }
-
-
-
-    
-
-
     }
 }

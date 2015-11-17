@@ -12,8 +12,6 @@ namespace DP.src.Augment
         public Stats<dynamic> Stats = null;
         public string Header = null;
         public int Number = 0;
-        public string Description = "";
-        public string Origin = "native";
 
         public AColumn(string header, int number)
         {

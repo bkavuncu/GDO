@@ -11,7 +11,7 @@ namespace DP.src.Augment
     public enum AType
     {
         Text,      // C# string        | JS String
-        Integral,  // C# long          | JS Number
+        Integral,  // C# double        | JS Number
         Floating,  // C# double        | JS Number
         DateTime,  // C# long          | JS Number 
         GPSCoords, // C# GeoCoordinate | JS Array[2]:number [longitude, latitude]
