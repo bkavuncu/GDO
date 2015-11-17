@@ -305,6 +305,8 @@
                     handleTable();
                 if (data.peertype === 'block')
                     guis[conn.peer].params.block = data.peerpayload;
+                if (data.peertype === 'info')
+                    guis[conn.peer].gui.add(guis[conn.peer].params, 'connection').name('Node:' + data.peerpayload);
             });
         });
 
