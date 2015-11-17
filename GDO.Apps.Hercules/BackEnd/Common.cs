@@ -28,6 +28,7 @@ namespace DP.src
                 return min;
             if (value > max)
                 return max;
+
             return value;
         }
 
@@ -36,13 +37,14 @@ namespace DP.src
         // If size is negative and empty array is returned.
         public static T[] FillArray<T>(int size, T elem)
         {
-            if (size < 0)
+            if (size <= 0)
                 return new T[0];
 
             T[] arr = new T[size];
             for (int i = 0; i < size; i++) {
                 arr[i] = elem;
             }
+
             return arr;
         }
 
