@@ -19,6 +19,8 @@
     "jquery": "^2.1.4",
     "js-schema": "^1.0.1",
     "react": "^0.14.2",
+    "react-dnd": "^2.0.2",
+    "react-dnd-touch-backend": "^0.2.0",
     "react-dom": "^0.14.2",
     "react-tap-event-plugin": "^0.2.1",
     "screenfull": "^2.0.0",
