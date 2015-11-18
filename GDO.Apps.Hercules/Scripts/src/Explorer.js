@@ -4,7 +4,8 @@ const React = require('react'),
     ReactDOM = require('react-dom'),
     _ = require('underscore'),
     DatasetStore = require('./stores/DatasetStore'),
-    ExplorerActions = require('./actions/ExplorerActions');
+    ExplorerActions = require('./actions/ExplorerActions'),
+    NavActions = require('./actions/NavigationActions');
 
 const W_PAPER = 210,
     H_PAPER = 310,
@@ -59,8 +60,12 @@ class Paper extends React.Component {
 }
 
 class AddNew extends React.Component {
+    _goToImporter () {
+        NavActions.goTo('CREATE');
+    }
+
     render () {
-        return <Paper>
+        return <Paper onTouchTap={this._goToImporter}>
             <div><i className="material-icons md-48">add_circle_outline</i></div>
             <div>Add New</div>
         </Paper>;

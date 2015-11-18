@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.Augment
 {
 
     // An ((A)ugmented)Column in a RichDS.
@@ -8,38 +8,26 @@ namespace DP.src.Augment
     // An AColumn has type information about the data it contains.
     class AColumn
     {
-        //
-        public AType PrincipalType = AType.Unknown;
-
-        //
-        public Dictionary<AType, int> TypeModes = new Dictionary<AType, int>();
-
-        //
-        public Stats<dynamic> Data = null;
-
-        //
+        public AType Type = AType.Unknown;
+        public Stats<dynamic> Stats = null;
         public string Header = null;
-
-        //
         public int Number = 0;
 
-        
-        // Creates a new AColum, empty, but with a header and a number at least.
         public AColumn(string header, int number)
         {
             Header = header;
             Number = number;
         }
 
-
         // Pretty printing of an AColumn.
         public override string ToString()
         {
-            return string.Format(
-                "#{0} - {1} : {2} of {3}\n\t{4} Min, {5} Max, {6} Count, {7} Modes, {8}, {9} Sum, {10} Mean, {11} Median, {12} Variance, {13} StdDev\n\tData: {14}",
-                Number, Header, PrincipalType.ToString(), TypeModes.Count,
-                Data.Min, Data.Max, Data.Count, Data.Modes.Count, Data.Enum ? "ENUM" : "NON-ENUM", Data.Sum, Data.Mean, Data.Median, Data.Variance, Data.StdDev,
-                string.Join(",", Data.Data));
+            return string.Format
+                (
+                    "#{0} - {1} : {2}\n\t{3} Min, {4} Max, {5} Count, {6}, {7} Sum, {8} Mean, {9} Median, {10} Variance, {11} StdDev",
+                    Number, Header, Type.ToString(),
+                    Stats.Min, Stats.Max, Stats.Count, Stats.Modes.Count, Stats.Enum ? "ENUM" : "NON-ENUM", Stats.Sum, Stats.Mean, Stats.Median, Stats.Variance, Stats.StdDev
+                );
         }
     }
 }

@@ -6,3 +6,15 @@ export function toggleNode (id) {
         nodeId: id
     });
 }
+
+export function createSection () {
+    Dispatcher.dispatch({
+        actionType: 'createSection'
+    });
+}
+
+export function clearSelection () {
+    Dispatcher.dispatch({
+        actionType: 'clearSelection'
+    });
+}

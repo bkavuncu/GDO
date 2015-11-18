@@ -1,18 +1,44 @@
 ﻿'use strict';
 var _ = require('underscore');
 var React = require('react');
-var ReactDOM = require('react-dom');
+var ReactDOM = require('react-dom'),
+    NavStore = require('./stores/NavStore');
 
 var View = require('./ui/View.jsx'),
-    Tabs = require('./Tabs.jsx');
+    Tabs = require('./Tabs.jsx'),
+    Importer = require('./Importer');
 
 require('react-tap-event-plugin')();
 
 class App  extends React.Component {
+    componentWillMount () {
+        var listener = this._onRouteChange.bind(this),
+            route = NavStore.getRoute();
+        NavStore.addChangeListener(listener);
+        this.setState({listener, route});
+    }
+
+    _onRouteChange () {
+        var route = NavStore.getRoute();
+        this.setState({route});
+    }
+
+    componentWillUnmount () {
+        NavStore.removeChangeListener(this.state.listener);
+    }
+
     render () {
-        return <View>
-            <Tabs />
-        </View>;
+        console.log(this.state);
+        switch (this.state.route) {
+            case 'VIEW':
+                return <View>
+                    <Tabs />
+                </View>;
+            case 'CREATE':
+                return <View>
+                    <Importer />
+                </View>;
+        }
     }
 }
 

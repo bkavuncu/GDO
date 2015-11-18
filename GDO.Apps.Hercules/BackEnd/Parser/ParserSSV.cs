@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DP.src.Parser
+namespace GDO.Apps.Hercules.BackEnd.Parser
 {
 
     // A parser of Something-Separated-Values files.
@@ -50,6 +50,11 @@ namespace DP.src.Parser
         public static ParserSSV FromFile(string path, string delimiter)
         {
             ParserSSV parser = new ParserSSV();
+            // Defaulting to "," if null or empty string
+            if (delimiter == null || delimiter.Length == 0)
+            {
+                delimiter = ",";
+            }
             try {
                 long rows = File.ReadLines(path).Count() - 1; // Compute line count, account for headers.
                 parser = FromStream(new FileStream(path, FileMode.Open), delimiter, rows); 
@@ -195,6 +200,11 @@ namespace DP.src.Parser
         public Exception GetException()
         {
             return Exception;
+        }
+
+        public TextFieldParser GetInner()
+        {
+            return Inner;
         }
     }
 }

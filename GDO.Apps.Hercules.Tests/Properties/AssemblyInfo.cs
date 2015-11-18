@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DataPillar")]
+[assembly: AssemblyTitle("GDO.Apps.Hercules.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DataPillar")]
+[assembly: AssemblyProduct("GDO.Apps.Hercules.Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8c79305b-760c-4fc3-80ee-e89d6d5bcf75")]
+[assembly: Guid("ac05fcc9-8675-40c7-aa6c-f577455f7162")]
 
 // Version information for an assembly consists of the following four values:
 //

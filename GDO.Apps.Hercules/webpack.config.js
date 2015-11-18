@@ -14,7 +14,12 @@ module.exports = {
     },
     resolve: {
         extensions: ['', '.js', '.jsx'],
-        alias: {}
+        alias: {
+            colors: './ui/colors',
+            actions: './actions',
+            stores: './stores',
+            ui: './ui'
+        }
     },
     output: {
         publicPath: '/assets/',

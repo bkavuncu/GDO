@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.Augment
 {
 
     // What ((A)ugmented)Type(s) are supported by our awesome app?
     public enum AType
     {
         Text,      // C# string        | JS String
-        Integral,  // C# long          | JS Number
+        Integral,  // C# double        | JS Number
         Floating,  // C# double        | JS Number
         DateTime,  // C# long          | JS Number 
         GPSCoords, // C# GeoCoordinate | JS Array[2]:number [longitude, latitude]

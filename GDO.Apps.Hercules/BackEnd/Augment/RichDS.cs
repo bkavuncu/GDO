@@ -1,88 +1,54 @@
-﻿using DP.src.Parser;
+﻿using GDO.Apps.Hercules.BackEnd.Parser;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Device.Location;
+using Newtonsoft.Json;
 //using Newtonsoft.Json;
 
 
-namespace DP.src.Augment
+//private dynamic[][] ValueCols = null;
+//private AType[][] TypeCols = null;
+
+namespace GDO.Apps.Hercules.BackEnd.Augment
 {
 
     public class RichDS
     {
 
-        // A matrix of dynamic values. This is a 1-to-1 mapping of the dataset into 
-        // memory. The matrix is stored into *columns*, s.t.: v = Values[column][row].
-        private dynamic[][] Values = null;
+        private List<dynamic[]> Rows     = null;
+        private List<AType[]>   Types    = null;
+        private AColumn[]       AColumns = null;
 
-        // A matrix of augmented types. This has a 1-to-1 mapping with Values. i.e.
-        // for each value in Values, its type is in Types.
-        // The matrix is stored into *columns*, s.t.: t = types[column][row].
-        private AType[][] Types = null;
+        private int NColumns = 0;
+        private int NRows = 0;
 
-        // The Augmented Columns.
-        private AColumn[] AColumns = null;
+        private int NPruned = 0;
 
-        // Shortcut for the number of columns.
-        private long NColumns = 0;
+        private List<long> MalformedLines = new List<long>();
 
-        // The parser that will be used to read the rows.
+
         private ParserSSV Parser = null;
 
-        // Shortcut for the number of rows.
-        private long NRows = 0;
 
-        // How many rows have been pruned
-        private long PrunedRows = 0;
-
-        // This becomes true only after/if at least the headers have been parsed correctly.
-        //private bool Alright = false;
-
-
-        // Can't make these directly, use WithParser, FromFile and FromStream instead.
         private RichDS(ParserSSV parser)
         {
             Parser = parser;
         }
 
 
-        // Given a Parser, returns a new RichDS that will use it to parse and augment the data.
-        // Throws NullPointerException if the Parser is null.
-        public static RichDS WithParser(ParserSSV parser)
-        {
-            if (parser == null) {
-                throw new ArgumentNullException("Cannot create a RichDS with a NULL Parser!");
-            }
-            return new RichDS(parser);
-        }
-
-
-        // Creates a Rich Dataset from the given file. Calls ParserSSV.FromFile.
-        // See documentation for ParserSSV.FromFile to see when this will be successfull.
         public static RichDS FromFile(string path, string delimiter)
         {
-            return WithParser(ParserSSV.FromFile(path, delimiter));
+            return new RichDS(ParserSSV.FromFile(path, delimiter));
         }
 
 
-        // Creates a Rich Dataset from the given stream. Calls ParserSSV.FromStream.
-        // See documentation for ParserSSV.FromFile to see when this will be successfull.
-        public static RichDS FromFile(Stream stream, string delimiter, long lines)
+        public static RichDS FromStream(Stream stream, string delimiter, long lines)
         {
-            return WithParser(ParserSSV.FromStream(stream, delimiter, lines));
+            return new RichDS(ParserSSV.FromStream(stream, delimiter, lines));
         }
 
 
-        // So it begins. The parser is set, we are ready to go and hopefully not crash.
-        // This function may take many seconds to return, depending on how big the file 
-        // being parsed is. 
-        // Eventually, this function returns true if everything went alright and we can
-        // Serialize the AColumns into a JSON. If it returns false it means that the 
-        // parser was not setup correctly. This function also returns false 
-        // if the first line read by the parser is malformed. That line are the headers 
-        // and if we can't parse the headers then we may as well give up on life.
-        // Errors can be retrieved via GetMalformed and GetException.
         public bool Begin()
         {
             Utils.Say("Begin...");
@@ -93,18 +59,18 @@ namespace DP.src.Augment
                     return false;
                 } else {
                     Initialize(row); // We got the headers, that's a start, initialize stuff.
+                    Utils.Say("Parsing...");
                     while (Parser.HasData()) { // Now continue with the rowss
                         if ((row = Parser.ParseRow()) != null) {
                             if (row.Length != NColumns) {
-                                Parser.AddMalformed(Parser.GetRowNumber(), "Inconsistent number of cells!");
+                                MalformedLines.Add(Parser.GetRowNumber());
+                                //Parser.AddMalformed(Parser.GetRowNumber(), "Inconsistent number of cells!");
                             } else {
-                                HandleRow(row, Parser.GetRowNumber()); // -1 To account for headers
+                                AddRow(row); // -1 To account for headers
                             }
                         }
                     }
-                    InferTypes();
-                    PruneRows();
-                    ComputeStats();
+                    Augment();
                 }
             } else {
                 Utils.Say("Parser has no data!");
@@ -125,40 +91,34 @@ namespace DP.src.Augment
         {
             Utils.Say("Initialize...");
 
-            int len = headers.Length;
+            NColumns = headers.Length;
 
-            NColumns = len;
-            NRows = Parser.GetRowCount();
-
-            AColumns = new AColumn[len]; // Columns
-            for (int i = 0; i < len; i++) {
+            AColumns = new AColumn[NColumns];
+            for (int i = 0; i < NColumns; i++) {
                 AColumns[i] = new AColumn(headers[i], i);
             }
 
-            Values = new dynamic[len][]; // Values
-            for (int i = 0; i < len; i++) {
-                Values[i] = new dynamic[NRows]; // wow much memory
-            }
+            Rows = new List<dynamic[]>();
+            Types = new List<AType[]>(); 
 
-            Types = new AType[len][]; // And Types
-            for (int i = 0; i < len; i++) {
-                Types[i] = new AType[NRows]; // wow much memory
-            }
-
-            Utils.Say("Initialized {0} columns, {1} rows.", NColumns, NRows);
+            Utils.Say("Initialized {0} columns", NColumns);
         }
 
 
-        // Handles one row: parses each cell and stores the value and the type for that cell.
-        private void HandleRow(string[] cells, long row)
+        private void AddRow(string[] cells)
         {
-            for (int i = 0; i < NColumns; i++) {
-                ParseCell(cells[i], out Types[i][row], out Values[i][row]);
+            AType[] types = new AType[NColumns];
+            dynamic[] values = new dynamic[NColumns];
+
+            for (int col = 0; col < NColumns; col++) {
+                ParseCell(cells[col], out types[col], out values[col]);
             }
+
+            Types.Add(types);
+            Rows.Add(values);
         }
 
 
-        // Given a string(cell), try and parse it into an Augmented type and by doing so obtain its value.
         public static void ParseCell(string cell, out AType type, out dynamic value)
         {
             // Integer
@@ -202,7 +162,7 @@ namespace DP.src.Augment
                 return;
             }
 
-            // URL(URI)
+            // URL (URI)
             if (Uri.IsWellFormedUriString(cell, UriKind.Absolute)) {
                 Uri uri = new Uri(cell);
                 value = uri;
@@ -221,44 +181,48 @@ namespace DP.src.Augment
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+        private void Augment()
+        {
+            NRows = Rows.Count; // Now we know
+
+            Utils.Say("Parsed {0} rows.", NRows);
+
+            InferTypes();
+            PruneRows();
+            ComputeStats();
+        }
+
+
         // Now that all the rows have been parsed, it's time to figure out the types.
         private void InferTypes()
         {
             Utils.Say("Inferring types...");
-            for (int i = 0; i < NColumns; i++) {
-                TypeColumn(AColumns[i]);
+
+            for (int col = 0; col < NColumns; col++) {
+                TypeColumn(col);
             }
+
             Utils.Say("Types inferred.");
         }
 
 
         // Figure out column type modes and principal type
-        private void TypeColumn(AColumn col)
+        private void TypeColumn(int col)
         {
-            AType[] types = Types[col.Number];
+            AType[] types = new AType[NRows];
 
-            int[] intModes = Utils.FillArray(Enum.GetNames(typeof(AType)).Length, 0);
-            for (int i = 0; i < types.Length; i++) {
-                intModes[(int)types[i]]++;
-            }
+            int[] modes = new int[(int)AType.Unknown]; // Which type appears the most?
+            foreach (AType[] row in Types)
+                modes[(int)row[col]]++;
+            
+            bool integer  = modes[(int)AType.Integral] > 0;
+            bool floating = modes[(int)AType.Floating] > 0;
 
-            Dictionary<AType, int> typeModes = new Dictionary<AType, int>();
-            for (int i = 0; i < intModes.Length; i++) {
-                typeModes.Add((AType)i, intModes[i]);
-            }
+            AType type = (AType)Utils.IndexOfMax(modes);
+            if (type == AType.Integral && floating || type == AType.Floating && integer)
+                type = AType.Floating;
 
-            col.TypeModes = typeModes;
-
-            // If we have both integers and floatings, then the type is floating.
-            // TODO Ugly... clean up.
-            bool integer = intModes[(int)AType.Integral] > 0;
-            bool floating = intModes[(int)AType.Floating] > 0;
-            AType commonest = (AType)Utils.IndexOfMax(intModes);
-            if (commonest == AType.Integral && floating)
-                commonest = AType.Floating;
-            else if (commonest == AType.Floating && integer)
-                commonest = AType.Floating;
-            col.PrincipalType = commonest;
+            AColumns[col].Type = type;
         }
 
 
@@ -272,54 +236,27 @@ namespace DP.src.Augment
         {
             Utils.Say("Pruning rows...");
 
-            bool[] invalid = new bool[NRows]; // Which rows should be pruned?
-            int pruned = 0; // How many rows have been pruned?
+            List<dynamic[]> values = new List<dynamic[]>(NRows);
+
             for (int row = 0; row < NRows; row++) {
-                if (ShouldPruneRow(row)) {
-                    invalid[row] = true;
-                    pruned++;
-                }
+                if (!ShouldPruneRow(Types[row])) 
+                    values.Add(Rows[row]);
+                else 
+                    NPruned++;
             }
 
-            PrunedRows = pruned;
+            Rows = values; // Only care about valid rows
+            NRows -= NPruned;
+            Types = null; // Don't need the types any more
 
-            if (pruned == 0) // The values stay the same if no row was pruned.
-                return;
-
-
-            dynamic[][] copy = new dynamic[NColumns][];
-            for (int col = 0; col < NColumns; col++) {
-                copy[col] = new dynamic[NRows - pruned];
-            }
-
-            for (int row = 0, cur = 0; row < NRows; row++) {
-                if (!invalid[row]) {
-                    for (int col = 0; col < NColumns; col++) {
-                        copy[col][cur] = Values[col][row];
-                    }
-                    cur++;
-                }
-            }
-
-            NRows -= pruned;
-            Values = copy; // 0_0
-
-            Utils.Say("{0} rows pruned.", pruned);
-        }
-
-        // Move row @from into row @to.
-        private void MoveRow(int from, int to)
-        {
-            for (int col = 0; col < NColumns; col++) {  
-                Values[col][to] = Values[col][from];
-            }
+            Utils.Say("{0} rows pruned.", NPruned);
         }
 
         // If any cell in any rows doesn't agree with the principal type, that row is removed.
-        private bool ShouldPruneRow(int row)
+        private bool ShouldPruneRow(AType[] row)
         {
-            for (int col = 0; col < AColumns.Length; col++)  // Check that row is fine 
-                if (!TypesCompatible(Types[col][row], AColumns[col].PrincipalType))
+            for (int col = 0; col < NColumns; col++)  // Check that row is fine 
+                if (!TypesCompatible(row[col], AColumns[col].Type))
                     return true;
 
             return false;
@@ -334,6 +271,7 @@ namespace DP.src.Augment
                 return true;
             if (fst == AType.Floating && snd == AType.Integral)
                 return true;
+
             return false;
         }
 
@@ -348,21 +286,29 @@ namespace DP.src.Augment
         {
             Utils.Say("Computing stats...");
 
+            dynamic[] values = new dynamic[NRows]; // Column of values
+
             for (int col = 0; col < NColumns; col++) {
-                switch (AColumns[col].PrincipalType) {
+                switch (AColumns[col].Type) {
                     case AType.Floating:
                     case AType.Integral:
-                    case AType.DateTime:
-                        AColumns[col].Data = Stats<dynamic>.DynamicStats(Values[col], true, true);
+                    case AType.DateTime:    
+                        for (int row = 0; row < NRows; row++) {
+                            values[row] = Rows[row][col];
+                        }
+                        AColumns[col].Stats = Stats<dynamic>.DynamicStats(values, true, true);
                         break;
                     case AType.Text:
-                        AColumns[col].Data = Stats<dynamic>.DynamicStats(Values[col], true, false);
+                        for (int row = 0; row < NRows; row++) {
+                            values[row] = Rows[row][col].Length; // Use Length for strings...
+                        }
+                        AColumns[col].Stats = Stats<dynamic>.DynamicStats(values, true, true);
                         break;
                     case AType.GPSCoords:
                     case AType.URL:
                     case AType.Boolean:
                     case AType.Unknown:
-                        AColumns[col].Data = Stats<dynamic>.DynamicStats(Values[col], false, false);
+                        AColumns[col].Stats = Stats<dynamic>.DynamicStats(values, false, false);
                         break;
                 }
             }
@@ -374,8 +320,7 @@ namespace DP.src.Augment
         //
         public void Serialize(string path)
         {
-            //string hope = JsonConvert.SerializeObject(AColumns);
-            //System.Console.WriteLine(hope);
+            
         }
 
         
@@ -388,11 +333,5 @@ namespace DP.src.Augment
             }
             //System.Console.WriteLine(AColumns.ToString());
         }
-
-
-
-    
-
-
     }
 }

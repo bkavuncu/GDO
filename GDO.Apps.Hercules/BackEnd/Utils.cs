@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src
+namespace GDO.Apps.Hercules.BackEnd
 {
 
-    class Utils
+    public class Utils
     {
 
         // Given a filePath, extracts the file extension. 
         // If filePath is null or empty, the empty string is returned
         public static string ExtractFileExtension(string path)
         {
-            if (path == null || path == "")
+            if (path == null || path == "" || path.LastIndexOf(".") == -1)
                 return "";
 
             return path.Substring(Clamp(0, path.LastIndexOf(".") + 1, path.Length));
@@ -28,6 +28,7 @@ namespace DP.src
                 return min;
             if (value > max)
                 return max;
+
             return value;
         }
 
@@ -36,13 +37,14 @@ namespace DP.src
         // If size is negative and empty array is returned.
         public static T[] FillArray<T>(int size, T elem)
         {
-            if (size < 0)
+            if (size <= 0)
                 return new T[0];
 
             T[] arr = new T[size];
             for (int i = 0; i < size; i++) {
                 arr[i] = elem;
             }
+
             return arr;
         }
 
