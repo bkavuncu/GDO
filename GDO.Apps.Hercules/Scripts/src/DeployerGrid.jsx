@@ -7,33 +7,68 @@ const React = require('react'),
     colors = require('colors');
 
 const NODE_PADDING = 3;
+let [REST, SELECT, MERGE, SECTION] = [1,2,3,4];
 class DeployerNode extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            step: REST
+        };
+    }
     _onTap () {
         DeployerActions.toggleNode(this.props.id);
+    }
+
+    getColour () {
+        switch (this.state.step) {
+            case REST:
+                return colors.NODE;
+                    break;
+            case SELECT:
+                return colors.NODE_SELECT;
+                break;
+            case MERGE:
+                return colors.NODE_MERGE;
+                break;
+            case SECTION:
+                return colors.NODE_SECTION;
+                break;
+        }
+    }
+    getBoxShadow () {
+        switch (this.state.step) {
+            case REST:
+            case SECTION:
+                return 5;
+                break;
+            case SELECT:
+            case MERGE:
+                return 15;
+                break;
+        }
+    }
+    componentWillReceiveProps({step}) {
+        this.setState({step});
     }
     render () {
         var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
             fontSize = Math.floor(Math.max(8, Math.min(edge / 2, 30)));
 
-        var selected = this.props.selected,
-            mergeable = this.props.mergeable,
-            backgroundColor = (selected && mergeable)? colors.NODE_FOCUS
-                : (selected? colors.NODE_SELECT : colors.NODE),
-            outerStyle = {
+        var outerStyle = {
                 display: "flex",
                 justifyContent: "center",
                 width: edge + 'px',
                 height: edge + 'px',
                 padding: NODE_PADDING + 'px'
             },
-            boxShadowDepth = selected? 15 : 5,
             innerStyle = {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: backgroundColor,
-                boxShadow: '0 0 '+ boxShadowDepth +'px gray',
+                backgroundColor: this.getColour(),
+                boxShadow: '0 0 '+ this.getBoxShadow() +'px gray',
                 transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
                 color: 'white',
                 fontSize: fontSize + 'px',
@@ -83,43 +118,6 @@ class DeployerGrid extends React.Component {
         });
     }
 
-    isMergeable (nodeSet) {
-        var rows = [0,1,2,3];
-
-        var nodesPerRow = rows.map((r) => {
-            return nodeSet.filter(
-                (nodeIndex) =>
-                    (r * COLUMNS) <= nodeIndex && nodeIndex < ((r+1) * COLUMNS)
-            ).sort().toArray()
-        });
-
-        var nonNullRows = nodesPerRow.filter((a) => a.length > 0);
-
-        if (nonNullRows.length === 0)
-            return false;
-
-        var prevRowStartIndex = null;
-        var prevRowLength = null;
-        for (var i = 0; i < nonNullRows.length; i++) {
-            var row = nonNullRows[i];
-            var startIndex = row[0] % COLUMNS;
-
-            // Check continuity
-            if (row[row.length - 1] - row[0] !== row.length - 1) {
-                return false;
-            }
-
-            // Check row starts at same index as previous row (if any) and has same length
-            if (prevRowStartIndex === null) {
-                prevRowStartIndex = startIndex;
-                prevRowLength = row.length;
-            } else if (prevRowStartIndex !== startIndex || row.length !== prevRowLength) {
-                return false;
-            }
-        }
-
-        return true;
-    }
     render() {
         var outerStyle = {
                 padding: 0,
@@ -147,12 +145,21 @@ class DeployerGrid extends React.Component {
                     nH = height / ROWS;
 
                 var nodeSet = this.props.selectedNodes,
-                    mergeable = this.isMergeable(nodeSet),
+                    mergeable = this.props.mergeable,
+                    sections = this.props.sections,
+                    getNodeStep = (nodeId) => {
+                        if (nodeSet.contains(nodeId))
+                            return mergeable? MERGE : SELECT;
+
+                        if (sections.size > 0 && DeployerStore.nodeInSection(nodeId))
+                            return SECTION;
+
+                        return REST;
+                    },
                     nodeList = _.range(0, NODE_NUMBER)
                     .map((i) => <DeployerNode
                         key={i} id={i}
-                        selected={nodeSet.contains(i)}
-                        mergeable={mergeable}
+                        step={getNodeStep(i)}
                         width={nW} height={nH} />);
 
                 return <View style={outerStyle}>
@@ -219,6 +226,8 @@ class DeployerButton extends React.Component {
             height: 'auto'
         }, finalStyle = _.extend({}, initialStyle, this.getStyle());
 
+        console.log(this.props);
+
         return <View style={finalStyle} onTouchTap={this.handleTap}>
             {this.getText()}
         </View>;
@@ -233,10 +242,14 @@ class CreateSection extends DeployerButton {
     }
 
     getStyle () {
-        var buttonColor = this.props.mergeable? colors.NODE_FOCUS : colors.MAIN;
+        var buttonColor = this.props.mergeable? colors.NODE_MERGE : colors.MAIN;
         return {
             backgroundColor: buttonColor
         };
+    }
+
+    handleTap () {
+        DeployerActions.createSection();
     }
 }
 
@@ -246,7 +259,7 @@ class ClearSelection extends DeployerButton {
     }
 
     getStyle () {
-        var buttonColor = this.props.clearable? colors.NODE_FOCUS : colors.MAIN;
+        var buttonColor = this.props.clearable? colors.NODE_MERGE : colors.MAIN;
         return {
             backgroundColor: buttonColor
         };
@@ -283,12 +296,14 @@ class GridWrapper extends React.Component {
 
     _onChange () {
         this.setState({
-            selectedNodes: DeployerStore.getSelectedNodes()
+            selectedNodes: DeployerStore.getSelectedNodes(),
+            mergeable: DeployerStore.isMergeable(),
+            sections: DeployerStore.getSections()
         });
     }
 
     render () {
-        return <DeployerGrid selectedNodes={this.state.selectedNodes} />
+        return <DeployerGrid {...this.state}/>
     }
 }
 module.exports = GridWrapper;

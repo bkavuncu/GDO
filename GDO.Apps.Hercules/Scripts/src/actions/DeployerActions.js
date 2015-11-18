@@ -7,10 +7,9 @@ export function toggleNode (id) {
     });
 }
 
-export function createSection (nodeList) {
+export function createSection () {
     Dispatcher.dispatch({
-        actionType: 'createSection',
-        nodeList: nodeList
+        actionType: 'createSection'
     });
 }
 
