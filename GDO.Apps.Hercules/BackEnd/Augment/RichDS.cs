@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Device.Location;
+using Newtonsoft.Json;
 //using Newtonsoft.Json;
 
 
@@ -98,7 +99,7 @@ namespace GDO.Apps.Hercules.BackEnd.Augment
             }
 
             Rows = new List<dynamic[]>();
-            Types  = new List<AType[]>(); 
+            Types = new List<AType[]>(); 
 
             Utils.Say("Initialized {0} columns", NColumns);
         }
@@ -319,8 +320,7 @@ namespace GDO.Apps.Hercules.BackEnd.Augment
         //
         public void Serialize(string path)
         {
-            //string hope = JsonConvert.SerializeObject(AColumns);
-            //System.Console.WriteLine(hope);
+            
         }
 
         
@@ -333,11 +333,5 @@ namespace GDO.Apps.Hercules.BackEnd.Augment
             }
             //System.Console.WriteLine(AColumns.ToString());
         }
-
-
-
-    
-
-
     }
 }

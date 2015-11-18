@@ -4,19 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.DB
 {
-
 
     class JsStats
     {
-        public double min;
-        public double max;
-        public double mean;
-        public double median;
-        public double variance;
-        public double stdDev;
+        public dynamic min;
+        public dynamic max;
+        public dynamic mean;
+        public dynamic median;
+        public dynamic variance;
+        public dynamic stdDev;
         public bool isEnum;
+
+        public static JsStats FromStats(Stats<dynamic> stats)
+        {
+            JsStats js = new JsStats();
+
+            js.min = stats.Min;
+            js.max = stats.Max;
+            js.mean = stats.Mean;
+            js.median = stats.Median;
+
+            return js;
+
+        }
     }
 
 
@@ -49,6 +61,8 @@ namespace DP.src.Augment
         public JsMiniset schema;
         public dynamic[][] rows;
     }
+
+
 
 
 }

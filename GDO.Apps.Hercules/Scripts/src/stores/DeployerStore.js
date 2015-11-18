@@ -18,6 +18,11 @@ class DeployerStore extends BaseStore {
                 else
                     this.activeNodes = this.activeNodes.add(action.nodeId);
                 break;
+            case 'createSection':
+                break;
+            case 'clearSelection':
+                this.activeNodes = Immutable.Set();
+                break;
         }
         this.emitChange();
     }
