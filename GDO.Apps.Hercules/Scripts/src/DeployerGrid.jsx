@@ -7,49 +7,41 @@ const React = require('react'),
     colors = require('colors');
 
 const NODE_PADDING = 3;
-let [REST, SELECT, MERGE, SECTION] = [1,2,3,4];
+let [REST, SELECT, MERGE, SECTION, SECTION_SELECTED] = [1,2,3,4];
 class DeployerNode extends React.Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {
-            step: REST
-        };
-    }
     _onTap () {
         DeployerActions.toggleNode(this.props.id);
     }
 
     getColour () {
-        switch (this.state.step) {
+        switch (this.props.step) {
             case REST:
                 return colors.NODE;
-                    break;
             case SELECT:
                 return colors.NODE_SELECT;
-                break;
             case MERGE:
                 return colors.NODE_MERGE;
-                break;
+            case SECTION_SELECTED:
+                return colors.NODE_SECTION_SELECT;
             case SECTION:
                 return colors.NODE_SECTION;
-                break;
         }
     }
     getBoxShadow () {
-        switch (this.state.step) {
-            case REST:
-            case SECTION:
-                return 5;
-                break;
+        var depth = 5,
+            color = 'gray';
+        switch (this.props.step) {
             case SELECT:
             case MERGE:
-                return 15;
+                depth = 15;
+                break;
+            case SECTION_SELECTED:
+                depth = 15;
+                color = '#666666';
                 break;
         }
-    }
-    componentWillReceiveProps({step}) {
-        this.setState({step});
+
+        return '0 0 ' + depth + 'px ' + color;
     }
     render () {
         var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
@@ -68,7 +60,7 @@ class DeployerNode extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: this.getColour(),
-                boxShadow: '0 0 '+ this.getBoxShadow() +'px gray',
+                boxShadow: this.getBoxShadow(),
                 transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
                 color: 'white',
                 fontSize: fontSize + 'px',
@@ -151,8 +143,9 @@ class DeployerGrid extends React.Component {
                         if (nodeSet.contains(nodeId))
                             return mergeable? MERGE : SELECT;
 
-                        if (sections.size > 0 && DeployerStore.nodeInSection(nodeId))
-                            return SECTION;
+                        if (sections.size > 0 && DeployerStore.nodeInSection(nodeId)){
+                            return DeployerStore.isNodeInSelectedSection(nodeId)? SECTION_SELECTED : SECTION;
+                        }
 
                         return REST;
                     },
@@ -194,7 +187,8 @@ class SectionManager extends React.Component {
 
         return <View style={style}>
             <CreateSection handler={this._createSection.bind(this)} mergeable={mergeable}/>
-            <ClearSelection clearable={nodeSet.size > 0} />
+            <ClearSelection clearable={nodeSet.size > 0} mergeable={mergeable}/>
+            <DestroySection />
         </View>;
     }
 }
@@ -226,8 +220,6 @@ class DeployerButton extends React.Component {
             height: 'auto'
         }, finalStyle = _.extend({}, initialStyle, this.getStyle());
 
-        console.log(this.props);
-
         return <View style={finalStyle} onTouchTap={this.handleTap}>
             {this.getText()}
         </View>;
@@ -253,13 +245,31 @@ class CreateSection extends DeployerButton {
     }
 }
 
+class DestroySection extends DeployerButton {
+    getText () {
+        return 'Destroy Section';
+    }
+
+    getStyle () {
+        var buttonColor = DeployerStore.hasSelectedSection()? colors.NODE_SECTION_SELECT : colors.MAIN;
+        return {
+            backgroundColor: buttonColor
+        };
+    }
+
+    handleTap () {
+        DeployerActions.destroySection();
+    }
+}
+
 class ClearSelection extends DeployerButton {
     getText () {
         return 'Clear Selection';
     }
 
     getStyle () {
-        var buttonColor = this.props.clearable? colors.NODE_MERGE : colors.MAIN;
+        var buttonColor = this.props.mergeable? colors.NODE_MERGE
+            : this.props.clearable? colors.NODE_SELECT : colors.MAIN;
         return {
             backgroundColor: buttonColor
         };

@@ -18,3 +18,9 @@ export function clearSelection () {
         actionType: 'clearSelection'
     });
 }
+
+export function destroySection () {
+    Dispatcher.dispatch({
+        actionType: 'destroySection'
+    });
+}
