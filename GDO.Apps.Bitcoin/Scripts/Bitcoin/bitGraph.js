@@ -208,7 +208,7 @@ var s = new sigma({
  * @param blkid
  * (blkid=-1 is flag for live transactions)
  */
-function bindEvents(blkid){
+function bindEvents(blkid, client){
 //function peerConnect(blkid){
     //establish connection to controller
     var peer = new Peer({ host: "dsigdopreprod.doc.ic.ac.uk", port: 55555 });
@@ -217,7 +217,9 @@ function bindEvents(blkid){
     //update DOM with connection string
     conn.on('open', function(){
         console.log('Connection to '+conn.peer+' from '+peer.id);
-        document.getElementById('peerID').innerHTML = 'ConnectionID:'+peer.id;
+        document.getElementById('peerID').innerHTML = 'ConnectionID:' + peer.id;
+        
+        conn.send({ peertype: 'info', peerpayload: client });   //TODO SEND client
         conn.send({peertype:'block',peerpayload:blkid});
     });
 
@@ -228,10 +230,10 @@ function bindEvents(blkid){
     //simple messaging protocol
     conn.on('data', function(data) {
         if (data.type == 'newBlock' && data.value >= 0)
-            window.open("/Web/Bitcoin/block.html?block=" + data.value, '_self');
+            window.open("/Web/Bitcoin/App.cshtml?block=" + data.value, '_self');
 
-        if (data.type == 'newBlock' && data.value < 0)
-            window.open("/Web/Bitcoin/mempool.html", '_self');
+        if (data.type == 'newBlock' && data.value < 0)  
+            window.open("/Web/Bitcoin/App.cshtml", '_self');
 
         if (data.type == 'connComp') {
             if (data.value)
