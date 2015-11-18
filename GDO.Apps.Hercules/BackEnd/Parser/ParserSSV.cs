@@ -35,6 +35,8 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
         // Dictionary of malformed lines.
         private Dictionary<long, string> Malformed = new Dictionary<long, string>();
 
+        // Source of the file.
+        private Stream Source = null;
 
         // Can't construct directly, use FromFile or FromStream instead.
         private ParserSSV() { }
@@ -93,6 +95,7 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
                 inner.SetDelimiters(delimiter);
                 parser.Inner = inner;
                 parser.RowCount = rows < 0 ? 2 ^ 15 : rows;
+                parser.Source = source;
             } catch (Exception ouch) {
                 parser.Exception = ouch;
             }
@@ -145,8 +148,10 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
         public string[] ParseRow()
         {
             if (!HasData())
+            {
+                CloseSource();
                 return null;
-
+            }
             string[] row = null;
 
             RowNumber++;
@@ -205,6 +210,12 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
         public TextFieldParser GetInner()
         {
             return Inner;
+        }
+
+        // Closes the source file. Only call this method when you are done parsing.
+        public void CloseSource()
+        {
+            this.Source.Close();
         }
     }
 }
