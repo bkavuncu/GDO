@@ -28,7 +28,6 @@ class App  extends React.Component {
     }
 
     render () {
-        console.log(this.state);
         switch (this.state.route) {
             case 'VIEW':
                 return <View>

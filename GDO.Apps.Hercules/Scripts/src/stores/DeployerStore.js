@@ -1,10 +1,13 @@
 const BaseStore = require('./BaseStore'),
-    Immutable = require('immutable');
+    Immutable = require('immutable'),
+    _ = require('underscore'),
+    assert = require('assert');
 
 const NODE_NUMBER = 64,
     ROWS = 4,
     COLUMNS = NODE_NUMBER / ROWS,
-    PADDING = 10;
+    PADDING = 10,
+    NO_SECTION_SELECTED = -1;
 
 class DeployerStore extends BaseStore {
     constructor() {
@@ -12,6 +15,7 @@ class DeployerStore extends BaseStore {
 
         this.activeNodes = Immutable.Set();
         this.sections = Immutable.List();
+        this.selectedSectionId = NO_SECTION_SELECTED;
         this.mergeable = false;
 
         this.subscribe(() => this._registerToActions.bind(this))
@@ -22,9 +26,9 @@ class DeployerStore extends BaseStore {
             case 'toggleNode':
                 var nodeId = action.nodeId;
 
-                if (this.nodeInSection(nodeId)) {
-                    return;
-                } else if (this.activeNodes.contains(nodeId))
+                if (this.nodeInSection(nodeId))
+                    this._selectSection(this.getNodeSectionId(nodeId));
+                else if (this.activeNodes.contains(nodeId))
                     this.activeNodes = this.activeNodes.remove(nodeId);
                 else
                     this.activeNodes = this.activeNodes.add(nodeId);
@@ -36,6 +40,15 @@ class DeployerStore extends BaseStore {
                     this._makeSection(sectionNodes);
                 }
                 break;
+            case 'destroySection':
+                if (this.hasSelectedSection()) {
+                    this.sections = this.sections.filter((s) => s.id !== this.selectedSectionId);
+                    this.selectedSectionId = NO_SECTION_SELECTED;
+                }
+                break;
+            case 'selectSection':
+                this._selectSection(action.sectionId);
+                break;
             case 'clearSelection':
                 this.activeNodes = Immutable.Set();
                 break;
@@ -46,13 +59,15 @@ class DeployerStore extends BaseStore {
 
     _makeSection (sectionNodes) {
         var nodeList = sectionNodes.toOrderedSet().toList(),
-            sectionId = this.sections.size,
+            maxSectionId = this.sections.map(s => s.id).reduce((prev, curr) => Math.max(prev, curr), -1),
+            sectionId = maxSectionId + 1,
             section = {
                 id: sectionId,
                 nodeList: nodeList
             };
 
         this.sections = this.sections.push(section);
+        this.selectedSectionId = sectionId;
     }
 
     getSections () {
@@ -104,12 +119,45 @@ class DeployerStore extends BaseStore {
         return true;
     }
 
+    _selectSection (sectionId) {
+        this.selectedSectionId = this.selectedSectionId === sectionId? NO_SECTION_SELECTED : sectionId;
+    }
+
+    getNodeSectionId (nodeId) {
+        assert(this.nodeInSection(nodeId), 'the node does not belong in any section');
+
+        var targetSections = this.sections.filter(s => s.nodeList.contains(nodeId));
+
+        assert(targetSections.size === 1, 'the node is in more than one section');
+
+        return targetSections.get(0).id;
+    }
+
+    isNodeInSelectedSection (nodeId) {
+        return this.hasSelectedSection()
+            && this.nodeInSection(nodeId)
+            && this.getNodeSectionId(nodeId) === this.selectedSectionId;
+    }
+
+    hasSelectedSection () {
+        return 0 <= this.selectedSectionId;
+    }
+
     isMergeable () {
         return this.mergeable;
     }
 
     getSelectedNodes () {
         return this.activeNodes;
+    }
+
+    getSelectedSectionId () {
+        assert(this.hasSelectedSection(), 'no section selected');
+        return this.selectedSectionId;
+    }
+
+    _checkSectionExists (sectionId) {
+        assert(this.sections.filter(s => s.id === sectionId).size > 0, 'the section does not exist');
     }
 }
 
