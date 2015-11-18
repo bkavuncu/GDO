@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.Augment
 {
 
     // An ((A)ugmented)Column in a RichDS.

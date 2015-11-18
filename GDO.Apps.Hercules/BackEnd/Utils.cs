@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src
+namespace GDO.Apps.Hercules.BackEnd
 {
 
-    class Utils
+    public class Utils
     {
 
         // Given a filePath, extracts the file extension. 
         // If filePath is null or empty, the empty string is returned
         public static string ExtractFileExtension(string path)
         {
-            if (path == null || path == "")
+            if (path == null || path == "" || path.LastIndexOf(".") == -1)
                 return "";
 
             return path.Substring(Clamp(0, path.LastIndexOf(".") + 1, path.Length));

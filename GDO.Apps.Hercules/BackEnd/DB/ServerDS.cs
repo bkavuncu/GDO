@@ -7,9 +7,8 @@ using System.IO;
 using Newtonsoft.Json;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using DP.src;
 
-namespace GDO
+namespace GDO.Apps.Hercules.BackEnd.DB
 {
 
     public class ServerDS

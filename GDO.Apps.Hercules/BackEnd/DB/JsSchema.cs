@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.DB
 {
-
 
     class JsStats
     {

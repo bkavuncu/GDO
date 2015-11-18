@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src.Augment
+namespace GDO.Apps.Hercules.BackEnd.Augment
 {
 
     // What ((A)ugmented)Type(s) are supported by our awesome app?

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP.src
+namespace GDO.Apps.Hercules.BackEnd
 {
 
     // Statistics about an array of data.
