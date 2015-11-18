@@ -1,5 +1,6 @@
 const BaseStore = require('./BaseStore'),
     Immutable = require('immutable'),
+    _ = require('underscore'),
     assert = require('assert');
 
 const NODE_NUMBER = 64,
@@ -58,7 +59,8 @@ class DeployerStore extends BaseStore {
 
     _makeSection (sectionNodes) {
         var nodeList = sectionNodes.toOrderedSet().toList(),
-            sectionId = this.sections.size,
+            maxSectionId = this.sections.map(s => s.id).reduce((prev, curr) => Math.max(prev, curr), -1),
+            sectionId = maxSectionId + 1,
             section = {
                 id: sectionId,
                 nodeList: nodeList
