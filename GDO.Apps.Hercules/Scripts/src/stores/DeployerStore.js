@@ -45,6 +45,9 @@ class DeployerStore extends BaseStore {
                     this.selectedSectionId = NO_SECTION_SELECTED;
                 }
                 break;
+            case 'selectSection':
+                this._selectSection(action.sectionId);
+                break;
             case 'clearSelection':
                 this.activeNodes = Immutable.Set();
                 break;
@@ -144,6 +147,11 @@ class DeployerStore extends BaseStore {
 
     getSelectedNodes () {
         return this.activeNodes;
+    }
+
+    getSelectedSectionId () {
+        assert(this.hasSelectedSection(), 'no section selected');
+        return this.selectedSectionId;
     }
 
     _checkSectionExists (sectionId) {

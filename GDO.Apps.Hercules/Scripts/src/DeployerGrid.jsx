@@ -44,7 +44,7 @@ class DeployerNode extends React.Component {
         return '0 0 ' + depth + 'px ' + color;
     }
     render () {
-        var edge = Math.min(this.props.width, this.props.height) - 2 * NODE_PADDING,
+        var edge = this.props.edge - 2 * NODE_PADDING,
             fontSize = Math.floor(Math.max(8, Math.min(edge / 2, 30)));
 
         var outerStyle = {
@@ -101,12 +101,18 @@ class DeployerGrid extends React.Component {
         window.removeEventListener('resize', this.state.listener);
     }
     resize () {
-        var el = ReactDOM.findDOMNode(this);
+        var el = ReactDOM.findDOMNode(this),
+            width = el.offsetWidth - 2 * PADDING,
+            height = el.offsetHeight - 2 * PADDING,
+            nW = width / COLUMNS,
+            nH = height / ROWS,
+            edge = Math.min(nW, nH),
+            containerHeight = edge * ROWS;
 
         this.setState({
             step: RENDER,
-            width: el.offsetWidth,
-            height: el.offsetHeight
+            edge: edge,
+            containerHeight: containerHeight
         });
     }
 
@@ -117,9 +123,10 @@ class DeployerGrid extends React.Component {
                 display: 'flex',
                 flexDirection: 'column'
             },
-            style = {
+            gridStyle = {
                 alignContent: 'flex-start',
                 flexGrow: 1,
+                flexShrink: 1,
                 height: 'auto',
                 padding: PADDING + 'px',
                 backgroundColor: '#80cbc4',
@@ -128,19 +135,14 @@ class DeployerGrid extends React.Component {
 
         switch (this.state.step) {
             case MEASURE:
-                return <View style={style}/>;
+                return <View style={gridStyle}/>;
                 break;
             case RENDER:
-                var width = this.state.width - 2 * PADDING,
-                    height = this.state.height - 2 * PADDING,
-                    nW = width / COLUMNS,
-                    nH = height / ROWS;
+                var {edge, containerHeight} = this.state,
+                    {mergeable, selectedNodes, sections} = this.props;
 
-                var nodeSet = this.props.selectedNodes,
-                    mergeable = this.props.mergeable,
-                    sections = this.props.sections,
-                    getNodeStep = (nodeId) => {
-                        if (nodeSet.contains(nodeId))
+                var getNodeStep = (nodeId) => {
+                        if (selectedNodes.contains(nodeId))
                             return mergeable? MERGE : SELECT;
 
                         if (sections.size > 0 && DeployerStore.nodeInSection(nodeId)){
@@ -150,17 +152,22 @@ class DeployerGrid extends React.Component {
                         return REST;
                     },
                     nodeList = _.range(0, NODE_NUMBER)
-                    .map((i) => <DeployerNode
-                        key={i} id={i}
-                        step={getNodeStep(i)}
-                        width={nW} height={nH} />);
+                        .map((i) => <DeployerNode
+                            key={i} id={i}
+                            step={getNodeStep(i)}
+                            edge={edge} />);
+
+                // set max height for grid
+                gridStyle = _.extend({}, gridStyle, {
+                    maxHeight: containerHeight + 'px'
+                });
 
                 return <View style={outerStyle}>
-                    <View  id="grid" style={style}>
+                    <View  id="grid" style={gridStyle}>
                         {nodeList}
                     </View>
-                    <SectionManager selectedNodes={nodeSet} mergeable={mergeable}/>
-                    <SectionViewer />
+                    <SectionManager selectedNodes={selectedNodes} mergeable={mergeable}/>
+                    <SectionViewer sections={sections} selectedSectionId={this.props.selectedSectionId}/>
                 </View>;
                 break;
         }
@@ -214,6 +221,7 @@ class DeployerButton extends React.Component {
             flexBasis: '200px',
             color: 'white',
             marginRight: '5px',
+            borderRadius: '3px',
             boxShadow: '0 0 10px gray',
             backgroundColor: colors.NODE,
             width: 'auto',
@@ -280,14 +288,44 @@ class ClearSelection extends DeployerButton {
     }
 }
 
+class Section extends React.Component {
+    _onTap () {
+        DeployerActions.selectSection(this.props.data.id);
+    }
+    render () {
+        var {selected, data} = this.props,
+            style = {
+            backgroundColor: selected? colors.NODE_SECTION_SELECT : colors.NODE_SECTION,
+            display: 'flex',
+            transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
+            color: 'white',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            marginRight: '5px',
+            boxShadow: '0 0 ' + (selected? 15 : 5) + 'px gray',
+            alignItems: 'center',
+            padding: '10px'
+        };
+
+        return <div style={style} onTouchTap={this._onTap.bind(this)}>
+            <div>Section ID: {data.id}</div>
+            <div>Nodes: {data.nodeList.sort().map(n => n+1).toArray().toString()}</div>
+        </div>;
+    }
+}
+
 class SectionViewer extends React.Component {
     render () {
         var style = {
+            display: 'flex',
+            flexWrap: 'wrap',
+            padding: '10px',
+            alignItems: 'flex-start',
             flexGrow: 1
-        }
+        }, selectedId = this.props.selectedSectionId;
 
         return <div style={style}>
-
+            {this.props.sections.map(s => <Section data={s} key={s.id} selected={selectedId === s.id} />)}
         </div>;
     }
 }
@@ -308,7 +346,8 @@ class GridWrapper extends React.Component {
         this.setState({
             selectedNodes: DeployerStore.getSelectedNodes(),
             mergeable: DeployerStore.isMergeable(),
-            sections: DeployerStore.getSections()
+            sections: DeployerStore.getSections(),
+            selectedSectionId: DeployerStore.hasSelectedSection()?  DeployerStore.getSelectedSectionId() : false
         });
     }
 

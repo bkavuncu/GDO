@@ -24,3 +24,10 @@ export function destroySection () {
         actionType: 'destroySection'
     });
 }
+
+export function selectSection (sectionId) {
+    Dispatcher.dispatch({
+        actionType: 'selectSection',
+        sectionId: sectionId
+    })
+}
