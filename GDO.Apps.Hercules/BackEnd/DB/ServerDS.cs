@@ -55,11 +55,10 @@ namespace GDO.Apps.Hercules.BackEnd.DB
                 { "schema", schema } 
             };
 
-            int id = document.GetElement("_id").Value.AsInt32;
 
-            MongoDB.GetCollection<BsonDocument>("datasets").InsertOneAsync(document);
+            MongoDB.GetCollection<BsonDocument>("datasets").InsertOneAsync(document).Wait();
 
-            Utils.Say("DIO ANOOOO " + id);
+            Utils.Say("DIO ANOOOO " + document["_id"].ToString());
 
             return -1;
         }
