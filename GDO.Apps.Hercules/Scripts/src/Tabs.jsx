@@ -8,7 +8,8 @@ const React = require('react'),
 
 var DeployerGrid = require('./DeployerGrid.jsx'),
     DataExplorer = require('./Explorer'),
-    DataEnricher, DataFilter, GraphControl;
+    GraphControl = require('./GraphControl'),
+    DataEnricher, DataFilter;
 
 class Tab extends React.Component {
     render () {
