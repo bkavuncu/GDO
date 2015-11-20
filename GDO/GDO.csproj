@@ -953,7 +953,6 @@
     <Content Include="Web\Console.cshtml" />
     <Content Include="Web\Instances.cshtml" />
     <Content Include="Web\Management.cshtml" />
-    <Content Include="Web\Wiki.cshtml" />
     <Content Include="Web\Scenarios.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -978,7 +977,6 @@
     </Content>
     <Content Include="Web\Node.cshtml" />
     <Content Include="Web\Base.cshtml" />
-    <Content Include="Web\Initialize.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
   </ItemGroup>
   <ItemGroup>

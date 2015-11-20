@@ -17,8 +17,9 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
                 window.onload = function() {
-                    setTimeout(function() {
-                        window.location = "http://sage2server:9292/display.html?clientID=" + gdo.clientId;
+                    setTimeout(function () {
+                        var sageId = gdo.net.cols * ((gdo.net.rows - 1) - ((gdo.clientId - 1) / gdo.net.cols)) + (2*((gdo.clientId - 1) % gdo.net.cols)) ;
+                        window.location = "http://129.31.192.25:9292/display.html?clientID=" + sageId;
                     }, 700);
                 };
             });
