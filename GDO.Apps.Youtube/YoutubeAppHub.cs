@@ -24,7 +24,7 @@ namespace GDO.Apps.Youtube
     public class YoutubeAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "Youtube";
-        public int P2PMode { get; set; } = (int) Cave.P2PModes.Neighbours;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new YoutubeApp().GetType();
         public void JoinGroup(int instanceId)
         { 

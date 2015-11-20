@@ -17,7 +17,7 @@ namespace GDO.Apps.Presentation
         private static readonly ILog Log = LogManager.GetLogger(typeof(PresentationAppHub));
 
         public string Name { get; set; } = "Presentation";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new PresentationApp().GetType();
         public void JoinGroup(int instanceId)
         {

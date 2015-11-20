@@ -1,0 +1,28 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.location = "your link";
+                    }, 700);
+                };
+            });
+        });
+    </script>
+</body>
+</html>
