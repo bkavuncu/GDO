@@ -11,4 +11,8 @@ The purpose of the software is to:
 
 ## [Check out the Wiki](https://wiki.imperial.ac.uk/display/DG/Home)
 
+
+## !!! CONTENTS OF THIS REPO ARE CONFIDENTIAL !!!
+## !!! DO NOT SHARE OUTSIDE THE DEVELOPMENT TEAM !!!
+
 ***
