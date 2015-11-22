@@ -210,9 +210,12 @@
     <Content Include="Scripts\build\index.html" />
     <Content Include="Scripts\build\assets\control.js.map" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\gdo.apps.dd3.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\peer.js" />
     <Content Include="Scripts\src\ui\View.jsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
