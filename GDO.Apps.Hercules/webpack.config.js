@@ -22,7 +22,7 @@ module.exports = {
         }
     },
     output: {
-        publicPath: '/assets/',
+        path: './Scripts/build/assets/',
         filename: "control.js"
     },
     module: {

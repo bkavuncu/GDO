@@ -1,13 +1,13 @@
-﻿using DP.src;
-using DP.src.Augment;
-using GDO;
+
+using GDO.Apps.Hercules.BackEnd.Augment;
+using GDO.Apps.Hercules.BackEnd.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DP
+namespace GDO.Apps.Hercules.BackEnd
 {
     class Program
     {

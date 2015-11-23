@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DP.src.Parser
+namespace GDO.Apps.Hercules.BackEnd.Parser
 {
 
     // General interface for parsing stuff row by row.

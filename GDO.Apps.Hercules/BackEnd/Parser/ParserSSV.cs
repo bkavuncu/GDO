@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DP.src.Parser
+namespace GDO.Apps.Hercules.BackEnd.Parser
 {
 
     // A parser of Something-Separated-Values files.
@@ -35,6 +35,8 @@ namespace DP.src.Parser
         // Dictionary of malformed lines.
         private Dictionary<long, string> Malformed = new Dictionary<long, string>();
 
+        // Source of the file.
+        private Stream Source = null;
 
         // Can't construct directly, use FromFile or FromStream instead.
         private ParserSSV() { }
@@ -50,6 +52,11 @@ namespace DP.src.Parser
         public static ParserSSV FromFile(string path, string delimiter)
         {
             ParserSSV parser = new ParserSSV();
+            // Defaulting to "," if null or empty string
+            if (delimiter == null || delimiter.Length == 0)
+            {
+                delimiter = ",";
+            }
             try {
                 long rows = File.ReadLines(path).Count() - 1; // Compute line count, account for headers.
                 parser = FromStream(new FileStream(path, FileMode.Open), delimiter, rows); 
@@ -88,6 +95,7 @@ namespace DP.src.Parser
                 inner.SetDelimiters(delimiter);
                 parser.Inner = inner;
                 parser.RowCount = rows < 0 ? 2 ^ 15 : rows;
+                parser.Source = source;
             } catch (Exception ouch) {
                 parser.Exception = ouch;
             }
@@ -140,8 +148,10 @@ namespace DP.src.Parser
         public string[] ParseRow()
         {
             if (!HasData())
+            {
+                CloseSource();
                 return null;
-
+            }
             string[] row = null;
 
             RowNumber++;
@@ -195,6 +205,17 @@ namespace DP.src.Parser
         public Exception GetException()
         {
             return Exception;
+        }
+
+        public TextFieldParser GetInner()
+        {
+            return Inner;
+        }
+
+        // Closes the source file. Only call this method when you are done parsing.
+        public void CloseSource()
+        {
+            this.Source.Close();
         }
     }
 }

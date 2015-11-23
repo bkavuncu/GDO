@@ -7,9 +7,8 @@ using System.IO;
 using Newtonsoft.Json;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using DP.src;
 
-namespace GDO
+namespace GDO.Apps.Hercules.BackEnd.DB
 {
 
     public class ServerDS
@@ -56,11 +55,10 @@ namespace GDO
                 { "schema", schema } 
             };
 
-            int id = document.GetElement("_id").Value.AsInt32;
 
-            MongoDB.GetCollection<BsonDocument>("datasets").InsertOneAsync(document);
+            MongoDB.GetCollection<BsonDocument>("datasets").InsertOneAsync(document).Wait();
 
-            Utils.Say("DIO ANOOOO " + id);
+            Utils.Say("DIO ANOOOO " + document["_id"].ToString());
 
             return -1;
         }
