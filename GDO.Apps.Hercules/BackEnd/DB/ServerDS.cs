@@ -15,7 +15,7 @@ namespace GDO.Apps.Hercules.BackEnd.DB
     {
         private static IMongoClient MongoClient;
         private static IMongoDatabase MongoDB;
-        
+        private static IMongoCollection<BsonDocument> MongoCollection;
 
         // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
@@ -30,7 +30,7 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         {
             MongoClient = new MongoClient();
             MongoDB = MongoClient.GetDatabase("datasets");
-
+            MongoCollection = MongoDB.GetCollection<BsonDocument>("jsdatasets");
             return true;
         }
 
@@ -42,14 +42,38 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         // If something goes wrong, return the NULL string and save the error.
         public static string GetMiniset(int id)
         {
-            return null;
+            try {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                BsonDocument miniset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return miniset.ToJson<BsonDocument>();
+            }
+            catch(Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
         // Returns an array containing the JSON strings of ALL the minisets.
         // If something goes wrong, return the NULL array and save the error.
-        public static string[] GetMinisets()
+        public async Task<string[]> GetMinisets()
         {
-            return null;
+             try {
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                var minisets = await MongoCollection.Find(_ => true).Project(project).ToListAsync();
+                
+                return minisets.Select(x => x.ToJson<BsonDocument>()).ToArray();
+            }
+            catch(Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
         // Each JsDataset contains the data (rows) and the JsMiniset (schema).
@@ -61,7 +85,20 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         // If something goes wrong, return the NULL string and save the error.
         public static string GetDataset(int id)
         {
-            return null;
+            try
+            {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Include("schema")
+                    .Include("rows");
+                BsonDocument dataset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return dataset.ToJson<BsonDocument>();
+            }
+            catch (Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
 
