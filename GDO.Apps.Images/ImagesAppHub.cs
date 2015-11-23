@@ -48,7 +48,7 @@ namespace GDO.Apps.Images
                     ia.ImageName = imageName;
 
                     Clients.Caller.setMessage("Generating random id for the image...");
-                    String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\\";
+                    String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/") ;
                     String path1 = basePath + ia.ImageName;
                     Random imgDigitGenerator = new Random();
                     while (Directory.Exists(basePath + ia.ImageNameDigit))
@@ -62,6 +62,10 @@ namespace GDO.Apps.Images
                     img1.Save(path2, ImageFormat.Png);
                     img1.Dispose();
                     //File.Move(path1, path2);
+
+                    // log to index file
+                    String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
+                    File.AppendAllLines(indexFile,new string[] { ia.ImageName+"|"+ia.ImageNameDigit});
 
                     Clients.Caller.setMessage("Loading the image and creating thumbnail...");
                     //create origin
@@ -201,7 +205,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     Clients.Caller.setMessage("Finding image digits " + digits);
-                    String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\\";
+                    String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/");
                     if (digits == "" || !Directory.Exists(basePath + digits)) {
                         Clients.Caller.setMessage("Digits not found! Please upload a new image!");
                         return; 
