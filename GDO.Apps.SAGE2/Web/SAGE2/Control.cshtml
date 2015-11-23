@@ -16,19 +16,41 @@
     <meta name="author" content="">
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script>
-        $(function () {
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                window.onload = function() {
-                    setTimeout(function() {
-                        window.location = "https://129.31.192.25:9090/";
-                    }, 700);
-                };
-            });
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script>
+    function getUrlVar(variable) {
+        /// <summary>
+        /// Gets the URL variable.
+        /// </summary>
+        /// <param name="variable">The variable.</param>
+        /// <returns></returns>
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) { return pair[1]; }
+        }
+        query = window.frames['control_frame_content'].location.search.substring(1);
+        vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) { return pair[1]; }
+        }
+        return (false);
+    }
+    $(function() {
+        $(document).ready(function() {
+            var gdo = parent.gdo;
+            window.onload = function() {
+                setTimeout(function() {
+                    gdo.controlId = getUrlVar("controlId");
+                    gdo.consoleOut(".SAGE2", 1, "Connecting to Sage Control Panel at " + gdo.net.app["SAGE2"].config[gdo.net.instance[gdo.controlId].configName].controlIp);
+                    window.location = gdo.net.app["SAGE2"].config[gdo.net.instance[gdo.controlId].configName].controlIp;
+                }, 700);
+            };
         });
-    </script>
+    });
+</script>
 </body>
 </html>

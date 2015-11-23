@@ -18,8 +18,10 @@
                 var gdo = parent.gdo;
                 window.onload = function() {
                     setTimeout(function () {
-                        var sageId = gdo.net.cols * ((gdo.net.rows - 1) - ((gdo.clientId - 1) / gdo.net.cols)) + (2*((gdo.clientId - 1) % gdo.net.cols)) ;
-                        window.location = "http://129.31.192.25:9292/display.html?clientID=" + sageId;
+                        var sageId = gdo.net.cols * ((gdo.net.rows - 1) - ((gdo.clientId - 1) / gdo.net.cols)) + (2 * ((gdo.clientId - 1) % gdo.net.cols));
+                        var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+                        gdo.consoleOut(".SAGE2", 1, "Connecting to Sage Node at " + gdo.net.app["SAGE2"].config[gdo.net.instance[instanceId].configName].clientIp + sageId);
+                        window.location = gdo.net.app["SAGE2"].config[gdo.net.instance[instanceId].configName].clientIp + sageId;
                     }, 700);
                 };
             });
