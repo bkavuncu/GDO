@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using GDO.Core;
-using Newtonsoft.Json;
-using DP.src.Augment;
+﻿using GDO.Core;
 
 namespace GDO.Apps.Hercules
 {
