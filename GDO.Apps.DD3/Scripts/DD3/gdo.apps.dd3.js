@@ -98,7 +98,7 @@ var initDD3App = function () {
     })();
 
     var api = function () {
-        var api = { };
+        var api = {};
         var uid = 0;
 
         api.dataPoints = {};
@@ -281,7 +281,7 @@ var initDD3App = function () {
     var dd3 = (function () {
         "use strict";
         var _dd3 = Object.create(d3);
-        
+
         var options = {
             useApi: false,
             positionByClientId: true,
@@ -698,7 +698,7 @@ var initDD3App = function () {
                 var request = {
                     dataId: dataId,
                     dataName: dataName,
-                    limits : [],
+                    limits: [],
                     _keys: keys || null
                 };
 
@@ -1904,8 +1904,8 @@ var initDD3App = function () {
                         });
                     });
                     var rcpt = _dd3_findRecipients(g);
-                    rcpt.forEach(function (r) { r.min = time - step; r.max = time + step})
-                    _dd3_mergeRecipientsIn(rcpt, rcpts); 
+                    rcpt.forEach(function (r) { r.min = time - step; r.max = time + step })
+                    _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
 
                 c1.removeChild(clones[0]);
@@ -1949,7 +1949,7 @@ var initDD3App = function () {
                         f.call(node, 1);
                         endValues.push(d3_node[p0].apply(d3_node, p1));
                     }
-                                        
+
                 });
 
                 group.removeChild(node);
@@ -1974,7 +1974,7 @@ var initDD3App = function () {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
 
                     t.each("start.dd3", function (d, i) {
-                        if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__ )
+                        if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
                         var transition = this[ns][this[ns].active];
 
@@ -2016,7 +2016,7 @@ var initDD3App = function () {
                             tweened: [],
                             tweens: tweenFunctions,
                             attrTweens: attrTweenFunctions,
-                            styleTweens : styleTweenFunctions,
+                            styleTweens: styleTweenFunctions,
                             ns: ns,
                             name: name,
                             delay: transition.delay,
@@ -2078,7 +2078,7 @@ var initDD3App = function () {
                         return d3.transition.prototype.tween.call(this, name, _dd3_tweens['dd3_' + tween]);
                     };
 
-                    t.attrTween = function (attr, tween)  {
+                    t.attrTween = function (attr, tween) {
                         if (arguments.length < 2) return attrTweens.get(attr);
 
                         if (tween == null) {
@@ -2311,8 +2311,8 @@ gdo.net.app["DD3"].initClient = function (launcher, orderController) {
 gdo.net.app["DD3"].initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
-    dd3Server.server.defineController(gdo.management.selectedInstance);
-    return gdo.management.selectedInstance;
+    dd3Server.server.defineController(gdo.net.instance[gdo.controlId].id);
+    return gdo.net.instance[gdo.controlId].id;
 }
 
 gdo.net.app["DD3"].terminateClient = function () {

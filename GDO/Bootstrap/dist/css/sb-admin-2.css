@@ -28,8 +28,8 @@ body {
 
 @media(min-width:768px) {
     #page-wrapper {
-        width: 90%;
-        margin: 0 0 0 170px;
+        width: 87%;
+        margin: 0 0 0 225px;
         padding-left: 80px;
         border-left: 1px solid #fff;
         background: #181818;
@@ -144,7 +144,7 @@ body {
     .sidebar {
         z-index: 1;
         position: fixed;
-        width:216px;
+        width:280px;
         height: 100%;
         margin-top: 73px;
 
@@ -154,7 +154,7 @@ body {
     }
     .navbar-left{
         height: 74px;
-        width: 218px;
+        width: 282px;
     }
 
     .navbar-top-links .dropdown-messages,
