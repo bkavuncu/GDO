@@ -16,19 +16,6 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         public dynamic variance;
         public dynamic stdDev;
         public bool isEnum;
-
-        public static JsStats FromStats(Stats<dynamic> stats)
-        {
-            JsStats js = new JsStats();
-
-            js.min = stats.Min;
-            js.max = stats.Max;
-            js.mean = stats.Mean;
-            js.median = stats.Median;
-
-            return js;
-
-        }
     }
 
 
