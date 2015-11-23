@@ -1,4 +1,5 @@
-const React = require('react');
+const React = require('react'),
+    GraphBuilder = require('./GraphBuilder');
 
 class GraphItem extends React.Component {
     constructor (props) {
@@ -42,7 +43,7 @@ class GraphList extends React.Component {
 
     render () {
         var listStyle = {
-            width: '15%',
+            flexBasis: '15%',
             display: 'flex',
             flexDirection: 'column',
             flexWrap: 'nowrap',
@@ -70,16 +71,11 @@ class GraphPanel extends React.Component {
 
     render () {
         var panelStyle = {
-            width: '85%',
+            flexBasis: '85%',
             padding: '5px',
-            display: 'flex',
-            flexDirection: 'column',
-            flexWrap: 'nowrap',
-            justifyContent: 'flex-start',
-            alignContent: 'flex-start',
-            alignItems: 'flex-start'
+            display: 'flex'
         }
-        return <div style={panelStyle}> {this.props.activeSection} </div>;
+        return <div style={panelStyle}> <GraphBuilder/> </div>;
     }
 }
 
@@ -94,7 +90,8 @@ class GraphControl extends React.Component {
     render () {
         var divStyle = {
             display: 'flex',
-            width: '100%'
+            alignSelf: 'stretch',
+            flexGrow: '1'
         }, selectGraph = (sectionData) => {
             this.setState({
                 active: sectionData.sectionId
