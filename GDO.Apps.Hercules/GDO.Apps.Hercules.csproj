@@ -191,14 +191,6 @@
   <ItemGroup>
     <Content Include=".babelrc" />
     <None Include=".bin\node.cmd" />
-    <Content Include="BackEnd\DB\data\minisets.json" />
-    <Content Include="BackEnd\DB\data\metadata.json" />
-    <Content Include="BackEnd\DB\data\amazon\miniset.json" />
-    <Content Include="BackEnd\DB\data\amazon\dataset.json" />
-    <Content Include="BackEnd\DB\data\insurance\dataset.json" />
-    <Content Include="BackEnd\DB\data\insurance\miniset.json" />
-    <Content Include="BackEnd\DB\data\sales\dataset.json" />
-    <Content Include="BackEnd\DB\data\sales\miniset.json" />
     <None Include="ClearScript.V8\ClearScriptV8-32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
