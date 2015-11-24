@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Device.Location;
 using Newtonsoft.Json;
-//using Newtonsoft.Json;
 
-
-//private dynamic[][] ValueCols = null;
-//private AType[][] TypeCols = null;
 
 namespace GDO.Apps.Hercules.BackEnd.Augment
 {
+
 
     public class RichDS
     {
@@ -42,10 +39,9 @@ namespace GDO.Apps.Hercules.BackEnd.Augment
             return new RichDS(ParserSSV.FromFile(path, delimiter));
         }
 
-
-        public static RichDS FromStream(Stream stream, string delimiter, long lines)
+        public static RichDS FromStream(Stream stream, string delimiter)
         {
-            return new RichDS(ParserSSV.FromStream(stream, delimiter, lines));
+            return new RichDS(ParserSSV.FromStream(stream, delimiter));
         }
 
 

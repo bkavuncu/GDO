@@ -2,13 +2,16 @@
 const React = require('react'),
     View = require('./ui/View.jsx'),
     _ = require('underscore'),
-    screenfull = require('screenfull');
-
+    screenfull = require('screenfull'),
+    DragDropContext = require('react-dnd').DragDropContext,
+    //TouchBackend = require('react-dnd-touch-backend');
+    HTML5Backend = require('react-dnd-html5-backend');
 
 
 var DeployerGrid = require('./DeployerGrid.jsx'),
     DataExplorer = require('./Explorer'),
-    DataEnricher, DataFilter, GraphControl;
+    GraphControl = require('./GraphControl'),
+    DataEnricher, DataFilter;
 
 class Tab extends React.Component {
     render () {
@@ -152,4 +155,5 @@ class Tabs extends React.Component {
     }
 }
 
-module.exports = Tabs;
+//module.exports = DragDropContext(TouchBackend)(Tabs);
+module.exports = DragDropContext(HTML5Backend)(Tabs);
