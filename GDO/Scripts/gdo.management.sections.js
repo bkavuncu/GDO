@@ -1,4 +1,4 @@
-﻿$(function () {
+$(function () {
     gdo.management.selectedSection = -1;
     gdo.management.selectedApp = null;
     gdo.management.selectedConfiguration = null;
@@ -327,6 +327,7 @@ gdo.management.drawButtonTable = function() {
                     gdo.net.server.closeSection(gdo.management.selectedSection);
                     gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + gdo.management.selectedSection);
                     gdo.management.selectedSection = -1;
+                    gdo.updateDisplayCanvas();
                 }
             }
         });
@@ -441,6 +442,7 @@ gdo.management.drawButtonTable = function() {
                     gdo.net.server.closeApp(gdo.net.section[gdo.management.selectedSection].appInstanceId);
                     gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.selectedSection);
                     gdo.management.selectedSection = -1;
+                    gdo.updateDisplayCanvas();
                 }
             }
         });
@@ -475,5 +477,10 @@ gdo.management.drawButtonTable = function() {
         .click(function() {
             gdo.consoleOut('.NET', 1, 'Clearing States');
             gdo.net.server.clearCave();
+            gdo.management.selectedSection = -1;
+            gdo.management.selectedApp = null;
+            gdo.management.selectedConfiguration = null;
+            gdo.management.selectedInstance = -1;
+            gdo.updateDisplayCanvas();
         });
 }
