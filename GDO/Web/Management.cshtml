@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>GDO Management</title>
+    <title>GDO Nodes</title>
     <!-- Bootstrap Core CSS -->
     <link href="../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
@@ -41,6 +41,7 @@
             -o-user-select: none;
             user-select: none;
         }
+
         iframe {
             border: 0 none;
             width: 98.5%;
@@ -74,7 +75,47 @@
     </script>
 </head>
 <body unselectable="on" class="unselectable">
-    <div id="wrapper" >
+    <script src="../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript" src="../Scripts/gdo.js"></script>
+    <script src="../signalr/hubs"></script>
+    <script type="text/javascript" src="../Scripts/peer.js"></script>
+
+    <script>
+            gdo.updateDisplayCanvas = function () {
+                gdo.management.updateMaintenanceButton();
+                gdo.management.drawNodeTable(gdo.nodeId);
+            }
+            $(function () {
+                @{
+                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                    {
+                        @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                    }
+                }
+                gdo.loadModule("nodes","management", gdo.MODULE_TYPE.CORE);
+                gdo.loadModule("console","management", gdo.MODULE_TYPE.CORE);
+                $( document ).ready(function() {
+                    gdo.clientId = 1;
+                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+                });
+            });
+            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+                var space = "<br /> ";
+                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+            }
+            initApp = function () {
+                gdo.consoleOut('', 1, 'GDO Initialized');
+                gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+                gdo.management.drawNodeTable(gdo.nodeId);
+                gdo.management.drawConsoleInput();
+                $('#welcome_modal').modal('toggle');
+                gdo.updateSelf();
+            }
+    </script>
+    <div id="wrapper">
         <div style="position: absolute; top: 7px; right: 7px; z-index: 1000">
             <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;"><tr><td><button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button></td><td><button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></td></tr></table>
         </div>
@@ -92,20 +133,19 @@
                             <img src="~/Img/logo.png" width="49" height="49">
                         </div>
                         <div class="col-md-1">
-                            
+
                         </div>
                         <div class="col-md-7">
-                                <div class="row" style="width: 90%">
-                                    <font color="#fff" size="5.5px"><b>GDO</b></font>
-                                </div>
-                                <div class="row" style="width: 90%">
-                                    <font color="#fff" size="5.5px">Management</font>
-                                </div>
+                            <div class="row" style="width: 90%">
+                                <font color="#fff" size="5.5px"><b>GDO</b></font>
+                            </div>
+                            <div class="row" style="width: 90%">
+                                <font color="#fff" size="5.5px">Management</font>
+                            </div>
                         </div>
                         <!-- /.col-lg-12 -->
                     </a>
                 </div>
-                
             </div>
             <!-- /.navbar-header -->
             <!-- /.navbar-top-links -->
@@ -149,66 +189,77 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
-
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Global Data Observatory</h2>
+                    <h3>Nodes</h3>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <br />
-            <div class="row">
-                <div class="col-lg-12">
-                    <p class="lead">Welcome to GDO Management Interface</p>
-                </div>
-                <!-- /.col-lg-12 -->
+            <table id="selected_node" style="width: 99.5%">
+                <tr>
+                    <td id="selected_node_id"><b>&nbsp;Node Id:</b></td>
+                    <td id="selected_node_col"><b>&nbsp;Col:</b></td>
+                    <td id="selected_node_row"><b>&nbsp;Row:</b></td>
+                    <td id="selected_node_sid"><b>&nbsp;Section Id:</b></td>
+                    <td id="selected_node_scol"><b>&nbsp;Section Col:</b></td>
+                    <td id="selected_node_srow"><b>&nbsp;Section Row:</b></td>
+                    <td id="selected_node_cid"><b>&nbsp;Connection Id:</b></td>
+                    <td id="selected_node_pid"><b>&nbsp;Peer Id:</b></td>
+                    <td id="selected_node_h"><b>&nbsp;Node Health:</b></td>
+                </tr>
+            </table>
+            <br>
+            <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height: 42vh; border-collapse: separate; border-spacing: 3px;"></table>
+            <div id="node_table_space"><br>
             </div>
-            <br/>
-            <div class="row">
-                <div class="col-md-6">
-                    <img src="~/Img/gdo.png" width="77%">
-                </div>
+            <div id="console_area" style="font-size: 13px; width: 99.5%; height: 35vh; overflow-y: scroll; overflow-y: hidden; border: 1px solid #333; background-color: #222; color: #FFF"></div>
+            <div id="console_area_space"><br>
+            </div>
+            <div style="width: 99.5%;">
+                <div class="col-lg-8" id="console_input_div"></div>
                 <!-- /.col-lg-12 -->
+                <div class="col-lg-4" id="console_submit_div"></div>
             </div>
         </div>
+        <div class="modal fade" id="welcome_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4><font color="white">Global Data Observatory</font></h4>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p class="lead">Welcome to GDO Management Interface</p>
+                            </div>
+                            <!-- /.col-lg-12 -->
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="~/Img/gdo.png" width="200%">
+                            </div>
+                            <!-- /.col-lg-12 -->
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                       
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- /#wrapper -->
-    <script src="../Scripts/jquery-2.1.4.min.js"></script>
+    <!--<script src="..//Bootstrap/bower_components/jquery/dist/jquery.min.js"></script>-->
+    <!-- Bootstrap Core JavaScript -->
     <script src="../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
     <script src="../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
-    <script type="text/javascript" src="../Scripts/gdo.js"></script>
-    <script src="../signalr/hubs"></script>
-    <script type="text/javascript" src="../Scripts/peer.js"></script>
-    <script>
-            gdo.updateDisplayCanvas = function () {
-                gdo.management.updateMaintenanceButton();
-            }
-            $(function () {
-                $( document ).ready(function() {
-                    @{
-                        foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                        {
-                            @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
-                        }
-                    }
-                    gdo.loadModule('console', 'management', gdo.MODULE_TYPE.CORE);
-                    gdo.clientId = 1;
-                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-                });
-            });
-            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                var space = "<br /> ";
-                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-            }
-            initApp = function () {
-                gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.updateSelf();
-            }
-    </script>
+    <!-- Custom Theme JavaScript -->
+    <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
+
 </body>
 </html>
