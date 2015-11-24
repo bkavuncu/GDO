@@ -3,9 +3,7 @@ const React = require('react'),
     View = require('./ui/View.jsx'),
     _ = require('underscore'),
     screenfull = require('screenfull'),
-    DragDropContext = require('react-dnd').DragDropContext,
-    //TouchBackend = require('react-dnd-touch-backend');
-    HTML5Backend = require('react-dnd-html5-backend');
+    DragDropContext = require('react-dnd').DragDropContext;
 
 
 var DeployerGrid = require('./DeployerGrid.jsx'),
@@ -155,5 +153,7 @@ class Tabs extends React.Component {
     }
 }
 
-//module.exports = DragDropContext(TouchBackend)(Tabs);
-module.exports = DragDropContext(HTML5Backend)(Tabs);
+var touchDevice = ('ontouchstart' in window || (typeof navigator != 'undefined' && 'msMaxTouchPoints' in navigator)),
+    dndBackend = touchDevice? require('react-dnd-touch-backend') : require('react-dnd-html5-backend');
+
+module.exports = DragDropContext(dndBackend)(Tabs);

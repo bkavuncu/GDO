@@ -39,11 +39,13 @@ namespace GDO.Apps.Hercules.BackEnd.Augment
             return new RichDS(ParserSSV.FromFile(path, delimiter));
         }
 
+        // TODO(zeme) : Fix FromStream Parser SSV required number of rows?
+        /*
         public static RichDS FromStream(Stream stream, string delimiter)
         {
-            return new RichDS(ParserSSV.FromStream(stream, delimiter));
+            return new RichDS(ParserSSV.FromStream(stream, delimiter, ));
         }
-
+        */
 
         public bool Begin()
         {

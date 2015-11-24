@@ -7,6 +7,7 @@ using System.IO;
 using Newtonsoft.Json;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using GDO.Apps.Hercules.BackEnd.Augment;
 
 namespace GDO.Apps.Hercules.BackEnd.DB
 {
@@ -15,7 +16,7 @@ namespace GDO.Apps.Hercules.BackEnd.DB
     {
         private static IMongoClient MongoClient;
         private static IMongoDatabase MongoDB;
-        
+        private static IMongoCollection<BsonDocument> MongoCollection;
 
         // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
@@ -30,7 +31,7 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         {
             MongoClient = new MongoClient();
             MongoDB = MongoClient.GetDatabase("datasets");
-
+            MongoCollection = MongoDB.GetCollection<BsonDocument>("jsdatasets");
             return true;
         }
 
@@ -42,14 +43,38 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         // If something goes wrong, return the NULL string and save the error.
         public static string GetMiniset(int id)
         {
-            return null;
+            try {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                BsonDocument miniset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return miniset.ToJson<BsonDocument>();
+            }
+            catch(Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
         // Returns an array containing the JSON strings of ALL the minisets.
         // If something goes wrong, return the NULL array and save the error.
-        public static string[] GetMinisets()
+        public async static Task<string[]> GetMinisets()
         {
-            return null;
+             try {
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                var minisets = await MongoCollection.Find(_ => true).Project(project).ToListAsync();
+                
+                return minisets.Select(x => x.ToJson<BsonDocument>()).ToArray();
+            }
+            catch(Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
         // Each JsDataset contains the data (rows) and the JsMiniset (schema).
@@ -61,7 +86,20 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         // If something goes wrong, return the NULL string and save the error.
         public static string GetDataset(int id)
         {
-            return null;
+            try
+            {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Include("schema")
+                    .Include("rows");
+                BsonDocument dataset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return dataset.ToJson<BsonDocument>();
+            }
+            catch (Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
 
@@ -75,15 +113,42 @@ namespace GDO.Apps.Hercules.BackEnd.DB
         // the database.
         // Then obtain the *automagically* unique ID for it and RETURN it.
         // If stuff goes wrong, save the error and return -1.
-        public static int UploadDSFromFile(string path, string name, string descritpion)
-        {
-            JsDataset ds = null; // RichDS.FromFile(path);
-            if (ds == null) {
-                LastError = ""; // RichDS.GetError();
+        public static async Task<int> UploadDSFromFile(string path, string name, string description)
+        {   
+            try
+            {
+                // TODO(zeme) : Make RichDS throw an error rather than having null as a ds -> we can catch it here!
+                // TODO(zeme) : Implement Dataset.FromFile - Converting RichDS to JsDataset
+                JsDataset ds = null; // Dataset.FromFile(path);
+                // Name
+                if (name == null || name.Length == 0)
+                {
+                    name = path;
+                }
+                var filter = Builders<BsonDocument>.Filter.Eq("schema.name", name);
+                var result = await MongoCollection.Find(filter).ToListAsync();
+                bool nameIsUnique = result.Count() <= 1;
+                if (!nameIsUnique)
+                {
+                    // TODO(iora): Find a better way to deal with duplicate docs.
+                    name = "new" + name;
+                }
+
+                // Description
+                if (description == null || description.Length == 0)
+                {
+                    description = "No description provided";
+                }
+
+                BsonDocument doc = ds.ToBsonDocument();
+                await MongoCollection.InsertOneAsync(doc);
+                return doc["_id"].ToInt32();
+            }
+            catch (Exception e)
+            {
+                LastError = e.ToString();
                 return -1;
             }
-
-            return -1;
         }
 
         // TODO maybe one day
