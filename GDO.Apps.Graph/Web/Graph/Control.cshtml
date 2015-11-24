@@ -195,8 +195,8 @@
                                         <br />
                                         <button class='btn btn-primary' id="blue">Blue</button>
                                         <button class='btn btn-success' id="green">Green</button>
-                                        <button class='btn btn-warning' id="yellow">Yellow</button>
-                                        <button class='btn btn-danger' id="orange">Orange</button>
+                                        <button class='btn btn-warning' id="orange">Orange</button>
+                                        <button class='btn btn-danger' id="red">Red</button>
                                         <br />
                                         <br />
                                         <br />
@@ -348,12 +348,12 @@
             gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "green");
         });
 
-        $("#yellow").click(function () {
-            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "yellow");
-        });
-
         $("#orange").click(function () {
             gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
+        });
+
+        $("#red").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "red");
         });
 
 

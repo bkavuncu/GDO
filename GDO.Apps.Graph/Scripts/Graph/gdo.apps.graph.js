@@ -6,22 +6,13 @@
 
 
 
-//document.body
-//.getElementsByTagName('iframe')[0]
-//.onload = function () {
- //   console.log("Time after rendering (using onload): " + window.performance.now());
-//};
-
-
-
-
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     /* global variables */
 
     // arrays to store data
-    var links, nodes, mostConnectedNodes, labels, k;
+    var links, nodes, mostConnectedNodes, labels;
     var minLinks = 3;
 
     // boolean to track if current graph is zoomed
@@ -30,24 +21,19 @@ $(function () {
     // set size of nodes and links
     var zoomedRadius = 5;
     var zoomedStrokeWidth = 2;
-    var zoomedFontSize = 16;
+    var zoomedFontSize = 30;
     var normalRadius = 3;
     var normalStrokeWidth = 1;
-    var normalFontSize = 10;
+    var normalFontSize = 20;
 
     
-    var blueColor = { r: 100, g: 175, b: 255 }; // { r: 0, g: 20, b: 50 };
-    var greenColor = { r: 75, g: 255, b: 125 }; // { r: 0, g: 50, b: 20 };
-    var yellowColor = { r: 225, g: 225, b: 0 }; // { r: 30, g: 30, b: 0 };
-    var orangeColor = { r: 255, g: 125, b: 60 }; // { r: 50, g: 20, b: 0 };
+    var blueColor = { r: 100, g: 175, b: 255 }; 
+    var greenColor = { r: 75, g: 255, b: 125 }; 
+    var orangeColor = { r: 255, g: 150, b: 50 };
+    var redColor = { r: 255, g: 50, b: 50 };
 
-    var currentColor = blueColor; //{ r: 0, g: 50, b: 20 };   // rgb setting to track current color scheme
+    var currentColor = blueColor;    // rgb setting to track current color scheme
     var highlightedColor = { r: 207, g: 35, b: 49 };   // rgb setting for highlighted nodes
-
-
-    // r 50 g 100 b 0 (lime green)
-    // r 0 g 50 b 100 (nice blue); 
-    // r 50, g 100, b 50 (pastel green)
 
 
     var maxLinks = 5;
@@ -206,10 +192,10 @@ $(function () {
                 currentColor = blueColor;
             } else if (colourScheme == "green") {
                 currentColor = greenColor;
-            } else if (colourScheme == "yellow") {
-                currentColor = yellowColor;
             } else if (colourScheme == "orange") {
                 currentColor = orangeColor;
+            } else if (colourScheme == "red") {
+                currentColor = redColor;
             }
         }
     }
