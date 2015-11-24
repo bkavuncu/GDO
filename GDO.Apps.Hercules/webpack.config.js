@@ -6,7 +6,7 @@ module.exports = {
     devtool: 'sourcemap',
     entry: [
         'webpack/hot/only-dev-server',
-        './Scripts/src/control.jsx'
+        './Scripts/src/control.js'
     ],
     stats: {
         colors: true,

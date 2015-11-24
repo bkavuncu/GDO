@@ -6,7 +6,7 @@ const React = require('react'),
     DragDropContext = require('react-dnd').DragDropContext;
 
 
-var DeployerGrid = require('./DeployerGrid.jsx'),
+var DeployerGrid = require('./DeployerGrid.js'),
     DataExplorer = require('./Explorer'),
     GraphControl = require('./GraphControl'),
     DataEnricher, DataFilter;
