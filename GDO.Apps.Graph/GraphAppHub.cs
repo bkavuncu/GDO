@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Net;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
 using System.Diagnostics;
-using System.Linq;
-using System.Web;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
 
 namespace GDO.Apps.Graph
 {
@@ -38,7 +29,7 @@ namespace GDO.Apps.Graph
  
         public void InitiateProcessing(int instanceId, string inputFolder)
         {
-            System.Diagnostics.Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
+            Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
 
             lock (Cave.AppLocks[instanceId])
             {
@@ -51,16 +42,11 @@ namespace GDO.Apps.Graph
                     ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
                     Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
                     string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
-
-                    Clients.Caller.setMessage("Processing of raw graph data has completed.");
+                    Clients.Caller.setMessage("Processing of raw graph data is completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("Graph is now being rendered.");
-
-                    // read in nodes.json which stores nodes data (id, pos, connectedNodes) and store in var
-                    ga.ReadNodesData(inputFolder);
-                    Clients.Caller.setMessage("Reading in nodes.json data to prepare for search function.");
 
                     // set up label dictionary to prepare for search
                     Clients.Caller.setMessage("Setting up label dictionary.");
@@ -70,11 +56,15 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Setting up nodes dictionary.");
                     ga.SetupNodeDictionary();
 
-
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
                     ga.ProcessGraph(inputFolder, true, folderNameDigit);
                     Clients.Caller.setMessage("Graph is now ready for zooming.");
+
+                    // compute the adjacencies of each node
+                    ga.ComputeNodeAdjacencies();
+                    Clients.Caller.setMessage("Computing adjacencies for search function.");
+
                 }
                 catch (WebException e)
                 {
@@ -228,7 +218,6 @@ namespace GDO.Apps.Graph
             }
         }
 
-
         public void TriggerZoomIn(int instanceId)
         {
 
@@ -245,7 +234,6 @@ namespace GDO.Apps.Graph
                     Clients.Group("" + instanceId).renderGraph(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit, true);
                     Clients.Caller.setMessage("Zoomed-in graph is now being rendered.");
 
-
                     Clients.Group("" + instanceId).renderBuffer(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).FolderNameDigit);
                     Clients.Caller.setMessage("Buffer for zoomed-in graph is now being rendered.");
                 }
@@ -257,7 +245,6 @@ namespace GDO.Apps.Graph
                 }
             }
         }
-
 
         public void TriggerZoomOut(int instanceId)
         {
@@ -336,7 +323,6 @@ namespace GDO.Apps.Graph
             }
         }
 
-
         public void RenderMostConnectedLabels(int instanceId, int numLinks)
         {
 
@@ -358,7 +344,6 @@ namespace GDO.Apps.Graph
                 }
             }
         }
-
 
         public void HideMostConnected(int instanceId)
         {
@@ -419,8 +404,6 @@ namespace GDO.Apps.Graph
 
                         // Clients.Group to broadcast and get all clients to update graph
 
-                        // Clients.Group to broadcast and get all clients to update graph
-
                         // hide all highlight
                         Clients.Group("" + instanceId).hideHighlight();
                         Clients.Group("" + instanceId).hideLabels();
@@ -460,7 +443,6 @@ namespace GDO.Apps.Graph
                 }
             }
         }
-
 
         public void HideSearch(int instanceId)
         {
@@ -505,33 +487,6 @@ namespace GDO.Apps.Graph
                 }
             }
         }
-
-
-
-
-        public void HideSublinks(int instanceId)
-        {
-
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Hiding sublinks.");
-
-                    // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).hideSublinks();
-                    Clients.Caller.setMessage("Sublinks are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to remove sublinks.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-
 
     }
 }
