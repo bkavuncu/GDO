@@ -126,11 +126,8 @@
     <Content Include="Web\Graph\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain.cs" />
     <Compile Include="GraphApp.cs" />
     <Compile Include="GraphAppHub.cs" />
-    <Compile Include="GraphDataReader.cs" />
-    <Compile Include="GraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
