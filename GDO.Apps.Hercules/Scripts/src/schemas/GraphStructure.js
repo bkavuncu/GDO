@@ -5,34 +5,79 @@
  *  https://github.com/molnarg/js-schema
  * */
 var schema = require('js-schema');
-var validDataset = require('Dataset').validDataset
+var validDataset = require('./Dataset').validDataset;
 
-export var lineGraph = schema({
-    type: 'LINE',
-    xAxis: ['Float', 'Integer', 'Datetime'],
-    yAxis: [['Float', 'Integer']]
+
+var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Float']);
+
+var dimension = schema({
+    name: String,
+    validTypes: Array.of(type)
 });
 
-export var scatterGraph = schema({
-    type: 'SCATTER',
-    xAxis: ['Float', 'Integer', 'Datetime'],
-    yAxis: [['Float', 'Integer']]
+var graph = schema({
+    graphType: String,
+    dimensions: Array.of(dimension)
 });
 
-export var barGraph = schema({
-    type: 'BAR',
-    xAxis: ['Integer', 'Enum'],
-    yAxis: ['Float', 'Integer']
-});
+export var lineGraph = {
+    graphType: 'LINE',
+    dimensions : [
+        {
+            name: 'xAxis',
+            validTypes: ['Float', 'Integer', 'Datetime']
+        },{
+            name: 'yAxis',
+            validTypes: ['Float', 'Integer']
+        }
+    ]
+};
 
-export var pieGraph = schema({
-    type: 'PIE',
-    xAxis: ['Enum'],
-    yAxis: ['Float', 'Integer']
-});
+export var scatterGraph = {
+    graphType: 'SCATTER',
+    dimensions : [
+        {
+            name: 'xAxis',
+            validTypes: ['Float', 'Integer', 'Datetime']
+        },{
+            name: 'yAxis',
+            validTypes: ['Float', 'Integer']
+        }
+    ]
+};
+
+export var barGraph = {
+    graphType: 'BAR',
+    dimensions : [
+        {
+            name: 'xAxis',
+            validTypes: ['Enum', 'Integer']
+        },{
+            name: 'yAxis',
+            validTypes: ['Float', 'Integer']
+        }
+    ]
+};
+
+export var pieGraph = {
+    graphType: 'PIE',
+    dimensions : [
+        {
+            name: 'xAxis',
+            validTypes: ['Enum']
+        },{
+            name: 'yAxis',
+            validTypes: ['Float', 'Integer']
+        }
+    ]
+};
 
 export var validGraphData = schema([
     lineGraph, scatterGraph,
     barGraph, pieGraph
 ]);
 
+export var sectionGraph = schema({
+    sectionId: Number,
+    graphData: validGraphData
+});

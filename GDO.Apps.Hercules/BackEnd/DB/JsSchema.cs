@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GDO.Apps.Hercules.BackEnd.DB
 {
 
-    class JsStats
+    public class JsStats
     {
         public dynamic min;
         public dynamic max;
@@ -19,7 +19,7 @@ namespace GDO.Apps.Hercules.BackEnd.DB
     }
 
 
-    class JsField
+    public class JsField
     {
         public string name;
         public string description;
@@ -30,11 +30,10 @@ namespace GDO.Apps.Hercules.BackEnd.DB
     }
 
 
-    class JsMiniset
+    public class JsMiniset
     {
         public string name;
         public string description;
-        public int id;
         public int nrows;
         public string sourceType;
         public string sourceOrigin;
@@ -43,7 +42,7 @@ namespace GDO.Apps.Hercules.BackEnd.DB
     }
 
 
-    class JsDataset
+    public class JsDataset
     {
         public JsMiniset schema;
         public dynamic[][] rows;
