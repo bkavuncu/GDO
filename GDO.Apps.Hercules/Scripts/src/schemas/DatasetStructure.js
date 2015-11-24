@@ -6,10 +6,12 @@
  * */
 var schema = require('js-schema');
 
+export var types = schema(['String', 'Integer', 'Float', 'Datetime', 'URL', 'Enum', 'Boolean']);
+
 export var validField = schema({
     name: String,
     description: [null, String],
-    type: ['String', 'Integer', 'Float', 'Datetime', 'URL', 'Enum', 'Boolean'],
+    type: types,
     origin: ['native', 'artificial'],
     disabled: Boolean
 });

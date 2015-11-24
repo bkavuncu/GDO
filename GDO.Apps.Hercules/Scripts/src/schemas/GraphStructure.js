@@ -5,10 +5,10 @@
  *  https://github.com/molnarg/js-schema
  * */
 var schema = require('js-schema');
-var validDataset = require('./Dataset').validDataset;
 
+export var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Float']);
 
-var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Float']);
+export const graphTypes = schema(['LINE', 'SCATTER', 'BAR', 'PIE']);
 
 var dimension = schema({
     name: String,
