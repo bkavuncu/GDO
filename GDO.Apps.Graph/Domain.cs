@@ -1,0 +1,58 @@
+﻿using System.Collections.Generic;
+
+namespace GDO.Apps.Graph.Domain
+{
+    public class Position
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+    }
+
+    public class PartitionPos
+    {
+        public int Row { get; set; }
+        public int Col { get; set; }
+    }
+
+    public class RectDimension
+    {
+        public float Width { get; set; }
+        public float Height { get; set; }
+    }
+
+    public class Scales
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+    }
+
+    public class GraphNode
+    {
+        public string ID { get; set; }
+        public string Label { get; set; }
+        public Position Pos { get; set; }
+        public float Size { get; set; }
+        public int R { get; set; }
+        public int G { get; set; }
+        public int B { get; set; }
+        public int NumLinks { get; set; }
+        public List<string> Adj { get; set; }  // adj = list of connectedNodes
+    }
+
+    public class GraphLink
+    {
+        public Position StartPos { get; set; }
+        public Position EndPos { get; set; }
+        public string Source { get; set; }
+        public string Target { get; set; }
+        public float Weight { get; set; }
+    }
+
+    public class Partition
+    {
+        public PartitionPos partitionPos { get; set; }
+        public List<GraphNode> Nodes { get; set; }
+        public List<GraphLink> Links { get; set; }
+    }
+
+}
