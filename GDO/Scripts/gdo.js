@@ -43,7 +43,7 @@ gdo.initGDO = function (clientMode) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 500, 20, 'Node Failed to Initialize');
                 setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                waitForResponse(initApp, gdo.net.isNodeInitialized, 500, 20, 'Node Failed to Initialize');
+                waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
             }
 
             //set intervl and 
@@ -120,9 +120,8 @@ gdo.loadModule = function (submodule, module, moduleType) {
     if (moduleType == gdo.MODULE_TYPE.CORE) {
 
         if (submodule == module) {
-            var modulepath = '\'../scripts/gdo.' + module + '.js\'';
-            gdo.consoleOut('', 1, 'Loading core module ' + module + ' at ' + modulepath);
-            $head.append('<script type=\'text/javascript\' src=' + modulepath + '></script>');
+            gdo.consoleOut('', 1, 'Loading core module ' + module + ' at ' + '../scripts/gdo.' + module + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + module + '.js\'></script>');
         } else {
             gdo.consoleOut('', 1, 'Loading core submodule ' + submodule + ' at of ' + module + ' at ../scripts/gdo.' + module + '.' + submodule + '.js\'');
             $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + module + '.' + submodule + '.js\'></script>');
@@ -130,9 +129,8 @@ gdo.loadModule = function (submodule, module, moduleType) {
 
     } else if (moduleType == gdo.MODULE_TYPE.APP) {
         if (submodule == module) {
-            var modulepath = '\'../scripts/' + module + '/gdo.apps.' + module + '.js\'';
-            gdo.consoleOut('', 1, 'Loading app module ' + module + ' at ' + modulepath);
-            $head.append('<script type=\'text/javascript\' src=' + modulepath + '></script>');
+            gdo.consoleOut('', 1, 'Loading app module ' + module + ' at ' + '../scripts/' + module + '/gdo.app.' + module + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + module + '/gdo.apps.' + module + '.js\'></script>');
         } else {
             gdo.consoleOut('', 1, 'Loading app submodule ' + submodule + ' at of ' + module + ' ../scripts/' + module + '/gdo.app.' + module + '.' + submodule + '.js\'');
             $head.append('<script type=\'text/javascript\' src=\'../scripts/' + module + '/gdo.apps.' + module + '.' + submodule + '.js\'></script>');

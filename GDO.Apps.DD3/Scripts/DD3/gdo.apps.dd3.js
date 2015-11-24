@@ -2272,8 +2272,6 @@ dd3Server.client.dd3Receive = function (f) {
 
 // Non-dd3 functions
 
-// Non-dd3 functions
-
 dd3Server.client.receiveGDOConfiguration = function (id) {
     // To get configId from server
     main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');

@@ -1572,8 +1572,10 @@ $(function () {
 
                     function readLabels(file) {
                         var xhr = new XMLHttpRequest();
+
                         xhr.open("GET", file, true);
                         xhr.send();
+
                         xhr.onreadystatechange = function () {
                             if (xhr.readyState == 4 && xhr.status == 200) {
                                 labels = JSON.parse(xhr.responseText);

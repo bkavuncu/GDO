@@ -12,7 +12,7 @@ gdo.net.app["BasicMaps"].numButtons =6;
 
 
 gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
-    gdo.net.app["BasicMaps"].drawEmptyMapTable(6,3);
+    gdo.net.app["BasicMaps"].drawEmptyMapTable(6,2);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()
@@ -146,7 +146,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 6);
         });
-    $("iframe").contents().find("#map_table_row_2_col_0")
+    /*$("iframe").contents().find("#map_table_row_2_col_0")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_13' class='btn btn-danger btn-outline btn-block'>Bedrock and Superficial Geology</button></div>")
         .css("margin", "0px")
@@ -200,7 +200,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .unbind()
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 17);
-        });
+        });*/
     //Search
     $("iframe").contents().find("#map_input_div")
     .css("margin", "0px")

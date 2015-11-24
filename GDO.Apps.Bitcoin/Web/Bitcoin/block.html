@@ -11,8 +11,8 @@
     <title></title>
     <style type="text/css">
         #graphcontainer {
-			max-width: 5760px;
-			height: 3240px;
+            max-width: 5840px;
+            height: 3640px;
             margin: 0;
         }
         #textarea {
@@ -30,11 +30,6 @@
             padding-left:35%;
             font-size:800%;
             color:#ffffff;
-        }
-        .centeredAndBig{
-            margin:auto;
-            padding-left:35%;
-            font-size:800%;
         }
     </style>
 </head>
@@ -124,7 +119,7 @@
 
                     console.log('Retrieved block details successfully');
                     var resObj = JSON.parse(xmlhttp.responseText);
-                    document.getElementById('createdAt').innerHTML = new Date(1000*resObj.blocks[0].time);
+                    document.getElementById('createdAt').innerHTML = resObj.blocks[0].time;
                     
                     for (var i = 0; i < resObj.blocks.length; i++) {
                         if (resObj.blocks[i].main_chain) {

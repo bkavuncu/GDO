@@ -172,7 +172,7 @@ gdo.management.selectNodes = function() {
     }
 }
 
-gdo.management.drawButtonTable = function () {
+gdo.management.drawButtonTable = function() {
     /// <summary>
     /// Draws the button table.
     /// </summary>
@@ -190,13 +190,13 @@ gdo.management.drawButtonTable = function () {
 
     gdo.management.selectNodes();
     $("#create_section_button_div").unbind();
-    $("#create_section_button_div").click(function () {
+    $("#create_section_button_div").click(function() {
         if (gdo.management.isRectangle && gdo.management.isStarted) {
             gdo.net.server.createSection(gdo.management.colStart, gdo.management.rowStart, gdo.management.colEnd, gdo.management.rowEnd);
             for (var i = gdo.management.colStart; i <= gdo.management.colEnd; i++) {
                 for (var j = gdo.management.rowStart; j <= gdo.management.rowEnd; j++) {
                     var node = gdo.net.node[gdo.net.getNodeId(i, j)];
-                    node.isSelected = false;  
+                    node.isSelected = false;
                 }
             }
             gdo.consoleOut('.MANAGEMENT', 1, 'Requested Creation of Section at (' + gdo.management.colStart + ',' + gdo.management.rowStart + '),(' + gdo.management.colEnd + ',' + gdo.management.rowEnd + ')');
@@ -226,20 +226,20 @@ gdo.management.drawButtonTable = function () {
     //Enter Section Coordinates
 
     $("#select_section_div")
-    .empty()
-    .append("<div id='button_Enter_coordinates'> " +
+        .empty()
+        .append("<div id='button_Enter_coordinates'> " +
             "<table id='section_coordinate_table' style='width: 99%;' >" +
-                "<tr>"+
-                    "<td id='section_coordinate_table_start'' style='width:28%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2'/></input></td>" +
-                    "<td id='section_coordinate_table_end' style='width:28%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2' /></input></td>" +
-                    "<td id='section_coordinate_table_select' style='width:42%;'></td>" +
-                "</tr>" +
+            "<tr>" +
+            "<td id='section_coordinate_table_start'' style='width:28%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2'/></input></td>" +
+            "<td id='section_coordinate_table_end' style='width:28%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2' /></input></td>" +
+            "<td id='section_coordinate_table_select' style='width:42%;'></td>" +
+            "</tr>" +
             "</table>")
-    .css("width", (gdo.management.table_width / gdo.management.button_cols)+ "%")
-    .css("color", "#FFF")
-    .css('padding', 0)
-    .attr("align", "center")
-    .css({ fontSize: gdo.management.button_font_size});
+        .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css("color", "#FFF")
+        .css('padding', 0)
+        .attr("align", "center")
+        .css({ fontSize: gdo.management.button_font_size });
 
     $("#section_coordinate_table_start_input")
         .css("height", "100%")
@@ -250,7 +250,7 @@ gdo.management.drawButtonTable = function () {
         .css('padding', 0)
         .css('margin-top', 1)
         .css('padding-bottom', 1)
-        .css('text-align','center')
+        .css('text-align', 'center')
         .attr("align", "center")
         .attr("onfocus", "this.value=''")
         .attr("value", gdo.net.getNodeId(gdo.management.colStart, gdo.management.rowEnd))
@@ -268,7 +268,7 @@ gdo.management.drawButtonTable = function () {
         .css('text-align', 'center')
         .attr("align", "center")
         .attr("onfocus", "this.value=''")
-        .attr("value",  gdo.net.getNodeId(gdo.management.colEnd, gdo.management.rowStart))
+        .attr("value", gdo.net.getNodeId(gdo.management.colEnd, gdo.management.rowStart))
         .css({ fontSize: gdo.management.button_font_size * 1.4 });
 
     $("#section_coordinate_table_select")
@@ -280,7 +280,7 @@ gdo.management.drawButtonTable = function () {
         .css('padding-top', 1)
         .attr("align", "center");
     $("#select_button").unbind();
-    $("#select_button").click(function () {
+    $("#select_button").click(function() {
         var nodeStart = parseInt(document.getElementById('section_coordinate_table_start_input').value);
         var nodeEnd = parseInt(document.getElementById('section_coordinate_table_end_input').value);
         if (nodeEnd >= nodeStart && nodeStart <= gdo.net.cols * gdo.net.rows && nodeEnd <= gdo.net.cols * gdo.net.rows && nodeStart > 0 && nodeEnd > 0) {
@@ -288,7 +288,7 @@ gdo.management.drawButtonTable = function () {
                 gdo.net.node[i].isSelected = false;
             }
             gdo.management.selectedSection = -1;
-            for (var i = gdo.net.node[nodeStart].col; i <= gdo.net.node[nodeEnd].col ; i++) {
+            for (var i = gdo.net.node[nodeStart].col; i <= gdo.net.node[nodeEnd].col; i++) {
                 for (var j = gdo.net.node[nodeEnd].row; j <= gdo.net.node[nodeStart].row; j++) {
                     gdo.net.node[gdo.net.getNodeId(i, j)].isSelected = true;
                 }
@@ -320,7 +320,8 @@ gdo.management.drawButtonTable = function () {
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
         .attr("align", "center")
-        .click(function () {
+        .unbind()
+        .click(function() {
             if (gdo.management.selectedSection > -1) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
                     gdo.net.server.closeSection(gdo.management.selectedSection);
@@ -353,7 +354,7 @@ gdo.management.drawButtonTable = function () {
         .attr("align", "center");
     $(".deploy_app_button")
         .unbind()
-        .click(function () {
+        .click(function() {
             if (gdo.net.section[gdo.management.selectedSection] != null) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
                     gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
@@ -366,13 +367,13 @@ gdo.management.drawButtonTable = function () {
             }
         });
     if (gdo.management.selectedSection > -1) {
-        if (gdo.management.selectedConfiguration !=null) {
+        if (gdo.management.selectedConfiguration != null) {
             $(".deploy_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
                 .removeClass("btn-danger")
                 .addClass("btn-success");
-        } else if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1){
+        } else if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
             $(".deploy_app_button")
                 .removeClass("btn-default")
                 .removeClass("btn-success")
@@ -399,7 +400,8 @@ gdo.management.drawButtonTable = function () {
         .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
         .css('padding', 1)
         .attr("align", "center")
-        .click(function () {
+        .unbind()
+        .click(function() {
             if (gdo.management.selectedSection > -1) {
                 if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
                     window.location.replace("Instances.cshtml?id=" + gdo.net.section[gdo.management.selectedSection].appInstanceId);
@@ -426,21 +428,22 @@ gdo.management.drawButtonTable = function () {
             .removeClass("btn-success");
     }
     $("#close_app_button_div")
-    .empty()
-    .append("<button type='button' id='close_app_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Close App</button>")
-    .css("height", "100%")
-    .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
-    .css('padding', 1)
-    .attr("align", "center")
-    .click(function () {
+        .empty()
+        .append("<button type='button' id='close_app_button' class='btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Close App</button>")
+        .css("height", "100%")
+        .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css('padding', 1)
+        .attr("align", "center")
+        .unbind()
+        .click(function() {
             if (gdo.management.selectedSection > -1) {
-                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {                  
+                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
                     gdo.net.server.closeApp(gdo.net.section[gdo.management.selectedSection].appInstanceId);
                     gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.selectedSection);
                     gdo.management.selectedSection = -1;
                 }
             }
-    });
+        });
     if (gdo.management.selectedSection > -1) {
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
             $("#close_app_button")
@@ -460,4 +463,17 @@ gdo.management.drawButtonTable = function () {
             .addClass("btn-default")
             .removeClass("btn-warning");
     }
+    $("#clear_cave_button_div")
+        .empty()
+        .append("<button type='button' id='clear_cave_button' class='btn btn-danger btn-lg btn-block' data-toggle='modal' data-target='#confirm-clear'><i class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Clear Cave</button>")
+        .css("height", "100%")
+        .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css('padding', 1)
+        .attr("align", "center");
+    $("#clear_confirm_button")
+        .unbind()
+        .click(function() {
+            gdo.consoleOut('.NET', 1, 'Clearing States');
+            gdo.net.server.clearCave();
+        });
 }

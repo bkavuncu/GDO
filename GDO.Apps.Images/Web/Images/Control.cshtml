@@ -396,9 +396,9 @@
                 if (file != null)
                 {
                     filename = Path.GetFileName(file.FileName);
-                    //foldername)
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images")) ;
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/") + filename;
+                    //foldername
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + filename;
                     file.SaveAs(path);
                 }
             }
@@ -516,7 +516,7 @@
                                     </div>
                                 </fieldset>
                                 <br />
-                                <div id="thumbnail_control" style="width:100%;height:55vh;">
+                                <div id="thumbnail_control" style="width:100%;height:50vh;">
                                     <img src="">
                                 </div>
                             </div>

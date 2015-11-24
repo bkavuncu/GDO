@@ -99,11 +99,6 @@ namespace GDO.Apps.DD3
             return request.execute(this.data);
         }
 
-        public string requestRemoteData(RemoteDataRequest request)
-        {
-            return JsonConvert.SerializeObject(request.execute(ref this.data));
-        }
-
         // Code for Connection and Control
 
         public void newClient(string cid, BrowserInfo b)

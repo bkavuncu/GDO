@@ -1,7 +1,7 @@
-gdo.management.drawStateInputTable = function () {
+﻿gdo.management.drawStateInputTable = function () {
 
     $("#state_table_state_list")
-        .css("height", ((gdo.management.table_height) + (gdo.management.info_height))*2.8)
+        .css("height", ((gdo.management.table_height) + (gdo.management.info_height))*2.5)
         .css("width", "95%")
         .css("border", "1px solid #333")
         .css("color", "#DDD")
@@ -15,7 +15,7 @@ gdo.management.drawStateInputTable = function () {
     $("#state_table_state_header_table").append("<tr id='state_table_state_header_table_head'></tr>");
     $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_input'><input type='text' id='state_table_input'  value='Enter State Name' style='width: 95%;height: 100%;'/></input></td>");
     $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_save'><button type='button' id='state_table_save' class='btn btn-primary '><i class='fa fa-save fa-fw'></i>&nbsp;Save</button></td>");
-    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger'><i class='fa fa-th fa-fw'></i>&nbsp;Clear Cave</button></td>");
+    $("#state_table_state_header_table tr:last").append("<td id='state_table_state_header_table_row_clear'><button type='button' id='state_table_clear' class='btn btn-primary btn-danger' data-toggle='modal' data-target='#confirm-clear'><i class='fa fa-exclamation-circle fa-fw'></i>&nbsp;Clear Cave</button></td>");
     $("#state_table_input")
         .css("width", "100%")
         .css("height", "40px")
@@ -60,12 +60,12 @@ gdo.management.drawStateInputTable = function () {
             gdo.consoleOut('.NET', 1, 'Saving State ' + document.getElementById('state_table_input').value);
             gdo.net.server.saveCaveState(document.getElementById('state_table_input').value);
         });
-    $("#state_table_state_header_table_row_clear")
-            .unbind()
-            .click(function () {
-                gdo.consoleOut('.NET', 1, 'Clearing States');
-                gdo.net.server.clearCave();
-            });
+    $("#clear_confirm_button")
+    .unbind()
+    .click(function () {
+        gdo.consoleOut('.NET', 1, 'Clearing States');
+        gdo.net.server.clearCave();
+    });
 }
 
 gdo.management.drawStateTable = function () {

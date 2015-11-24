@@ -509,29 +509,5 @@ namespace GDO.Apps.Graph
 
 
 
-        public void HideSublinks(int instanceId)
-        {
-
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Hiding sublinks.");
-
-                    // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).hideSublinks();
-                    Clients.Caller.setMessage("Sublinks are now hidden.");
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.setMessage("Error: Failed to remove sublinks.");
-                    Clients.Caller.setMessage(e.ToString());
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-
-
     }
 }

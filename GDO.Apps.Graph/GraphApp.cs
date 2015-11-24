@@ -283,8 +283,8 @@ namespace GDO.Apps.Graph
 
                 // read labels.json from HTTP
                 sw.Restart();
-                
-  				Debug.WriteLine("Reading from: " + labelsFilePath);
+
+                Debug.WriteLine("Reading from: " + labelsFilePath);
 
                 WebClient client = new WebClient();
                 StreamReader file = new StreamReader(client.OpenRead(labelsFilePath));
@@ -294,7 +294,7 @@ namespace GDO.Apps.Graph
                 labels = serializer.Deserialize<List<string>>(jReader);
 
 
-                    // debugging
+                // debugging
 
                 //for (int i = 0; i < labels.Count; i++)
                 //{
@@ -998,66 +998,6 @@ namespace GDO.Apps.Graph
             sw.Start();
 
             nodeDict = new Dictionary<string, int>();
-
-            for (int i = 0; i < nodesData.Count; i++)
-            {
-                nodeDict.Add(nodesData[i].id, i);
-            }
-
-            sw.Stop();
-            Debug.WriteLine("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
-            GraphAppHub.self.LogTime("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
-
-
-            //Debug.WriteLine("Index for node ID 4943 (2): " + nodeDict[4943]);
-            //Debug.WriteLine("Index for node ID 7299 (2358): " + nodeDict[7299]);
-        }
-
-
-
-        public class SelectedNode
-        {
-            public Pos pos { get; set; }
-            public string label { get; set; }
-        }
-
-        // ***********************
-        // global dictionary variables
-        // ***********************
-        // map label to index within labels array
-        Dictionary<string, int> labelDict = new Dictionary<string, int>();
-        // map node ID to index within nodes data array
-        Dictionary<int, int> nodeDict = null;
-
-        // set up label dictionary to prepare for search
-        public void SetupLabelDictionary()
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            labelDict = new Dictionary<string, int>();
-
-            for (int i = 0; i < labels.Count; i++)
-            {
-                labelDict.Add(labels[i], i);
-            }
-
-            sw.Stop();
-            Debug.WriteLine("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
-            GraphAppHub.self.LogTime("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
-
-
-            //Debug.WriteLine("Index for label YLR386W (4): " + labelDict["YLR386W"]);
-            //Debug.WriteLine("Index for label YOR042W (2358): " + labelDict["YOR042W"]);
-        }
-
-
-        public void SetupNodeDictionary()
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            nodeDict = new Dictionary<int, int>();
 
             for (int i = 0; i < nodesData.Count; i++)
             {

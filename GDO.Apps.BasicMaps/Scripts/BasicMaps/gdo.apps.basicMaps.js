@@ -289,7 +289,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
     gdo.net.instance[instanceId].layers[12].wms = false;
 
-    gdo.net.instance[instanceId].layers[13] = new ol.layer.Tile({
+    /*gdo.net.instance[instanceId].layers[13] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.TileWMS({
             url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
@@ -342,7 +342,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             crossOrigin: null
         })
     });
-    gdo.net.instance[instanceId].layers[17].wms = true;
+    gdo.net.instance[instanceId].layers[17].wms = true;*/
 
     gdo.net.instance[instanceId].controls = new Array();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -366,18 +366,34 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
 
     gdo.net.instance[instanceId].positionFeature = new ol.Feature();
-    gdo.net.instance[instanceId].positionFeature.setStyle(new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: 14,
-            fill: new ol.style.Fill({
-                color: '#3399CC'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#222',
-                width: 4.9
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.instance[instanceId].positionFeature.setStyle(new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 14,
+                fill: new ol.style.Fill({
+                    color: '#3399CC'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#222',
+                    width: 4.7
+                })
             })
-        })
-    }));
+        }));
+    } else {
+        gdo.net.instance[instanceId].positionFeature.setStyle(new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 49,
+                fill: new ol.style.Fill({
+                    color: '#3399CC'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#222',
+                    width: 21.7
+                })
+            })
+        }));
+    }
+
 
     var featuresOverlay = new ol.layer.Vector({
         map: map,
