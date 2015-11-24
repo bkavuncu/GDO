@@ -53,13 +53,11 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
         {
             ParserSSV parser = new ParserSSV();
             // Defaulting to "," if null or empty string
-            if (delimiter == null || delimiter.Length == 0)
-            {
+            if (delimiter == null || delimiter.Length == 0) {
                 delimiter = ",";
             }
             try {
-                long rows = File.ReadLines(path).Count() - 1; // Compute line count, account for headers.
-                parser = FromStream(new FileStream(path, FileMode.Open), delimiter, rows); 
+                parser = FromStream(new FileStream(path, FileMode.Open), delimiter); 
             } catch (Exception ouch) {
                 parser.Exception = ouch;
             }
@@ -86,7 +84,7 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
         // | Datum2  | Catum2  | 2       | 1       | LineCount = 4 
         // | Datum3  | Catum3  | 3       | 2       | RowCount = 3
         // +---------+---------+---------+---------+
-        public static ParserSSV FromStream(Stream source, string delimiter, long rows)
+        public static ParserSSV FromStream(Stream source, string delimiter)
         {
             ParserSSV parser = new ParserSSV();
             try {
@@ -94,7 +92,6 @@ namespace GDO.Apps.Hercules.BackEnd.Parser
                 inner.TextFieldType = FieldType.Delimited;
                 inner.SetDelimiters(delimiter);
                 parser.Inner = inner;
-                parser.RowCount = rows < 0 ? 2 ^ 15 : rows;
                 parser.Source = source;
             } catch (Exception ouch) {
                 parser.Exception = ouch;

@@ -169,7 +169,7 @@ namespace GDO.Apps.Hercules.BackEnd.New
                 modes[(int)types[r][col]]++;
             }
 
-            return (AType)Utils.IndexOfMax(modes);
+            return (AType)BackEnd.Utils.IndexOfMax(modes);
         }
 
 

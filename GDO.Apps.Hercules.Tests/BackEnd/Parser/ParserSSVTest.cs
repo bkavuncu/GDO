@@ -46,7 +46,7 @@ namespace GDO.Apps.Hercules.BackEnd.Parser.Tests
         [TestMethod()]
         public void FromStreamCheckInnerTest()
         {
-            ParserSSV parser = ParserSSV.FromStream(new FileStream("../../TestFiles/test1.csv", FileMode.Open), ",", 4);
+            ParserSSV parser = ParserSSV.FromStream(new FileStream("../../TestFiles/test1.csv", FileMode.Open), ",");
             Assert.IsTrue(Enumerable.SequenceEqual(new string[] {"," }, parser.GetInner().Delimiters));
             Assert.AreEqual(FieldType.Delimited, parser.GetInner().TextFieldType);
             parser.CloseSource();

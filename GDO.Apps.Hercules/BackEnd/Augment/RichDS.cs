@@ -316,8 +316,16 @@ namespace GDO.Apps.Hercules.BackEnd.Augment
         //
         public void Serialize(string path)
         {
+            private List<dynamic[]> Rows = null;
+            private List<AType[]> Types = null;
+            private AColumn[] AColumns = null;
             
-        }
+            private int NColumns = 0;
+            private int NRows = 0;
+            
+            private int NPruned = 0;
+
+    }
 
         
         //
