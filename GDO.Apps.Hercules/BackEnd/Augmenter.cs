@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace GDO.Apps.Hercules.BackEnd.New
+namespace GDO.Apps.Hercules.BackEnd
 {
 
     // PlainDS --> RichDS
@@ -169,7 +169,7 @@ namespace GDO.Apps.Hercules.BackEnd.New
                 modes[(int)types[r][col]]++;
             }
 
-            return (AType)BackEnd.Utils.IndexOfMax(modes);
+            return (AType)Utils.IndexOfMax(modes);
         }
 
 

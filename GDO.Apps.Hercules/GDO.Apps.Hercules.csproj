@@ -237,7 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\ReactConfig.cs" />
-    <Compile Include="BackEnd\ServerDS.cs" />
     <Compile Include="BackEnd\Augmenter.cs" />
     <Compile Include="BackEnd\Database.cs" />
     <Compile Include="BackEnd\Parser.cs" />

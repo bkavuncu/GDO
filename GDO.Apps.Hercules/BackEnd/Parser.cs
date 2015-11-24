@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace GDO.Apps.Hercules.BackEnd.New
+namespace GDO.Apps.Hercules.BackEnd
 {
 
     // file/Stream/URL --> PlainDS

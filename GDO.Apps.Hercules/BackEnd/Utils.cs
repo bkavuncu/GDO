@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDO.Apps.Hercules.BackEnd.New
+namespace GDO.Apps.Hercules.BackEnd
 {
     public class Utils
     {

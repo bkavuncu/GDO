@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDO.Apps.Hercules.BackEnd.New
+namespace GDO.Apps.Hercules.BackEnd
 {
     //
-    class Database
+    public class Database
     {
 
         // A description of the last error that occurred from calling methods in this class.
@@ -24,8 +25,11 @@ namespace GDO.Apps.Hercules.BackEnd.New
         //
         private static IMongoDatabase MongoDB;
 
+        //
+        private static IMongoCollection<BsonDocument> MongoCollection;
 
-        // Initialization of ServerDS.
+
+        // Initialization of Database.
         // Sets up DB connection to MongoDB to database 'datasets'.
         // If everything wenk OK, returns true.
         // Otherwise LastError is saved and this returns false.
@@ -34,10 +38,9 @@ namespace GDO.Apps.Hercules.BackEnd.New
         {
             MongoClient = new MongoClient();
             MongoDB = MongoClient.GetDatabase("datasets");
-
+            MongoCollection = MongoDB.GetCollection<BsonDocument>("jsdatasets");
             return true;
         }
-
 
         // Each JsDataset contains the data (rows) and the JsMiniset (schema).
         // Each JsMiniset has a unique (id) field. We retrieved JsMinisets through this field.
@@ -47,17 +50,35 @@ namespace GDO.Apps.Hercules.BackEnd.New
         // If something goes wrong, return the NULL string and save the error.
         public static string GetMiniset(int id)
         {
-            return null;
+            try {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                BsonDocument miniset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return miniset.ToJson<BsonDocument>();
+            } catch (Exception ouch) {
+                LastError = string.Format("Database.GetMiniset({0}): database error ({1})", id, ouch.Message);
+                return null;
+            }
         }
-
 
         // Returns an array containing the JSON strings of ALL the minisets.
         // If something goes wrong, return the NULL array and save the error.
-        public static string[] GetMinisets()
+        public async static Task<string[]> GetMinisets()
         {
-            return null;
-        }
+            try {
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                var minisets = await MongoCollection.Find(_ => true).Project(project).ToListAsync();
 
+                return minisets.Select(x => x.ToJson<BsonDocument>()).ToArray();
+            } catch (Exception ouch) {
+                LastError = string.Format("Database.GetMinisets: database error ({0})", ouch.Message);
+                return null;
+            }
+        }
 
         // Each JsDataset contains the data (rows) and the JsMiniset (schema).
         // Each JsMiniset has a unique (id) field. We retrieved JsMinisets through this field.
@@ -68,7 +89,54 @@ namespace GDO.Apps.Hercules.BackEnd.New
         // If something goes wrong, return the NULL string and save the error.
         public static string GetDataset(int id)
         {
-            return null;
+            try {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Include("schema")
+                    .Include("rows");
+                BsonDocument dataset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return dataset.ToJson<BsonDocument>();
+            } catch (Exception ouch) {
+                LastError = string.Format("Database.GetDataset({0}): database error ({1})", id, ouch.Message);
+                return null;
+            }
+        }
+
+
+        // 
+        public async static Task<int> UploadDSFromRich(RichDS rich, string origin, string name, string description)
+        {
+            if (rich == null) {
+                LastError = "Database.UploadDSFromRich: the RichDS provided is null!";
+                return -1;
+            }
+
+            try {
+                // Name
+                if (name == null || name.Length == 0) {
+                    name = origin;
+                }
+
+                var filter = Builders<BsonDocument>.Filter.Eq("schema.name", name);
+                var result = await MongoCollection.Find(filter).ToListAsync();
+                bool nameIsUnique = result.Count() <= 1;
+                if (!nameIsUnique) {
+                    // TODO(iora): Find a better way to deal with duplicate docs.
+                    name = "new" + name;
+                }
+
+                // Description
+                if (description == null || description.Length == 0) {
+                    description = "No description provided.";
+                }
+
+                BsonDocument doc = JsonFromRich(rich, name, description).ToBsonDocument();
+                await MongoCollection.InsertOneAsync(doc);
+                return doc["_id"].ToInt32();
+            } catch (Exception ouch) {
+                LastError = string.Format("Database.UploadDSFromRich: database error ({0})", ouch.Message);
+                return -1;
+            }
         }
 
 
@@ -82,7 +150,7 @@ namespace GDO.Apps.Hercules.BackEnd.New
         // the database.
         // Then obtain the *automagically* unique ID for it and RETURN it.
         // If stuff goes wrong, save the error and return -1.
-        public static int UploadDSFromFile(string path, string name, string description)
+        public async static Task<int> UploadDSFromFile(string path, string name, string description)
         {
             RichDS rich = Augmenter.FromFile(path, ",");
             if (rich == null) {
@@ -90,12 +158,12 @@ namespace GDO.Apps.Hercules.BackEnd.New
                 return -1;
             }
 
-            return UploadDSFromRich(rich, name, description);
+            return await UploadDSFromRich(rich, path, name, description);
         }
 
 
         //
-        public static int UploadDSFromStream(Stream stream, string name, string description)
+        public async static Task<int> UploadDSFromStream(Stream stream, string name, string description)
         {
             RichDS rich = Augmenter.FromStream(stream, ",");
             if (rich == null) {
@@ -103,12 +171,12 @@ namespace GDO.Apps.Hercules.BackEnd.New
                 return -1;
             }
 
-            return UploadDSFromRich(rich, name, description);
+            return await UploadDSFromRich(rich, "<stream>", name, description);
         }
 
-
-        // TODO maybe one day
-        public static int UploadDSFromURL(string url, string name, string description)
+        
+        //
+        public async static Task<int> UploadDSFromURL(string url, string name, string description)
         {
             RichDS rich = Augmenter.FromURL(url, ",");
             if (rich == null) {
@@ -116,106 +184,40 @@ namespace GDO.Apps.Hercules.BackEnd.New
                 return -1;
             }
 
-            return UploadDSFromRich(rich, name, description);
+            return await UploadDSFromRich(rich, url, name, description);
         }
 
-
-        //
-        public static int UploadDSFromRich(RichDS rich, string name, string descritpion)
-        {
-            LastError = "Database.UploadDSFromRich: not implemented yet!";
-
-
-
-
-            return -1;
-        }
-    
 
         // RichDS --> JsonDS
-        public static JsonDS JsonFromRich(RichDS rich)
+        public static JsonDS JsonFromRich(RichDS rich, string name, string description)
         {
             JsonDS json = new JsonDS();
-            json.rows   = rich.Rows;
+            json.rows = rich.Rows;
 
-            json.schema       = new JsonMiniset();
+            json.schema = new JsonMiniset();
+            json.schema.description = description;
+            json.schema.name = name;
             json.schema.nrows = rich.NRows;
             json.schema.fields = new JsonField[rich.NColumns];
 
-            for (int c = 0, ncols = rich.NColumns; c < ncols; c++)
-            {
-                json.schema.fields[c]       = new JsonField();
-                json.schema.fields[c].name  = rich.Columns[c].Header;
+            for (int c = 0, ncols = rich.NColumns; c < ncols; c++) {
+                json.schema.fields[c] = new JsonField();
+                json.schema.fields[c].name = rich.Columns[c].Header;
                 json.schema.fields[c].index = rich.Columns[c].Index;
-                json.schema.fields[c].type  = rich.Columns[c].Type.ToString();
+                json.schema.fields[c].type = rich.Columns[c].Type.ToString();
 
-                json.schema.fields[c].stats          = new JsonStats();
-                json.schema.fields[c].stats.min      = rich.Columns[c].Stats.Min;
-                json.schema.fields[c].stats.max      = rich.Columns[c].Stats.Max;
-                json.schema.fields[c].stats.mean     = rich.Columns[c].Stats.Mean;
-                json.schema.fields[c].stats.median   = rich.Columns[c].Stats.Median;
+                json.schema.fields[c].stats = new JsonStats();
+                json.schema.fields[c].stats.min = rich.Columns[c].Stats.Min;
+                json.schema.fields[c].stats.max = rich.Columns[c].Stats.Max;
+                json.schema.fields[c].stats.mean = rich.Columns[c].Stats.Mean;
+                json.schema.fields[c].stats.median = rich.Columns[c].Stats.Median;
                 json.schema.fields[c].stats.variance = rich.Columns[c].Stats.Variance;
-                json.schema.fields[c].stats.sd       = rich.Columns[c].Stats.StdDev;
-                json.schema.fields[c].stats.sum      = rich.Columns[c].Stats.Sum;
-                json.schema.fields[c].stats.count    = rich.Columns[c].Stats.Count;
+                json.schema.fields[c].stats.sd = rich.Columns[c].Stats.StdDev;
+                json.schema.fields[c].stats.sum = rich.Columns[c].Stats.Sum;
+                json.schema.fields[c].stats.count = rich.Columns[c].Stats.Count;
             }
 
             return json;
         }
-
-
     }
-
 }
-
-
-
-//public static PlainDS PlainFromStream(Stream stream, string delimiter)
-//{
-//    PlainDS ds = Parser.FromStream(stream, delimiter);
-//    if (ds == null)
-//        LastError = "Dataset: parsing error -> " + Parser.GetError();
-//    return ds;
-//}
-
-//public static PlainDS PlainFromURL(string url, string delimiter)
-//{
-//    PlainDS ds = Parser.FromURL(url, delimiter);
-//    if (ds == null)
-//        LastError = "Dataset: parsing error -> " + Parser.GetError();
-//    return ds;
-//}
-
-//public static PlainDS PlainFromFile(string path, string delimiter)
-//{
-//    PlainDS ds = Parser.FromFile(path, delimiter);
-//    if (ds == null)
-//        LastError = "Dataset: parsing error -> " + Parser.GetError();
-//    return ds;
-//}
-
-
-//public static RichDS RichFromStream(Stream stream, string delimiter)
-//{
-//    return new RichDS();
-//}
-
-//public static RichDS RichFromString(string data, string delimiter)
-//{
-//    return new RichDS();
-//}
-
-//public static RichDS RichFromFile(string path, string delimiter)
-//{
-//    return new RichDS();
-//}
-
-//public static RichDS RichFromURL(string url, string delimiter)
-//{
-//    return new RichDS();
-//}
-
-//public static RichDS RichFromPlain(Stream stream, string delimiter)
-//{
-//    return new RichDS();
-//}
