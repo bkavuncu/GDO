@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GDO.Apps.Hercules.BackEnd
+namespace GDO.Apps.Hercules.BackEnd.New
 {
-
     public class Utils
     {
 
@@ -73,12 +72,10 @@ namespace GDO.Apps.Hercules.BackEnd
 
 
         // Shortcut for System.Diagnostics.Debug.WriteLine.
-        public static void Say (string format, params object[] args)
+        public static void Say(string format, params object[] args)
         {
             System.Diagnostics.Debug.WriteLine(format, args);
         }
-
-
     }
 
 
