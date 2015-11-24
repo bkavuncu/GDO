@@ -15,59 +15,122 @@ namespace GDO.Apps.Hercules.BackEnd.DB
     {
         private static IMongoClient MongoClient;
         private static IMongoDatabase MongoDB;
+        private static IMongoCollection<BsonDocument> MongoCollection;
 
+        // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
 
+
+        // Initialization of ServerDS.
+        // Sets up DB connection to MongoDB to database 'datasets'.
+        // If everything wenk OK, returns true.
+        // Otherwise LastError is saved and this returns false.
+        // If Init is called multiple times, make sure that things don't break.
         public static bool Init()
         {
             MongoClient = new MongoClient();
-            MongoDB = MongoClient.GetDatabase("test");
+            MongoDB = MongoClient.GetDatabase("datasets");
+            MongoCollection = MongoDB.GetCollection<BsonDocument>("jsdatasets");
             return true;
         }
 
+        // Each JsDataset contains the data (rows) and the JsMiniset (schema).
+        // Each JsMiniset has a unique (id) field. We retrieved JsMinisets through this field.
+        // Given the ID of a JsMiniset, we need to retrieve it from the MongolDB database. (Good Luck).
+        // Once we obtain it, we need to De?serialize it into a JSON string. Maybe MongolBD can do that 
+        // for us, or we'll need to use Newtonsoft.JSON.
+        // If something goes wrong, return the NULL string and save the error.
         public static string GetMiniset(int id)
         {
-            return "";
+            try {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                BsonDocument miniset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return miniset.ToJson<BsonDocument>();
+            }
+            catch(Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
-        public static string[] GetMinisets()
+        // Returns an array containing the JSON strings of ALL the minisets.
+        // If something goes wrong, return the NULL array and save the error.
+        public async Task<string[]> GetMinisets()
         {
-            return null;
+             try {
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Exclude("schema")
+                    .Include("rows");
+                var minisets = await MongoCollection.Find(_ => true).Project(project).ToListAsync();
+                
+                return minisets.Select(x => x.ToJson<BsonDocument>()).ToArray();
+            }
+            catch(Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
+        // Each JsDataset contains the data (rows) and the JsMiniset (schema).
+        // Each JsMiniset has a unique (id) field. We retrieved JsMinisets through this field.
+        // Given the ID of a JsMiniset, we need to retrieve it from the MongolDB database. (Good Luck).
+        // But we store the whole JsDatasets so this includes the rows.
+        // Once we obtain it, we need to De?serialize it into a JSON string. Maybe MongolBD can do that 
+        // for us, or we'll need to use Newtonsoft.JSON.
+        // If something goes wrong, return the NULL string and save the error.
         public static string GetDataset(int id)
         {
-            return null;
+            try
+            {
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var project = Builders<BsonDocument>.Projection.Exclude("_id")
+                    .Include("schema")
+                    .Include("rows");
+                BsonDocument dataset = MongoCollection.Find(filter).Project(project).ToBsonDocument();
+                return dataset.ToJson<BsonDocument>();
+            }
+            catch (Exception e)
+            {
+                LastError = e.Message;
+                return null;
+            }
         }
 
 
-
+        // Given the path of a file, a name for the dataset and a description for a dataset,
+        // opens the file, parse the file and obtain a JsDataset. The parsing is done by
+        // RichDS. If RichDS fails, obtain the error that occurred and save it as this LastError.
+        // If name is null or empty, use the file name from path. 
+        // CHECK that the name is unique in the database, otherwise come up with a new name.
+        // If description is null or empty, use "No description provided".
+        // If the JsDataset ds is obtained, serialize it into a BSON document and save it into
+        // the database.
+        // Then obtain the *automagically* unique ID for it and RETURN it.
+        // If stuff goes wrong, save the error and return -1.
         public static int UploadDSFromFile(string path, string name, string descritpion)
         {
-            // JsDataset ds = ParseDSFromFile(path);
-
-            string rows = "rows"; // JsonConvert.SerializeObject(ds.Rows);
-            string schema = "schema"; // JsonConvert.SerializeObject(ds.schema);
-
-            var document = new BsonDocument 
-            {
-                { "rows", rows } ,
-                { "schema", schema } 
-            };
-
-
-            MongoDB.GetCollection<BsonDocument>("datasets").InsertOneAsync(document).Wait();
-
-            Utils.Say("DIO ANOOOO " + document["_id"].ToString());
+            JsDataset ds = null; // RichDS.FromFile(path);
+            if (ds == null) {
+                LastError = ""; // RichDS.GetError();
+                return -1;
+            }
 
             return -1;
         }
 
+        // TODO maybe one day
         public static int UploadDSFromURL (string url, string name, string description)
         {
             return -1;
         }
 
+
+        // Returns the last error that occurred from the methods in ServerDS.
         public static string GetError()
         {
             return LastError;

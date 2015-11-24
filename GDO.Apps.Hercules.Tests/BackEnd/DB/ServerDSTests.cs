@@ -18,5 +18,11 @@ namespace GDO.Apps.Hercules.BackEnd.DB.Tests
             Assert.IsTrue(ServerDS.Init());
             Debug.WriteLine(ServerDS.UploadDSFromFile("", "", ""));
         }
+
+        [TestMethod()]
+        public void GetMinisetsTest()
+        {
+            Assert.Fail();
+        }
     }
 }

@@ -54,6 +54,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BackEnd\Augment\RichDSTests.cs" />
+    <Compile Include="BackEnd\DB\ServerDSTests.cs" />
     <Compile Include="BackEnd\Parser\ParserSSVTest.cs" />
     <Compile Include="BackEnd\UtilsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +65,11 @@
       <Project>{4b5b7588-261a-4a7a-8e1a-80a9ea1b77a4}</Project>
       <Name>GDO.Apps.Hercules</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="TestFiles\test1.csv" />
+    <None Include="TestFiles\test2.csv" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
