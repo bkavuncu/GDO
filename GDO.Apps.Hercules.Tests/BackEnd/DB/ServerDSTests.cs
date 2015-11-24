@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace GDO.Apps.Hercules.BackEnd.DB.Tests
 {
@@ -17,12 +19,6 @@ namespace GDO.Apps.Hercules.BackEnd.DB.Tests
         {
             Assert.IsTrue(ServerDS.Init());
             Debug.WriteLine(ServerDS.UploadDSFromFile("", "", ""));
-        }
-
-        [TestMethod()]
-        public void GetMinisetsTest()
-        {
-            Assert.Fail();
         }
     }
 }
