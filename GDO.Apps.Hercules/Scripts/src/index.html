@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta id="extViewportMeta" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <!--<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>-->
     <title>Hercules</title>
     <style>
@@ -52,5 +54,12 @@
         __REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__
     </script>
     <script type="text/javascript" src="assets/Hercules.js"></script>
+    <script>
+        document.body.addEventListener('touchmove', function(event) {
+            console.log(event.source);
+            //if (event.source == document.body)
+            event.preventDefault();
+        }, false);
+    </script>
 </body>
 </html>
