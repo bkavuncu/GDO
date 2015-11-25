@@ -48,7 +48,7 @@ namespace GDO.Apps.Hercules.BackEnd
         // Once we obtain it, we need to De?serialize it into a JSON string. Maybe MongolBD can do that 
         // for us, or we'll need to use Newtonsoft.JSON.
         // If something goes wrong, return the NULL string and save the error.
-        public static string GetMiniset(int id)
+        public static string GetMiniset(string id)
         {
             try {
                 var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
@@ -65,15 +65,15 @@ namespace GDO.Apps.Hercules.BackEnd
 
         // Returns an array containing the JSON strings of ALL the minisets.
         // If something goes wrong, return the NULL array and save the error.
-        public async static Task<string[]> GetMinisets()
+        public static string[] GetMinisets()
         {
             try {
                 var project = Builders<BsonDocument>.Projection.Exclude("_id")
                     .Exclude("schema")
                     .Include("rows");
-                var minisets = await MongoCollection.Find(_ => true).Project(project).ToListAsync();
-
-                return minisets.Select(x => x.ToJson<BsonDocument>()).ToArray();
+                var minisets = MongoCollection.Find(_ => true).Project(project).ToListAsync();
+                minisets.Wait();
+                return minisets.Result.Select(x => x.ToJson<BsonDocument>()).ToArray();
             } catch (Exception ouch) {
                 LastError = string.Format("Database.GetMinisets: database error ({0})", ouch.Message);
                 return null;
@@ -87,10 +87,10 @@ namespace GDO.Apps.Hercules.BackEnd
         // Once we obtain it, we need to De?serialize it into a JSON string. Maybe MongolBD can do that 
         // for us, or we'll need to use Newtonsoft.JSON.
         // If something goes wrong, return the NULL string and save the error.
-        public static string GetDataset(int id)
+        public static string GetDataset(string id)
         {
             try {
-                var filter = Builders<BsonDocument>.Filter.Eq("_id", id.ToString());
+                var filter = Builders<BsonDocument>.Filter.Eq("schema.id", id.ToString());
                 var project = Builders<BsonDocument>.Projection.Exclude("_id")
                     .Include("schema")
                     .Include("rows");
@@ -104,11 +104,11 @@ namespace GDO.Apps.Hercules.BackEnd
 
 
         // 
-        public async static Task<int> UploadDSFromRich(RichDS rich, string origin, string name, string description)
+        public static string UploadDSFromRich(RichDS rich, string origin, string name, string description)
         {
             if (rich == null) {
                 LastError = "Database.UploadDSFromRich: the RichDS provided is null!";
-                return -1;
+                return null;
             }
 
             try {
@@ -118,8 +118,9 @@ namespace GDO.Apps.Hercules.BackEnd
                 }
 
                 var filter = Builders<BsonDocument>.Filter.Eq("schema.name", name);
-                var result = await MongoCollection.Find(filter).ToListAsync();
-                bool nameIsUnique = result.Count() <= 1;
+                var result = MongoCollection.Find(filter).ToListAsync();
+                result.Wait();
+                bool nameIsUnique = result.Result.Count() <= 1;
                 if (!nameIsUnique) {
                     // TODO(iora): Find a better way to deal with duplicate docs.
                     name = "new" + name;
@@ -131,11 +132,11 @@ namespace GDO.Apps.Hercules.BackEnd
                 }
 
                 BsonDocument doc = JsonFromRich(rich, name, description).ToBsonDocument();
-                await MongoCollection.InsertOneAsync(doc);
-                return doc["_id"].ToInt32();
+                MongoCollection.InsertOneAsync(doc).Wait();
+                return doc["schema.id"].ToString();
             } catch (Exception ouch) {
                 LastError = string.Format("Database.UploadDSFromRich: database error ({0})", ouch.Message);
-                return -1;
+                return null;
             }
         }
 
@@ -150,41 +151,80 @@ namespace GDO.Apps.Hercules.BackEnd
         // the database.
         // Then obtain the *automagically* unique ID for it and RETURN it.
         // If stuff goes wrong, save the error and return -1.
-        public async static Task<int> UploadDSFromFile(string path, string name, string description)
+        public static string UploadDSFromFile(string path, string name, string description)
         {
             RichDS rich = Augmenter.FromFile(path, ",");
             if (rich == null) {
                 LastError = "Database.UploadDSFromFile: " + Augmenter.GetError();
-                return -1;
+                return null;
             }
 
-            return await UploadDSFromRich(rich, path, name, description);
+            return UploadDSFromRich(rich, path, name, description);
         }
 
 
         //
-        public async static Task<int> UploadDSFromStream(Stream stream, string name, string description)
+        public static string UploadDSFromStream(Stream stream, string name, string description)
         {
             RichDS rich = Augmenter.FromStream(stream, ",");
             if (rich == null) {
                 LastError = "Database.UploadDSFromStream: " + Augmenter.GetError();
-                return -1;
+                return null;
             }
 
-            return await UploadDSFromRich(rich, "<stream>", name, description);
+            return UploadDSFromRich(rich, "<stream>", name, description);
         }
 
         
         //
-        public async static Task<int> UploadDSFromURL(string url, string name, string description)
+        public static string UploadDSFromURL(string url, string name, string description)
         {
             RichDS rich = Augmenter.FromURL(url, ",");
             if (rich == null) {
                 LastError = "Database.UploadDSFromFile: " + Augmenter.GetError();
-                return -1;
+                return null;
             }
 
-            return await UploadDSFromRich(rich, url, name, description);
+            return UploadDSFromRich(rich, url, name, description);
+        }
+
+
+        //
+        public static JsonDS JsonFromURL(string url, string name, string description)
+        {
+            RichDS rich = Augmenter.FromURL(url, ",");
+            if (rich == null) {
+                LastError = "Database.JsonFromURL: " + Augmenter.GetError();
+                return null;
+            }
+
+            return JsonFromRich(rich, name, description);
+        }
+
+
+        //
+        public static JsonDS JsonFromFile(string path, string name, string description)
+        {
+            RichDS rich = Augmenter.FromFile(path, ",");
+            if (rich == null) {
+                LastError = "Database.JsonFromFile: " + Augmenter.GetError();
+                return null;
+            }
+
+            return JsonFromRich(rich, name, description);
+        }
+
+
+        //
+        public static JsonDS JsonFromStream(Stream stream, string name, string description)
+        {
+            RichDS rich = Augmenter.FromStream(stream, ",");
+            if (rich == null) {
+                LastError = "Database.JsonFromStream: " + Augmenter.GetError();
+                return null;
+            }
+
+            return JsonFromRich(rich, name, description);
         }
 
 

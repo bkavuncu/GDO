@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace GDO.Apps.Hercules.BackEnd
 {
@@ -15,10 +16,16 @@ namespace GDO.Apps.Hercules.BackEnd
         public dynamic mean;
         public dynamic median;
         public dynamic variance;
-        public dynamic sum;
         public dynamic sd;
+        public dynamic sum;
         public int count;
         public bool isEnum;
+
+        public override string ToString()
+        {
+            return string.Format("{0} Count:{1} Min:{2} Max:{3} Sum:{4} Mean:{5} Median:{6} Var:{7} SD:{8}",
+                                 isEnum ? "ENUM" : "NOT-ENUM", count, min, max, sum, mean, median, variance, sd);
+        }
     }
 
     public class JsonField
@@ -30,24 +37,44 @@ namespace GDO.Apps.Hercules.BackEnd
         public string origin;
         public bool disabled;
         public JsonStats stats;
+
+        public override string ToString()
+        {
+            return string.Format("{0}#{1} {2} {3} {5} :: {4} --> {6}",
+                                 index, name, description, origin, type, disabled ? "DISABLED" : "ACTIVE", stats.ToString());
+        }
     }
 
     public class JsonMiniset
     {
         public string name;
         public string description;
-        public int id;
+        [BsonId]
+        public MongoDB.Bson.ObjectId id;
         public int nrows;
         public string sourceType;
         public string sourceOrigin;
         public bool disabled;
         public JsonField[] fields;
+
+
+        public override string ToString()
+        {
+            return string.Format("{0}#{1} {2} {3} {4} {5} | {6} rows\n{7}",
+                                 id, name, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", nrows,
+                                 Utils.Lines(fields, "\n"));
+        }
     }
 
     public class JsonDS
     {
         public JsonMiniset schema;
         public List<dynamic[]> rows;
+
+        public override string ToString()
+        {
+            return string.Format("{0}\n{1}", schema.ToString(), Utils.Lines(rows, "\n\t"));
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////
