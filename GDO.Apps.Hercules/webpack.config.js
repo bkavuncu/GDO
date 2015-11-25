@@ -6,7 +6,7 @@ module.exports = {
     devtool: 'sourcemap',
     entry: [
         'webpack/hot/only-dev-server',
-        './Scripts/src/control.js'
+        './Scripts/src/Hercules.js'
     ],
     stats: {
         colors: true,
@@ -23,7 +23,7 @@ module.exports = {
     },
     output: {
         path: './Scripts/build/assets/',
-        filename: "control.js"
+        filename: "Hercules.js"
     },
     module: {
         loaders: [
