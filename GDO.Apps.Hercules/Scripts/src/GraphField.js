@@ -45,8 +45,7 @@ class GraphField extends React.Component {
 GraphField.propTypes = {
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
-    field: PropTypes.object.isRequired,
-    isDropped: PropTypes.bool.isRequired
+    field: PropTypes.object.isRequired
 };
 
 module.exports = DragSource(DragTypes.FIELD, fieldSource, collect)(GraphField);

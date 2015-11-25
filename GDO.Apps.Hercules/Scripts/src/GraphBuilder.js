@@ -15,11 +15,12 @@ class GraphBuilder extends React.Component {
 
         this.state = {
             baseFields: fields,
-            axes: []
+            axes: []            //Use Immutable set?
         };
     }
 
     _onChange () {
+        this.state.axes = [];
         var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
         var axesSetIter = axesSet.entries();
         var axis = axesSetIter.next();
