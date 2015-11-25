@@ -51,6 +51,12 @@ namespace GDO.Apps.Graph
             string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/" + inputFolder + "/"+ inputFolder + @".graphml");
             GraphDataReader.ReadGraphMLData(sw, graphMLfile, out Links, out Nodes, out rectDim);
 
+            this.SetupLabelDictionary();
+            this.SetupNodeDictionary();
+
+            //compute node adjacencies
+            this.ComputeNodeAdjacencies();
+
 
 
             #region calculate viewport and scales
@@ -286,7 +292,7 @@ namespace GDO.Apps.Graph
         }
 
 
-        public void ComputeNodeAdjacencies()
+        private void ComputeNodeAdjacencies()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -321,7 +327,7 @@ namespace GDO.Apps.Graph
         Dictionary<string, int> nodeDict = null;
 
         // set up label dictionary to prepare for search
-        public void SetupLabelDictionary()
+        private void SetupLabelDictionary()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -349,7 +355,7 @@ namespace GDO.Apps.Graph
         }
 
 
-        public void SetupNodeDictionary()
+        private void SetupNodeDictionary()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
