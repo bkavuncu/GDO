@@ -15,12 +15,15 @@ class Tab extends React.Component {
     render () {
         var {name, active, handleClick} = this.props,
             color = active? '#80cbc4' : '#009688',
+            zIndex = active? 100 : 0,
+            //boxShadow = active? null : '0 0 5px gray',
             tabStyle = {
                 flexGrow: 1,
                 width: 'auto',
                 height: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
+                zIndex: zIndex,
                 alignItems: 'center',
                 backgroundColor: color,
                 transition: 'background-color ease-in 0.2s'
@@ -71,7 +74,9 @@ class FullscreenToggle extends React.Component {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                flex: '0 0 30px'
+                alignItems: 'center',
+                flex: '0 0 50px',
+                zIndex: 100
             };
 
         return <View style={style} onTouchTap={handler}>
@@ -123,7 +128,8 @@ class Tabs extends React.Component {
             height: 'auto',
             flexGrow: '1',
             overflow: 'auto',
-            backgroundColor: '#80CBC4'
+            backgroundColor: '#80CBC4',
+            justifyContent: 'flex-start'
         };
     }
 
