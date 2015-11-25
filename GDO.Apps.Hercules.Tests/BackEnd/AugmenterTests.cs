@@ -70,26 +70,5 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         {
             Assert.Fail();
         }
-
-        //KeyValuePair<String, int>[] testpairs = new KeyValuePair<String, int>[] {
-        //    new KeyValuePair<string, int>("   1", 1),
-        //    new KeyValuePair<string, int>("1.", 1),
-        //    new KeyValuePair<string, int>("1 hjjhjhkhjkj", 1),
-        //    new KeyValuePair<string, int>("-1", -1)
-        //};
-
-        //[TestMethod()]
-        //public void IntegerInference()
-        //{
-        //    AType expected = AType.Integral;
-
-        //    foreach (KeyValuePair<string, int> pair in testpairs) {
-        //        AType actual;
-        //        dynamic value;
-        //        RichDS.ParseCell(pair.Key, out actual, out value);
-        //        Assert.AreEqual(expected, actual);
-        //        Assert.AreEqual(pair.Value, value);
-        //    }
-        //}
     }
 }

@@ -63,9 +63,13 @@ namespace GDO.Apps.Hercules.BackEnd
             List<dynamic[]> values = new List<dynamic[]>(ds.NRows);
 
             for (int r = 0, nrows = ds.NRows; r < nrows; r++) { // Parse all rows.
+                AType[] rtypes = new AType[ds.NHeaders];
+                dynamic[] rvalues = new dynamic[ds.NHeaders];
                 for (int c = 0, ncols = ds.NHeaders; c < ncols; c++) {
-                    ParseOne(ds.Rows[r][c], out types[r][c], out values[r][c]);
+                    ParseOne(ds.Rows[r][c], out rtypes[c], out rvalues[c]);
                 }
+                types.Add(rtypes);
+                values.Add(rvalues);
             }
 
             AType[] principals = new AType[ds.NHeaders]; // Compute principal types.
@@ -211,13 +215,13 @@ namespace GDO.Apps.Hercules.BackEnd
                 case AType.Integral:
                 case AType.DateTime:
                     for (int r = 0, nrows = values.Count; r < nrows; r++) {
-                        values[r] = values[r][col];
+                        data[r] = values[r][col];
                     }
                     return Stats.DynamicStats(data);
 
                 case AType.Text:
                     for (int r = 0, nrows = values.Count; r < nrows; r++) {
-                        values[r] = values[r][col].Length; // Use Length for strings.
+                        data[r] = values[r][col].Length; // Use Length for strings.
                     }
                     return Stats.DynamicStats(data);
 
