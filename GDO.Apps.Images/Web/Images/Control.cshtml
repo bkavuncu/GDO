@@ -397,8 +397,8 @@
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + filename;
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images"));
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/") + filename;
                     file.SaveAs(path);
                 }
             }
