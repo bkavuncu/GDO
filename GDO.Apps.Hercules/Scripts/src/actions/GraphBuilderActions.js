@@ -1,9 +1,20 @@
 const Dispatcher = require('../Dispatcher');
 
-export function moveField (fieldName, source, dest) {
+export function removeField (sectionId, field, source) {
     Dispatcher.dispatch({
-        actionType: 'moveField',
-        nodeId: id
+        actionType: 'removeField',
+        sectionId: sectionId,
+        field: field,
+        source: source
+    });
+}
+
+export function addField (sectionId, field, dest) {
+    Dispatcher.dispatch({
+        actionType: 'addField',
+        sectionId: sectionId,
+        field: field,
+        dest: dest
     });
 }
 

@@ -1,5 +1,5 @@
 const Dispatcher = require('../Dispatcher'),
-    schemas = require('../schemas/Dataset');
+    schemas = require('../schemas/DatasetStructure');
 
 var datasets = [
     {
