@@ -41,6 +41,7 @@ namespace GDO.Apps.Graph
 
                     // create GraphApp project and call its function to process graph
                     ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+
                     Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
                     string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
@@ -48,31 +49,23 @@ namespace GDO.Apps.Graph
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
                     Clients.Caller.setMessage("Graph is now being rendered.");
-
+                    /*
                     // set up label dictionary to prepare for search
                     Clients.Caller.setMessage("Setting up label dictionary.");
                     ga.SetupLabelDictionary();
 
                     // set up nodes dictionary to prepare for search
                     Clients.Caller.setMessage("Setting up nodes dictionary.");
-                    ga.SetupNodeDictionary();
+                    ga.SetupNodeDictionary(); */
 
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
                     ga.ProcessGraph(inputFolder, true, folderNameDigit);
                     Clients.Caller.setMessage("Graph is now ready for zooming.");
-
-                    // compute the adjacencies of each node
-                    ga.ComputeNodeAdjacencies();
-                    Clients.Caller.setMessage("Computing adjacencies for search function.");
-
                 }
                 catch (WebException e)
                 {
                     Clients.Caller.setMessage("Error: Files cannot be loaded. Please check if folder name is valid.");
-
-                    //Detailed error message for user is not necessary for this
-                    //Clients.Caller.setMessage(e.ToString());
                     Debug.WriteLine(e);
                 }
                 catch (Exception e)
@@ -139,7 +132,7 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Rendering links.");
 
                     // Clients.Group to broadcast and get all clients to update graph
-                    Clients.Group("" + instanceId).renderLinks();
+                    Clients.Group("" + instanceId).showLinks();
                     Clients.Caller.setMessage("Links are now being rendered.");
                 }
                 catch (Exception e)

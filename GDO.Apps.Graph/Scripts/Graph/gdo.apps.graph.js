@@ -9,10 +9,8 @@
 $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
-    /* global variables */
-
     // arrays to store data
-    var links, nodes, mostConnectedNodes, labels;
+    var links, nodes, labels, mostConnectedNodes = [];
     var minLinks = 3;
 
     // boolean to track if current graph is zoomed
@@ -33,7 +31,7 @@ $(function () {
     var redColor = { r: 255, g: 50, b: 50 };
 
     var currentColor = blueColor;    // rgb setting to track current color scheme
-    var highlightedColor = { r: 207, g: 35, b: 49 };   // rgb setting for highlighted nodes
+    var highlightedColor = { r: 250, g: 255, b: 0 };   // rgb setting for highlighted nodes
 
 
     var maxLinks = 5;
@@ -80,6 +78,7 @@ $(function () {
     var nodeList;
 
     $.connection.graphAppHub.client.renderSearch = function (folderName) {
+        alert("THIS IS THE RENDERSEARCH_1 FUNCTION!");         //TODO FIX remove
 
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
@@ -94,8 +93,11 @@ $(function () {
             var linksDom = highlightDom.append("g")
                                        .attr("id", "sublinks");
 
+            alert("SEARCH> readytorender Links");         //TODO FIX remove
             renderSearchLinks(linksPath);
+            alert("SEARCH> readytorender Nodes");         //TODO FIX remove
             renderSearchNodes(nodesPath);
+            alert("SEARCH> Links and Nodes rendered");         //TODO FIX remove
             
 
             function renderSearchNodes(file) {
@@ -106,7 +108,7 @@ $(function () {
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        nodeList = JSON.parse(xhr.responseText);
+                        nodeList = JSON.parse(xhr.responseText);        //TODO FIX
 
                         var radius = globalZoomed ? zoomedRadius + 2 : normalRadius + 2;
 
@@ -132,7 +134,7 @@ $(function () {
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        var linkList = JSON.parse(xhr.responseText);
+                        var linkList = JSON.parse(xhr.responseText);          //TODO FIX
 
                         var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
@@ -159,7 +161,9 @@ $(function () {
                                             .contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding  = globalZoomed ? 4 : 3;
+            var padding = globalZoomed ? 4 : 3;
+
+            alert("THIS IS THE RENDERSEARCHLABELS_1 FUNCTION!");         //TODO FIX remove
 
             nodeList.forEach(function (node) {
 
@@ -176,6 +180,7 @@ $(function () {
 
     $.connection.graphAppHub.client.hideSublinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            alert("THIS IS THE HIDESUBLINKS_1 FUNCTION!");         //TODO FIX remove
             var dom = document.body.getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("sublinks");
 
@@ -202,9 +207,9 @@ $(function () {
 
 
     $.connection.graphAppHub.client.hideHighlight = function () {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            // do nothing
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE HIDEHIGHLIGHT_1 FUNCTION!");         //TODO FIX remove
             var highlightDom = document.body
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("highlight");
@@ -218,6 +223,9 @@ $(function () {
 
     $.connection.graphAppHub.client.renderMostConnectedNodes = function (numLinks) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE rendermostconnected_1 FUNCTION! " + numLinks);         //TODO FIX remove
+
             var highlightDom = document.body
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("highlight");
@@ -226,10 +234,10 @@ $(function () {
 
             mostConnectedNodes.forEach(function (node) {
 
-                if (node.NumLinks >= numLinks) {
+                if (node.NumLinks >= numLinks) {  // TODO is this check really necessary?
 
                     highlightDom.append("circle")
-                        .attr("r", radius)
+                        .attr("r", Math.ceil(node.Size))
                         .attr("cx", node.Pos.X)
                         .attr("cy", node.Pos.Y)
                         .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");    // Nodes: highlighted mode
@@ -241,17 +249,20 @@ $(function () {
 
     $.connection.graphAppHub.client.renderMostConnectedLabels = function (numLinks) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE rendermostconnectedlabels_1 FUNCTION!" + numLinks);         //TODO FIX remove
+
             var highlightDom = document.body
                                     .getElementsByTagName('iframe')[0]
                                     .contentDocument.getElementById("highlight");
 
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding = globalZoomed ? 4 : 3;
+            var padding = globalZoomed ? 5 : 3;
 
             mostConnectedNodes.forEach(function (node) {
 
-                if (node[2] >= numLinks) {
+                if (node.NumLinks >= numLinks) {   // TODO is this check really necessary?
                     console.log("label: " + node.Label + ", pos: " + node.Pos.X + ", " + node.Pos.Y + ", node id: " + node.ID);
 
                     highlightDom.append("text")
@@ -259,8 +270,7 @@ $(function () {
                         .attr("y", node.Pos.Y - padding)
                         .text(node.Label)
                         .attr("font-size", fontSize)
-                        .attr("fill", "green");    // Labels: highlighted mode
-                   
+                        .attr("fill", "green");    // Labels: highlighted mode        
                 }
             });
 
@@ -270,6 +280,9 @@ $(function () {
 
     $.connection.graphAppHub.client.hideNodes = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE HIDENODES_1 FUNCTION!");         //TODO FIX remove
+
             var nodesDom = document.body.getElementsByTagName('iframe')[0]
                                         .contentDocument.getElementById("nodes");
 
@@ -281,6 +294,9 @@ $(function () {
 
     $.connection.graphAppHub.client.renderNodes = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE RENDERNODES_3 FUNCTION!");         //TODO FIX remove
+
             var nodesDom = document.body.getElementsByTagName('iframe')[0]
                                         .contentDocument.getElementById("nodes");
 
@@ -294,16 +310,14 @@ $(function () {
                     .attr("r", radius)
                     .attr("cx", node.Pos.X)
                     .attr("cy", node.Pos.Y)
-                    //.attr("fill", "purple")    
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
-
             });
 
         }
     }
 
-    //TODO: Refactor duplicating code for hideLinks and hideLabels
     $.connection.graphAppHub.client.hideLinks = function () {
+        alert("THIS IS THE HIDELINKS_1 FUNCTION!");         //TODO FIX remove
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var linksDom = document.body.getElementsByTagName('iframe')[0]
                                         .contentDocument.getElementById("links");
@@ -314,8 +328,8 @@ $(function () {
         }
     }
 
-    //TODO: change name to showLinks
-    $.connection.graphAppHub.client.renderLinks = function () {
+    $.connection.graphAppHub.client.showLinks = function () {
+        alert("THIS IS THE RENDERLINKS_1 FUNCTION!");         //TODO FIX remove
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var linksDom = document.body.getElementsByTagName('iframe')[0]
                                         .contentDocument.getElementById("links");
@@ -340,6 +354,9 @@ $(function () {
 
     $.connection.graphAppHub.client.hideLabels = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE HIDELABELS_2 FUNCTION!");         //TODO FIX remove
+
             var labelsDom = document.body.getElementsByTagName('iframe')[0]
                                          .contentDocument.getElementById("labels");
 
@@ -351,11 +368,14 @@ $(function () {
 
     $.connection.graphAppHub.client.renderLabels = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS THE RENDERLABELS_2 FUNCTION!");         //TODO FIX remove
+
             var labelsDom = document.body.getElementsByTagName('iframe')[0]
                                          .contentDocument.getElementById("labels");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding =  globalZoomed ? 3 : 2;
+            var padding =  globalZoomed ? 5 : 3;
 
             nodes.forEach(function (node, index) {
 
@@ -366,7 +386,6 @@ $(function () {
                     .attr("font-size", fontSize)
                     .attr("fill", "white");    // Labels: normal mode
                 ;
-
             });
         }
     }
@@ -403,6 +422,9 @@ $(function () {
     // Function to render buffer for zoomed-in graph
     $.connection.graphAppHub.client.renderBuffer = function (folderNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            alert("THIS IS RENDERBUFFER!_1 FUNCTION!");         //TODO FIX remove
+
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Rendering graph buffer");
 
 
@@ -851,6 +873,8 @@ $(function () {
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit, zoomed) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
+            alert("THIS IS RENDERGRAPH!_1 FUNCTION!");         //TODO FIX remove
+
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
             var basePath, fileName;
@@ -1269,6 +1293,10 @@ $(function () {
                                 var radius = zoomed ? zoomedRadius : normalRadius;
 
                                 nodes.forEach(function (node) {
+
+                                    if (node.NumLinks > minLinks) {
+                                        mostConnectedNodes.push(node);
+                                    } 
 
                                     //var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
