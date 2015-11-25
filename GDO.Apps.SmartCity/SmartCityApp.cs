@@ -92,7 +92,7 @@ namespace GDO.Apps.SmartCity
 
         public void SaveMap(string configName)
         {
-            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Configurations\SmartCity\\";
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Configurations/SmartCity/");
             String filePath = basePath + configName + ".json";
             System.IO.File.WriteAllText(filePath, GetSerializedMap());
         }
@@ -1200,7 +1200,7 @@ namespace GDO.Apps.SmartCity
 
         public void SaveEmptyMap()
         {
-            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Configurations\SmartCity\\";
+            String basePath = HttpContext.Current.Server.MapPath("~/Configurations/SmartCity/");
             String filePath = basePath + "template.json";
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(CreateEmptyMap(), JsonSettings);
             System.IO.File.WriteAllText(filePath, serializedMap);

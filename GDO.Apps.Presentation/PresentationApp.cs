@@ -36,18 +36,18 @@ namespace GDO.Apps.Presentation
             this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
-            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
+            this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
             this.FileName = "";
             this.FileNameDigit = "";
             this.PageCount = 0;
             this.CurrentPage = 0;
-            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs");
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs"));
         }
 
         public void ProcessImage(string imagePath, int pageNumber, int mode)
         {
             Image image = Image.FromFile(imagePath);
-            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
+            this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
             //create thumnail
             Image thumb = image.GetThumbnailImage(500 * image.Width / image.Height, 500, () => false, IntPtr.Zero);
             thumb.Save(BasePath + "\\" + FileNameDigit + "\\thumb_" + pageNumber + ".png", ImageFormat.Png);
@@ -100,7 +100,7 @@ namespace GDO.Apps.Presentation
         public void GenerateUniqueDigit(string filename)
         {
             this.FileName = filename;
-            this.BasePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\\";
+            this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
 
             // generate unique digit id
             String path1 = BasePath + "\\" + FileName;
