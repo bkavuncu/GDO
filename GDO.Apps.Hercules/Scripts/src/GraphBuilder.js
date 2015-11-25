@@ -1,14 +1,43 @@
 const React = require('react'),
     GraphField = require('./GraphField'),
-    AxisBox = require('./GraphAxisBox');
+    AxisBox = require('./GraphAxisBox'),
+    GraphBuilderStore = require('./stores/GraphBuilderStore');
 
 
 class GraphBuilder extends React.Component {
     constructor(props) {
         super(props);
 
+        var fields = [];
+        for (var i=0; i<this.props.miniSet.fields.length; i++) {
+            fields.push(this.props.miniSet.fields[i]);
+        }
+
         this.state = {
+            baseFields: fields,
+            axes: []
         };
+    }
+
+    _onChange () {
+        var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
+        var axesSetIter = axesSet.entries();
+        var axis = axesSetIter.next();
+        while (!axis.done) {
+            this.state.axes.push(axis.value);
+            axis = axesSetIter.next();
+        }
+    }
+
+    componentDidMount () {
+        var listener = this._onChange.bind(this);
+        GraphBuilderStore.addChangeListener(listener);
+        this.setState({listener});
+        this._onChange();
+    }
+
+    componentWillUnmount () {
+        GraphBuilderStore.removeChangeListener(this.state.listener);
     }
 
     render () {
@@ -31,13 +60,16 @@ class GraphBuilder extends React.Component {
             justifyContent: 'space-around'
         }
 
-        return <div className='buider' style={builderStyle}>
-            <div className='fieldsBox' style={fieldsBoxStyle}>
-                <GraphField/>
+        return <div id='buider' style={builderStyle}>
+            <div id='fieldsBox' style={fieldsBoxStyle}>
+                {this.state.baseFields.map(
+                    f => <GraphField field={f} />
+                )}
             </div>
-            <div className='axes' style={axisStyle}>
-                <AxisBox />
-                <AxisBox />
+            <div id='axes' style={axisStyle}>
+                {this.state.axes.map(
+                    axis => <AxisBox axisData={axis} sectionId={this.props.sectionId} />
+                )}
             </div>
         </div>;
     }

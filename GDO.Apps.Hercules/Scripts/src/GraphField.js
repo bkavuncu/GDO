@@ -8,9 +8,7 @@ const DragTypes = {
 
 var fieldSource = {
     beginDrag: function(props) {
-        return {
-            name: props.name
-        };
+        return props.field;
     }
 };
 
@@ -36,9 +34,9 @@ class GraphField extends React.Component {
             border: 'solid',
             fontSize: 25,
             fontWeight: 'bold',
-            //cursor: 'move',
-            flexBasis: '60px'
-            }}> Drag meh!
+            cursor: 'move',
+            flexBasis: '100px'
+            }}> {this.props.field.name}
             </div>
         );
     }
@@ -47,8 +45,7 @@ class GraphField extends React.Component {
 GraphField.propTypes = {
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
+    field: PropTypes.object.isRequired,
     isDropped: PropTypes.bool.isRequired
 };
 
