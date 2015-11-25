@@ -63,17 +63,17 @@ class GraphBuilder extends React.Component {
 
         return <div id='buider' style={builderStyle}>
             <div id='fieldsBox' style={fieldsBoxStyle}>
-                {this.state.baseFields.map(
-                    f => <GraphField field={f} />
-                )}
+                {this.state.baseFields.map(f => <GraphField field={f} key={f}/>)}
             </div>
             <div id='axes' style={axisStyle}>
                 {this.state.axes.map(
-                    axis => <AxisBox axisData={axis} sectionId={this.props.sectionId} />
+                    axis => <AxisBox axisData={axis} key={this.props.sectionId}     sectionId={this.props.sectionId} />
                 )}
             </div>
         </div>;
     }
 }
+
+GraphBuilder.tabName = 'Graph Control';
 
 module.exports = GraphBuilder;

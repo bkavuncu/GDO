@@ -354,4 +354,7 @@ class GridWrapper extends React.Component {
         return <DeployerGrid {...this.state}/>
     }
 }
+
+GridWrapper.prototype.tabName = 'Section Deployer';
+
 module.exports = GridWrapper;

@@ -60,7 +60,9 @@ class GraphList extends React.Component {
             {this.props.sectionList.map(
                     s => <GraphItem sectionData={s}
                                     select={this.props.selector}
-                                    activeId={this.props.activeId}/>
+                                    activeId={this.props.activeId}
+                                    key={s.id}
+                        />
             )}
         </div>;
     }
@@ -166,10 +168,11 @@ class GraphControlWrapper extends React.Component {
                 sectionId: 1,
                 graphData: graphData
             }];
-        //TEST DATA
 
         return <GraphControl sectionList={sectionData} miniSet={miniSet}/>;
     }
 }
+
+GraphControlWrapper.prototype.tabName = 'Graph Control';
 
 module.exports = GraphControlWrapper;
