@@ -95,7 +95,7 @@ const keys = ['name', 'description', 'type', 'origin'],
     FieldHeader = () => {
         return <div style={rowStyle}>
             {headers.map((k, i) => <div key={i} style={headerStyle}>{k}</div>)}
-            </div>
+        </div>
     };
 
 class Row extends React.Component {
@@ -118,7 +118,91 @@ class Row extends React.Component {
     }
 }
 
-let [MINI, EXPAND, FULL, COLLAPSE] = [1,2,3,4];
+let [REST, LOADED, UNLOAD] = [1,2,3];
+class DatasetLoaderButton extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            step: DatasetLoaderButton._getLoadState(props)
+        };
+    }
+
+    static _getLoadState (props) {
+        return props.active? LOADED : REST;
+    }
+
+    _clickHandler (e) {
+        switch (this.state.step) {
+            case REST:
+                ExplorerActions.selectDataset(this.props.datasetId);
+                break;
+            case LOADED:
+                this.setState({step: UNLOAD});
+                break;
+            case UNLOAD:
+                ExplorerActions.unloadDataset();
+                break;
+        }
+
+        e.stopPropagation();
+    }
+
+    componentWillReceiveProps (newProps) {
+        var step = DatasetLoaderButton._getLoadState(newProps);
+
+        this.setState({step});
+    }
+
+    _getStyleParams () {
+        var backgroundColor, text, iconName,
+            color = 'white';
+
+        switch (this.state.step) {
+            case REST:
+                backgroundColor = '#2196F3';
+                text = 'load';
+                iconName = 'keyboard_arrow_right';
+                break;
+            case LOADED:
+                backgroundColor = '#4CAF50';
+                text = 'loaded';
+                iconName = 'done';
+                break;
+            case UNLOAD:
+                backgroundColor = '#FFEB3B';
+                color = '#555555';
+                text = 'tap to unload';
+                iconName = 'eject';
+                break;
+        }
+
+        return {backgroundColor, text, iconName, color};
+    }
+
+    render () {
+        var {handler, active} = this.props,
+            {backgroundColor, text, iconName, color} = this._getStyleParams(),
+            btnStyle = {
+                display: 'flex',
+                alignSelf: 'stretch',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                padding: '5px',
+                boxShadow: 'inset 0 0 3px gray',
+                backgroundColor: backgroundColor,
+                color: color
+            }, text = text,
+            icon = iconName;
+
+        return <div style={btnStyle} onTouchTap={this._clickHandler.bind(this)}>
+            <span>{text}</span>
+            <i className="material-icons">{icon}</i>
+        </div>;
+    }
+}
+
+let [MINI, FULL] = [1,2];
 class Dataset extends React.Component {
     constructor (props) {
         super(props);
@@ -148,12 +232,9 @@ class Dataset extends React.Component {
 
     }
 
-    componentDidUpdate () {
-
-    }
-
     render () {
         var d = this.props.data,
+            active = this.props.active,
             fullView = this.state.step === FULL,
             nameStyle = {
                 fontSize: '24px',
@@ -190,13 +271,13 @@ class Dataset extends React.Component {
             });
 
         var fields = [<div key="name" style={nameStyle}>{d.name}</div>,
-            <div key="desc">{d.description}</div>,
+                <div key="desc">{d.description}</div>,
                 fullView ? null : <div key="sep" style={separator} />,
-            <div key="info" style={infoStyle}>
-                <div key="fieldCount" style={fieldStyle}>{d.fields.length} fields</div>
-                <div key="length" style={fieldStyle}>{d.length} rows</div>
-            </div>
-        ],
+                <div key="info" style={infoStyle}>
+                    <div key="fieldCount" style={fieldStyle}>{d.fields.length} fields</div>
+                    <div key="length" style={fieldStyle}>{d.length} rows</div>
+                </div>
+            ],
             extraFullInfo = null;
 
         if (fullView) {
@@ -216,7 +297,8 @@ class Dataset extends React.Component {
             <div style={stretchStyle}>
                 {fields}
             </div>
-                {extraFullInfo}
+            {extraFullInfo}
+            <DatasetLoaderButton active={active} datasetId={d.id} />
         </Paper>;
     }
 }
@@ -240,13 +322,15 @@ class Explorer extends React.Component {
     render () {
         const PADDING = 5;
         var outerStyle = {
-            backgroundColor: '#80CBC4',
-            alignContent: 'flex-start',
-            flexGrow: 1,
-            height: 'auto',
-            padding: PADDING + 'px'
-        },
-            pSize = null;
+                backgroundColor: '#80CBC4',
+                alignContent: 'flex-start',
+                flexGrow: 1,
+                height: 'auto',
+                padding: PADDING + 'px'
+            },
+            pSize = null,
+            {minisets, active} = this.props,
+            activeDatasetId = active? DatasetStore.getActiveDatasetId() : -1;
 
         if ('width' in this.state) {
             pSize = {
@@ -257,10 +341,11 @@ class Explorer extends React.Component {
 
         return <View style={outerStyle}>
             <AddNew />
-            {this.props.minisets
+            {minisets
                 .map((d) => <Dataset
                     key={d.name}
                     data={d}
+                    active={d.id === activeDatasetId}
                     parentSize={pSize}/>)}
         </View>;
     }
@@ -289,13 +374,16 @@ class ExplorerWrapper extends React.Component {
 
     _onChange () {
         this.setState({
-            minisets: DatasetStore.getAllSets()
+            minisets: DatasetStore.getAllSets(),
+            active: DatasetStore.hasActiveDataset()
         });
     }
 
     render () {
-        return <Explorer minisets={this.state.minisets} />;
+        return <Explorer {...this.state}/>;
     }
 }
+
+ExplorerWrapper.prototype.tabName = 'Data Explorer';
 
 module.exports = ExplorerWrapper;

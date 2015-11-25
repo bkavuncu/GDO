@@ -18,15 +18,18 @@ class DatasetStore extends BaseStore {
                 var miniset = action.data;
                 this.miniSets = this.miniSets.set(miniset.id, miniset);
                 break;
-            case 'loadDataset':
+            case 'selectDataset':
                 this._select(action.datasetId);
+                break;
+            case 'unloadDataset':
+                this.selected = null;
                 break;
         }
         this.emitChange();
     }
 
     _select (id) {
-        if(this.miniSets.contains(id)) {
+        if(this.miniSets.has(id)) {
             this.selected = id;
         }
     }
