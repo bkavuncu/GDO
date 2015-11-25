@@ -1,13 +1,17 @@
-﻿using GDO.Apps.Hercules.BackEnd;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GDO.Apps.Hercules.BackEnd.New;
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.CSharp.RuntimeBinder;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace GDO.Apps.Hercules.BackEnd.Tests
+namespace GDO.Apps.Hercules.BackEnd.New.Tests
 {
     [TestClass()]
-    public class UtilsTest
+    public class UtilsTests
     {
+   
         [TestMethod()]
         public void ExtractFileExtensionTest()
         {
@@ -34,9 +38,22 @@ namespace GDO.Apps.Hercules.BackEnd.Tests
             Assert.IsInstanceOfType(Utils.FillArray(-1, 2), arr.GetType());
             Assert.AreEqual(0, Utils.FillArray(-1, 2).Length);
 
-            string[] stringArr = new string[3] {"iora", "iora", "iora"};
+            string[] stringArr = new string[3] { "iora", "iora", "iora" };
             Assert.IsInstanceOfType(Utils.FillArray(3, "iora"), stringArr.GetType());
             Assert.AreEqual(3, Utils.FillArray(3, "iora").Length);
         }
+
+        [TestMethod()]
+        public void IndexOfMaxTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void SayTest()
+        {
+            Assert.Fail();
+        }
     }
+
 }

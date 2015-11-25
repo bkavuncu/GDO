@@ -66,10 +66,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BackEnd\Augment\RichDSTests.cs" />
-    <Compile Include="BackEnd\DB\ServerDSTests.cs" />
-    <Compile Include="BackEnd\Parser\ParserSSVTest.cs" />
-    <Compile Include="BackEnd\UtilsTest.cs" />
+    <Compile Include="BackEnd\AugmenterTests.cs" />
+    <Compile Include="BackEnd\DatabaseTests.cs" />
+    <Compile Include="BackEnd\ParserTests.cs" />
+    <Compile Include="BackEnd\StatsTests.cs" />
+    <Compile Include="BackEnd\UtilsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

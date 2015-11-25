@@ -237,16 +237,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\ReactConfig.cs" />
-    <Compile Include="BackEnd\Augment\AColumn.cs" />
-    <Compile Include="BackEnd\Augment\AType.cs" />
-    <Compile Include="BackEnd\Augment\RichDS.cs" />
-    <Compile Include="BackEnd\DB\JsSchema.cs" />
-    <Compile Include="BackEnd\DB\ServerDS.cs" />
-    <Compile Include="BackEnd\New\New.cs" />
-    <Compile Include="BackEnd\Parser\IParser.cs" />
-    <Compile Include="BackEnd\Parser\ParserSSV.cs" />
-    <Compile Include="BackEnd\Main.cs" />
+    <Compile Include="BackEnd\Augmenter.cs" />
+    <Compile Include="BackEnd\Database.cs" />
+    <Compile Include="BackEnd\Parser.cs" />
     <Compile Include="BackEnd\Stats.cs" />
+    <Compile Include="BackEnd\Types.cs" />
     <Compile Include="BackEnd\Utils.cs" />
     <Compile Include="HerculesApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

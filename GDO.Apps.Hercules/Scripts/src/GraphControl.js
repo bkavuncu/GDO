@@ -1,5 +1,8 @@
 const React = require('react'),
-    GraphBuilder = require('./GraphBuilder');
+    GraphBuilder = require('./GraphBuilder'),
+    GraphStructure = require('./schemas/GraphStructure'),
+    lineGraph = require('./schemas/GraphStructure').lineGraph,
+    GraphBuilderStore = require('./stores/GraphBuilderStore');
 
 class GraphItem extends React.Component {
     constructor (props) {
@@ -29,7 +32,8 @@ class GraphItem extends React.Component {
 
         return <div style={itemStyle}
                     onTouchTap={this._onTap.bind(this)}>
-            {this.props.sectionData.graphData.type}
+            {this.props.sectionData.sectionId}
+            {this.props.sectionData.graphData.graphType}
         </div>;
     }
 }
@@ -74,8 +78,12 @@ class GraphPanel extends React.Component {
             flexBasis: '85%',
             padding: '5px',
             display: 'flex'
-        }
-        return <div style={panelStyle}> <GraphBuilder/> </div>;
+        };
+
+        return <div style={panelStyle}>
+            <GraphBuilder sectionId={this.props.activeId}
+                          miniSet={this.props.miniSet} />
+        </div>;
     }
 }
 
@@ -101,7 +109,8 @@ class GraphControl extends React.Component {
             <GraphList sectionList={this.props.sectionList}
                        selector={selectGraph}
                        activeId={this.state.active}/>
-            <GraphPanel activeSection={this.state.active}/>
+            <GraphPanel activeId={this.state.active}
+                        miniSet={this.props.miniSet}/>
             </div>;
     }
 }
@@ -112,22 +121,54 @@ class GraphControlWrapper extends React.Component {
         this.state = {};
     }
 
+    componentWillMount () {
+        //TEST DATA
+        var graphData = GraphStructure.lineGraph,
+            sectionData = [{
+                sectionId: 1,
+                graphData: graphData
+            }];
+        //TEST DATA
+
+
+        GraphBuilderStore.init(sectionData);
+    }
+
     render () {
-        var BarData = {
-            type: 'BAR',
-            xAxis: [1,2,3,4],
-            yAxis: [1,1,0,1]
-        },  LineData = {
-            type: 'LINE',
-            xAxis: [1,2,3,4,5],
-            yAxis: [1.3, 4.4, 5.3, 2.1, 8.6]
-        },  sectionList = [
-            {sectionId: 1,
-            graphData: BarData},
-            {sectionId: 2,
-            graphData: LineData}
-        ];
-        return <GraphControl sectionList={sectionList}/>;
+        //TEST DATA
+        var miniSet = {
+                id: 2,
+                name: 'Sam Lemon',
+                description: 'a family friend',
+                fields: [
+                    {
+                        name: 'lemon',
+                        description: 'lemons',
+                        disabled: false,
+                        origin: 'native',
+                        type: 'Enum'
+                    },{
+                        name: 'orange',
+                        description: 'citruses',
+                        disabled: true,
+                        origin: 'artificial',
+                        type: 'Integer'
+                    }
+                ],
+                disabled: false,
+                length: 500,
+                source: {
+                    type: 'URL',
+                    url: 'http://deez.nuts/data.csv'
+                }
+            }, graphData = lineGraph,
+            sectionData = [{
+                sectionId: 1,
+                graphData: graphData
+            }];
+        //TEST DATA
+
+        return <GraphControl sectionList={sectionData} miniSet={miniSet}/>;
     }
 }
 
