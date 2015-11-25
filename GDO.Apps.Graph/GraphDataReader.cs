@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using GDO.Apps.Graph.Domain;
-using Newtonsoft.Json;
 
 namespace GDO.Apps.Graph
 {
@@ -129,6 +126,5 @@ namespace GDO.Apps.Graph
 
             Console.WriteLine(keys.Count());
         }
-
     }
 }
