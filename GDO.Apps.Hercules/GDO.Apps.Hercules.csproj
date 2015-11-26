@@ -210,6 +210,9 @@
     <Content Include="Scripts\build\index.html" />
     <Content Include="Scripts\build\assets\control.js.map" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\d3.v3.js" />
+    <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
+    <Content Include="Scripts\gdo.apps.hercules.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
@@ -254,6 +257,10 @@
     <Compile Include="HerculesAppHub.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GDO.Apps.DD3\GDO.Apps.DD3.csproj">
+      <Project>{df0d5add-0b53-4564-8983-2498c76d621a}</Project>
+      <Name>GDO.Apps.DD3</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>
       <Name>GDO</Name>

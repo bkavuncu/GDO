@@ -4,8 +4,26 @@
 <html>
 <head>
     <title>Hello React</title>
+    <style>
+        html, body {
+            background-color: white;
+            color: black;
+        }
+    </style>
 </head>
 <body>
-    <div id="content"></div>
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.0.js"></script>
+    <div id="content">
+        Supppppp
+    </div>
+    <script>
+        $(document).ready(function () {
+            var gdo = parent.gdo;
+
+            gdo.net.app['Hercules'].initClient();
+        });
+
+    </script>
 </body>
 </html>
