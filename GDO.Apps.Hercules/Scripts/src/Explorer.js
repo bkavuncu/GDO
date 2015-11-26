@@ -186,6 +186,7 @@ class DatasetLoaderButton extends React.Component {
             btnStyle = {
                 display: 'flex',
                 alignSelf: 'stretch',
+                flex: '0 0 25px',
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 padding: '5px',
