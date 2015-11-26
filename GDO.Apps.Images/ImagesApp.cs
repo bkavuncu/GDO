@@ -142,12 +142,8 @@ namespace GDO.Apps.Images
             public CanvasDataInfo canvasData { get; set; }
         }
 
-        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.DisplayMode = (int)Mode.FIT;
             this.ImageName = null;
             this.ImageNameDigit = ""; 

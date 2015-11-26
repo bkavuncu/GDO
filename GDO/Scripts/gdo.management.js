@@ -82,7 +82,7 @@ gdo.management.updateInstancesMenu = function () {
             $("#nav_instances").append("<li id='nav_li_" + gdo.net.app[appName].name + "'><a href='#'><i class='fa fa-cube  fa-fw'></i><font color='#fff' size='3px'>&nbsp;" + gdo.net.app[appName].name + "</font> <span class='fa arrow'></span></a>"
                + "<ul class='nav nav-third-level' id='nav_" + gdo.net.app[appName].name + "'></ul></li>");
             for (var instanceId in gdo.net.app[appName].instances) {
-                if (gdo.net.app[appName].instances.hasOwnProperty(instanceId) && gdo.net.app[appName].instances[instanceId].exists) {
+                if (gdo.net.app[appName].instances.hasOwnProperty(instanceId) && gdo.net.app[appName].instances[instanceId].exists && !gdo.net.instance[instanceId].integrationMode) {
                     count++;
                     $("#nav_" + gdo.net.app[appName].name)
                    .append("<li id='nav_li_" + gdo.net.app[appName].instances[instanceId].id + "'><a href='Instances.cshtml?id=" + gdo.net.app[appName].instances[instanceId].id + "'>"

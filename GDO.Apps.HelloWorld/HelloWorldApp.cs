@@ -18,14 +18,8 @@ namespace GDO.Apps.HelloWorld
         public IVirtualAppInstance ParentApp { get; set; }
 
         public string Name { get; set; }
-
-        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-
         }
 
         public void SetName(string name)

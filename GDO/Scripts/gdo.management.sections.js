@@ -418,7 +418,7 @@ gdo.management.drawButtonTable = function() {
             }
         });
     if (gdo.management.selectedSection > -1) {
-        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
+        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.selectedSection].appInstanceId].integrationMode) {
             $("#control_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")

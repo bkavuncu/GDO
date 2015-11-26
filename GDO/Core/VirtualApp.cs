@@ -40,7 +40,10 @@ namespace GDO.Core
             IVirtualAppInstance instance = (IVirtualAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
             AppConfiguration conf;
             Configurations.TryGetValue(configName, out conf);
-            instance.Init(instanceId, this.Name, conf);
+            instance.Id = instanceId;
+            instance.AppName = this.Name;
+            instance.Configuration = conf;
+            instance.Init();
             Instances.TryAdd(instanceId, instance);
             Cave.Instances.TryAdd(instanceId, instance);
             return instanceId;
