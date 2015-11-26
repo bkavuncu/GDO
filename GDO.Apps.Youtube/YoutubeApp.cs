@@ -247,12 +247,8 @@ namespace GDO.Apps.Youtube
             return yJson;
         }
 
-        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.key = "AIzaSyCVoYXZZHaRNqnJw6pINn9PG3wly3_xNYY";
             this.baseURL = "https://www.googleapis.com/youtube/v3/";
             this.Error = false;
@@ -264,7 +260,7 @@ namespace GDO.Apps.Youtube
             this.NextVideoUrls = null;
             this.SearchMode = 0;
 
-            string keywords = (string) configuration.Json.SelectToken("channel");
+            string keywords = (string) Configuration.Json.SelectToken("channel");
             if (keywords != "")
             {
                 Keywords = keywords;

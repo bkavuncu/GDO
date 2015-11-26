@@ -668,6 +668,7 @@ gdo.net.processApp = function (app) {
     gdo.net.app[app.Name].server = $.connection[hubName].server;
     gdo.net.app[app.Name].config = new Array();
     gdo.net.app[app.Name].p2pMode = app.P2PMode;
+    gdo.net.app[app.Name].appType = app.AppType;
     gdo.net.app[app.Name].config = new Array(app.ConfigurationList.length);
     for (var i = 0; i < app.ConfigurationList.length; i++) {
         gdo.net.app[app.Name].config[i] = app.ConfigurationList[i];
@@ -723,8 +724,8 @@ gdo.net.processInstance = function (exists, id, instance) {
     } else {
         if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.BASE) {
             if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
-                gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instance.Id + ")");
+                gdo.net.app[instance.AppName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
+                gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
             }
             gdo.net.section[instance.Section.Id].appInstanceId = -1;
             for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {

@@ -8,5 +8,6 @@
         int Id { get; set; }
         string AppName { get; set; }
         AppConfiguration Configuration { get; set; }
+        void Init();
     }
 }

@@ -8,9 +8,6 @@ namespace GDO.Core
     public interface IVirtualAppInstance : IAppInstance
     {
         List<IBaseAppInstance> IntegratedInstances { get; set; }
-
-        void Init(int instanceId, string appName, AppConfiguration configuration);
-
         List<int> GetListofIntegratedInstances();
     }
 }

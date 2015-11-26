@@ -45,7 +45,12 @@ namespace GDO.Core
             AppConfiguration conf;
             Cave.Sections[sectionId].CalculateDimensions();
             Configurations.TryGetValue(configName, out conf);
-            instance.Init(instanceId, this.Name, Cave.Sections[sectionId], conf, conf.IntegrationMode);
+            instance.Id = instanceId;
+            instance.AppName = this.Name;
+            instance.Section = Cave.Sections[sectionId];
+            instance.Configuration = conf;
+            ((IBaseAppInstance) instance).IntegrationMode = conf.IntegrationMode;
+            instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Instances.TryAdd(instanceId,instance);
             return instanceId;

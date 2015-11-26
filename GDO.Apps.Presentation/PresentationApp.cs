@@ -32,12 +32,8 @@ namespace GDO.Apps.Presentation
         public int PageCount { get; set; }
         public int CurrentPage { get; set; }
 
-        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
             this.FileName = "";
             this.FileNameDigit = "";

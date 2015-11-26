@@ -17,13 +17,8 @@ namespace GDO.Apps.SAGE2
         public bool IntegrationMode { get; set; }
         public IVirtualAppInstance ParentApp { get; set; }
 
-        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-
         }
     }
 }

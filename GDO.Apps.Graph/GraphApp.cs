@@ -26,13 +26,9 @@ namespace GDO.Apps.Graph
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
 
-        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
+        public void Init()
         {
             try {
-                this.Id = instanceId;
-                this.AppName = appName;
-                this.Section = section;
-                this.Configuration = configuration;
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
