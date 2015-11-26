@@ -10,6 +10,12 @@ gdo.net.P2P_MODE = {
     NEIGHBOUR: 3
 };
 
+gdo.net.APP_TYPE = {
+    NONE: -1,
+    BASE: 1,
+    VIRTUAL: 2
+};
+
 gdo.net.NEIGHBOUR_ENUM = {
     TOPLEFT: 0,
     TOP: 1,
@@ -88,7 +94,7 @@ $(function() {
         for (var i = 0; i < instances.length; i++) {
             if (instances[i] != null) {
                 var instance = JSON.parse(instances[i]);
-                gdo.net.processInstance(instance);
+                gdo.net.processInstance(true, i, instance);
             }
         }
         for (var i = 0; i < states.length; i++) {
@@ -129,49 +135,11 @@ $(function() {
         }
     }
 
-    $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, p2pMode, exists) {
+    $.connection.caveHub.client.receiveAppUpdate = function (status, id, serializedInstance) {
+        gdo.consoleOut('.NET', 1, 'Received App Update : (id:' + id + ', exists: ' +status + ")");
         if (gdo.net.isNodeInitialized()) {
-            gdo.consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
-            if (exists) {
-                gdo.net.instance[instanceId].appName = appName;
-                gdo.net.instance[instanceId].id = instanceId;
-                gdo.net.instance[instanceId].sectionId = sectionId;
-                gdo.net.instance[instanceId].exists = true;
-                gdo.net.instance[instanceId].configName = configName;
-                gdo.net.section[sectionId].appInstanceId = instanceId;
-                if (gdo.net.app[appName].config[configName] == null) {
-                    gdo.net.server.requestAppConfiguration(instanceId);
-                }
-                gdo.net.app[appName].p2pMode = p2pMode;
-                for (var i = 0; i < gdo.net.section[sectionId].cols; i++) {
-                    for (var j = 0; j < gdo.net.section[sectionId].rows; j++) {
-                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].p2pmode = p2pMode;
-                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = instanceId;
-                    }
-                }
-                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                    gdo.net.app[appName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
-                    gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + appName+ ', instanceId: ' + instanceId + ")");
-                }
-                gdo.net.app[appName].instances[instanceId] = {};
-                gdo.net.app[appName].instances[instanceId].id = instanceId;
-                gdo.net.app[appName].instances[instanceId].config = configName;
-                gdo.net.app[appName].instances[instanceId].exists = true;
-            } else {
-                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                    gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
-                    gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instanceId + ")");
-                }
-                gdo.net.instance[instanceId].exists = false;
-                gdo.net.section[sectionId].appInstanceId = -1;
-                for (var i = 0; i < gdo.net.section[sectionId].cols; i++) {
-                    for (var j = 0; j < gdo.net.section[sectionId].rows; j++) {
-                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].p2pmode = gdo.net.p2pmode;
-                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = -1;
-                    }
-                }
-                gdo.net.app[appName].instances[instanceId].exists = false;
-            }
+            var instance = JSON.parse(serializedInstance);
+            gdo.net.processInstance(status, id, instance);
             setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 700 + Math.floor((Math.random() * 21000) + 1));
             gdo.updateSelf();
             if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -698,41 +666,82 @@ gdo.net.processApp = function (app) {
     gdo.net.app[app.Name].server = $.connection[hubName].server;
     gdo.net.app[app.Name].config = new Array();
     gdo.net.app[app.Name].p2pMode = app.P2PMode;
-    //TODO
     gdo.net.app[app.Name].config = new Array(app.ConfigurationList.length);
     for (var i = 0; i < app.ConfigurationList.length; i++) {
         gdo.net.app[app.Name].config[i] = app.ConfigurationList[i];
     }
     gdo.net.app[app.Name].instances = [];
+    if (app.SupportedApps != null) {
+        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.VIRTUAL;
+        gdo.net.app[app.Name].supportedApps = app.SupportedApps;
+    } else {
+        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.BASE;
+        gdo.net.app[app.Name].supportedApps = {};
+    }
 }
 
-gdo.net.processInstance = function (instance) {
-    gdo.consoleOut('.NET', 2, 'Updating Instance: ' + instance.Id);
-    gdo.net.instance[instance.Id].appName = instance.AppName;
-    gdo.net.instance[instance.Id].id = instance.Id;
-    //Check if virtual
-    gdo.net.instance[instance.Id].sectionId = instance.Section.Id;
-    gdo.net.instance[instance.Id].exists = true;
-    gdo.net.instance[instance.Id].configName = instance.Configuration.Name;
-    //TODO
-    gdo.net.section[instance.Section.Id].appInstanceId = instance.Id;
-    if (gdo.net.app[instance.AppName].config[instance.Configuration.Name] == null) {
-        gdo.net.server.requestAppConfiguration(instance.Id);
-    }
-    for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {
-        for (var j = 0; j < gdo.net.section[instance.Section.Id].rows; j++) {
-            gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].p2pmode = gdo.net.app[instance.AppName].p2pMode;
-            gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = instance.Id;
+gdo.net.processInstance = function (exists, id, instance) {
+    gdo.consoleOut('.NET', 2, 'Updating Instance: ' + id + ' (' + exists + ')');
+    if (exists) {
+        gdo.net.instance[instance.Id].appName = instance.AppName;
+        gdo.net.instance[instance.Id].id = instance.Id;
+        gdo.net.instance[instance.Id].exists = true;
+        gdo.net.instance[instance.Id].configName = instance.Configuration.Name;
+
+        if (gdo.net.app[instance.AppName].config[instance.Configuration.Name] == null) {
+            gdo.net.server.requestAppConfiguration(instance.Id);
         }
+
+        if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.BASE) {
+            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.BASE;
+            gdo.net.instance[instance.Id].integrationMode = instance.IntegrationMode;
+            gdo.net.instance[instance.Id].sectionId = instance.Section.Id;
+            gdo.net.section[instance.Section.Id].appInstanceId = instance.Id;
+            for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {
+                for (var j = 0; j < gdo.net.section[instance.Section.Id].rows; j++) {
+                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].p2pmode = gdo.net.app[instance.AppName].p2pMode;
+                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = instance.Id;
+                }
+            }
+            if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
+                gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
+            }
+        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.VIRTUAL) {
+            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.VIRTUAL;
+            gdo.net.instance[instance.Id].integratedInstances = instance.IntegratedInstances;
+        } else {
+            gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
+        }
+
+        gdo.net.app[instance.AppName].instances[instance.Id] = {};
+        gdo.net.app[instance.AppName].instances[instance.Id].id = instance.Id;
+        gdo.net.app[instance.AppName].instances[instance.Id].config = instance.Configuration.Name;
+        gdo.net.app[instance.AppName].instances[instance.Id].exists = true;
+    } else {
+        if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.BASE) {
+            if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
+                gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instance.Id + ")");
+            }
+            gdo.net.section[instance.Section.Id].appInstanceId = -1;
+            for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {
+                for (var j = 0; j < gdo.net.section[instance.Section.Id].rows; j++) {
+                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].p2pmode = gdo.net.p2pmode;
+                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = -1;
+                }
+            }
+        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.VIRTUAL) {
+
+        } else {
+            gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
+        }
+
+        gdo.net.instance[instance.Id].exists = false;
+        gdo.net.app[instance.AppName].instances[instance.Id].exists = false;
     }
-    if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-        gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
-        gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
-    }
-    gdo.net.app[instance.AppName].instances[instance.Id] = {};
-    gdo.net.app[instance.AppName].instances[instance.Id].id = instance.Id;
-    gdo.net.app[instance.AppName].instances[instance.Id].config = instance.Configuration.Name;
-    gdo.net.app[instance.AppName].instances[instance.Id].exists = true;
+
+
 }
 
 gdo.net.processState = function (state, id, exists) {

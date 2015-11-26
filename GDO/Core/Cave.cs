@@ -39,6 +39,12 @@ namespace GDO.Core
             Section = 2,
             Neighbours = 3
         };
+        public enum AppTypes
+        {
+            None = -1,
+            Base = 1,
+            Virtual = 2
+        };
         /// <summary>
         /// Initializes a new instance of the <see cref="Cave"/> class.
         /// </summary>
@@ -400,30 +406,25 @@ namespace GDO.Core
         }
 
 
-        public static bool RegisterApp(string name, int p2pmode, Type appType, bool virtualMode, List<string> supportedApps ) {
+        public static bool RegisterApp(string name, int p2pmode, Type appClassType, bool isVirtual, List<string> supportedApps ) {
             if (!Apps.ContainsKey(name))
             {
-                if (virtualMode)
+                App app;
+                if (isVirtual)
                 {
-                    VirtualApp vapp = new VirtualApp();
-                    vapp.Init(name, appType, supportedApps);
-                    List<AppConfiguration> configurations = LoadAppConfigurations(name);
-                    foreach (var configuration in configurations)
-                    {
-                        Apps[name].Configurations.TryAdd(configuration.Name, configuration);
-                    }
+                    app = new VirtualApp();
+                    ((VirtualApp)app).Init(name, appClassType, (int)Cave.AppTypes.Virtual, supportedApps);
                 }
                 else
                 {
-                    App app = new App();
-                    app.Init(name, p2pmode, appType);
-                    Apps.TryAdd(name, app);
-                    Apps[name].Init(name, p2pmode, appType);
-                    List<AppConfiguration> configurations = LoadAppConfigurations(name);
-                    foreach (var configuration in configurations)
-                    {
-                        Apps[name].Configurations.TryAdd(configuration.Name, configuration);
-                    }
+                    app = new App();
+                    app.Init(name, p2pmode, appClassType, (int)Cave.AppTypes.Base);
+                }
+                Apps.TryAdd(name, app);
+                List<AppConfiguration> configurations = LoadAppConfigurations(name);
+                foreach (var configuration in configurations)
+                {
+                    Apps[name].Configurations.TryAdd(configuration.Name, configuration);
                 }
                 return true;
             }
@@ -516,52 +517,41 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Disposes a base application instance.
+        /// Disposes an application instance.
         /// </summary>
         /// <param name="appName">Name of the application.</param>
         /// <param name="instanceId">The instance identifier.</param>
         /// <returns></returns>
-        public static bool DisposeBaseAppInstance(string appName, int instanceId)
+        public static bool DisposeAppInstance(string appName, int instanceId)
         {
             if (Cave.Apps.ContainsKey(appName))
             {
                 if (Cave.Apps[appName].Instances.ContainsKey(instanceId))
                 {
-                    Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
-                    if (Apps[appName].DisposeAppInstance(instanceId))
+                    if (Cave.Apps[appName].AppType == (int)Cave.AppTypes.Base)
                     {
-                        section.FreeSection();
-                        return true;
+                        Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
+                        if (Apps[appName].DisposeAppInstance(instanceId))
+                        {
+                            section.FreeSection();
+                            return true;
+                        }
+                    }
+                    else if (Cave.Apps[appName].AppType == (int)Cave.AppTypes.Virtual)
+                    {
+                        if (Apps[appName].DisposeAppInstance(instanceId))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unknown App Type");
                     }
                 }
             }
             return false;
         }
-
-        /// <summary>
-        /// Disposes a virtual application instance.
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <param name="instanceId">The instance identifier.</param>
-        /// <returns></returns>
-        public static bool DisposeVirtualAppInstance(string appName, int instanceId)
-        {
-            // TODO
-            /*if (Cave.Apps.ContainsKey(appName))
-            {
-                if (Cave.Apps[appName].Instances.ContainsKey(instanceId))
-                {
-                    Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
-                    if (Apps[appName].DisposeAppInstance(instanceId))
-                    {
-                        section.FreeSection();
-                        return true;
-                    }
-                }
-            }*/
-            return false;
-        }
-
         /// <summary>
         /// Gets the name of the application.
         /// </summary>
@@ -585,7 +575,8 @@ namespace GDO.Core
             int slot = Utilities.GetAvailableSlot<CaveState>(States);
             CaveState caveState = new CaveState(slot, name);
             States.TryAdd(slot, caveState);
-            foreach(KeyValuePair<int,IVirtualAppInstance> instaKeyValuePair in Instances)
+            //TODO Add support virtual app
+            /*foreach(KeyValuePair<int,IVirtualAppInstance> instaKeyValuePair in Instances)
             {
                 IVirtualAppInstance instance = instaKeyValuePair.Value;
                 //TODO State Mechanism for both Vapps and apps
@@ -593,7 +584,7 @@ namespace GDO.Core
                 Section section = instance.Section;
                 AppState appState = new AppState(section.Col,section.Row,section.Cols,section.Rows,instance.AppName,instance.Configuration.Name);
                 caveState.States.Add(appState);
-            }
+            }*/
             return slot;
         }
 

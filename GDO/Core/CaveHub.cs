@@ -214,7 +214,8 @@ namespace GDO.Core
                 Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
                 if (instanceId >= 0)
                 {
-                    BroadcastBaseAppUpdate(sectionId, appName, configName, instanceId, Cave.Apps[appName].P2PMode, true);
+                    string serializedInstance = GetInstanceUpdate(instanceId);
+                    BroadcastAppUpdate(true, instanceId, serializedInstance);
                 }
                 return instanceId;
             }
@@ -228,7 +229,8 @@ namespace GDO.Core
                 int instanceId = Cave.CreateVirtualAppInstance(instanceIds, appName, configName);
                 if (instanceId >= 0)
                 {
-                    BroadcastVirtualAppUpdate(appName, configName, instanceId, true, instanceIds);
+                    //Do more
+                    //BroadcastAppUpdate(appName, configName, instanceId, true, instanceIds);
                 }
                 return instanceId;
             }
@@ -246,26 +248,20 @@ namespace GDO.Core
                 if (Cave.ContainsInstance(instanceId))
                 {
                     string appName = Cave.GetAppName(instanceId);
-
+                    string serializedInstance = GetInstanceUpdate(instanceId);
                     if (Cave.Apps[appName].Instances[instanceId] is IBaseAppInstance)
                     {
                         int sectionId = ((IBaseAppInstance) Cave.Apps[appName].Instances[instanceId]).Section.Id;
                         Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
-                        if (Cave.DisposeBaseAppInstance(appName, instanceId))
-                        {
-                            BroadcastBaseAppUpdate(sectionId, appName, "", instanceId, (int) Cave.P2PModes.None, false);
-                            return true;
-                        }
                     }
-                    else
+                    else if (Cave.Apps[appName].Instances[instanceId] is IVirtualAppInstance)
                     {
                         List<int> integratedInstances =((IVirtualAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
-                        if (Cave.DisposeVirtualAppInstance(appName, instanceId))
-                        {
-                            BroadcastVirtualAppUpdate(appName, "", instanceId, false, integratedInstances);
-                            return true;
-                        }
-
+                    }
+                    if (Cave.DisposeAppInstance(appName, instanceId))
+                    {
+                        BroadcastAppUpdate(false, instanceId, serializedInstance);
+                        return true;
                     }
                 }
                 return false;
@@ -524,57 +520,12 @@ namespace GDO.Core
             }
         }
 
-        private bool BroadcastBaseAppUpdate(int sectionId, string appName, string configName, int instanceId, int p2pmode, bool exists)
+        private bool BroadcastAppUpdate(bool exists, int instanceId, string serializedInstance)
         {
             try
             {
-                if (exists)
-                {
-                    if (Cave.Apps.ContainsKey(appName))
-                    {
-                        if (Cave.ContainsInstance(instanceId) && Cave.Apps[appName].Configurations.ContainsKey(configName))
-                        {
-                            //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
-                            Clients.All.receiveBaseAppUpdate(sectionId, appName, configName, instanceId, p2pmode, true);
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    Clients.All.receiveBaseAppUpdate(sectionId, appName, -1, instanceId, p2pmode, false);
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-            return false;
-        }
-
-        private bool BroadcastVirtualAppUpdate(string appName, string configName, int instanceId, bool exists, List<int> integratedInstanceIds)
-        {
-            try
-            {
-                if (exists)
-                {
-                    if (Cave.Apps.ContainsKey(appName))
-                    {
-                        if (Cave.ContainsInstance(instanceId) && Cave.Apps[appName].Configurations.ContainsKey(configName))
-                        {
-                            //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
-                            Clients.All.receiveVirtualAppUpdate(appName, configName, instanceId, true, integratedInstanceIds);
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    Clients.All.receiveVirtualAppUpdate( appName, -1, instanceId, false, integratedInstanceIds);
-                    return true;
-                }
+                Clients.All.receiveAppUpdate(exists, instanceId, serializedInstance);
+                 return true;
             }
             catch (Exception e)
             {
@@ -710,13 +661,14 @@ namespace GDO.Core
             {
                 CaveState caveState = Cave.States[id];
                 ClearCave();
-                foreach (AppState appState in caveState.States)
+                //TODO Virtual apps
+                /*foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
                         (appState.Row + appState.Rows -1));
                     Cave.GetSectionId(appState.Col, appState.Row);
                     DeployApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.ConfigName);
-                }
+                }*/
             }
 
         }
