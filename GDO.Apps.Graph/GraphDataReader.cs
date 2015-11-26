@@ -10,8 +10,10 @@ namespace GDO.Apps.Graph
 {
     public static class GraphDataReader
     {
-        public static void  ReadGraphMLData(Stopwatch sw, string graphmlfile, out List<GraphLink> links, out List<GraphNode> nodes, out RectDimension dimension)
+        public static void  ReadGraphMLData(string graphmlfile, out List<GraphLink> links, out List<GraphNode> nodes, out RectDimension dimension)
         {
+            Stopwatch sw = new Stopwatch();
+
             XDocument doc = XDocument.Load(XmlReader.Create(graphmlfile));
             XNamespace ns = @"http://graphml.graphdrawing.org/xmlns";
 
@@ -46,6 +48,7 @@ namespace GDO.Apps.Graph
 
             var graphelem = doc.Root.Element(ns + "graph");
 
+            #region fill Nodes data structure
             nodes = graphelem.Elements(ns + "node").Select(xn =>
                 new
                 {
@@ -73,6 +76,7 @@ namespace GDO.Apps.Graph
                 .ToList();
 
             var nodesbyID = nodes.ToDictionary(n => n.ID, n => n);
+            #endregion
 
             #region rescale nodes
 
@@ -86,7 +90,6 @@ namespace GDO.Apps.Graph
                 Width = maxX-minX,
                 Height = maxY-minY
             };
-
 
             var xscale = 1/ dimension.Width;
             var yscale = 1 / dimension.Height;
@@ -102,9 +105,11 @@ namespace GDO.Apps.Graph
                 Width = 1,
                 Height = 1
             };
-            
 
-            #endregion 
+
+            #endregion
+
+            #region fill Links data structure 
 
             links = graphelem.Elements(ns + "edge").Select(xn =>
             new
@@ -124,7 +129,13 @@ namespace GDO.Apps.Graph
                 EndPos = nodesbyID[l.target].Pos
             }).ToList();
 
-            Console.WriteLine(keys.Count());
+            #endregion
+
+            Console.WriteLine(keys.Count);
+
+            sw.Stop();
+            Debug.WriteLine("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
+            GraphAppHub.self.LogTime("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
         }
     }
 }

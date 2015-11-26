@@ -10,7 +10,7 @@ $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     // arrays to store data
-    var links, nodes, labels, mostConnectedNodes = [];
+    var links, nodes, mostConnectedNodes = [];
     var minLinks = 3;
 
     // boolean to track if current graph is zoomed
@@ -73,106 +73,100 @@ $(function () {
         scroll_bottom(logDom[0]);
     }
 
-
     var overallFolder; // defined in renderGraph()
-    var nodeList;
 
-    $.connection.graphAppHub.client.renderSearch = function (folderName) {
-        alert("THIS IS THE RENDERSEARCH_1 FUNCTION!");         //TODO FIX remove
+
+    $.connection.graphAppHub.client.renderLabels = function () {
+            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
+
+            var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
+            var padding =  globalZoomed ? 5 : 3;
+
+            nodes.forEach(function (node) {
+                labelsDom.append("text")
+                    .attr("x", node.Pos.X + padding)
+                    .attr("y", node.Pos.Y - padding)
+                    .text(node.Label)
+                    .attr("font-size", fontSize)
+                    .attr("fill", "white");    // Labels: normal mode
+            });
+        }
+    }
+
+    $.connection.graphAppHub.client.renderSearch = function (searchquery) {
 
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            var basePath = "\\Web\\Graph\\graph\\" + overallFolder + "\\search\\" + folderName + "\\";
-            var nodesPath = basePath + "nodes.json";
-            var linksPath = basePath + "links.json";
-            searchPath = nodesPath;
+            var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
+            var linksDom = highlightDom.append("g").attr("id", "sublinks");
 
-            var highlightDom = document.body.getElementsByTagName('iframe')[0]
-                                            .contentDocument.getElementById("highlight");
+            renderSearchNodes(searchquery);
+            //renderSearchLinks(searchquery);
 
-            var linksDom = highlightDom.append("g")
-                                       .attr("id", "sublinks");
+            function renderSearchNodes(searchquery) {
 
-            alert("SEARCH> readytorender Links");         //TODO FIX remove
-            renderSearchLinks(linksPath);
-            alert("SEARCH> readytorender Nodes");         //TODO FIX remove
-            renderSearchNodes(nodesPath);
-            alert("SEARCH> Links and Nodes rendered");         //TODO FIX remove
-            
+                //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
-            function renderSearchNodes(file) {
-                var xhr = new XMLHttpRequest();
-
-                xhr.open("GET", file, true);
-                xhr.send();
-
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        nodeList = JSON.parse(xhr.responseText);        //TODO FIX
-
-                        var radius = globalZoomed ? zoomedRadius + 2 : normalRadius + 2;
-
-                        nodeList.forEach(function (node) {
-
-                            highlightDom.append("circle")
-                                .attr("r", radius)
-                                .attr("cx", node.Pos.X)
-                                .attr("cy", node.Pos.Y)
-                                .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");  // Nodes: search mode                            
-                        });
-
-                    }
-                }
+                nodes.forEach(function(node) {
+                    if (node.Label.search(searchquery) != -1) {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size) + 5)
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")"); // Nodes: search mode , selected   
+                    } /*else {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size))
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "gray"); // Nodes: search mode, not selected
+                    } */
+                });
             }
 
 
-            function renderSearchLinks(file) {
-                var xhr = new XMLHttpRequest();
+            function renderSearchLinks(searchquery) {
 
-                xhr.open("GET", file, true);
-                xhr.send();
+                var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        var linkList = JSON.parse(xhr.responseText);          //TODO FIX
+                links.forEach(function (link) {
+                    if (link.Source.search(searchquery) != 1 || link.Target.search(searchquery) != 1) {
 
-                        var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
-
-                        linkList.forEach(function (link) {
-
-                            linksDom.append("line")
-                                .attr("x1", link.StartPos.X)
-                                .attr("y1", link.StartPos.Y)
-                                .attr("x2", link.EndPos.X)
-                                .attr("y2", link.EndPos.Y)
-                                .attr("stroke-width", strokeWidth)
-                                .attr("stroke", "#B8B8B8");
-                        });
-
+                        linksDom.append("line")
+                            .attr("x1", link.StartPos.X)
+                            .attr("y1", link.StartPos.Y)
+                            .attr("x2", link.EndPos.X)
+                            .attr("y2", link.EndPos.Y)
+                            .attr("stroke-width", strokeWidth)
+                            .attr("stroke", "yellow");
+                    } else {
+                        console.log("no link!");
                     }
-                }
+                });
+
             }
         }
     }
 
-    $.connection.graphAppHub.client.renderSearchLabels = function () {
+
+    $.connection.graphAppHub.client.renderSearchLabels = function (searchquery) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            var highlightDom = document.body.getElementsByTagName('iframe')[0]
-                                            .contentDocument.getElementById("highlight");
+            var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
             var padding = globalZoomed ? 4 : 3;
 
-            alert("THIS IS THE RENDERSEARCHLABELS_1 FUNCTION!");         //TODO FIX remove
-
-            nodeList.forEach(function (node) {
-
+            nodes.forEach(function (node) {
+                if (node.Label.search(searchquery) != -1) {
                     highlightDom.append("text")
                         .attr("x", node.Pos.X + padding)
                         .attr("y", node.Pos.Y - padding)
                         .text(node.Label)
                         .attr("font-size", fontSize)
-                        .attr("fill", "yellow");      // Labels: search mode
+                        .attr("fill", "yellow"); // Labels: search mode
+                }
             });
 
         }
@@ -180,10 +174,8 @@ $(function () {
 
     $.connection.graphAppHub.client.hideSublinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            alert("THIS IS THE HIDESUBLINKS_1 FUNCTION!");         //TODO FIX remove
-            var dom = document.body.getElementsByTagName('iframe')[0]
-                                    .contentDocument.getElementById("sublinks");
 
+            var dom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("sublinks");
             while (dom.firstChild) {
                 dom.removeChild(dom.firstChild);
             }
@@ -209,11 +201,7 @@ $(function () {
     $.connection.graphAppHub.client.hideHighlight = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE HIDEHIGHLIGHT_1 FUNCTION!");         //TODO FIX remove
-            var highlightDom = document.body
-                                    .getElementsByTagName('iframe')[0]
-                                    .contentDocument.getElementById("highlight");
-
+            var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
             while (highlightDom.firstChild) {
                 highlightDom.removeChild(highlightDom.firstChild);
             }
@@ -224,18 +212,13 @@ $(function () {
     $.connection.graphAppHub.client.renderMostConnectedNodes = function (numLinks) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE rendermostconnected_1 FUNCTION! " + numLinks);         //TODO FIX remove
+            var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
-            var highlightDom = document.body
-                                    .getElementsByTagName('iframe')[0]
-                                    .contentDocument.getElementById("highlight");
-
-            var radius = globalZoomed ? zoomedRadius + 2 : normalRadius + 2;
+            //var radius = globalZoomed ? zoomedRadius + 2 : normalRadius + 2;
 
             mostConnectedNodes.forEach(function (node) {
 
-                if (node.NumLinks >= numLinks) {  // TODO is this check really necessary?
-
+                if (node.NumLinks >= numLinks) {  // mostConnectedNodes has all nodes with numLinks > 3
                     highlightDom.append("circle")
                         .attr("r", Math.ceil(node.Size))
                         .attr("cx", node.Pos.X)
@@ -250,27 +233,20 @@ $(function () {
     $.connection.graphAppHub.client.renderMostConnectedLabels = function (numLinks) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE rendermostconnectedlabels_1 FUNCTION!" + numLinks);         //TODO FIX remove
-
-            var highlightDom = document.body
-                                    .getElementsByTagName('iframe')[0]
-                                    .contentDocument.getElementById("highlight");
-
+            var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
             var padding = globalZoomed ? 5 : 3;
 
             mostConnectedNodes.forEach(function (node) {
 
-                if (node.NumLinks >= numLinks) {   // TODO is this check really necessary?
-                    console.log("label: " + node.Label + ", pos: " + node.Pos.X + ", " + node.Pos.Y + ", node id: " + node.ID);
-
+                if (node.NumLinks >= numLinks) {   // mostConnectedNodes contains nodes with numLinks > 3
                     highlightDom.append("text")
                         .attr("x", node.Pos.X + padding)
                         .attr("y", node.Pos.Y - padding)
                         .text(node.Label)
                         .attr("font-size", fontSize)
-                        .attr("fill", "green");    // Labels: highlighted mode        
+                        .attr("fill", "yellow");    // Labels: highlighted mode        
                 }
             });
 
@@ -281,24 +257,18 @@ $(function () {
     $.connection.graphAppHub.client.hideNodes = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE HIDENODES_1 FUNCTION!");         //TODO FIX remove
-
-            var nodesDom = document.body.getElementsByTagName('iframe')[0]
-                                        .contentDocument.getElementById("nodes");
-
+            var nodesDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("nodes");
             while (nodesDom.firstChild) {
                 nodesDom.removeChild(nodesDom.firstChild);
             }
         }
     }
 
+    //TODO this function must be changed to use proper colours and sizes
     $.connection.graphAppHub.client.renderNodes = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE RENDERNODES_3 FUNCTION!");         //TODO FIX remove
-
-            var nodesDom = document.body.getElementsByTagName('iframe')[0]
-                                        .contentDocument.getElementById("nodes");
+            var nodesDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("nodes");
 
             var radius = globalZoomed ? zoomedRadius : normalRadius;
 
@@ -312,16 +282,13 @@ $(function () {
                     .attr("cy", node.Pos.Y)
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
             });
-
         }
     }
 
     $.connection.graphAppHub.client.hideLinks = function () {
-        alert("THIS IS THE HIDELINKS_1 FUNCTION!");         //TODO FIX remove
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            var linksDom = document.body.getElementsByTagName('iframe')[0]
-                                        .contentDocument.getElementById("links");
 
+            var linksDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("links");
             while (linksDom.firstChild) {
                 linksDom.removeChild(linksDom.firstChild);
             }
@@ -329,10 +296,8 @@ $(function () {
     }
 
     $.connection.graphAppHub.client.showLinks = function () {
-        alert("THIS IS THE RENDERLINKS_1 FUNCTION!");         //TODO FIX remove
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            var linksDom = document.body.getElementsByTagName('iframe')[0]
-                                        .contentDocument.getElementById("links");
+            var linksDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("links");
 
             var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
@@ -346,7 +311,6 @@ $(function () {
                     .attr("stroke-width", strokeWidth)
                     .attr("stroke", "#B8B8B8");
             });
-
         }
     }
 
@@ -355,11 +319,7 @@ $(function () {
     $.connection.graphAppHub.client.hideLabels = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE HIDELABELS_2 FUNCTION!");         //TODO FIX remove
-
-            var labelsDom = document.body.getElementsByTagName('iframe')[0]
-                                         .contentDocument.getElementById("labels");
-
+            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
             while (labelsDom.firstChild) {
                 labelsDom.removeChild(labelsDom.firstChild);
             }
@@ -369,23 +329,19 @@ $(function () {
     $.connection.graphAppHub.client.renderLabels = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("THIS IS THE RENDERLABELS_2 FUNCTION!");         //TODO FIX remove
-
-            var labelsDom = document.body.getElementsByTagName('iframe')[0]
-                                         .contentDocument.getElementById("labels");
+            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
             var padding =  globalZoomed ? 5 : 3;
 
-            nodes.forEach(function (node, index) {
+            nodes.forEach(function (node) {
 
                 labelsDom.append("text")
                     .attr("x", node.Pos.X + padding)
                     .attr("y", node.Pos.Y - padding)
-                    .text(labels[index])
+                    .text(node.Label)
                     .attr("font-size", fontSize)
                     .attr("fill", "white");    // Labels: normal mode
-                ;
             });
         }
     }
@@ -422,8 +378,6 @@ $(function () {
     // Function to render buffer for zoomed-in graph
     $.connection.graphAppHub.client.renderBuffer = function (folderNameDigit) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            alert("THIS IS RENDERBUFFER!_1 FUNCTION!");         //TODO FIX remove
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Rendering graph buffer");
 
@@ -754,13 +708,11 @@ $(function () {
                                 fileName = (clientRow + i) + "_" + (clientCol + j);
                                 nodesFilePath = basePath + "\\nodes\\" + fileName + ".json";
                                 linksFilePath = basePath + "\\links\\" + fileName + ".json";
-                                labelsFilePath = basePath + "\\labels\\" + fileName + ".json";
 
                                 console.log(fileName + " is being rendered.");
 
                                 renderNodes(nodesFilePath);
                                 renderLinks(linksFilePath);
-                                readPartitionLabels(labelsFilePath);
                             }
                         }
                     }
@@ -848,19 +800,6 @@ $(function () {
                         };
                     }
 
-                    function readPartitionLabels(file) {
-                        var xhr = new XMLHttpRequest();
-
-                        xhr.open("GET", file, true);
-                        xhr.send();
-
-                        xhr.onreadystatechange = function () {
-                            if (xhr.readyState == 4 && xhr.status == 200) {
-                                labels = JSON.parse(xhr.responseText);
-                            }
-                        }
-                    }
-
                 }, { "simplesvg": 1 }]
             }, {}, [6]);
         }
@@ -872,8 +811,6 @@ $(function () {
     // @param (boolean) zoomed: indicates if it's a zoomed graph; 'true' means zoomed
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit, zoomed) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            alert("THIS IS RENDERGRAPH!_1 FUNCTION!");         //TODO FIX remove
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
@@ -888,9 +825,6 @@ $(function () {
                 basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal";
                 fileName = clientRow + "_" + clientCol;
 
-                /*
-                linksFilePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\normal\\links\\" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol + ".bin";
-                */
             } else {  // for zoomed in graph, read the file that's 1 row and 1 col more
                 globalZoomed = true;
                 basePath = "\\Web\\Graph\\graph\\" + folderNameDigit + "\\zoomed";
@@ -899,7 +833,6 @@ $(function () {
 
             var nodesFilePath = basePath + "\\nodes\\" + fileName + ".json";
             var linksFilePath = basePath + "\\links\\" + fileName + ".json";    
-            var labelsFilePath = basePath + "\\labels\\" + fileName + ".json";
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -1258,10 +1191,8 @@ $(function () {
                     console.log("Time before reading linksPos.json: " + window.performance.now());
                     renderLinks(linksFilePath);
 
-                    // read in labels and store in variable 'labels' for rendering later
-                    readLabels(labelsFilePath);
 
-                    // new optimised rendering, to read from binary pos files
+                    // new optimised rendering, to read from distributed json files
                     function renderNodes(file) {
 
                         console.log("Rendering nodes from: " + file);
@@ -1302,11 +1233,9 @@ $(function () {
 
                                     nodesDom.append("circle")
                                         .attr("r", Math.ceil(node.Size)) // radius
-                                        //.attr("r", radius) // radius
                                         .attr("cx", node.Pos.X)
                                         .attr("cy", node.Pos.Y)
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
-                                        //.attr("fill", "cyan");    // Nodes: normal mode
                                         .attr("fill","rgb(" + node.R + "," + node.G + "," + node.B + ")");
                                 });
 
@@ -1342,26 +1271,11 @@ $(function () {
                                         .attr("stroke-width", strokeWidth)
                                         .attr("stroke", "#B8B8B8");
                                 });
-
                                 console.log("Time after appending links: " + window.performance.now());
                             }
 
                         };
                     }
-
-                    function readLabels(file) {
-                        var xhr = new XMLHttpRequest();
-
-                        xhr.open("GET", file, true);
-                        xhr.send();
-
-                        xhr.onreadystatechange = function () {
-                            if (xhr.readyState == 4 && xhr.status == 200) {
-                                labels = JSON.parse(xhr.responseText);
-                            }
-                        }
-                    }
-
 
                 }, { "simplesvg": 1 }]
             }, {}, [6]);

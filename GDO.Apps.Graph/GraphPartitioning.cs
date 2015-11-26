@@ -114,8 +114,8 @@ namespace GDO.Apps.Graph
 
                 // START OF IMPROVED INTERSECTION ALGORITHM
                 // cases:
-                // 1. both in the same partition
-                // 2. both in different partitions
+                // 1. Nodes in the same partition
+                // 2. Nodes in different partitions
 
                 if (rowDiff == 0 && colDiff == 0)
                 {
@@ -131,7 +131,7 @@ namespace GDO.Apps.Graph
 
                     // calculate line equation y = mx + c
                     var m = (endPos.Y - startPos.Y)/(endPos.X - startPos.X);
-                    var c = startPos.Y - (m*startPos.X);
+                    var c = startPos.Y - m * startPos.X;
 
                     // get intersection points
                     // check for x intersection with horizontal line (y = a)

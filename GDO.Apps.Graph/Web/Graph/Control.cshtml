@@ -386,7 +386,7 @@
         $("#show_searchLabels").click(function () {
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
 
-            gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId);
+            gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#searchKeywords").val());
         });
 
         $("#hide_sublinks").click(function () {
