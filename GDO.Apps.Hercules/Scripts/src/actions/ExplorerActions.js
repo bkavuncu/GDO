@@ -1,5 +1,5 @@
 const Dispatcher = require('../Dispatcher'),
-    schemas = require('../schemas/Dataset');
+    schemas = require('../schemas/DatasetStructure');
 
 var datasets = [
     {
@@ -219,14 +219,25 @@ export function requestMinisets () {
     datasets.map ((d) => {
         var valid = schemas.validMiniset;
 
-        if (valid(d)) {
-            console.log('Una bomba');
-        } else {
-            console.error(valid.errors(d))
-        }
+        if (!valid(d))
+            console.error(valid.errors(d));
+
         Dispatcher.dispatch({
             actionType: 'addMiniset',
             data: d
         })
     })
+}
+
+export function selectDataset (datasetId) {
+    Dispatcher.dispatch({
+        actionType: 'selectDataset',
+        datasetId: datasetId
+    });
+}
+
+export function unloadDataset () {
+    Dispatcher.dispatch({
+        actionType: 'unloadDataset'
+    });
 }

@@ -124,9 +124,8 @@ class DeployerGrid extends React.Component {
                 flexDirection: 'column'
             },
             gridStyle = {
-                alignContent: 'flex-start',
                 flexGrow: 1,
-                flexShrink: 1,
+                flexWrap: 'wrap-reverse',
                 height: 'auto',
                 padding: PADDING + 'px',
                 backgroundColor: '#80cbc4',
@@ -355,4 +354,7 @@ class GridWrapper extends React.Component {
         return <DeployerGrid {...this.state}/>
     }
 }
+
+GridWrapper.prototype.tabName = 'Section Deployer';
+
 module.exports = GridWrapper;

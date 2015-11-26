@@ -100,15 +100,15 @@
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=2.1.1.5, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MongoDB.Bson">
       <HintPath>..\packages\MongoDB.Bson.2.1.1\lib\net45\MongoDB.Bson.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Driver, Version=2.1.1.5, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MongoDB.Driver">
       <HintPath>..\packages\MongoDB.Driver.2.1.1\lib\net45\MongoDB.Driver.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MongoDB.Driver.Core, Version=2.1.1.5, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MongoDB.Driver.Core">
       <HintPath>..\packages\MongoDB.Driver.Core.2.1.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -206,9 +206,7 @@
     <Content Include="npmPlaceholder.txt" />
     <Content Include="packages.config" />
     <Content Include="Configurations\Hercules\default.json" />
-    <Content Include="Scripts\build\assets\control.js" />
     <Content Include="Scripts\build\index.html" />
-    <Content Include="Scripts\build\assets\control.js.map" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\d3.v3.js" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
@@ -216,14 +214,37 @@
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\src\actions\DeployerActions.js" />
+    <Content Include="Scripts\src\actions\ExplorerActions.js" />
+    <Content Include="Scripts\src\actions\GraphBuilderActions.js" />
+    <Content Include="Scripts\src\actions\NavigationActions.js" />
+    <Content Include="Scripts\src\DataFilter.js" />
+    <Content Include="Scripts\src\Dispatcher.js" />
+    <Content Include="Scripts\src\Explorer.js" />
+    <Content Include="Scripts\src\GraphAxisBox.js" />
+    <Content Include="Scripts\src\GraphBuilder.js" />
+    <Content Include="Scripts\src\GraphControl.js" />
+    <Content Include="Scripts\src\GraphField.js" />
+    <Content Include="Scripts\src\Importer.js" />
+    <Content Include="Scripts\src\index.html" />
+    <Content Include="Scripts\src\schemas\DatasetStructure.js" />
+    <Content Include="Scripts\src\schemas\GraphStructure.js" />
+    <Content Include="Scripts\src\schemas\HerculesStructure.js" />
+    <Content Include="Scripts\src\stores\BaseStore.js" />
+    <Content Include="Scripts\src\stores\DatasetStore.js" />
+    <Content Include="Scripts\src\stores\DeployerStore.js" />
+    <Content Include="Scripts\src\stores\GraphBuilderStore.js" />
+    <Content Include="Scripts\src\stores\NavStore.js" />
     <Content Include="Scripts\src\ui\View.jsx" />
+    <Content Include="Scripts\src\DeployerGrid.jsx" />
+    <Content Include="Scripts\src\Tabs.jsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Scripts\src\control.jsx" />
+    <None Include="Scripts\src\Hercules.js" />
     <Content Include="Scripts\react\JSXTransformer-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.min.js" />
@@ -242,15 +263,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\ReactConfig.cs" />
-    <Compile Include="BackEnd\Augment\AColumn.cs" />
-    <Compile Include="BackEnd\Augment\AType.cs" />
-    <Compile Include="BackEnd\Augment\RichDS.cs" />
-    <Compile Include="BackEnd\DB\JsSchema.cs" />
-    <Compile Include="BackEnd\DB\ServerDS.cs" />
-    <Compile Include="BackEnd\Parser\IParser.cs" />
-    <Compile Include="BackEnd\Parser\ParserSSV.cs" />
-    <Compile Include="BackEnd\Main.cs" />
+    <Compile Include="BackEnd\Augmenter.cs" />
+    <Compile Include="BackEnd\Database.cs" />
+    <Compile Include="BackEnd\Hercules.cs" />
+    <Compile Include="BackEnd\Parser.cs" />
     <Compile Include="BackEnd\Stats.cs" />
+    <Compile Include="BackEnd\Types.cs" />
     <Compile Include="BackEnd\Utils.cs" />
     <Compile Include="HerculesApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

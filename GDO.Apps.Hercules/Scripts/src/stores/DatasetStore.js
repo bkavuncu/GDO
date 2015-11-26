@@ -1,12 +1,13 @@
 const BaseStore = require('./BaseStore'),
-    Immutable = require('immutable');
+    Immutable = require('immutable'),
+    assert = require('assert');
 
 class DatasetStore extends BaseStore {
     constructor() {
         super();
 
         this.miniSets = Immutable.Map();
-        this.fullSets = Immutable.Map();
+        this.selected = null;
 
         this.subscribe(() => this._registerToActions.bind(this))
     }
@@ -17,20 +18,34 @@ class DatasetStore extends BaseStore {
                 var miniset = action.data;
                 this.miniSets = this.miniSets.set(miniset.id, miniset);
                 break;
-            case 'addFullset':
-                var fullset = action.data;
-                this.fullSets = this.fullSets.set(fullset.id, fullset);
+            case 'selectDataset':
+                this._select(action.datasetId);
+                break;
+            case 'unloadDataset':
+                this.selected = null;
                 break;
         }
         this.emitChange();
     }
 
-    getMiniSet (id) {
-        return this.miniSets.get(id);
+    _select (id) {
+        if(this.miniSets.has(id)) {
+            this.selected = id;
+        }
     }
 
-    getFullSet (id) {
-        return this.fullSets.get(id);
+    hasActiveDataset () {
+        return !!this.selected;
+    }
+
+    getActiveDatasetId () {
+        assert(this.hasActiveDataset());
+
+        return this.selected;
+    }
+
+    getMiniSet (id) {
+        return this.miniSets.get(id);
     }
 
     getAllSets () {
