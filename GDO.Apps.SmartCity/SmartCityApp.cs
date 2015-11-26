@@ -17,7 +17,7 @@ using Style = GDO.Apps.SmartCity.Core.Style;
 
 namespace GDO.Apps.SmartCity
 {
-    public class SmartCityApp : IAdvancedAppInstance
+    public class SmartCityApp : IVirtualAppInstance
     {
         JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
@@ -37,8 +37,11 @@ namespace GDO.Apps.SmartCity
         public ZindexTable ZindexTable { get; set; }
         public bool IsInitialized = false;
 
-        public void Init()
+        public void Init(int instanceId, string appName, AppConfiguration configuration)
         {
+            this.Id = instanceId;
+            this.AppName = appName;
+            this.Configuration = configuration;
 
             SaveEmptyMap();
             Layers= new GenericDictionary<Layer>();
@@ -56,7 +59,7 @@ namespace GDO.Apps.SmartCity
             Formats.Init();
             ZindexTable.Init();
 
-            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
+            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(configuration.Json.ToString(), JsonSettings);
 
             foreach (Format format in Map.Formats)
             {

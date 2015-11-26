@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
@@ -185,16 +186,34 @@ namespace GDO.Core
         /// <param name="appName">Name of the application.</param>
         /// <param name="configName">Name of the configuration.</param>
         /// <returns></returns>
-        public int DeployApp(int sectionId, string appName, string configName)
+        public int DeployBaseApp(int sectionId, string appName, string configName)
         {
             lock (Cave.ServerLock)
             {
+<<<<<<< HEAD
                 Log.Info("Deploying App "+appName);
                 int instanceId = Cave.CreateAppInstance(sectionId, appName, configName);
+=======
+                int instanceId = Cave.CreateBaseAppInstance(sectionId, appName, configName);
+>>>>>>> virtual app structure 1
                 Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
                 if (instanceId >= 0)
                 {
-                    BroadcastAppUpdate(sectionId, appName, configName, instanceId, Cave.Apps[appName].P2PMode, true);
+                    BroadcastBaseAppUpdate(sectionId, appName, configName, instanceId, Cave.Apps[appName].P2PMode, true);
+                }
+                return instanceId;
+            }
+        }
+
+
+        public int DeployVirtualApp(List<int> instanceIds, string appName, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                int instanceId = Cave.CreateVirtualAppInstance(instanceIds, appName, configName);
+                if (instanceId >= 0)
+                {
+                    BroadcastVirtualAppUpdate(appName, configName, instanceId, true, instanceIds);
                 }
                 return instanceId;
             }
@@ -209,10 +228,37 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
+<<<<<<< HEAD
                 Log.Info("Closing App instance "+instanceId);
 
                 if (!Cave.ContainsInstance(instanceId)) {
                     return false;
+=======
+                if (Cave.ContainsInstance(instanceId))
+                {
+                    string appName = Cave.GetAppName(instanceId);
+
+                    if (Cave.Apps[appName].Instances[instanceId] is IBaseAppInstance)
+                    {
+                        int sectionId = ((IBaseAppInstance) Cave.Apps[appName].Instances[instanceId]).Section.Id;
+                        Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
+                        if (Cave.DisposeBaseAppInstance(appName, instanceId))
+                        {
+                            BroadcastBaseAppUpdate(sectionId, appName, "", instanceId, (int) Cave.P2PModes.None, false);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        List<int> integratedInstances =((IVirtualAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        if (Cave.DisposeVirtualAppInstance(appName, instanceId))
+                        {
+                            BroadcastVirtualAppUpdate(appName, "", instanceId, false, integratedInstances);
+                            return true;
+                        }
+
+                    }
+>>>>>>> virtual app structure 1
                 }
 
                 string appName = Cave.GetAppName(instanceId);
@@ -297,7 +343,7 @@ namespace GDO.Core
                     if (Cave.ContainsInstance(instanceId))
                     {
                         Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId), Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Name,
-                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()));
+                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()), Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.IntegrationMode);
                     }
                 }
                 catch (Exception e)
@@ -459,20 +505,69 @@ namespace GDO.Core
             }
         }
 
+<<<<<<< HEAD
         private bool BroadcastAppUpdate(int sectionId, string appName, string configName, int instanceId, int p2pmode,bool exists) {
             try {
                 if (exists) {
                     if (Cave.Apps.ContainsKey(appName)) {
                         if (Cave.ContainsInstance(instanceId) &&
                             Cave.Apps[appName].Configurations.ContainsKey(configName)) {
+=======
+        private bool BroadcastBaseAppUpdate(int sectionId, string appName, string configName, int instanceId, int p2pmode, bool exists)
+        {
+            try
+            {
+                if (exists)
+                {
+                    if (Cave.Apps.ContainsKey(appName))
+                    {
+                        if (Cave.ContainsInstance(instanceId) && Cave.Apps[appName].Configurations.ContainsKey(configName))
+                        {
                             //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
-                            Clients.All.receiveAppUpdate(sectionId, appName, configName, instanceId, p2pmode, exists);
+                            Clients.All.receiveBaseAppUpdate(sectionId, appName, configName, instanceId, p2pmode, true);
                             return true;
                         }
                     }
                 }
+                else
+                {
+                    Clients.All.receiveBaseAppUpdate(sectionId, appName, -1, instanceId, p2pmode, false);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            return false;
+        }
+
+        private bool BroadcastVirtualAppUpdate(string appName, string configName, int instanceId, bool exists, List<int> integratedInstanceIds)
+        {
+            try
+            {
+                if (exists)
+                {
+                    if (Cave.Apps.ContainsKey(appName))
+                    {
+                        if (Cave.ContainsInstance(instanceId) && Cave.Apps[appName].Configurations.ContainsKey(configName))
+                        {
+>>>>>>> virtual app structure 1
+                            //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
+                            Clients.All.receiveVirtualAppUpdate(appName, configName, instanceId, true, integratedInstanceIds);
+                            return true;
+                        }
+                    }
+                }
+<<<<<<< HEAD
                 else {
                     Clients.All.receiveAppUpdate(sectionId, appName, -1, instanceId, p2pmode, exists);
+=======
+                else
+                {
+                    Clients.All.receiveVirtualAppUpdate( appName, -1, instanceId, false, integratedInstanceIds);
+>>>>>>> virtual app structure 1
                     return true;
                 }
             }

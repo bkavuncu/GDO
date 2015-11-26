@@ -14,7 +14,7 @@ namespace GDO.Apps.ShanghaiMetro
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         
         public bool BingLayer { get; set; }
@@ -36,26 +36,30 @@ namespace GDO.Apps.ShanghaiMetro
         public string Style { get; set; }
         public bool IsInitialized = false;
 
-        public void Init()
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
+            this.Id = instanceId;
+            this.AppName = appName;
+            this.Section = section;
+            this.Configuration = configuration;
             this.mode = false;
             this.Position = new MapPosition();
-            this.Position.Center[0] = (string)Configuration.Json.SelectToken("center[0]");
-            this.Position.Center[1] = (string)Configuration.Json.SelectToken("center[1]");
-            this.Position.TopLeft[0] = (string)Configuration.Json.SelectToken("topLeft[0]");
-            this.Position.TopLeft[1] = (string)Configuration.Json.SelectToken("topLeft[1]");
-            this.Position.BottomRight[0] = (string)Configuration.Json.SelectToken("bottomRight[0]");
-            this.Position.BottomRight[1] = (string)Configuration.Json.SelectToken("bottomRight[1]");
-            this.Position.Resolution = (string)Configuration.Json.SelectToken("resolution");
-            this.Position.Zoom = (int)Configuration.Json.SelectToken("zoom");
-            this.Position.Width = (int)Configuration.Json.SelectToken("width");
-            this.Position.Height = (int)Configuration.Json.SelectToken("height");
-            this.Blur = (int)Configuration.Json.SelectToken("blur");
-            this.Radius = (int)Configuration.Json.SelectToken("radius");
-            this.Opacity = (float) Configuration.Json.SelectToken("opacity");
-            this.StationWidth = (int)Configuration.Json.SelectToken("station");
-            this.LineWidth = (int)Configuration.Json.SelectToken("line");
-            this.Entry = (bool)Configuration.Json.SelectToken("entry");
+            this.Position.Center[0] = (string)configuration.Json.SelectToken("center[0]");
+            this.Position.Center[1] = (string)configuration.Json.SelectToken("center[1]");
+            this.Position.TopLeft[0] = (string)configuration.Json.SelectToken("topLeft[0]");
+            this.Position.TopLeft[1] = (string)configuration.Json.SelectToken("topLeft[1]");
+            this.Position.BottomRight[0] = (string)configuration.Json.SelectToken("bottomRight[0]");
+            this.Position.BottomRight[1] = (string)configuration.Json.SelectToken("bottomRight[1]");
+            this.Position.Resolution = (string)configuration.Json.SelectToken("resolution");
+            this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
+            this.Position.Width = (int)configuration.Json.SelectToken("width");
+            this.Position.Height = (int)configuration.Json.SelectToken("height");
+            this.Blur = (int)configuration.Json.SelectToken("blur");
+            this.Radius = (int)configuration.Json.SelectToken("radius");
+            this.Opacity = (float) configuration.Json.SelectToken("opacity");
+            this.StationWidth = (int)configuration.Json.SelectToken("station");
+            this.LineWidth = (int)configuration.Json.SelectToken("line");
+            this.Entry = (bool)configuration.Json.SelectToken("entry");
             this.BingLayer = true;
             this.StamenLayer = false;
             this.StationLayer = true;

@@ -10,12 +10,6 @@ gdo.net.P2P_MODE = {
     NEIGHBOUR: 3
 };
 
-gdo.net.APP_TYPE = {
-    NONE: -1,
-    BASE: 1,
-    ADVANCED: 2
-};
-
 gdo.net.NEIGHBOUR_ENUM = {
     TOPLEFT: 0,
     TOP: 1,
@@ -28,22 +22,12 @@ gdo.net.NEIGHBOUR_ENUM = {
     BOTTOMRIGHT: 8
 };
 
-gdo.net.time = new Date();
-gdo.net.connectionState = 0;
-
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
     // that is why they are on load
-
-    $.connection.caveHub.client.receiveDefaultP2PMode = function (defaultP2PMode) {
+    $.connection.caveHub.client.receiveDefaultP2PMode = function(defaultP2PMode) {
         gdo.net.p2pmode = defaultP2PMode;
     }
-
-    $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
-        gdo.net.time.setTime(heartbeat);
-        //gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
-    }
-
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);
@@ -104,7 +88,7 @@ $(function() {
         for (var i = 0; i < instances.length; i++) {
             if (instances[i] != null) {
                 var instance = JSON.parse(instances[i]);
-                gdo.net.processInstance(true, i, instance);
+                gdo.net.processInstance(instance);
             }
         }
         for (var i = 0; i < states.length; i++) {
@@ -145,11 +129,49 @@ $(function() {
         }
     }
 
-    $.connection.caveHub.client.receiveAppUpdate = function (status, id, serializedInstance) {
-        gdo.consoleOut('.NET', 1, 'Received App Update : (id:' + id + ', exists: ' +status + ")");
+    $.connection.caveHub.client.receiveAppUpdate = function(sectionId, appName, configName, instanceId, p2pMode, exists) {
         if (gdo.net.isNodeInitialized()) {
-            var instance = JSON.parse(serializedInstance);
-            gdo.net.processInstance(status, id, instance);
+            gdo.consoleOut('.NET', 1, 'Received App Update : (id:' + instanceId + ', exists: ' + exists + ")");
+            if (exists) {
+                gdo.net.instance[instanceId].appName = appName;
+                gdo.net.instance[instanceId].id = instanceId;
+                gdo.net.instance[instanceId].sectionId = sectionId;
+                gdo.net.instance[instanceId].exists = true;
+                gdo.net.instance[instanceId].configName = configName;
+                gdo.net.section[sectionId].appInstanceId = instanceId;
+                if (gdo.net.app[appName].config[configName] == null) {
+                    gdo.net.server.requestAppConfiguration(instanceId);
+                }
+                gdo.net.app[appName].p2pMode = p2pMode;
+                for (var i = 0; i < gdo.net.section[sectionId].cols; i++) {
+                    for (var j = 0; j < gdo.net.section[sectionId].rows; j++) {
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].p2pmode = p2pMode;
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = instanceId;
+                    }
+                }
+                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                    gdo.net.app[appName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
+                    gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + appName+ ', instanceId: ' + instanceId + ")");
+                }
+                gdo.net.app[appName].instances[instanceId] = {};
+                gdo.net.app[appName].instances[instanceId].id = instanceId;
+                gdo.net.app[appName].instances[instanceId].config = configName;
+                gdo.net.app[appName].instances[instanceId].exists = true;
+            } else {
+                if (gdo.net.node[gdo.clientId].sectionId == sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                    gdo.net.app[appName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
+                    gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + appName + ', instanceId: ' + instanceId + ")");
+                }
+                gdo.net.instance[instanceId].exists = false;
+                gdo.net.section[sectionId].appInstanceId = -1;
+                for (var i = 0; i < gdo.net.section[sectionId].cols; i++) {
+                    for (var j = 0; j < gdo.net.section[sectionId].rows; j++) {
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].p2pmode = gdo.net.p2pmode;
+                        gdo.net.node[gdo.net.getNodeId(gdo.net.section[sectionId].col + i, gdo.net.section[sectionId].row + j)].appInstanceId = -1;
+                    }
+                }
+                gdo.net.app[appName].instances[instanceId].exists = false;
+            }
             setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 700 + Math.floor((Math.random() * 21000) + 1));
             gdo.updateSelf();
             if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -165,36 +187,9 @@ $(function() {
             gdo.updateSelf();
         }
     }
-    $.connection.caveHub.connection.stateChanged(gdo.net.connectionStateChanged);
+
 });
 
-
-gdo.net.connectionStateChanged = function (state) {
-    gdo.net.connectionState = state.newState;
-    var stateConversion = { 0: 'CONNECTING', 1: 'CONNECTED', 2: 'RECONNECTING', 4: 'DISCONNECTED' };
-    $("#connection_icon")
-        .removeClass("fa-arrow-right")
-        .removeClass("fa-check")
-        .removeClass("fa-repeat")
-        .removeClass("fa-times");
-    if (state.newState == 0) {
-        gdo.consoleOut('.NET', 1,'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
-        $("#connection_status").css("background", "#2A9FD6");
-        $("#connection_icon").addClass("fa-arrow-right");
-    }else if (state.newState == 1) {
-        gdo.consoleOut('.NET', 0, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
-        $("#connection_status").css("background", "#77B300");
-        $("#connection_icon").addClass("fa-check");
-    }else if (state.newState == 2) {
-        gdo.consoleOut('.NET', 4, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
-        $("#connection_status").css("background", "#FF8800");
-        $("#connection_icon").addClass("fa-repeat");
-    } else if (state.newState == 4) {
-        gdo.consoleOut('.NET', 5, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
-        $("#connection_status").css("background", "#CC0000");
-        $("#connection_icon").addClass("fa-times");
-    }
-}
 
 gdo.net.initHub = function () {
     /// <summary>
@@ -205,7 +200,6 @@ gdo.net.initHub = function () {
     gdo.net.connection = $.connection;
     gdo.net.server = $.connection.caveHub.server;
     gdo.net.node[gdo.clientId].connectionId = gdo.net.connection.hub.id;
-    gdo.net.server.initialize();
     //gdo.net.listener = $.connection.caveHub.client;
     gdo.consoleOut('.NET', 0, 'Connected to Hub');
 }
@@ -524,7 +518,6 @@ gdo.net.initializeArrays = function (num) {
         gdo.net.node[i].isSelected = false;
         gdo.net.node[i].sectionId = 0;
         gdo.net.node[i].appInstanceId = -1;
-        gdo.net.node[i].lastUpdate = 100;
         gdo.net.node[i].sendData = function (id, type, command, data, mode) {
             var dataObj = {};
             dataObj.type = type;
@@ -627,7 +620,6 @@ gdo.net.processNode = function (node)
     gdo.net.node[node.Id].sectionRow = node.SectionRow;
     gdo.net.node[node.Id].sectionId = node.SectionId;
     gdo.net.node[node.Id].deployed = node.IsDeployed;
-    //gdo.net.node[id].lastUpdate = 0;
     if (node.Id != gdo.clientId || gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.node[node.Id].connectionId = node.ConnectionId;
         gdo.net.node[node.Id].peerId = node.PeerId;
@@ -648,10 +640,7 @@ gdo.net.processNode = function (node)
         }
         gdo.net.section[gdo.net.node[node.Id].sectionId].health = gdo.net.section[gdo.net.node[node.Id].sectionId].health / (gdo.net.section[gdo.net.node[node.Id].sectionId].cols * gdo.net.section[gdo.net.node[node.Id].sectionId].rows);
     }
-    if (gdo.management.processNodeUpdate != null) {
-        gdo.management.processNodeUpdate(node.Id);
-    }
-    //gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
+    gdo.consoleOut('.NET', 2, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
 }
 
 gdo.net.processSection = function(exists, id, section) {
@@ -711,83 +700,41 @@ gdo.net.processApp = function (app) {
     gdo.net.app[app.Name].server = $.connection[hubName].server;
     gdo.net.app[app.Name].config = new Array();
     gdo.net.app[app.Name].p2pMode = app.P2PMode;
-    gdo.net.app[app.Name].appType = app.AppType;
+    //TODO
     gdo.net.app[app.Name].config = new Array(app.ConfigurationList.length);
     for (var i = 0; i < app.ConfigurationList.length; i++) {
         gdo.net.app[app.Name].config[i] = app.ConfigurationList[i];
     }
     gdo.net.app[app.Name].instances = [];
-    if (app.SupportedApps != null) {
-        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.ADVANCED;
-        gdo.net.app[app.Name].supportedApps = app.SupportedApps;
-    } else {
-        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.BASE;
-        gdo.net.app[app.Name].supportedApps = {};
-    }
 }
 
-gdo.net.processInstance = function (exists, id, instance) {
-    gdo.consoleOut('.NET', 2, 'Updating Instance: ' + id + ' (' + exists + ')');
-    if (exists) {
-        gdo.net.instance[instance.Id].appName = instance.AppName;
-        gdo.net.instance[instance.Id].id = instance.Id;
-        gdo.net.instance[instance.Id].exists = true;
-        gdo.net.instance[instance.Id].configName = instance.Configuration.Name;
-
-        if (gdo.net.app[instance.AppName].config[instance.Configuration.Name] == null) {
-            gdo.net.server.requestAppConfiguration(instance.Id);
-        }
-
-        if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.BASE) {
-            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.BASE;
-            gdo.net.instance[instance.Id].integrationMode = instance.IntegrationMode;
-            gdo.net.instance[instance.Id].sectionId = instance.Section.Id;
-            gdo.net.section[instance.Section.Id].appInstanceId = instance.Id;
-            for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {
-                for (var j = 0; j < gdo.net.section[instance.Section.Id].rows; j++) {
-                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].p2pmode = gdo.net.app[instance.AppName].p2pMode;
-                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = instance.Id;
-                }
-            }
-            if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
-                gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
-            }
-        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
-            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.ADVANCED;
-            gdo.net.instance[instance.Id].integratedInstances = instance.IntegratedInstances;
-        } else {
-            gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
-        }
-
-        gdo.net.app[instance.AppName].instances[instance.Id] = {};
-        gdo.net.app[instance.AppName].instances[instance.Id].id = instance.Id;
-        gdo.net.app[instance.AppName].instances[instance.Id].config = instance.Configuration.Name;
-        gdo.net.app[instance.AppName].instances[instance.Id].exists = true;
-    } else {
-        if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.BASE) {
-            if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                gdo.net.app[instance.AppName].server.exitGroup(gdo.net.node[gdo.clientId].appInstanceId);
-                gdo.consoleOut('.NET', 1, 'Exiting Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
-            }
-            gdo.net.section[instance.Section.Id].appInstanceId = -1;
-            for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {
-                for (var j = 0; j < gdo.net.section[instance.Section.Id].rows; j++) {
-                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].p2pmode = gdo.net.p2pmode;
-                    gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = -1;
-                }
-            }
-        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
-
-        } else {
-            gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
-        }
-
-        gdo.net.instance[instance.Id].exists = false;
-        gdo.net.app[instance.AppName].instances[instance.Id].exists = false;
+gdo.net.processInstance = function (instance) {
+    gdo.consoleOut('.NET', 2, 'Updating Instance: ' + instance.Id);
+    gdo.net.instance[instance.Id].appName = instance.AppName;
+    gdo.net.instance[instance.Id].id = instance.Id;
+    //Check if virtual
+    gdo.net.instance[instance.Id].sectionId = instance.Section.Id;
+    gdo.net.instance[instance.Id].exists = true;
+    gdo.net.instance[instance.Id].configName = instance.Configuration.Name;
+    //TODO
+    gdo.net.section[instance.Section.Id].appInstanceId = instance.Id;
+    if (gdo.net.app[instance.AppName].config[instance.Configuration.Name] == null) {
+        gdo.net.server.requestAppConfiguration(instance.Id);
     }
-
-
+    for (var i = 0; i < gdo.net.section[instance.Section.Id].cols; i++) {
+        for (var j = 0; j < gdo.net.section[instance.Section.Id].rows; j++) {
+            gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].p2pmode = gdo.net.app[instance.AppName].p2pMode;
+            gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = instance.Id;
+        }
+    }
+    if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
+        gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
+    }
+    gdo.net.app[instance.AppName].instances[instance.Id] = {};
+    gdo.net.app[instance.AppName].instances[instance.Id].id = instance.Id;
+    gdo.net.app[instance.AppName].instances[instance.Id].config = instance.Configuration.Name;
+    gdo.net.app[instance.AppName].instances[instance.Id].exists = true;
 }
 
 gdo.net.processState = function (state, id, exists) {
@@ -800,35 +747,5 @@ gdo.net.processState = function (state, id, exists) {
     } else {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
-    }
-}
-
-gdo.net.setTimeout = function(func, start) {
-    /// <summary>
-    /// Synced Timout
-    /// </summary>
-    /// <param name="func">The function.</param>
-    /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
-    /// <returns></returns>
-    setTimeout(func, gdo.net.time - start);
-}
-
-gdo.net.setInterval = function (statement, start, current, interval, conditionFunc) {
-    /// <summary>
-    /// Synced Interval
-    /// </summary>
-    /// <param name="func">The function to execute.</param>
-    /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
-    /// <param name="current">The current time: get it by gdo.net.time.getTime()</param>
-    /// <param name="interval">The interval in milliseconds</param>
-    /// <param name="conditionFunc">The condition function input for breaking the recursion when needed, 
-    /// if it returns true it loops otherwise it breaks.
-    /// </param>
-    /// <returns></returns>
-    if (conditionFunc()) {
-        setTimeout(function () {
-            eval(statement);
-            gdo.net.setInterval(statement, (start + interval), gdo.net.time.getTime(), interval, conditionFunc);
-        }, start - current);
     }
 }

@@ -15,11 +15,17 @@ namespace GDO.Apps.HelloWorld
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
 
         public string Name { get; set; }
-        public void Init()
+
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
+            this.Id = instanceId;
+            this.AppName = appName;
+            this.Section = section;
+            this.Configuration = configuration;
+
         }
 
         public void SetName(string name)

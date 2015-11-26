@@ -1,8 +1,6 @@
 ﻿$(function () {
     gdo.management.selectedApp = null;
     gdo.management.selectedConfiguration = null;
-    gdo.management.selectedAdvancedApp = null;
-    gdo.management.selectedAdvancedConfiguration = null;
 });
 
 gdo.management.drawEmptyAppTable = function () {
@@ -29,36 +27,12 @@ gdo.management.drawEmptyAppTable = function () {
         .css({ fontSize: gdo.management.button_font_size });
 }
 
-gdo.management.drawEmptyAdvancedAppTable = function () {
-
-    $("#advanced_app_table_app_list")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
-        .css("width", "36%")
-        .css("border", "3px solid #444")
-        .css("color", "#DDD")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "top")
-        .css("vertical-align", "top")
-        .css({ fontSize: gdo.management.button_font_size });
-    $("#advanced_app_table_configuration_list")
-        .css("height", (gdo.management.table_height + (gdo.management.info_height * 3.5)))
-        .css("width", "36%")
-        .css("border", "3px solid #444")
-        .css("color", "#DDD")
-        .css("background", "#222")
-        .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
-        .css("vertical-align", "top")
-        .css({ fontSize: gdo.management.button_font_size });
-}
-
 gdo.management.drawAppTable = function () {
     gdo.management.drawEmptyAppTable();
-    if (gdo.management.selectedSection > -1) {
+    if (gdo.management.selectedSection > -1){
         if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
-            $("#app_table_panel").removeClass("panel-success");
-            $("#app_table_panel").addClass("panel-danger");
+            $("#app_table_app_table_panel").removeClass("panel-success");
+            $("#app_table_app_table_panel").addClass("panel-danger");
             gdo.management.drawAppListTable();
             if (gdo.management.selectedApp != null) {
                 gdo.management.drawConfigurationListTable();
@@ -68,7 +42,7 @@ gdo.management.drawAppTable = function () {
                     .click(function () {
                         if (gdo.net.section[gdo.management.selectedSection] != null) {
                             if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
-                                gdo.net.server.deployBaseApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
+                                gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
                                 gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedApp + " at Section " + gdo.management.selectedSection + " with Configuration " + gdo.management.selectedConfiguration);
                                 gdo.management.selectedSection = -1;
                                 gdo.management.selectedApp = null;
@@ -87,131 +61,68 @@ gdo.management.drawAppTable = function () {
                     $("#app_table_configuration_panel").removeClass("panel-success");
                     $("#app_table_configuration_panel").addClass("panel-danger");
                 }
-                $("#app_table_panel").removeClass("panel-default");
-                $("#app_table_panel").removeClass("panel-danger");
-                $("#app_table_panel").addClass("panel-success");
+                $("#app_table_app_table_panel").removeClass("panel-default");
+                $("#app_table_app_table_panel").removeClass("panel-danger");
+                $("#app_table_app_table_panel").addClass("panel-success");
             } else {
                 $("#button_table_row_0_col_3").unbind();
-                $("#app_table_panel").removeClass("panel-default");
-                $("#app_table_panel").removeClass("panel-success");
-                $("#app_table_panel").addClass("panel-danger");
+                $("#app_table_app_table_panel").removeClass("panel-default");
+                $("#app_table_app_table_panel").removeClass("panel-success");
+                $("#app_table_app_table_panel").addClass("panel-danger");
                 $("#app_table_configuration_panel").removeClass("panel-default");
                 $("#app_table_configuration_panel").removeClass("panel-success");
                 $("#app_table_configuration_panel").addClass("panel-danger");
             }
         } else {
-            $("#app_table").empty();
+            $("#app_table_app_table").empty();
             $("#app_table_configuration_table").empty();
             gdo.management.selectedApp = null;
             gdo.management.selectedConfiguration = null;
-            $("#app_table_panel").removeClass("panel-danger");
-            $("#app_table_panel").removeClass("panel-success");
-            $("#app_table_panel").addClass("panel-default");
+            $("#app_table_app_table_panel").removeClass("panel-danger");
+            $("#app_table_app_table_panel").removeClass("panel-success");
+            $("#app_table_app_table_panel").addClass("panel-default");
             $("#app_table_configuration_panel").removeClass("panel-danger");
             $("#app_table_configuration_panel").removeClass("panel-success");
             $("#app_table_configuration_panel").addClass("panel-default");
         }
     } else if (gdo.management.selectedSection == -1) {
-        $("#app_table").empty();
+        $("#app_table_app_table").empty();
         $("#app_table_configuration_table").empty();
         gdo.management.selectedApp = null;
         gdo.management.selectedConfiguration = null;
-        $("#app_table_panel").removeClass("panel-danger");
-        $("#app_table_panel").removeClass("panel-success");
-        $("#app_table_panel").addClass("panel-default");
+        $("#app_table_app_table_panel").removeClass("panel-danger");
+        $("#app_table_app_table_panel").removeClass("panel-success");
+        $("#app_table_app_table_panel").addClass("panel-default");
         $("#app_table_configuration_panel").removeClass("panel-danger");
         $("#app_table_configuration_panel").removeClass("panel-success");
         $("#app_table_configuration_panel").addClass("panel-default");
     }
 }
 
-gdo.management.drawAdvancedAppTable = function () {
-    gdo.management.drawEmptyAdvancedAppTable();
-    gdo.management.drawAdvancedAppListTable();
-    if (gdo.management.selectedAdvancedApp != null) {
-        gdo.management.drawAdvancedConfigurationListTable();
-        if (gdo.management.selectedAdvancedConfiguration != null) {
-            $("#advanced_button_table_row_0_col_1").css("background-color", "#006B00")
-                .unbind()
-                .click(function() {
-                    if (gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
-                        //gdo.net.server.deployApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
-                        gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedAdvancedApp + " with Configuration " + gdo.management.selectedAdvancedConfiguration);
-                        gdo.management.selectedAdvancedApp = null;
-                        gdo.management.selectedAdvancedConfiguration = null;
-                        gdo.updateDisplayCanvas();
-                    }
-                });
-            $("#advanced_app_table_configuration_panel").removeClass("panel-default");
-            $("#advanced_app_table_configuration_panel").removeClass("panel-danger");
-            $("#advanced_app_table_configuration_panel").addClass("panel-success");
-        } else {
-            $("#button_table_row_0_col_1").unbind();
-            $("#advanced_app_table_configuration_panel").removeClass("panel-default");
-            $("#advanced_app_table_configuration_panel").removeClass("panel-success");
-            $("#advanced_app_table_configuration_panel").addClass("panel-danger");
-        }
-        $("#advanced_app_table_panel").removeClass("panel-default");
-        $("#advanced_app_table_panel").removeClass("panel-danger");
-        $("#advanced_app_table_panel").addClass("panel-success");
-    }
-}
-
-gdo.management.drawAppListTable = function () {
-    $("#app_table").empty();
-
+gdo.management.drawAppListTable = function() {
+    $("#app_table_app_table").empty();
+    
     for (var j = 0; j < gdo.net.numApps; j++) {
-        if (gdo.net.app[gdo.net.apps[j]].appType == gdo.net.APP_TYPE.BASE) {
-            $("#app_table").append("<tr id='app_table_row_" + j + " row='" + j + "'></tr>");
-            $("#app_table tr:last").append("<td id='app_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
+        if (!gdo.net.app[gdo.net.apps[j]].virtualMode) {
+            $("#app_table_app_table").append("<tr id='app_table_app_table_row_" + j + " row='" + j + "'></tr>");
+            $("#app_table_app_table tr:last").append("<td id='app_table_app_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
         }
     }
     for (var j = 0; j < gdo.net.numApps; j++) {
-        if (gdo.net.app[gdo.net.apps[j]].appType == gdo.net.APP_TYPE.BASE) {
-            $("#app_table_row_" + j + "_col_1")
+        if (!gdo.net.app[gdo.net.apps[j]].virtualMode) {
+            $("#app_table_app_table_row_" + j + "_col_1")
             .empty()
             .css("background", "#222")
-            .append("<div id='app_table_" + gdo.net.apps[j] + "'><font size='3px'>" + gdo.net.apps[j] + "</font></div>")
+            .append("<div id='app_table_app_table_" + gdo.net.apps[j] + "'><font size='3px'>" + gdo.net.apps[j] + "</font></div>")
             .click(function () {
                 gdo.management.selectedApp = gdo.net.apps[$(this).attr('row')];
                 gdo.management.selectedConfiguration = gdo.net.app[gdo.management.selectedApp].config[0];
                 gdo.updateDisplayCanvas();
             });
             if (gdo.net.apps[j] == gdo.management.selectedApp) {
-                $("#app_table_row_" + j + "_col_1").css("color", "#99D522");
+                $("#app_table_app_table_row_" + j + "_col_1").css("color", "#99D522");
             } else {
-                $("#app_table_row_" + j + "_col_1").css("color", "#DDD");
-            }
-        }
-    }
-}
-
-
-gdo.management.drawAdvancedAppListTable = function () {
-    $("#advanced_app_table").empty();
-
-    for (var j = 0; j < gdo.net.numApps; j++) {
-        if (gdo.net.app[gdo.net.apps[j]].appType == gdo.net.APP_TYPE.ADVANCED) {
-            $("#advanced_app_table").append("<tr id='advanced_app_table_row_" + j + " row='" + j + "'></tr>");
-            $("#advanced_app_table tr:last").append("<td id='advanced_app_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
-        }
-    }
-    for (var j = 0; j < gdo.net.numApps; j++) {
-        if (gdo.net.app[gdo.net.apps[j]].appType == gdo.net.APP_TYPE.ADVANCED) {
-            $("#advanced_app_table_row_" + j + "_col_1")
-            .empty()
-            .css("background", "#222")
-            .append("<div id='advanced_app_table_" + gdo.net.apps[j] + "'><font size='3px'>" + gdo.net.apps[j] + "</font></div>")
-            .click(function () {
-                    gdo.consoleOut(".MAN", 4, gdo.net.apps[$(this).attr('row')]);
-                gdo.management.selectedAdvancedApp = gdo.net.apps[$(this).attr('row')];
-                gdo.management.selectedAdvancedConfiguration = gdo.net.app[gdo.management.selectedAdvancedApp].config[0];
-                gdo.updateDisplayCanvas();
-            });
-            if (gdo.net.apps[j] == gdo.management.selectedAdvancedApp) {
-                $("#advanced_app_table_row_" + j + "_col_1").css("color", "#99D522");
-            } else {
-                $("#advanced_app_table_row_" + j + "_col_1").css("color", "#DDD");
+                $("#app_table_app_table_row_" + j + "_col_1").css("color", "#DDD");
             }
         }
     }
@@ -220,7 +131,7 @@ gdo.management.drawAdvancedAppListTable = function () {
 gdo.management.drawConfigurationListTable = function () {
     $("#app_table_configuration_table").empty();
     for (var j = 0; j < gdo.net.app[gdo.management.selectedApp].config.length; j++) {
-        $("#app_table_configuration_table").append("<tr id='app_table_row_' + j + ' row='" + j + "'></tr>");
+        $("#app_table_configuration_table").append("<tr id='app_table_app_table_row_' + j + ' row='" + j + "'></tr>");
         $("#app_table_configuration_table tr:last").append("<td id='app_table_configuration_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
     }
     for (var j = 0; j < gdo.net.app[gdo.management.selectedApp].config.length; j++) {
@@ -235,28 +146,6 @@ gdo.management.drawConfigurationListTable = function () {
             $("#app_table_configuration_table_row_" + j + "_col_1").css("color", "#99D522");
         } else {
             $("#app_table_configuration_table_row_" + j + "_col_1").css("color", "#DDD");
-        }
-    }
-}
-
-gdo.management.drawAdvancedConfigurationListTable = function () {
-    $("#advanced_app_table_configuration_table").empty();
-    for (var j = 0; j < gdo.net.app[gdo.management.selectedAdvancedApp].config.length; j++) {
-        $("#advanced_app_table_configuration_table").append("<tr id='advanced_app_table_row_' + j + ' row='" + j + "'></tr>");
-        $("#advanced_app_table_configuration_table tr:last").append("<td id='advanced_app_table_configuration_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
-    }
-    for (var j = 0; j < gdo.net.app[gdo.management.selectedAdvancedApp].config.length; j++) {
-        $("#advanced_app_table_configuration_table_row_" + j + "_col_1")
-            .empty()
-            .append("<div id='advanced_app_table_configuration_table_" + gdo.net.app[gdo.management.selectedAdvancedApp].config[j] + "'><font size='3px'>" + gdo.net.app[gdo.management.selectedAdvancedApp].config[j] + "</font></div>")
-            .click(function () {
-                gdo.management.selectedAdvancedConfiguration = gdo.net.app[gdo.management.selectedAdvancedApp].config[$(this).attr('row')];
-                gdo.updateDisplayCanvas();
-            });
-        if (gdo.net.app[gdo.management.selectedAdvancedApp].config[j] == gdo.management.selectedAdvancedConfiguration) {
-            $("#advanced_app_table_configuration_table_row_" + j + "_col_1").css("color", "#99D522");
-        } else {
-            $("#advanced_app_table_configuration_table_row_" + j + "_col_1").css("color", "#DDD");
         }
     }
 }

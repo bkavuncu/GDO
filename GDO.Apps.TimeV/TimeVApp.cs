@@ -20,9 +20,13 @@ namespace GDO.Apps.TimeV
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
-        public void Init()
+        public IVirtualAppInstance ParentApp { get; set; }
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
+            this.Id = instanceId;
+            this.AppName = appName;
+            Section = section;
+            Configuration = configuration;
             _dataProvider = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");
             _qureyThreads = new Hashtable();
         }

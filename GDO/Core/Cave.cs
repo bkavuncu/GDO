@@ -401,25 +401,32 @@ namespace GDO.Core
             return neighbours;
         }
 
-        /// <summary>
-        /// Registers an application
-        /// </summary>
-        /// <param name="name">name of app</param>
-        /// <param name="p2pmode">mode of app</param>
-        /// <param name="appType">c# type of app</param>
-        public static bool RegisterApp(string name, int p2pmode, Type appType) {
+        public static bool RegisterApp(string name, int p2pmode, Type appType, bool virtualMode, List<string> supportedApps ) {
             if (!Apps.ContainsKey(name))
             {
                 Log.Info("registering an app "+name+" of type "+appType.FullName);
-                App app = new App();
-                app.Init(name, p2pmode,appType);
-                Apps.TryAdd(name, app);
-                Apps[name].Init(name,p2pmode,appType);
-                List<AppConfiguration> configurations = LoadAppConfigurations(name);
-                foreach (var configuration in configurations)
+                if (virtualMode)
                 {
-                    Log.Info("registering an app configuration for app " + name + " called " + configuration.Name);
-                    Apps[name].Configurations.TryAdd(configuration.Name, configuration);
+                    VirtualApp vapp = new VirtualApp();
+                    vapp.Init(name, appType, supportedApps);
+                    List<AppConfiguration> configurations = LoadAppConfigurations(name);
+                    foreach (var configuration in configurations)
+                    {
+                        Apps[name].Configurations.TryAdd(configuration.Name, configuration);
+                    }
+                }
+                else
+                {
+                    App app = new App();
+                    app.Init(name, p2pmode, appType);
+                    Apps.TryAdd(name, app);
+                    Apps[name].Init(name, p2pmode, appType);
+                    List<AppConfiguration> configurations = LoadAppConfigurations(name);
+                    foreach (var configuration in configurations)
+                    {
+                        Log.Info("registering an app configuration for app " + name + " called " + configuration.Name);
+                        Apps[name].Configurations.TryAdd(configuration.Name, configuration);
+                    }
                 }
                 return true;
             }
@@ -468,13 +475,13 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Creates an application instance.
+        /// Creates an base application instance.
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <param name="appName">Name of the application.</param>
         /// <param name="configName">Name of the configuration.</param>
         /// <returns></returns>
-        public static int CreateAppInstance(int sectionId, string appName, string configName)
+        public static int CreateBaseAppInstance(int sectionId, string appName, string configName)
         {
             Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
             if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
@@ -484,7 +491,7 @@ namespace GDO.Core
                     int instanceId =  Apps[appName].CreateAppInstance(configName, sectionId);
                     if (instanceId >= 0)
                     {
-                        Apps[appName].Instances[instanceId].Section.DeploySection(instanceId);
+                        ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section.DeploySection(instanceId);
                     }
                     return instanceId;
                 }
@@ -493,18 +500,40 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Disposes an application instance.
+        /// Creates an virtual application instance.
+        /// </summary>
+        /// <returns></returns>
+        public static int CreateVirtualAppInstance(List<int> instanceIds, string appName, string configName)
+        {
+            //TODO
+            /*if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
+            {
+                if (Cave.Apps[appName].Configurations.ContainsKey(configName))
+                {
+                    int instanceId = Apps[appName].CreateAppInstance(configName, sectionId);
+                    if (instanceId >= 0)
+                    {
+                        Apps[appName].Instances[instanceId].Section.DeploySection(instanceId);
+                    }
+                    return instanceId;
+                }
+            }*/
+            return -1;
+        }
+
+        /// <summary>
+        /// Disposes a base application instance.
         /// </summary>
         /// <param name="appName">Name of the application.</param>
         /// <param name="instanceId">The instance identifier.</param>
         /// <returns></returns>
-        public static bool DisposeAppInstance(string appName, int instanceId)
+        public static bool DisposeBaseAppInstance(string appName, int instanceId)
         {
             if (Cave.Apps.ContainsKey(appName))
             {
                 if (Cave.Apps[appName].Instances.ContainsKey(instanceId))
                 {
-                    Section section = Apps[appName].Instances[instanceId].Section;
+                    Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
                     if (Apps[appName].DisposeAppInstance(instanceId))
                     {
                         section.FreeSection();
@@ -512,6 +541,30 @@ namespace GDO.Core
                     }
                 }
             }
+            return false;
+        }
+
+        /// <summary>
+        /// Disposes a virtual application instance.
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <param name="instanceId">The instance identifier.</param>
+        /// <returns></returns>
+        public static bool DisposeVirtualAppInstance(string appName, int instanceId)
+        {
+            // TODO
+            /*if (Cave.Apps.ContainsKey(appName))
+            {
+                if (Cave.Apps[appName].Instances.ContainsKey(instanceId))
+                {
+                    Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
+                    if (Apps[appName].DisposeAppInstance(instanceId))
+                    {
+                        section.FreeSection();
+                        return true;
+                    }
+                }
+            }*/
             return false;
         }
 
@@ -535,9 +588,11 @@ namespace GDO.Core
             int slot = Utilities.GetAvailableSlot<CaveState>(States);
             CaveState caveState = new CaveState(slot, name);
             States.TryAdd(slot, caveState);
-            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Instances)
+            foreach(KeyValuePair<int,IVirtualAppInstance> instaKeyValuePair in Instances)
             {
-                IAppInstance instance = instaKeyValuePair.Value;
+                IVirtualAppInstance instance = instaKeyValuePair.Value;
+                //TODO State Mechanism for both Vapps and apps
+                if(instance.GetType())
                 Section section = instance.Section;
                 AppState appState = new AppState(section.Col,section.Row,section.Cols,section.Rows,instance.AppName,instance.Configuration.Name);
                 caveState.States.Add(appState);

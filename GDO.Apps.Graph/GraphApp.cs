@@ -19,16 +19,20 @@ namespace GDO.Apps.Graph
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
 
         private GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
 
-        public void Init()
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             try {
+                this.Id = instanceId;
+                this.AppName = appName;
+                this.Section = section;
+                this.Configuration = configuration;
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
