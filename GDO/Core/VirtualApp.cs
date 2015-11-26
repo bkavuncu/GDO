@@ -18,10 +18,11 @@ namespace GDO.Core
 
         }
 
-        new public void Init(string name, Type appType, List<string> supportedApps)
+        new public void Init(string name, Type appClassType, int appType, List<string> supportedApps)
         {
             this.Name = name;
             this.P2PMode = -1;
+            this.AppClassType = appClassType;
             this.AppType = appType;
             this.SupportedApps = supportedApps;
             this.Configurations = new ConcurrentDictionary<string, AppConfiguration>();
@@ -36,7 +37,7 @@ namespace GDO.Core
             }
 
             int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-            IVirtualAppInstance instance = (IVirtualAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
+            IVirtualAppInstance instance = (IVirtualAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
             AppConfiguration conf;
             Configurations.TryGetValue(configName, out conf);
             instance.Init(instanceId, this.Name, conf);

@@ -3,12 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using GDO.Utility;
-using log4net;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using GDO.Utility;
 using Newtonsoft.Json;
 
 
@@ -16,8 +10,6 @@ namespace GDO.Core
 {
     public class App
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(App));
-
         public string Name { get; set; }
         public int P2PMode { get; set; }
         [JsonIgnore]
@@ -47,28 +39,16 @@ namespace GDO.Core
             if (!Configurations.ContainsKey(configName)) {
                 return -1;
             }
-            try {
-                Log.Info("Creating App "+AppType.Name+" section "+sectionId+" config "+configName);
-                int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-                IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
-                AppConfiguration conf;
-                Cave.Sections[sectionId].CalculateDimensions();
-                Configurations.TryGetValue(configName, out conf);
-                instance.Id = instanceId;
-                instance.AppName = this.Name;
-                instance.Section = Cave.Sections[sectionId];
-                instance.Configuration = conf;
-                ((IBaseAppInstance) instance).IntegrationMode = conf.IntegrationMode;
-                instance.Init();
-                Instances.TryAdd(instanceId,instance);
-                Cave.Instances.TryAdd(instanceId,instance);
-                Log.Info("Created App " + AppType.Name + " section " + sectionId + " config " + configName);
-                return instanceId;
-            }
-            catch (Exception e) {
-                Log.Error("Exception encoutered deploying config "+configName+" to sectionid "+sectionId+ " "+e+ " stack"+e.StackTrace);
-            }
 
+            int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
+            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
+            AppConfiguration conf;
+            Cave.Sections[sectionId].CalculateDimensions();
+            Configurations.TryGetValue(configName, out conf);
+            instance.Init(instanceId, this.Name, Cave.Sections[sectionId], conf, conf.IntegrationMode);
+            Instances.TryAdd(instanceId,instance);
+            Cave.Instances.TryAdd(instanceId,instance);
+            return instanceId;
         }
 
         public bool DisposeAppInstance(int instanceId) {
