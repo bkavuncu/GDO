@@ -6,12 +6,13 @@ using GDO.Core;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Temperatures {
-    public class TemperaturesApp : IAppInstance {
+    public class TemperaturesApp : IBaseAppInstance {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
         public string Keywords { get; set; }
         public string ChannelId { get; set; }
         public string PlaylistId { get; set; }
@@ -210,7 +211,7 @@ namespace GDO.Apps.Temperatures {
             return yJson;
         }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;

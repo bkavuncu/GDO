@@ -103,11 +103,14 @@ gdo.management.drawAppListTable = function() {
     $("#app_table_app_table").empty();
     
     for (var j = 0; j < gdo.net.numApps; j++) {
-        $("#app_table_app_table").append("<tr id='app_table_app_table_row_" + j + " row='" + j + "'></tr>");
-        $("#app_table_app_table tr:last").append("<td id='app_table_app_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
+        if (!gdo.net.app[gdo.net.apps[j]].virtualMode) {
+            $("#app_table_app_table").append("<tr id='app_table_app_table_row_" + j + " row='" + j + "'></tr>");
+            $("#app_table_app_table tr:last").append("<td id='app_table_app_table_row_" + j + "_col_1' col='1' row='" + j + "'></td>");
+        }
     }
     for (var j = 0; j < gdo.net.numApps; j++) {
-        $("#app_table_app_table_row_" + j + "_col_1")
+        if (!gdo.net.app[gdo.net.apps[j]].virtualMode) {
+            $("#app_table_app_table_row_" + j + "_col_1")
             .empty()
             .css("background", "#222")
             .append("<div id='app_table_app_table_" + gdo.net.apps[j] + "'><font size='3px'>" + gdo.net.apps[j] + "</font></div>")
@@ -116,13 +119,13 @@ gdo.management.drawAppListTable = function() {
                 gdo.management.selectedConfiguration = gdo.net.app[gdo.management.selectedApp].config[0];
                 gdo.updateDisplayCanvas();
             });
-        if (gdo.net.apps[j] == gdo.management.selectedApp) {
-            $("#app_table_app_table_row_" + j + "_col_1").css("color", "#99D522");
-        } else {
-            $("#app_table_app_table_row_" + j + "_col_1").css("color", "#DDD");
+            if (gdo.net.apps[j] == gdo.management.selectedApp) {
+                $("#app_table_app_table_row_" + j + "_col_1").css("color", "#99D522");
+            } else {
+                $("#app_table_app_table_row_" + j + "_col_1").css("color", "#DDD");
+            }
         }
     }
-
 }
 
 gdo.management.drawConfigurationListTable = function () {

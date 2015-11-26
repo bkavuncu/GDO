@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace GDO.Apps.TimeV
 {
-    public class TimeVApp : IAppInstance
+    public class TimeVApp : IBaseAppInstance
     {
         private MongoDataProvider _dataProvider;
 
@@ -19,8 +19,9 @@ namespace GDO.Apps.TimeV
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;

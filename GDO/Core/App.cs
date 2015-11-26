@@ -39,11 +39,11 @@ namespace GDO.Core
             }
 
             int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-            IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
+            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
             AppConfiguration conf;
             Cave.Sections[sectionId].CalculateDimensions();
             Configurations.TryGetValue(configName, out conf);
-            instance.init(instanceId, this.Name, Cave.Sections[sectionId], conf);
+            instance.Init(instanceId, this.Name, Cave.Sections[sectionId], conf, this.VirtualMode);
             Instances.TryAdd(instanceId,instance);
             Cave.Instances.TryAdd(instanceId,instance);
             return instanceId;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using GDO.Core;
 namespace GDO.Apps.Graph
 {
     [Export(typeof(IAppHub))]
-    public class GraphAppHub : Hub, IAppHub
+    public class GraphAppHub : Hub, IBaseAppHub
     {
         public string ControllerId { get; set; }
         public static GraphAppHub self;

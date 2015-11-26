@@ -7,12 +7,14 @@ using GDO.Core;
 
 namespace GDO.Apps.ShanghaiMetro
 {
-    public class ShanghaiMetroApp : IAppInstance
+    public class ShanghaiMetroApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         
         public bool BingLayer { get; set; }
@@ -34,7 +36,7 @@ namespace GDO.Apps.ShanghaiMetro
         public string Style { get; set; }
         public bool IsInitialized = false;
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;

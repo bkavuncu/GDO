@@ -3,7 +3,7 @@
     gdo.management.section_font_size = 11;
     gdo.management.button_font_size = 21;
     gdo.management.header_font_size = 17;
-    gdo.management.table_height = 280;
+    gdo.management.table_height = 210;
     gdo.management.info_height = 35;
     gdo.management.table_width = 100;
     gdo.management.button_height = 61;

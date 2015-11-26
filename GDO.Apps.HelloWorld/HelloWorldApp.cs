@@ -8,16 +8,18 @@ using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.HelloWorld
 {
-    public class HelloWorldApp : IAppInstance
+    public class HelloWorldApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
 
         public string Name { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;

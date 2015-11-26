@@ -10,7 +10,7 @@ using Microsoft.AspNet.SignalR;
 namespace GDO.Apps.ShanghaiMetro
 {
     [Export(typeof(IAppHub))]
-    public class ShanghaiMetroAppHub : Hub, IAppHub
+    public class ShanghaiMetroAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "ShanghaiMetro";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

@@ -17,13 +17,15 @@ using Style = GDO.Apps.SmartCity.Core.Style;
 
 namespace GDO.Apps.SmartCity
 {
-    public class SmartCityApp : IAppInstance
+    public class SmartCityApp : IVirtualAppInstance
     {
         JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public List<IBaseAppInstance> IntegratedInstances { get; set; }
+
         public Map Map;
         public View View { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
@@ -34,13 +36,11 @@ namespace GDO.Apps.SmartCity
         public GenericDictionary<Format> Formats { get; set; }
         public ZindexTable ZindexTable { get; set; }
         public bool IsInitialized = false;
-        //public bool Mode { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, AppConfiguration configuration)
         {
             this.Id = instanceId;
             this.AppName = appName;
-            this.Section = section;
             this.Configuration = configuration;
 
             SaveEmptyMap();
@@ -79,6 +79,16 @@ namespace GDO.Apps.SmartCity
                 //TODO update zindex
             }
             View = Map.View;
+        }
+
+        public List<int> GetListofIntegratedInstances()
+        {
+            List<int> list = new List<int>();
+            foreach (var instance in IntegratedInstances)
+            {
+                list.Add(instance.Id);
+            }
+            return list;
         }
 
         //Map

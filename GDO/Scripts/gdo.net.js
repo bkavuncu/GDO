@@ -698,6 +698,7 @@ gdo.net.processApp = function (app) {
     gdo.net.app[app.Name].server = $.connection[hubName].server;
     gdo.net.app[app.Name].config = new Array();
     gdo.net.app[app.Name].p2pMode = app.P2PMode;
+    //TODO
     gdo.net.app[app.Name].config = new Array(app.ConfigurationList.length);
     for (var i = 0; i < app.ConfigurationList.length; i++) {
         gdo.net.app[app.Name].config[i] = app.ConfigurationList[i];
@@ -709,9 +710,11 @@ gdo.net.processInstance = function (instance) {
     gdo.consoleOut('.NET', 2, 'Updating Instance: ' + instance.Id);
     gdo.net.instance[instance.Id].appName = instance.AppName;
     gdo.net.instance[instance.Id].id = instance.Id;
+    //Check if virtual
     gdo.net.instance[instance.Id].sectionId = instance.Section.Id;
     gdo.net.instance[instance.Id].exists = true;
     gdo.net.instance[instance.Id].configName = instance.Configuration.Name;
+    //TODO
     gdo.net.section[instance.Section.Id].appInstanceId = instance.Id;
     if (gdo.net.app[instance.AppName].config[instance.Configuration.Name] == null) {
         gdo.net.server.requestAppConfiguration(instance.Id);

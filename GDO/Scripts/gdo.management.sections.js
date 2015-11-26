@@ -17,7 +17,7 @@ gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
     for (var i = 0; i < maxRow; i++) {
         $("#section_table").append("<tr id='section_table_row_" + i + "' row='" + i + "'></tr>");
         for (var j = 0; j < maxCol; j++) {
-            $("#section_table tr:last").append("<td id='section_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>");
+            $("#section_table tr:last").append("<td id='section_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>").css('overflow', 'hidden');
         }
     }
 }
@@ -35,14 +35,15 @@ gdo.management.drawSectionTable =  function (){
         var sectionId = node.sectionId;
         $("#section_table_row_" + gdo.net.rows).css("height", 0);
         if (sectionId == 0) {
+            $("#section_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
             $("#section_table_row_" + node.row + "_col_" + node.col)
                     .empty()
                     .unbind()
                     .css("vertical-align", "top")
-                    .append("<div id='section_table_node_" + node.id + "_i' style='text-align:center;background:#444'> <font size='4px'><b> " + node.id + "</b></font></div>")
+                    .append("<div id='section_table_node_" + node.id + "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" + node.id + "</b></font></div>")
                     .append("</br>")
                     .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-                    .css("height", (gdo.management.table_height / gdo.net.rows) + "")
+                    //.css("height", (gdo.management.table_height / gdo.net.rows) + "")
                     .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
                     .css("border", "1px solid #333")
                     .css('overflow', 'hidden')
@@ -66,7 +67,7 @@ gdo.management.drawSectionTable =  function (){
                 .unbind()
                 .attr('colspan', gdo.net.section[sectionId].cols)
                 .attr('rowspan', gdo.net.section[sectionId].rows)
-                .css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
+                //.css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
                 .css("width", ((gdo.management.table_width / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
                 .css("border", "1px solid #2A9FD6")
                 .css("background", "#087DB4")
@@ -74,17 +75,24 @@ gdo.management.drawSectionTable =  function (){
                 .css('overflow', 'hidden')
                 .css("vertical-align", "top")
                 .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>")
-                .append("</br>")
-                .append("<b>&nbsp;Start: </b> (" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")")
-                .append("<br><b>&nbsp;End: </b> (" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")");
+                .append("<div style='height:5px'></div>");
+            if (gdo.net.section[sectionId].cols == 1 && gdo.net.section[sectionId].rows == 1) {
+                $("#section_table_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.section[sectionId].nodeMap[0][gdo.net.section[sectionId].nodeMap[0].length - 1] + "");
+            } else {
+                $("#section_table_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.section[sectionId].nodeMap[0][gdo.net.section[sectionId].nodeMap[0].length - 1] + " to <b>N</b>" + gdo.net.section[sectionId].nodeMap[gdo.net.section[sectionId].nodeMap.length - 1][0] + "");
+            }
                 //.append("</br>(" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")->(" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
             if (gdo.net.section[sectionId].appInstanceId >= 0) {
+                $("#section_table_section_" + sectionId + "_i")
+                    .empty()
+                    .append("<font size='4px'><b> S" + sectionId + ", I" + gdo.net.section[sectionId].appInstanceId + "</b></font>");
                 $("#section_table_row_" + node.row + "_col_" + node.col)
                     .append("</br>")
                     .css('overflow', 'hidden')
-                    .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;Application:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
-                    .append("<div id='section_table_section_" + sectionId + "_i'> <b>&nbsp;Instance:</b> " + gdo.net.section[sectionId].appInstanceId + "</div>")
-                    .append("<div id='section_table_section_" + sectionId + "_c'> <b>&nbsp;Configuration:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
+                    .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
+                    
+                    .append("<div id='section_table_section_" + sectionId + "_c'> <b>&nbsp;Config:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
+                    .css('overflow', 'hidden')
                     .css("background", "#559100");
                 $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
                 $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");

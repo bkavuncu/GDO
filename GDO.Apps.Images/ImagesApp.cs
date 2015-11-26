@@ -16,12 +16,14 @@ namespace GDO.Apps.Images
         FILL = 1,
         FIT = 0
     };
-    public class ImagesApp : IAppInstance
+    public class ImagesApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
         public string ImageName { get; set; }
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }
@@ -140,7 +142,7 @@ namespace GDO.Apps.Images
             public CanvasDataInfo canvasData { get; set; }
         }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;

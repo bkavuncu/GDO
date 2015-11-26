@@ -76,8 +76,21 @@ namespace GDO
             assemblies.Add(typeof(CaveHub).Assembly);
             foreach (var caveapp in _caveapps)
             {
-                Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType);
-                assemblies.Add(caveapp.GetType().Assembly);
+                if (caveapp is IBaseAppHub)
+                {
+                    Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
+                    assemblies.Add(caveapp.GetType().Assembly);
+                }
+                else if(caveapp is IVirtualAppHub)
+                {
+                    Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IVirtualAppHub)caveapp).SupportedApps);
+                    assemblies.Add(caveapp.GetType().Assembly);
+                }
+                else
+                {
+                    throw new Exception("Cave App Class not recognized");
+                }
+
                 //assemblies.Add(caveapp.InstanceType.Assembly);
             }
             return assemblies;

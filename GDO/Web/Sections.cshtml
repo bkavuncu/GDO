@@ -1,4 +1,4 @@
-@using System.Threading.Tasks
+﻿@using System.Threading.Tasks
 @using GDO.Core
 @{
     Layout = null;
@@ -46,6 +46,12 @@
             width: 98.5%;
             height: 98.5%;
             display: block;
+        }
+        table {
+          table-layout: fixed;
+        }
+        td {
+          overflow: hidden;
         }
     </style>
     <script>
@@ -196,58 +202,77 @@
             </div>
             <!-- /.col-lg-12 -->
         </div>
-        <div class="col-lg-5" style="padding: 7px;">
-            <div id="app_table_app_table_panel" class="panel panel-default" style="height: 40vh;">
-                <div class="panel-heading">
-                    <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
-                </div>
-                <div class="panel-body">
-                    <table id="app_table_app_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#apps" data-toggle="tab"><i class="fa fa-cube  fa-fw"></i>&nbsp;&nbsp;Base Apps</a>
+            </li>
+            <li>
+                <a href="#vapps" data-toggle="tab"><i class="fa fa-codepen fa-fw"></i>&nbsp;&nbsp;Virtual Apps</a>
+            </li>
+        </ul>
+        <div class="tab-content" style="height: 90vh">
+            <div class="tab-pane fade in active" id="apps" style="height: 84vh;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="col-lg-5" style="padding: 7px;margin-left:0px">
+                            <div id="app_table_app_table_panel" class="panel panel-default" style="height: 40vh;">
+                                <div class="panel-heading">
+                                    <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
+                                </div>
+                                <div class="panel-body">
+                                    <table id="app_table_app_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6" style="padding: 7px;">
+                            <div id="app_table_configuration_panel" class="panel panel-default" style="height: 40vh;">
+                                <div class="panel-heading">
+                                    <h6><i class='fa  fa-gears fa-fw'></i>&nbsp;Select Configuration</h6>
+                                </div>
+                                <div class="panel-body">
+                                    <table id="app_table_configuration_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1" style="padding: 7px; align-content: center">
+                            <span type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block deploy_app_button' style="height: 40vh; display: table"><i class='fa  fa-cloud-upload  fa-3x' style="display: table-cell; vertical-align: middle;"></i></span>
+                        </div>
+                        <div id="app_table_space">
+                            <br>
+                        </div>
+                        <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed;padding: 2px; width: 99.5%; height: 35vh; border-collapse: separate; border-spacing: 2px;"></table>
+                        <div id="section_table_space">
+                            <br>
+                        </div>
+                        <div id="button_table" unselectable="on" class="unselectable" style="width: 99.5%; padding: 3px;">
+                            <div class="col-lg-2" id="select_section_div"></div>
+                            <div class="col-lg-1" id="create_section_button_div"></div>
+                            <div class="col-lg-1" id="close_section_button_div"></div>
+                            <div class="col-lg-1" id="deploy_app_button_div"></div>
+                            <div class="col-lg-1" id="control_app_button_div"></div>
+                            <div class="col-lg-1" id="close_app_button_div"></div>
+                            <div class="col-lg-1" id="clear_cave_button_div"></div>
+                        </div>
+                        <div class="modal fade" id="confirm-clear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5><font color="white">Clear Cave</font></h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to close all app instances and sections?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                        <button type="button" id="clear_confirm_button" data-dismiss="modal" class="btn btn-danger btn-ok">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-6" style="padding: 7px;">
-            <div id="app_table_configuration_panel" class="panel panel-default" style="height: 40vh;">
-                <div class="panel-heading">
-                    <h6><i class='fa  fa-gears fa-fw'></i>&nbsp;Select Configuration</h6>
-                </div>
-                <div class="panel-body">
-                    <table id="app_table_configuration_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-1" style="padding: 7px; align-content: center">
-            <span type='button' id='deploy_app_button' class='btn btn-default disabled btn-lg btn-block deploy_app_button' style="height: 40vh; display: table"><i class='fa  fa-cloud-upload  fa-3x' style="display: table-cell; vertical-align: middle;"></i></span>
-        </div>
-        <div id="app_table_space"><br>
-        </div>
-        <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed;padding: 2px; width: 99.5%; height: 40vh; border-collapse: separate; border-spacing: 2px;"></table>
-        <div id="section_table_space">
-            <br>
-        </div>
-        <div id="button_table" unselectable="on" class="unselectable" style="width: 99.5%; padding: 3px;">
-            <div class="col-lg-2" id="select_section_div"></div>
-            <div class="col-lg-1" id="create_section_button_div"></div>
-            <div class="col-lg-1" id="close_section_button_div"></div>
-            <div class="col-lg-1" id="deploy_app_button_div"></div>
-            <div class="col-lg-1" id="control_app_button_div"></div>
-            <div class="col-lg-1" id="close_app_button_div"></div>
-            <div class="col-lg-1" id="clear_cave_button_div"></div>
-        </div>
-        <div class="modal fade" id="confirm-clear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5><font color="white">Clear Cave</font></h5>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to close all app instances and sections?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" id="clear_confirm_button" data-dismiss="modal" class="btn btn-danger btn-ok">Confirm</button>
-                    </div>
-                </div>
+            <div class="tab-pane fade" id="vapps">
             </div>
         </div>
     </div>

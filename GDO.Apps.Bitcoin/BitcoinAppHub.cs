@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
@@ -10,7 +11,7 @@ namespace GDO.Apps.Bitcoin
 {
 
     [Export(typeof(IAppHub))]
-    public class BitcoinAppHub : Hub, IAppHub
+    public class BitcoinAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "Bitcoin";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;

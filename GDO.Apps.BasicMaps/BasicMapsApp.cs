@@ -7,26 +7,27 @@ using GDO.Core;
 
 namespace GDO.Apps.BasicMaps
 {
-    public class BasicMapsApp : IAppInstance
+    public class BasicMapsApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         public string[] MarkerPosition { get; set; }
         public int MaxLayers { get; set; } = 35;
         public bool[] LayerVisibility { get; set; }
 
         public bool IsInitialized = false;
-
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
-
+            this.IntegrationMode = integrationMode;
             this.Position = new MapPosition();
             this.Position.Center[0] = (string)configuration.Json.SelectToken("center[0]");
             this.Position.Center[1] = (string)configuration.Json.SelectToken("center[1]");

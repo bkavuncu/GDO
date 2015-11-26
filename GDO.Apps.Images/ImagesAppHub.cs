@@ -23,7 +23,7 @@ using Newtonsoft.Json;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : Hub, IAppHub
+    public class ImagesAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "Images";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

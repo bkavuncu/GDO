@@ -11,20 +11,21 @@ using log4net;
 namespace GDO.Apps.Graph
 {
 
-    public class GraphApp : IAppInstance {
+    public class GraphApp : IBaseAppInstance {
         private static readonly ILog Log = LogManager.GetLogger(typeof(GraphApp));
 
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
 
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
 
-        // init is run when 'Deploy' is clicked
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             try {
                 this.Id = instanceId;

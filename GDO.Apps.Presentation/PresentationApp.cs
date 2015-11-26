@@ -18,19 +18,21 @@ namespace GDO.Apps.Presentation
         CROP = 1,
         FIT = 0
     };
-    public class PresentationApp : IAppInstance
+    public class PresentationApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IVirtualAppInstance ParentApp { get; set; }
         public string BasePath { get; set; }
         public string FileName { get; set; }
         public string FileNameDigit { get; set; }
         public int PageCount { get; set; }
         public int CurrentPage { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void init(int instanceId, string appName, Section section, AppConfiguration configuration, bool integrationMode)
         {
             this.Id = instanceId;
             this.AppName = appName;
