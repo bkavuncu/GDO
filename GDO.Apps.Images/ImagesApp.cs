@@ -165,7 +165,7 @@ namespace GDO.Apps.Images
                 }
             }
             this.Tiles = null;
-            Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Images/images"));
         }
 
     }

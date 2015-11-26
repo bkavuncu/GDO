@@ -106,8 +106,8 @@
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs");
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Presentation\PPTs\" + filename;
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs"));
+                    path = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/" + filename);
                     file.SaveAs(path);
                 }
             }

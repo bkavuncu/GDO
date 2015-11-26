@@ -32,7 +32,7 @@ namespace GDO.Apps.Graph
                 this.AppName = appName;
                 this.Section = section;
                 this.Configuration = configuration;
-                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"Web\Graph\graph");
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
             }
             catch (Exception e) {
                 Log.Error("failed to launch the Graphs App",e);
@@ -52,7 +52,7 @@ namespace GDO.Apps.Graph
         {
             Stopwatch sw = new Stopwatch();
 
-            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/") + @"Web\Graph\" + inputFolder + @"\"+ inputFolder + @".graphml";
+            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/" + inputFolder + "/"+ inputFolder + @".graphml");
             GraphDataReader.ReadGraphMLData(sw, graphMLfile, out Links, out Nodes, out rectDim);
 
 
@@ -152,7 +152,7 @@ namespace GDO.Apps.Graph
 
             // write to individual browser file
             // i. create sub-directories to store partition files
-            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph\\";
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
             string nodesPath, linksPath, labelsPath;
@@ -493,7 +493,7 @@ namespace GDO.Apps.Graph
 
             // 4. Write to files
 
-            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Graph\graph\\";
+            String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             Directory.CreateDirectory(basePath + FolderNameDigit + @"\search");
             String searchPath = basePath + FolderNameDigit + @"\search\\";
 
