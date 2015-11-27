@@ -102,15 +102,18 @@ $(function () {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
             var linksDom = highlightDom.append("g").attr("id", "sublinks");
 
-            renderSearchNodes(searchquery);
-            //renderSearchLinks(searchquery);
+            var highlightedNodes = [];  //stores the ID of the nodes matching the query
 
-            function renderSearchNodes(searchquery) {
+            renderSearchNodes();
+            renderSearchLinks();
+
+            function renderSearchNodes() {
 
                 //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
                 nodes.forEach(function(node) {
                     if (node.Label.search(searchquery) != -1) {
+                        highlightedNodes.push(node.ID);
                         highlightDom.append("circle")
                             .attr("r", Math.ceil(node.Size) + 5)
                             .attr("cx", node.Pos.X)
@@ -127,12 +130,14 @@ $(function () {
             }
 
 
-            function renderSearchLinks(searchquery) {
+            function renderSearchLinks() {
 
                 var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
                 links.forEach(function (link) {
-                    if (link.Source.search(searchquery) != 1 || link.Target.search(searchquery) != 1) {
+                    //TODO we could improve this by using different colours depending on whether the searched node is the source or the target
+                    if (highlightedNodes.indexOf(link.Source) != -1 
+                        || highlightedNodes.indexOf(link.Target) != -1) {
 
                         linksDom.append("line")
                             .attr("x1", link.StartPos.X)

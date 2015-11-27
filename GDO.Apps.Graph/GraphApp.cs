@@ -6,6 +6,7 @@ using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
 using log4net;
+using log4net.Filter;
 
 namespace GDO.Apps.Graph
 {
@@ -52,8 +53,9 @@ namespace GDO.Apps.Graph
             GraphDataReader.ReadGraphMLData(graphMLfile, out Links, out Nodes, out rectDim);
 
             //create Dictionaries for quick search of Labels and Nodes
-            SetupLabelDictionary();
-            SetupNodeDictionary();
+            //SetupLabelDictionary();
+            //SetupNodeDictionary();
+            SetupNodesDictionary();
 
             //compute node adjacencies
             ComputeNodeAdjacencies();
@@ -253,58 +255,33 @@ namespace GDO.Apps.Graph
         }
 
 
-        // ***********************
-        // global dictionary variables
-        // ***********************
-        // map label to index within labels array
-        Dictionary<string, int> labelDict;
-        // map node ID to index within nodes data array
-        Dictionary<string, int> nodeDict;
+        //have a dictionary of the nodes indexed by ID
+        Dictionary<string, GraphNode> _nodesDictionary;
 
-        // set up label dictionary to prepare for search
-        private void SetupLabelDictionary()
+        private void SetupNodesDictionary()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            this.labelDict = new Dictionary<string, int>();
-
-            for (int i = 0; i < Nodes.Count; i++)
+            _nodesDictionary = new Dictionary<string, GraphNode>();
+            foreach (GraphNode n in Nodes)
             {
-                try       // TODO HACK improve this checking!!
+                try       // TODO improve this checking
                 {
-                    if (Nodes[i].Label != null && !labelDict.ContainsKey(Nodes[i].Label)) {
-                        this.labelDict.Add(Nodes[i].Label, i);
-                    }
+                    _nodesDictionary.Add(n.ID, n);
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e + "Key '" + Nodes[i].Label + "' already exists!");
-                    GraphAppHub.self.LogTime(e + "Key '" + Nodes[i].Label + "' already exists!");
+                    Debug.WriteLine(e + "Node '" + n.ID + "' already exists!");
+                    GraphAppHub.self.LogTime(e + "Node '" + n.ID + "' already exists!");
                 }
-            }     
-            sw.Stop();
-            Debug.WriteLine("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
-            GraphAppHub.self.LogTime("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
-        }
-
-
-        private void SetupNodeDictionary()
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            this.nodeDict = new Dictionary<string, int>();
-
-            for (int i = 0; i < Nodes.Count; i++)
-            {
-                    this.nodeDict.Add(Nodes[i].ID, i);            
             }
             sw.Stop();
             Debug.WriteLine("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
         }
-        
+
+       
         /** 
         * Auxiliar function to compute the neighbours of each node and store that information within the Node objects themselves
         */
@@ -316,14 +293,14 @@ namespace GDO.Apps.Graph
             foreach (GraphLink l in Links)
             {
                 //add the target to the source Adj variable
-                int sourceIndex = nodeDict[l.Source];
-                Nodes[sourceIndex].Adj.Add(l.Target);
-                Nodes[sourceIndex].NumLinks++;
+                GraphNode n = _nodesDictionary[l.Source];
+                n.Adj.Add(l.Target);
+                n.NumLinks++;
 
                 //add the source to the target Adj variable
-                int targetIndex = nodeDict[l.Target];
-                Nodes[targetIndex].Adj.Add(l.Source);
-                Nodes[targetIndex].NumLinks++;
+                n = _nodesDictionary[l.Target];
+                n.Adj.Add(l.Source);
+                n.NumLinks++;
             }
             sw.Stop();
             Debug.WriteLine("Time taken to compute adjacencies: " + sw.ElapsedMilliseconds + "ms");
