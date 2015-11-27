@@ -60,7 +60,7 @@ namespace GDO.Apps.Graph
                     new GraphNode()
                     {
                         ID = n.id,
-                        Label = hasLabel? n.data["label"] : n.id,
+                        Label = hasLabel && n.data.ContainsKey("label") ? n.data["label"] : "",// leave labels blank
                         Pos = new Position()
                         {
                             X = float.Parse(n.data["x"]),

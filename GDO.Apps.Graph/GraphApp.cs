@@ -270,7 +270,9 @@ namespace GDO.Apps.Graph
             {
                 try       // TODO HACK improve this checking!!
                 {
-                    this.labelDict.Add(Nodes[i].Label, i);
+                    if (Nodes[i].Label != null && !labelDict.ContainsKey(Nodes[i].Label)) {
+                        this.labelDict.Add(Nodes[i].Label, i);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -293,7 +295,7 @@ namespace GDO.Apps.Graph
 
             for (int i = 0; i < Nodes.Count; i++)
             {
-                this.nodeDict.Add(Nodes[i].ID, i);
+                    this.nodeDict.Add(Nodes[i].ID, i);            
             }
             sw.Stop();
             Debug.WriteLine("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
