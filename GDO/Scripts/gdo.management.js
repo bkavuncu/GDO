@@ -95,7 +95,7 @@ gdo.management.updateInstancesMenu = function () {
             }
         }
     }
-    $("#side-menu").metisMenu();
+   // $("#side-menu").metisMenu();
 }
 
                                 
