@@ -1,6 +1,7 @@
 const React = require('react'),
     DatasetStore = require('stores/DatasetStore'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    {IndigoIterator, PurpleIterator} = require('colors');
 
 
 class Field extends React.Component {
@@ -75,18 +76,6 @@ class FilterPanel extends React.Component {
     }
 }
 
-const colors = ['#7986CB', '#5C6BC0', '#3F51B5', '#3949AB', '#303F9F', '#283593', '#1A237E'],
-    pickColor = (index) => {
-        var l = colors.length - 1,
-            evenCycle = (Math.floor(index / l) % 2) === 0,
-            selector = (index % l) + 1;
-
-        if (evenCycle)
-            return colors[selector];
-        else
-            return colors[l - selector];
-    };
-
 class FieldList extends React.Component {
     static _getContainerStyle () {
         return {
@@ -100,7 +89,9 @@ class FieldList extends React.Component {
     }
 
     render () {
+        console.log(IndigoIterator);
         var {fields, onSelect, selectedIndex} = this.props,
+            colorIter = IndigoIterator(),
             onFieldSelect = (fieldIndex) => {
                 return () => onSelect(fieldIndex);
             };
@@ -113,7 +104,7 @@ class FieldList extends React.Component {
                                   index={i}
                                   active={selectedIndex === i}
                                   handler={onFieldSelect(i)}
-                                  backgroundColor={pickColor(i)}/> )}
+                                  backgroundColor={colorIter.getNext()}/> )}
         </div>;
     }
 }
