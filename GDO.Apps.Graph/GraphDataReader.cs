@@ -23,10 +23,10 @@ namespace GDO.Apps.Graph
                     id = k.Attribute("id").Value,
                     name = k.Attribute("attr.name").Value,
                     type = k.Attribute("attr.type").Value,
-                    node = k.Attribute("for").Value =="node",
+                    appliesTo = k.Attribute("for").Value,
                 }).ToList();
 
-            var nodekeys = keys.Where(k => k.node).ToList();
+            var nodekeys = keys.Where(k => k.appliesTo == "node").ToList();
             bool hasLabel = nodekeys.Any(k => k.name == "label");
             bool hasSize = nodekeys.Any(k => k.name == "size");
             bool hasR = nodekeys.Any(k => k.name == "r");
@@ -39,16 +39,13 @@ namespace GDO.Apps.Graph
             bool hascolour = hasR && hasG && hasB;
             bool hasposition = hasX && hasY; // throw exception / log
 
-
-            var edgekeys = keys.Where(k => !k.node).ToList();
-            bool hasEdgeLabel = edgekeys.Any(k => k.name == "Edge Label");
+            var edgekeys = keys.Where(k => k.appliesTo == "edge").ToList();
             bool hasWeight = edgekeys.Any(k => k.name == "weight");
-            bool hasEdgeId = edgekeys.Any(k => k.name == "Edge Id");
-
 
             var graphelem = doc.Root.Element(ns + "graph");
 
             #region fill Nodes data structure
+            var mandatorykeys = new[] { "x", "y", "r", "g", "b", "size" };
             nodes = graphelem.Elements(ns + "node").Select(xn =>
                 new
                 {
@@ -60,7 +57,8 @@ namespace GDO.Apps.Graph
                     new GraphNode()
                     {
                         ID = n.id,
-                        Label = hasLabel && n.data.ContainsKey("label") ? n.data["label"] : "",// leave labels blank
+                        Attrs = n.data.Where(a => !mandatorykeys.Contains(a.Key)).ToDictionary(a=>a.Key,a=>a.Value),    // remove attrs that have their own field (R,G,B, size)
+                        Label = hasLabel && n.data.ContainsKey("label") ? n.data["label"] : "",     // leave labels blank
                         Pos = new Position()
                         {
                             X = float.Parse(n.data["x"]),
@@ -124,7 +122,8 @@ namespace GDO.Apps.Graph
             {
                 Source = l.source,
                 Target = l.target,
-                Weight = hasWeight ? float.Parse( l.data["weight"]) :1,
+                Attrs = l.data,
+                Weight = hasWeight ? float.Parse( l.data["weight"]) : 1,
                 StartPos = nodesbyID[l.source].Pos,
                 EndPos = nodesbyID[l.target].Pos
             }).ToList();
