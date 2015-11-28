@@ -1,5 +1,5 @@
 const React = require('react'),
-    DatasetStore = require('stores/DatasetStore'),
+    FilterStore = require('stores/FilterStore'),
     _ = require('underscore'),
     {IndigoIterator, PurpleIterator} = require('colors');
 
@@ -89,18 +89,19 @@ class FieldList extends React.Component {
     }
 
     render () {
-        console.log(IndigoIterator);
         var {fields, onSelect, selectedIndex} = this.props,
             colorIter = IndigoIterator(),
             onFieldSelect = (fieldIndex) => {
                 return () => onSelect(fieldIndex);
             };
 
+        console.log(fields.toArray(), fields);
+
         return <div style={FieldList._getContainerStyle()}>
             {fields.map(
                 (f, i) =>
                     <Field {...f} key={i}
-                                  listLength={fields.length}
+                                  listLength={fields.size}
                                   index={i}
                                   active={selectedIndex === i}
                                   handler={onFieldSelect(i)}
@@ -126,22 +127,23 @@ class DataFilter extends React.Component {
     }
 
     _onSelect (index) {
-        var fields = this.props.miniset.fields;
-        if (index < fields.length)
+        var fields = this.props.fields;
+        if (index < fields.size)
             this.setState({selectedIndex: index});
     }
 
     render () {
-        var {miniset} = this.props,
-            {selectedIndex} = this.state;
+        var {fields, filters} = this.props,
+            {selectedIndex} = this.state,
+            fieldList = fields.toList();
 
         return (
             <div style={DataFilter._getContainerStyle()}>
-                <FieldList fields={miniset.fields}
+                <FieldList fields={fieldList}
                            selectedIndex={selectedIndex}
                            onSelect={this._onSelect.bind(this)}
                     />
-                <FilterPanel field={miniset[selectedIndex]}/>
+                <FilterPanel field={null}/>
             </div>
         );
     }
@@ -153,31 +155,31 @@ class DataFilterWrapper extends React.Component {
         super (props);
 
         this.state = {
-            datasetId: DatasetStore.getActiveDatasetId()
+            fields: FilterStore.getFields(),
+            filters: FilterStore.getFilters()
         };
     }
     componentWillMount () {
         var listener = this._onChange.bind(this);
 
-        DatasetStore.addChangeListener(listener);
+        FilterStore.addChangeListener(listener);
 
         this.setState({listener});
     }
 
     componentWillUnmount () {
-        DatasetStore.removeChangeListener(this.state.listener);
+        FilterStore.removeChangeListener(this.state.listener);
     }
 
     _onChange () {
         this.setState({
-            datasetId: DatasetStore.getActiveDatasetId()
+            fields: FilterStore.getFields(),
+            filters: FilterStore.getFilters()
         });
     }
 
     render () {
-        var miniset = DatasetStore.getMiniSet(this.state.datasetId);
-
-        return <DataFilter miniset={miniset} />;
+        return <DataFilter {...this.state} />;
     }
 }
 

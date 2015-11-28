@@ -44,6 +44,10 @@ class DatasetStore extends BaseStore {
         return this.selected;
     }
 
+    getActiveMiniset () {
+        return this.getMiniSet(this.getActiveDatasetId());
+    }
+
     getMiniSet (id) {
         return this.miniSets.get(id);
     }

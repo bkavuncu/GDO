@@ -59,7 +59,7 @@ class GraphBuilder extends React.Component {
             flexDirection: 'row',
             alignSelf: 'stretch',
             justifyContent: 'space-around'
-        }
+        };
 
         return <div id='buider' style={builderStyle}>
             <div id='fieldsBox' style={fieldsBoxStyle}>

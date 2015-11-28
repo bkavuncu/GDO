@@ -18,7 +18,7 @@ class DeployerStore extends BaseStore {
         this.selectedSectionId = NO_SECTION_SELECTED;
         this.mergeable = false;
 
-        this.subscribe(() => this._registerToActions.bind(this))
+        this.subscribe(() => this._registerToActions.bind(this));
     }
 
     _registerToActions (action) {
