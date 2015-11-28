@@ -11,8 +11,20 @@ const DragTypes = {
 };
 
 const boxTarget = {
-    drop(props, monitor) {
-        Builder.addField(props.sectionId, monitor.getItem(), props.axisData[0]);
+    drop(props, monitor, component) {
+        if ((props.singleField && component.getNumEntries() < 1) || !props.singleField ) {
+            var type = monitor.getItem().type;
+            var validTypes = props.validTypes;
+            for(var vType in validTypes) {
+                if (validTypes[vType] == type) {
+                    Builder.addField(monitor.getItem(), props.axisData[0]);
+                } else {
+                    //Wrong type error
+                }
+            }
+        } else {
+            //Too many fields error
+        }
     }
 };
 
@@ -34,8 +46,11 @@ class AxisBox extends React.Component {
         };
     }
 
+    getNumEntries() {
+        return this.state.contents.length;
+    }
+
     _onChange () {
-        //console.log(this.props.axisData[1].size);
         this.state.contents = [];
         var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
         var axisFields = axesSet.get(this.state.name);
@@ -53,9 +68,11 @@ class AxisBox extends React.Component {
             this.state.contents.push(field.value);
             field = fieldIter.next();
         }
-        //for (var field in this.props.axisData[1]) {
-        //    this.state.contents.push(field);
-        //}
+
+    }
+
+    _onRemove (field) {
+        Builder.removeField(field, this.props.axisData[0]);
     }
 
     componentDidMount () {
@@ -80,7 +97,8 @@ class AxisBox extends React.Component {
                 flex: '1',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
-                overflow: 'auto'
+                overflow: 'auto',
+                backgroundColor: '#9FE0DA'
             }
         }else if (canDrop) {
             var axisBoxStyle = {
@@ -89,7 +107,8 @@ class AxisBox extends React.Component {
                 flex: '1',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
-                overflow: 'auto'
+                overflow: 'auto',
+                backgroundColor: '#9FE0DA'
             }
         } else {
             var axisBoxStyle = {
@@ -97,14 +116,15 @@ class AxisBox extends React.Component {
                 flex: '1',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
-                overflow: 'auto'
+                overflow: 'auto',
+                backgroundColor: '#9FE0DA'
             }
         }
         return connectDropTarget(
             <div id='axisBox' style={axisBoxStyle}>
                 {this.state.name}
                 {this.state.contents.map(
-                    f=> <GraphField field={f} />
+                    f=> <GraphField key={f.name} field={f} isRemovable={true} remove={this._onRemove.bind(this)} />
                 )}
             </div>
     );
@@ -114,10 +134,10 @@ class AxisBox extends React.Component {
 AxisBox.propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
+    sectionId: PropTypes.number.isRequired,
     canDrop: PropTypes.bool.isRequired,
-    sectionId: PropTypes.number.isRequired
-    //accepts: PropTypes.arrayOf(PropTypes.string).isRequired,
-
+    singleField: PropTypes.bool.isRequired,
+    validTypes: PropTypes.array.isRequired
 };
 
 module.exports = DropTarget(DragTypes.FIELD, boxTarget, collect)(AxisBox);

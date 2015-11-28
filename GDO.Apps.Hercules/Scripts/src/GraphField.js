@@ -26,17 +26,36 @@ class GraphField extends React.Component {
         this.state = {};
     }
 
+    _onRemove () {
+        this.props.remove(this.props.field);
+    }
+
     render () {
         const { name, isDropped, isDragging, connectDragSource  } = this.props;
-        return connectDragSource(
-            <div style={{
+        var fieldStyle = {
             opacity: isDragging? 0.5 : 1,
             border: 'solid',
             fontSize: 25,
             fontWeight: 'bold',
             cursor: 'move',
-            flexBasis: '100px'
-            }}> {this.props.field.name}
+            display: 'flex',
+            flexDirection: 'row',
+            flexBasis: '100px',
+            padding: '7px'
+        }, closeStyle = {
+
+        }, nameStyle = {
+            flexGrow: '1'
+        }
+
+        return connectDragSource(
+            <div style={fieldStyle}>
+                <div style={nameStyle}>
+                    {this.props.field.name}
+                </div>
+                {this.props.isRemovable ?
+                    <div style={closeStyle} onClick={this._onRemove.bind(this)}> X </div> :
+                <div/>}
             </div>
         );
     }
@@ -45,7 +64,9 @@ class GraphField extends React.Component {
 GraphField.propTypes = {
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
-    field: PropTypes.object.isRequired
+    field: PropTypes.object.isRequired,
+    isRemovable: PropTypes.bool.isRequired,
+    remove: PropTypes.func
 };
 
 module.exports = DragSource(DragTypes.FIELD, fieldSource, collect)(GraphField);
