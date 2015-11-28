@@ -4,7 +4,7 @@ const React = require('react'),
     _ = require('underscore'),
     DeployerStore = require('./stores/DeployerStore'),
     DeployerActions = require('./actions/DeployerActions'),
-    colors = require('colors');
+    colors = require('colors').deployerColors;
 
 const NODE_PADDING = 3;
 let [REST, SELECT, MERGE, SECTION, SECTION_SELECTED] = [1,2,3,4];
@@ -354,4 +354,7 @@ class GridWrapper extends React.Component {
         return <DeployerGrid {...this.state}/>
     }
 }
+
+GridWrapper.prototype.tabName = 'Section Deployer';
+
 module.exports = GridWrapper;

@@ -22,8 +22,6 @@ class GraphBuilderStore extends BaseStore {
             case 'addField':
                 this.addField(action.dest, action.field);
                 break;
-            default:
-                console.log("ERROR: unknown action \n");
         }
         this.emitChange();
     }

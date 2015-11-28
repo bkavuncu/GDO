@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace GDO.Apps.Hercules.BackEnd.New.Tests
 {
@@ -26,7 +27,10 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         [TestMethod()]
         public void FromFileTest()
         {
-            Assert.Fail();
+            PlainDS ds = Parser.FromFile("../../TestFiles/test1.csv", ",");
+            Assert.IsNotNull(ds);
+            Debug.WriteLine(ds.ToString());
+            //Assert.Fail();
         }
 
         [TestMethod()]

@@ -76,6 +76,17 @@ namespace GDO.Apps.Hercules.BackEnd
         {
             System.Diagnostics.Debug.WriteLine(format, args);
         }
+
+
+        public static string Lines<T>(T[] arr, string separator)
+        {
+            return string.Join(separator, from o in arr select o.ToString());
+        }
+
+        public static string Lines<T>(List<T> arr, string separator)
+        {
+            return string.Join(separator, from o in arr select o.ToString());
+        }
     }
 
 

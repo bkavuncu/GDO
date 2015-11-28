@@ -211,14 +211,37 @@
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\src\actions\DeployerActions.js" />
+    <Content Include="Scripts\src\actions\ExplorerActions.js" />
+    <Content Include="Scripts\src\actions\GraphBuilderActions.js" />
+    <Content Include="Scripts\src\actions\NavigationActions.js" />
+    <Content Include="Scripts\src\DataFilter.js" />
+    <Content Include="Scripts\src\Dispatcher.js" />
+    <Content Include="Scripts\src\Explorer.js" />
+    <Content Include="Scripts\src\GraphAxisBox.js" />
+    <Content Include="Scripts\src\GraphBuilder.js" />
+    <Content Include="Scripts\src\GraphControl.js" />
+    <Content Include="Scripts\src\GraphField.js" />
+    <Content Include="Scripts\src\Importer.js" />
+    <Content Include="Scripts\src\index.html" />
+    <Content Include="Scripts\src\schemas\DatasetStructure.js" />
+    <Content Include="Scripts\src\schemas\GraphStructure.js" />
+    <Content Include="Scripts\src\schemas\HerculesStructure.js" />
+    <Content Include="Scripts\src\stores\BaseStore.js" />
+    <Content Include="Scripts\src\stores\DatasetStore.js" />
+    <Content Include="Scripts\src\stores\DeployerStore.js" />
+    <Content Include="Scripts\src\stores\GraphBuilderStore.js" />
+    <Content Include="Scripts\src\stores\NavStore.js" />
     <Content Include="Scripts\src\ui\View.jsx" />
+    <Content Include="Scripts\src\DeployerGrid.jsx" />
+    <Content Include="Scripts\src\Tabs.jsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Scripts\src\control.jsx" />
+    <None Include="Scripts\src\Hercules.js" />
     <Content Include="Scripts\react\JSXTransformer-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.min.js" />
@@ -239,6 +262,7 @@
     <Compile Include="App_Start\ReactConfig.cs" />
     <Compile Include="BackEnd\Augmenter.cs" />
     <Compile Include="BackEnd\Database.cs" />
+    <Compile Include="BackEnd\Hercules.cs" />
     <Compile Include="BackEnd\Parser.cs" />
     <Compile Include="BackEnd\Stats.cs" />
     <Compile Include="BackEnd\Types.cs" />
