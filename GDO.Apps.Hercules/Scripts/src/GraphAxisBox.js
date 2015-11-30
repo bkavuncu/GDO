@@ -61,8 +61,8 @@ class AxisBox extends React.Component {
         while (!field.done) {
             this.state.contents = this.state.contents.set(fieldIndex, field.value);
             field = axisFieldIter.next();
+            fieldIndex++;
         }
-
 
         var fieldIter = this.props.axisData[1].entries();
         var field = fieldIter.next();
@@ -127,9 +127,7 @@ class AxisBox extends React.Component {
             <div id='axisBox' style={axisBoxStyle}>
                 {this.state.name}
                 {this.state.contents.map(
-                    (f, i) => {
-                        return <GraphField key={i} field={f} isRemovable={true} remove={this._onRemove.bind(this)}/>;
-                    }
+                    (f, i) => <GraphField field={f} isRemovable={true} remove={this._onRemove.bind(this)}/>
                 )}
             </div>
     );

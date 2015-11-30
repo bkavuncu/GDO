@@ -111,7 +111,7 @@ class GraphControlWrapper extends React.Component {
                 description: 'lemons',
                 disabled: false,
                 origin: 'native',
-                type: 'Enum'
+                type: 'Integer'
             },{
                 name: 'orange',
                 description: 'citruses',
@@ -123,7 +123,31 @@ class GraphControlWrapper extends React.Component {
                 description: 'citruses',
                 disabled: true,
                 origin: 'native',
-                type: 'Boolean'
+                type: 'Float'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
+            },{
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Integer'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Float'
             },{
                 name: 'orange',
                 description: 'whatever',
@@ -147,31 +171,7 @@ class GraphControlWrapper extends React.Component {
                 description: 'citruses',
                 disabled: true,
                 origin: 'native',
-                type: 'Boolean'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
                 type: 'Float'
-            },{
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            },{
-                name: 'clementine',
-                description: 'citruses',
-                disabled: true,
-                origin: 'native',
-                type: 'Boolean'
             },{
                 name: 'orange',
                 description: 'whatever',
