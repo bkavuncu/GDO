@@ -6,7 +6,6 @@ using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
 using log4net;
-using log4net.Filter;
 
 namespace GDO.Apps.Graph
 {
@@ -178,11 +177,26 @@ namespace GDO.Apps.Graph
 
 
             // ii. write to files
+            WriteAllNodesFile(nodesPath, Nodes);
             WriteNodeFiles(totalRows, totalCols, nodesPath, partitions);
             WriteLinkFiles(totalRows, totalCols, linksPath, partitions);
             #endregion
 
             return this.FolderNameDigit;
+        }
+
+        private static void WriteAllNodesFile(string nodesPath, List<GraphNode> nodes)
+        {   
+            // writes a json file containing the information about all nodes in the graph; all browser will need this information for searching
+            using (StreamWriter streamWriter = new StreamWriter(nodesPath +  @"all" + @".json")
+            {
+                AutoFlush = true
+            })
+            {
+                JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(jsonWriter, nodes);
+            }
         }
 
 
@@ -245,7 +259,6 @@ namespace GDO.Apps.Graph
                 {
                     this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
                 }
-
                 Directory.CreateDirectory(basePath + FolderNameDigit);
             }
             else

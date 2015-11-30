@@ -10,9 +10,6 @@ namespace GDO.Apps.Graph
     {
         private static PartitionPos PartionPosition(Position pos,Section section)
         {
-            // previously bug: didn't divide Section.Height by Section.Rows, which makes it divide by the dimension of whole section, hence all nodes appear in the first file
-            // cast it to int; Section.Height/Section.Rows to get height of single display
-
             return new PartitionPos
             {
                 Row = (int) Math.Floor(pos.Y/(section.Height/(double) section.Rows)),
@@ -175,8 +172,12 @@ namespace GDO.Apps.Graph
 
                         var linkSegment = new GraphLink
                         {
+                            Source = link.Source,
+                            Target = link.Target,
                             StartPos = intersections[j],
-                            EndPos = intersections[j + 1]
+                            EndPos = intersections[j + 1],
+                            Weight = link.Weight,
+                            Attrs = link.Attrs   // copy rest of attributes
                         };
 
                         partitions[segmentPos.Row, segmentPos.Col].Links.Add(linkSegment);

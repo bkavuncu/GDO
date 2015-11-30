@@ -10,7 +10,7 @@ $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     // arrays to store data
-    var links, nodes, mostConnectedNodes = [];
+    var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;
 
     // boolean to track if current graph is zoomed
@@ -104,6 +104,8 @@ $(function () {
 
             var highlightedNodes = [];  //stores the ID of the nodes matching the query
 
+            // To render links properly, each browser needs to know all matched nodes. We load the full file.
+
             renderSearchNodes();
             renderSearchLinks();
 
@@ -111,9 +113,16 @@ $(function () {
 
                 //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
-                nodes.forEach(function(node) {
+                //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var
+                allnodes.forEach(function(node) {
                     if (node.Label.search(searchquery) != -1) {
                         highlightedNodes.push(node.ID);
+                    }
+                });
+
+                //Now, each browser calculate the matching nodes among its nodes. 
+                nodes.forEach(function(node) {
+                    if (node.Label.search(searchquery) != -1) {
                         highlightDom.append("circle")
                             .attr("r", Math.ceil(node.Size) + 5)
                             .attr("cx", node.Pos.X)
@@ -134,6 +143,7 @@ $(function () {
 
                 var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
+                //because highlightedNodes has the relevant nodes for the whole graph, this will work even though matching nodes not being in the target browser
                 links.forEach(function (link) {
                     //TODO we could improve this by using different colours depending on whether the searched node is the source or the target
                     if (highlightedNodes.indexOf(link.Source) != -1 
@@ -146,9 +156,7 @@ $(function () {
                             .attr("y2", link.EndPos.Y)
                             .attr("stroke-width", strokeWidth)
                             .attr("stroke", "yellow");
-                    } else {
-                        console.log("no link!");
-                    }
+                    } 
                 });
 
             }
@@ -817,6 +825,8 @@ $(function () {
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit, zoomed) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
+            alert("RENDER GRAPH: this should be called only once per graph...")
+
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
             var basePath, fileName;
@@ -837,7 +847,8 @@ $(function () {
             }
 
             var nodesFilePath = basePath + "\\nodes\\" + fileName + ".json";
-            var linksFilePath = basePath + "\\links\\" + fileName + ".json";    
+            var linksFilePath = basePath + "\\links\\" + fileName + ".json";
+            var allnodesFilePath = basePath + "\\nodes\\" + "all" + ".json";
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -1191,11 +1202,24 @@ $(function () {
 
                     console.log("Time before rendering: " + window.performance.now());
 
+                    loadAllNodes();
+
                     console.log("Time before reading nodesPos.json: " + window.performance.now());
                     renderNodes(nodesFilePath);
                     console.log("Time before reading linksPos.json: " + window.performance.now());
                     renderLinks(linksFilePath);
 
+                    function loadAllNodes() {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", allnodesFilePath, true);
+                        xhr.send();
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                allnodes = JSON.parse(xhr.responseText);
+                            }
+                        }
+                    }
 
                     // new optimised rendering, to read from distributed json files
                     function renderNodes(file) {
@@ -1235,7 +1259,6 @@ $(function () {
                                     } 
 
                                     //var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
-
                                     nodesDom.append("circle")
                                         .attr("r", Math.ceil(node.Size)) // radius
                                         .attr("cx", node.Pos.X)
@@ -1267,7 +1290,6 @@ $(function () {
                                 var strokeWidth = zoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
                                 links.forEach(function (link) {
-
                                     linksDom.append("line")
                                         .attr("x1", link.StartPos.X)   
                                         .attr("y1", link.StartPos.Y) 
