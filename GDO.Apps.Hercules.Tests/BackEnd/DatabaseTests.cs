@@ -20,28 +20,38 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         public void GetErrorTest()
         {
 
-            List<Fuck> l = new List<Fuck>(3);
-            Debug.WriteLine(l[0]);
-
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void InitTest()
         {
             Assert.IsTrue(Database.Init());
-            JsonDS ds = Database.JsonFromFile("../../TestFiles/test1.csv", "Zeme", "If this works im going home.");
-            if (ds == null) {
+            JsonDS ds1 = Database.JsonFromFile("../../TestFiles/test1.csv", "Test1", "Descriptive description.");
+            JsonDS ds2 = Database.JsonFromFile("../../TestFiles/test2.csv", "Test2", "The brown fox jumped over the lazy dog#.");
+            if (ds1 == null && ds2 == null) {
                 Debug.WriteLine(Database.GetError());
             } else {
-                Debug.WriteLine(ds.ToString());
-                //string json = Database.GetDataset(id);
-                //if (json == null) {
-                //    Debug.WriteLine(Database.GetError());
-                //} else {
-                //    JsonDS ds = JsonConvert.DeserializeObject<JsonDS>(json);
-                //    Debug.WriteLine(ds.ToString());
-                //}
+               
+                //string id1 = Database.UploadJsonDS(ds1);
+                string id1 = "565c7fe75e0c5c0d282cee30";
+                JsonMiniset ms1 = Database.QueryJsonMiniset(id1);
+                Assert.AreEqual(id1, ms1._id.ToString());
+                JsonRows rs1 = Database.QueryJsonRows(id1);
+                Assert.AreEqual(id1, rs1._id.ToString());
+                ds1 = Database.QueryJsonDS(id1);
+                Assert.AreEqual(id1, ds1.schema._id.ToString());
+
+
+                string id2 = Database.UploadJsonDS(ds2);
+                JsonMiniset ms2 = Database.QueryJsonMiniset(id2);
+                Assert.AreEqual(id2, ms2._id.ToString());
+                JsonRows rs2 = Database.QueryJsonRows(id2);
+                Assert.AreEqual(id2, rs2._id.ToString());
+                ds2 = Database.QueryJsonDS(id2);
+                Assert.AreEqual(id2, ds2.schema._id.ToString());
+
+                JsonMiniset[] mss = Database.QueryJsonMinisets();
+
             }
         }
 

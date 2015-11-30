@@ -22,7 +22,7 @@ module.exports = {
         }
     },
     output: {
-        path: './Scripts/build/assets/',
+        publicPath: '/assets/',
         filename: "Hercules.js"
     },
     module: {

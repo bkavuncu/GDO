@@ -49,21 +49,27 @@ namespace GDO.Apps.Hercules.BackEnd
     {
         public string name;
         public string description;
-        [BsonId]
-        public MongoDB.Bson.ObjectId id;
         public int nrows;
         public string sourceType;
         public string sourceOrigin;
         public bool disabled;
         public JsonField[] fields;
+        public MongoDB.Bson.ObjectId _id;
 
 
         public override string ToString()
         {
             return string.Format("{0}#{1} {2} {3} {4} {5} | {6} rows\n{7}",
-                                 id, name, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", nrows,
+                                 _id, name, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", nrows,
                                  Utils.Lines(fields, "\n"));
         }
+    }
+
+
+    public class JsonRows
+    {
+        public MongoDB.Bson.ObjectId _id;
+        public List<dynamic[]> rows;
     }
 
     public class JsonDS

@@ -87,6 +87,11 @@ namespace GDO.Apps.Hercules.BackEnd
         {
             return string.Join(separator, from o in arr select o.ToString());
         }
+
+        public static string Maybe(string s, string b)
+        {
+            return (s == null || s.Length <= 0) ? b : s;
+        }
     }
 
 

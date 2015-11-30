@@ -24,6 +24,7 @@ class GraphBuilder extends React.Component {
         var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
         var axesSetIter = axesSet.entries();
         var axis = axesSetIter.next();
+
         while (!axis.done) {
             this.state.axes.push(axis.value);
             axis = axesSetIter.next();
@@ -47,7 +48,8 @@ class GraphBuilder extends React.Component {
             display: 'flex',
             flexDirection: 'column',
             alignSelf: 'stretch',
-            flexBasis: '250px'
+            flexBasis: '250px',
+            backgroundColor: '#9FE0DA'
         }, axisStyle = {
             display: 'flex',
             flexDirection: 'column',
@@ -59,15 +61,24 @@ class GraphBuilder extends React.Component {
             flexDirection: 'row',
             alignSelf: 'stretch',
             justifyContent: 'space-around'
-        }
+        };
 
         return <div id='buider' style={builderStyle}>
             <div id='fieldsBox' style={fieldsBoxStyle}>
-                {this.state.baseFields.map(f => <GraphField field={f} key={f}/>)}
+                {this.state.baseFields.map(
+                    f => <GraphField key={f.name} field={f} isRemovable={false}/>
+                )}
             </div>
             <div id='axes' style={axisStyle}>
                 {this.state.axes.map(
-                    axis => <AxisBox axisData={axis} key={this.props.sectionId}     sectionId={this.props.sectionId} />
+                    axis => {
+                        var dimData = GraphBuilderStore.getDimensionData(axis[0]);
+                        return <AxisBox key={axis[0]}
+                                        axisData={axis}
+                                        sectionId={this.props.sectionId}
+                                        singleField={dimData.singleField}
+                                        validTypes={dimData.validTypes}/>;
+                    }
                 )}
             </div>
         </div>;
