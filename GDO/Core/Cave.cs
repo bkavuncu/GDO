@@ -26,6 +26,10 @@ namespace GDO.Core
         public static int NodeWidth { get; set; }
         public static int NodeHeight { get; set; }
         public static int DefaultP2PMode { get; set; }
+        public static int CurrentHeartbeat { get; set; }
+        public static int MaximumHeartbeat { get; set; }
+        public static bool InitializedSync { get; set; }
+        public static System.Timers.Timer SyncTimer { get; set; }
         public static ConcurrentDictionary<string, App> Apps { get; set; }
         public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
@@ -50,6 +54,8 @@ namespace GDO.Core
         /// </summary>
         public Cave()
         {
+            CurrentHeartbeat = 0;
+            MaximumHeartbeat = 1000000;
             MaintenanceMode = true;
             BlankMode = false;
             Apps = new ConcurrentDictionary<string, App>();
@@ -62,6 +68,7 @@ namespace GDO.Core
             NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
             NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
             DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
+            InitializedSync = false;
             for (int id = 1; id <= Cols * Rows; id++)
             {
                 string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');

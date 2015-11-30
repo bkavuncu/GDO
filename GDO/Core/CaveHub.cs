@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
+using Timer = System.Threading.Timer;
 
 namespace GDO.Core
 {
@@ -43,6 +45,33 @@ namespace GDO.Core
             return base.OnDisconnected(stopCalled);
 
         }
+
+        private void InitializeSynchronization()
+        {
+            if (!Cave.InitializedSync)
+            {
+                Cave.InitializedSync = true;
+                Cave.SyncTimer = new System.Timers.Timer(10);
+                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
+                //Cave.SyncTimer.Interval = 10 - (DateTime.Now.Millisecond%10);
+                Cave.SyncTimer.Start();
+            }
+        }
+
+
+        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
+        {
+            if (Cave.CurrentHeartbeat == Cave.MaximumHeartbeat)
+            {
+                Cave.CurrentHeartbeat = 0;
+            }
+            Cave.CurrentHeartbeat++;
+            //Cave.SyncTimer.Stop();
+            //Cave.SyncTimer.Interval = (DateTime.Now.Millisecond % 10) +1;
+            //Cave.SyncTimer.Start();
+            Clients.All.receiveHeartbeat(Cave.CurrentHeartbeat);
+        }
+
 
         /// <summary>
         /// Deploys the node.
@@ -617,7 +646,7 @@ namespace GDO.Core
 
         public void Initialize()
         {
-            //dummy
+            InitializeSynchronization();
         }
 
         public void SaveCaveState(string name)

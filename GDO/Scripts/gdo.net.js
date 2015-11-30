@@ -31,9 +31,38 @@ gdo.net.NEIGHBOUR_ENUM = {
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
     // that is why they are on load
-    $.connection.caveHub.client.receiveDefaultP2PMode = function(defaultP2PMode) {
+    sync10ms = function (heartbeat) {
+        //gdo.consoleOut('.NET', 3, 'Received 10ms heartbeat ' + heartbeat);
+    }
+
+    sync100ms = function (heartbeat) {
+        //gdo.consoleOut('.NET', 4, 'Received 100ms heartbeat ' + heartbeat);
+    }
+
+    sync1s = function (heartbeat) {
+        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+            gdo.net.node[i].lastUpdate++;
+        }
+        //gdo.consoleOut('.NET', 5, 'Received 1s heartbeat ' + heartbeat);
+    }
+
+    $.connection.caveHub.client.receiveDefaultP2PMode = function (defaultP2PMode) {
         gdo.net.p2pmode = defaultP2PMode;
     }
+
+    $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
+        gdo.net.sync10ms(heartbeat);
+        sync10ms(heartbeat);
+        if (heartbeat % 10 == 0) {
+            gdo.net.sync100ms(heartbeat / 10);
+            sync100ms(heartbeat / 10);
+        }
+        if (heartbeat % 100 == 0) {
+            gdo.net.sync1s(heartbeat / 100);
+            sync1s(heartbeat / 100);
+        }
+    }
+
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.consoleOut('.NET', 1, 'Maintenance Mode:' + maintenanceMode);
@@ -168,6 +197,7 @@ gdo.net.initHub = function () {
     gdo.net.connection = $.connection;
     gdo.net.server = $.connection.caveHub.server;
     gdo.net.node[gdo.clientId].connectionId = gdo.net.connection.hub.id;
+    gdo.net.server.initialize();
     //gdo.net.listener = $.connection.caveHub.client;
     gdo.consoleOut('.NET', 0, 'Connected to Hub');
 }
@@ -484,6 +514,7 @@ gdo.net.initializeArrays = function (num) {
         gdo.net.node[i].isSelected = false;
         gdo.net.node[i].sectionId = 0;
         gdo.net.node[i].appInstanceId = -1;
+        gdo.net.node[i].lastUpdate = 100;
         gdo.net.node[i].sendData = function (id, type, command, data, mode) {
             var dataObj = {};
             dataObj.type = type;
@@ -586,6 +617,7 @@ gdo.net.processNode = function (node)
     gdo.net.node[node.Id].sectionRow = node.SectionRow;
     gdo.net.node[node.Id].sectionId = node.SectionId;
     gdo.net.node[node.Id].deployed = node.IsDeployed;
+    //gdo.net.node[id].lastUpdate = 0;
     if (node.Id != gdo.clientId || gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.node[node.Id].connectionId = node.ConnectionId;
         gdo.net.node[node.Id].peerId = node.PeerId;
@@ -606,7 +638,10 @@ gdo.net.processNode = function (node)
         }
         gdo.net.section[gdo.net.node[node.Id].sectionId].health = gdo.net.section[gdo.net.node[node.Id].sectionId].health / (gdo.net.section[gdo.net.node[node.Id].sectionId].cols * gdo.net.section[gdo.net.node[node.Id].sectionId].rows);
     }
-    gdo.consoleOut('.NET', 2, 'Received Node Update : (id:'+ node.Id + '),(col,row:' + node.Col + ','+node.Row+'),(peerId:' + node.PeerId + ')');
+    if (gdo.management.processNodeUpdate != null) {
+        gdo.management.processNodeUpdate(node.Id);
+    }
+    gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
 }
 
 gdo.net.processSection = function(exists, id, section) {
@@ -756,4 +791,18 @@ gdo.net.processState = function (state, id, exists) {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
     }
+}
+
+
+
+gdo.net.sync10ms = function (heartbeat) {
+    //gdo.consoleOut('.NET', 3, 'Received 10ms heartbeat ' + heartbeat);
+}
+
+gdo.net.sync100ms = function (heartbeat) {
+    //gdo.consoleOut('.NET', 4, 'Received 100ms heartbeat ' + heartbeat);
+}
+
+gdo.net.sync1s = function (heartbeat) {
+    //gdo.consoleOut('.NET', 5, 'Received 1s heartbeat ' + heartbeat);
 }

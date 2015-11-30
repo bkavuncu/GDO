@@ -14,6 +14,12 @@
         }
     }
 }
+gdo.management.processNodeUpdate = function (id) {
+    $("#node_table_node_" + node.id + '_u').css("background", "#559100");
+    gdo.consoleOut('.NET', 2, 'HERE1');
+    setTimeout(function () { $("#node_table_node_" + node.id + '_u').css("background", "transparent"); gdo.consoleOut('.NET', 2, 'HERE2'); }, 100);
+    
+}
 
 gdo.management.drawNodeTable = function (nodeId) {
     /// <summary>
@@ -39,8 +45,8 @@ gdo.management.drawNodeTable = function (nodeId) {
         var node = gdo.net.node[i];
         $("#node_table_row_" + node.row + "_col_" + node.col)
              .empty()
-             .css("vertical-align","top")
-             .append("<div id='node_table_node_" + node.id + "_i' style='text-align:center;background:#444'> <font size='4px'><b> " + node.id + "</b></font></div>")
+             .css("vertical-align", "top")
+             .append("<div id='node_table_node_" + node.id + "_i' style='text-align:center;background:#444'> <font size='4px'><b> " + node.id + "</b></font><div id='node_table_node_" + node.id + "_u' class='circle'></div></div>")
              .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
              .append("<div id='node_table_node_" + node.id + "_s'> <b>&nbsp;Section ID:</b> " + node.sectionId + "</div>")
              //.append("<div id='node_table_node_" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
