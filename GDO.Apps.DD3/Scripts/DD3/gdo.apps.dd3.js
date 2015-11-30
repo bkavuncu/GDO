@@ -3,10 +3,7 @@
 // signalR_callback is defined later in dd3 when it is initiated.
 var d3;
 
-var initDD3App = function (dd3Server, jQuery, Peer, signalR_callback) {
-
-    d3 = document.getElementById('app_frame_content').contentWindow['d3'];
-    console.error('Hello World', d3);
+var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
     var $ = jQuery;
 
     var utils = (function () {
@@ -393,33 +390,16 @@ var initDD3App = function (dd3Server, jQuery, Peer, signalR_callback) {
             };
 
             init.checkLibraries = function () {
-                var toCheck = ['d3', 'Peer', 'jQuery', ['jQuery', 'signalR']];
+                var deps = [d3, dd3Server, $, jQuery, signalR_callback, Peer];
+                var undefinedDeps = deps.filter(function (d) { return typeof d === 'undefined'; }),
+                    ok = undefinedDeps.length === 0;
 
-                var check = toCheck.some(function (lib, i) {
-                    var ok = false;
-                    if (typeof lib === 'string' && typeof window[lib] === "undefined") {
-                        utils.log("Initialization failed : " + lib + " was not found", 4);
-                        ok = true;
-                    } else if (typeof lib === 'object') {
-                        var path = window;
-                        ok = lib.some(function (l) {
-                            if (!(path = path[l])) {
-                                utils.log("Initialization failed : " + l + " was not found", 4);
-                                return true;
-                            }
-                            return false;
-                        });
-                        toCheck[i] = lib.join('.');
-                    }
-                    return ok;
-                });
+                if (!ok) {
+                    utils.log("Some libraries were undefined", 4);
+                }
 
-                if (check)
-                    return false;
-
-                utils.log("All Libraries successfully loaded\n[" + toCheck.join(', ') + ']', 1);
-                return true;
-            };
+                return ok;
+            }
 
             init.setBrowserConfiguration = function () {
                 if (options.positionByClientId) {
@@ -2344,9 +2324,9 @@ gdo.net.app["DD3"].initClient = function (launcher, orderController) {
     orderTransmitter = orderController;
     main_callback = launcher;
 
-    console.log('mannagia a padre pio figlio e spirito santo amen', dd3Server, $, Peer, signalR_callback);
+    var d3 = document.getElementById('app_frame_content').contentWindow['d3'];
 
-    return initDD3App(dd3Server, $, Peer, signalR_callback);
+    return initDD3App(d3, dd3Server, $, Peer, signalR_callback);
 }
 
 gdo.net.app["DD3"].initControl = function (callback) {
