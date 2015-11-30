@@ -2,72 +2,8 @@ const React = require('react'),
     GraphBuilder = require('./GraphBuilder'),
     GraphStructure = require('./schemas/GraphStructure'),
     lineGraph = require('./schemas/GraphStructure').lineGraph,
-    GraphBuilderStore = require('./stores/GraphBuilderStore');
-
-class GraphItem extends React.Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {};
-    }
-
-    _onTap () {
-        this.props.select(this.props.sectionData);
-    }
-
-    render () {
-        var itemStyle;
-        if(this.props.sectionData.sectionId == this.props.activeId) {
-            itemStyle = {
-                width: '100%',
-                flex: '1'
-            }
-        } else {
-            itemStyle = {
-                width: '100%',
-                flex: '1',
-                backgroundColor: '#009688'
-            }
-        }
-
-        return <div style={itemStyle}
-                    onTouchTap={this._onTap.bind(this)}>
-            {this.props.sectionData.sectionId}
-            {this.props.sectionData.graphData.graphType}
-        </div>;
-    }
-}
-
-class GraphList extends React.Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {};
-    }
-
-    render () {
-        var listStyle = {
-            flexBasis: '15%',
-            display: 'flex',
-            flexDirection: 'column',
-            flexWrap: 'nowrap',
-            justifyContent: 'flex-start',
-            alignContent: 'stretch',
-            alignItems: 'stretch'
-        }
-
-        return <div style={listStyle}>
-            {this.props.sectionList.map(
-                    s => <GraphItem key={s.sectionId}
-                                    sectionData={s}
-                                    select={this.props.selector}
-                                    activeId={this.props.activeId}
-                                    key={s.id}
-                        />
-            )}
-        </div>;
-    }
-}
+    GraphBuilderStore = require('./stores/GraphBuilderStore'),
+    SideMenu = require('./ui/SideMenu');
 
 class GraphPanel extends React.Component {
     constructor(props) {
@@ -108,7 +44,7 @@ class GraphControl extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            active: this.props.sectionList[0].sectionId
+            active: 0
         };
     }
 
@@ -117,16 +53,22 @@ class GraphControl extends React.Component {
             display: 'flex',
             alignSelf: 'stretch',
             flexGrow: '1'
-        }, selectGraph = (sectionData) => {
+        }, selectGraph = (sectionIndex) => {
             this.setState({
-                active: sectionData.sectionId
+                active: sectionIndex
             });
-            GraphBuilderStore.setActiveSection(sectionData.sectionId);
+            GraphBuilderStore.setActiveSection(this.props.sectionList[sectionIndex].sectionId);
         }
+
+        var sectionLabelList = [];
+        for (var i in this.props.sectionList) {
+            sectionLabelList.push("Section "+this.props.sectionList[i].sectionId);
+        }
+
         return <div style={divStyle}>
-            <GraphList sectionList={this.props.sectionList}
-                       selector={selectGraph}
-                       activeId={this.state.active}/>
+            <SideMenu fields={sectionLabelList}
+                       onSelect={selectGraph}
+                       selectedIndex={this.state.active}/>
             <GraphPanel activeId={this.state.active}
                         miniSet={this.props.miniSet}/>
             </div>;
@@ -160,32 +102,91 @@ class GraphControlWrapper extends React.Component {
 
     render () {
         //TEST DATA
-        var miniSet = {
-                id: 2,
-                name: 'Sam Lemon',
-                description: 'a family friend',
-                fields: [
-                    {
-                        name: 'lemon',
-                        description: 'lemons',
-                        disabled: false,
-                        origin: 'native',
-                        type: 'Enum'
-                    },{
-                        name: 'orange',
-                        description: 'citruses',
-                        disabled: true,
-                        origin: 'artificial',
-                        type: 'Integer'
-                    }
-                ],
+        var miniSet = {id: 1,
+            name: 'George Lemon',
+            description: 'a family friend',
+            fields: [
+            {
+                name: 'lemon',
+                description: 'lemons',
                 disabled: false,
-                length: 500,
-                source: {
-                    type: 'URL',
-                    url: 'http://deez.nuts/data.csv'
-                }
-            }, graphData = lineGraph,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Boolean'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
+            },{
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Boolean'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
+            },{
+                name: 'lemon',
+                description: 'lemons',
+                disabled: false,
+                origin: 'native',
+                type: 'Enum'
+            },{
+                name: 'orange',
+                description: 'citruses',
+                disabled: true,
+                origin: 'artificial',
+                type: 'Integer'
+            },{
+                name: 'clementine',
+                description: 'citruses',
+                disabled: true,
+                origin: 'native',
+                type: 'Boolean'
+            },{
+                name: 'orange',
+                description: 'whatever',
+                disabled: false,
+                origin: 'artificial',
+                type: 'Float'
+            }
+        ],
+            disabled: false,
+            length: 500,
+            source: {
+            type: 'URL',
+                url: 'http://deez.nuts/data.csv'
+        }
+    }, graphData = lineGraph,
             sectionData = [{
                 sectionId: 1,
                 graphData: graphData
