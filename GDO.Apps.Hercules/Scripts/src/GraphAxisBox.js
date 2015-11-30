@@ -4,7 +4,8 @@ const React = require('react'),
      PropTypes = React.PropTypes,
      GraphField = require('./GraphField'),
      Builder = require('./actions/GraphBuilderActions'),
-     GraphBuilderStore = require('./stores/GraphBuilderStore');
+     GraphBuilderStore = require('./stores/GraphBuilderStore'),
+     Immutable = require('immutable');
 
 const DragTypes = {
     FIELD: 'field'
@@ -42,22 +43,23 @@ class AxisBox extends React.Component {
 
         this.state = {
             name: this.props.axisData[0],
-            contents: []
+            contents: Immutable.List()
         };
     }
 
     getNumEntries() {
-        return this.state.contents.length;
+        return this.state.contents.size;
     }
 
     _onChange () {
-        this.state.contents = [];
+        this.state.contents = this.state.contents.clear();
         var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
         var axisFields = axesSet.get(this.state.name);
         var axisFieldIter = axisFields.values();
         var field = axisFieldIter.next();
+        var fieldIndex = 0;
         while (!field.done) {
-            this.state.contents.push(field.value);
+            this.state.contents = this.state.contents.set(fieldIndex, field.value);
             field = axisFieldIter.next();
         }
 
@@ -120,11 +122,14 @@ class AxisBox extends React.Component {
                 backgroundColor: '#9FE0DA'
             }
         }
+
         return connectDropTarget(
             <div id='axisBox' style={axisBoxStyle}>
                 {this.state.name}
                 {this.state.contents.map(
-                    f=> <GraphField key={f.name} field={f} isRemovable={true} remove={this._onRemove.bind(this)} />
+                    (f, i) => {
+                        return <GraphField key={i} field={f} isRemovable={true} remove={this._onRemove.bind(this)}/>;
+                    }
                 )}
             </div>
     );

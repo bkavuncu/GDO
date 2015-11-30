@@ -42,6 +42,7 @@ class GraphField extends React.Component {
             flexDirection: 'row',
             flexBasis: '100px',
             padding: '7px'
+
         }, closeStyle = {
 
         }, nameStyle = {

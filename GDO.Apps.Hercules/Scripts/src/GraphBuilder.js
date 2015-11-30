@@ -45,11 +45,14 @@ class GraphBuilder extends React.Component {
     render () {
         var fieldsBoxStyle = {
             border: 'solid',
-            display: 'flex',
+            //display: 'flex',
             flexDirection: 'column',
             alignSelf: 'stretch',
+            alignItems: 'stretch',
             flexBasis: '250px',
-            backgroundColor: '#9FE0DA'
+            backgroundColor: '#9FE0DA',
+            overflow: 'auto',
+            minHeight: 'min-content'
         }, axisStyle = {
             display: 'flex',
             flexDirection: 'column',
@@ -66,7 +69,7 @@ class GraphBuilder extends React.Component {
         return <div id='buider' style={builderStyle}>
             <div id='fieldsBox' style={fieldsBoxStyle}>
                 {this.state.baseFields.map(
-                    f => <GraphField key={f.name} field={f} isRemovable={false}/>
+                    (f, i) => <GraphField key={i} field={f} isRemovable={false}/>
                 )}
             </div>
             <div id='axes' style={axisStyle}>
