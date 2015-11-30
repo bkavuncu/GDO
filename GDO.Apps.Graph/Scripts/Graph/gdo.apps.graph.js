@@ -825,7 +825,7 @@ $(function () {
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit, zoomed) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            alert("RENDER GRAPH: this should be called only once per graph...")
+            //alert("RENDER GRAPH: this should be called only once per graph...")
 
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
