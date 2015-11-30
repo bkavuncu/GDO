@@ -58,9 +58,12 @@ class GraphList extends React.Component {
 
         return <div style={listStyle}>
             {this.props.sectionList.map(
-                    s => <GraphItem sectionData={s}
+                    s => <GraphItem key={s.sectionId}
+                                    sectionData={s}
                                     select={this.props.selector}
-                                    activeId={this.props.activeId}/>
+                                    activeId={this.props.activeId}
+                                    key={s.id}
+                        />
             )}
         </div>;
     }
@@ -74,15 +77,29 @@ class GraphPanel extends React.Component {
     }
 
     render () {
+
         var panelStyle = {
             flexBasis: '85%',
             padding: '5px',
-            display: 'flex'
+            display: 'flex',
+            flexDirection: 'column'
+        }, plotButtonStyle = {
+           alignSelf: 'flex-end',
+            flexBasis: '50px',
+            fontSize: '-webkit-xxx-large'
         };
+
+        var graphData;
+        for(var section in this.props.sectionList) {
+            if(this.props.activeId == section.sectionId) {
+                graphData = section.graphData;
+            }
+        }
 
         return <div style={panelStyle}>
             <GraphBuilder sectionId={this.props.activeId}
                           miniSet={this.props.miniSet} />
+            <div style={plotButtonStyle}> Plot </div>
         </div>;
     }
 }
@@ -103,7 +120,8 @@ class GraphControl extends React.Component {
         }, selectGraph = (sectionData) => {
             this.setState({
                 active: sectionData.sectionId
-            })
+            });
+            GraphBuilderStore.setActiveSection(sectionData.sectionId);
         }
         return <div style={divStyle}>
             <GraphList sectionList={this.props.sectionList}
@@ -127,7 +145,13 @@ class GraphControlWrapper extends React.Component {
             sectionData = [{
                 sectionId: 1,
                 graphData: graphData
-            }];
+            },{
+                    sectionId: 2,
+                    graphData: graphData
+                },{
+                    sectionId: 3,
+                    graphData: graphData
+                }];
         //TEST DATA
 
 
@@ -165,11 +189,18 @@ class GraphControlWrapper extends React.Component {
             sectionData = [{
                 sectionId: 1,
                 graphData: graphData
-            }];
-        //TEST DATA
+            },{
+                    sectionId: 2,
+                    graphData: graphData
+                },{
+                    sectionId: 3,
+                    graphData: graphData
+                }];
 
         return <GraphControl sectionList={sectionData} miniSet={miniSet}/>;
     }
 }
+
+GraphControlWrapper.prototype.tabName = 'Graph Control';
 
 module.exports = GraphControlWrapper;

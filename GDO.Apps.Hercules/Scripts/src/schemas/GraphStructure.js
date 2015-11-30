@@ -12,6 +12,7 @@ export const graphTypes = schema(['LINE', 'SCATTER', 'BAR', 'PIE']);
 
 var dimension = schema({
     name: String,
+    singleField: Boolean,
     validTypes: Array.of(type)
 });
 
@@ -25,9 +26,11 @@ export var lineGraph = {
     dimensions : [
         {
             name: 'xAxis',
+            singleField: true,
             validTypes: ['Float', 'Integer', 'Datetime']
         },{
             name: 'yAxis',
+            singleField: false,
             validTypes: ['Float', 'Integer']
         }
     ]
@@ -38,9 +41,11 @@ export var scatterGraph = {
     dimensions : [
         {
             name: 'xAxis',
+            singleField: true,
             validTypes: ['Float', 'Integer', 'Datetime']
         },{
             name: 'yAxis',
+            singleField: false,
             validTypes: ['Float', 'Integer']
         }
     ]
@@ -51,9 +56,11 @@ export var barGraph = {
     dimensions : [
         {
             name: 'xAxis',
+            singleField: true,
             validTypes: ['Enum', 'Integer']
         },{
             name: 'yAxis',
+            singleField: false,
             validTypes: ['Float', 'Integer']
         }
     ]
@@ -64,9 +71,11 @@ export var pieGraph = {
     dimensions : [
         {
             name: 'xAxis',
+            singleField: true,
             validTypes: ['Enum']
         },{
             name: 'yAxis',
+            singleField: true,
             validTypes: ['Float', 'Integer']
         }
     ]
