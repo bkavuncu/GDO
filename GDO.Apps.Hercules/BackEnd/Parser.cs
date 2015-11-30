@@ -55,8 +55,9 @@ namespace GDO.Apps.Hercules.BackEnd
                     if (row.Length != ds.NHeaders) { // Ignore rows with missing/too many fields.
                         string err = string.Format("Dataset has {0} headers, this row has {1}.", ds.NHeaders, row.Length);
                         throw new MalformedLineException(err, p.LineNumber);
+                    } else {
+                        ds.Rows.Add(row);
                     }
-                    ds.Rows.Add(p.ReadFields());
                 } catch (MalformedLineException ouch) {
                     ds.Malformed.Add(ouch.LineNumber, ouch.Message);
                 }
