@@ -5,7 +5,8 @@ const React = require('react'),
      GraphField = require('./GraphField'),
      Builder = require('./actions/GraphBuilderActions'),
      GraphBuilderStore = require('./stores/GraphBuilderStore'),
-     Immutable = require('immutable');
+     Immutable = require('immutable'),
+     _ = require('underscore');
 
 const DragTypes = {
     FIELD: 'field'
@@ -92,11 +93,18 @@ class AxisBox extends React.Component {
         const {isOver, canDrop, connectDropTarget} = this.props;
         const isActive = isOver && canDrop;
 
+        var titleStyle = {
+            boxShadow: '0 0 4px black',
+            backgroundColor: '#2196F3',
+            padding: '5px',
+            color: 'white'
+        }
+
         if (isActive) {
             var axisBoxStyle = {
-                border: 'dashed',
+                margin: '4px',
+                boxShadow: '0 0 10px black',
                 display: 'flex',
-                flex: '1',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
                 overflow: 'auto',
@@ -104,9 +112,9 @@ class AxisBox extends React.Component {
             }
         }else if (canDrop) {
             var axisBoxStyle = {
-                border: 'solid',
+                margin: '4px',
+                boxShadow: '0 0 3px black',
                 display: 'flex',
-                flex: '1',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
                 overflow: 'auto',
@@ -114,8 +122,8 @@ class AxisBox extends React.Component {
             }
         } else {
             var axisBoxStyle = {
+                margin: '4px',
                 display: 'flex',
-                flex: '1',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
                 overflow: 'auto',
@@ -123,9 +131,23 @@ class AxisBox extends React.Component {
             }
         }
 
+        if(this.props.singleField) {
+            var sizeStyle = {
+                flexBasis: '150px'
+            }
+        } else {
+            var sizeStyle = {
+                flex: 1
+            }
+        }
+
+        axisBoxStyle = _.extend({}, axisBoxStyle, sizeStyle);
+
         return connectDropTarget(
             <div id='axisBox' style={axisBoxStyle}>
-                {this.state.name}
+                <div id="title" style={titleStyle}>
+                    {this.state.name}
+                </div>
                 {this.state.contents.map(
                     (f, i) => <GraphField field={f} isRemovable={true} remove={this._onRemove.bind(this)}/>
                 )}

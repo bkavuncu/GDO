@@ -67,10 +67,20 @@ class GraphBuilder extends React.Component {
             flexDirection: 'column',
             display: 'flex',
             flexBasis: '240px'
-        };
+        }, titleStyle = {
+            boxShadow: '0 0 4px black',
+            backgroundColor: '#2196F3',
+            padding: '5px',
+            color: 'white'
+        }, stopScroll = (e) => {
+            e.stopPropagation();
+        }
 
-        return <div id='buider' style={builderStyle}>
+        return <div id='buider' onScroll={stopScroll} style={builderStyle}>
             <div id='fieldBoxWrapper' style={wrapperStyle}>
+                <div id="title" style={titleStyle} >
+                    Available Fields
+                </div>
                 <div id='fieldsBox' style={fieldsBoxStyle}>
                     {this.state.baseFields.map(
                         (f, i) => <GraphField key={i} field={f} isRemovable={false}/>
