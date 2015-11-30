@@ -12,6 +12,7 @@ using System.Web.Helpers;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
+using GDO.Apps.DD3;
 using GDO.Utility;
 using Newtonsoft.Json;
 
@@ -21,7 +22,7 @@ using Newtonsoft.Json;
 namespace GDO.Apps.Hercules
 {
     [Export(typeof(IAppHub))]
-    public class HerculesAppHub : Hub, IAppHub
+    public class HerculesAppHub : DD3AppHub, IAppHub
     {
         public string Name { get; set; } = "Hercules";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;

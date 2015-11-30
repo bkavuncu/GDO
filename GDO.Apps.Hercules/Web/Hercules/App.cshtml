@@ -1,145 +1,156 @@
 ﻿@{
     Layout = null;
 }
-<!DOCTYPE html>
 <html>
 <head>
     <title>Hello React</title>
+    <style>
+        html, body {
+            background-color: white;
+            color: black;
+        }
+    </style>
 </head>
 <body>
     <script src="~/Scripts/jquery-2.1.4.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.0.js"></script>
-    <script src="~/Scripts/d3.js"></script>
-    <script src="~/Scripts/peer.js"></script>
+    <script src="~/Scripts/DD3/d3.v3.js"></script>
+    <script src="~/Scripts/DD3/peer.js"></script>
+    <script>
+        $(document).ready(function () {
+            var gdo = parent.gdo;
 
-    <script src="~/Scripts/gdo.apps.dd3.js"></script>
+            if (typeof gdo === 'undefined')
+                throw new Error('gdo was not defined in parent');
 
-    <script type="text/javascript">
-        var dataset = [
-                [5, 20], [480, 90], [250, 50], [100, 33], [330, 95],
-                [410, 12], [475, 44], [25, 67], [85, 21], [220, 88]
-        ];
+            gdo.net.app['Hercules'].initClient();
 
-        //Create SVG element
-        var svg = d3.select("body")
-                    .append("svg")
-                    .attr("width", w)
-                    .attr("height", h);
-
-        svg.selectAll("circle")
-           .data(dataset)
-           .enter()
-           .append("circle")
-           .attr("cx", function(d) {
-            return d[0];})
-           .attr("cy", function(d) {
-            return d[1];})
-           .attr("r", function(d) {
-            return Math.sqrt(h - d[1]);}); 
-    
-        test_bench['1'] = function () {
-            var xScale, yScale;
-            var data, pathData;
-            var dataId = "";
-
-            var requestData = function (dim) {
-                var extentX = dim.x.max - dim.x.min,
-                    extentY = dim.y.max - dim.y.min,
-                    coef = 0.05, c = 1;
-
-                var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
-                    yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
-
-                // Setup Scales
-                xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
-                yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
-
-                dd3.getPointData('pointData', dataId, function (d) {
-                    data = d;
-                    draw();
-                }, xScale, yScale);
-
-                dd3.getPathData('pathData', dataId, function (d) {
-                    pathData = d;
-                    draw();
-                }, xScale, yScale, ['x'], ['y']);
-
+            var launcher = function (configId) {
+                if (dd3.state() === "ready") {
+                    viz(configId);
+                } else {
+                    dd3.on('ready', viz.bind(null, configId));
+                }
             };
 
-            var draw = function () {
-                if (!data || !pathData)
-                    return;
+            var orderController = (function () {
+                var t = function (order) {
+                    orderController.orders[order.name] ?
+                    orderController.orders[order.name].apply(null, order.args) :
+                    gdo.consoleOut('.DD3', 4, 'No test function corresponding to ' + order.name);
+                };
 
-                var svg = dd3.svgCanvas,
-                    pathGroup = svg.append("g").attr("id", "dd3_path"),
-                    circleGroup = svg.append("g").attr("id", "dd3_circle");
+                t.orders = {};
 
-                // Setup Axis
-                var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
-                    yAxis = d3.svg.axis().scale(yScale).orient("left");
+                return t;
+            })();
 
-                // x-axis
-                svg.append("g")
-                  .unwatch()
-                  .attr("class", "x axis")
-                  .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
-                  .call(xAxis)
-                .append("text")
-                  .attr("class", "label")
-                  .attr("x", dd3.cave.svgWidth)
-                  .attr("y", -6)
-                  .style("text-anchor", "end")
-                  .text("X axis");
+            dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
-                // y-axis
-                svg.append("g")
-                  .unwatch()
-                  .attr("class", "y axis")
-                  .attr("transform", "translate(" + [0, 0] + ")")
-                  .call(yAxis)
-                .append("text")
-                  .attr("class", "label")
-                  .attr("transform", "rotate(-90)")
-                  .attr("y", 6)
-                  .attr("dy", ".71em")
-                  .style("text-anchor", "end")
-                  .text("Y axis");
+            viz = function () {
+                var xScale, yScale;
+                var data, pathData;
+                var dataId = "";
 
-                // Draw dots
-                circleGroup.selectAll(".dot")
-                  .data(data)
-                .enter()
-                  .append("g")
-                  .append("circle")
-                  .attr("class", "dot")
-                  .attr("cx", function (d) { return xScale(d['x']); })
-                  .attr("cy", function (d) { return yScale(d['y']); })
-                  .attr("r", 3)
-                  .style("fill", function (d, i) { return "black"; })
-                  .style("stroke", "red");
+                var requestData = function (dim) {
+                    var extentX = dim.x.max - dim.x.min,
+                        extentY = dim.y.max - dim.y.min,
+                        coef = 0.05, c = 1;
 
-                var lineFunction = d3.svg.line()
-                        .x(function (d) { return xScale(d['x']); })
-                        .y(function (d) { return yScale(d['y']); })
-                        .interpolate("monotone");
+                    var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
+                        yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
 
-                //*
-                pathGroup.append("path").datum(pathData)
-                    .unwatch()
-                    .attr("d", lineFunction)
-                    .attr("stroke", "blue")
-                    .attr("stroke-width", 2)
-                    .attr("fill", "none");
-                //*/
+                    // Setup Scales
+                    xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                    yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
+
+                    dd3.getPointData('pointData', dataId, function (d) {
+                        data = d;
+                        draw();
+                    }, xScale, yScale);
+
+                    dd3.getPathData('pathData', dataId, function (d) {
+                        pathData = d;
+                        draw();
+                    }, xScale, yScale, ['x'], ['y']);
+
+                };
+
+                var draw = function () {
+                    if (!data || !pathData)
+                        return;
+
+                    var svg = dd3.svgCanvas,
+                        pathGroup = svg.append("g").attr("id", "dd3_path"),
+                        circleGroup = svg.append("g").attr("id", "dd3_circle");
+
+                    // Setup Axis
+                    var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
+                        yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                    // x-axis
+                    svg.append("g")
+                      .unwatch()
+                      .attr("class", "x axis")
+                      .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
+                      .call(xAxis)
+                    .append("text")
+                      .attr("class", "label")
+                      .attr("x", dd3.cave.svgWidth)
+                      .attr("y", -6)
+                      .style("text-anchor", "end")
+                      .text("X axis");
+
+                    // y-axis
+                    svg.append("g")
+                      .unwatch()
+                      .attr("class", "y axis")
+                      .attr("transform", "translate(" + [0, 0] + ")")
+                      .call(yAxis)
+                    .append("text")
+                      .attr("class", "label")
+                      .attr("transform", "rotate(-90)")
+                      .attr("y", 6)
+                      .attr("dy", ".71em")
+                      .style("text-anchor", "end")
+                      .text("Y axis");
+
+                    // Draw dots
+                    circleGroup.selectAll(".dot")
+                      .data(data)
+                    .enter()
+                      .append("g")
+                      .append("circle")
+                      .attr("class", "dot")
+                      .attr("cx", function (d) { return xScale(d['x']); })
+                      .attr("cy", function (d) { return yScale(d['y']); })
+                      .attr("r", 3)
+                      .style("fill", function (d, i) { return "black"; })
+                      .style("stroke", "red");
+
+                    var lineFunction = d3.svg.line()
+                            .x(function (d) { return xScale(d['x']); })
+                            .y(function (d) { return yScale(d['y']); })
+                            .interpolate("monotone");
+
+                    //*
+                    pathGroup.append("path").datum(pathData)
+                        .unwatch()
+                        .attr("d", lineFunction)
+                        .attr("stroke", "blue")
+                        .attr("stroke-width", 2)
+                        .attr("fill", "none");
+                    //*/
+                };
+
+                orderController.orders['plot'] = function (id) {
+                    dataId = id;
+                    data = pathData = null;
+                    dd3.svgCanvas.selectAll("g").remove();
+                    dd3.getDataDimensions(dataId, requestData);
+                };
             };
-
-            orderController.orders['plot'] = function (id) {
-                dataId = id;
-                data = pathData = null;
-                dd3.svgCanvas.selectAll("g").remove();
-                dd3.getDataDimensions(dataId, requestData);
-            };
-        };
+        });
 
     </script>
 </body>

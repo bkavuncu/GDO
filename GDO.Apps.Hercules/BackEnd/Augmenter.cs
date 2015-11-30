@@ -59,6 +59,11 @@ namespace GDO.Apps.Hercules.BackEnd
         // PlainDS --> RichDS
         public static RichDS FromPlain(PlainDS ds)
         {
+            if (ds == null) {
+                LastError = "Augmenter.FromPlain: PlainDS can't be null!";
+                return null;
+            }
+
             List<AType[]> types = new List<AType[]>(ds.NRows); // Initializeee!
             List<dynamic[]> values = new List<dynamic[]>(ds.NRows);
 

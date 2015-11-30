@@ -1,9 +1,6 @@
-﻿// ==== IF THIS NODE IS AN APP ====
-// These functions need to be defined before signalR is started, so we need to use a callback system:
-// signalR_callback is defined later in dd3 when it is initiated.
-var d3;
+﻿var initDD3App = function (_d3, dd3Server, jQuery, Peer, signalR_callback) {
 
-var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
+    var d3 = _d3;
     var $ = jQuery;
 
     var utils = (function () {
@@ -390,16 +387,33 @@ var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
             };
 
             init.checkLibraries = function () {
-                var deps = [d3, dd3Server, $, jQuery, signalR_callback, Peer];
-                var undefinedDeps = deps.filter(function (d) { return typeof d === 'undefined'; }),
-                    ok = undefinedDeps.length === 0;
+                var toCheck = ['d3', 'Peer', 'jQuery', ['jQuery', 'signalR']];
 
-                if (!ok) {
-                    utils.log("Some libraries were undefined", 4);
-                }
+                var check = toCheck.some(function (lib, i) {
+                    var ok = false;
+                    if (typeof lib === 'string' && typeof window[lib] === "undefined") {
+                        utils.log("Initialization failed : " + lib + " was not found", 4);
+                        ok = true;
+                    } else if (typeof lib === 'object') {
+                        var path = window;
+                        ok = lib.some(function (l) {
+                            if (!(path = path[l])) {
+                                utils.log("Initialization failed : " + l + " was not found", 4);
+                                return true;
+                            }
+                            return false;
+                        });
+                        toCheck[i] = lib.join('.');
+                    }
+                    return ok;
+                });
 
-                return ok;
-            }
+                if (check)
+                    return false;
+
+                utils.log("All Libraries successfully loaded\n[" + toCheck.join(', ') + ']', 1);
+                return true;
+            };
 
             init.setBrowserConfiguration = function () {
                 if (options.positionByClientId) {
@@ -2277,70 +2291,3 @@ var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
 
     return dd3;
 };
-
-var dd3Server = $.connection.dD3AppHub;
-var signalR_callback = {};
-var main_callback; // Callback inside the html file
-var orderTransmitter; // Callback inside the html file
-
-// Function used for dd3 callback
-dd3Server.client.dd3Receive = function (f) {
-    signalR_callback[f].apply(null, [].slice.call(arguments, 1));
-};
-
-// Non-dd3 functions
-
-dd3Server.client.receiveGDOConfiguration = function (id) {
-    // To get configId from server
-    main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');
-    main_callback = null;
-};
-
-dd3Server.client.receiveControllerOrder = function (orders) {
-    if (orderTransmitter) {
-        orders = JSON.parse(orders)
-        gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
-        orderTransmitter(orders);
-    } else {
-        gdo.consoleOut('.DD3', 4, 'No test controller defined');
-    }
-};
-
-// ==== IF THIS NODE IS A CONTROLLER ====
-
-dd3Server.client.updateController = function (obj) {
-    gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
-    main_callback && main_callback(JSON.parse(obj));
-};
-
-
-// ===============================
-
-gdo.net.app["DD3"].displayMode = 0;
-
-gdo.net.app["DD3"].initClient = function (launcher, orderController) {
-    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
-    dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-    orderTransmitter = orderController;
-    main_callback = launcher;
-
-    var d3 = document.getElementById('app_frame_content').contentWindow['d3'];
-
-    return initDD3App(d3, dd3Server, $, Peer, signalR_callback);
-}
-
-gdo.net.app["DD3"].initControl = function (callback) {
-    gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
-    main_callback = callback;
-    dd3Server.server.defineController(gdo.management.selectedInstance);
-    return gdo.management.selectedInstance;
-}
-
-gdo.net.app["DD3"].terminateClient = function () {
-    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
-    dd3Server.server.removeClient(dd3Server.instanceId);
-}
-
-gdo.net.app["DD3"].terminateControl = function () {
-    gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
-}
