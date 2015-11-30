@@ -15,7 +15,7 @@ module.exports = {
     resolve: {
         extensions: ['', '.js', '.jsx'],
         alias: {
-            colors: './ui/colors',
+            colors: './ui/Colors',
             actions: './actions',
             stores: './stores',
             ui: './ui'
