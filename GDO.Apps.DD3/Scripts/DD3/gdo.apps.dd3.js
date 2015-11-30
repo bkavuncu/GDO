@@ -1,14 +1,13 @@
-﻿/**
-*   Version 0.0.1
-*   dd3 - v0.0.2
-*/
-
-// ==== IF THIS NODE IS AN APP ====
+﻿// ==== IF THIS NODE IS AN APP ====
+// These functions need to be defined before signalR is started, so we need to use a callback system:
+// signalR_callback is defined later in dd3 when it is initiated.
 var d3;
 
-var initDD3App = function () {
+var initDD3App = function (dd3Server, jQuery, Peer, signalR_callback) {
 
     d3 = document.getElementById('app_frame_content').contentWindow['d3'];
+    console.error('Hello World', d3);
+    var $ = jQuery;
 
     var utils = (function () {
         return {
@@ -35,8 +34,8 @@ var initDD3App = function () {
             extend: function (base, extension) {
                 if (arguments.length > 2) {
                     [].forEach.call(arguments, function (extension) {
-                        utils.extend(base, extension)
-                    })
+                        utils.extend(base, extension);
+                    });
                 } else {
                     for (var k in extension)
                         base[k] = extension[k];
@@ -67,7 +66,7 @@ var initDD3App = function () {
                 var sevMessage = ["Debug", "Info", "Warning", "Error", "Critical"];
                 var consoleFunction = ["debug", "log", "warn", "warn", "error"];
                 utils.log.sev = typeof utils.log.sev === "undefined" ? 0 : utils.log.sev;
-                arr = (dd3 && dd3.browser) ? [dd3.browser.row, dd3.browser.column] : [];
+                var arr = (dd3 && dd3.browser) ? [dd3.browser.row, dd3.browser.column] : [];
 
                 sev = utils.clamp(sev || 0, 0, 4);
                 if (utils.log.sev <= sev) {
@@ -98,22 +97,22 @@ var initDD3App = function () {
     })();
 
     var api = function () {
-        var api = { };
+        var api = {};
         var uid = 0;
 
         api.dataPoints = {};
-        api.dataPoints['scatterplotCos'] = d3.range(0, 26, 0.8).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) }; });
-        api.dataPoints['scatterplotParabole'] = d3.range(-10, 15, 0.5).map(function (d) { return { id: uid++, x: d, y: d * d }; });
-        api.dataPoints['testSet'] = [{ x: 1, y: 2 }, { x: 4.5, y: 3.3 }, { x: 1, y: 5 }, { x: 8, y: 2 }];
-        api.dataPoints['barData'] = [{ country: "USA", gdp: "17.4" }, { country: "China", gdp: "10.3" }, { country: "England", gdp: "2.9" }, { country: "France", gdp: "2.8" }, { country: "Germany", gdp: "3.8" }, { country: "Japan", gdp: "4.6" }]
-        api.dataPoints['scatterplot4000'] = d3.range(0, 200, 0.05).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) * 3 }; });
+        api.dataPoints.scatterplotCos = d3.range(0, 26, 0.8).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) }; });
+        api.dataPoints.scatterplotParabole = d3.range(-10, 15, 0.5).map(function (d) { return { id: uid++, x: d, y: d * d }; });
+        api.dataPoints.testSet = [{ x: 1, y: 2 }, { x: 4.5, y: 3.3 }, { x: 1, y: 5 }, { x: 8, y: 2 }];
+        api.dataPoints.barData = [{ country: "USA", gdp: "17.4" }, { country: "China", gdp: "10.3" }, { country: "England", gdp: "2.9" }, { country: "France", gdp: "2.8" }, { country: "Germany", gdp: "3.8" }, { country: "Japan", gdp: "4.6" }];
+        api.dataPoints.scatterplot4000 = d3.range(0, 200, 0.05).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) * 3 }; });
 
         var sorter = function (_) {
             return function (a, b) {
                 a[_] = +a[_] ? +a[_] : a[_];
                 b[_] = +b[_] ? +b[_] : b[_];
                 return a[_] > b[_] ? 1 : a[_] < b[_] ? -1 : 0;
-            }
+            };
         };
 
         api.getDataDimensions = function (dataId) {
@@ -121,7 +120,7 @@ var initDD3App = function () {
                 prop = [],
                 data = api.dataPoints[dataId];
 
-            for (p in data[0])
+            for (var p in data[0])
                 if (data[0].hasOwnProperty(p))
                     prop.push(p);
 
@@ -129,7 +128,7 @@ var initDD3App = function () {
                 dimensions[p] = {};
                 dimensions[p].min = d3.min(data, utils.d(p, true));
                 dimensions[p].max = d3.max(data, utils.d(p, true));
-            })
+            });
 
             dimensions.length = data.length;
 
@@ -164,7 +163,7 @@ var initDD3App = function () {
                     } else {
                         for (var k in d) {
                             if (d.hasOwnProperty(k))
-                                obj[k] = d[k]
+                                obj[k] = d[k];
                         }
                     }
 
@@ -185,23 +184,24 @@ var initDD3App = function () {
             data.sort(sorter(sortOnKey || "id"))
                 .forEach(function (d, i) { d.order = i; });
 
-            var requestedData = data.filter(function (d, i) { return i >= limit.min && i < limit.max })
-                .map(function (d) {
-                    var obj = {};
+            var requestedData = data.filter(function (d, i) {
+                return i >= limit.min && i < limit.max;
+            }).map(function (d) {
+                var obj = {};
 
-                    if (request._keys !== null) {
-                        request._keys.forEach(function (k) {
+                if (request._keys !== null) {
+                    request._keys.forEach(function (k) {
+                        obj[k] = d[k];
+                    });
+                } else {
+                    for (var k in d) {
+                        if (d.hasOwnProperty(k))
                             obj[k] = d[k];
-                        });
-                    } else {
-                        for (var k in d) {
-                            if (d.hasOwnProperty(k))
-                                obj[k] = d[k]
-                        }
                     }
+                }
 
-                    return obj;
-                });
+                return obj;
+            });
 
             // Simulate api response time
             setTimeout(function () {
@@ -219,7 +219,10 @@ var initDD3App = function () {
             var pts = [], counter = approx;
 
             var isIn = function (d) {
-                return (d[xKey] >= limit.xmin && d[xKey] < limit.xmax && d[yKey] >= limit.ymin && d[yKey] < limit.ymax)
+                return d[xKey] >= limit.xmin
+                        && d[xKey] < limit.xmax
+                        && d[yKey] >= limit.ymin
+                        && d[yKey] < limit.ymax;
             };
 
             for (var i = 0, l = data.length ; i < l ; i++) {
@@ -259,7 +262,7 @@ var initDD3App = function () {
                 } else {
                     for (var k in d) {
                         if (d.hasOwnProperty(k))
-                            obj[k] = d[k]
+                            obj[k] = d[k];
                     }
                 }
 
@@ -281,7 +284,7 @@ var initDD3App = function () {
     var dd3 = (function () {
         "use strict";
         var _dd3 = Object.create(d3);
-        
+
         var options = {
             useApi: false,
             positionByClientId: true,
@@ -298,7 +301,7 @@ var initDD3App = function () {
         var state = (function () {
             var _state = 'loading';
             return function (newState) {
-                if (arguments.length == 0) return _state;
+                if (arguments.length === 0) return _state;
 
                 if (newState === 'connecting') {
                     _state = 'connecting';
@@ -380,7 +383,7 @@ var initDD3App = function () {
 
             var init = function () {
                 if (!init.checkLibraries()) {
-                    state("fatal")
+                    state("fatal");
                     return;
                 }
 
@@ -454,9 +457,12 @@ var initDD3App = function () {
                                 return;
                             }
 
-                            peer.connections[r][c].open ?
-                            peer.connections[r][c].close() :
-                            peer.connections[r][c].removeAllListeners().on("open", peer.connections[r][c].close);
+                            if (peer.connections[r][c].open)
+                                peer.connections[r][c].close();
+                            else
+                                peer.connections[r][c]
+                              	.removeAllListeners()
+                              	.on("open", peer.connections[r][c].close);
                         }
 
                         peer.connections[r][c] = conn;
@@ -486,8 +492,8 @@ var initDD3App = function () {
 
 
                 // Define server interaction functions
-                signalR_callback['receiveConfiguration'] = init.getCaveConfiguration;
-                signalR_callback['receiveSynchronize'] = signalR.receiveSynchronize;
+                signalR_callback.receiveConfiguration = init.getCaveConfiguration;
+                signalR_callback.receiveSynchronize = signalR.receiveSynchronize;
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -569,19 +575,19 @@ var initDD3App = function () {
             }
 
             _dd3.position = function (context1, range1, context2, range2) {
-                var p = {};
+                var p = {}, f, sign;
                 if (context1 === context2) {
-                    var f = dd3.position[(context1 === 'html') ? 'html' : 'svg'];
-                    var sign = (range1 == range2) ? 0 : (range1 == 'local') ? 1 : -1;
+                    f = dd3.position[(context1 === 'html') ? 'html' : 'svg'];
+                    sign = (range1 == range2) ? 0 : (range1 == 'local') ? 1 : -1;
                     p.left = sumWith(f.left, sign);
                     p.top = sumWith(f.top, sign);
                 } else if (range1 === range2) {
-                    var f = ((range1 === 'local') ? browser : cave).margin;
-                    var sign = (context1 === 'html') ? -1 : 1;
+                    f = ((range1 === 'local') ? browser : cave).margin;
+                    sign = (context1 === 'html') ? -1 : 1;
                     p.left = sumWith(f.left, sign);
                     p.top = sumWith(f.top, sign);
                 } else {
-                    var f = _dd3.position(context1, range1, context1, range2);
+                    f = _dd3.position(context1, range1, context1, range2);
                     var g = _dd3.position(context1, range2, context2, range2);
                     p.left = function (x) { return g.left(f.left(x)); };
                     p.top = function (x) { return g.top(f.top(x)); };
@@ -698,7 +704,7 @@ var initDD3App = function () {
                 var request = {
                     dataId: dataId,
                     dataName: dataName,
-                    limits : [],
+                    limits: [],
                     _keys: keys || null
                 };
 
@@ -850,7 +856,9 @@ var initDD3App = function () {
                     utils.log("Error requesting dimensions : " + dimensions.error, 3);
                 }
                 data[pr(dataId)].dataDimensions = dimensions;
-                data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
+
+                if (typeof data[pr(dataId)].callback_dimensions == 'function')
+                    data[pr(dataId)].callback_dimensions(dimensions);
             };
 
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
@@ -860,18 +868,22 @@ var initDD3App = function () {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
                 }
                 data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
-                data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
+
+                if (typeof data[pr(dataId)][pr(dataName)].callback_data === 'function')
+                    data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
             };
 
             dd3_data.receiveRemoteDataReady = function (dataId, result) {
                 utils.log("Received result of remote server request : " + dataId, 1);
                 result = JSON.parse(result);
-                data[pr(dataId)].callback_remoteDataReady && data[pr(dataId)].callback_remoteDataReady(result);
+
+                if (typeof data[pr(dataId)].callback_remoteDataReady === 'function')
+                    data[pr(dataId)].callback_remoteDataReady(result);
             };
 
-            signalR_callback['receiveDimensions'] = dd3_data.receiveDimensions;
-            signalR_callback['receiveData'] = dd3_data.receiveData;
-            signalR_callback['receiveRemoteDataReady'] = dd3_data.receiveRemoteDataReady;
+            signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
+            signalR_callback.receiveData = dd3_data.receiveData;
+            signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             /**
              * PEER FUNCTIONS
@@ -1038,7 +1050,7 @@ var initDD3App = function () {
 
                 if (data.name == "image") {
                     obj.attr_("xlink:href", data.attr.href);
-                    delete data.attr.href
+                    delete data.attr.href;
                 }
 
                 obj.attr_(data.attr)
@@ -1071,8 +1083,7 @@ var initDD3App = function () {
                     obj.interrupt(data.name);
                     var trst = _dd3_hook_selection_transition.call(obj, data.name);
 
-                    //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
-                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)")
+                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
 
                     obj.attr_(data.start.attr)
                        .style_(data.start.style);
@@ -1081,18 +1092,24 @@ var initDD3App = function () {
                         .style(data.end.style)
                         .duration(data.duration);
 
-                    data.tweens && data.tweens.forEach(function (o) {
-                        _dd3_tweens[o.value] && trst.tween(o.key, _dd3_tweens[o.value]);
-                    });
+                    if (data.tweens)
+                        data.tweens.forEach(function (o) {
+                            if (_dd3_tweens[o.value])
+                                trst.tween(o.key, _dd3_tweens[o.value]);
+                        });
 
-                    data.attrTweens && data.attrTweens.forEach(function (o) {
-                        _dd3_tweens[o.value] && trst.attrTween(o.key, _dd3_tweens[o.value]);
-                    });
+                    if (data.attrTweens)
+                        data.attrTweens.forEach(function (o) {
+                            if (_dd3_tweens[o.value])
+                                trst.attrTween(o.key, _dd3_tweens[o.value]);
+                        });
 
-                    data.styleTweens && data.styleTweens.forEach(function (o) {
-                        var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
-                        _dd3_tweens[o.value[0]] && trst.styleTween.apply(trst, args);
-                    });
+                    if (data.styleTweens)
+                        data.styleTweens.forEach(function (o) {
+                            var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
+                            if (_dd3_tweens[o.value[0]])
+                                trst.styleTween.apply(trst, args);
+                        });
 
                     if (_dd3_timeTransitionRelative)
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
@@ -1100,8 +1117,12 @@ var initDD3App = function () {
                         trst.delay(data.delay + (data.elapsed - Date.now()));
 
 
-                    if (data.ease)
-                        _dd3_eases[data.ease] ? trst.ease(_dd3_eases[data.ease]) : trst.ease(data.ease);
+                    if (data.ease) {
+                        if (_dd3_eases[data.ease])
+                            trst.ease(_dd3_eases[data.ease]);
+                        else
+                            trst.ease(data.ease);
+                    }
                 };
                 /**/
                 launchTransition(data);
@@ -1179,11 +1200,11 @@ var initDD3App = function () {
                         syncTime = Date.now();
                         utils.log("Synchronized !", 0);
                         _();
-                    }
+                    };
                     setTimeout(function () {
                         signalR.server.synchronize(signalR.sid);
                     }, t || 0);
-                }
+                };
             })();
 
             /**
@@ -1197,7 +1218,7 @@ var initDD3App = function () {
                     path[funcName + '_'] = original;
                     return watcher.apply(null, [].slice.call(arguments, 1));
                 };
-            }
+            };
 
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
@@ -1217,7 +1238,7 @@ var initDD3App = function () {
                         _dd3_selection_send.call(e, 'property', { 'function': funcName, 'property': arguments[0] });
 
                     return this;
-                }
+                };
             };
 
             var _dd3_watchAdd = function (original, funcName) {
@@ -1305,7 +1326,7 @@ var initDD3App = function () {
                         return false;
                     });
                     return r;
-                }
+                };
 
                 ns.forEach(function (d) {
                     if ((i = contain(os, d)) >= 0) {
@@ -1321,7 +1342,7 @@ var initDD3App = function () {
                 exit = os;
 
                 return [enter, update, exit];
-            }
+            };
 
             // Find all browsers which MAY need to receive the element
             var _dd3_findRecipients = function (el) {
@@ -1336,7 +1357,7 @@ var initDD3App = function () {
                 var rcpt = [];
                 var rect = el.getBoundingClientRect(); // Relative to local html
 
-                if ((rect.bottom > browser.height || rect.top < 0 || rect.right > browser.width || rect.left < 0) && (rect.width != 0 && rect.height != 0)) {
+                if ((rect.bottom > browser.height || rect.top < 0 || rect.right > browser.width || rect.left < 0) && (rect.width !== 0 && rect.height !== 0)) {
                     var f = hlhg,
                         topLeft = _dd3_findBrowserAt(f.left(rect.left), f.top(rect.top), 'html'),
                         bottomRight = _dd3_findBrowserAt(f.left(rect.right), f.top(rect.bottom), 'html');
@@ -1396,7 +1417,7 @@ var initDD3App = function () {
             _dd3.selection.prototype.send = function () {
                 _dd3_selection_createProperties(this);
                 return _dd3_selection_send.call(this, 'shape');
-            }
+            };
 
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
@@ -1447,7 +1468,7 @@ var initDD3App = function () {
                 if (this.parentNode) // If the group is still in the dom, we notify children. Otherwise they will be deleted in every previous recipients dom with the group deletion anyway
                     _dd3_notifyChildren.call(this, 'updateContainer');
 
-                var rcpt = _dd3_getSelections(_dd3_getChildrenRcpts.call(this, []), rcpt)[1];
+                rcpt = _dd3_getSelections(_dd3_getChildrenRcpts.call(this, []), rcpt)[1];
 
                 if (rcpt.length > 0) {
                     // Create the object to send
@@ -1583,7 +1604,7 @@ var initDD3App = function () {
                 };
 
                 var formatElem = function (s, i, elem, type, selections, args, active, objs, obj) {
-                    if (s.length == 0) {
+                    if (s.length === 0) {
                         objs.push(false);
                         return;
                     }
@@ -1632,12 +1653,14 @@ var initDD3App = function () {
                             break;
                     }
 
-                    objTemp && (objTemp.onSend = onSend);
+                    if (objTemp)
+                        objTemp.onSend = onSend;
+
                     objs.push(objTemp);
                 };
 
                 var formatGroup = function (elem, type, selections, args, active, objs, obj) {
-                    var onSend = []
+                    var onSend = [];
                     if (type === 'property') {
                         if (typeof args.property === 'object') { // If we gave object as { property -> value, ... }
                             obj = createPropertiesObject(obj, elem, args.function, args.property);
@@ -1654,7 +1677,8 @@ var initDD3App = function () {
                         utils.log('Not handling : type is ' + type);
                         return;
                     }
-                    obj && (obj.onSend = onSend);
+                    if (obj)
+                        obj.onSend = onSend;
                     objs.push(obj);
                 };
 
@@ -1670,7 +1694,12 @@ var initDD3App = function () {
                         };
 
 
-                    selections.forEach(function (s, i) { isElem ? formatElem(s, i, elem, type, selections, args, active, objs, obj) : formatGroup(elem, type, selections, args, active, objs, obj) });
+                    selections.forEach(function (s, i) {
+                        if (isElem)
+                            formatElem(s, i, elem, type, selections, args, active, objs, obj);
+                        else
+                            formatGroup(elem, type, selections, args, active, objs, obj);
+                    });
 
                     return objs;
                 };
@@ -1749,13 +1778,13 @@ var initDD3App = function () {
             var _dd3_selection_filterWatched = function (e) {
                 return e.filter(function (d, i) {
                     return !this.__unwatch__ && ([].indexOf.call(this.classList, 'dd3_received') < 0);
-                })
+                });
             };
 
             var _dd3_selection_filterUnreceived = function (e) {
                 return e.filter(function () {
                     return !_dd3_isReceived(this);
-                })
+                });
             };
 
             var _dd3_isReceived = function (e) {
@@ -1765,13 +1794,13 @@ var initDD3App = function () {
             var _dd3_selection_filterGroup = function (e) {
                 return e.filter(function (d, i) {
                     return (this.nodeName.toLowerCase() === "g");
-                })
+                });
             };
 
             var _dd3_selection_filterNonGroup = function (e) {
                 return e.filter(function (d, i) {
                     return (this.nodeName.toLowerCase() !== "g");
-                })
+                });
             };
 
             var _dd3_notifyChildren = function (name) {
@@ -1788,20 +1817,24 @@ var initDD3App = function () {
                 if (this.nodeName === 'g')
                     return [].forEach.call(this.childNodes, function (_) { _dd3_mergeRecipientsIn(_dd3_getChildrenRcpts.call(_, array), array); }), array;
                 else
-                    return this.__recipients__ || (log("No recipients"), []);
+                    return this.__recipients__ || (utils.log("No recipients"), []);
             };
 
             var getOrder = function (elem) {
-                var prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
+                var prev = elem,
+                    prevOrder = 0,
+                    next = elem,
+                    o = browser.row + '-' + browser.column,
+                    nextOrder, s;
 
                 if (prev = getPreviousElemOrdered(elem)) {
-                    var s = prev.getAttribute("order").split("_")
+                    s = prev.getAttribute("order").split("_");
                     if (s[0] === o)
                         prevOrder = +s[1];
                 }
 
                 if (next = getNextElemOrdered(elem)) {
-                    var s = next.getAttribute("order").split("_")
+                    s = next.getAttribute("order").split("_");
                     if (s[0] === o)
                         nextOrder = +s[1];
                 }
@@ -1863,7 +1896,7 @@ var initDD3App = function () {
 
                 var c1 = containers[0], c2;
                 while (c1 && c1.__dd3_transitions__.empty()) {
-                    c2 = containers.shift()
+                    c2 = containers.shift();
                     c1 = containers[0];
                 }
 
@@ -1893,19 +1926,24 @@ var initDD3App = function () {
 
                 range.forEach(function (time) {
                     transitionsInfos.forEach(function (c, i) {
-                        c && c.forEach(function (obj) {
-                            var a = (time - obj.time) / obj.duration;
-                            if (a >= 0 && a <= 1) {
-                                var t = obj.ease(a);
-                                obj.tweened.forEach(function (f) {
-                                    f.call(clones[i], t);
-                                });
-                            }
-                        });
+                        if (typeof c.forEach === 'function')
+                            c.forEach(function (obj) {
+                                var a = (time - obj.time) / obj.duration;
+                                if (a >= 0 && a <= 1) {
+                                    var t = obj.ease(a);
+                                    obj.tweened.forEach(function (f) {
+                                        f.call(clones[i], t);
+                                    });
+                                }
+                            });
                     });
                     var rcpt = _dd3_findRecipients(g);
-                    rcpt.forEach(function (r) { r.min = time - step; r.max = time + step})
-                    _dd3_mergeRecipientsIn(rcpt, rcpts); 
+                    rcpt.forEach(function (r) {
+                        r.min = time - step;
+                        r.max = time + step;
+                    });
+
+                    _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
 
                 c1.removeChild(clones[0]);
@@ -1949,7 +1987,7 @@ var initDD3App = function () {
                         f.call(node, 1);
                         endValues.push(d3_node[p0].apply(d3_node, p1));
                     }
-                                        
+
                 });
 
                 group.removeChild(node);
@@ -1974,7 +2012,7 @@ var initDD3App = function () {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
 
                     t.each("start.dd3", function (d, i) {
-                        if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__ )
+                        if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
                         var transition = this[ns][this[ns].active];
 
@@ -2016,7 +2054,7 @@ var initDD3App = function () {
                             tweened: [],
                             tweens: tweenFunctions,
                             attrTweens: attrTweenFunctions,
-                            styleTweens : styleTweenFunctions,
+                            styleTweens: styleTweenFunctions,
                             ns: ns,
                             name: name,
                             delay: transition.delay,
@@ -2078,15 +2116,17 @@ var initDD3App = function () {
                         return d3.transition.prototype.tween.call(this, name, _dd3_tweens['dd3_' + tween]);
                     };
 
-                    t.attrTween = function (attr, tween)  {
-                        if (arguments.length < 2) return attrTweens.get(attr);
+                    t.attrTween = function (attr, tween) {
+                        var temp = this.tween,
+                            trst;
+                        if (arguments.length < 2)
+                            return attrTweens.get(attr);
 
                         if (tween == null) {
                             attrTweens.remove(attr);
 
-                            var temp = this.tween;
                             this.tween = d3.transition.prototype.tween;
-                            var trst = d3.transition.prototype.attrTween.call(this, attr, null);
+                            trst = d3.transition.prototype.attrTween.call(this, attr, null);
                             this.tween = temp;
 
                             return trst;
@@ -2100,23 +2140,24 @@ var initDD3App = function () {
 
                         attrTweens.set(attr, 'dd3_' + tween);
 
-                        var temp = this.tween;
                         this.tween = d3.transition.prototype.tween;
-                        var trst = d3.transition.prototype.attrTween.call(this, attr, _dd3_tweens['dd3_' + tween]);
+                        trst = d3.transition.prototype.attrTween.call(this, attr, _dd3_tweens['dd3_' + tween]);
                         this.tween = temp;
 
                         return trst;
                     };
 
                     t.styleTween = function (style, tween, priority) {
+                        var temp = this.tween,
+                            trst;
                         if (arguments.length < 2) return styleTweens.get(style);
 
                         if (tween == null) {
                             styleTweens.remove(style);
 
-                            var temp = this.tween;
+                            temp = this.tween;
                             this.tween = d3.transition.prototype.tween;
-                            var trst = d3.transition.prototype.styleTween.call(this, style, null);
+                            trst = d3.transition.prototype.styleTween.call(this, style, null);
                             this.tween = temp;
 
                             return trst;
@@ -2133,9 +2174,9 @@ var initDD3App = function () {
                         var args = [].slice.call(arguments);
                         args[1] = _dd3_tweens['dd3_' + tween];
 
-                        var temp = this.tween;
+                        temp = this.tween;
                         this.tween = d3.transition.prototype.tween;
-                        var trst = d3.transition.prototype.styleTween.apply(this, args);
+                        trst = d3.transition.prototype.styleTween.apply(this, args);
                         this.tween = temp;
 
                         return trst;
@@ -2152,7 +2193,7 @@ var initDD3App = function () {
                     };
 
                     return t;
-                }
+                };
 
                 return initialize(t, ease, precision);
             };
@@ -2255,10 +2296,7 @@ var initDD3App = function () {
     })();
 
     return dd3;
-}
-
-// These functions need to be defined before signalR is started, so we need to use a callback system:
-// signalR_callback is defined later in dd3 when it is initiated.
+};
 
 var dd3Server = $.connection.dD3AppHub;
 var signalR_callback = {};
@@ -2305,7 +2343,10 @@ gdo.net.app["DD3"].initClient = function (launcher, orderController) {
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     orderTransmitter = orderController;
     main_callback = launcher;
-    return initDD3App();
+
+    console.log('mannagia a padre pio figlio e spirito santo amen', dd3Server, $, Peer, signalR_callback);
+
+    return initDD3App(dd3Server, $, Peer, signalR_callback);
 }
 
 gdo.net.app["DD3"].initControl = function (callback) {
