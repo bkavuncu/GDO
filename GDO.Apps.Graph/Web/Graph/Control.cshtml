@@ -178,14 +178,16 @@
                                         <button class='btn btn-default' id="right"><i class='fa  fa-arrow-circle-right fa-fw'></i>&nbsp;Right</button>
                                         <br />
                                         <br />
-                                        <br />
-                                        <label> Toggle zooming </label>
-                                        <br />
-                                        <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
-                                        <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
-                                        <br />
-                                        <br />
-                                        <br />
+                                        <br/>
+                                    <!-- //TODO zooming functionality removed
+                                    <label> Toggle zooming </label>
+                                    <br/>
+                                    <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
+                                    <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                        -->
                                     </td>
                                     <td style="width:50%;">
                                         <label> Colour Scheme </label>
@@ -328,7 +330,7 @@
 
         */
 
-
+        /* //TODO zooming functionality removed 
         $("#zoomIn").click(function () {
             gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
         });
@@ -336,6 +338,7 @@
         $("#zoomOut").click(function () {
             gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
         });
+        */
 
         $("#blue").click(function () {
             gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
