@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -134,12 +135,12 @@ namespace GDO.Apps.Images
                     
                     Clients.Caller.setMessage("Cropping the image...");
                     ia.Tiles = new ImagesApp.TilesInfo[ia.TileCols, ia.TileRows];
-                    int cur = 0;
-                    for (int i = 0; i < ia.TileCols; i++)
+                    //for (int i = 0; i < ia.TileCols; i++)
+                    Parallel.For(0,ia.TileCols, i=> 
                     {
-                        for (int j = 0; j < ia.TileRows; j++)
-                        {
-                            Clients.Caller.setMessage("Cropping the image " + cur.ToString() + "/" + sum.ToString());
+                        for (int j = 0; j < ia.TileRows; j++) {
+                            int tileID = i*ia.TileRows + j;
+                            Clients.Caller.setMessage("Cropping the image " + tileID.ToString() + "/" + sum.ToString());
                             ia.Tiles[i, j] = new ImagesApp.TilesInfo();
                             Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
                             Graphics graphics = Graphics.FromImage(curTile);
@@ -154,13 +155,12 @@ namespace GDO.Apps.Images
                             ia.Tiles[i, j].cols = i;
                             ia.Tiles[i, j].rows = j;
                             curTile.Save(path2, ImageFormat.Png);
-                            cur ++;
                         }
-                    }
+                    });
                     originImage.Dispose();
                     image.Dispose();
                     ia.ThumbNailImage = null;
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt")) 
+                    using (StreamWriter file = new StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt")) 
                     {
                         file.WriteLine("//ImageName ImageNameDigit ImageNaturalWidth ImageNaturalHeight TileWidth TileHeight TileCols TileRows");
                         file.WriteLine(ia.ImageName);
