@@ -51,7 +51,7 @@ namespace GDO.Core
             if (!Cave.InitializedSync)
             {
                 Cave.InitializedSync = true;
-                Cave.SyncTimer = new System.Timers.Timer(10);
+                Cave.SyncTimer = new System.Timers.Timer(2);
                 Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
                 //Cave.SyncTimer.Interval = 10 - (DateTime.Now.Millisecond%10);
                 Cave.SyncTimer.Start();
@@ -251,11 +251,11 @@ namespace GDO.Core
         }
 
 
-        public int DeployVirtualApp(List<int> instanceIds, string appName, string configName)
+        public int DeployAdvancedApp(List<int> instanceIds, string appName, string configName)
         {
             lock (Cave.ServerLock)
             {
-                int instanceId = Cave.CreateVirtualAppInstance(instanceIds, appName, configName);
+                int instanceId = Cave.CreateAdvancedAppInstance(instanceIds, appName, configName);
                 if (instanceId >= 0)
                 {
                     //Do more
@@ -283,9 +283,9 @@ namespace GDO.Core
                         int sectionId = ((IBaseAppInstance) Cave.Apps[appName].Instances[instanceId]).Section.Id;
                         Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     }
-                    else if (Cave.Apps[appName].Instances[instanceId] is IVirtualAppInstance)
+                    else if (Cave.Apps[appName].Instances[instanceId] is IAdvancedAppInstance)
                     {
-                        List<int> integratedInstances =((IVirtualAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        List<int> integratedInstances =((IAdvancedAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
                     }
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
@@ -690,7 +690,7 @@ namespace GDO.Core
             {
                 CaveState caveState = Cave.States[id];
                 ClearCave();
-                //TODO Virtual apps
+                //TODO Advanced apps
                 /*foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),

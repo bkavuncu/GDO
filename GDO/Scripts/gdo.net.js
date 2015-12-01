@@ -13,7 +13,7 @@ gdo.net.P2P_MODE = {
 gdo.net.APP_TYPE = {
     NONE: -1,
     BASE: 1,
-    VIRTUAL: 2
+    ADVANCED: 2
 };
 
 gdo.net.NEIGHBOUR_ENUM = {
@@ -31,15 +31,15 @@ gdo.net.NEIGHBOUR_ENUM = {
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
     // that is why they are on load
-    sync10ms = function (heartbeat) {
+    receiveHeartbeat10ms = function (heartbeat) {
         //gdo.consoleOut('.NET', 3, 'Received 10ms heartbeat ' + heartbeat);
     }
 
-    sync100ms = function (heartbeat) {
+    receiveHeartbeat100ms = function (heartbeat) {
         //gdo.consoleOut('.NET', 4, 'Received 100ms heartbeat ' + heartbeat);
     }
 
-    sync1s = function (heartbeat) {
+    receiveHeartbeat1s = function (heartbeat) {
         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
             gdo.net.node[i].lastUpdate++;
         }
@@ -51,15 +51,15 @@ $(function() {
     }
 
     $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
-        gdo.net.sync10ms(heartbeat);
-        sync10ms(heartbeat);
+        gdo.net.receiveHeartbeat10ms(heartbeat);
+        receiveHeartbeat10ms(heartbeat);
         if (heartbeat % 10 == 0) {
-            gdo.net.sync100ms(heartbeat / 10);
-            sync100ms(heartbeat / 10);
+            gdo.net.receiveHeartbeat100ms(heartbeat / 10);
+            receiveHeartbeat100ms(heartbeat / 10);
         }
         if (heartbeat % 100 == 0) {
-            gdo.net.sync1s(heartbeat / 100);
-            sync1s(heartbeat / 100);
+            gdo.net.receiveHeartbeat1s(heartbeat / 100);
+            receiveHeartbeat1s(heartbeat / 100);
         }
     }
 
@@ -641,7 +641,7 @@ gdo.net.processNode = function (node)
     if (gdo.management.processNodeUpdate != null) {
         gdo.management.processNodeUpdate(node.Id);
     }
-    gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
+    //gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
 }
 
 gdo.net.processSection = function(exists, id, section) {
@@ -708,7 +708,7 @@ gdo.net.processApp = function (app) {
     }
     gdo.net.app[app.Name].instances = [];
     if (app.SupportedApps != null) {
-        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.VIRTUAL;
+        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.ADVANCED;
         gdo.net.app[app.Name].supportedApps = app.SupportedApps;
     } else {
         gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.BASE;
@@ -743,8 +743,8 @@ gdo.net.processInstance = function (exists, id, instance) {
                 gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
                 gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
             }
-        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.VIRTUAL) {
-            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.VIRTUAL;
+        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
+            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.ADVANCED;
             gdo.net.instance[instance.Id].integratedInstances = instance.IntegratedInstances;
         } else {
             gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
@@ -767,7 +767,7 @@ gdo.net.processInstance = function (exists, id, instance) {
                     gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = -1;
                 }
             }
-        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.VIRTUAL) {
+        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
 
         } else {
             gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
@@ -795,14 +795,14 @@ gdo.net.processState = function (state, id, exists) {
 
 
 
-gdo.net.sync10ms = function (heartbeat) {
+gdo.net.receiveHeartbeat10ms = function (heartbeat) {
     //gdo.consoleOut('.NET', 3, 'Received 10ms heartbeat ' + heartbeat);
 }
 
-gdo.net.sync100ms = function (heartbeat) {
+gdo.net.receiveHeartbeat100ms = function (heartbeat) {
     //gdo.consoleOut('.NET', 4, 'Received 100ms heartbeat ' + heartbeat);
 }
 
-gdo.net.sync1s = function (heartbeat) {
+gdo.net.receiveHeartbeat1s = function (heartbeat) {
     //gdo.consoleOut('.NET', 5, 'Received 1s heartbeat ' + heartbeat);
 }

@@ -8,12 +8,12 @@ using Newtonsoft.Json;
 
 namespace GDO.Core
 {
-    public class VirtualApp : App
+    public class AdvancedApp : App
     {
         public List<string> SupportedApps { get; set; }
 
 
-        public VirtualApp()
+        public AdvancedApp()
         {
 
         }
@@ -37,7 +37,7 @@ namespace GDO.Core
             }
 
             int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-            IVirtualAppInstance instance = (IVirtualAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
+            IAdvancedAppInstance instance = (IAdvancedAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
             AppConfiguration conf;
             Configurations.TryGetValue(configName, out conf);
             instance.Id = instanceId;

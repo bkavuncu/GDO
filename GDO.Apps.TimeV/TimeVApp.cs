@@ -20,7 +20,7 @@ namespace GDO.Apps.TimeV
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IVirtualAppInstance ParentApp { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public void Init()
         {
             _dataProvider = new MongoDataProvider("mongodb://146.169.46.95:27017", "GDO_Apps_TimeV");

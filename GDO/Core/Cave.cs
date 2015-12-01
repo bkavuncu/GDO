@@ -47,7 +47,7 @@ namespace GDO.Core
         {
             None = -1,
             Base = 1,
-            Virtual = 2
+            Advanced = 2
         };
         /// <summary>
         /// Initializes a new instance of the <see cref="Cave"/> class.
@@ -413,14 +413,14 @@ namespace GDO.Core
         }
 
 
-        public static bool RegisterApp(string name, int p2pmode, Type appClassType, bool isVirtual, List<string> supportedApps ) {
+        public static bool RegisterApp(string name, int p2pmode, Type appClassType, bool isAdvanced, List<string> supportedApps ) {
             if (!Apps.ContainsKey(name))
             {
                 App app;
-                if (isVirtual)
+                if (isAdvanced)
                 {
-                    app = new VirtualApp();
-                    ((VirtualApp)app).Init(name, appClassType, (int)Cave.AppTypes.Virtual, supportedApps);
+                    app = new AdvancedApp();
+                    ((AdvancedApp)app).Init(name, appClassType, (int)Cave.AppTypes.Advanced, supportedApps);
                 }
                 else
                 {
@@ -502,10 +502,10 @@ namespace GDO.Core
         }
 
         /// <summary>
-        /// Creates an virtual application instance.
+        /// Creates an advanced application instance.
         /// </summary>
         /// <returns></returns>
-        public static int CreateVirtualAppInstance(List<int> instanceIds, string appName, string configName)
+        public static int CreateAdvancedAppInstance(List<int> instanceIds, string appName, string configName)
         {
             //TODO
             /*if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
@@ -544,7 +544,7 @@ namespace GDO.Core
                             return true;
                         }
                     }
-                    else if (Cave.Apps[appName].AppType == (int)Cave.AppTypes.Virtual)
+                    else if (Cave.Apps[appName].AppType == (int)Cave.AppTypes.Advanced)
                     {
                         if (Apps[appName].DisposeAppInstance(instanceId))
                         {
@@ -582,10 +582,10 @@ namespace GDO.Core
             int slot = Utilities.GetAvailableSlot<CaveState>(States);
             CaveState caveState = new CaveState(slot, name);
             States.TryAdd(slot, caveState);
-            //TODO Add support virtual app
-            /*foreach(KeyValuePair<int,IVirtualAppInstance> instaKeyValuePair in Instances)
+            //TODO Add support advanced app
+            /*foreach(KeyValuePair<int,IAdvancedAppInstance> instaKeyValuePair in Instances)
             {
-                IVirtualAppInstance instance = instaKeyValuePair.Value;
+                IAdvancedAppInstance instance = instaKeyValuePair.Value;
                 //TODO State Mechanism for both Vapps and apps
                 if(instance.GetType())
                 Section section = instance.Section;

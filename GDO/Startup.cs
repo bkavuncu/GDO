@@ -81,9 +81,9 @@ namespace GDO
                     Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
                     assemblies.Add(caveapp.GetType().Assembly);
                 }
-                else if(caveapp is IVirtualAppHub)
+                else if(caveapp is IAdvancedAppHub)
                 {
-                    Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IVirtualAppHub)caveapp).SupportedApps);
+                    Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IAdvancedAppHub)caveapp).SupportedApps);
                     assemblies.Add(caveapp.GetType().Assembly);
                 }
                 else

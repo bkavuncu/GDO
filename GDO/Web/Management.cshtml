@@ -85,6 +85,9 @@
     <script>
             gdo.updateDisplayCanvas = function () {
                 gdo.management.updateMaintenanceButton();
+                if (!gdo.management.nodeTableDrawn) {
+                    gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+                }
                 gdo.management.drawNodeTable(gdo.nodeId);
             }
             $(function () {
@@ -108,7 +111,9 @@
             }
             initApp = function () {
                 gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+                if (!gdo.management.nodeTableDrawn) {
+                    gdo.management.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
+                }
                 gdo.management.drawNodeTable(gdo.nodeId);
                 gdo.management.drawConsoleInput();
                 $('#welcome_modal').modal('toggle');
@@ -210,10 +215,10 @@
                 </tr>
             </table>
             <br>
-            <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height: 42vh; border-collapse: separate; border-spacing: 3px;"></table>
+            <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height: 35vh; border-collapse: separate; border-spacing: 3px;"></table>
             <div id="node_table_space"><br>
             </div>
-            <div id="console_area" style="font-size: 13px; width: 99.5%; height: 35vh; overflow-y: scroll; overflow-y: hidden; border: 1px solid #333; background-color: #222; color: #FFF"></div>
+            <div id="console_area" style="font-size: 13px; width: 99.5%; height: 38vh; overflow-y: scroll; overflow-y: hidden; border: 1px solid #333; background-color: #222; color: #FFF"></div>
             <div id="console_area_space"><br>
             </div>
             <div style="width: 99.5%;">

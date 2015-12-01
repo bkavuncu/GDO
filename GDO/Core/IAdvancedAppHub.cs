@@ -9,7 +9,7 @@ namespace GDO.Core
     /// <summary>
     /// Virtual App Hub Interface
     /// </summary>
-    public interface IVirtualAppHub : IAppHub
+    public interface IAdvancedAppHub : IAppHub
     {
         List<string> SupportedApps { get; set; }
     }

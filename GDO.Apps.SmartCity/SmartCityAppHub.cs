@@ -22,7 +22,7 @@ using Style = GDO.Apps.SmartCity.Core.Style;
 namespace GDO.Apps.SmartCity
 {
     [Export(typeof (IAppHub))]
-    public class SmartCityAppHub : Hub, IVirtualAppHub
+    public class SmartCityAppHub : Hub, IAdvancedAppHub
     {
         public string Name { get; set; } = "SmartCity";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;

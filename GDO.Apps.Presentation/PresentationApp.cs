@@ -25,7 +25,7 @@ namespace GDO.Apps.Presentation
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IVirtualAppInstance ParentApp { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public string BasePath { get; set; }
         public string FileName { get; set; }
         public string FileNameDigit { get; set; }

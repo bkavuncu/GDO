@@ -25,7 +25,7 @@ gdo.initGDO = function (clientMode) {
     gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
     gdo.clientMode = clientMode;
     //$("title").append(" :" + gdo.clientId);
-    gdo.updateInterval = 21000;
+    gdo.updateInterval = 7000;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
@@ -41,7 +41,7 @@ gdo.initGDO = function (clientMode) {
             gdo.net.initNet(clientMode);
             if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 500, 20, 'Node Failed to Initialize');
-                setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval);
+                setTimeout(function() { setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval); }, Math.random() * gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
             }

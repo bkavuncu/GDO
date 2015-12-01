@@ -3,9 +3,9 @@
 namespace GDO.Core
 {
     /// <summary>
-    /// Virtual App Instance Interface
+    /// Advanced App Instance Interface
     /// </summary>
-    public interface IVirtualAppInstance : IAppInstance
+    public interface IAdvancedAppInstance : IAppInstance
     {
         List<IBaseAppInstance> IntegratedInstances { get; set; }
         List<int> GetListofIntegratedInstances();

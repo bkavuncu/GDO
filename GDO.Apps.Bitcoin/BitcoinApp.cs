@@ -10,7 +10,7 @@ namespace GDO.Apps.Bitcoin
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IVirtualAppInstance ParentApp { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public void Init()
         {
         }

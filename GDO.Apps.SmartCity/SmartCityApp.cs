@@ -17,7 +17,7 @@ using Style = GDO.Apps.SmartCity.Core.Style;
 
 namespace GDO.Apps.SmartCity
 {
-    public class SmartCityApp : IVirtualAppInstance
+    public class SmartCityApp : IAdvancedAppInstance
     {
         JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
