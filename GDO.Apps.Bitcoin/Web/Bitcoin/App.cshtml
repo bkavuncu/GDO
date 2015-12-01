@@ -90,6 +90,19 @@
             var textarea2 = document.getElementById('textarea2');
             var titleDIV = document.getElementById('titleDIV');
 
+            function transmit(payload) {
+                bcWebsocket.send(JSON.stringify(payload));
+            }
+
+            function onOpen(openEvent) {
+                console.log("connecting");
+                //subscribe to realtime transaction notifications
+                transmit({ "op": "unconfirmed_sub" });
+                console.log("subscribed to unconfirmed transactions");
+                //subscribe to realtime block notifications
+                transmit({ "op": "blocks_sub" });
+                console.log("subscribed to new block notifications");
+            }
 
             switch (configName) {
             case "Globe":
@@ -169,20 +182,6 @@
                     xmlhttp.open("GET", url, true);
                     xmlhttp.send();
                     console.log('Retrieved current backbone nodes');
-                }
-
-                function transmit(payload) {
-                    bcWebsocket.send(JSON.stringify(payload));
-                }
-
-                function onOpen(openEvent) {
-                    console.log("connecting");
-                    //subscribe to realtime transaction notifications
-                    transmit({ "op": "unconfirmed_sub" });
-                    console.log("subscribed to unconfirmed transactions");
-                    //subscribe to realtime block notifications
-                    transmit({ "op": "blocks_sub" });
-                    console.log("subscribed to new block notifications");
                 }
 
                 function onMessage(msgEvent) {
@@ -538,13 +537,12 @@
                     // else... do nothing
                 }
 
+                populateTextAreas_block();
+                initBlock();
+                break;
 
-                    populateTextAreas_block();
-                    initBlock();
-                    break;
 
-
-                default:
+            default:
                     $("#graphcontainer").text("THIS IS A WRONG CONFIGURATION!");
 
             }
