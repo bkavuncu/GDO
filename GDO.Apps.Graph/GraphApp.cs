@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
@@ -131,6 +132,7 @@ namespace GDO.Apps.Graph
 
             // 1. Distribute nodes & labels
             sw.Restart();
+            Debug.WriteLine("About to DistributeNodesInPartitions");
             // Set up a 2D array to store nodes data in each partition
             partitions = GraphPartitioning.DistributeNodesInPartitions(partitions, Nodes, Section);
             sw.Stop();
@@ -140,6 +142,7 @@ namespace GDO.Apps.Graph
             // 2. Distribute links
             sw.Restart();
             // Set up a 2D array to store nodes data in each partition
+            Debug.WriteLine("About to distribute Links");
             partitions = GraphPartitioning.DistributeLinksInPartitions(partitions,Links, singleDisplayWidth, singleDisplayHeight,Section);
             sw.Stop();
             Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
@@ -147,6 +150,7 @@ namespace GDO.Apps.Graph
 
             // write to individual browser file
             // i. create sub-directories to store partition files
+            Debug.WriteLine("Writing partition files");
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
@@ -177,6 +181,9 @@ namespace GDO.Apps.Graph
             WriteAllNodesFile(nodesPath, Nodes);
             WriteNodeFiles(totalRows, totalCols, nodesPath, partitions);
             WriteLinkFiles(totalRows, totalCols, linksPath, partitions);
+
+            Debug.WriteLine("Writen partition files");
+            
             #endregion
 
             return this.FolderNameDigit;
@@ -201,10 +208,11 @@ namespace GDO.Apps.Graph
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < totalRows; ++i)
+            Parallel.For(0,totalCols, j => { 
+            //for (int j = 0; j < totalCols; ++j) {
+                for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < totalCols; ++j)
-                {
+            
                     using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json")
                     {
                         AutoFlush = true
@@ -215,7 +223,7 @@ namespace GDO.Apps.Graph
                         serializer.Serialize(jsonWriter, partitions[i, j].Nodes);
                     }
                 }
-            }
+            });
             sw.Stop();
             Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
@@ -225,21 +233,20 @@ namespace GDO.Apps.Graph
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < totalRows; ++i)
-            {
-                for (int j = 0; j < totalCols; ++j)
+            Parallel.For(0, totalCols, j => {
+                //for (int j = 0; j < totalCols; ++j)
                 {
-                    using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json")
-                    {
-                        AutoFlush = true
-                    })
-                    {
-                        JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
-                        JsonSerializer serializer = new JsonSerializer();
-                        serializer.Serialize(jsonWriter, partitions[i,j].Links);
+                    for (int i = 0; i < totalRows; ++i) {
+                        using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json") {
+                            AutoFlush = true
+                        }) {
+                            JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                            JsonSerializer serializer = new JsonSerializer();
+                            serializer.Serialize(jsonWriter, partitions[i, j].Links);
+                        }
                     }
                 }
-            }
+            });
             sw.Stop();
             Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
