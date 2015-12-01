@@ -234,8 +234,9 @@
             document.getElementById(evt.data.node.id).style.backgroundColor = '#FF0000';
         }
     });
-
-    var peer = new Peer('controller', { key: '3dp2kjnfd9kq33di' });
+        
+    var peer = new Peer('controller', { key: "g9o1meczkw9x80k9" });
+    //var peer = new Peer('controller', { host: "dsigdopreprod.doc.ic.ac.uk", port: 55555 });
     var guis = {};
 
     peer.on('connection', function(conn) {
@@ -305,6 +306,8 @@
                     handleTable();
                 if (data.peertype === 'block')
                     guis[conn.peer].params.block = data.peerpayload;
+                if (data.peertype === 'info')   // indicates which node this controller belongs to
+                    guis[conn.peer].gui.add(guis[conn.peer].params, 'connection').name('Node:' + data.peerpayload);
             });
         });
 
