@@ -171,6 +171,25 @@
 		bcWebsocket = new WebSocket(ws);
 		bcWebsocket.onopen = function(openEvent) { onOpen(openEvent) };
 		bcWebsocket.onmessage = function(msgEvent) { onMessage(msgEvent) };
+		
+		bcWebsocket.onclose = function(event) {
+			var code = event.code;
+			var reason = event.reason;
+			var wasClean = event.wasClean;
+			// handle close event
+			//alert("Error: " + code + ";" + reason);
+
+			i = 0;
+			//for (i = 0; i < 11; i++) {
+				//alert("localMessage " + i)
+				//setTimeout(function() {
+				//	var interval = setInterval(localMessage("input" + i + ".xml"), 0);
+				//	}, 1000
+				//);
+				//setTimeout(function() {while (true);}, 3000);
+				localMessage(i);
+			//}
+		};
 	}
 	
 	function onOpen(openEvent) {
@@ -187,14 +206,30 @@
 		bcWebsocket.send(JSON.stringify(payload));
 	}
 
+	function localMessage(i) {
+		var request = new XMLHttpRequest();
+		request.open("GET", "data/input" + i + ".xml", false);
+		request.send(null);
+		var msg = JSON.parse(request.responseText);
+	    processMessage(msg);
+
+		i++;
+	    if (i < 1800) {
+	        setTimeout(function() { localMessage(i) }, 1000);
+	    }
+	}
+
+
 	function onMessage(msgEvent) {
+	    var msg = JSON.parse(msgEvent.data);
+	    processMessage(msg);
+	}
 
-		var msg = JSON.parse(msgEvent.data);
 
-		if (paused) {
+    function processMessage(msg){
+	    if (paused) {
 			msgBuf.push(msg);
 		}
-
 		else {
 
 			processMsg(msg);
@@ -242,7 +277,6 @@
                 // document.getElementById('app_frame_content').contentWindow.location.reload(true);
                 //document.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
                 //document.body.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
-
             }
 		}
 	}
