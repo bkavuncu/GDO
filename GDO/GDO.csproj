@@ -959,16 +959,16 @@
     <Content Include="Web\Scenarios.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\IVirtualAppHub.cs" />
+    <Compile Include="Core\IAdvancedAppHub.cs" />
     <Compile Include="Core\IBaseAppHub.cs" />
     <Compile Include="Core\IBaseAppInstance.cs" />
-    <Compile Include="Core\VirtualApp.cs" />
+    <Compile Include="Core\AdvancedApp.cs" />
     <Compile Include="Core\CaveHub.cs" />
     <Compile Include="Core\AppConfiguration.cs" />
     <Compile Include="Core\App.cs" />
     <Compile Include="Core\CaveState.cs" />
     <Compile Include="Core\IAppHub.cs" />
-    <Compile Include="Core\IVirtualAppInstance.cs" />
+    <Compile Include="Core\IAdvancedAppInstance.cs" />
     <Compile Include="Core\IAppInstance.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />

@@ -19,7 +19,7 @@ namespace GDO.Apps.Graph
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IVirtualAppInstance ParentApp { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
 
         private GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();

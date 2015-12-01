@@ -26,7 +26,6 @@
     <link href="../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="../CSS/gdo.management.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -35,6 +34,20 @@
     <![endif]-->
 
     <style>
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        iframe {
+            border: 0 none;
+            width: 98.5%;
+            height: 98.5%;
+            display: block;
+        }
     </style>
     <script>
         var gdo = {};
@@ -64,7 +77,6 @@
 <body unselectable="on" class="unselectable">
     <script src="../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../Scripts/jquery.csv-0.71.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
@@ -109,23 +121,8 @@
             }
     </script>
     <div id="wrapper">
-        <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
-            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
-                <tr>
-                    <td>
-                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button>
-                    </td>
-                    <td>
-                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button>
-                    </td>
-                    <td>
-                        <div style="width:14px"></div>
-                    </td>
-                    <td>
-                        <div id="connection_status" class="img-circle circle" style='width:45px;height:45px; background: #2A9FD6;display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-lg' style="display: table-cell; vertical-align: middle; text-align: center"></i></div>
-                    </td>
-                </tr>
-            </table>
+        <div style="position: absolute; top: 7px; right: 7px; z-index: 1000">
+            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;"><tr><td><button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button></td><td><button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></td></tr></table>
         </div>
         <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
@@ -191,12 +188,6 @@
                         <li>
                             <a href="https://wiki.imperial.ac.uk/display/DG/DSI+-+GDO+Home"><i class="fa fa-file-text fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Wiki</font></a>
                         </li>
-                        <li>
-                            <a href="https://github.com/bkavuncu/GDO"><i class="fa fa-github fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Github</font></a>
-                        </li>
-                        <li>
-                            <a href="https://trello.com/gdo6"><i class="fa fa-trello fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Trello</font></a>
-                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -227,7 +218,7 @@
             <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height: 35vh; border-collapse: separate; border-spacing: 3px;"></table>
             <div id="node_table_space"><br>
             </div>
-            <div id="console_area" style="font-size: 13px; width: 100.5%; height: 38vh; overflow: auto;border: 1px solid #333; background-color: #222; color: #FFF"></div>
+            <div id="console_area" style="font-size: 13px; width: 99.5%; height: 38vh; overflow-y: scroll; overflow-y: hidden; border: 1px solid #333; background-color: #222; color: #FFF"></div>
             <div id="console_area_space"><br>
             </div>
             <div style="width: 99.5%;">

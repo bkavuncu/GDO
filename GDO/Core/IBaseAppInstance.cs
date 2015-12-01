@@ -7,6 +7,6 @@
     {
         Section Section { get; set; }
         bool IntegrationMode { get; set; }
-        IVirtualAppInstance ParentApp { get; set; }
+        IAdvancedAppInstance ParentApp { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace GDO.Apps.BasicMaps
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IVirtualAppInstance ParentApp { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         public string[] MarkerPosition { get; set; }
         public int MaxLayers { get; set; } = 35;

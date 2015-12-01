@@ -23,7 +23,7 @@ namespace GDO.Apps.Images
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IVirtualAppInstance ParentApp { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public string ImageName { get; set; }
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }

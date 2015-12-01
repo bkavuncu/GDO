@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
+using Timer = System.Threading.Timer;
 
 namespace GDO.Core
 {
@@ -43,6 +45,33 @@ namespace GDO.Core
             return base.OnDisconnected(stopCalled);
 
         }
+
+        private void InitializeSynchronization()
+        {
+            if (!Cave.InitializedSync)
+            {
+                Cave.InitializedSync = true;
+                Cave.SyncTimer = new System.Timers.Timer(2);
+                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
+                //Cave.SyncTimer.Interval = 10 - (DateTime.Now.Millisecond%10);
+                Cave.SyncTimer.Start();
+            }
+        }
+
+
+        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
+        {
+            if (Cave.CurrentHeartbeat == Cave.MaximumHeartbeat)
+            {
+                Cave.CurrentHeartbeat = 0;
+            }
+            Cave.CurrentHeartbeat++;
+            //Cave.SyncTimer.Stop();
+            //Cave.SyncTimer.Interval = (DateTime.Now.Millisecond % 10) +1;
+            //Cave.SyncTimer.Start();
+            Clients.All.receiveHeartbeat(Cave.CurrentHeartbeat);
+        }
+
 
         /// <summary>
         /// Deploys the node.
@@ -222,11 +251,11 @@ namespace GDO.Core
         }
 
 
-        public int DeployVirtualApp(List<int> instanceIds, string appName, string configName)
+        public int DeployAdvancedApp(List<int> instanceIds, string appName, string configName)
         {
             lock (Cave.ServerLock)
             {
-                int instanceId = Cave.CreateVirtualAppInstance(instanceIds, appName, configName);
+                int instanceId = Cave.CreateAdvancedAppInstance(instanceIds, appName, configName);
                 if (instanceId >= 0)
                 {
                     //Do more
@@ -254,9 +283,9 @@ namespace GDO.Core
                         int sectionId = ((IBaseAppInstance) Cave.Apps[appName].Instances[instanceId]).Section.Id;
                         Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     }
-                    else if (Cave.Apps[appName].Instances[instanceId] is IVirtualAppInstance)
+                    else if (Cave.Apps[appName].Instances[instanceId] is IAdvancedAppInstance)
                     {
-                        List<int> integratedInstances =((IVirtualAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        List<int> integratedInstances =((IAdvancedAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
                     }
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
@@ -617,7 +646,7 @@ namespace GDO.Core
 
         public void Initialize()
         {
-            //dummy
+            InitializeSynchronization();
         }
 
         public void SaveCaveState(string name)
@@ -661,7 +690,7 @@ namespace GDO.Core
             {
                 CaveState caveState = Cave.States[id];
                 ClearCave();
-                //TODO Virtual apps
+                //TODO Advanced apps
                 /*foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
