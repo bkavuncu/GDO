@@ -28,39 +28,19 @@ gdo.net.NEIGHBOUR_ENUM = {
     BOTTOMRIGHT: 8
 };
 
+gdo.net.time = new Date();
+
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
     // that is why they are on load
-    receiveHeartbeat10ms = function (heartbeat) {
-        //gdo.consoleOut('.NET', 3, 'Received 10ms heartbeat ' + heartbeat);
-    }
-
-    receiveHeartbeat100ms = function (heartbeat) {
-        //gdo.consoleOut('.NET', 4, 'Received 100ms heartbeat ' + heartbeat);
-    }
-
-    receiveHeartbeat1s = function (heartbeat) {
-        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-            gdo.net.node[i].lastUpdate++;
-        }
-        //gdo.consoleOut('.NET', 5, 'Received 1s heartbeat ' + heartbeat);
-    }
 
     $.connection.caveHub.client.receiveDefaultP2PMode = function (defaultP2PMode) {
         gdo.net.p2pmode = defaultP2PMode;
     }
 
     $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
-        gdo.net.receiveHeartbeat10ms(heartbeat);
-        receiveHeartbeat10ms(heartbeat);
-        if (heartbeat % 10 == 0) {
-            gdo.net.receiveHeartbeat100ms(heartbeat / 10);
-            receiveHeartbeat100ms(heartbeat / 10);
-        }
-        if (heartbeat % 100 == 0) {
-            gdo.net.receiveHeartbeat1s(heartbeat / 100);
-            receiveHeartbeat1s(heartbeat / 100);
-        }
+        gdo.net.time.setTime(heartbeat);
+        gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
     }
 
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
@@ -793,18 +773,4 @@ gdo.net.processState = function (state, id, exists) {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
     }
-}
-
-
-
-gdo.net.receiveHeartbeat10ms = function (heartbeat) {
-    //gdo.consoleOut('.NET', 3, 'Received 10ms heartbeat ' + heartbeat);
-}
-
-gdo.net.receiveHeartbeat100ms = function (heartbeat) {
-    //gdo.consoleOut('.NET', 4, 'Received 100ms heartbeat ' + heartbeat);
-}
-
-gdo.net.receiveHeartbeat1s = function (heartbeat) {
-    //gdo.consoleOut('.NET', 5, 'Received 1s heartbeat ' + heartbeat);
 }

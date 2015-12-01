@@ -616,9 +616,11 @@
     <Content Include="Bootstrap\pages\panels-wells.html" />
     <Content Include="Bootstrap\pages\tables.html" />
     <Content Include="Bootstrap\pages\typography.html" />
+    <Content Include="CSS\gdo.management.css" />
     <Content Include="Img\gdo.png" />
     <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\enscroll-0.6.1.min.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.console.js" />
@@ -935,11 +937,9 @@
     <Content Include="Bootstrap\less\variables.less" />
     <Content Include="Bootstrap\LICENSE" />
     <Content Include="Bootstrap\README.md" />
-    <None Include="Properties\PublishProfiles\emergency.pubxml" />
+    <Content Include="Bootstrap\gdo.management" />
     <None Include="Properties\PublishProfiles\PreProd.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
-    <None Include="Properties\PublishProfiles\studentserver.pubxml" />
-    <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

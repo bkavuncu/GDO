@@ -25,7 +25,7 @@ gdo.initGDO = function (clientMode) {
     gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
     gdo.clientMode = clientMode;
     //$("title").append(" :" + gdo.clientId);
-    gdo.updateInterval = 7000;
+    gdo.updateInterval = 14000;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
