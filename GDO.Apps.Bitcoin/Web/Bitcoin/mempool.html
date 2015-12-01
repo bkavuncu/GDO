@@ -319,8 +319,8 @@
                 }
             }
 
-		    //refresh page when number of graph vertices >5000
-            if (numNodes > 5000) {
+		    //refresh page when number of graph vertices >3000
+            if (numNodes > 3000) {
                 console.log("Reloading page because we have many graph vertices");
                 location.reload(true);  //this reload the iframe
                 /* the following don't work because this page does not know it will be within an iframe */
