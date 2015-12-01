@@ -209,77 +209,27 @@
 	function localMessage(i) {
 		var request = new XMLHttpRequest();
 		request.open("GET", "data/input" + i + ".xml", false);
-		request.send(null)
+		request.send(null);
 		var msg = JSON.parse(request.responseText);
-		//alert (msg.result[0]);
+	    processMessage(msg);
 
-		if (paused) {
-			msgBuf.push(msg);
-		}
-
-		else {
-			processMsg(msg);
-			applyFilters();
-			renderGraph();
-
-			document.getElementById('txMaxVal').innerHTML = (txMaxVal/100000000).toLocaleString()+'B / $'+
-											(currUSDBTC * txMaxVal/100000000).toLocaleString();
-			document.getElementById('txTotalVal').innerHTML = (txTotalVal/100000000).toLocaleString()+'B / $'+
-											(currUSDBTC * txTotalVal/100000000).toLocaleString();
-			document.getElementById('txAvgVal').innerHTML = ((txTotalVal/numTx)*1000/100000000).toLocaleString()+'mB / $'+
-											((currUSDBTC * txTotalVal/numTx)/100000000).toLocaleString();
-
-			document.getElementById('txMaxFee').innerHTML = (txMaxFee*1000/100000000).toLocaleString()+'mB / $'+
-											(currUSDBTC * txMaxFee/100000000).toLocaleString();
-			document.getElementById('txTotalFee').innerHTML = (txTotalFee/100000000).toLocaleString()+'B / $'+
-											(currUSDBTC * txTotalFee/100000000).toLocaleString();
-			document.getElementById('txAvgFee').innerHTML = ((txTotalFee/numTx)*1000/100000000).toLocaleString()+'mB / $'+
-											((currUSDBTC * txTotalFee/numTx)/100000000).toLocaleString();
-
-			document.getElementById('txMaxSize').innerHTML = (txMaxSize).toLocaleString();
-			document.getElementById('txTotalSize').innerHTML = (txTotalSize).toLocaleString();
-			document.getElementById('txAvgSize').innerHTML = (txTotalSize/numTx).toLocaleString();
-
-			document.getElementById('txMaxFeeDens').innerHTML = "";
-			document.getElementById('txTotalFeeDens').innerHTML = "";
-			document.getElementById('txAvgFeeDens').innerHTML = (txTotalFee/txTotalSize).toLocaleString()+'sat/byte / $'+
-					(currUSDBTC * 1024 * txTotalFee/(txTotalSize*100000000)).toLocaleString() + '/kB';
-
-			//update tx rate every 10 transactions
-			if(msg.op=='utx') {
-				if ((numTx - lastRateTx) % 10 == 0) {
-					txRate = 10 / ((Date.now() - timeOfLastTx) / 1000);
-					document.getElementById('statTxRate').innerHTML = txRate.toLocaleString();
-					timeOfLastTx = Date.now();
-					lastRateTx = numTx;
-				}
-			}
-
-			//refresh page when number of graph vertices >5000
-			if (numNodes > 5000) {
-				console.log("Reloading page because we have many graph vertices");
-				location.reload(true);  //this reload the iframe
-				/* the following don't work because this page does not know it will be within an iframe */
-				// document.getElementById('app_frame_content').contentWindow.location.reload(true);
-				//document.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
-				//document.body.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
-
-			}
-		}
 		i++;
-		if (i < 1800)
-			setTimeout(function() {localMessage(i)}, 1000);
+	    if (i < 1800) {
+	        setTimeout(function() { localMessage(i) }, 1000);
+	    }
 	}
 
-	
+
 	function onMessage(msgEvent) {
+	    var msg = JSON.parse(msgEvent.data);
+	    processMessage(msg);
+	}
 
-		var msg = JSON.parse(msgEvent.data);
 
-		if (paused) {
+    function processMessage(msg){
+	    if (paused) {
 			msgBuf.push(msg);
 		}
-
 		else {
 
 			processMsg(msg);
@@ -327,7 +277,6 @@
                 // document.getElementById('app_frame_content').contentWindow.location.reload(true);
                 //document.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
                 //document.body.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
-
             }
 		}
 	}
