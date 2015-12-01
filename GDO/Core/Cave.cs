@@ -26,8 +26,6 @@ namespace GDO.Core
         public static int NodeWidth { get; set; }
         public static int NodeHeight { get; set; }
         public static int DefaultP2PMode { get; set; }
-        public static int CurrentHeartbeat { get; set; }
-        public static int MaximumHeartbeat { get; set; }
         public static bool InitializedSync { get; set; }
         public static System.Timers.Timer SyncTimer { get; set; }
         public static ConcurrentDictionary<string, App> Apps { get; set; }
@@ -54,8 +52,8 @@ namespace GDO.Core
         /// </summary>
         public Cave()
         {
-            CurrentHeartbeat = 0;
-            MaximumHeartbeat = 1000000;
+            //CurrentHeartbeat = 0;
+            //MaximumHeartbeat = 1000000;
             MaintenanceMode = true;
             BlankMode = false;
             Apps = new ConcurrentDictionary<string, App>();

@@ -16,7 +16,7 @@
 }
 gdo.management.processNodeUpdate = function (id) {
     $("#node_table_node_" + id + '_u').css("background", "#559100");
-    setTimeout(function () { $("#node_table_node_" + id + '_u').css("background", "#333"); }, 700);
+    setTimeout(function () { $("#node_table_node_" + id + '_u').css("background", "#2F2F2F"); }, 700);
 }
 
 gdo.management.drawNodeTable = function (nodeId) {
@@ -46,8 +46,8 @@ gdo.management.drawNodeTable = function (nodeId) {
                 .empty()
                 .css("vertical-align", "top")
                 .append("<div id='node_table_node_" + node.id + "_i' style='text-align:center;background:#333;position:relative'> <font size='4px'><b> " + node.id + "</b></font> " +
-                    "<div class='circle img-circle' style='width:14px;height:14px;position:absolute;top:3px;right:4px;background:#111'></div>" +
-                    "<div id='node_table_node_" + node.id + "_u' class='circle img-circle' style='width:10px;height:10px;position:absolute;top:5px;right:6px;background:#333'></div>" +
+                    "<div class='circle img-circle' style='width:15px;height:15px;position:absolute;top:4px;right:4px;background:#111'></div>" +
+                    "<div id='node_table_node_" + node.id + "_u' class='circle img-circle' style='width:13px;height:13px;position:absolute;top:5px;right:5px;background:#2F2F2F'></div>" +
                     "</div>")
                 .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
                 .append("<div id='node_table_node_" + node.id + "_s'> <b>&nbsp;Section ID:</b> " + node.sectionId + "</div>")
