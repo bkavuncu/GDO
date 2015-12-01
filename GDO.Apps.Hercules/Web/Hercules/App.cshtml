@@ -47,7 +47,9 @@
 
             dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
-            viz = function () {
+            console.log(dd3);
+
+            var viz = function () {
                 var xScale, yScale;
                 var data, pathData;
                 var dataId = "";
@@ -150,6 +152,12 @@
                     dd3.getDataDimensions(dataId, requestData);
                 };
             };
+
+            window.orderController = orderController;
+            window.viz = viz;
+
+            viz();
+            orderController.orders.plot();
         });
 
     </script>

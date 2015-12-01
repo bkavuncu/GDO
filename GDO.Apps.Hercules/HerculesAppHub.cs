@@ -35,5 +35,9 @@ namespace GDO.Apps.Hercules
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
+        public void dataTest (int instanceId)
+        {
+            throw new Exception("data test");
+        }
     }
 }

@@ -18,9 +18,10 @@
         // Non-dd3 functions
 
         HerculesServer.client.receiveGDOConfiguration = function (id) {
-            // To get configId from server
-            main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');
-            main_callback = null;
+            if (main_callback)
+                main_callback(id);
+            else
+                gdo.consoleOut('.DD3', 1, 'No callback defined');
         };
 
         HerculesServer.client.receiveControllerOrder = function (orders) {
@@ -33,14 +34,21 @@
             }
         };
 
+        var HerculesApp = gdo.net.app.Hercules;
 
-        gdo.net.app["Hercules"].displayMode = 0;
 
-        gdo.net.app["Hercules"].initClient = function () {
+        HerculesApp.displayMode = 0;
+
+        HerculesApp.initClient = function () {
             gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Client at Node ' + gdo.clientId);
+            HerculesServer.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
         }
 
-        gdo.net.app["Hercules"].initDD3 = function () {
+        HerculesApp.initDD3 = function (launcher, orderController) {
+            var d3 = document.getElementById('app_frame_content').contentWindow['d3'] || window.d3 || d3;
+            orderTransmitter = orderController;
+            main_callback = launcher;
+
             if (typeof initDD3App === 'function') {
                 return initDD3App(d3, HerculesServer, $, Peer, signalR_callback);
             } else {
@@ -48,18 +56,25 @@
             }
         }
 
-        gdo.net.app["Hercules"].initControl = function (callback) {
+        HerculesApp.initControl = function (callback) {
             gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Control at Instance ' + gdo.clientId);
         }
 
-        gdo.net.app["Hercules"].terminateClient = function () {
+        HerculesApp.terminateClient = function () {
             gdo.consoleOut('.Hercules', 1, 'Terminating Hercules App Client at Node ' + gdo.clientId);
             HerculesServer.server.removeClient(HerculesServer.instanceId);
         }
 
-        gdo.net.app["Hercules"].terminateControl = function () {
+        HerculesApp.terminateControl = function () {
             gdo.consoleOut('.Hercules', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
         }
+
+        HerculesApp.dataTest = function () {
+            console.error('Things -> ', HerculesApp.server, HerculesApp.server.dataTest, HerculesServer);
+            HerculesServer.server.dataTest(54);
+        }
+
+        console.error('Loaded: -> ', HerculesApp);
 
         initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
             var $ = jQuery;

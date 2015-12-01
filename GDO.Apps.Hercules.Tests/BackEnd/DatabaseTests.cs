@@ -14,7 +14,6 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
     [TestClass()]
     public class DatabaseTests
     {
-        class Fuck { }
 
         [TestMethod()]
         public void GetErrorTest()
