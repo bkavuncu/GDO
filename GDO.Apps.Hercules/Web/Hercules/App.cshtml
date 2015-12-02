@@ -19,17 +19,20 @@
     <script>
         $(document).ready(function () {
             var gdo = parent.gdo;
+                configName,
+                configId,
+                test_bench = {};
 
             if (typeof gdo === 'undefined')
                 throw new Error('gdo was not defined in parent');
 
-            gdo.net.app['Hercules'].initClient();
+           
 
             var launcher = function (configId) {
                 if (dd3.state() === "ready") {
-                    viz(configId);
+                    test_bench[configId](configId);
                 } else {
-                    dd3.on('ready', viz.bind(null, configId));
+                    dd3.on('ready', test_bench[configId].bind(null, configId));
                 }
             };
 
@@ -45,11 +48,18 @@
                 return t;
             })();
 
+            //gdo.net.app['Hercules'].initClient();
+            if (!gdo.net.app["Hercules"].initClient) {
+                $("#error").css("display", "");
+                parent.location.reload();
+                return;
+            }
+
             dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
             console.log(dd3);
 
-            var viz = function () {
+            test_bench[0] = function () {
                 var xScale, yScale;
                 var data, pathData;
                 var dataId = "";
@@ -153,12 +163,16 @@
                 };
             };
 
-            window.orderController = orderController;
-            window.viz = viz;
+            //window.orderController = orderController;
+            //window.viz = viz;
 
-            viz();
-            orderController.orders.plot();
+            //viz();
+            //orderController.orders.plot();
         });
+
+        test_bench[1] = function () {
+
+        };
 
     </script>
 </body>

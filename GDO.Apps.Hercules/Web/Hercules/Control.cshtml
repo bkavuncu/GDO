@@ -59,11 +59,83 @@
     <script src="~/Scripts/jquery-2.1.4.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
+        function getUrlVar(variable) {
+            /// <summary>
+            /// Gets the URL variable.
+            /// </summary>
+            /// <param name="variable">The variable.</param>
+            /// <returns></returns>
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) { return pair[1]; }
+            }
+            query = window.frames['control_frame_content'].location.search.substring(1);
+            vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) { return pair[1]; }
+            }
+            return (false);
+        }
+
         $(function () {
             console.log(parent, parent.gdo);
             var gdo = parent.gdo;
             window.gdo = gdo;
-            gdo.consoleOut('.Hercules', 1, 'Init Control');
+            server = gdo.net.app.DD3.server;
+            gdo.controlId = getUrlVar("controlId");
+
+            var instanceId,
+                confId,
+                numClients;
+
+            var test_bench = [];
+
+            var callback = function (message) {
+                gdo.consoleOut(".Hercules", 1, "Callback Message: " + message);
+                confId = message.configurationId;
+                numClients = message.numClient;
+                if (message.state == 1) {
+                    test_bench[confId] && test_bench[confId]();
+                    test_bench[confId] = null;
+                    $("#wait").css("display", "none");
+                    if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
+                        $("#control_6").css("display", "");
+                    } else {
+                        $("#control_" + confId).css("display", "");
+                    }
+                }
+            };
+
+            var order = function (name, args) {
+                return JSON.stringify({ name: name, args: args });
+            };
+
+            if (!gdo.net.app["Hercules"].initControl) {
+                $("#wait").css("display", "none");
+                $("#error").css("display", "");
+                return;
+            }
+
+            instanceId = gdo.net.app["Hercules"].initControl(callback);
+
+            test_bench[0] = function () {
+                var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
+
+                var table = $("#control_1 table");
+                var send = function (value) {
+                    server.sendOrder(instanceId, order("plot", [value]), true);
+                };
+
+                dataIds.forEach(function (d) {
+                    table.append('<tr><td>' + d + '</td></tr>');
+                    table.find("tr:last td").addClass('green').click(send.bind(null, d));
+                });
+            };
+
+            //gdo.consoleOut('.Hercules', 1, 'Init Control');
             gdo.net.app['Hercules'].initControl();
             gdo.net.app['Hercules'].server.testSignalR(gdo.controlId);
         });

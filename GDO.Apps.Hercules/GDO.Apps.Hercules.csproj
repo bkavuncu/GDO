@@ -209,6 +209,7 @@
     <Content Include="Scripts\build\index.html" />
     <Content Include="Scripts\build\assets\Hercules.js.map" />
     <Content Include="package.json" />
+    <Content Include="Configurations\Hercules\json.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\DD3\d3.v3.js" />
     <Content Include="Scripts\DD3\dd3.js" />
