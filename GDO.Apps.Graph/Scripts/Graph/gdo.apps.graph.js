@@ -283,14 +283,14 @@ $(function () {
 
             var nodesDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("nodes");
 
-            var radius = globalZoomed ? zoomedRadius : normalRadius;
+            //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
             nodes.forEach(function (node) {
 
                 var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
                 nodesDom.append("circle")
-                    .attr("r", radius)
+                    .attr("r", Math.ceil(node.Size)) // radius
                     .attr("cx", node.Pos.X)
                     .attr("cy", node.Pos.Y)
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
