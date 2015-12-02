@@ -29,6 +29,7 @@ namespace GDO.Apps.Graph
         {
             try {
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs"));
             }
             catch (Exception e) {
                 Log.Error("failed to launch the Graphs App",e);
@@ -46,17 +47,14 @@ namespace GDO.Apps.Graph
         // return name of folder that stores processed data
         public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
         {
-            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/" + inputFolder + "/"+ inputFolder + @".graphml");
+            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs/" + inputFolder );
             GraphDataReader.ReadGraphMLData(graphMLfile, out Links, out Nodes, out rectDim);
 
-            //create Dictionaries for quick search of Labels and Nodes
-            //SetupLabelDictionary();
-            //SetupNodeDictionary();
+            //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();
 
             //compute node adjacencies
             ComputeNodeAdjacencies();
-
 
             #region calculate viewport and scales
             int singleDisplayWidth = Section.Width / Section.Cols;
@@ -151,6 +149,7 @@ namespace GDO.Apps.Graph
             // write to individual browser file
             // i. create sub-directories to store partition files
             Debug.WriteLine("Writing partition files");
+            GraphAppHub.self.LogTime("Writing partition files");
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
@@ -202,7 +201,6 @@ namespace GDO.Apps.Graph
                 serializer.Serialize(jsonWriter, nodes);
             }
         }
-
 
         private static void WriteNodeFiles(int totalRows, int totalCols, string linksPath, Partition[,] partitions)
         {
@@ -274,7 +272,6 @@ namespace GDO.Apps.Graph
 
         //have a dictionary of the nodes indexed by ID
         Dictionary<string, GraphNode> _nodesDictionary;
-
         private void SetupNodesDictionary()
         {
             Stopwatch sw = new Stopwatch();
