@@ -16,9 +16,6 @@ using GDO.Apps.DD3;
 using GDO.Utility;
 using Newtonsoft.Json;
 
-//[assembly: System.Web.UI.WebResource("GDO.Apps.Youtube.Scripts.Youtube.js", "application/x-javascript")]
-//[assembly: System.Web.UI.WebResource("GDO.Apps.Youtube.Configurations.sample.js", "application/json")]
-
 namespace GDO.Apps.Hercules
 {
     [Export(typeof(IAppHub))]
@@ -40,12 +37,19 @@ namespace GDO.Apps.Hercules
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void PorcaMadonna (int instanceId)
+        public void TestSignalR (int instanceId)
         {
-           // lock (Cave.AppLocks[instanceId]) {
-                Debug.WriteLine("fuck");
-           // }
-            Debug.WriteLine("DAAAAAAAAAAAAAAAAAAAAAAAAAAi");
+           Debug.WriteLine("please show");
+        }
+
+        public override System.Threading.Tasks.Task OnConnected()
+        {
+            return base.OnConnected();
+        }
+
+        public override System.Threading.Tasks.Task OnDisconnected(Boolean b)
+        {
+            return base.OnDisconnected(b);
         }
     }
 }
