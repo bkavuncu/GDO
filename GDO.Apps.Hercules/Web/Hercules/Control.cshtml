@@ -65,11 +65,13 @@
             window.gdo = gdo;
             gdo.consoleOut('.Hercules', 1, 'Init Control');
             gdo.net.app['Hercules'].initControl();
-            gdo.net.app.Hercules.dataTest();
+            console.log("IF WE SEE THIS ITS ALREADY GODD");
+            gdo.net.app['Hercules'].server.porcaMadonna(gdo.controlId);
         });
     </script>
 
     <div id="react-target"></div>
     <script src="~/Scripts/build/assets/Hercules.js"></script>
+
 </body>
 </html>

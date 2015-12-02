@@ -24,20 +24,28 @@ namespace GDO.Apps.Hercules
     [Export(typeof(IAppHub))]
     public class HerculesAppHub : DD3AppHub, IAppHub
     {
-        public string Name { get; set; } = "Hercules";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
-        public Type InstanceType { get; set; } = new HerculesApp().GetType();
-        public void JoinGroup(int instanceId)
+        new public string Name { get; set; } = "Hercules";
+
+        new public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
+
+        new public Type InstanceType { get; set; } = new HerculesApp().GetType();
+
+        new public void JoinGroup(int instanceId)
         {
             Groups.Add(Context.ConnectionId, "" + instanceId);
         }
-        public void ExitGroup(int instanceId)
+
+        new public void ExitGroup(int instanceId)
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
-        public void dataTest (int instanceId)
+
+        public void PorcaMadonna (int instanceId)
         {
-            throw new Exception("data test");
+           // lock (Cave.AppLocks[instanceId]) {
+                Debug.WriteLine("fuck");
+           // }
+            Debug.WriteLine("DAAAAAAAAAAAAAAAAAAAAAAAAAAi");
         }
     }
 }
