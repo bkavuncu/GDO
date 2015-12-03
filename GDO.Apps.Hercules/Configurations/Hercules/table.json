@@ -1,0 +1,64 @@
+﻿{
+  "id": 1,
+  "data": {
+     // FIELD/COLUMN
+/*var col1 = {
+			name: "FieldInt",
+			index: 0,
+			description: "",
+			origin: "native|added", 
+			disabled: false,
+			type: "Text,Integral,Floating,DateTime,GPSCoords,URL,Boolean,Unknown",
+			stats: {
+			     min:1,max:4,mean:34,median,variance,sd,sum,count,isEnum;
+			}
+		};
+		
+		var col2 = {
+			name: "FieldInt",
+			index: 0,
+			description: "",
+			origin: "native|added", 
+			disabled: false,
+			type: "Text",
+			stats: {
+			     min:1,max:4,mean:34,median,variance,sd,sum,count,isEnum;
+			}
+		};
+		
+			var col3 = {
+			name: "FieldInt",
+			index: 0,
+			description: "",
+			origin: "native|added", 
+			disabled: false,
+			type: "Boolean",
+			stats: {
+			     min:1,max:4,mean:34,median,variance,sd,sum,count,isEnum;
+			}
+		};
+		
+		
+// main object, DATASET		
+var ds = {
+	schema: {
+		name: "Test DS",
+		description: "No description",
+		sourceType: "File|URL",
+		sourceOrigin: "filepath|urladdress",
+		nrows: 2,
+		disabled: true, // dont care
+		_id: "ajksdh234k2j34", // dont care
+		fields: [col1, col2, col3]
+	},
+	rows: [[1,"hello",false]
+	      ,[4,"world",true]]
+};
+
+
+function presetDataSetInTableView(ds, [nodes]) {
+	// dd3 
+	
+}*/
+  }
+}
