@@ -40,7 +40,7 @@ $(function() {
 
     $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
         gdo.net.time.setTime(heartbeat);
-        gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
+        //gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
     }
 
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
@@ -770,5 +770,29 @@ gdo.net.processState = function (state, id, exists) {
     } else {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
+    }
+}
+
+gdo.net.setTimeout = function(func, start) {
+    setTimeout(func, gdo.net.time - start);
+}
+
+gdo.net.setInterval = function (func, start, current, interval, conditionFunc) {
+    /// <summary>
+    /// Synced Interval
+    /// </summary>
+    /// <param name="func">The function to execute.</param>
+    /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
+    /// <param name="current">The current time: get it by gdo.net.time.getTime()</param>
+    /// <param name="interval">The interval in milliseconds</param>
+    /// <param name="conditionFunc">The condition function input for breaking the recursion when needed, 
+    /// if it returns true it loops otherwise it breaks.
+    /// </param>
+    /// <returns></returns>
+    if (conditionFunc()) {
+        setTimeout(function () {
+            eval(func);
+            gdo.net.setInterval(func, (start + interval), gdo.net.time.getTime(), interval, conditionFunc);
+        }, start - current);
     }
 }
