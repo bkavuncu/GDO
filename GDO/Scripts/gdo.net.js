@@ -29,6 +29,7 @@ gdo.net.NEIGHBOUR_ENUM = {
 };
 
 gdo.net.time = new Date();
+gdo.net.connectionState = 0;
 
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
@@ -164,9 +165,36 @@ $(function() {
             gdo.updateSelf();
         }
     }
-
+    $.connection.caveHub.connection.stateChanged(gdo.net.connectionStateChanged);
 });
 
+
+gdo.net.connectionStateChanged = function (state) {
+    gdo.net.connectionState = state.newState;
+    var stateConversion = { 0: 'connecting', 1: 'connected', 2: 'reconnecting', 4: 'disconnected' };
+    $("#connection_icon")
+        .removeClass("fa-arrow-right")
+        .removeClass("fa-check")
+        .removeClass("fa-repeat")
+        .removeClass("fa-times");
+    if (state.newState == 0) {
+        gdo.consoleOut('.NET', 1,'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#2A9FD6");
+        $("#connection_icon").addClass("fa-arrow-right");
+    }else if (state.newState == 1) {
+        gdo.consoleOut('.NET', 0, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#77B300");
+        $("#connection_icon").addClass("fa-check");
+    }else if (state.newState == 2) {
+        gdo.consoleOut('.NET', 4, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#FF8800");
+        $("#connection_icon").addClass("fa-repeat");
+    } else if (state.newState == 4) {
+        gdo.consoleOut('.NET', 5, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#CC0000");
+        $("#connection_icon").addClass("fa-times");
+    }
+}
 
 gdo.net.initHub = function () {
     /// <summary>
@@ -774,10 +802,16 @@ gdo.net.processState = function (state, id, exists) {
 }
 
 gdo.net.setTimeout = function(func, start) {
+    /// <summary>
+    /// Synced Timout
+    /// </summary>
+    /// <param name="func">The function.</param>
+    /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
+    /// <returns></returns>
     setTimeout(func, gdo.net.time - start);
 }
 
-gdo.net.setInterval = function (func, start, current, interval, conditionFunc) {
+gdo.net.setInterval = function (statement, start, current, interval, conditionFunc) {
     /// <summary>
     /// Synced Interval
     /// </summary>
@@ -791,8 +825,8 @@ gdo.net.setInterval = function (func, start, current, interval, conditionFunc) {
     /// <returns></returns>
     if (conditionFunc()) {
         setTimeout(function () {
-            eval(func);
-            gdo.net.setInterval(func, (start + interval), gdo.net.time.getTime(), interval, conditionFunc);
+            eval(statement);
+            gdo.net.setInterval(statement, (start + interval), gdo.net.time.getTime(), interval, conditionFunc);
         }, start - current);
     }
 }

@@ -76,8 +76,23 @@
     <script type="text/javascript" src="../Scripts/peer.js"></script>
 
     <div id="wrapper" >
-        <div style="position: absolute; top: 7px; right: 7px; z-index: 1000">
-            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;"><tr><td><button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button></td><td><button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></td></tr></table>
+        <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
+            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
+                <tr>
+                    <td>
+                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button>
+                    </td>
+                    <td>
+                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button>
+                    </td>
+                    <td>
+                        <div style="width:14px"></div>
+                    </td>
+                    <td>
+                        <div id="connection_status" class="img-circle circle" style='width:45px;height:45px; background: #2A9FD6;display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-lg' style="display: table-cell; vertical-align: middle; text-align: center"></i></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">

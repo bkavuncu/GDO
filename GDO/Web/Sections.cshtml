@@ -111,8 +111,23 @@
     </script>
     <div id="wrapper">
 
-        <div style="position: absolute; top: 7px; right: 7px; z-index: 1000">
-            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;"><tr><td><button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button></td><td><button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button></td></tr></table>
+        <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
+            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
+                <tr>
+                    <td>
+                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button>
+                    </td>
+                    <td>
+                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button>
+                    </td>
+                    <td>
+                        <div style="width:14px"></div>
+                    </td>
+                    <td>
+                        <div id="connection_status" class="img-circle circle" style='width:45px;height:45px; background: #2A9FD6;display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-lg' style="display: table-cell; vertical-align: middle; text-align: center"></i></div>
+                    </td>
+                </tr>
+            </table>
         </div>
         <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
@@ -210,7 +225,7 @@
                 <div class="tab-pane fade in active" id="apps" style="height: 84vh;">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="col-lg-5" style="padding: 7px;margin-left:0px">
+                            <div class="col-lg-5" style="padding: 7px; margin-left: 0px">
                                 <div id="app_table_app_table_panel" class="panel panel-default" style="height: 47vh;">
                                     <div class="panel-heading">
                                         <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
@@ -236,7 +251,7 @@
                             <div id="app_table_space">
                                 <br>
                             </div>
-                            <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed;padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                            <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
                             <div id="section_table_space">
                                 <br>
                             </div>
@@ -272,7 +287,7 @@
                 <div class="tab-pane fade" id="vapps">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="col-lg-4" style="padding: 7px;margin-left:0px">
+                            <div class="col-lg-4" style="padding: 7px; margin-left: 0px">
                                 <div id="advanced_app_table_app_table_panel" class="panel panel-default" style="height: 47vh;">
                                     <div class="panel-heading">
                                         <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
@@ -292,7 +307,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4" style="padding: 7px;margin-left:0px">
+                            <div class="col-lg-4" style="padding: 7px; margin-left: 0px">
                                 <div id="advanced_deployed_app_table_panel" class="panel panel-primary" style="height: 47vh;">
                                     <div class="panel-heading">
                                         <h6><i class='fa  fa-cloud fa-fw'></i>&nbsp;Deployed Apps</h6>
@@ -305,7 +320,7 @@
                             <div id="advanced_app_table_space">
                                 <br>
                             </div>
-                            <table id="advanced_section_table" unselectable="on" class="unselectable" style="table-layout: fixed;padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                            <table id="advanced_section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
                             <div id="advanced_section_table_space">
                                 <br>
                             </div>
