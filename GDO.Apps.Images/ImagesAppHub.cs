@@ -135,28 +135,63 @@ namespace GDO.Apps.Images
                     
                     Clients.Caller.setMessage("Cropping the image...");
                     ia.Tiles = new ImagesApp.TilesInfo[ia.TileCols, ia.TileRows];
-                    //for (int i = 0; i < ia.TileCols; i++)
-                    Parallel.For(0,ia.TileCols, i=> 
-                    {
-                        for (int j = 0; j < ia.TileRows; j++) {
-                            int tileID = i*ia.TileRows + j;
-                            Clients.Caller.setMessage("Cropping the image " + tileID.ToString() + "/" + sum.ToString());
-                            ia.Tiles[i, j] = new ImagesApp.TilesInfo();
-                            Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
-                            Graphics graphics = Graphics.FromImage(curTile);
-                            graphics.DrawImage(image,
-                                new Rectangle(0, 0, ia.TileWidth, ia.TileHeight),
-                                new Rectangle(i * ia.TileWidth, j * ia.TileHeight, ia.TileWidth, ia.TileHeight),
-                                GraphicsUnit.Pixel);
-                            graphics.Dispose();
-                            path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + i + @"_" + j + @".png";
-                            ia.Tiles[i, j].left = i * ia.TileWidth;
-                            ia.Tiles[i, j].top = j * ia.TileHeight;
-                            ia.Tiles[i, j].cols = i;
-                            ia.Tiles[i, j].rows = j;
-                            curTile.Save(path2, ImageFormat.Png);
+                    //             for (int i = 0; i < ia.TileCols; i++)
+                    // create an image object for each thread
+                    var images = Enumerable.Range(1, ia.TileCols).Select(i => (Image) image.Clone()).ToArray();
+                        try {
+                        Parallel.For(0, ia.TileCols, col => {
+                            
+                            for (int row = 0; row < ia.TileRows; row++) {
+                                int tileID = col*ia.TileRows + row;
+                                Clients.Caller.setMessage("Cropping the image " + tileID.ToString() + "/" +
+                                                          sum.ToString());
+
+                                int success = 0;
+
+                                while (success>-3 && success!=1) {// repeat a couple of times to avoid issues with the GDI+ instability within System.Drawing
+
+                                    try {
+
+                                    ia.Tiles[col, row] = new ImagesApp.TilesInfo();
+                                    Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
+                                    Graphics graphics = Graphics.FromImage(curTile);
+                                    graphics.DrawImage(images[col],
+                                        new Rectangle(0, 0, ia.TileWidth, ia.TileHeight),
+                                        new Rectangle(col*ia.TileWidth, row*ia.TileHeight, ia.TileWidth, ia.TileHeight),
+                                        GraphicsUnit.Pixel);
+                                    graphics.Dispose();
+                                    path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + col + @"_" + row +
+                                            @".png";
+                                    ia.Tiles[col, row].left = col*ia.TileWidth;
+                                    ia.Tiles[col, row].top = row*ia.TileHeight;
+                                    ia.Tiles[col, row].cols = col;
+                                    ia.Tiles[col, row].rows = row;
+                                    curTile.Save(path2, ImageFormat.Png);
+
+                                        success = 1;
+
+                                    } catch (Exception e ) {
+                                        Clients.Caller.setMessage("retrying"+e.Message + e.StackTrace);
+                                        success--;
+                                    }
+
+                                    
+                                }
+
+                                if (success != 1) {
+                                    Clients.Caller.setMessage("FAILED after 3 retires :-/ ");
+                                }
+                            }
+                        });
+
+                    }
+                    catch (AggregateException ae) {
+                        Clients.Caller.setMessage("Encountered Aggregate Exception");
+
+                        foreach (var ex in ae.InnerExceptions) {
+                            Clients.Caller.setMessage(ex.Message + ex.StackTrace);
                         }
-                    });
+                    }
                     originImage.Dispose();
                     image.Dispose();
                     ia.ThumbNailImage = null;
