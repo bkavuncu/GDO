@@ -144,7 +144,7 @@
 
 
             $("#show_labels").click(function () {
-                gdo.net.app["Graph"].server.showLabels(gdo.controlId);
+                gdo.net.app["Graph"].server.showLabels(gdo.controlId, $("#select_label").val());
             });
 
             // trigger panning
@@ -341,7 +341,12 @@
                                             <br />
                                             <br />
                                             <label> Toggle labels </label>
-                                            <br />
+                                            <br/>
+                                            <select id="select_label" required style="color: black;">
+                                                <option value="label">Label</option>
+                                                <option value="title">Title</option>
+                                                <option value="keywords">Keywords</option>
+                                            </select>
                                             <button class='btn btn-default' id="show_labels">Show labels</button>
                                             <button class='btn btn-default' id="hide_labels">Hide labels</button>
                                             <br />

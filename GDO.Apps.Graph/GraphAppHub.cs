@@ -148,14 +148,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void ShowLabels(int instanceId)
+        public void ShowLabels(int instanceId, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Rendering labels.");
-                    Clients.Group("" + instanceId).renderLabels();
+                    Clients.Caller.setMessage("Rendering '" + field +"' field as labels.");
+                    Clients.Group("" + instanceId).renderLabels(field);
                     Clients.Caller.setMessage("Labels are now being rendered.");
                 }
                 catch (Exception e)
