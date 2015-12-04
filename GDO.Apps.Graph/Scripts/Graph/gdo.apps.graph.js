@@ -76,8 +76,8 @@ $(function () {
     var overallFolder; // defined in renderGraph()
 
 
-    $.connection.graphAppHub.client.renderLabels = function () {
-            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+    $.connection.graphAppHub.client.renderLabels = function (field) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
 
@@ -87,12 +87,23 @@ $(function () {
                 labelsDom.append("text")
                     .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
                     .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
-                    .text(node.Label)
+                    .text(node.Attrs[field] ? node.Attrs[field] : "")  // if the field does not exist for the curent node, print nothing
                     .attr("font-size", fontSize)
                     .attr("fill", "white");    // Labels: normal mode
             });
         }
     }
+
+    $.connection.graphAppHub.client.hideLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
+            while (labelsDom.firstChild) {
+                labelsDom.removeChild(labelsDom.firstChild);
+            }
+        }
+    }
+
 
     $.connection.graphAppHub.client.renderSearch = function (searchquery) {
 
@@ -162,7 +173,6 @@ $(function () {
         }
     }
 
-
     $.connection.graphAppHub.client.renderSearchLabels = function (searchquery) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
@@ -192,6 +202,7 @@ $(function () {
             }
         }
     }
+
 
     $.connection.graphAppHub.client.setRGB = function (colourScheme) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Setting colour scheme to: ' + colourScheme);
@@ -293,6 +304,7 @@ $(function () {
         }
     }
 
+
     $.connection.graphAppHub.client.hideLinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
@@ -322,35 +334,6 @@ $(function () {
         }
     }
 
-
-
-    $.connection.graphAppHub.client.hideLabels = function () {
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
-            while (labelsDom.firstChild) {
-                labelsDom.removeChild(labelsDom.firstChild);
-            }
-        }
-    }
-
-    $.connection.graphAppHub.client.renderLabels = function () {
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
-
-            var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-
-            nodes.forEach(function (node) {
-                labelsDom.append("text")
-                    .attr("x", node.Pos.X + Math.ceil(node.Size) +1)
-                    .attr("y", node.Pos.Y - Math.ceil(node.Size) -1)
-                    .text(node.Label)
-                    .attr("font-size", fontSize)
-                    .attr("fill", "white");    // Labels: normal mode
-            });
-        }
-    }
 
     $.connection.graphAppHub.client.pan = function (direction) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {

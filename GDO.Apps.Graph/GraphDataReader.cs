@@ -10,7 +10,7 @@ namespace GDO.Apps.Graph
 {
     public static class GraphDataReader
     {
-        public static void  ReadGraphMLData(string graphmlfile, out List<GraphLink> links, out List<GraphNode> nodes, out RectDimension dimension)
+        public static void  ReadGraphMLData(string graphmlfile, out GraphInfo graphinfo, out List<GraphLink> links, out List<GraphNode> nodes, out RectDimension dimension)
         {
             Stopwatch sw = new Stopwatch();
 
@@ -37,7 +37,7 @@ namespace GDO.Apps.Graph
             
             
             bool hascolour = hasR && hasG && hasB;
-            bool hasposition = hasX && hasY; // throw exception / log
+            bool hasposition = hasX && hasY;  //TODO throw exception / log
 
             var edgekeys = keys.Where(k => k.appliesTo == "edge").ToList();
             bool hasWeight = edgekeys.Any(k => k.name == "weight");
@@ -45,7 +45,15 @@ namespace GDO.Apps.Graph
             var graphelem = doc.Root.Element(ns + "graph");
 
             #region fill Nodes data structure
-            var mandatorykeys = new[] { "x", "y", "r", "g", "b", "size" };
+            var mandatoryNodeKeys = new[] { "x", "y", "r", "g", "b", "size" };
+
+            graphinfo = new GraphInfo()
+            {
+                NodeMandatoryFields = nodekeys.Where(f => mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList(),
+                NodeOtherFields = nodekeys.Where(f => !mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList(),
+                LinkKeys = edgekeys.Select(f => f.name).ToList()
+            };
+
             nodes = graphelem.Elements(ns + "node").Select(xn =>
                 new
                 {
@@ -57,7 +65,7 @@ namespace GDO.Apps.Graph
                     new GraphNode()
                     {
                         ID = n.id,
-                        Attrs = n.data.Where(a => !mandatorykeys.Contains(a.Key)).ToDictionary(a=>a.Key,a=>a.Value),    // remove attrs that have their own field (R,G,B, size)
+                        Attrs = n.data.Where(a => !mandatoryNodeKeys.Contains(a.Key)).ToDictionary(a=>a.Key,a=>a.Value),    // remove attrs that have their own field (R,G,B, size)
                         Label = hasLabel && n.data.ContainsKey("label") ? n.data["label"] : "",     // leave labels blank
                         Pos = new Position()
                         {

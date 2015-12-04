@@ -21,6 +21,7 @@ namespace GDO.Apps.Graph
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
 
+        private GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
@@ -48,7 +49,7 @@ namespace GDO.Apps.Graph
         public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
         {
             string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs/" + inputFolder );
-            GraphDataReader.ReadGraphMLData(graphMLfile, out Links, out Nodes, out rectDim);
+            GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
 
             //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();
