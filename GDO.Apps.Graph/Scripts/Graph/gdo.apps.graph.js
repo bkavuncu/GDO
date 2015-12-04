@@ -82,12 +82,11 @@ $(function () {
             var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding =  globalZoomed ? 5 : 3;
 
             nodes.forEach(function (node) {
                 labelsDom.append("text")
-                    .attr("x", node.Pos.X + padding)
-                    .attr("y", node.Pos.Y - padding)
+                    .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                    .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
                     .text(node.Label)
                     .attr("font-size", fontSize)
                     .attr("fill", "white");    // Labels: normal mode
@@ -169,13 +168,12 @@ $(function () {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding = globalZoomed ? 4 : 3;
 
             nodes.forEach(function (node) {
                 if (node.Label.search(searchquery) != -1) {
                     highlightDom.append("text")
-                        .attr("x", node.Pos.X + padding)
-                        .attr("y", node.Pos.Y - padding)
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) +1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) -1)
                         .text(node.Label)
                         .attr("font-size", fontSize)
                         .attr("fill", "yellow"); // Labels: search mode
@@ -230,7 +228,6 @@ $(function () {
             //var radius = globalZoomed ? zoomedRadius + 2 : normalRadius + 2;
 
             mostConnectedNodes.forEach(function (node) {
-
                 if (node.NumLinks >= numLinks) {  // mostConnectedNodes has all nodes with numLinks > 3
                     highlightDom.append("circle")
                         .attr("r", Math.ceil(node.Size))
@@ -249,14 +246,12 @@ $(function () {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding = globalZoomed ? 5 : 3;
 
             mostConnectedNodes.forEach(function (node) {
-
                 if (node.NumLinks >= numLinks) {   // mostConnectedNodes contains nodes with numLinks > 3
                     highlightDom.append("text")
-                        .attr("x", node.Pos.X + padding)
-                        .attr("y", node.Pos.Y - padding)
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) +1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) -1)
                         .text(node.Label)
                         .attr("font-size", fontSize)
                         .attr("fill", "yellow");    // Labels: highlighted mode        
@@ -345,13 +340,11 @@ $(function () {
             var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding =  globalZoomed ? 5 : 3;
 
             nodes.forEach(function (node) {
-
                 labelsDom.append("text")
-                    .attr("x", node.Pos.X + padding)
-                    .attr("y", node.Pos.Y - padding)
+                    .attr("x", node.Pos.X + Math.ceil(node.Size) +1)
+                    .attr("y", node.Pos.Y - Math.ceil(node.Size) -1)
                     .text(node.Label)
                     .attr("font-size", fontSize)
                     .attr("fill", "white");    // Labels: normal mode
