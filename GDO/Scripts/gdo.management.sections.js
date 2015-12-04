@@ -22,6 +22,23 @@ gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
     }
 }
 
+gdo.management.drawEmptyAdvancedSectionTable = function (maxCol, maxRow) {
+    /// <summary>
+    /// Draws the section table.
+    /// </summary>
+    /// <param name="maxRow">The maximum row.</param>
+    /// <param name="maxCol">The maximum col.</param>
+    /// <returns></returns>
+
+    $("#advanced_section_table").empty();
+    for (var i = 0; i < maxRow; i++) {
+        $("#advanced_section_table").append("<tr id='advanced_section_row_" + i + "' row='" + i + "'></tr>");
+        for (var j = 0; j < maxCol; j++) {
+            $("#advanced_section_table tr:last").append("<td id='advanced_section_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>").css('overflow', 'hidden');
+        }
+    }
+}
+
 gdo.management.drawSectionTable =  function (){
     /// <summary>
     /// Draws the section table.
@@ -176,6 +193,128 @@ gdo.management.selectNodes = function() {
             if (!node.isSelected) {
                 gdo.management.isRectangle = false;
             }
+        }
+    }
+}
+
+gdo.management.drawAdvancedSectionTable = function () {
+    /// <summary>
+    /// Draws the section table.
+    /// </summary>
+    /// <returns></returns>
+    gdo.management.drawEmptyAdvancedSectionTable(gdo.net.cols, gdo.net.rows + 1);
+
+
+    for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+        var node = gdo.net.node[i];
+        var sectionId = node.sectionId;
+        $("#advanced_section_row_" + gdo.net.rows).css("height", 0);
+        if (sectionId == 0) {
+            $("#advanced_section_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
+            $("#advanced_section_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .css("vertical-align", "top")
+                    .append("<div id='advanced_section_node_" + node.id + "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" + node.id + "</b></font></div>")
+                    .append("</br>")
+                    .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+                    //.css("height", (gdo.management.table_height / gdo.net.rows) + "")
+                    .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
+                    .css("border", "1px solid #333")
+                    .css('overflow', 'hidden')
+                    .css("background", "#222")
+                    .css({ fontSize: gdo.management.section_font_size })
+                    .css('padding', 0)
+
+        } else if ((node.sectionCol == 0 && node.sectionRow == 0) && node.sectionId > 0) {
+            $("#advanced_section_row_" + node.row + "_col_" + node.col)
+                .empty()
+                .unbind()
+                .attr('colspan', gdo.net.section[sectionId].cols)
+                .attr('rowspan', gdo.net.section[sectionId].rows)
+                //.css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
+                .css("width", ((gdo.management.table_width / gdo.net.cols) * gdo.net.section[sectionId].cols) + "%")
+                .css("border", "1px solid #333")
+                .css("background", "#222")
+                .css('padding', 0)
+                .css('overflow', 'hidden')
+                .css("vertical-align", "top")
+                .append("<div id='advanced_section_section_" + sectionId + "_i' style='text-align:center;background:#333'> <font size='4px'><b> S" + sectionId + "</b></font></div>")
+                .append("<div style='height:5px'></div>");
+            if (gdo.net.section[sectionId].cols == 1 && gdo.net.section[sectionId].rows == 1) {
+                $("#advanced_section_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.section[sectionId].nodeMap[0][gdo.net.section[sectionId].nodeMap[0].length - 1] + "");
+            } else {
+                $("#advanced_section_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.section[sectionId].nodeMap[0][gdo.net.section[sectionId].nodeMap[0].length - 1] + " to <b>N</b>" + gdo.net.section[sectionId].nodeMap[gdo.net.section[sectionId].nodeMap.length - 1][0] + "");
+            }
+            //.append("</br>(" + gdo.net.section[sectionId].col + "," + gdo.net.section[sectionId].row + ")->(" + (gdo.net.section[sectionId].col + gdo.net.section[sectionId].cols - 1) + "," + (gdo.net.section[sectionId].row + gdo.net.section[sectionId].rows - 1) + ")")
+            if (gdo.net.section[sectionId].appInstanceId >= 0) {
+                $("#advanced_section_section_" + sectionId + "_i")
+                    .empty()
+                    .append("<font size='4px'><b> S" + sectionId + ", I" + gdo.net.section[sectionId].appInstanceId + "</b></font>");
+                $("#advanced_section_row_" + node.row + "_col_" + node.col)
+                    .append("</br>")
+                    .css('overflow', 'hidden')
+                    .append("<div id='advanced_section_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].appName + "</div>")
+
+                    .append("<div id='advanced_section_section_" + sectionId + "_c'> <b>&nbsp;Config:</b> " + gdo.net.instance[gdo.net.section[sectionId].appInstanceId].configName + "</div>")
+                    .css('overflow', 'hidden')
+                    .css("background", "#990000");
+                $("#advanced_section_section_" + sectionId + "_i").css("background", "#CC0000");
+                $("#advanced_section_row_" + node.row + "_col_" + node.col).css("border", "1px solid #CC0000");
+            }
+            $("#advanced_section_row_" + node.row + "_col_" + node.col)
+                .append("<div id='advanced_section_section_" + sectionId + "_h'> <b>&nbsp;Section Health</b></div>")
+                .css({ fontSize: gdo.management.section_font_size });
+            if (gdo.net.section[sectionId].appInstanceId > 0 && gdo.net.instance[gdo.net.section[sectionId].appInstanceId].integrationMode) {
+                $("#advanced_section_row_" + node.row + "_col_" + node.col).css("background-color", "#559100").css("border", "1px solid #77B300");
+                $("#advanced_section_section_" + sectionId + "_i").css("background", "#77B300");
+                $("#advanced_section_row_" + node.row + "_col_" + node.col)
+                   .unbind()
+                   .click(function () {
+                       var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
+                       if (gdo.management.selectedAdvancedSection == id) {
+                           gdo.management.selectedAdvancedSection = -1;
+
+                       } else {
+                           for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+                               gdo.net.node[i].isselectedAdvanced = false;
+                           }
+                           gdo.management.selectedAdvancedSection = id;
+                           //gdo.management.selectedAdvancedInstance = gdo.net.section[gdo.management.selectedAdvancedSection].appInstanceId;
+                       }
+                       gdo.updateDisplayCanvas();
+                   });
+            }
+            if (gdo.management.selectedAdvancedSection == sectionId) {
+                if (gdo.net.section[sectionId].appInstanceId >= 0) {
+                        if (gdo.net.instance[gdo.net.section[sectionId].appInstanceId].integrationMode) {
+                            //Also check deployed instance integration mechanism
+                            //already integrated
+                            //then
+                            $("#advanced_section_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
+                            $("#advanced_section_section_" + sectionId + "_i").css("background", "#99D522");
+                        } else {
+                            $("#advanced_section_row_" + node.row + "_col_" + node.col).css("background-color", "#990000").css("border", "1px solid #CC0000");
+                            $("#advanced_section_section_" + sectionId + "_i").css("background", "#CC0000");
+                        }
+                } else {
+
+                }
+
+            }
+            if (gdo.net.section[sectionId].health >= 4) {
+                $("#advanced_section_section_" + sectionId + '_h').css("background", "#559100");
+            } else if (gdo.net.section[sectionId].health >= 3) {
+                $("#advanced_section_section_" + sectionId + '_h').css("background", "#DD7700");
+            } else if (gdo.net.section[sectionId].health >= 2) {
+                $("#advanced_section_section_" + sectionId + '_h').css("background", "#FF8800");
+            } else if (gdo.net.section[sectionId].health >= 1) {
+                $("#advanced_section_table_section_" + sectionId + '_h').css("background", "#CC0000");
+            } else {
+                $("#advanced_section_table_section_" + sectionId + '_h').css("background", "#CC0000");
+            }
+        } else if ((node.sectionCol != 0 || node.sectionRow != 0) && node.sectionId > 0) {
+            $("#advanced_section_row_" + node.row + "_col_" + node.col).hide();
         }
     }
 }

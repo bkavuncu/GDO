@@ -76,39 +76,43 @@
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
 
-    <script>
-            gdo.updateDisplayCanvas = function () {
-                gdo.management.updateMaintenanceButton();
-                gdo.management.drawSectionTable();
-                gdo.management.drawButtonTable();
-                gdo.management.drawAppTable();
-            }
-            $(function () {
-                @{
+<script>
+    gdo.updateDisplayCanvas = function () {
+        gdo.management.updateMaintenanceButton();
+        gdo.management.drawSectionTable();
+        gdo.management.drawAdvancedSectionTable();
+        gdo.management.drawButtonTable();
+        gdo.management.drawAppTable();
+        gdo.management.drawAdvancedAppTable();               
+    }
+    $(function () {
+        @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
                         @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
                     }
                 }
-                gdo.loadModule('sections', 'management', gdo.MODULE_TYPE.CORE);
-                gdo.loadModule("apps","management", gdo.MODULE_TYPE.CORE);
-                $( document ).ready(function() {
-                    gdo.clientId = 1;
-                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-                });
-            });
-            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                var space = "<br /> ";
-                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-            }
-            initApp = function () {
-                gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-                gdo.management.drawAppTable();
-                gdo.updateSelf();
-            }
-    </script>
+        gdo.loadModule('sections', 'management', gdo.MODULE_TYPE.CORE);
+        gdo.loadModule("apps","management", gdo.MODULE_TYPE.CORE);
+        $( document ).ready(function() {
+            gdo.clientId = 1;
+            gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+        });
+    });
+    window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+        var space = "<br /> ";
+        gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+            + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+    }
+    initApp = function () {
+        gdo.consoleOut('', 1, 'GDO Initialized');
+        gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+        gdo.management.drawEmptyAdvancedSectionTable(gdo.net.cols, gdo.net.rows);
+        gdo.management.drawAppTable();
+        gdo.management.drawAdvancedAppTable();
+        gdo.updateSelf();
+    }
+</script>
     <div id="wrapper">
 
         <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
@@ -226,12 +230,12 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="col-lg-5" style="padding: 7px; margin-left: 0px">
-                                <div id="app_table_app_table_panel" class="panel panel-default" style="height: 47vh;">
+                                <div id="app_table_panel" class="panel panel-default" style="height: 47vh;">
                                     <div class="panel-heading">
                                         <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
                                     </div>
                                     <div class="panel-body">
-                                        <table id="app_table_app_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
+                                        <table id="app_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
                                     </div>
                                 </div>
                             </div>
@@ -288,12 +292,12 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="col-lg-4" style="padding: 7px; margin-left: 0px">
-                                <div id="advanced_app_table_app_table_panel" class="panel panel-default" style="height: 47vh;">
+                                <div id="advanced_app_table_panel" class="panel panel-default" style="height: 47vh;">
                                     <div class="panel-heading">
                                         <h6><i class='fa  fa-cubes fa-fw'></i>&nbsp;Select App</h6>
                                     </div>
                                     <div class="panel-body">
-                                        <table id="advanced_app_table_app_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
+                                        <table id="advanced_app_table" unselectable="on" class="unselectable" style="background: #222; width: 98.5%; vertical-align: top"></table>
                                     </div>
                                 </div>
                             </div>

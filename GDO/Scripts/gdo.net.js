@@ -171,7 +171,7 @@ $(function() {
 
 gdo.net.connectionStateChanged = function (state) {
     gdo.net.connectionState = state.newState;
-    var stateConversion = { 0: 'connecting', 1: 'connected', 2: 'reconnecting', 4: 'disconnected' };
+    var stateConversion = { 0: 'CONNECTING', 1: 'CONNECTED', 2: 'RECONNECTING', 4: 'DISCONNECTED' };
     $("#connection_icon")
         .removeClass("fa-arrow-right")
         .removeClass("fa-check")
