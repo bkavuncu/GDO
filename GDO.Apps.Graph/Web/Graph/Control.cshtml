@@ -120,11 +120,9 @@
 
                 if (input.length) {
                     input.val(log);
-                } 
+                }
             });
         });
-
-        
 
         $(function () {
 
@@ -168,43 +166,43 @@
                 gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
             });
 
-        /*
-        // Panning using key is disabled for now
-        // because it's being triggered unnecessarily sometimes when typing
+            /*
+            // Panning using key is disabled for now
+            // because it's being triggered unnecessarily sometimes when typing
 
-        window.addEventListener('keydown', processKeyPress, true);
+            window.addEventListener('keydown', processKeyPress, true);
 
-        function processKeyPress(evt) {
+            function processKeyPress(evt) {
 
-            var key = evt.keyCode;
-            var direction = null;
+                var key = evt.keyCode;
+                var direction = null;
 
-            if (key == 37) {    // default code for arrow keys
-                direction = "left";
-            } else if (key == 38) {
-                direction = "up";
-            } else if (key == 39) {
-                direction = "right";
-            } else if (key == 40) {
-                direction = "down";
+                if (key == 37) {    // default code for arrow keys
+                    direction = "left";
+                } else if (key == 38) {
+                    direction = "up";
+                } else if (key == 39) {
+                    direction = "right";
+                } else if (key == 40) {
+                    direction = "down";
+                }
+
+                if (direction != null) {
+                    gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
+                }
             }
 
-            if (direction != null) {
-                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
-            }
-        }
+            */
 
-        */
+            /* //TODO zooming functionality removed
+            $("#zoomIn").click(function () {
+                gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
+            });
 
-        /* //TODO zooming functionality removed
-        $("#zoomIn").click(function () {
-            gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
-        });
-
-        $("#zoomOut").click(function () {
-            gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
-        });
-        */
+            $("#zoomOut").click(function () {
+                gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+            });
+            */
 
             $("#blue").click(function () {
                 gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
@@ -275,7 +273,7 @@
             {
 
                 HttpPostedFileBase file = Request.Files[0];
-                if (file != null)
+                if (file != null && !file.FileName.IsEmpty())   //need to add this check, because iot tried to save empty file in subsequent button clicks
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
@@ -285,27 +283,30 @@
                 }
             }
         }
-        <form id="submit_graph_form" action="" method="post" enctype="multipart/form-data">
+        <div>
+
             <div class="row">
                 <div class="col-lg-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h6><i class='fa  fa-folder-open fa-fw'></i>&nbsp;Upload Graph</h6>
+                            <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Graph</h6>
                         </div>
                         <div class="panel-body">
                             <fieldset>
-                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
-                                    <tr>
-                                        <td>
-                                            <div style="background-color: transparent">
-                                                <span class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-picture-o fa-fw'></i>&nbsp;Choose File <input type="file" name="Graph" class="upload" id="select_graph"></span> 
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input id="submit_graph" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Render Graph"/>  
-                                        </td>
-                                    </tr>
-                                </table>
+                                <form id="submit_graph_form" action="" method="post" enctype="multipart/form-data">
+                                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                        <tr>
+                                            <td>
+                                                <div style="background-color: transparent">
+                                                    <span class="btn btn-primary btn-file btn-block" style="border-color: transparent;"><i class='fa  fa-file-picture-o fa-fw'></i>&nbsp;Choose File <input type="file" name="Graph" class="upload" id="select_graph"></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input id="submit_graph" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Render Graph" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
                             </fieldset>
                         </div>
                     </div>
@@ -329,9 +330,9 @@
                         </div>
                         <div class="panel-body">
                             <fieldset id="graph_UI">
-                                <table style="width: 100%;background: transparent">
+                                <table style="width: 100%; background: transparent">
                                     <tr>
-                                        <td style="width:50%;">
+                                        <td style="width: 50%;">
                                             <label> Toggle links </label>
                                             <br />
                                             <button class='btn btn-default' id="show_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Show links</button>
@@ -356,16 +357,16 @@
                                             <br />
                                             <br />
                                             <!-- //TODO zooming functionality removed
-                                        <label> Toggle zooming </label>
-                                        <br/>
-                                        <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
-                                        <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
-                                        <br/>
-                                        <br/>
-                                        <br/>
+                                            <label> Toggle zooming </label>
+                                            <br/>
+                                            <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
+                                            <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
+                                            <br/>
+                                            <br/>
+                                            <br/>
                                             -->
                                         </td>
-                                        <td style="width:50%;">
+                                        <td style="width: 50%;">
                                             <label> Colour Scheme </label>
                                             <br />
                                             <button class='btn btn-primary' id="blue">Blue</button>
@@ -382,14 +383,9 @@
                                             <table style="border-collapse: separate; border-spacing: 1px;">
                                                 <tr>
                                                     <td><input class="input_field" size="175" type="text" id="numLinks" /></td>
-                                                    <td>
-                                                        <button class='btn btn-default' id="show_mostConnectedNodes">Highlight nodes</button>
-                                                    </td>
-                                                    <td>
-                                                        <button class='btn btn-default' id="show_mostConnectedLabels">Show labels</button>
-                                                    <td>
-                                                        <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
-                                                    </td>
+                                                    <td><button class='btn btn-default' id="show_mostConnectedNodes">Highlight nodes</button></td>
+                                                    <td><button class='btn btn-default' id="show_mostConnectedLabels">Show labels</button></td>
+                                                    <td><button class='btn btn-default' id="hide_mostConnected">Hide all</button></td>
                                                 </tr>
                                             </table>
 
@@ -415,14 +411,13 @@
                                             <br />
                                         </td>
                                     </tr>
-
                                 </table>
                             </fieldset>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
     @if (path != "")
     {
@@ -430,8 +425,7 @@
             $(function () {
                 $(document).ready(function () {
                     var gdo = parent.gdo;
-
-                    gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for folder " + "@filename");
+                    gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Uploaded Graph " + "@filename");
                     gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, "@filename");
                 });
 
