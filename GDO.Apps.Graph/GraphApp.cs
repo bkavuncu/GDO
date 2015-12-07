@@ -30,7 +30,7 @@ namespace GDO.Apps.Graph
         {
             try {
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
-                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs"));
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
             catch (Exception e) {
                 Log.Error("failed to launch the Graphs App",e);
@@ -46,10 +46,12 @@ namespace GDO.Apps.Graph
 
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
-        public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
+        public string ProcessGraph(string filename, bool zoomed, string folderName)
         {
-            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs/" + inputFolder );
+            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
             GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
+
+            //File.Delete(graphMLfile);
 
             //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();

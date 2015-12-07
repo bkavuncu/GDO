@@ -276,11 +276,14 @@
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
-                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Graph/graphs"));
-                    path = HttpContext.Current.Server.MapPath("~/Web/Graph/graphs/") + filename;
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
+                    path = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/") + filename;
+                    if (File.Exists(path)) {  // if the file already exists, delete it
+                        File.Delete(path);
+                    }
                     file.SaveAs(path);
+                    }
                 }
-            }
         }
         <div>
 
