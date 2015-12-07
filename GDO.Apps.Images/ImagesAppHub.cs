@@ -127,32 +127,35 @@ namespace GDO.Apps.Images
                     
                     Clients.Caller.setMessage("Cropping the image...");
                     ia.Tiles = new TilesInfo[ia.TileCols, ia.TileRows];
-                    //             for (int i = 0; i < ia.TileCols; i++)
-                    // create an image object for each thread
-                    var images = Enumerable.Range(1, ia.TileCols).Select(i => (Image) image.Clone()).ToArray();
-                        try {
-                        Parallel.For(0, ia.TileCols, col => {
-                            
-                            for (int row = 0; row < ia.TileRows; row++) {
-                                int tileID = col*ia.TileRows + row;
-                                Clients.Caller.setMessage("Cropping the image " + tileID.ToString() + "/" +
-                                                          sum.ToString());
+                    for (int col = 0; col < ia.TileCols; col++) {
+                        // so we are still getting threading issues here, Server side image processing is painful 
+                        // create an image object for each thread
+                        //    var images = Enumerable.Range(1, ia.TileCols).Select(i => (Image) image.Clone()).ToArray();
+                        //      try {
+                        //    Parallel.For(0, ia.TileCols, col => {
 
-                                int success = 0;
+                        for (int row = 0; row < ia.TileRows; row++) {
+                            int tileID = col*ia.TileRows + row;
+                            Clients.Caller.setMessage("Cropping the image " + tileID + "/" + sum);
 
-                                while (success>-3 && success!=1) {// repeat a couple of times to avoid issues with the GDI+ instability within System.Drawing
+                            int success = 0;
 
-                                    try {
+                            while (success > -3 && success != 1) {
+// repeat a couple of times to avoid issues with the GDI+ instability within System.Drawing
+
+                                try {
 
                                     ia.Tiles[col, row] = new TilesInfo();
                                     Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
                                     Graphics graphics = Graphics.FromImage(curTile);
-                                    graphics.DrawImage(images[col],
+                                    graphics.DrawImage(image,
                                         new Rectangle(0, 0, ia.TileWidth, ia.TileHeight),
-                                        new Rectangle(col*ia.TileWidth, row*ia.TileHeight, ia.TileWidth, ia.TileHeight),
+                                        new Rectangle(col*ia.TileWidth, row*ia.TileHeight, ia.TileWidth,
+                                            ia.TileHeight),
                                         GraphicsUnit.Pixel);
                                     graphics.Dispose();
-                                    path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + col + @"_" + row +
+                                    path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + col +
+                                            @"_" + row +
                                             @".png";
                                     ia.Tiles[col, row].left = col*ia.TileWidth;
                                     ia.Tiles[col, row].top = row*ia.TileHeight;
@@ -160,30 +163,31 @@ namespace GDO.Apps.Images
                                     ia.Tiles[col, row].rows = row;
                                     curTile.Save(path2, ImageFormat.Png);
 
-                                        success = 1;
+                                    success = 1;
 
-                                    } catch (Exception e ) {
-                                        Clients.Caller.setMessage("retrying"+e.Message + e.StackTrace);
-                                        success--;
-                                    }
-
-                                    
+                                }
+                                catch (Exception e) {
+                                    Clients.Caller.setMessage("retrying" + e.Message + e.StackTrace);
+                                    success--;
                                 }
 
-                                if (success != 1) {
-                                    Clients.Caller.setMessage("FAILED after 3 retires :-/ ");
-                                }
+
                             }
-                        });
 
-                    }
-                    catch (AggregateException ae) {
+                            if (success != 1) {
+                                Clients.Caller.setMessage("FAILED after 3 retires :-/ ");
+                            }
+                        }
+                    } //   });
+
+
+                    /*    catch (AggregateException ae) {
                         Clients.Caller.setMessage("Encountered Aggregate Exception");
 
                         foreach (var ex in ae.InnerExceptions) {
                             Clients.Caller.setMessage(ex.Message + ex.StackTrace);
                         }
-                    }
+                    }*/
                     originImage.Dispose();
                     image.Dispose();
                     ia.ThumbNailImage = null;
