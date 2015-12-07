@@ -1,5 +1,4 @@
-﻿@using GDO.Core
-@{
+﻿@{
     Layout = null;
 }
 
@@ -79,8 +78,8 @@
         }
 
         .input_field_div {
-            margin: 0px;
-            padding: 0px;
+            margin: 0;
+            padding: 0;
         }
 
         .input_field {
@@ -89,7 +88,7 @@
             border: 1px solid #333;
             background: #333;
             color: #FFF;
-            padding: 0px;
+            padding: 0;
             display: inline-block;
             position: relative;
             text-align: center;
@@ -243,14 +242,14 @@
             $("#startSearch").click(function () {
                 gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
 
-                gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val());
+                gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchField").val());
             });
 
 
             $("#show_searchLabels").click(function () {
                 gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
 
-                gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#searchKeywords").val());
+                gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchField").val());
             });
 
             $("#hide_sublinks").click(function () {
@@ -277,8 +276,8 @@
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs"));
-                    path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphs/") + filename;
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Graph/graphs"));
+                    path = HttpContext.Current.Server.MapPath("~/Web/Graph/graphs/") + filename;
                     file.SaveAs(path);
                 }
             }
@@ -401,7 +400,12 @@
                                             <br />
                                             <table style="border-collapse: separate; border-spacing: 1px;">
                                                 <tr>
-                                                    <td><input class="input_field" size="75" type="text" id="searchKeywords" /></td>
+                                                    <select id="select_SearchField" required style="color: black;">
+                                                        <option value="label">Label</option>
+                                                        <option value="title">Title</option>
+                                                        <option value="keywords">Keywords</option>
+                                                    </select>
+                                                    <td><input class="input_field" size="75" type="text" id="searchKeywords"/></td>
                                                     <td><button class='btn btn-default' id="startSearch">Search</button></td>
                                                     <td><button class='btn btn-default' id="show_searchLabels">Show labels</button></td>
                                                     <td><button class='btn btn-default' id="hide_sublinks">Hide links</button></td>

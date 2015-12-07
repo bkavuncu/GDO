@@ -13,6 +13,9 @@ $(function () {
     var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;
 
+    var highlightedNodes = [];  //stores the ID of the nodes matching the query
+    var highlightedNeighbours = [];  //stores the ID of the neighbour nodes of those matching the query
+
     // boolean to track if current graph is zoomed
     var globalZoomed;
 
@@ -24,14 +27,15 @@ $(function () {
     var normalStrokeWidth = 1;
     var normalFontSize = 20;
 
-    
-    var blueColor = { r: 100, g: 175, b: 255 }; 
-    var greenColor = { r: 75, g: 255, b: 125 }; 
+
+    var blueColor = { r: 100, g: 175, b: 255 };
+    var greenColor = { r: 75, g: 255, b: 125 };
     var orangeColor = { r: 255, g: 150, b: 50 };
     var redColor = { r: 255, g: 50, b: 50 };
 
     var currentColor = blueColor;    // rgb setting to track current color scheme
     var highlightedColor = { r: 250, g: 255, b: 0 };   // rgb setting for highlighted nodes
+    var highlightedColor2 = { r: 255, g: 153, b: 0 };   // rgb setting for highlighted nodes
 
 
     var maxLinks = 5;
@@ -105,46 +109,62 @@ $(function () {
     }
 
 
-    $.connection.graphAppHub.client.renderSearch = function (searchquery) {
+    $.connection.graphAppHub.client.renderSearch = function (searchquery, field) {
 
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
             var linksDom = highlightDom.append("g").attr("id", "sublinks");
 
-            var highlightedNodes = [];  //stores the ID of the nodes matching the query
+            findMatchingNodes(); // To render links properly, each browser needs to know all matched nodes.
+            renderSearchNodes(); // Each browser renders its mathching and neighbour nodes
+            renderSearchLinks(); // Each browser renders its links
 
-            // To render links properly, each browser needs to know all matched nodes. We load the full file.
-
-            renderSearchNodes();
-            renderSearchLinks();
-
-            function renderSearchNodes() {
-
-                //var radius = globalZoomed ? zoomedRadius : normalRadius;
-
+            function findMatchingNodes() {
                 //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var
+                // the neighbour nodes are also stored in the highlightedNeighbours var
+                var queryRE = new RegExp(searchquery, 'i'); // case-insensitive
                 allnodes.forEach(function(node) {
-                    if (node.Label.search(searchquery) != -1) {
-                        highlightedNodes.push(node.ID);
+                    if (node.Attrs[field]) { // if the field does not exist for the curent node, skip
+                        if (node.Attrs[field].search(queryRE) != -1) {
+                            highlightedNodes.push(node.ID);
+                            node.Adj.forEach(function(neighbour) { // save all its neighbours in a variable
+                                highlightedNeighbours.push(neighbour);
+                            });
+                        }
                     }
                 });
+            }
 
-                //Now, each browser calculate the matching nodes among its nodes. 
-                nodes.forEach(function(node) {
-                    if (node.Label.search(searchquery) != -1) {
+            function renderSearchNodes() {
+                //var radius = globalZoomed ? zoomedRadius : normalRadius;
+
+                //Each browser render the matching and neighbour nodes among its nodes. 
+                nodes.forEach(function (node) {
+                    // is this node a match?
+                    if (highlightedNodes.indexOf(node.ID) != -1) {
                         highlightDom.append("circle")
                             .attr("r", Math.ceil(node.Size) + 5)
                             .attr("cx", node.Pos.X)
                             .attr("cy", node.Pos.Y)
-                            .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")"); // Nodes: search mode , selected   
-                    } /*else {
+                            .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                    }
+                    // else, is this a neighbour?
+                    else if (highlightedNeighbours.indexOf(node.ID) != -1) {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size) + 5)
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")");
+                    }
+                    /* // do nothing (or paint in a another way)
+                    else {
                         highlightDom.append("circle")
                             .attr("r", Math.ceil(node.Size))
                             .attr("cx", node.Pos.X)
                             .attr("cy", node.Pos.Y)
                             .attr("fill", "gray"); // Nodes: search mode, not selected
-                    } */
+                        } */
                 });
             }
 
@@ -156,7 +176,7 @@ $(function () {
                 //because highlightedNodes has the relevant nodes for the whole graph, this will work even though matching nodes not being in the target browser
                 links.forEach(function (link) {
                     //TODO we could improve this by using different colours depending on whether the searched node is the source or the target
-                    if (highlightedNodes.indexOf(link.Source) != -1 
+                    if (highlightedNodes.indexOf(link.Source) != -1
                         || highlightedNodes.indexOf(link.Target) != -1) {
 
                         linksDom.append("line")
@@ -166,27 +186,38 @@ $(function () {
                             .attr("y2", link.EndPos.Y)
                             .attr("stroke-width", strokeWidth)
                             .attr("stroke", "yellow");
-                    } 
+                    }
                 });
 
             }
         }
     }
 
-    $.connection.graphAppHub.client.renderSearchLabels = function (searchquery) {
+    $.connection.graphAppHub.client.renderSearchLabels = function (searchquery, field) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
 
             nodes.forEach(function (node) {
-                if (node.Label.search(searchquery) != -1) {
+                // is this node a match?
+                if (highlightedNodes.indexOf(node.ID) != -1) {
                     highlightDom.append("text")
-                        .attr("x", node.Pos.X + Math.ceil(node.Size) +1)
-                        .attr("y", node.Pos.Y - Math.ceil(node.Size) -1)
-                        .text(node.Label)
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
+                        .text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing (should exist unless the user has changed the droplist...)
                         .attr("font-size", fontSize)
-                        .attr("fill", "yellow"); // Labels: search mode
+                        .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                }
+                // else, is this a neighbour?
+                else if (highlightedNeighbours.indexOf(node.ID) != -1) {
+                    highlightDom.append("text")
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
+                        //.text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing
+                        .text(node.Label) // print the label instead
+                        .attr("font-size", fontSize)
+                        .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")"); 
                 }
             });
 
@@ -261,8 +292,8 @@ $(function () {
             mostConnectedNodes.forEach(function (node) {
                 if (node.NumLinks >= numLinks) {   // mostConnectedNodes contains nodes with numLinks > 3
                     highlightDom.append("text")
-                        .attr("x", node.Pos.X + Math.ceil(node.Size) +1)
-                        .attr("y", node.Pos.Y - Math.ceil(node.Size) -1)
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
                         .text(node.Label)
                         .attr("font-size", fontSize)
                         .attr("fill", "yellow");    // Labels: highlighted mode        
@@ -753,7 +784,7 @@ $(function () {
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
                                         .attr("fill", "red");    // Nodes: UNUSED??
                                 });
-                               
+
                             }
                         }
                     }
@@ -1232,7 +1263,7 @@ $(function () {
 
                                     if (node.NumLinks > minLinks) {
                                         mostConnectedNodes.push(node);
-                                    } 
+                                    }
 
                                     //var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
                                     nodesDom.append("circle")
@@ -1240,7 +1271,7 @@ $(function () {
                                         .attr("cx", node.Pos.X)
                                         .attr("cy", node.Pos.Y)
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
-                                        .attr("fill","rgb(" + node.R + "," + node.G + "," + node.B + ")");
+                                        .attr("fill", "rgb(" + node.R + "," + node.G + "," + node.B + ")");
                                 });
 
                                 console.log("Time after appending nodes: " + window.performance.now());
@@ -1267,10 +1298,10 @@ $(function () {
 
                                 links.forEach(function (link) {
                                     linksDom.append("line")
-                                        .attr("x1", link.StartPos.X)   
-                                        .attr("y1", link.StartPos.Y) 
-                                        .attr("x2", link.EndPos.X) 
-                                        .attr("y2", link.EndPos.Y) 
+                                        .attr("x1", link.StartPos.X)
+                                        .attr("y1", link.StartPos.Y)
+                                        .attr("x2", link.EndPos.X)
+                                        .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", strokeWidth)
                                         .attr("stroke", "#B8B8B8");
                                 });

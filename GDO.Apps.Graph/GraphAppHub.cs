@@ -340,19 +340,19 @@ namespace GDO.Apps.Graph
 
 
 
-        public void InitiateSearch(int instanceId, string keywords)
+        public void InitiateSearch(int instanceId, string keywords, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Initiating processing of search query: " + keywords);
+                    Clients.Caller.setMessage("Initiating processing of search query: '" + keywords + "' at " + field);
 
                     Clients.Group("" + instanceId).hideHighlight();
                     Clients.Group("" + instanceId).hideLabels();
                     Clients.Group("" + instanceId).hideLinks();
 
-                    Clients.Group("" + instanceId).renderSearch(keywords);
+                    Clients.Group("" + instanceId).renderSearch(keywords, field);
                     Clients.Caller.setMessage("Search result is now being rendered.");
                 }
                 catch (Exception e)
@@ -364,14 +364,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void RenderSearchLabels(int instanceId, string keywords)
+        public void RenderSearchLabels(int instanceId, string keywords, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Rendering labels for selected nodes.");
-                    Clients.Group("" + instanceId).renderSearchLabels(keywords);
+                    Clients.Group("" + instanceId).renderSearchLabels(keywords, field);
                     Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
                 }
                 catch (Exception e)

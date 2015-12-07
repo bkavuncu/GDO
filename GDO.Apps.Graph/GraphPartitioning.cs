@@ -141,7 +141,7 @@ namespace GDO.Apps.Graph
                     intersections.AddRange(verticalLines.Select(x => new Position
                     {
                         X = x,
-                        Y = (m*x) + c
+                        Y = m*x + c
                     }));
 
                     intersections.Add(startPos);
