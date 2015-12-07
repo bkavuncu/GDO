@@ -209,6 +209,7 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
+                Log.Info("Deploying App "+appName);
                 int instanceId = Cave.CreateAppInstance(sectionId, appName, configName);
                 Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
                 if (instanceId >= 0)
