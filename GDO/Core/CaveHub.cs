@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Timers;
-using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
-using Timer = System.Threading.Timer;
 
 namespace GDO.Core
 {
@@ -45,25 +42,6 @@ namespace GDO.Core
             return base.OnDisconnected(stopCalled);
 
         }
-
-        private void InitializeSynchronization()
-        {
-            if (!Cave.InitializedSync)
-            {
-                Cave.InitializedSync = true;
-                Cave.SyncTimer = new System.Timers.Timer(70);
-                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
-                Cave.SyncTimer.Start();
-            }
-        }
-
-
-        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
-        {
-            DateTime now = DateTime.Now;
-            Clients.All.receiveHeartbeat((long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds);
-        }
-
 
         /// <summary>
         /// Deploys the node.
@@ -227,31 +205,16 @@ namespace GDO.Core
         /// <param name="appName">Name of the application.</param>
         /// <param name="configName">Name of the configuration.</param>
         /// <returns></returns>
-        public int DeployBaseApp(int sectionId, string appName, string configName)
+        public int DeployApp(int sectionId, string appName, string configName)
         {
             lock (Cave.ServerLock)
             {
-                int instanceId = Cave.CreateBaseAppInstance(sectionId, appName, configName);
+                Log.Info("Deploying App "+appName);
+                int instanceId = Cave.CreateAppInstance(sectionId, appName, configName);
                 Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
                 if (instanceId >= 0)
                 {
-                    string serializedInstance = GetInstanceUpdate(instanceId);
-                    BroadcastAppUpdate(true, instanceId, serializedInstance);
-                }
-                return instanceId;
-            }
-        }
-
-
-        public int DeployAdvancedApp(List<int> instanceIds, string appName, string configName)
-        {
-            lock (Cave.ServerLock)
-            {
-                int instanceId = Cave.CreateAdvancedAppInstance(instanceIds, appName, configName);
-                if (instanceId >= 0)
-                {
-                    //Do more
-                    //BroadcastAppUpdate(appName, configName, instanceId, true, instanceIds);
+                    BroadcastAppUpdate(sectionId, appName, configName, instanceId, Cave.Apps[appName].P2PMode, true);
                 }
                 return instanceId;
             }
@@ -269,19 +232,11 @@ namespace GDO.Core
                 if (Cave.ContainsInstance(instanceId))
                 {
                     string appName = Cave.GetAppName(instanceId);
-                    string serializedInstance = GetInstanceUpdate(instanceId);
-                    if (Cave.Apps[appName].Instances[instanceId] is IBaseAppInstance)
-                    {
-                        int sectionId = ((IBaseAppInstance) Cave.Apps[appName].Instances[instanceId]).Section.Id;
-                        Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
-                    }
-                    else if (Cave.Apps[appName].Instances[instanceId] is IAdvancedAppInstance)
-                    {
-                        List<int> integratedInstances =((IAdvancedAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
-                    }
+                    int sectionId = Cave.Apps[appName].Instances[instanceId].Section.Id;
+                    Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
-                        BroadcastAppUpdate(false, instanceId, serializedInstance);
+                        BroadcastAppUpdate(sectionId, appName, "", instanceId, (int) Cave.P2PModes.None, false);
                         return true;
                     }
                 }
@@ -541,12 +496,27 @@ namespace GDO.Core
             }
         }
 
-        private bool BroadcastAppUpdate(bool exists, int instanceId, string serializedInstance)
+        private bool BroadcastAppUpdate(int sectionId, string appName, string configName, int instanceId, int p2pmode, bool exists)
         {
             try
             {
-                Clients.All.receiveAppUpdate(exists, instanceId, serializedInstance);
-                 return true;
+                if (exists)
+                {
+                    if (Cave.Apps.ContainsKey(appName))
+                    {
+                        if (Cave.ContainsInstance(instanceId) && Cave.Apps[appName].Configurations.ContainsKey(configName))
+                        {
+                            //Clients.Group(sectionId.ToString()).receiveAppConfig(instanceId, appName, configName,Newtonsoft.Json.JsonConvert.SerializeObject(Cave.Apps[appName].Configurations[configName]));
+                            Clients.All.receiveAppUpdate(sectionId, appName, configName, instanceId, p2pmode, exists);
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    Clients.All.receiveAppUpdate(sectionId, appName, -1, instanceId, p2pmode, exists);
+                    return true;
+                }
             }
             catch (Exception e)
             {
@@ -638,7 +608,7 @@ namespace GDO.Core
 
         public void Initialize()
         {
-            InitializeSynchronization();
+            //dummy
         }
 
         public void SaveCaveState(string name)
@@ -682,14 +652,13 @@ namespace GDO.Core
             {
                 CaveState caveState = Cave.States[id];
                 ClearCave();
-                //TODO Advanced apps
-                /*foreach (AppState appState in caveState.States)
+                foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
                         (appState.Row + appState.Rows -1));
                     Cave.GetSectionId(appState.Col, appState.Row);
                     DeployApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.ConfigName);
-                }*/
+                }
             }
 
         }
