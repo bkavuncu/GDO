@@ -36,6 +36,7 @@ $(function () {
     var currentColor = blueColor;    // rgb setting to track current color scheme
     var highlightedColor = { r: 250, g: 255, b: 0 };   // rgb setting for highlighted nodes
     var highlightedColor2 = { r: 255, g: 153, b: 0 };   // rgb setting for highlighted nodes
+    var highlightedColor3 = redColor;
 
 
     var maxLinks = 5;
@@ -76,8 +77,6 @@ $(function () {
 
         scroll_bottom(logDom[0]);
     }
-
-    var overallFolder; // defined in renderGraph()
 
 
     $.connection.graphAppHub.client.renderLabels = function (field) {
@@ -123,6 +122,9 @@ $(function () {
             function findMatchingNodes() {
                 //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var
                 // the neighbour nodes are also stored in the highlightedNeighbours var
+                highlightedNodes = [];  // empty it from previous searches
+                highlightedNeighbours = [];  // empty it from previous searches
+
                 var queryRE = new RegExp(searchquery, 'i'); // case-insensitive
                 allnodes.forEach(function(node) {
                     if (node.Attrs[field]) { // if the field does not exist for the curent node, skip
@@ -207,7 +209,7 @@ $(function () {
                         .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
                         .text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing (should exist unless the user has changed the droplist...)
                         .attr("font-size", fontSize)
-                        .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                        .attr("fill", "rgb(" + highlightedColor3.r + "," + highlightedColor3.g + "," + highlightedColor3.b + ")");
                 }
                 // else, is this a neighbour?
                 else if (highlightedNeighbours.indexOf(node.ID) != -1) {
@@ -839,8 +841,6 @@ $(function () {
             var basePath, fileName;
             var clientRow = gdo.net.node[gdo.clientId].sectionRow;
             var clientCol = gdo.net.node[gdo.clientId].sectionCol;
-
-            overallFolder = folderNameDigit;
 
             if (!zoomed) {
                 globalZoomed = false;

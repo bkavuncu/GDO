@@ -27,7 +27,7 @@ namespace GDO.Apps.Graph
         }
 
  
-        public void InitiateProcessing(int instanceId, string inputFolder)
+        public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
 
@@ -41,8 +41,8 @@ namespace GDO.Apps.Graph
                     // create GraphApp project and call its function to process graph
                     ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
 
-                    Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
-                    string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
+                    Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
+                    string folderNameDigit = ga.ProcessGraph(filename, false, null);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
@@ -51,12 +51,12 @@ namespace GDO.Apps.Graph
 
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
-                    ga.ProcessGraph(inputFolder, true, folderNameDigit);
+                    ga.ProcessGraph(filename, true, folderNameDigit);
                     Clients.Caller.setMessage("Graph is now ready for zooming.");
                 }
                 catch (WebException e)
                 {
-                    Clients.Caller.setMessage("Error: Files cannot be loaded. Please check if folder name is valid.");
+                    Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
                     Debug.WriteLine(e);
                 }
                 catch (Exception e)
