@@ -35,6 +35,10 @@ module.exports = {
                 test: /\.jsx$|.js$/,
                 exclude: /node_modules/,
                 loader: 'react-hot!babel?presets[]=react,presets[]=es2015'
+            },
+            {
+                test: /\.svg$/,
+                loader: 'svg-inline'
             }
         ]
     },

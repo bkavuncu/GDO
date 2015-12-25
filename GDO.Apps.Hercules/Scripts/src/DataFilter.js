@@ -1,9 +1,12 @@
 const React = require('react'),
+    ReactDOM = require('react-dom'),
     FilterStore = require('stores/FilterStore'),
     _ = require('underscore'),
     {IndigoIterator, PurpleIterator} = require('colors'),
     Immutable = require('immutable'),
-    SideMenu = require('./ui/SideMenu');
+    SideMenu = require('./ui/SideMenu'),
+    RangeSelector = require('./RangeSelector'),
+    MeasureComponent = require('ui/MeasureComponent');
 
 class FilterPanel extends React.Component {
     static _getContainerStyle () {
@@ -11,12 +14,18 @@ class FilterPanel extends React.Component {
             flex: '1 1 auto',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'stretch'
+            alignItems: 'stretch',
+            padding: '15px'
         };
     }
 
     render () {
-        return <div id="filter-panel" style={FilterPanel._getContainerStyle()}>
+        var {field} = this.props,
+            stats = field.stats;
+
+        return <div id="filter-panel"
+                    style={FilterPanel._getContainerStyle()}>
+            <MeasureComponent getChildren={(props) => <RangeSelector floor={0} ceiling={100} {...props} />} />
         </div>;
     }
 }
@@ -33,7 +42,8 @@ class DataFilter extends React.Component {
     static _getContainerStyle () {
         return {
             display: 'flex',
-            alignItems: 'stretch'
+            alignItems: 'stretch',
+            flexGrow: 1
         };
     }
 
@@ -46,16 +56,8 @@ class DataFilter extends React.Component {
     render () {
         var {fields, filters} = this.props,
             {selectedIndex} = this.state,
-            fieldList = fields.toList(),
-            fieldLabelList = [];
-
-        var fieldListIter = fieldList.entries(),
-            field = fieldListIter.next();
-
-        while(!field.done) {
-            fieldLabelList.push(field.value[1].name);
-            field = fieldListIter.next();
-        }
+            fieldLabelList = fields.keySeq().toArray(),
+            selectedField = fields.get(fieldLabelList[selectedIndex]);
 
         return (
             <div style={DataFilter._getContainerStyle()}>
@@ -63,7 +65,7 @@ class DataFilter extends React.Component {
                            selectedIndex={selectedIndex}
                            onSelect={this._onSelect.bind(this)}
                     />
-                <FilterPanel field={null}/>
+                <FilterPanel field={selectedField}/>
             </div>
         );
     }

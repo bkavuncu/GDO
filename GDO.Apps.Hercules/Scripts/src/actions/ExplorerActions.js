@@ -8,202 +8,35 @@ var datasets = [
         description: 'a family friend',
         fields: [
             {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
                 name: 'orange',
                 description: 'citruses',
                 disabled: true,
                 origin: 'artificial',
-                type: 'Integer'
+                type: 'Integer',
+                stats: {
+                    min: 0,
+                    max: 1000,
+                    median: 400,
+                    mean: 150,
+                    enum: false,
+                    variance: 125,
+                    stdDev: 15
+                }
             },{
                 name: 'clementine',
                 description: 'citruses',
                 disabled: true,
                 origin: 'native',
-                type: 'Boolean'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
-                type: 'Float'
-            },{
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            },{
-                name: 'clementine',
-                description: 'citruses',
-                disabled: true,
-                origin: 'native',
-                type: 'Boolean'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
-                type: 'Float'
-            },{
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            },{
-                name: 'clementine',
-                description: 'citruses',
-                disabled: true,
-                origin: 'native',
-                type: 'Boolean'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
-                type: 'Float'
-            }
-        ],
-        disabled: false,
-        length: 500,
-        source: {
-            type: 'URL',
-            url: 'http://deez.nuts/data.csv'
-        }
-    },{
-        id: 2,
-        name: 'Sam Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            }
-        ],
-        disabled: false,
-        length: 500,
-        source: {
-            type: 'URL',
-            url: 'http://deez.nuts/data.csv'
-        }
-    }, {
-        id: 3,
-        name: 'Gina Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            }
-        ],
-        disabled: false,
-        length: 500,
-        source: {
-            type: 'URL',
-            url: 'http://deez.nuts/data.csv'
-        }
-    },{
-        id: 4,
-        name: 'Jeremiah Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            }
-        ],
-        disabled: false,
-        length: 500,
-        source: {
-            type: 'URL',
-            url: 'http://deez.nuts/data.csv'
-        }
-    },{
-        id: 5,
-        name: 'Jermaine Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            }
-        ],
-        disabled: false,
-        length: 500,
-        source: {
-            type: 'URL',
-            url: 'http://deez.nuts/data.csv'
-        }
-    }, {
-        id: 6,
-        name: 'Geoffrey Lemon',
-        description: 'a family friend',
-        fields: [
-            {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
+                type: 'Boolean',
+                stats: {
+                    min: 0,
+                    max: 1000,
+                    median: 400,
+                    mean: 150,
+                    enum: false,
+                    variance: 125,
+                    stdDev: 15
+                }
             }
         ],
         disabled: false,

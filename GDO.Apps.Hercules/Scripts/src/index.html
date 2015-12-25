@@ -23,6 +23,17 @@
             overflow: hidden;
         }
 
+        .unselectable {
+            -webkit-user-select: none;
+            -khtml-user-drag: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -moz-user-select: -moz-none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
         .material-icons.md-18 { font-size: 18px; }
         .material-icons.md-24 { font-size: 24px; }
         .material-icons.md-36 { font-size: 36px; }
@@ -37,11 +48,16 @@
     </style>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
-    <div id="react-target"></div>
-    <script>
-        __REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__
-    </script>
-    <script type="text/javascript" src="assets/Hercules.js"></script>
+<body class="unselectable">
+<div id="react-target" class="unselectable"></div>
+<script>
+    document.body.addEventListener('touchmove', function(event) {
+        event.preventDefault();
+    }, false);
+</script>
+<script>
+    __REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__
+</script>
+<script type="text/javascript" src="assets/Hercules.js"></script>
 </body>
 </html>

@@ -8,12 +8,23 @@ var schema = require('js-schema');
 
 export var types = schema(['String', 'Integer', 'Float', 'Datetime', 'URL', 'Enum', 'Boolean']);
 
+var stats = schema({
+    min: Number,
+    max: Number,
+    median: Number,
+    mean: Number,
+    enum: Boolean,
+    variance: Number,
+    stdDev: Number
+});
+
 export var validField = schema({
     name: String,
     description: [null, String],
     type: types,
     origin: ['native', 'artificial'],
-    disabled: Boolean
+    disabled: Boolean,
+    stats: [stats, null]
 });
 
 export var validMiniset = schema({

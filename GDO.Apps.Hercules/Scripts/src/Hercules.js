@@ -5,6 +5,7 @@ var ReactDOM = require('react-dom'),
     NavStore = require('./stores/NavStore');
 
 var View = require('./ui/View.jsx'),
+    unselectable = require('ui/styles').unselectable,
     Tabs = require('./Tabs.js'),
     Importer = require('./Importer');
 
@@ -90,18 +91,22 @@ class Hercules extends React.Component {
     }
 
     render () {
+        var innerElems;
+
         switch (this.state.route) {
             case 'VIEW':
-                return <View>
-                    <Tabs>
+                innerElems = <Tabs>
                         {this._getAvailableComponents()}
-                    </Tabs>
-                </View>;
+                    </Tabs>;
+                break;
             case 'CREATE':
-                return <View>
-                    <Importer />
-                </View>;
+                innerElems = <Importer />;
+                break;
         }
+
+        return <View style={unselectable}>
+            {innerElems}
+        </View>;
     }
 }
 
