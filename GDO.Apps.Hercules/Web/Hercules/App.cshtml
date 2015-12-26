@@ -19,17 +19,20 @@
     <script>
         $(document).ready(function () {
             var gdo = parent.gdo;
+                configName,
+                configId,
+                test_bench = {};
 
             if (typeof gdo === 'undefined')
                 throw new Error('gdo was not defined in parent');
 
-            gdo.net.app['Hercules'].initClient();
+           
 
             var launcher = function (configId) {
                 if (dd3.state() === "ready") {
-                    viz(configId);
+                    test_bench[configId](configId);
                 } else {
-                    dd3.on('ready', viz.bind(null, configId));
+                    dd3.on('ready', test_bench[configId].bind(null, configId));
                 }
             };
 
@@ -45,11 +48,18 @@
                 return t;
             })();
 
+            //gdo.net.app['Hercules'].initClient();
+            if (!gdo.net.app["Hercules"].initClient) {
+                $("#error").css("display", "");
+                parent.location.reload();
+                return;
+            }
+
             dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
             console.log(dd3);
 
-            var viz = function () {
+            test_bench[0] = function () {
                 var xScale, yScale;
                 var data, pathData;
                 var dataId = "";
@@ -153,12 +163,47 @@
                 };
             };
 
-            window.orderController = orderController;
-            window.viz = viz;
+            //window.orderController = orderController;
+            //window.viz = viz;
 
-            viz();
-            orderController.orders.plot();
+            //viz();
+            //orderController.orders.plot();
         });
+
+        test_bench[1] = function () {
+            var table = d3.select("body").append("table")
+           .attr("style", "margin-left: 250px"),
+       thead = table.append("thead"),
+       tbody = table.append("tbody");
+
+            // append the header row
+            thead.append("tr")
+                .selectAll("th")
+                .data(columns)
+                .enter()
+                .append("th")
+                    .text(function (column) { return column; });
+
+            // create a row for each object in the data
+            var rows = tbody.selectAll("tr")
+                .data(data)
+                .enter()
+                .append("tr");
+
+            // create a cell in each row for each column
+            var cells = rows.selectAll("td")
+                .data(function (row) {
+                    return columns.map(function (column) {
+                        return { column: column, value: row[column] };
+                    });
+                })
+                .enter()
+                .append("td")
+                .attr("style", "font-family: Courier") // sets the font style
+                    .html(function (d) { return d.value; });
+
+            
+        };
 
     </script>
 </body>
