@@ -1,30 +1,24 @@
 ﻿$(function () {
     gdo.consoleOut('.WebGL', 1, 'Loaded WebGL JS');
-    $.connection.webGLAppHub.client.receiveName = function (instanceId, name) {
+
+    $.connection.webGLAppHub.client.receiveMousePosition = function (instanceId, mouseX, mouseY) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received MousePos : " + mouseX + "," + mouseY);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
-            $("iframe").contents().find("#hello_text").empty().append("Hello " + name);
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received MousePos : " + mouseX + "," + mouseY);
         }
     }
 });
 
 gdo.net.app["WebGL"].initClient = function () {
+    var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Client at Node ' + gdo.clientId);
 }
 
 gdo.net.app["WebGL"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
-    gdo.net.app["WebGL"].server.requestName(gdo.controlId);
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Control at Instance ' + gdo.controlId);
-
-    $("iframe").contents().find("#hello_submit")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.WebGL', 1, 'Sending Name to Clients :' + $("iframe").contents().find('#hello_input').val());
-        gdo.net.app["WebGL"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
-    });
 }
 
 gdo.net.app["WebGL"].terminateClient = function () {
