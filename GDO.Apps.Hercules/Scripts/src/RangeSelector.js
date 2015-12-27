@@ -1,6 +1,7 @@
 const React = require('react'),
     InlineSVG = require('svg-inline-react'),
-    ReactDOM = require('react-dom');
+    ReactDOM = require('react-dom'),
+    d3 = require('d3');
 
 const WIDTH = 50;
 
@@ -10,7 +11,8 @@ class Slider extends React.Component {
         super(props);
 
         this.state = {
-            step: REST
+            step: REST,
+            height: 20
         };
     }
     render () {
@@ -68,12 +70,31 @@ class Slider extends React.Component {
         });
     }
 
-    componentDidUpdate () {
+    componentDidMount () {
+        this.measureHeight();
+    }
+
+    componentWillReceiveProps (next) {
+        if (next.width !== this.props.width) {
+            var iSvg = this.refs.svg,
+                svg = ReactDOM.findDOMNode(iSvg),
+                svg = svg.getElementsByTagName('svg')[0];
+
+            svg.style.width = next.width;
+
+            this.measureHeight();
+        }
+    }
+
+    measureHeight () {
         var iSvg = this.refs.svg,
             svg = ReactDOM.findDOMNode(iSvg),
-            svg = svg.getElementsByTagName('svg')[0];
+            svg = svg.getElementsByTagName('svg')[0],
+            height = svg.offsetHeight;
 
-        svg.style.width = this.props.width;
+        console.log('new slider height ' + height, svg.offsetHeight);
+
+        this.setState({height});
     }
 }
 
@@ -83,9 +104,8 @@ class SliderMin extends Slider {
     }
 
     _getOuterStyle () {
-        var {offset} = this.props;
-
-        console.log(offset);
+        var {offset} = this.props,
+            heightAdjustedOffset = offset - this.state.height;
 
         return {
             position: 'absolute',
@@ -102,9 +122,8 @@ class SliderMax extends Slider {
     }
 
     _getOuterStyle () {
-        var {offset} = this.props;
-
-        console.log(offset);
+        var {offset} = this.props,
+            heightAdjustedOffset = offset - this.state.height;
 
         return {
             position: 'absolute',
@@ -134,8 +153,12 @@ class RangeBar extends React.Component {
         this.resize();
     }
 
-    componentWillReceiveProps () {
-        this.resize();
+    componentWillReceiveProps (nextProps) {
+        var {height} = this.props,
+            _h = nextProps.height;
+
+        if (height !== _h)
+            this.resize();
     }
 
     propagateWidth (w) {
@@ -150,8 +173,6 @@ class RangeBar extends React.Component {
         var svg = ReactDOM.findDOMNode(this.refs.svg);
         svg = svg.getElementsByTagName('svg')[0];
         svg.style.height = this.props.height;
-
-        console.log('resizing');
 
         var width = svg.offsetWidth;
         this.propagateWidth(width);
@@ -171,33 +192,36 @@ class RangeSelector extends React.Component {
         super(props);
 
         console.log(props);
+
+        var scale = d3.scale.linear()
+            .domain([props.floor, props.ceiling])
+            .rangeRound([0, props.height])
+            .clamp(true);
+
         this.state = {
             barWidth: WIDTH,
             min: props.floor,
-            max: props.ceiling
+            max: props.ceiling,
+            scale: scale
         };
     }
 
     _offsetToValue (offset) {
-        var {height, ceiling} = this.props,
-            value = (offset/height) * ceiling;
+        var {scale} = this.state;
 
-        console.log('yo', offset, value);
-        return Math.round(value);
+        return scale.invert(offset);
     }
 
     _valueToOffset (value) {
-        var {height, ceiling} = this.props,
-            offset = (value / ceiling) * height;
+        var {scale} = this.state;
 
-        return Math.round(offset);
+        return scale(value);
     }
 
     getOuterStyle () {
         var {width, height} = this.props;
         return {
-            height: height,
-            width: width,
+            flexGrow: 1,
             position: 'relative'
         };
     }
@@ -221,18 +245,20 @@ class RangeSelector extends React.Component {
                 return newValue;
             },
             minUpdate = (delta) => {
-                var previous = this._valueToOffset(this.state.min),
+                var {max, min} = this.state,
+                    previous = this._valueToOffset(min),
                     newValue = deltaUpdate(previous, delta);
 
                 this.setState({
-                    min: newValue
+                    min: newValue < max? newValue : max
                 });
             }, maxUpdate = (delta) => {
-                var previous = this._valueToOffset(this.state.max),
+                var {max, min} = this.state,
+                    previous = this._valueToOffset(max),
                     newValue = deltaUpdate(previous, delta);
 
                 this.setState({
-                    max: newValue
+                    max: newValue > min? newValue : min
                 });
             };
 

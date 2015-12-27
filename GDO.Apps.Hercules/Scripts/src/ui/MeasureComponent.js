@@ -36,6 +36,8 @@ class MeasureComponent extends React.Component {
     render () {
         var style = {
             flexGrow: 1,
+            display: 'flex',
+            alignItems: 'stretch',
             overflow: 'hidden'
         };
 
