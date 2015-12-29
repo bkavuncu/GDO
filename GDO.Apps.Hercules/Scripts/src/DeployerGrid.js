@@ -97,9 +97,11 @@ class DeployerGrid extends React.Component {
         window.addEventListener('resize', listener);
         this.resize();
     }
+
     componentWillUnmount () {
         window.removeEventListener('resize', this.state.listener);
     }
+
     resize () {
         var el = ReactDOM.findDOMNode(this),
             width = el.offsetWidth - 2 * PADDING,
@@ -167,9 +169,69 @@ class DeployerGrid extends React.Component {
                     </View>
                     <SectionManager selectedNodes={selectedNodes} mergeable={mergeable}/>
                     <SectionViewer sections={sections} selectedSectionId={this.props.selectedSectionId}/>
+                    <GraphPicker selectedSectionId={this.props.selectedSectionId} />
                 </View>;
                 break;
         }
+    }
+}
+
+class GraphPicker extends React.Component {
+    _getOuterStyle () {
+        return {
+            display: 'flex',
+            flexGrow: 1,
+            justifyContent: 'space-around',
+            alignItems: 'stretch'
+        };
+    }
+
+    _getHandler (graphName) {
+        return () => {
+            if (this.props.selectedSectionId !== false) {
+                DeployerActions.pickGraph(graphName);
+            }
+        };
+    }
+
+    _getSelectorStyle () {
+        var {selectedSectionId} = this.props,
+            commonStyle = {
+                margin: '10px',
+                flexGrow: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            };
+
+        if (selectedSectionId === false) {
+        console.log(selectedSectionId);
+            return _.extend({}, commonStyle, {
+                backgroundColor: '#C7C7C7',
+                color: 'rgba(0,0,0,0.38)'
+            })
+        } else {
+            return _.extend({}, commonStyle, {
+                boxShadow: '0 0 5px #6E6E6E',
+                color: 'white',
+                backgroundColor: '#2196F3'
+            });
+        }
+    }
+
+    render () {
+        var {selectedSectionId} = this.props,
+            getGraphSelector = (graphName, i) => {
+                return <div key={i}
+                            style={this._getSelectorStyle()}
+                            onTouchTap={this._getHandler(graphName.toLowerCase())}>
+                    {graphName}
+                </div>
+            }, elems = ['Table', 'Scatter', 'Bar'].map(getGraphSelector);
+
+        return <div style={this._getOuterStyle()}>
+            {elems}
+        </div>;
     }
 }
 
@@ -291,22 +353,27 @@ class Section extends React.Component {
     _onTap () {
         DeployerActions.selectSection(this.props.data.id);
     }
-    render () {
-        var {selected, data} = this.props,
-            style = {
+
+    _getOuterStyle () {
+        var {selected, data} = this.props;
+
+        return  {
             backgroundColor: selected? colors.NODE_SECTION_SELECT : colors.NODE_SECTION,
             display: 'flex',
             transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
             color: 'white',
             flexDirection: 'column',
             justifyContent: 'center',
-            marginRight: '5px',
+            margin: '0px 5px 5px 0px',
             boxShadow: '0 0 ' + (selected? 15 : 5) + 'px gray',
             alignItems: 'center',
             padding: '10px'
         };
+    }
+    render () {
+        var {data} = this.props;
 
-        return <div style={style} onTouchTap={this._onTap.bind(this)}>
+        return <div style={this._getOuterStyle()} onTouchTap={this._onTap.bind(this)}>
             <div>Section ID: {data.id}</div>
             <div>Nodes: {data.nodeList.sort().map(n => n+1).toArray().toString()}</div>
         </div>;
@@ -314,17 +381,18 @@ class Section extends React.Component {
 }
 
 class SectionViewer extends React.Component {
-    render () {
-        var style = {
+    _getOuterStyle () {
+        return {
             display: 'flex',
             flexWrap: 'wrap',
-            padding: '10px',
-            alignItems: 'flex-start',
-            flexGrow: 1
-        }, selectedId = this.props.selectedSectionId;
+            padding: '10px'
+        };
+    }
+    render () {
+        var {selectedSectionId, sections} = this.props;
 
-        return <div style={style}>
-            {this.props.sections.map(s => <Section data={s} key={s.id} selected={selectedId === s.id} />)}
+        return <div style={this._getOuterStyle()}>
+            {sections.map(s => <Section data={s} key={s.id} selected={selectedSectionId === s.id} />)}
         </div>;
     }
 }
@@ -346,7 +414,8 @@ class GridWrapper extends React.Component {
             selectedNodes: DeployerStore.getSelectedNodes(),
             mergeable: DeployerStore.isMergeable(),
             sections: DeployerStore.getSections(),
-            selectedSectionId: DeployerStore.hasSelectedSection()?  DeployerStore.getSelectedSectionId() : false
+            selectedSectionId: DeployerStore.hasSelectedSection()?  DeployerStore.getSelectedSectionId() : false,
+            graphMap: DeployerStore.getGraphMap()
         });
     }
 

@@ -31,3 +31,10 @@ export function selectSection (sectionId) {
         sectionId: sectionId
     })
 }
+
+export function pickGraph (graphName) {
+    Dispatcher.dispatch({
+        actionType: 'pickGraph',
+        graphName: graphName
+    });
+}

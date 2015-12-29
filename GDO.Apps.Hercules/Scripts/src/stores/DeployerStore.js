@@ -16,6 +16,7 @@ class DeployerStore extends BaseStore {
         this.activeNodes = Immutable.Set();
         this.sections = Immutable.List();
         this.selectedSectionId = NO_SECTION_SELECTED;
+        this.graphMap = Immutable.Map();
         this.mergeable = false;
 
         this.subscribe(() => this._registerToActions.bind(this));
@@ -51,6 +52,10 @@ class DeployerStore extends BaseStore {
                 break;
             case 'clearSelection':
                 this.activeNodes = Immutable.Set();
+                break;
+            case 'pickGraph':
+                var {graphName} = action;
+                this._bindToGraph(graphName);
                 break;
         }
         this.mergeable = this._computeMergeable();
@@ -156,8 +161,18 @@ class DeployerStore extends BaseStore {
         return this.selectedSectionId;
     }
 
+    getGraphMap () {
+        return this.graphMap;
+    }
+
     _checkSectionExists (sectionId) {
         assert(this.sections.filter(s => s.id === sectionId).size > 0, 'the section does not exist');
+    }
+
+    _bindToGraph (graphName) {
+        if (this.hasSelectedSection()) {
+            this.graphMap = this.graphMap.set(this.getSelectedSectionId(), graphName);
+        }
     }
 }
 
