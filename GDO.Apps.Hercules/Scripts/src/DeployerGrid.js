@@ -121,6 +121,7 @@ class DeployerGrid extends React.Component {
     render() {
         var outerStyle = {
                 padding: 0,
+                justifyContent: 'flex-start',
                 alignItems: 'stretch',
                 display: 'flex',
                 flexDirection: 'column'
@@ -180,8 +181,8 @@ class GraphPicker extends React.Component {
     _getOuterStyle () {
         return {
             display: 'flex',
-            flexGrow: 1,
-            justifyContent: 'space-around',
+            flex: '0 1 80px',
+            justifyContent: 'center',
             alignItems: 'stretch'
         };
     }
@@ -194,11 +195,12 @@ class GraphPicker extends React.Component {
         };
     }
 
-    _getSelectorStyle () {
+    _getSelectorStyle (graphName) {
         var {selectedSectionId} = this.props,
+            graphMap = DeployerStore.getGraphMap(),
             commonStyle = {
                 margin: '10px',
-                flexGrow: 1,
+                flex: '0 1 200px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center'
@@ -211,10 +213,15 @@ class GraphPicker extends React.Component {
                 color: 'rgba(0,0,0,0.38)'
             })
         } else {
+            var backgroundColor = '#2196F3';
+
+            if (graphMap.get(selectedSectionId, false) === graphName.toLowerCase())
+                backgroundColor = colors.NODE_SECTION_SELECT;
+
             return _.extend({}, commonStyle, {
                 boxShadow: '0 0 5px #6E6E6E',
                 color: 'white',
-                backgroundColor: '#2196F3'
+                backgroundColor: backgroundColor
             });
         }
     }
@@ -223,7 +230,7 @@ class GraphPicker extends React.Component {
         var {selectedSectionId} = this.props,
             getGraphSelector = (graphName, i) => {
                 return <div key={i}
-                            style={this._getSelectorStyle()}
+                            style={this._getSelectorStyle(graphName)}
                             onTouchTap={this._getHandler(graphName.toLowerCase())}>
                     {graphName}
                 </div>
@@ -246,10 +253,9 @@ class SectionManager extends React.Component {
         var style = {
             display: 'flex',
             alignSelf: 'stretch',
-            flex: '0 0 60px',
+            flex: '0 0 80px',
             width: 'auto',
-            justifyContent: 'flex-start',
-            padding: '0 10px 0 10px',
+            justifyContent: 'center'
         }, mergeable = this.props.mergeable,
             nodeSet = this.props.selectedNodes;
 
@@ -281,7 +287,7 @@ class DeployerButton extends React.Component {
             alignItems: 'center',
             flexBasis: '200px',
             color: 'white',
-            marginRight: '5px',
+            margin: '10px',
             borderRadius: '3px',
             boxShadow: '0 0 10px gray',
             backgroundColor: colors.NODE,
@@ -303,7 +309,7 @@ class CreateSection extends DeployerButton {
     }
 
     getStyle () {
-        var buttonColor = this.props.mergeable? colors.NODE_MERGE : colors.MAIN;
+        var buttonColor = this.props.mergeable? colors.NODE_MERGE : colors.NODE;
         return {
             backgroundColor: buttonColor
         };
@@ -320,7 +326,7 @@ class DestroySection extends DeployerButton {
     }
 
     getStyle () {
-        var buttonColor = DeployerStore.hasSelectedSection()? colors.NODE_SECTION_SELECT : colors.MAIN;
+        var buttonColor = DeployerStore.hasSelectedSection()? colors.NODE_SECTION_SELECT : colors.NODE;
         return {
             backgroundColor: buttonColor
         };
@@ -338,7 +344,7 @@ class ClearSelection extends DeployerButton {
 
     getStyle () {
         var buttonColor = this.props.mergeable? colors.NODE_MERGE
-            : this.props.clearable? colors.NODE_SELECT : colors.MAIN;
+            : this.props.clearable? colors.NODE_SELECT : colors.NODE;
         return {
             backgroundColor: buttonColor
         };

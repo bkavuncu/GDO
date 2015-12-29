@@ -13,13 +13,17 @@ class DeployerStore extends BaseStore {
     constructor() {
         super();
 
+        this._clear();
+
+        this.subscribe(() => this._registerToActions.bind(this));
+    }
+
+    _clear () {
         this.activeNodes = Immutable.Set();
         this.sections = Immutable.List();
         this.selectedSectionId = NO_SECTION_SELECTED;
         this.graphMap = Immutable.Map();
         this.mergeable = false;
-
-        this.subscribe(() => this._registerToActions.bind(this));
     }
 
     _registerToActions (action) {
@@ -43,7 +47,9 @@ class DeployerStore extends BaseStore {
                 break;
             case 'destroySection':
                 if (this.hasSelectedSection()) {
-                    this.sections = this.sections.filter((s) => s.id !== this.selectedSectionId);
+                    var targetId = this.getSelectedSectionId();
+                    this.sections = this.sections.filter((s) => s.id !== targetId);
+                    this.graphMap = this.graphMap.remove(targetId);
                     this.selectedSectionId = NO_SECTION_SELECTED;
                 }
                 break;
@@ -173,6 +179,38 @@ class DeployerStore extends BaseStore {
         if (this.hasSelectedSection()) {
             this.graphMap = this.graphMap.set(this.getSelectedSectionId(), graphName);
         }
+    }
+
+    toHerculesObject () {
+        return this.sections.map((s) => {
+            var {id, nodeList} = s,
+                res = {
+                    id: id,
+                    nodeList: nodeList.toArray()
+                };
+
+            if (this.graphMap.has(s.id)) {
+                res = _.extend({}, res, {
+                    graphName: this.graphMap.get(s.id)
+                });
+            }
+
+            return res;
+        }).toJS();
+    }
+
+    fromHerculesObject (sections) {
+        this._clear();
+
+        sections.forEach((s) => {
+            var {id, nodeList, graphName} = s;
+                nodeList = Immutable.List(nodeList);
+
+            this.sections = this.sections.push({id, nodeList});
+
+            if (typeof s.graphName == 'string')
+                this.graphMap = this.graphMap.set(s.id, s.graphName);
+        });
     }
 }
 
