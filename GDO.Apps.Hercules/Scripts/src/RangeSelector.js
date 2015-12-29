@@ -1,7 +1,9 @@
 const React = require('react'),
+    _ = require('underscore'),
     InlineSVG = require('svg-inline-react'),
     ReactDOM = require('react-dom'),
-    d3 = require('d3');
+    d3 = require('d3'),
+    {IndigoIterator} = require('ui/Colors');
 
 const WIDTH = 50;
 
@@ -187,21 +189,184 @@ class RangeBar extends React.Component {
     }
 }
 
+class ControlBar extends React.Component {
+    _getOuterStyle () {
+        return {
+            display: 'flex',
+            alignItems: 'stretch',
+            alignSelf: 'stretch',
+            flex: '0 1 100px',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            boxShadow: '0 0 10px gray',
+            zIndex: '100'
+        }
+    }
+
+    _getButtonStyle () {
+        return {
+            display: 'flex',
+            flexGrow: 1,
+            justifyContent: 'center',
+            fontSize: '24px',
+            color: 'rgba(0,0,0, 0.6)',
+            alignItems: 'center'
+        }
+    }
+
+    _getValueStyle () {
+        return _.extend(this._getButtonStyle(), {
+            flexGrow: 2,
+            fontSize: '42px',
+            boxShadow: 'inset 0 0 10px gray'
+        })
+    }
+
+    _getHandler (val) {
+        var {onDelta} = this.props;
+
+        return () => {
+            onDelta(val);
+        };
+    }
+
+    render () {
+        var {value} = this.props,
+            getButton = (val, i) => {
+                var valString = val > 0? '+' + val : val;
+                return <div key={i} onTouchTap={this._getHandler(val)}
+                            style={this._getButtonStyle(val)}>
+                    {valString}
+                </div>;
+            }, left = [-10, -1].map(getButton),
+            right = [1,10].map(getButton);
+
+        return <div style={this._getOuterStyle()}>
+            {left}
+            <div style={this._getValueStyle()}>
+                {value}
+            </div>
+            {right}
+        </div>;
+    }
+}
+
+const StatFieldRow = ({name, value, color, zIndex}) => {
+    var style = {
+        flex: '0 0 30px',
+        display: 'flex',
+        color: 'white',
+        padding: '15px 0 10px 0',
+        overflow: 'hidden',
+        alignItems: 'baseline',
+        backgroundColor: color,
+        zIndex: zIndex,
+        boxShadow: '0 0 5px black'
+    }, leftStyle = {
+        flex: '0 0 50%',
+        textAlign: 'right',
+        paddingRight: '5px',
+        fontStyle: 'italic',
+        color: 'rgba(255, 255, 255, 0.8)'
+    }, rightStyle = {
+        textAlign: 'left',
+        flex: '0 0 50%',
+        fontSize: '20px',
+        paddingLeft: '5px'
+    };
+
+    return <div key={name} style={style}>
+        <div style={leftStyle}>
+            {name}
+        </div>
+        <div style={rightStyle}>
+            {value}
+        </div>
+    </div>;
+};
+
+class StatViewer extends React.Component {
+    _getOuterStyle () {
+        return {
+            flexGrow: 2,
+            display: 'flex',
+            alignItems: 'stretch'
+        }
+    }
+
+    _getColumnStyle () {
+        return {
+            display: 'flex',
+            flexGrow: 1,
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)'
+        }
+    }
+
+    render () {
+        var {field} = this.props,
+            stats = field.stats,
+            keys = Object.keys(stats),
+            l = keys.length,
+            iter = new IndigoIterator();
+
+        return <div style={this._getOuterStyle()}>
+            <div style={this._getColumnStyle()}>
+                {keys.map((k, i) => <StatFieldRow key={k} zIndex={l-i} name={k} value={stats[k]} color={iter.getNext()}/>)}
+            </div>
+        </div>;
+    }
+}
+
+class RangeControl extends React.Component {
+    _getOuterStyle () {
+        return {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            flexGrow: 1,
+            padding: '0 10px 0 10px'
+        };
+    }
+
+    render () {
+        var {min, max, field, onUpdateMin, onUpdateMax} = this.props,
+            deltaMin = (delta) => {
+                onUpdateMin(min + delta);
+            }, deltaMax = (delta) => {
+                onUpdateMax(max + delta);
+            }
+
+        return <div style={this._getOuterStyle()}>
+            <ControlBar value={min} onDelta={deltaMin}/>
+            <StatViewer field={field} />
+            <ControlBar value={max} onDelta={deltaMax}/>
+        </div>;
+    }
+}
+
+const clamp = (val, min, max) => {
+    return Math.max(min, Math.min(val, max));
+};
+
 class RangeSelector extends React.Component {
     constructor (props) {
         super(props);
 
-        console.log(props);
+        var stats = props.field.stats,
+            floor = stats.min,
+            ceiling = stats.max;
 
         var scale = d3.scale.linear()
-            .domain([props.floor, props.ceiling])
+            .interpolate(d3.interpolateRound)
+            .domain([floor, ceiling])
             .rangeRound([0, props.height])
             .clamp(true);
 
         this.state = {
             barWidth: WIDTH,
-            min: props.floor,
-            max: props.ceiling,
+            min: floor,
+            max: ceiling,
             scale: scale
         };
     }
@@ -209,7 +374,7 @@ class RangeSelector extends React.Component {
     _offsetToValue (offset) {
         var {scale} = this.state;
 
-        return scale.invert(offset);
+        return Math.round(scale.invert(offset));
     }
 
     _valueToOffset (value) {
@@ -218,12 +383,40 @@ class RangeSelector extends React.Component {
         return scale(value);
     }
 
-    getOuterStyle () {
-        var {width, height} = this.props;
+    _getOuterStyle () {
         return {
-            flexGrow: 1,
-            position: 'relative'
+            display: 'flex',
+            flexGrow: 1
         };
+    }
+
+    _getSliderStyle () {
+        var {barWidth} = this.state;
+
+        return {
+            position: 'relative',
+            flex: '0 0 ' + barWidth + 'px'
+        };
+    }
+
+    _updateMin (newValue) {
+        var {max} = this.state,
+            {field} = this.props,
+            floor = field.stats.min;
+
+        this.setState({
+            min: clamp(newValue, floor, max)
+        });
+    }
+
+    _updateMax (newValue) {
+        var {min} = this.state,
+            {field} = this.props,
+            ceiling = field.stats.max;
+
+        this.setState({
+            max: clamp(newValue, min, ceiling)
+        });
     }
 
     render () {
@@ -234,8 +427,7 @@ class RangeSelector extends React.Component {
         };
 
         var {min, max, barWidth} = this.state,
-            {width, height} = this.props,
-            sliderWidth = barWidth,
+            {width, height, field} = this.props,
             minOffset = this._valueToOffset(min),
             maxOffset = Math.max(height - this._valueToOffset(max), 0),
             deltaUpdate = (previousOffset, delta) => {
@@ -249,27 +441,28 @@ class RangeSelector extends React.Component {
                     previous = this._valueToOffset(min),
                     newValue = deltaUpdate(previous, delta);
 
-                this.setState({
-                    min: newValue < max? newValue : max
-                });
+                this._updateMin(newValue);
             }, maxUpdate = (delta) => {
                 var {max, min} = this.state,
                     previous = this._valueToOffset(max),
                     newValue = deltaUpdate(previous, delta);
 
-                this.setState({
-                    max: newValue > min? newValue : min
-                });
+                this._updateMax(newValue)
             };
 
-        return <div style={this.getOuterStyle()}>
-            <SliderMin width={sliderWidth}
-                       offset={minOffset}
-                       onDelta={minUpdate} />
-            <RangeBar {...this.props} onFindWidth={onRangeBarRender}/>
-            <SliderMax width={sliderWidth}
-                       offset={maxOffset}
-                       onDelta={maxUpdate} />
+        return <div style={this._getOuterStyle()}>
+            <div style={this._getSliderStyle()}>
+                <SliderMin width={barWidth}
+                           offset={minOffset}
+                           onDelta={minUpdate} />
+                <RangeBar {...this.props} onFindWidth={onRangeBarRender}/>
+                <SliderMax width={barWidth}
+                           offset={maxOffset}
+                           onDelta={maxUpdate} />
+            </div>
+            <RangeControl {...{min, max, field}}
+                onUpdateMin={this._updateMin.bind(this)}
+                onUpdateMax={this._updateMax.bind(this)}/>
         </div>;
     }
 }
@@ -277,10 +470,7 @@ class RangeSelector extends React.Component {
 RangeSelector.propTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
-    floor: React.PropTypes.number.isRequired,
-    ceiling: React.PropTypes.number.isRequired,
-//    min: React.PropTypes.number.isRequired,
-//    max: React.PropTypes.number.isRequired
+    field: React.PropTypes.object.isRequired
 };
 
 module.exports = RangeSelector;

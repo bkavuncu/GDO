@@ -20,12 +20,11 @@ class FilterPanel extends React.Component {
     }
 
     render () {
-        var {field} = this.props,
-            stats = field.stats;
+        var {field} = this.props;
 
         return <div id="filter-panel"
                     style={FilterPanel._getContainerStyle()}>
-            <MeasureComponent getChildren={(props) => <RangeSelector floor={0} ceiling={100} {...props} />} />
+            <MeasureComponent getChildren={(props) => <RangeSelector {...props} field={field} />} />
         </div>;
     }
 }
