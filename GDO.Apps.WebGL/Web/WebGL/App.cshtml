@@ -27,7 +27,6 @@
 
                 // TODO: Work out correct vertical fov
                 var camera = new THREE.PerspectiveCamera(24, 16 / 9, 3, 10000);
-                camera.position.z = 1800;
 
                 var w = 1920;
                 var h = 1080;
@@ -39,15 +38,17 @@
 
                 camera.setViewOffset(fullWidth, fullHeight, 0, yOffset, w, h);
 
-                initializeScene(camera, function (mousePos) {
-                    gdo.net.app["WebGL"].initClient(mousePos);
-                });
+                initializeScene();
 
-                beginGameLoop(function () {
-                    camera.position.x += (mousePosition.x - camera.position.x) * 0.05;
-                    camera.position.y += (-mousePosition.y - camera.position.y) * 0.05;
+                var cameraParent = new THREE.Object3D();
+                cameraParent.add(camera);
+                scene.add(cameraParent);
+                cameraParent.position.z = 1800;
 
-                    camera.lookAt(scene.position);
+                gdo.net.app["WebGL"].initClient(cameraParent);
+
+                beginGameLoop(camera, function () {
+                    gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Actual cam pos: " + JSON.stringify(camera.position));
                 });
             });
         });

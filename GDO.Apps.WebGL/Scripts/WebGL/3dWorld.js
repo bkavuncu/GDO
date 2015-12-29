@@ -1,22 +1,13 @@
-﻿var camera, scene, renderer;
+﻿var scene, renderer;
 
 var mesh, group1, group2, group3, light;
-
-var mousePosition = {
-    x: 0,
-    y: 0
-}
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-function initializeScene(cameraParam, setMousePosObject) {
+function initializeScene() {
 
     var container = document.getElementById('wrapper');
-
-    camera = cameraParam;
-
-    setMousePosObject( mousePosition );
 
     scene = new THREE.Scene();
 
@@ -131,6 +122,7 @@ function initializeScene(cameraParam, setMousePosObject) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
+    onWindowResize();
     window.addEventListener('resize', onWindowResize, false);
 }
 
@@ -149,10 +141,12 @@ function onWindowResize() {
     }
 }
 
-var update;
+var update, camera;
 
-function beginGameLoop(updateParam) {
+function beginGameLoop(cameraParam, updateParam) {
     update = updateParam;
+    camera = cameraParam;
+
     requestAnimationFrame(gameLoop);
 }
 

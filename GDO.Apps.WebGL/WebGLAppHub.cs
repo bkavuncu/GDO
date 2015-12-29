@@ -23,15 +23,14 @@ namespace GDO.Apps.WebGL
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void SetMousePosition(int instanceId, string mouseX, string mouseY)
+        public void SetCameraPosition(int instanceId, Camera camera)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).mouseX = mouseX;
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).mouseY = mouseY;
-                    Clients.Group("" + instanceId).receiveMousePosition(instanceId, mouseX, mouseY);
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera = camera;
+                    Clients.Group("" + instanceId).receiveCameraPosition(instanceId, camera);
                 }
                 catch (Exception e)
                 {

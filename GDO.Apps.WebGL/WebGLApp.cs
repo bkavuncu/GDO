@@ -15,10 +15,7 @@ namespace GDO.Apps.WebGL
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
-        public MousePosition MousePosition { get; set; }
-
-        public string mouseX = "";
-        public string mouseY = "";
+        public Camera Camera { get; set; }
 
         public string Name { get; set; }
 
@@ -29,17 +26,19 @@ namespace GDO.Apps.WebGL
             this.Section = section;
             this.Configuration = configuration;
 
-            this.MousePosition = new MousePosition();
+            this.Camera = new Camera();
         }
     }
 
-    public class MousePosition
+    public class Camera
     {
         public string[] Position { get; set; }
+        public string[] Quaternion { get; set; }
 
-        public MousePosition()
+        public Camera()
         {
-            this.Position = new string[2];
+            this.Position = new string[3];
+            this.Quaternion = new string[4];
         }
     }
 }

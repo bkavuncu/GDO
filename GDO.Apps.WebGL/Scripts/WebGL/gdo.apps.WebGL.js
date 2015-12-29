@@ -1,26 +1,34 @@
-﻿var mousePosition;
+﻿var cameraParent;
 
 
 $(function () {
     gdo.consoleOut('.WebGL', 1, 'Loaded WebGL JS');
 
-    $.connection.webGLAppHub.client.receiveMousePosition = function (instanceId, mouseX, mouseY) {
+    $.connection.webGLAppHub.client.receiveCameraPosition = function (instanceId, newCamera) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received MousePos : " + mouseX + "," + mouseY);
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + JSON.stringify(newCamera));
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received MousePos : " + mouseX + "," + mouseY);
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
 
-            mousePosition.x = mouseX;
-            mousePosition.y = mouseY;
+            cameraParent.position.set(parseFloat(newCamera.Position[0]),
+                                      parseFloat(newCamera.Position[1]),
+                                      parseFloat(newCamera.Position[2]));
+            cameraParent.quaternion.set(parseFloat(newCamera.Quaternion[0]),
+                                        parseFloat(newCamera.Quaternion[1]),
+                                        parseFloat(newCamera.Quaternion[2]),
+                                        parseFloat(newCamera.Quaternion[3]));
+            cameraParent.updateMatrix();
+
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera parent: " + JSON.stringify(cameraParent));
         }
     }
 });
 
-gdo.net.app["WebGL"].initClient = function (mousePositionParam) {
+gdo.net.app["WebGL"].initClient = function (cameraParentParam) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Client at Node ' + gdo.clientId);
 
-    mousePosition = mousePositionParam;
+    cameraParent = cameraParentParam;
 }
 
 gdo.net.app["WebGL"].initControl = function () {
