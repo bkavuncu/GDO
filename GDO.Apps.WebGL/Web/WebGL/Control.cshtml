@@ -112,7 +112,10 @@
 
             $(document).ready(function () {
 
-                initializeScene(function (cameraPosition) { });
+                var camera = new THREE.PerspectiveCamera(20, 16 / 9, 3, 10000);
+                camera.position.z = 1800;
+
+                initializeScene(camera, function (cameraPosition) { });
 
                 function onDocumentMouseMove(event) {
 

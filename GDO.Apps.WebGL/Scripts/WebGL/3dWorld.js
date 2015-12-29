@@ -10,12 +10,11 @@ var mousePosition = {
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-function initializeScene(setMousePosObject) {
+function initializeScene(cameraParam, setMousePosObject) {
 
     var container = document.getElementById('wrapper');
 
-    camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.z = 1800;
+    camera = cameraParam;
 
     setMousePosObject( mousePosition );
 
@@ -140,10 +139,14 @@ function onWindowResize() {
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    var effectiveWidth = window.innerHeight * (16 / 9);
+    var effectiveHeight = window.innerWidth * (9 / 16);
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    if (effectiveWidth > window.innerWidth) {
+        renderer.setSize(window.innerWidth, effectiveHeight);
+    } else {
+        renderer.setSize(effectiveWidth, window.innerHeight);
+    }
 }
 
 var update;
