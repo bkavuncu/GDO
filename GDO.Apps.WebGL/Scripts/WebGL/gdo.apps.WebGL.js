@@ -1,4 +1,4 @@
-﻿var camera;
+﻿var mousePosition;
 
 
 $(function () {
@@ -10,17 +10,17 @@ $(function () {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received MousePos : " + mouseX + "," + mouseY);
 
-            camera.position.x += (parseFloat(mouseX) - camera.position.x) * 0.05;
-            camera.position.y += (-parseFloat(mouseY) - camera.position.y) * 0.05;
+            mousePosition.x = mouseX;
+            mousePosition.y = mouseY;
         }
     }
 });
 
-gdo.net.app["WebGL"].initClient = function (cameraParam) {
+gdo.net.app["WebGL"].initClient = function (mousePositionParam) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Client at Node ' + gdo.clientId);
 
-    camera = cameraParam;
+    mousePosition = mousePositionParam;
 }
 
 gdo.net.app["WebGL"].initControl = function () {
