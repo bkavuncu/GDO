@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
@@ -18,6 +19,7 @@ namespace GDO.Apps.Graph
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
 
+        private GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
@@ -31,6 +33,7 @@ namespace GDO.Apps.Graph
                 this.Section = section;
                 this.Configuration = configuration;
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
             catch (Exception e) {
                 Log.Error("failed to launch the Graphs App",e);
@@ -46,18 +49,18 @@ namespace GDO.Apps.Graph
 
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
-        public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
+        public string ProcessGraph(string filename, bool zoomed, string folderName)
         {
-            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/" + inputFolder + "/"+ inputFolder + @".graphml");
-            GraphDataReader.ReadGraphMLData(graphMLfile, out Links, out Nodes, out rectDim);
+            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
+            GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
 
-            //create Dictionaries for quick search of Labels and Nodes
-            SetupLabelDictionary();
-            SetupNodeDictionary();
+            //File.Delete(graphMLfile);
+
+            //create Dictionary for quick search of Nodes by ID
+            SetupNodesDictionary();
 
             //compute node adjacencies
             ComputeNodeAdjacencies();
-
 
             #region calculate viewport and scales
             int singleDisplayWidth = Section.Width / Section.Cols;
@@ -133,6 +136,7 @@ namespace GDO.Apps.Graph
 
             // 1. Distribute nodes & labels
             sw.Restart();
+            Debug.WriteLine("About to DistributeNodesInPartitions");
             // Set up a 2D array to store nodes data in each partition
             partitions = GraphPartitioning.DistributeNodesInPartitions(partitions, Nodes, Section);
             sw.Stop();
@@ -142,6 +146,7 @@ namespace GDO.Apps.Graph
             // 2. Distribute links
             sw.Restart();
             // Set up a 2D array to store nodes data in each partition
+            Debug.WriteLine("About to distribute Links");
             partitions = GraphPartitioning.DistributeLinksInPartitions(partitions,Links, singleDisplayWidth, singleDisplayHeight,Section);
             sw.Stop();
             Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
@@ -149,6 +154,8 @@ namespace GDO.Apps.Graph
 
             // write to individual browser file
             // i. create sub-directories to store partition files
+            Debug.WriteLine("Writing partition files");
+            GraphAppHub.self.LogTime("Writing partition files");
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
@@ -176,22 +183,40 @@ namespace GDO.Apps.Graph
 
 
             // ii. write to files
+            WriteAllNodesFile(nodesPath, Nodes);
             WriteNodeFiles(totalRows, totalCols, nodesPath, partitions);
             WriteLinkFiles(totalRows, totalCols, linksPath, partitions);
+
+            Debug.WriteLine("Writen partition files");
+            
             #endregion
 
             return this.FolderNameDigit;
         }
 
+        private static void WriteAllNodesFile(string nodesPath, List<GraphNode> nodes)
+        {   
+            // writes a json file containing the information about all nodes in the graph; all browser will need this information for searching
+            using (StreamWriter streamWriter = new StreamWriter(nodesPath +  @"all" + @".json")
+            {
+                AutoFlush = true
+            })
+            {
+                JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(jsonWriter, nodes);
+            }
+        }
 
         private static void WriteNodeFiles(int totalRows, int totalCols, string linksPath, Partition[,] partitions)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < totalRows; ++i)
+            Parallel.For(0,totalCols, j => { 
+            //for (int j = 0; j < totalCols; ++j) {
+                for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < totalCols; ++j)
-                {
+            
                     using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json")
                     {
                         AutoFlush = true
@@ -202,7 +227,7 @@ namespace GDO.Apps.Graph
                         serializer.Serialize(jsonWriter, partitions[i, j].Nodes);
                     }
                 }
-            }
+            });
             sw.Stop();
             Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
@@ -212,21 +237,20 @@ namespace GDO.Apps.Graph
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < totalRows; ++i)
-            {
-                for (int j = 0; j < totalCols; ++j)
+            Parallel.For(0, totalCols, j => {
+                //for (int j = 0; j < totalCols; ++j)
                 {
-                    using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json")
-                    {
-                        AutoFlush = true
-                    })
-                    {
-                        JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
-                        JsonSerializer serializer = new JsonSerializer();
-                        serializer.Serialize(jsonWriter, partitions[i,j].Links);
+                    for (int i = 0; i < totalRows; ++i) {
+                        using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json") {
+                            AutoFlush = true
+                        }) {
+                            JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                            JsonSerializer serializer = new JsonSerializer();
+                            serializer.Serialize(jsonWriter, partitions[i, j].Links);
+                        }
                     }
                 }
-            }
+            });
             sw.Stop();
             Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
@@ -243,7 +267,6 @@ namespace GDO.Apps.Graph
                 {
                     this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
                 }
-
                 Directory.CreateDirectory(basePath + FolderNameDigit);
             }
             else
@@ -253,58 +276,32 @@ namespace GDO.Apps.Graph
         }
 
 
-        // ***********************
-        // global dictionary variables
-        // ***********************
-        // map label to index within labels array
-        Dictionary<string, int> labelDict;
-        // map node ID to index within nodes data array
-        Dictionary<string, int> nodeDict;
-
-        // set up label dictionary to prepare for search
-        private void SetupLabelDictionary()
+        //have a dictionary of the nodes indexed by ID
+        Dictionary<string, GraphNode> _nodesDictionary;
+        private void SetupNodesDictionary()
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            this.labelDict = new Dictionary<string, int>();
-
-            for (int i = 0; i < Nodes.Count; i++)
+            _nodesDictionary = new Dictionary<string, GraphNode>();
+            foreach (GraphNode n in Nodes)
             {
-                try       // TODO HACK improve this checking!!
+                try       // TODO improve this checking
                 {
-                    if (Nodes[i].Label != null && !labelDict.ContainsKey(Nodes[i].Label)) {
-                        this.labelDict.Add(Nodes[i].Label, i);
-                    }
+                    _nodesDictionary.Add(n.ID, n);
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e + "Key '" + Nodes[i].Label + "' already exists!");
-                    GraphAppHub.self.LogTime(e + "Key '" + Nodes[i].Label + "' already exists!");
+                    Debug.WriteLine(e + "Node '" + n.ID + "' already exists!");
+                    GraphAppHub.self.LogTime(e + "Node '" + n.ID + "' already exists!");
                 }
-            }     
-            sw.Stop();
-            Debug.WriteLine("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
-            GraphAppHub.self.LogTime("Time taken to set up label dictionary: " + sw.ElapsedMilliseconds + "ms");
-        }
-
-
-        private void SetupNodeDictionary()
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            this.nodeDict = new Dictionary<string, int>();
-
-            for (int i = 0; i < Nodes.Count; i++)
-            {
-                    this.nodeDict.Add(Nodes[i].ID, i);            
             }
             sw.Stop();
             Debug.WriteLine("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to set up nodes dictionary: " + sw.ElapsedMilliseconds + "ms");
         }
-        
+
+       
         /** 
         * Auxiliar function to compute the neighbours of each node and store that information within the Node objects themselves
         */
@@ -316,14 +313,14 @@ namespace GDO.Apps.Graph
             foreach (GraphLink l in Links)
             {
                 //add the target to the source Adj variable
-                int sourceIndex = nodeDict[l.Source];
-                Nodes[sourceIndex].Adj.Add(l.Target);
-                Nodes[sourceIndex].NumLinks++;
+                GraphNode n = _nodesDictionary[l.Source];
+                n.Adj.Add(l.Target);
+                n.NumLinks++;
 
                 //add the source to the target Adj variable
-                int targetIndex = nodeDict[l.Target];
-                Nodes[targetIndex].Adj.Add(l.Source);
-                Nodes[targetIndex].NumLinks++;
+                n = _nodesDictionary[l.Target];
+                n.Adj.Add(l.Source);
+                n.NumLinks++;
             }
             sw.Stop();
             Debug.WriteLine("Time taken to compute adjacencies: " + sw.ElapsedMilliseconds + "ms");

@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
 using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Scripts.imagetiles.js", "application/x-javascript")]
@@ -48,7 +41,7 @@ namespace GDO.Apps.Images
                     ia.ImageName = imageName;
 
                     Clients.Caller.setMessage("Generating random id for the image...");
-                    String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+                    String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
                     String path1 = basePath + ia.ImageName;
                     Random imgDigitGenerator = new Random();
                     while (Directory.Exists(basePath + ia.ImageNameDigit))
@@ -71,7 +64,7 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Loading the image and creating thumbnail...");
                     //create origin
                     Image originImage = Image.FromFile(path2);
-                    Image image = null;
+                    Image image;
                     if (originImage.Height > originImage.Width) {
                         originImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
                         image = originImage;
@@ -133,34 +126,72 @@ namespace GDO.Apps.Images
                     }
                     
                     Clients.Caller.setMessage("Cropping the image...");
-                    ia.Tiles = new ImagesApp.TilesInfo[ia.TileCols, ia.TileRows];
-                    int cur = 0;
-                    for (int i = 0; i < ia.TileCols; i++)
-                    {
-                        for (int j = 0; j < ia.TileRows; j++)
-                        {
-                            Clients.Caller.setMessage("Cropping the image " + cur.ToString() + "/" + sum.ToString());
-                            ia.Tiles[i, j] = new ImagesApp.TilesInfo();
-                            Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
-                            Graphics graphics = Graphics.FromImage(curTile);
-                            graphics.DrawImage(image,
-                                new Rectangle(0, 0, ia.TileWidth, ia.TileHeight),
-                                new Rectangle(i * ia.TileWidth, j * ia.TileHeight, ia.TileWidth, ia.TileHeight),
-                                GraphicsUnit.Pixel);
-                            graphics.Dispose();
-                            path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + i + @"_" + j + @".png";
-                            ia.Tiles[i, j].left = i * ia.TileWidth;
-                            ia.Tiles[i, j].top = j * ia.TileHeight;
-                            ia.Tiles[i, j].cols = i;
-                            ia.Tiles[i, j].rows = j;
-                            curTile.Save(path2, ImageFormat.Png);
-                            cur ++;
+                    ia.Tiles = new TilesInfo[ia.TileCols, ia.TileRows];
+                    for (int col = 0; col < ia.TileCols; col++) {
+                        // so we are still getting threading issues here, Server side image processing is painful 
+                        // create an image object for each thread
+                        //    var images = Enumerable.Range(1, ia.TileCols).Select(i => (Image) image.Clone()).ToArray();
+                        //      try {
+                        //    Parallel.For(0, ia.TileCols, col => {
+
+                        for (int row = 0; row < ia.TileRows; row++) {
+                            int tileID = col*ia.TileRows + row;
+                            Clients.Caller.setMessage("Cropping the image " + tileID + "/" + sum);
+
+                            int success = 0;
+
+                            while (success > -3 && success != 1) {
+// repeat a couple of times to avoid issues with the GDI+ instability within System.Drawing
+
+                                try {
+
+                                    ia.Tiles[col, row] = new TilesInfo();
+                                    Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
+                                    Graphics graphics = Graphics.FromImage(curTile);
+                                    graphics.DrawImage(image,
+                                        new Rectangle(0, 0, ia.TileWidth, ia.TileHeight),
+                                        new Rectangle(col*ia.TileWidth, row*ia.TileHeight, ia.TileWidth,
+                                            ia.TileHeight),
+                                        GraphicsUnit.Pixel);
+                                    graphics.Dispose();
+                                    path2 = basePath + ia.ImageNameDigit + "\\" + "crop" + @"_" + col +
+                                            @"_" + row +
+                                            @".png";
+                                    ia.Tiles[col, row].left = col*ia.TileWidth;
+                                    ia.Tiles[col, row].top = row*ia.TileHeight;
+                                    ia.Tiles[col, row].cols = col;
+                                    ia.Tiles[col, row].rows = row;
+                                    curTile.Save(path2, ImageFormat.Png);
+
+                                    success = 1;
+
+                                }
+                                catch (Exception e) {
+                                    Clients.Caller.setMessage("retrying" + e.Message + e.StackTrace);
+                                    success--;
+                                }
+
+
+                            }
+
+                            if (success != 1) {
+                                Clients.Caller.setMessage("FAILED after 3 retires :-/ ");
+                            }
                         }
-                    }
+                    } //   });
+
+
+                    /*    catch (AggregateException ae) {
+                        Clients.Caller.setMessage("Encountered Aggregate Exception");
+
+                        foreach (var ex in ae.InnerExceptions) {
+                            Clients.Caller.setMessage(ex.Message + ex.StackTrace);
+                        }
+                    }*/
                     originImage.Dispose();
                     image.Dispose();
                     ia.ThumbNailImage = null;
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt")) 
+                    using (StreamWriter file = new StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt")) 
                     {
                         file.WriteLine("//ImageName ImageNameDigit ImageNaturalWidth ImageNaturalHeight TileWidth TileHeight TileCols TileRows");
                         file.WriteLine(ia.ImageName);
@@ -227,12 +258,12 @@ namespace GDO.Apps.Images
                     ia.TileCols = Convert.ToInt32(lines[7]);
                     ia.TileRows = Convert.ToInt32(lines[8]);
                     ia.ThumbNailImage = null;
-                    ia.Tiles = new ImagesApp.TilesInfo[ia.TileCols, ia.TileRows];
+                    ia.Tiles = new TilesInfo[ia.TileCols, ia.TileRows];
                     for (int i = 0; i < ia.TileCols; i++)
                     {
                         for (int j = 0; j < ia.TileRows; j++)
                         {
-                            ia.Tiles[i, j] = new ImagesApp.TilesInfo {
+                            ia.Tiles[i, j] = new TilesInfo {
                                 left = i*ia.TileWidth,
                                 top = j*ia.TileHeight,
                                 cols = i,
@@ -328,10 +359,10 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Updating thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    ia.ThumbNailImage = JsonConvert.DeserializeObject<ImagesApp.ThumbNailImageInfo>(imageInfo);
+                    ia.ThumbNailImage = JsonConvert.DeserializeObject<ThumbNailImageInfo>(imageInfo);
                     ia.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
                     double ratio = ia.ImageNaturalWidth / (ia.ThumbNailImage.imageData.width + 0.0);
-                    double tl = 0.0, tt = 0.0, tw = 0.0, th = 0.0;
+                    double tl, tt, tw, th;
                     // compute display region info
                     if (ia.Rotate == 0) {
                         tl = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
@@ -364,8 +395,8 @@ namespace GDO.Apps.Images
                     ia.DisplayRegion.height = Convert.ToInt32(Math.Ceiling(ratio * th));
 
                     // compute each screen block and related tiles info
-                    int blockImageWidth = 0, blockImageHeight = 0;
-                    double displayRatio = 0;
+                    int blockImageWidth, blockImageHeight;
+                    double displayRatio;
                     if (ia.Rotate == 0 || ia.Rotate == 180) {
                         blockImageWidth = (ia.DisplayRegion.width - 1) / ia.Section.Cols + 1; //ceiling
                         blockImageHeight = (ia.DisplayRegion.height - 1) / ia.Section.Rows + 1; //ceiling
@@ -407,7 +438,7 @@ namespace GDO.Apps.Images
                                 ia.BlockRegion[i, j].tiles = null;
                                 continue;
                             }
-                            ia.BlockRegion[i, j].tiles = new ImagesApp.DisplayTileInfo[tilesNum];
+                            ia.BlockRegion[i, j].tiles = new DisplayTileInfo[tilesNum];
                             // traverse every tile that will be shown in this screen block
                             for (int ii = tileLeftTopCol ; ii <= tileRightBottomCol ; ii++) {
                                 for (int jj = tileLeftTopRow ; jj <= tileRightBottomRow ; jj++) {
@@ -431,14 +462,15 @@ namespace GDO.Apps.Images
                                     tw = ia.TileWidth;
                                     th = ia.TileHeight;
                                     int rank = (ii - tileLeftTopCol) * (tileRightBottomRow - tileLeftTopRow + 1) + 
-                                               (jj - tileLeftTopRow); 
-                                    ia.BlockRegion[i, j].tiles[rank] = new ImagesApp.DisplayTileInfo();
-                                    ia.BlockRegion[i, j].tiles[rank].tileIdCol = ii;
-                                    ia.BlockRegion[i, j].tiles[rank].tileIdRow = jj;
-                                    ia.BlockRegion[i, j].tiles[rank].displayLeft = Convert.ToInt32(Math.Floor(displayRatio * tl));
-                                    ia.BlockRegion[i, j].tiles[rank].displayTop = Convert.ToInt32(Math.Floor(displayRatio * tt));
-                                    ia.BlockRegion[i, j].tiles[rank].displayWidth = Convert.ToInt32(Math.Ceiling(displayRatio * tw));
-                                    ia.BlockRegion[i, j].tiles[rank].displayHeight = Convert.ToInt32(Math.Ceiling(displayRatio * th));
+                                               (jj - tileLeftTopRow);
+                                    ia.BlockRegion[i, j].tiles[rank] = new DisplayTileInfo {
+                                        tileIdCol = ii,
+                                        tileIdRow = jj,
+                                        displayLeft = Convert.ToInt32(Math.Floor(displayRatio*tl)),
+                                        displayTop = Convert.ToInt32(Math.Floor(displayRatio*tt)),
+                                        displayWidth = Convert.ToInt32(Math.Ceiling(displayRatio*tw)),
+                                        displayHeight = Convert.ToInt32(Math.Ceiling(displayRatio*th))
+                                    };
                                 }
                             }
                         }
@@ -462,10 +494,11 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting tiles information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    if (ia.BlockRegion[col, row].tiles != null)
-                        Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width / ia.Section.Cols, ia.Section.Height / ia.Section.Rows, JsonConvert.SerializeObject(ia.BlockRegion[col, row].tiles));
-                    else
-                        Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width / ia.Section.Cols, ia.Section.Height / ia.Section.Rows, "");
+                    Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
+                        ia.Section.Height/ia.Section.Rows,
+                        ia.BlockRegion[col, row].tiles != null
+                            ? JsonConvert.SerializeObject(ia.BlockRegion[col, row].tiles)
+                            : "");
                     Clients.Caller.setMessage("Requested tiles information Success!");
                 }
                 catch (Exception e)
@@ -484,15 +517,10 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    if (ia.ThumbNailImage != null)
-                    {
-                        Clients.Caller.setThumbNailImageInfo(JsonConvert.SerializeObject(ia.ThumbNailImage));
-                    }
-                    else
-                    {
-                        Clients.Caller.setThumbNailImageInfo(null);
-                    }
-                    
+                    Clients.Caller.setThumbNailImageInfo(ia.ThumbNailImage != null
+                        ? JsonConvert.SerializeObject(ia.ThumbNailImage)
+                        : null);
+
                     Clients.Caller.setMessage("Requested thumbnail image information Success!");
                 }
                 catch (Exception e)

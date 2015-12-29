@@ -2,6 +2,12 @@
 
 namespace GDO.Apps.Graph.Domain
 {
+    public class GraphInfo
+    {
+        public List<string> NodeMandatoryFields { get; set; }
+        public List<string> NodeOtherFields { get; set; }
+        public List<string> LinkKeys { get; set; }
+    }
     public class Position
     {
         public float X { get; set; }
@@ -29,23 +35,25 @@ namespace GDO.Apps.Graph.Domain
     public class GraphNode
     {
         public string ID { get; set; }
-        public string Label { get; set; }
         public Position Pos { get; set; }
+        public string Label { get; set; }
         public float Size { get; set; }
         public int R { get; set; }
         public int G { get; set; }
         public int B { get; set; }
+        public Dictionary<string, string> Attrs { get; set; }
         public int NumLinks { get; set; }
         public List<string> Adj { get; set; }  // adj = list of connectedNodes
     }
 
     public class GraphLink
     {
-        public Position StartPos { get; set; }
-        public Position EndPos { get; set; }
         public string Source { get; set; }
         public string Target { get; set; }
+        public Position StartPos { get; set; }
+        public Position EndPos { get; set; }
         public float Weight { get; set; }
+        public Dictionary<string, string> Attrs { get; set; }
     }
 
     public class Partition

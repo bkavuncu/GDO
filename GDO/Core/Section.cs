@@ -30,6 +30,8 @@ namespace GDO.Core
         /// Initializes a new instance of the <see cref="Section"/> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
+        /// <param name="col">top left??</param>
+        /// <param name="row">top left ??</param>
         /// <param name="cols">The cols.</param>
         /// <param name="rows">The rows.</param>
         public Section(int id, int col, int row, int cols, int rows)
@@ -58,19 +60,12 @@ namespace GDO.Core
                     check = false;
                 }
             }
+            
             return check;
         }
 
-        public bool IsDeployed()
-        {
-            if (AppInstanceId > -1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        public bool IsDeployed() {
+            return AppInstanceId > -1;
         }
 
         /// <summary>
@@ -143,7 +138,7 @@ namespace GDO.Core
         public string SerializeJSON()
         {
             this.NodeMap = GetNodeMap();
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

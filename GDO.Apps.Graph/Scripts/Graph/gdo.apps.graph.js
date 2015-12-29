@@ -10,8 +10,11 @@ $(function () {
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Loaded Graph Renderer JS');
 
     // arrays to store data
-    var links, nodes, mostConnectedNodes = [];
+    var links, nodes, allnodes, mostConnectedNodes = [];
     var minLinks = 3;
+
+    var highlightedNodes = [];  //stores the ID of the nodes matching the query
+    var highlightedNeighbours = [];  //stores the ID of the neighbour nodes of those matching the query
 
     // boolean to track if current graph is zoomed
     var globalZoomed;
@@ -24,14 +27,16 @@ $(function () {
     var normalStrokeWidth = 1;
     var normalFontSize = 20;
 
-    
-    var blueColor = { r: 100, g: 175, b: 255 }; 
-    var greenColor = { r: 75, g: 255, b: 125 }; 
+
+    var blueColor = { r: 100, g: 175, b: 255 };
+    var greenColor = { r: 75, g: 255, b: 125 };
     var orangeColor = { r: 255, g: 150, b: 50 };
     var redColor = { r: 255, g: 50, b: 50 };
 
     var currentColor = blueColor;    // rgb setting to track current color scheme
     var highlightedColor = { r: 250, g: 255, b: 0 };   // rgb setting for highlighted nodes
+    var highlightedColor2 = { r: 255, g: 153, b: 0 };   // rgb setting for highlighted nodes
+    var highlightedColor3 = redColor;
 
 
     var maxLinks = 5;
@@ -73,66 +78,108 @@ $(function () {
         scroll_bottom(logDom[0]);
     }
 
-    var overallFolder; // defined in renderGraph()
 
-
-    $.connection.graphAppHub.client.renderLabels = function () {
-            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+    $.connection.graphAppHub.client.renderLabels = function (field) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding =  globalZoomed ? 5 : 3;
 
             nodes.forEach(function (node) {
                 labelsDom.append("text")
-                    .attr("x", node.Pos.X + padding)
-                    .attr("y", node.Pos.Y - padding)
-                    .text(node.Label)
+                    .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                    .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
+                    .text(node.Attrs[field] ? node.Attrs[field] : "")  // if the field does not exist for the curent node, print nothing
                     .attr("font-size", fontSize)
                     .attr("fill", "white");    // Labels: normal mode
             });
         }
     }
 
-    $.connection.graphAppHub.client.renderSearch = function (searchquery) {
+    $.connection.graphAppHub.client.hideLabels = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
+            while (labelsDom.firstChild) {
+                labelsDom.removeChild(labelsDom.firstChild);
+            }
+        }
+    }
+
+
+    $.connection.graphAppHub.client.renderSearch = function (searchquery, field) {
 
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
             var linksDom = highlightDom.append("g").attr("id", "sublinks");
 
-            renderSearchNodes(searchquery);
-            //renderSearchLinks(searchquery);
+            findMatchingNodes(); // To render links properly, each browser needs to know all matched nodes.
+            renderSearchNodes(); // Each browser renders its mathching and neighbour nodes
+            renderSearchLinks(); // Each browser renders its links
 
-            function renderSearchNodes(searchquery) {
+            function findMatchingNodes() {
+                //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var
+                // the neighbour nodes are also stored in the highlightedNeighbours var
+                highlightedNodes = [];  // empty it from previous searches
+                highlightedNeighbours = [];  // empty it from previous searches
 
+                var queryRE = new RegExp(searchquery, 'i'); // case-insensitive
+                allnodes.forEach(function(node) {
+                    if (node.Attrs[field]) { // if the field does not exist for the curent node, skip
+                        if (node.Attrs[field].search(queryRE) != -1) {
+                            highlightedNodes.push(node.ID);
+                            node.Adj.forEach(function(neighbour) { // save all its neighbours in a variable
+                                highlightedNeighbours.push(neighbour);
+                            });
+                        }
+                    }
+                });
+            }
+
+            function renderSearchNodes() {
                 //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
-                nodes.forEach(function(node) {
-                    if (node.Label.search(searchquery) != -1) {
+                //Each browser render the matching and neighbour nodes among its nodes. 
+                nodes.forEach(function (node) {
+                    // is this node a match?
+                    if (highlightedNodes.indexOf(node.ID) != -1) {
                         highlightDom.append("circle")
                             .attr("r", Math.ceil(node.Size) + 5)
                             .attr("cx", node.Pos.X)
                             .attr("cy", node.Pos.Y)
-                            .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")"); // Nodes: search mode , selected   
-                    } /*else {
+                            .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                    }
+                    // else, is this a neighbour?
+                    else if (highlightedNeighbours.indexOf(node.ID) != -1) {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size) + 5)
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")");
+                    }
+                    /* // do nothing (or paint in a another way)
+                    else {
                         highlightDom.append("circle")
                             .attr("r", Math.ceil(node.Size))
                             .attr("cx", node.Pos.X)
                             .attr("cy", node.Pos.Y)
                             .attr("fill", "gray"); // Nodes: search mode, not selected
-                    } */
+                        } */
                 });
             }
 
 
-            function renderSearchLinks(searchquery) {
+            function renderSearchLinks() {
 
                 var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
+                //because highlightedNodes has the relevant nodes for the whole graph, this will work even though matching nodes not being in the target browser
                 links.forEach(function (link) {
-                    if (link.Source.search(searchquery) != 1 || link.Target.search(searchquery) != 1) {
+                    //TODO we could improve this by using different colours depending on whether the searched node is the source or the target
+                    if (highlightedNodes.indexOf(link.Source) != -1
+                        || highlightedNodes.indexOf(link.Target) != -1) {
 
                         linksDom.append("line")
                             .attr("x1", link.StartPos.X)
@@ -141,8 +188,6 @@ $(function () {
                             .attr("y2", link.EndPos.Y)
                             .attr("stroke-width", strokeWidth)
                             .attr("stroke", "yellow");
-                    } else {
-                        console.log("no link!");
                     }
                 });
 
@@ -150,22 +195,31 @@ $(function () {
         }
     }
 
-
-    $.connection.graphAppHub.client.renderSearchLabels = function (searchquery) {
+    $.connection.graphAppHub.client.renderSearchLabels = function (searchquery, field) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding = globalZoomed ? 4 : 3;
 
             nodes.forEach(function (node) {
-                if (node.Label.search(searchquery) != -1) {
+                // is this node a match?
+                if (highlightedNodes.indexOf(node.ID) != -1) {
                     highlightDom.append("text")
-                        .attr("x", node.Pos.X + padding)
-                        .attr("y", node.Pos.Y - padding)
-                        .text(node.Label)
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
+                        .text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing (should exist unless the user has changed the droplist...)
                         .attr("font-size", fontSize)
-                        .attr("fill", "yellow"); // Labels: search mode
+                        .attr("fill", "rgb(" + highlightedColor3.r + "," + highlightedColor3.g + "," + highlightedColor3.b + ")");
+                }
+                // else, is this a neighbour?
+                else if (highlightedNeighbours.indexOf(node.ID) != -1) {
+                    highlightDom.append("text")
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
+                        //.text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing
+                        .text(node.Label) // print the label instead
+                        .attr("font-size", fontSize)
+                        .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")"); 
                 }
             });
 
@@ -181,6 +235,7 @@ $(function () {
             }
         }
     }
+
 
     $.connection.graphAppHub.client.setRGB = function (colourScheme) {
         gdo.consoleOut('.GRAPHRENDERER', 1, 'Setting colour scheme to: ' + colourScheme);
@@ -217,7 +272,6 @@ $(function () {
             //var radius = globalZoomed ? zoomedRadius + 2 : normalRadius + 2;
 
             mostConnectedNodes.forEach(function (node) {
-
                 if (node.NumLinks >= numLinks) {  // mostConnectedNodes has all nodes with numLinks > 3
                     highlightDom.append("circle")
                         .attr("r", Math.ceil(node.Size))
@@ -236,14 +290,12 @@ $(function () {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
             var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding = globalZoomed ? 5 : 3;
 
             mostConnectedNodes.forEach(function (node) {
-
                 if (node.NumLinks >= numLinks) {   // mostConnectedNodes contains nodes with numLinks > 3
                     highlightDom.append("text")
-                        .attr("x", node.Pos.X + padding)
-                        .attr("y", node.Pos.Y - padding)
+                        .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
+                        .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
                         .text(node.Label)
                         .attr("font-size", fontSize)
                         .attr("fill", "yellow");    // Labels: highlighted mode        
@@ -270,20 +322,21 @@ $(function () {
 
             var nodesDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("nodes");
 
-            var radius = globalZoomed ? zoomedRadius : normalRadius;
+            //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
             nodes.forEach(function (node) {
 
                 var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
                 nodesDom.append("circle")
-                    .attr("r", radius)
+                    .attr("r", Math.ceil(node.Size)) // radius
                     .attr("cx", node.Pos.X)
                     .attr("cy", node.Pos.Y)
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
             });
         }
     }
+
 
     $.connection.graphAppHub.client.hideLinks = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -314,37 +367,6 @@ $(function () {
         }
     }
 
-
-
-    $.connection.graphAppHub.client.hideLabels = function () {
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
-            while (labelsDom.firstChild) {
-                labelsDom.removeChild(labelsDom.firstChild);
-            }
-        }
-    }
-
-    $.connection.graphAppHub.client.renderLabels = function () {
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
-
-            var fontSize = globalZoomed ? zoomedFontSize : normalFontSize;
-            var padding =  globalZoomed ? 5 : 3;
-
-            nodes.forEach(function (node) {
-
-                labelsDom.append("text")
-                    .attr("x", node.Pos.X + padding)
-                    .attr("y", node.Pos.Y - padding)
-                    .text(node.Label)
-                    .attr("font-size", fontSize)
-                    .attr("fill", "white");    // Labels: normal mode
-            });
-        }
-    }
 
     $.connection.graphAppHub.client.pan = function (direction) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -764,7 +786,7 @@ $(function () {
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
                                         .attr("fill", "red");    // Nodes: UNUSED??
                                 });
-                               
+
                             }
                         }
                     }
@@ -812,13 +834,13 @@ $(function () {
     $.connection.graphAppHub.client.renderGraph = function (folderNameDigit, zoomed) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
+            //alert("RENDER GRAPH: this should be called only once per graph...")
+
             gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance - ' + gdo.clientId + ": Downloading Graph : " + "AppInstance_" + gdo.net.node[gdo.clientId].appInstanceId + "Partition_" + gdo.net.node[gdo.clientId].sectionRow + "_" + gdo.net.node[gdo.clientId].sectionCol);
 
             var basePath, fileName;
             var clientRow = gdo.net.node[gdo.clientId].sectionRow;
             var clientCol = gdo.net.node[gdo.clientId].sectionCol;
-
-            overallFolder = folderNameDigit;
 
             if (!zoomed) {
                 globalZoomed = false;
@@ -832,7 +854,8 @@ $(function () {
             }
 
             var nodesFilePath = basePath + "\\nodes\\" + fileName + ".json";
-            var linksFilePath = basePath + "\\links\\" + fileName + ".json";    
+            var linksFilePath = basePath + "\\links\\" + fileName + ".json";
+            var allnodesFilePath = basePath + "\\nodes\\" + "all" + ".json";
 
             var settings = {
                 // for SVG translation in each browser, since coordinates of data are spread across the whole section
@@ -1186,11 +1209,24 @@ $(function () {
 
                     console.log("Time before rendering: " + window.performance.now());
 
+                    loadAllNodes();
+
                     console.log("Time before reading nodesPos.json: " + window.performance.now());
                     renderNodes(nodesFilePath);
                     console.log("Time before reading linksPos.json: " + window.performance.now());
                     renderLinks(linksFilePath);
 
+                    function loadAllNodes() {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", allnodesFilePath, true);
+                        xhr.send();
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                allnodes = JSON.parse(xhr.responseText);
+                            }
+                        }
+                    }
 
                     // new optimised rendering, to read from distributed json files
                     function renderNodes(file) {
@@ -1227,16 +1263,15 @@ $(function () {
 
                                     if (node.NumLinks > minLinks) {
                                         mostConnectedNodes.push(node);
-                                    } 
+                                    }
 
                                     //var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
-
                                     nodesDom.append("circle")
                                         .attr("r", Math.ceil(node.Size)) // radius
                                         .attr("cx", node.Pos.X)
                                         .attr("cy", node.Pos.Y)
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
-                                        .attr("fill","rgb(" + node.R + "," + node.G + "," + node.B + ")");
+                                        .attr("fill", "rgb(" + node.R + "," + node.G + "," + node.B + ")");
                                 });
 
                                 console.log("Time after appending nodes: " + window.performance.now());
@@ -1262,12 +1297,11 @@ $(function () {
                                 var strokeWidth = zoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
                                 links.forEach(function (link) {
-
                                     linksDom.append("line")
-                                        .attr("x1", link.StartPos.X)   
-                                        .attr("y1", link.StartPos.Y) 
-                                        .attr("x2", link.EndPos.X) 
-                                        .attr("y2", link.EndPos.Y) 
+                                        .attr("x1", link.StartPos.X)
+                                        .attr("y1", link.StartPos.Y)
+                                        .attr("x2", link.EndPos.X)
+                                        .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", strokeWidth)
                                         .attr("stroke", "#B8B8B8");
                                 });

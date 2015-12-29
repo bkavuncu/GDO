@@ -27,7 +27,7 @@ namespace GDO.Apps.Graph
         }
 
  
-        public void InitiateProcessing(int instanceId, string inputFolder)
+        public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
 
@@ -41,8 +41,8 @@ namespace GDO.Apps.Graph
                     // create GraphApp project and call its function to process graph
                     ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
 
-                    Clients.Caller.setMessage("Initiating processing of raw graph data in folder: " + inputFolder);
-                    string folderNameDigit = ga.ProcessGraph(inputFolder, false, null);
+                    Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
+                    string folderNameDigit = ga.ProcessGraph(filename, false, null);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
@@ -51,12 +51,12 @@ namespace GDO.Apps.Graph
 
                     // After rendering, start processing graph for zooming
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
-                    ga.ProcessGraph(inputFolder, true, folderNameDigit);
+                    ga.ProcessGraph(filename, true, folderNameDigit);
                     Clients.Caller.setMessage("Graph is now ready for zooming.");
                 }
                 catch (WebException e)
                 {
-                    Clients.Caller.setMessage("Error: Files cannot be loaded. Please check if folder name is valid.");
+                    Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
                     Debug.WriteLine(e);
                 }
                 catch (Exception e)
@@ -148,14 +148,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void ShowLabels(int instanceId)
+        public void ShowLabels(int instanceId, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Rendering labels.");
-                    Clients.Group("" + instanceId).renderLabels();
+                    Clients.Caller.setMessage("Rendering '" + field +"' field as labels.");
+                    Clients.Group("" + instanceId).renderLabels(field);
                     Clients.Caller.setMessage("Labels are now being rendered.");
                 }
                 catch (Exception e)
@@ -339,19 +339,19 @@ namespace GDO.Apps.Graph
 
 
 
-        public void InitiateSearch(int instanceId, string keywords)
+        public void InitiateSearch(int instanceId, string keywords, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Initiating processing of search query: " + keywords);
+                    Clients.Caller.setMessage("Initiating processing of search query: '" + keywords + "' at " + field);
 
                     Clients.Group("" + instanceId).hideHighlight();
                     Clients.Group("" + instanceId).hideLabels();
                     Clients.Group("" + instanceId).hideLinks();
 
-                    Clients.Group("" + instanceId).renderSearch(keywords);
+                    Clients.Group("" + instanceId).renderSearch(keywords, field);
                     Clients.Caller.setMessage("Search result is now being rendered.");
                 }
                 catch (Exception e)
@@ -363,14 +363,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void RenderSearchLabels(int instanceId, string keywords)
+        public void RenderSearchLabels(int instanceId, string keywords, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Rendering labels for selected nodes.");
-                    Clients.Group("" + instanceId).renderSearchLabels(keywords);
+                    Clients.Group("" + instanceId).renderSearchLabels(keywords, field);
                     Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
                 }
                 catch (Exception e)

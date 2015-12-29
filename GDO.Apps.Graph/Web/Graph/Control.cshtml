@@ -1,8 +1,4 @@
-﻿@using System.IO
-@using System.Web.Helpers
-@using System.Web.UI.WebControls
-@using GDO.Core
-@{
+﻿@{
     Layout = null;
 }
 
@@ -82,8 +78,8 @@
         }
 
         .input_field_div {
-            margin: 0px;
-            padding: 0px;
+            margin: 0;
+            padding: 0;
         }
 
         .input_field {
@@ -92,7 +88,7 @@
             border: 1px solid #333;
             background: #333;
             color: #FFF;
-            padding: 0px;
+            padding: 0;
             display: inline-block;
             position: relative;
             text-align: center;
@@ -107,298 +103,346 @@
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 
+    <script>
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+        });
+
+        $(document).ready(function () {
+            $('.btn-file :file').on('fileselect', function (event, numFiles, label) {
+
+                var input = $(this).parents('.input-group').find(':text'),
+                    log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+                if (input.length) {
+                    input.val(log);
+                }
+            });
+        });
+
+        $(function () {
+
+            var gdo = parent.gdo;
+
+            $("#hide_links").click(function () {
+                gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
+            });
+
+
+            $("#show_links").click(function () {
+                gdo.net.app["Graph"].server.showLinks(gdo.controlId);
+            });
+
+
+            $("#hide_labels").click(function () {
+                gdo.net.app["Graph"].server.hideLabels(gdo.controlId);
+            });
+
+
+            $("#show_labels").click(function () {
+                gdo.net.app["Graph"].server.showLabels(gdo.controlId, $("#select_label").val());
+            });
+
+            // trigger panning
+            $("#up").click(function () {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "up");
+            });
+
+
+            $("#left").click(function () {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "left");
+            });
+
+
+            $("#down").click(function () {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "down");
+            });
+
+            $("#right").click(function () {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
+            });
+
+            /*
+            // Panning using key is disabled for now
+            // because it's being triggered unnecessarily sometimes when typing
+
+            window.addEventListener('keydown', processKeyPress, true);
+
+            function processKeyPress(evt) {
+
+                var key = evt.keyCode;
+                var direction = null;
+
+                if (key == 37) {    // default code for arrow keys
+                    direction = "left";
+                } else if (key == 38) {
+                    direction = "up";
+                } else if (key == 39) {
+                    direction = "right";
+                } else if (key == 40) {
+                    direction = "down";
+                }
+
+                if (direction != null) {
+                    gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
+                }
+            }
+
+            */
+
+            /* //TODO zooming functionality removed
+            $("#zoomIn").click(function () {
+                gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
+            });
+
+            $("#zoomOut").click(function () {
+                gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+            });
+            */
+
+            $("#blue").click(function () {
+                gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
+            });
+
+            $("#green").click(function () {
+                gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "green");
+            });
+
+            $("#orange").click(function () {
+                gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
+            });
+
+            $("#red").click(function () {
+                gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "red");
+            });
+
+
+            $("#show_mostConnectedNodes").click(function () {
+                gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering most connected nodes.");
+
+                gdo.net.app["Graph"].server.renderMostConnectedNodes(gdo.controlId, parseInt($("#numLinks").val()));
+            });
+
+            $("#show_mostConnectedLabels").click(function () {
+                gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of most connected nodes.");
+
+                gdo.net.app["Graph"].server.renderMostConnectedLabels(gdo.controlId, parseInt($("#numLinks").val()));
+            });
+
+            $("#hide_mostConnected").click(function () {
+                gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
+            });
+
+
+            // Search event listeners
+
+            $("#startSearch").click(function () {
+                gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
+
+                gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchField").val());
+            });
+
+
+            $("#show_searchLabels").click(function () {
+                gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
+
+                gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchField").val());
+            });
+
+            $("#hide_sublinks").click(function () {
+                gdo.net.app["Graph"].server.hideSublinks(gdo.controlId);
+            });
+
+            $("#hide_search").click(function () {
+                gdo.net.app["Graph"].server.hideSearch(gdo.controlId);
+            });
+
+            gdo.net.app["Graph"].initControl();
+        });
+    </script>
+
     <div class="wrapper" style="width: 97%">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h6><i class='fa  fa-folder-open fa-fw'></i>&nbsp;Input</h6>
-                    </div>
-                    <div class="panel-body">
-                        <fieldset>
-                            <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
-                                <tr>
-                                    <td>
-                                        <div style="background-color: transparent">
-                                            <h6>Input Folder Name:</h6>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="input_field_div">
-                                            <input type="text" class="input_field" id="folderName" size="75">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button type='button' id="update_folderName" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Render Graph</button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Messages</h6>
-                    </div>
-                    <div class="panel-body">
-                        <h6 id="message_from_server">&nbsp;</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h6><i class='fa  fa-sliders  fa-fw'></i>&nbsp;Control</h6>
-                    </div>
-                    <div class="panel-body">
-                        <fieldset id="graph_UI">
-                            <table style="width: 100%;background: transparent">
-                                <tr>
-                                    <td style="width:50%;">
-                                        <label> Toggle links </label>
-                                        <br />
-                                        <button class='btn btn-default' id="show_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Show links</button>
-                                        <button class='btn btn-default' id="hide_links"><i class='fa  fa-unlink  fa-fw'></i>&nbsp;Hide links</button>
-                                        <br />
-                                        <br />
-                                        <br />
-                                        <label> Toggle labels </label>
-                                        <br />
-                                        <button class='btn btn-default' id="show_labels">Show labels</button>
-                                        <button class='btn btn-default' id="hide_labels">Hide labels</button>
-                                        <br />
-                                        <br />
-                                        <br />
-                                        <label> Toggle panning </label>
-                                        <br />
-                                        <button class='btn btn-default' id="up"><i class='fa  fa-arrow-circle-up fa-fw'></i>&nbsp;Up</button>
-                                        <button class='btn btn-default' id="left"><i class='fa  fa-arrow-circle-left  fa-fw'></i>&nbsp;Left</button>
-                                        <button class='btn btn-default' id="down"><i class='fa  fa-arrow-circle-down fa-fw'></i>&nbsp;Down</button>
-                                        <button class='btn btn-default' id="right"><i class='fa  fa-arrow-circle-right fa-fw'></i>&nbsp;Right</button>
-                                        <br />
-                                        <br />
-                                        <br />
-                                        <label> Toggle zooming </label>
-                                        <br />
-                                        <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
-                                        <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
-                                        <br />
-                                        <br />
-                                        <br />
-                                    </td>
-                                    <td style="width:50%;">
-                                        <label> Colour Scheme </label>
-                                        <br />
-                                        <button class='btn btn-primary' id="blue">Blue</button>
-                                        <button class='btn btn-success' id="green">Green</button>
-                                        <button class='btn btn-warning' id="orange">Orange</button>
-                                        <button class='btn btn-danger' id="red">Red</button>
-                                        <br />
-                                        <br />
-                                        <br />
-                                        <label> Most connected nodes </label>
-                                        <br />
-                                        <p id="mostConnected">Input no. of links: </p>
+        @{
+            var path = "";
+            var filename = "";
+            if (IsPost)
+            {
 
-                                        <table style="border-collapse: separate; border-spacing: 1px;">
-                                            <tr>
-                                                <td><input class="input_field" size="175" type="text" id="numLinks" /></td>
-                                                <td><button class='btn btn-default' id="show_mostConnectedNodes">Highlight nodes</button>
-                                                </td>
-                                                <td>
-                                                    <button class='btn btn-default' id="show_mostConnectedLabels">Show labels</button>
-                                                <td>
-                                                    <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
-                                                </td>
-                                            </tr>
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null && !file.FileName.IsEmpty())   //need to add this check, because iot tried to save empty file in subsequent button clicks
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    //foldername
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
+                    path = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/") + filename;
+                    if (File.Exists(path)) {  // if the file already exists, delete it
+                        File.Delete(path);
+                    }
+                    file.SaveAs(path);
+                    }
+                }
+        }
+        <div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Graph</h6>
+                        </div>
+                        <div class="panel-body">
+                            <fieldset>
+                                <form id="submit_graph_form" action="" method="post" enctype="multipart/form-data">
+                                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                        <tr>
+                                            <td>
+                                                <div style="background-color: transparent">
+                                                    <span class="btn btn-primary btn-file btn-block" style="border-color: transparent;"><i class='fa  fa-file-picture-o fa-fw'></i>&nbsp;Choose File <input type="file" name="Graph" class="upload" id="select_graph"></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input id="submit_graph" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Render Graph" />
+                                            </td>
+                                        </tr>
                                     </table>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Messages</h6>
+                        </div>
+                        <div class="panel-body">
+                            <h6 id="message_from_server">&nbsp;</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-sliders  fa-fw'></i>&nbsp;Control</h6>
+                        </div>
+                        <div class="panel-body">
+                            <fieldset id="graph_UI">
+                                <table style="width: 100%; background: transparent">
+                                    <tr>
+                                        <td style="width: 50%;">
+                                            <label> Toggle links </label>
+                                            <br />
+                                            <button class='btn btn-default' id="show_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Show links</button>
+                                            <button class='btn btn-default' id="hide_links"><i class='fa  fa-unlink  fa-fw'></i>&nbsp;Hide links</button>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <label> Toggle labels </label>
+                                            <br/>
+                                            <select id="select_label" required style="color: black;">
+                                                <option value="label">Label</option>
+                                                <option value="title">Title</option>
+                                                <option value="keywords">Keywords</option>
+                                            </select>
+                                            <button class='btn btn-default' id="show_labels">Show labels</button>
+                                            <button class='btn btn-default' id="hide_labels">Hide labels</button>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <label> Toggle panning </label>
+                                            <br />
+                                            <button class='btn btn-default' id="up"><i class='fa  fa-arrow-circle-up fa-fw'></i>&nbsp;Up</button>
+                                            <button class='btn btn-default' id="left"><i class='fa  fa-arrow-circle-left  fa-fw'></i>&nbsp;Left</button>
+                                            <button class='btn btn-default' id="down"><i class='fa  fa-arrow-circle-down fa-fw'></i>&nbsp;Down</button>
+                                            <button class='btn btn-default' id="right"><i class='fa  fa-arrow-circle-right fa-fw'></i>&nbsp;Right</button>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <!-- //TODO zooming functionality removed
+                                            <label> Toggle zooming </label>
+                                            <br/>
+                                            <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
+                                            <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
+                                            <br/>
+                                            <br/>
+                                            <br/>
+                                            -->
+                                        </td>
+                                        <td style="width: 50%;">
+                                            <label> Colour Scheme </label>
+                                            <br />
+                                            <button class='btn btn-primary' id="blue">Blue</button>
+                                            <button class='btn btn-success' id="green">Green</button>
+                                            <button class='btn btn-warning' id="orange">Orange</button>
+                                            <button class='btn btn-danger' id="red">Red</button>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <label> Most connected nodes </label>
+                                            <br />
+                                            <p id="mostConnected">Input no. of links: </p>
 
-                            <br />
-                            <br />
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td><input class="input_field" size="175" type="text" id="numLinks" /></td>
+                                                    <td><button class='btn btn-default' id="show_mostConnectedNodes">Highlight nodes</button></td>
+                                                    <td><button class='btn btn-default' id="show_mostConnectedLabels">Show labels</button></td>
+                                                    <td><button class='btn btn-default' id="hide_mostConnected">Hide all</button></td>
+                                                </tr>
+                                            </table>
 
-                            <label> Search Labels </label>
-                            <br />
-                            <table style="border-collapse: separate; border-spacing: 1px;">
-                                <tr>
-                                    <td><input class="input_field" size="75" type="text" id="searchKeywords" /></td>
-                                    <td><button class='btn btn-default' id="startSearch">Search</button></td>
-                                    <td><button class='btn btn-default' id="show_searchLabels">Show labels</button></td>
-                                    <td><button class='btn btn-default' id="hide_sublinks">Hide links</button></td>
-                                    <td><button class='btn btn-default' id="hide_search">Hide all</button></td>
-                                </tr>
-                            </table>
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            </td>
-                            </tr>
+                                            <br />
+                                            <br />
 
-                            </table>
-                        </fieldset>
+                                            <label> Search Labels </label>
+                                            <br />
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <select id="select_SearchField" required style="color: black;">
+                                                        <option value="label">Label</option>
+                                                        <option value="title">Title</option>
+                                                        <option value="keywords">Keywords</option>
+                                                    </select>
+                                                    <td><input class="input_field" size="75" type="text" id="searchKeywords"/></td>
+                                                    <td><button class='btn btn-default' id="startSearch">Search</button></td>
+                                                    <td><button class='btn btn-default' id="show_searchLabels">Show labels</button></td>
+                                                    <td><button class='btn btn-default' id="hide_sublinks">Hide links</button></td>
+                                                    <td><button class='btn btn-default' id="hide_search">Hide all</button></td>
+                                                </tr>
+                                            </table>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        var gdo = parent.gdo;
+    @if (path != "")
+    {
+        <script>
+            $(function () {
+                $(document).ready(function () {
+                    var gdo = parent.gdo;
+                    gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Uploaded Graph " + "@filename");
+                    gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, "@filename");
+                });
 
-        $(function () {
-            $(document).ready(function () {
-                gdo.net.app["Graph"].initControl();
             });
-        });
-
-        $("#update_folderName").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Initiating processing for folder " + $("#folderName").val());
-
-            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#folderName").val());
-
-            // nothing to request render on control page yet, implement this later if necessary
-            // gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
-        });
-
-        $("#hide_links").click(function () {
-            gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
-        });
-
-
-        $("#show_links").click(function () {
-            gdo.net.app["Graph"].server.showLinks(gdo.controlId);
-        });
-
-
-        $("#hide_labels").click(function () {
-            gdo.net.app["Graph"].server.hideLabels(gdo.controlId);
-        });
-
-
-        $("#show_labels").click(function () {
-            gdo.net.app["Graph"].server.showLabels(gdo.controlId);
-        });
-
-        // trigger panning
-        $("#up").click(function () {
-            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "up");
-        });
-
-
-        $("#left").click(function () {
-            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "left");
-        });
-
-
-        $("#down").click(function () {
-            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "down");
-        });
-
-        $("#right").click(function () {
-            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
-        });
-
-        /*
-        // Panning using key is disabled for now
-        // because it's being triggered unnecessarily sometimes when typing
-
-        window.addEventListener('keydown', processKeyPress, true);
-
-        function processKeyPress(evt) {
-
-            var key = evt.keyCode;
-            var direction = null;
-
-            if (key == 37) {    // default code for arrow keys
-                direction = "left";
-            } else if (key == 38) {
-                direction = "up";
-            } else if (key == 39) {
-                direction = "right";
-            } else if (key == 40) {
-                direction = "down";
-            }
-
-            if (direction != null) {
-                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
-            }
-        }
-
-        */
-
-
-        $("#zoomIn").click(function () {
-            gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
-        });
-
-        $("#zoomOut").click(function () {
-            gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
-        });
-
-        $("#blue").click(function () {
-            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
-        });
-
-        $("#green").click(function () {
-            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "green");
-        });
-
-        $("#orange").click(function () {
-            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
-        });
-
-        $("#red").click(function () {
-            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "red");
-        });
-
-
-        $("#show_mostConnectedNodes").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering most connected nodes.");
-
-            gdo.net.app["Graph"].server.renderMostConnectedNodes(gdo.controlId, parseInt($("#numLinks").val()));
-        });
-
-        $("#show_mostConnectedLabels").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of most connected nodes.");
-
-            gdo.net.app["Graph"].server.renderMostConnectedLabels(gdo.controlId, parseInt($("#numLinks").val()));
-        });
-
-        $("#hide_mostConnected").click(function () {
-            gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
-        });
-
-
-        // Search event listeners
-
-        $("#startSearch").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
-
-            gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val());
-        });
-
-
-        $("#show_searchLabels").click(function () {
-            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
-
-            gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#searchKeywords").val());
-        });
-
-        $("#hide_sublinks").click(function () {
-            gdo.net.app["Graph"].server.hideSublinks(gdo.controlId);
-        });
-
-        $("#hide_search").click(function () {
-            gdo.net.app["Graph"].server.hideSearch(gdo.controlId);
-        });
-
-    </script>
-
+        </script>
+    }
 </body>
-
 </html>

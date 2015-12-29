@@ -246,7 +246,9 @@ gdo.net.initPeer = function () {
     gdo.consoleOut('.NET', 2, 'Initializing Peer Connections');
    // gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); // public server for testing outside of college
 
-    gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
+    //gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
+    gdo.net.peer = new Peer({ host: "146.169.32.109", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
+
     gdo.net.peer.on('open', function(peerId) {
         gdo.consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         gdo.net.node[gdo.clientId].peerId = peerId;
