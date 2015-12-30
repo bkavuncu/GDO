@@ -5,11 +5,14 @@ const BaseStore = require('./BaseStore'),
 class DatasetStore extends BaseStore {
     constructor() {
         super();
-
-        this.miniSets = Immutable.Map();
-        this.selected = null;
+        this._clear();
 
         this.subscribe(() => this._registerToActions.bind(this))
+    }
+
+    _clear () {
+        this.miniSets = Immutable.Map();
+        this.selected = null;
     }
 
     _registerToActions (action) {
@@ -24,6 +27,9 @@ class DatasetStore extends BaseStore {
             case 'unloadDataset':
                 this.selected = null;
                 break;
+            case 'restoreState':
+                var {minisets} = action.data;
+                this._fromHerculesObject(minisets);
         }
         this.emitChange();
     }
@@ -54,6 +60,18 @@ class DatasetStore extends BaseStore {
 
     getAllSets () {
         return this.miniSets.toList();
+    }
+
+    toHerculesObject () {
+        return this.getAllSets().toJS();
+    }
+
+    _fromHerculesObject (obj) {
+        this._clear();
+
+        obj.forEach((miniset) => {
+            this.miniSets = this.miniSets.set(miniset.id, miniset);
+        });
     }
 }
 

@@ -63,6 +63,9 @@ class DeployerStore extends BaseStore {
                 var {graphName} = action;
                 this._bindToGraph(graphName);
                 break;
+            case 'restoreState':
+                var {sections} = action.data;
+                this._fromHerculesObject(sections);
         }
         this.mergeable = this._computeMergeable();
         this.emitChange();
@@ -199,7 +202,7 @@ class DeployerStore extends BaseStore {
         }).toJS();
     }
 
-    fromHerculesObject (sections) {
+    _fromHerculesObject (sections) {
         this._clear();
 
         sections.forEach((s) => {
