@@ -141,17 +141,14 @@ function onWindowResize() {
     }
 }
 
-var update, camera;
+var camera;
 
-function beginGameLoop(cameraParam, updateParam) {
-    update = updateParam;
+function beginAnimation(cameraParam) {
     camera = cameraParam;
-
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(animate);
 }
 
-function gameLoop() {
-    requestAnimationFrame(gameLoop);
-    update();
+function animate() {
+    requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }

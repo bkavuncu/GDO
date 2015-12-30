@@ -10,7 +10,7 @@
     <title></title>
 
 </head>
-<body unselectable="on" class="unselectable">
+<body unselectable="on" class="unselectable" style="margin: 0px;">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
@@ -25,8 +25,17 @@
 
                 var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
 
-                // TODO: Work out correct vertical fov
-                var camera = new THREE.PerspectiveCamera(24, 16 / 9, 3, 10000);
+                // TODO: Work out correct fov values
+                var camera = new THREE.PerspectiveCamera(12.0354097, 16 / 9, 3, 10000);
+
+                var numNodesWide = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width / 1920;
+
+                numNodesWide--;
+
+                var nodeOffset = gdo.net.node[gdo.clientId].sectionCol - (numNodesWide / 2);
+
+                gdo.consoleOut('.WebGL', 1, 'Node offset - ' + (numNodesWide % 2));
+                camera.rotateY(nodeOffset * (-0.375/(gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height / 1080)));
 
                 var w = 1920;
                 var h = 1080;
@@ -47,14 +56,12 @@
 
                 gdo.net.app["WebGL"].initClient(cameraParent);
 
-                beginGameLoop(camera, function () {
-                    gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Actual cam pos: " + JSON.stringify(camera.position));
-                });
+                beginAnimation(camera);
             });
         });
     </script>
 
-    <div id="wrapper" style="background-color:#000;width:97vw;height:97vh;text-align:center; vertical-align: middle;" align="center">
+    <div id="wrapper" style="background-color:#000;width:100vw;height:100vh;text-align:center; vertical-align: middle;" align="center">
     </div>
 
 </body>

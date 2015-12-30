@@ -127,13 +127,15 @@
 
                 document.addEventListener('mousemove', onDocumentMouseMove, false);
 
-                beginGameLoop(camera, function () {
+                beginAnimation(camera);
+
+                setInterval(function () {
                     camera.position.x += (mouseX - camera.position.x) * 0.05;
                     camera.position.y += (-mouseY - camera.position.y) * 0.05;
 
                     camera.lookAt(scene.position);
 
-                    gdo.net.app["WebGL"].server.setCameraPosition(gdo.controlId, 
+                    gdo.net.app["WebGL"].server.setCameraPosition(gdo.controlId,
                         {
                             Position: [camera.position.x,
                                         camera.position.y,
@@ -143,7 +145,7 @@
                                 camera.quaternion.z,
                                 camera.quaternion.w]
                         });
-                });
+                }, 1000 / 60);
             });
         });
     </script>

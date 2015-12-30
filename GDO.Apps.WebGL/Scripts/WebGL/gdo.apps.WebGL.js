@@ -8,7 +8,7 @@ $(function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + JSON.stringify(newCamera));
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
+            //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
 
             cameraParent.position.set(parseFloat(newCamera.Position[0]),
                                       parseFloat(newCamera.Position[1]),
@@ -19,7 +19,7 @@ $(function () {
                                         parseFloat(newCamera.Quaternion[3]));
             cameraParent.updateMatrix();
 
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera parent: " + JSON.stringify(cameraParent));
+            //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera parent: " + JSON.stringify(cameraParent));
         }
     }
 });
