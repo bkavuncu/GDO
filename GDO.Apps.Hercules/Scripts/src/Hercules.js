@@ -17,7 +17,7 @@ const DeployerStore = require('stores/DeployerStore'),
 
 const SectionDeployer = require('./DeployerGrid'),
     Explorer = require('./Explorer'),
-    Filter = require('./DataFilter'),
+    Filter = require('./filter/DataFilter'),
     GraphControl = require('./GraphControl');
 
 let [START, DATA, GRAPH] = [1,2,3];

@@ -4,7 +4,7 @@ const React = require('react'),
     _ = require('underscore'),
     {IndigoIterator, PurpleIterator} = require('colors'),
     Immutable = require('immutable'),
-    SideMenu = require('./ui/SideMenu'),
+    SideMenu = require('ui/SideMenu'),
     RangeSelector = require('./RangeSelector'),
     MeasureComponent = require('ui/MeasureComponent');
 

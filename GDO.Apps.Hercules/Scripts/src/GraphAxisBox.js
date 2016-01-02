@@ -3,8 +3,8 @@ const React = require('react'),
      DropTarget = require('react-dnd').DropTarget,
      PropTypes = React.PropTypes,
      GraphField = require('./GraphField'),
-     Builder = require('./actions/GraphBuilderActions'),
-     GraphBuilderStore = require('./stores/GraphBuilderStore'),
+     Builder = require('actions/GraphBuilderActions'),
+     GraphBuilderStore = require('stores/GraphBuilderStore'),
      Immutable = require('immutable'),
      _ = require('underscore');
 
