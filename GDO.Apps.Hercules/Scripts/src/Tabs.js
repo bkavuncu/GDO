@@ -5,12 +5,6 @@ const React = require('react'),
     screenfull = require('screenfull'),
     DragDropContext = require('react-dnd').DragDropContext;
 
-
-var DeployerGrid = require('./DeployerGrid.js'),
-    DataExplorer = require('./Explorer'),
-    GraphControl = require('./GraphControl'),
-    DataEnricher, DataFilter;
-
 class Tab extends React.Component {
     render () {
         var {name, active, handleClick} = this.props,
