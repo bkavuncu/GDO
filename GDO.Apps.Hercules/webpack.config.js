@@ -1,4 +1,5 @@
-var webpack = require('webpack');
+var webpack = require('webpack'),
+    path = require('path');
 
 module.exports = {
     cache: true,
@@ -13,12 +14,13 @@ module.exports = {
         reasons: true
     },
     resolve: {
+        root: path.resolve('./Scripts/src/'),
         extensions: ['', '.js', '.jsx'],
         alias: {
-            colors: './ui/Colors',
-            actions: './actions',
-            stores: './stores',
-            ui: './ui'
+            colors: 'ui/Colors',
+            actions: 'actions',
+            stores: 'stores',
+            ui: 'ui'
         }
     },
     output: {
