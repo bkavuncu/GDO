@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Diagnostics
+
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -51,6 +53,10 @@
             .material-icons.md-light.md-inactive {
                 color: rgba(255, 255, 255, 0.3);
             }
+
+        .hidden {
+            display: none;
+        }
     </style>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -143,6 +149,50 @@
 
     <div id="react-target"></div>
     <script src="~/Scripts/build/assets/Hercules.js"></script>
+    <div class="hidden">
+        @{
+            var path = "";
+            var filename = "";
+            if (IsPost)
+            {
 
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null)
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    /*
+                    //foldername
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images");
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/") + @"\Web\Images\images\" + filename;
+                    file.SaveAs(path);
+                    */
+                    Debug.WriteLine(filename);
+
+                }
+            }
+        }
+
+        <form id="submit_file" action="" method="post" enctype="multipart/form-data">
+            <input type="file" name="Image" class="upload" id="select_file" />
+        </form>
+    </div>
+    <script>
+        var HerculesExchange = {};
+
+        $(document).ready(function () {
+            var $inputEl = $('#select_file');
+
+            $inputEl.change(function () {
+                $('#submit_file').submit();
+            });
+        });
+
+        HerculesExchange.uploadFile = function () {
+            var $inputEl = $('#select_file');
+            $inputEl.click();
+        };
+
+        window.HerculesExchange = HerculesExchange;
+    </script>
 </body>
 </html>
