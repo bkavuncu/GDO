@@ -8,6 +8,61 @@ const React = require('react'),
     RangeSelector = require('./RangeSelector'),
     MeasureComponent = require('ui/MeasureComponent');
 
+class ApplyFilter extends React.Component {
+    _getOuterStyle () {
+        return {
+            flex: '0 0 35px',
+            padding: '10px 20px 10px 10px',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            boxShadow: '0 0 5px',
+            alignItems: 'stretch',
+            backgroundColor: '#00796B'
+        };
+    }
+
+    _getButtonStyle () {
+        return {
+            flex: '0 0 100px',
+            textTransform: 'uppercase',
+            boxShadow: '0 0 10px gray',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginLeft: '10px',
+            color: 'white'
+        };
+    }
+
+    render () {
+        var buttonStyle = {
+            flex: '0 0 100px',
+            textTransform: 'uppercase',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginLeft: '20px',
+            fontSize: 'small',
+            color: 'white'
+        }, cancelStyle = _.extend({}, buttonStyle, {
+            boxShadow: '0 0 5px black',
+            backgroundColor: '#607D8B'
+        }), applyStyle = _.extend({}, buttonStyle, {
+            boxShadow: '0 0 10px black',
+            backgroundColor: '#F50057'
+        }), {onApply, onCancel} = this.props;
+
+        return <div style={this._getOuterStyle()}>
+            <div style={cancelStyle} onTouchTap={onCancel}>
+                Cancel
+            </div>
+            <div style={applyStyle} onTouchTap={onApply}>
+                Apply
+            </div>
+        </div>;
+    }
+}
+
 class FilterPanel extends React.Component {
     static _getContainerStyle () {
         return {
@@ -15,7 +70,7 @@ class FilterPanel extends React.Component {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'stretch',
-            padding: '15px'
+            flexGrow: 1
         };
     }
 
@@ -24,7 +79,10 @@ class FilterPanel extends React.Component {
 
         return <div id="filter-panel"
                     style={FilterPanel._getContainerStyle()}>
-            <MeasureComponent getChildren={(props) => <RangeSelector {...props} field={field} />} />
+            <div style={{display: 'flex', flexGrow: 1, padding: '10px', alignItems: 'stretch'}}>
+                <MeasureComponent getChildren={(props) => <RangeSelector {...props} field={field} />} />
+            </div>
+            <ApplyFilter onApply={() => {}} onCancel={() => {}} />
         </div>;
     }
 }

@@ -193,6 +193,45 @@ const clamp = (val, min, max) => {
     return Math.max(min, Math.min(val, max));
 };
 
+class SliderView extends React.Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            width: WIDTH
+        };
+    }
+
+    _getOuterStyle () {
+        var {width} = this.state;
+
+        return {
+            position: 'relative',
+            flex: '0 0 ' + width + 'px'
+        };
+    }
+
+    render () {
+        var {minOffset, minUpdate, maxOffset, maxUpdate, height} = this.props,
+            {width} = this.state,
+            onRangeBarRender = (w) => {
+            this.setState({
+                width: w
+            });
+        };
+
+        return <div style={this._getOuterStyle()}>
+            <SliderMin width={width}
+                       offset={minOffset}
+                       onDelta={minUpdate} />
+            <RangeBar height={height} onFindWidth={onRangeBarRender}/>
+            <SliderMax width={width}
+                       offset={maxOffset}
+                       onDelta={maxUpdate} />
+        </div>;
+    }
+}
+
 class RangeSelector extends React.Component {
     constructor (props) {
         super(props);
@@ -208,7 +247,6 @@ class RangeSelector extends React.Component {
             .clamp(true);
 
         this.state = {
-            barWidth: WIDTH,
             min: floor,
             max: ceiling,
             scale: scale
@@ -234,15 +272,6 @@ class RangeSelector extends React.Component {
         };
     }
 
-    _getSliderStyle () {
-        var {barWidth} = this.state;
-
-        return {
-            position: 'relative',
-            flex: '0 0 ' + barWidth + 'px'
-        };
-    }
-
     _updateMin (newValue) {
         var {max} = this.state,
             {field} = this.props,
@@ -264,13 +293,7 @@ class RangeSelector extends React.Component {
     }
 
     render () {
-        const onRangeBarRender = (w) => {
-            this.setState({
-                barWidth: w
-            });
-        };
-
-        var {min, max, barWidth} = this.state,
+        var {min, max} = this.state,
             {width, height, field} = this.props,
             minOffset = this._valueToOffset(min),
             maxOffset = Math.max(height - this._valueToOffset(max), 0),
@@ -295,15 +318,7 @@ class RangeSelector extends React.Component {
             };
 
         return <div style={this._getOuterStyle()}>
-            <div style={this._getSliderStyle()}>
-                <SliderMin width={barWidth}
-                           offset={minOffset}
-                           onDelta={minUpdate} />
-                <RangeBar {...this.props} onFindWidth={onRangeBarRender}/>
-                <SliderMax width={barWidth}
-                           offset={maxOffset}
-                           onDelta={maxUpdate} />
-            </div>
+            <SliderView {...{minOffset, minUpdate, maxOffset, maxUpdate, height}} />
             <RangeControl {...{min, max, field}}
                 onUpdateMin={this._updateMin.bind(this)}
                 onUpdateMax={this._updateMax.bind(this)}/>
