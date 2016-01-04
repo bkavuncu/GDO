@@ -24,6 +24,9 @@ gdo.net.app["Spreadsheets"].initControl = function () {
     .click(function () {
         gdo.consoleOut('.Spreadsheets', 1, 'Sending Name to Clients :' + $("iframe").contents().find('#hello_input').val());
         gdo.net.app["Spreadsheets"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
+
+
+
     });
 }
 
