@@ -9,7 +9,14 @@ class GraphPanel extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            plotted: false
+        };
+    }
+
+    plot () {
+        //Pass box contents from store to render
+        this.state.plotted = true;
     }
 
     render () {
@@ -22,7 +29,11 @@ class GraphPanel extends React.Component {
         }, plotButtonStyle = {
            alignSelf: 'flex-end',
             flexBasis: '50px',
-            fontSize: '-webkit-xxx-large'
+            fontSize: '-webkit-xxx-large',
+            border: 'solid #2196F3',
+            backgroundColor: '#2196F3',
+            boxShadow: '0 0 4px black',
+            borderRadius: '5px'
         };
 
         var graphData;
@@ -35,7 +46,7 @@ class GraphPanel extends React.Component {
         return <div style={panelStyle}>
             <GraphBuilder sectionId={this.props.activeId}
                           miniSet={this.props.miniSet} />
-            <div style={plotButtonStyle}> Plot </div>
+            <div style={plotButtonStyle} onClick={this.plot.bind(this)}> Plot </div>
         </div>;
     }
 }

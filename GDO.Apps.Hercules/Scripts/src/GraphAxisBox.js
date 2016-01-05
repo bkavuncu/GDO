@@ -102,7 +102,7 @@ class AxisBox extends React.Component {
 
         if (isActive) {
             var axisBoxStyle = {
-                margin: '4px',
+                margin: '5px',
                 boxShadow: '0 0 10px black',
                 display: 'flex',
                 alignSelf: 'stretch',
@@ -112,7 +112,7 @@ class AxisBox extends React.Component {
             }
         }else if (canDrop) {
             var axisBoxStyle = {
-                margin: '4px',
+                margin: '5px',
                 boxShadow: '0 0 3px black',
                 display: 'flex',
                 alignSelf: 'stretch',
@@ -122,7 +122,7 @@ class AxisBox extends React.Component {
             }
         } else {
             var axisBoxStyle = {
-                margin: '4px',
+                margin: '5px',
                 display: 'flex',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
