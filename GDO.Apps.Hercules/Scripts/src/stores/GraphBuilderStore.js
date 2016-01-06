@@ -1,4 +1,5 @@
 const BaseStore = require('./BaseStore'),
+    _ = require('underscore'),
     Immutable = require('immutable');
 
 class GraphBuilderStore extends BaseStore {
@@ -9,6 +10,8 @@ class GraphBuilderStore extends BaseStore {
         this.sectionMap = Immutable.Map();
         //sectionDataMap<sectionId, Map<axisName, dimension>>
         this.sectionDataMap = Immutable.Map();
+        //sectionMap<sectionId, Map<axisName, Set<field>>> (Only for plotted graphs)
+        this.deployedMap = Immutable.Map();
         this.activeSection;
 
         this.subscribe(() => this._registerToActions.bind(this))
@@ -21,6 +24,12 @@ class GraphBuilderStore extends BaseStore {
                 break;
             case 'addField':
                 this.addField(action.dest, action.field);
+                break;
+            case 'plotGraph':
+                this.plotGraph(action.id);
+                break;
+            case 'unplotGraph':
+                this.unplotGraph(action.id);
                 break;
         }
         this.emitChange();
@@ -61,6 +70,17 @@ class GraphBuilderStore extends BaseStore {
         this.emitChange();
     }
 
+    plotGraph(sectionId) {
+        var axesSet = this.sectionMap.get(sectionId);
+        this.deployedMap = this.deployedMap.set(sectionId, axesSet);
+        this.emitChange();
+    }
+
+    unplotGraph(sectionId) {
+        this.deployedMap = this.deployedMap.remove(sectionId);
+        this.emitChange();
+    }
+
     setActiveSection (sectionId) {
         this.activeSection = sectionId;
         this.emitChange();
@@ -91,6 +111,22 @@ class GraphBuilderStore extends BaseStore {
 
     getYAxis() {
         return this.selectedY;
+    }
+
+    toHerculesObject (sectionId) {
+        var axisSet = this.sectionMap.get(sectionId);
+        return axisSet.map((s) => {
+            var {axisName, fields} = s,
+                res = {
+                    axisName: axisName,
+                    fields: fields.toArray()
+                };
+            return res;
+        }).toJS();
+    }
+
+    _fromHerculesObject (sections) {
+        //TODO
     }
 
 }

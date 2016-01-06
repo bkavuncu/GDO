@@ -1,4 +1,5 @@
 const BaseStore = require('./BaseStore'),
+    builderStore = require('./GraphBuilderStore'),
     Immutable = require('immutable'),
     _ = require('underscore'),
     assert = require('assert');
@@ -193,8 +194,11 @@ class DeployerStore extends BaseStore {
                 };
 
             if (this.graphMap.has(s.id)) {
+                var dims = builderStore.toHerculesObject(id);
+                var graphName = this.graphMap.get(s.id);
+                var deployed = {graphName, dims};
                 res = _.extend({}, res, {
-                    graphName: this.graphMap.get(s.id)
+                    deployed: deployed
                 });
             }
 
@@ -206,13 +210,13 @@ class DeployerStore extends BaseStore {
         this._clear();
 
         sections.forEach((s) => {
-            var {id, nodeList, graphName} = s;
+            var {id, nodeList, graph} = s;
                 nodeList = Immutable.List(nodeList);
 
             this.sections = this.sections.push({id, nodeList});
 
-            if (typeof s.graphName == 'string')
-                this.graphMap = this.graphMap.set(s.id, s.graphName);
+            if (typeof graph !== null)
+                this.graphMap = this.graphMap.set(id, graph.graphName);
         });
     }
 }

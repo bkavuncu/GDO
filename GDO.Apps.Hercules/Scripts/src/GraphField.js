@@ -34,7 +34,7 @@ class GraphField extends React.Component {
         const { name, isDropped, isDragging, connectDragSource  } = this.props;
         var fieldStyle = {
             opacity: isDragging? 0.5 : 1,
-            border: 'solid',
+            border: 'solid rgb(41, 41, 41) 2px',
             fontSize: 25,
             fontWeight: 'bold',
             cursor: 'move',

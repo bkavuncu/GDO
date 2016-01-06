@@ -1,8 +1,12 @@
 const React = require('react'),
     GraphBuilder = require('./GraphBuilder'),
     GraphStructure = require('./schemas/GraphStructure'),
-    lineGraph = require('./schemas/GraphStructure').lineGraph,
+    barGraph = require('./schemas/GraphStructure').barGraph,
+    scatterGraph = require('./schemas/GraphStructure').scatterGraph,
+    table = require('./schemas/GraphStructure').table,
     GraphBuilderStore = require('./stores/GraphBuilderStore'),
+    DataStore = require('./stores/DatasetStore'),
+    DeployerStore = require('./stores/DeployerStore'),
     SideMenu = require('./ui/SideMenu');
 
 class GraphPanel extends React.Component {
@@ -73,7 +77,8 @@ class GraphControl extends React.Component {
 
         var sectionLabelList = [];
         for (var i in this.props.sectionList) {
-            sectionLabelList.push("Section "+this.props.sectionList[i].sectionId);
+            sectionLabelList.push("Section "+this.props.sectionList[i].sectionId+ " ("
+                +this.props.sectionList[i].graphData.graphType+")");
         }
 
         return <div style={divStyle}>
@@ -89,127 +94,44 @@ class GraphControl extends React.Component {
 class GraphControlWrapper extends React.Component {
     constructor (props) {
         super(props);
-        this.state = {};
+
+        var miniSet = DataStore.getActiveMiniset(),
+            graphMap = DeployerStore.getGraphMap(),
+            sectionData = [];
+
+        graphMap.forEach((graphName, id) => {
+            var res = {
+                    sectionId: id,
+                    graphData: this.getGraphData(graphName)
+                }
+            sectionData.push(res);
+        });
+
+        this.state = {
+            miniSet: miniSet,
+            sectionData: sectionData
+        };
+    }
+
+    getGraphData (graphName) {
+        switch (graphName) {
+            case 'scatter':
+                return scatterGraph;
+            case 'bar':
+                return barGraph;
+            case 'table':
+                return table;
+            default:
+                console.log('Unknown graph name!');
+        }
     }
 
     componentWillMount () {
-        //TEST DATA
-        var graphData = GraphStructure.lineGraph,
-            sectionData = [{
-                sectionId: 1,
-                graphData: graphData
-            },{
-                    sectionId: 2,
-                    graphData: graphData
-                },{
-                    sectionId: 3,
-                    graphData: graphData
-                }];
-        //TEST DATA
-
-
-        GraphBuilderStore.init(sectionData);
+        GraphBuilderStore.init(this.state.sectionData);
     }
 
     render () {
-        //TEST DATA
-        var miniSet = {id: 1,
-            name: 'George Lemon',
-            description: 'a family friend',
-            fields: [
-            {
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Integer'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            },{
-                name: 'clementine',
-                description: 'citruses',
-                disabled: true,
-                origin: 'native',
-                type: 'Float'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
-                type: 'Float'
-            },{
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Integer'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            },{
-                name: 'clementine',
-                description: 'citruses',
-                disabled: true,
-                origin: 'native',
-                type: 'Float'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
-                type: 'Float'
-            },{
-                name: 'lemon',
-                description: 'lemons',
-                disabled: false,
-                origin: 'native',
-                type: 'Enum'
-            },{
-                name: 'orange',
-                description: 'citruses',
-                disabled: true,
-                origin: 'artificial',
-                type: 'Integer'
-            },{
-                name: 'clementine',
-                description: 'citruses',
-                disabled: true,
-                origin: 'native',
-                type: 'Float'
-            },{
-                name: 'orange',
-                description: 'whatever',
-                disabled: false,
-                origin: 'artificial',
-                type: 'Float'
-            }
-        ],
-            disabled: false,
-            length: 500,
-            source: {
-            type: 'URL',
-                url: 'http://deez.nuts/data.csv'
-        }
-    }, graphData = lineGraph,
-            sectionData = [{
-                sectionId: 1,
-                graphData: graphData
-            },{
-                    sectionId: 2,
-                    graphData: graphData
-                },{
-                    sectionId: 3,
-                    graphData: graphData
-                }];
-
-        return <GraphControl sectionList={sectionData} miniSet={miniSet}/>;
+        return <GraphControl sectionList={this.state.sectionData} miniSet={this.state.miniSet}/>;
     }
 }
 
