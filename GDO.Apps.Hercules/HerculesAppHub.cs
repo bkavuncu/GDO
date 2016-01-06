@@ -21,6 +21,7 @@ namespace GDO.Apps.Hercules
     [Export(typeof(IAppHub))]
     public class HerculesAppHub : DD3AppHub, IAppHub
     {
+        
         new public string Name { get; set; } = "Hercules";
 
         new public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
