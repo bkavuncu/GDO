@@ -90,7 +90,7 @@
             console.log(parent, parent.gdo);
             var gdo = parent.gdo;
             window.gdo = gdo;
-            server = gdo.net.app.DD3.server;
+            server = gdo.net.app.Hercules.server;
             gdo.controlId = getUrlVar("controlId");
 
             var instanceId,
@@ -148,7 +148,7 @@
     </script>
 
     <div id="react-target"></div>
-    <!--<script src="~/Scripts/build/assets/Hercules.js"></script>-->
+    <script src="~/Scripts/src/Hercules.js"></script>
     <div class="hidden">
         @{
             var path = "";

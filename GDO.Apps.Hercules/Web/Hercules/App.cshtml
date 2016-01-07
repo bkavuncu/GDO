@@ -9,6 +9,17 @@
             background-color: white;
             color: black;
         }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .dot {
+          stroke: #000;
+        }
     </style>
 </head>
 <body>
@@ -17,152 +28,155 @@
     <script src="~/Scripts/DD3/d3.v3.js"></script>
     <script src="~/Scripts/DD3/peer.js"></script>
     <script>
-        $(document).ready(function () {
-            var gdo = parent.gdo;
+        var dd3;
+
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
                 configName,
                 configId,
                 test_bench = {};
 
-            if (typeof gdo === 'undefined')
-                throw new Error('gdo was not defined in parent');
+                if (typeof gdo === 'undefined')
+                    throw new Error('gdo was not defined in parent');
 
-           
 
-            var launcher = function (configId) {
-                if (dd3.state() === "ready") {
-                    test_bench[configId](configId);
-                } else {
-                    dd3.on('ready', test_bench[configId].bind(null, configId));
+
+                var launcher = function (configId) {
+                    if (dd3.state() === "ready") {
+                        test_bench[configId](configId);
+                    } else {
+                        dd3.on('ready', test_bench[configId].bind(null, configId));
+                    }
+                };
+
+                var orderController = (function () {
+                    var t = function (order) {
+                        orderController.orders[order.name] ?
+                        orderController.orders[order.name].apply(null, order.args) :
+                        gdo.consoleOut('.Hercules', 4, 'No test function corresponding to ' + order.name);
+                    };
+
+                    t.orders = {};
+
+                    return t;
+                })();
+
+                //gdo.net.app['Hercules'].initClient();
+                if (!gdo.net.app["Hercules"].initClient) {
+                    $("#error").css("display", "");
+                    parent.location.reload();
+                    return;
                 }
-            };
 
-            var orderController = (function () {
-                var t = function (order) {
-                    orderController.orders[order.name] ?
-                    orderController.orders[order.name].apply(null, order.args) :
-                    gdo.consoleOut('.DD3', 4, 'No test function corresponding to ' + order.name);
+                dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
+
+                console.log(dd3);
+
+                test_bench[0] = function () {
+                    var xScale, yScale;
+                    var data, pathData;
+                    var dataId = "";
+
+                    var requestData = function (dim) {
+                        var extentX = dim.x.max - dim.x.min,
+                            extentY = dim.y.max - dim.y.min,
+                            coef = 0.05, c = 1;
+
+                        var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
+                            yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
+
+                        // Setup Scales
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
+
+                        dd3.getPointData('pointData', dataId, function (d) {
+                            data = d;
+                            draw();
+                        }, xScale, yScale);
+
+                        dd3.getPathData('pathData', dataId, function (d) {
+                            pathData = d;
+                            draw();
+                        }, xScale, yScale, ['x'], ['y']);
+
+                    };
+
+                    var draw = function () {
+                        if (!data || !pathData)
+                            return;
+
+                        var svg = dd3.svgCanvas,
+                            pathGroup = svg.append("g").attr("id", "dd3_path"),
+                            circleGroup = svg.append("g").attr("id", "dd3_circle");
+
+                        // Setup Axis
+                        var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
+                            yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                        // x-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "x axis")
+                          .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
+                          .call(xAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("x", dd3.cave.svgWidth)
+                          .attr("y", -6)
+                          .style("text-anchor", "end")
+                          .text("X axis");
+
+                        // y-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "y axis")
+                          .attr("transform", "translate(" + [0, 0] + ")")
+                          .call(yAxis)
+                        .append("text")
+                          .attr("class", "label")
+                          .attr("transform", "rotate(-90)")
+                          .attr("y", 6)
+                          .attr("dy", ".71em")
+                          .style("text-anchor", "end")
+                          .text("Y axis");
+
+                        // Draw dots
+                        circleGroup.selectAll(".dot")
+                          .data(data)
+                        .enter()
+                          .append("g")
+                          .append("circle")
+                          .attr("class", "dot")
+                          .attr("cx", function (d) { return xScale(d['x']); })
+                          .attr("cy", function (d) { return yScale(d['y']); })
+                          .attr("r", 3)
+                          .style("fill", function (d, i) { return "black"; })
+                          .style("stroke", "red");
+
+                        var lineFunction = d3.svg.line()
+                                .x(function (d) { return xScale(d['x']); })
+                                .y(function (d) { return yScale(d['y']); })
+                                .interpolate("monotone");
+
+                        //*
+                        pathGroup.append("path").datum(pathData)
+                            .unwatch()
+                            .attr("d", lineFunction)
+                            .attr("stroke", "blue")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+                        //*/
+                    };
+
+                    orderController.orders['plot'] = function (id) {
+                        dataId = id;
+                        data = pathData = null;
+                        dd3.svgCanvas.selectAll("g").remove();
+                        dd3.getDataDimensions(dataId, requestData);
+                    };
                 };
-
-                t.orders = {};
-
-                return t;
-            })();
-
-            //gdo.net.app['Hercules'].initClient();
-            if (!gdo.net.app["Hercules"].initClient) {
-                $("#error").css("display", "");
-                parent.location.reload();
-                return;
-            }
-
-            dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
-
-            console.log(dd3);
-
-            test_bench[0] = function () {
-                var xScale, yScale;
-                var data, pathData;
-                var dataId = "";
-
-                var requestData = function (dim) {
-                    var extentX = dim.x.max - dim.x.min,
-                        extentY = dim.y.max - dim.y.min,
-                        coef = 0.05, c = 1;
-
-                    var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
-                        yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
-
-                    // Setup Scales
-                    xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
-                    yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
-
-                    dd3.getPointData('pointData', dataId, function (d) {
-                        data = d;
-                        draw();
-                    }, xScale, yScale);
-
-                    dd3.getPathData('pathData', dataId, function (d) {
-                        pathData = d;
-                        draw();
-                    }, xScale, yScale, ['x'], ['y']);
-
-                };
-
-                var draw = function () {
-                    if (!data || !pathData)
-                        return;
-
-                    var svg = dd3.svgCanvas,
-                        pathGroup = svg.append("g").attr("id", "dd3_path"),
-                        circleGroup = svg.append("g").attr("id", "dd3_circle");
-
-                    // Setup Axis
-                    var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
-                        yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-                    // x-axis
-                    svg.append("g")
-                      .unwatch()
-                      .attr("class", "x axis")
-                      .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
-                      .call(xAxis)
-                    .append("text")
-                      .attr("class", "label")
-                      .attr("x", dd3.cave.svgWidth)
-                      .attr("y", -6)
-                      .style("text-anchor", "end")
-                      .text("X axis");
-
-                    // y-axis
-                    svg.append("g")
-                      .unwatch()
-                      .attr("class", "y axis")
-                      .attr("transform", "translate(" + [0, 0] + ")")
-                      .call(yAxis)
-                    .append("text")
-                      .attr("class", "label")
-                      .attr("transform", "rotate(-90)")
-                      .attr("y", 6)
-                      .attr("dy", ".71em")
-                      .style("text-anchor", "end")
-                      .text("Y axis");
-
-                    // Draw dots
-                    circleGroup.selectAll(".dot")
-                      .data(data)
-                    .enter()
-                      .append("g")
-                      .append("circle")
-                      .attr("class", "dot")
-                      .attr("cx", function (d) { return xScale(d['x']); })
-                      .attr("cy", function (d) { return yScale(d['y']); })
-                      .attr("r", 3)
-                      .style("fill", function (d, i) { return "black"; })
-                      .style("stroke", "red");
-
-                    var lineFunction = d3.svg.line()
-                            .x(function (d) { return xScale(d['x']); })
-                            .y(function (d) { return yScale(d['y']); })
-                            .interpolate("monotone");
-
-                    //*
-                    pathGroup.append("path").datum(pathData)
-                        .unwatch()
-                        .attr("d", lineFunction)
-                        .attr("stroke", "blue")
-                        .attr("stroke-width", 2)
-                        .attr("fill", "none");
-                    //*/
-                };
-
-                orderController.orders['plot'] = function (id) {
-                    dataId = id;
-                    data = pathData = null;
-                    dd3.svgCanvas.selectAll("g").remove();
-                    dd3.getDataDimensions(dataId, requestData);
-                };
-            };
-
+            });
             //window.orderController = orderController;
             //window.viz = viz;
 
@@ -170,7 +184,7 @@
             //orderController.orders.plot();
         });
 
-        test_bench[1] = function () {
+       /* test_bench[1] = function () {
             var table = d3.select("body").append("table")
            .attr("style", "margin-left: 250px"),
        thead = table.append("thead"),
@@ -200,10 +214,10 @@
                 .enter()
                 .append("td")
                 .attr("style", "font-family: Courier") // sets the font style
-                    .html(function (d) { return d.value; });
+                    .html(function (d) { return d.value; });*/
 
             
-        };
+       
 
     </script>
 </body>
