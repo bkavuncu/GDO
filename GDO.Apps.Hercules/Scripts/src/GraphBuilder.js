@@ -44,7 +44,6 @@ class GraphBuilder extends React.Component {
 
     render () {
         var fieldsBoxStyle = {
-            border: 'solid',
             display: 'flex',
             flexDirection: 'column',
             alignSelf: 'stretch',

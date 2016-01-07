@@ -6,7 +6,7 @@
  * */
 var schema = require('js-schema');
 
-export var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Float']);
+export var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Bool']);
 
 export const graphTypes = schema(['LINE', 'SCATTER', 'BAR', 'PIE']);
 
@@ -80,6 +80,15 @@ export var pieGraph = {
         }
     ]
 };
+
+export var table = {
+    graphType: 'TABLE',
+    dimensions: [{
+        name: 'Columns',
+        singleField: false,
+        validTypes: ['Float', 'Integer', 'Datetime', 'Enum', 'Boolean']
+    }]
+}
 
 export var validGraphData = schema([
     lineGraph, scatterGraph,
