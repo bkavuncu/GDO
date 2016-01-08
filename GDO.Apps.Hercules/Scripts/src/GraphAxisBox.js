@@ -56,20 +56,22 @@ class AxisBox extends React.Component {
         this.state.contents = this.state.contents.clear();
         var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
         var axisFields = axesSet.get(this.state.name);
-        var axisFieldIter = axisFields.values();
-        var field = axisFieldIter.next();
-        var fieldIndex = 0;
-        while (!field.done) {
-            this.state.contents = this.state.contents.set(fieldIndex, field.value);
-            field = axisFieldIter.next();
-            fieldIndex++;
-        }
+        if (axisFields !== null) {
+            var axisFieldIter = axisFields.values();
+            var field = axisFieldIter.next();
+            var fieldIndex = 0;
+            while (!field.done) {
+                this.state.contents = this.state.contents.set(fieldIndex, field.value);
+                field = axisFieldIter.next();
+                fieldIndex++;
+            }
 
-        var fieldIter = this.props.axisData[1].entries();
-        var field = fieldIter.next();
-        while (!field.done) {
-            this.state.contents.push(field.value);
-            field = fieldIter.next();
+            var fieldIter = this.props.axisData[1].entries();
+            var field = fieldIter.next();
+            while (!field.done) {
+                this.state.contents.push(field.value);
+                field = fieldIter.next();
+            }
         }
 
     }
@@ -102,7 +104,7 @@ class AxisBox extends React.Component {
 
         if (isActive) {
             var axisBoxStyle = {
-                margin: '4px',
+                margin: '5px',
                 boxShadow: '0 0 10px black',
                 display: 'flex',
                 alignSelf: 'stretch',
@@ -112,7 +114,7 @@ class AxisBox extends React.Component {
             }
         }else if (canDrop) {
             var axisBoxStyle = {
-                margin: '4px',
+                margin: '5px',
                 boxShadow: '0 0 3px black',
                 display: 'flex',
                 alignSelf: 'stretch',
@@ -122,7 +124,7 @@ class AxisBox extends React.Component {
             }
         } else {
             var axisBoxStyle = {
-                margin: '4px',
+                margin: '5px',
                 display: 'flex',
                 alignSelf: 'stretch',
                 flexDirection: 'column',
