@@ -207,7 +207,6 @@ class GraphPicker extends React.Component {
             };
 
         if (selectedSectionId === false) {
-        console.log(selectedSectionId);
             return _.extend({}, commonStyle, {
                 backgroundColor: '#C7C7C7',
                 color: 'rgba(0,0,0,0.38)'

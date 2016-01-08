@@ -30,8 +30,6 @@ class FilterStore extends BaseStore {
         if (DatasetStore.hasActiveDataset()) {
             var miniset = DatasetStore.getActiveMiniset();
 
-            //console.log(miniset.fields, miniset);
-
             miniset.fields.forEach((f) => fields.set(f.name, f));
         }
 

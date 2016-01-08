@@ -55,8 +55,8 @@ class ImportView extends React.Component {
                 <i className="material-icons md-64">file_upload</i>
                 File Upload
             </div>
-            <form style={fileFormStyle}>
-                <input type="file" ref="fileInput"/>
+            <form style={fileFormStyle} method="post" encType="multipart/form-data">
+                <input type="file" ref="fileInput" name="Image"/>
             </form>
         </div>;
 
