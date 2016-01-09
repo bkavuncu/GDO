@@ -32,12 +32,13 @@ namespace GDO.Apps.Hercules
             this.Configuration = configuration;
             this.Context = (IHubContext<dynamic>)GlobalHost.ConnectionManager.GetHubContext<HerculesAppHub>();
 
-            JToken value;
+            /* JToken value;
 
             Configuration.Json.TryGetValue("id", out value);
             this.ConfigurationId = (int)value;
 
             data = new Data(this.Configuration.Name);
+            */
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();

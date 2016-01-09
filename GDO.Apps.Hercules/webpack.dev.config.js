@@ -5,12 +5,16 @@ var webpack = require('webpack'),
 
 module.exports = _.extend({}, commonConfig, {
     cache: true,
-    debug: false,
+    debug: true,
     entry: [
+        'webpack/hot/only-dev-server',
         './Scripts/src/Hercules.js'
     ],
     output: {
-        path: './Web/Hercules/assets/',
-        filename: "HerculesControl.js"
-    }
+        publicPath: '/assets/',
+        filename: "Hercules.js"
+    },
+    plugins: [
+    new webpack.HotModuleReplacementPlugin()
+    ]
 });
