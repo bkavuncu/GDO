@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Mhhh Data",
   "src": "Scripts/src",
-  "dist": "Scripts/build",
+  "dist": "Web/Hercules/assets",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
