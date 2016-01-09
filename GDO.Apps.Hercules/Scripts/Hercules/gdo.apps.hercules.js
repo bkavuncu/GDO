@@ -69,9 +69,8 @@
             gdo.consoleOut('.Hercules', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
         }
 
-        HerculesApp.porcaMadonna = function () {
+        HerculesApp.signalTest = function () {
             console.error('Things -> ', HerculesApp.server, HerculesApp.server.dataTest, HerculesServer);
-            HerculesServer.server.porcaMadonna(54);
         }
 
         console.error('Loaded: -> ', HerculesApp);

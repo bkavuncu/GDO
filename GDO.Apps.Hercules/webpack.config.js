@@ -12,5 +12,13 @@ module.exports = _.extend({}, commonConfig, {
     output: {
         path: './Web/Hercules/assets/',
         filename: "HerculesControl.js"
-    }
+    },
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            compress: {
+                warnings: false
+            }
+        })
+    ]
 });
