@@ -278,7 +278,7 @@ var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
     //var peerObject = { key: 'q35ylav1jljo47vi', debug: 0 };
     var peerObject = { host: "dsigdoprod.doc.ic.ac.uk", port: 55555 };
 
-    var dd3 = function () {
+    var dd3 = (function () {
         "use strict";
         var _dd3 = Object.create(d3);
 
@@ -2271,9 +2271,9 @@ var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
         initializer();
 
         return _dd3;
-    };
+    })();
 
-    return dd3();
+    return dd3;
 };
 
 var dd3Server = $.connection.dD3AppHub;
