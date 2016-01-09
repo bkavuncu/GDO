@@ -10,6 +10,14 @@
             color: black;
         }
 
+         .unselectable {
+            -moz-user-select: -moz-none;
+            /*-khtml-user-select: none;*/
+            -webkit-user-select: none;
+           /*-o-user-select: none;*/
+            user-select: none;
+        }
+
         .axis path,
         .axis line {
           fill: none;
@@ -32,7 +40,7 @@
 
         $(function () {
             $(document).ready(function () {
-                var gdo = parent.gdo;
+                var gdo = parent.gdo,
                 configName,
                 configId,
                 test_bench = {};
@@ -73,7 +81,7 @@
 
                 console.log(dd3);
 
-                test_bench[0] = function () {
+                test_bench['0'] = function () {
                     var xScale, yScale;
                     var data, pathData;
                     var dataId = "";
@@ -159,14 +167,12 @@
                                 .y(function (d) { return yScale(d['y']); })
                                 .interpolate("monotone");
 
-                        //*
                         pathGroup.append("path").datum(pathData)
                             .unwatch()
                             .attr("d", lineFunction)
                             .attr("stroke", "blue")
                             .attr("stroke-width", 2)
                             .attr("fill", "none");
-                        //*/
                     };
 
                     orderController.orders['plot'] = function (id) {

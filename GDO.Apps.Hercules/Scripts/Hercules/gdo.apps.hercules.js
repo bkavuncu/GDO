@@ -45,9 +45,9 @@
         }
 
         HerculesApp.initDD3 = function (launcher, orderController) {
-           /* var d3 = document.getElementById('app_frame_content').contentWindow['d3'] || window.d3 || d3;
+           var d3 = document.getElementById('app_frame_content').contentWindow['d3'] || window.d3 || d3;
             orderTransmitter = orderController;
-            main_callback = launcher;*/
+            main_callback = launcher;
 
             if (typeof initDD3App === 'function') {
                 return initDD3App(d3, HerculesServer, $, Peer, signalR_callback);
