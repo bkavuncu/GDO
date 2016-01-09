@@ -2,7 +2,8 @@
     return connect.static(require('path').resolve(dir));
 };
 
-var webpackDevConfig = require('./webpack.config.js');
+var webpackDevConfig = require('./webpack.dev.config.js'),
+    webpackDistConfig = require('./webpack.config.js');
 
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
@@ -14,7 +15,7 @@ module.exports = function (grunt) {
         pkg: pkgConfig,
 
         webpack: {
-            options: webpackDevConfig,
+            options: webpackDistConfig,
             dist: {
                 cache: false
             }
@@ -100,7 +101,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['karma']);
 
-    grunt.registerTask('build', [ 'clean', 'copy', 'webpack']);
+    grunt.registerTask('build', [ 'clean', /* 'copy', */ 'webpack']);
 
     grunt.registerTask('default', ['serve']);
 };
