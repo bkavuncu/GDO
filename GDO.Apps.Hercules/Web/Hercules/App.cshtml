@@ -37,13 +37,12 @@
     <script src="~/Scripts/DD3/peer.js"></script>
     <script>
         var dd3;
-
-        $(function () {
-            $(document).ready(function () {
+        
+        $(document).ready(function () {
                 var gdo = parent.gdo,
                 configName,
                 configId,
-                test_bench = {};
+                test_bench = [];
 
                 if (typeof gdo === 'undefined')
                     throw new Error('gdo was not defined in parent');
@@ -81,7 +80,7 @@
 
                 console.log(dd3);
 
-                test_bench['0'] = function () {
+                test_bench[0] = function () {
                     var xScale, yScale;
                     var data, pathData;
                     var dataId = "";
@@ -175,20 +174,23 @@
                             .attr("fill", "none");
                     };
 
-                    orderController.orders['plot'] = function (id) {
+                    console.error("is it actually plotting?");
+                    orderController.orders.plot = function (id) {
                         dataId = id;
                         data = pathData = null;
                         dd3.svgCanvas.selectAll("g").remove();
                         dd3.getDataDimensions(dataId, requestData);
                     };
                 };
+
+                test_bench[0]();
+                orderController.orders.plot();
             });
             //window.orderController = orderController;
             //window.viz = viz;
 
             //viz();
             //orderController.orders.plot();
-        });
 
        /* test_bench[1] = function () {
             var table = d3.select("body").append("table")

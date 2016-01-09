@@ -169,12 +169,15 @@
 
                 instanceId = gdo.net.app["Hercules"].initControl(callback);
 
-                test_bench[0] = function () {
+                var initTable = function () {
                     var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
 
                     var table = $("#control_1 table");
+                    
                     var send = function (value) {
+                        console.error('ready to send?!', table);
                         server.sendOrder(instanceId, order("plot", [value]), true);
+                        console.error("shout out if you are plotting");
                     };
 
                     dataIds.forEach(function (d) {
@@ -182,6 +185,11 @@
                         table.find("tr:last td").addClass('green').click(send.bind(null, d));
                     });
                 };
+                test_bench[0] = initTable;
+
+                initTable();
+
+               
 
                 //gdo.consoleOut('.Hercules', 1, 'Init Control');
                 //gdo.net.app['Hercules'].initControl();
@@ -189,7 +197,7 @@
             });
         });
     </script>
-    <div id="control_1" style="display:none">
+    <div id="control_1">
         <table class="table_control"></table>
     </div>
     <!--<div id="react-target"></div>
