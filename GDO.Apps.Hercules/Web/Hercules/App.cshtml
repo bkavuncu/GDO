@@ -49,9 +49,9 @@
                     throw new Error('gdo was not defined in parent');
 
 
-
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
+                        
                         test_bench[configId](configId);
                     } else {
                         dd3.on('ready', test_bench[configId].bind(null, configId));
@@ -79,9 +79,53 @@
 
                 dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
-                console.log(dd3);
-
                 test_bench['0'] = function () {
+
+                    
+                    var xScale, yScale;
+
+                    dd3.getDataDimensions("myData", function (dimensions) {
+
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain([dimensions.x.min - 1, dimensions.x.max + 1]);
+                        yScale = dd3.scale.linear().range([0, dd3.cave.svgHeight]).domain([dimensions.y.min - 1, dimensions.y.max + 1]);
+
+                        dd3.getPointData('scatterplot', 'myData', draw, xScale, yScale);
+                    });
+
+                    var draw = function () {
+                        var svg = dd3.svgCanvas,
+                            scatterGroup = svg.append("g").attr("id", "dd3_myScatterplot");
+
+                        // Setup Axis
+                        var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
+                            yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+                        // x-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "x axis")
+                          .attr("transform", "translate(" + [0, dd3.cave.svgHeight] + ")")
+                          .call(xAxis);
+
+                        // y-axis
+                        svg.append("g")
+                          .unwatch()
+                          .attr("class", "y axis")
+                          .attr("transform", "translate(" + [0, 0] + ")")
+                          .call(yAxis);
+
+                        scatterGroup.selectAll("circle")
+                            .data(data)
+                            .enter()
+                            .append("circle")
+                            .attr("cx", function (d) { return xScale(d.x); })
+                            .attr("cy", function (d) { return yScale(d.y); })
+                            .attr("r", 3)
+                            .style("fill", "black");
+                    };
+                    
+
+                    /*
                     var xScale, yScale;
                     var data, pathData;
                     var dataId = "";
@@ -181,6 +225,7 @@
                         dd3.svgCanvas.selectAll("g").remove();
                         dd3.getDataDimensions(dataId, requestData);
                     };
+                    */
                 };
             });
             //window.orderController = orderController;
