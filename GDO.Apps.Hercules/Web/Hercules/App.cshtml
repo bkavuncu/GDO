@@ -84,12 +84,15 @@
                     
                     var xScale, yScale;
 
-                    dd3.getDataDimensions("myData", function (dimensions) {
+                    dd3.getDataDimensions("scatterplot33", function (dimensions) {
 
                         xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain([dimensions.x.min - 1, dimensions.x.max + 1]);
                         yScale = dd3.scale.linear().range([0, dd3.cave.svgHeight]).domain([dimensions.y.min - 1, dimensions.y.max + 1]);
 
-                        dd3.getPointData('scatterplot', 'myData', draw, xScale, yScale);
+                        dd3.getPointData('scatterplot', 'scatterplot33', function (d) {
+                            data = d;
+                            draw();
+                        }, xScale, yScale);
                     });
 
                     var draw = function () {
