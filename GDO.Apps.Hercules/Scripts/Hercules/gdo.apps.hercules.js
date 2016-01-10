@@ -2481,11 +2481,13 @@
 
         HerculesApp.initControl = function (callback) {
             gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Control at Instance ' + gdo.clientId);
-            //CONTROL _ TEST
             main_callback = callback;
             HerculesServer.server.defineController(gdo.management.selectedInstance);
             return gdo.management.selectedInstance;
-            //TEST
+        }
+
+        HerculesApp.getInstanceId = function () {
+            return gdo.management.selectedInstance;
         }
 
         HerculesApp.terminateClient = function () {

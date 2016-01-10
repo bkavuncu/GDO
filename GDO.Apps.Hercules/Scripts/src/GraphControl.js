@@ -9,6 +9,15 @@ const React = require('react'),
     DeployerStore = require('./stores/DeployerStore'),
     SideMenu = require('./ui/SideMenu');
 
+var gdo = parent.gdo,
+    server = gdo.net.app.Hercules.server, 
+    //instanceId = gdo.net.app["Hercules"].getInstanceId();
+    instanceId = 0;
+
+var order = function (name, args) {
+    return JSON.stringify({ name: name, args: args });
+};
+
 class GraphPanel extends React.Component {
     constructor(props) {
         super(props);
@@ -20,6 +29,7 @@ class GraphPanel extends React.Component {
 
     plot () {
         //Pass box contents from store to render
+        server.sendOrder(instanceId, order("plot", ["scatterplot33"]), true);
         this.state.plotted = true;
     }
 
