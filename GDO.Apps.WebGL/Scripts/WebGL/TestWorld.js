@@ -7,6 +7,9 @@
 
     this.initScene = function () {
 
+        //
+        // Lights
+
         var light = new THREE.DirectionalLight(0xffffff);
         light.position.set(0, 0, 1);
         this.scene.add(light);
@@ -108,6 +111,34 @@
         group3.position.x = 0;
         group3.rotation.x = 0;
         this.scene.add(group3);
+    }
+
+    this.setAsControl = function () {
+
+        //
+        // Track mouse position
+
+        var mouseX = 0;
+        var mouseY = 0;
+
+        function onDocumentMouseMove(event) {
+            mouseX = (event.clientX - (window.innerWidth / 2));
+            mouseY = (event.clientY - (window.innerHeight / 2));
+        }
+
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+        //
+        // Periodically move camera towards mouse position
+
+        function moveCamera() {
+            this.camera.position.x += (mouseX - this.camera.position.x) * 0.05;
+            this.camera.position.y += (-mouseY - this.camera.position.y) * 0.05;
+
+            this.camera.lookAt(this.scene.position);
+        }
+
+        setInterval(moveCamera.bind(this), 1000 / 60);
     }
 
     this.startRendering = function () {

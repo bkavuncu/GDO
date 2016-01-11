@@ -17,6 +17,37 @@
     <script type="text/javascript" src="../../Scripts/three.min.js"></script>
 
     <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/UFOWorld.js"></script>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+        varying vec3 vWorldPosition;
+
+        void main() {
+
+        vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+        vWorldPosition = worldPosition.xyz;
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+        }
+
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentShader">
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        uniform float offset;
+        uniform float exponent;
+
+        varying vec3 vWorldPosition;
+
+        void main() {
+
+        float h = normalize( vWorldPosition + offset ).y;
+        gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
+
+        }
+
+    </script>
 
     <script>
         $(function () {
@@ -36,14 +67,7 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 container.appendChild(renderer.domElement);
 
-                var windowHalfX = window.innerWidth / 2;
-                var windowHalfY = window.innerHeight / 2;
-
                 function onWindowResize() {
-
-                    windowHalfX = window.innerWidth / 2;
-                    windowHalfY = window.innerHeight / 2;
-
                     var effectiveWidth = window.innerHeight * (16 / 9);
                     var effectiveHeight = window.innerWidth * (9 / 16);
 
@@ -63,7 +87,7 @@
                 // TODO: Work out correct fov values
                 var camera = new THREE.PerspectiveCamera(12.0354097, 16 / 9, 3, 10000);
 
-                var world = new TestWorld(renderer, camera);
+                var world = new UFOWorld(renderer, camera);
                 world.initScene();
 
                 var numNodesWide = (gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width / 1920) - 1;
@@ -71,7 +95,7 @@
                 var nodeOffset = gdo.net.node[gdo.clientId].sectionCol - (numNodesWide / 2);
 
                 gdo.consoleOut('.WebGL', 1, 'Node offset - ' + (numNodesWide % 2));
-                camera.rotateY(nodeOffset * (-0.375/(gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height / 1080)));
+                camera.rotateY(nodeOffset * (-0.374/(gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height / 1080)));
 
                 var w = 1920;
                 var h = 1080;
