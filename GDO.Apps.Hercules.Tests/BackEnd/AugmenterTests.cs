@@ -20,7 +20,11 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         [TestMethod()]
         public void FromFileTest()
         {
-            Assert.Fail();
+            RichDS test = Augmenter.FromFile("../../TestFiles/askscience.csv", ",");
+            for (int i = 0; i < test.Columns.Length; i++)
+            {
+                Utils.Say(test.Columns[i].Type.ToString() + " ");
+            }
         }
 
         [TestMethod()]
