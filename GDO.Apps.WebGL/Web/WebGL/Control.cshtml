@@ -103,7 +103,7 @@
     <script src="../../Scripts/three.min.js"></script>
     <script src="../../Scripts/stats.min.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/WebGL/3dWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
 
     <script>
         $(function () {
@@ -112,10 +112,40 @@
 
             $(document).ready(function () {
 
-                var camera = new THREE.PerspectiveCamera(20, 16 / 9, 3, 10000);
-                camera.position.z = 1800;
+                //
+                // Set up renderer on window
 
-                initializeScene();
+                var container = document.getElementById('wrapper');
+
+                var renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setClearColor(0xffffff);
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                var windowHalfX = window.innerWidth / 2;
+                var windowHalfY = window.innerHeight / 2;
+
+                function onWindowResize() {
+
+                    windowHalfX = window.innerWidth / 2;
+                    windowHalfY = window.innerHeight / 2;
+
+                    var effectiveWidth = window.innerHeight * (16 / 9);
+                    var effectiveHeight = window.innerWidth * (9 / 16);
+
+                    if (effectiveWidth > window.innerWidth) {
+                        renderer.setSize(window.innerWidth, effectiveHeight);
+                    } else {
+                        renderer.setSize(effectiveWidth, window.innerHeight);
+                    }
+                }
+
+                onWindowResize();
+                window.addEventListener('resize', onWindowResize, false);
+
+                //
+                // Track mouse position
 
                 var mouseX = 0;
                 var mouseY = 0;
@@ -127,14 +157,13 @@
 
                 document.addEventListener('mousemove', onDocumentMouseMove, false);
 
-                beginAnimation(camera);
+                //
+                // Create camera and periodically send its position to clients
 
-                setInterval(function () {
-                    camera.position.x += (mouseX - camera.position.x) * 0.05;
-                    camera.position.y += (-mouseY - camera.position.y) * 0.05;
+                var camera = new THREE.PerspectiveCamera(20, 16 / 9, 3, 10000);
+                camera.position.z = 1800;
 
-                    camera.lookAt(scene.position);
-
+                function sendCameraPositionToClients() {
                     gdo.net.app["WebGL"].server.setCameraPosition(gdo.controlId,
                         {
                             Position: [camera.position.x,
@@ -145,7 +174,33 @@
                                 camera.quaternion.z,
                                 camera.quaternion.w]
                         });
-                }, 1000 / 60);
+                }
+
+                setInterval(sendCameraPositionToClients, 1000 / 60);
+
+                //
+                // Create 3d world
+
+                var world = new TestWorld(renderer, camera);
+                world.initScene();
+
+                //
+                // Periodically move camera towards mouse position
+
+                function moveCamera() {
+                    camera.position.x += (mouseX - camera.position.x) * 0.05;
+                    camera.position.y += (-mouseY - camera.position.y) * 0.05;
+
+                    camera.lookAt(world.scene.position);
+                }
+
+                setInterval(moveCamera, 1000 / 60);
+
+                //
+                // Start rendering
+
+                world.startRendering();
+
             });
         });
     </script>
