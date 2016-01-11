@@ -270,6 +270,29 @@
                     }, 500);
                 };
 
+                api.getGivenDataDimensions = function (data) {
+                    var dimensions = {},
+                        prop = [];
+
+
+                    for (var p in data[0])
+                        if (data[0].hasOwnProperty(p))
+                            prop.push(p);
+
+                    prop.forEach(function (p) {
+                        dimensions[p] = {};
+                        dimensions[p].min = d3.min(data, utils.d(p, true));
+                        dimensions[p].max = d3.max(data, utils.d(p, true));
+                    });
+
+                    dimensions.length = data.length;
+
+                    // Simulate api response time
+                    setTimeout(function () {
+                        dd3Server.client.dd3Receive("receiveDimensions", dataId, JSON.stringify(dimensions));
+                    }, 500);
+                };
+
                 api.getData = function (dataName, dataId) {
                     // Simulate api response time
                     setTimeout(function () {
@@ -307,6 +330,7 @@
                         dd3Server.client.dd3Receive("receiveData", request.dataName, request.dataId, JSON.stringify(requestedData));
                     }, 500);
                 };
+
 
                 api.getBarData = function (request) {
                     var data = api.dataPoints[request.dataId],
