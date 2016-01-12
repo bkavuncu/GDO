@@ -5,11 +5,16 @@
 
     this.scene = new THREE.Scene();
 
-    var ufo = initUFOModel();
-
     this.initScene = function () {
 
-        ufo.position = new THREE.Vector3(0, 450, -100);
+        var ufo = createUFOModel();
+        ufo.rotation.y = 2.1;
+        ufo.rotation.x = 0.4;
+
+        ufo.position.x = 1223;
+        ufo.position.y = 109;
+        ufo.position.z = 20
+
         this.scene.add(ufo);
 
         // LIGHTS
@@ -35,7 +40,7 @@
 
         this.scene.add(hemiLight);
 
-        this.scene.add(initGround());
+        this.scene.add(createGround());
 
         //SKYDOME 
         var vertexShader = document.getElementById('vertexShader').textContent;
@@ -64,17 +69,24 @@
         this.scene.add(sky);
     }
 
-    function initGround() {
+    function createGround() {
+
+        var seed = 32842;
+        function hackyRandom() {
+            var x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+
         var wSegments = 45;
         var hSegments = 45;
 
         //GROUND
-        var groundGeo = new THREE.PlaneGeometry(6000, 5000, wSegments, hSegments);
+        var groundGeo = new THREE.PlaneGeometry(6000, 6000, wSegments, hSegments);
 
         var index = 0;
         for (var i = 0; i < wSegments; i++) {
             for (var j = 0; j < hSegments; j++) {
-                groundGeo.vertices[index].z = (Math.random() - 0.5) * 100;
+                groundGeo.vertices[index].z = hackyRandom() * 50;
                 index++;
             }
         }
@@ -89,14 +101,12 @@
 
         var ground = new THREE.Mesh(groundGeo, groundMat);
         ground.rotation.x = -Math.PI / 2;
-        ground.position.y = -50;
         ground.receiveShadow = true;
-        ground.position.z = -2500;
 
         return ground;
     }
 
-    function initUFOModel() {
+    function createUFOModel() {
         // model
         var combined = new THREE.Geometry();
 
@@ -130,7 +140,13 @@
     }
 
     this.setAsControl = function () {
-        var juicyCamera = new JuicyCamera(this.camera, ufo);
+
+        var controls = new THREE.PointerLockControls(this.camera);
+        controls.enabled = true;
+
+        controls.getObject().position.y = 200;
+
+        this.scene.add(controls.getObject());
     }
 
     this.startRendering = function () {

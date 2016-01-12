@@ -106,7 +106,7 @@
     <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
 
     <script type="text/javascript" src="../../Scripts/WebGL/UFOWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/JuicyCamera.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/PointerLockControls.js"></script>
 
     <script type="x-shader/x-vertex" id="vertexShader">
         varying vec3 vWorldPosition;
@@ -132,6 +132,7 @@
         void main() {
 
         float h = normalize( vWorldPosition + offset ).y;
+        h = max(0,h);
         gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
 
         }
@@ -173,19 +174,21 @@
                 //
                 // Create camera and periodically send its position to clients
 
-                var camera = new THREE.PerspectiveCamera(20, 16 / 9, 3, 10000);
-                camera.position.z = 1800;
+                var camera = new THREE.PerspectiveCamera(12.0354097, 16 / 9, 3, 10000);
 
                 function sendCameraPositionToClients() {
+                    var position = camera.getWorldPosition();
+                    var quaternion = camera.getWorldQuaternion();
+
                     gdo.net.app["WebGL"].server.setCameraPosition(gdo.controlId,
                         {
-                            Position: [camera.position.x,
-                                        camera.position.y,
-                                        camera.position.z],
-                            Quaternion: [camera.quaternion.x,
-                                camera.quaternion.y,
-                                camera.quaternion.z,
-                                camera.quaternion.w]
+                            Position:   [position.x,
+                                         position.y,
+                                         position.z],
+                            Quaternion: [quaternion.x,
+                                         quaternion.y,
+                                         quaternion.z,
+                                         quaternion.w]
                         });
                 }
 

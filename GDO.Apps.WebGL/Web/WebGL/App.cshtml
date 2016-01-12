@@ -43,6 +43,7 @@
         void main() {
 
         float h = normalize( vWorldPosition + offset ).y;
+        h = max(0,h);
         gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
 
         }
@@ -110,7 +111,6 @@
                 var cameraParent = new THREE.Object3D();
                 cameraParent.add(camera);
                 world.scene.add(cameraParent);
-                cameraParent.position.z = 1800;
 
                 gdo.net.app["WebGL"].initClient(cameraParent);
 
