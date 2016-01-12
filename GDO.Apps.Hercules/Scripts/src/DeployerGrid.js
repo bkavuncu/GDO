@@ -378,10 +378,12 @@ class Section extends React.Component {
     }
     render () {
         var {data} = this.props;
+        var selectedGraph = DeployerStore.graphMap.get(data.id);
 
         return <div style={this._getOuterStyle()} onTouchTap={this._onTap.bind(this)}>
             <div>Section ID: {data.id}</div>
             <div>Nodes: {data.nodeList.sort().map(n => n+1).toArray().toString()}</div>
+            <div>Graph: {selectedGraph ? selectedGraph : 'Assign'}</div>
         </div>;
     }
 }

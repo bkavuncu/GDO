@@ -10,6 +10,14 @@
             color: black;
         }
 
+         .unselectable {
+            -moz-user-select: -moz-none;
+            /*-khtml-user-select: none;*/
+            -webkit-user-select: none;
+           /*-o-user-select: none;*/
+            user-select: none;
+        }
+
         .axis path,
         .axis line {
           fill: none;
@@ -32,7 +40,7 @@
 
         $(function () {
             $(document).ready(function () {
-                var gdo = parent.gdo;
+                var gdo = parent.gdo,
                 configName,
                 configId,
                 test_bench = {};
@@ -41,9 +49,9 @@
                     throw new Error('gdo was not defined in parent');
 
 
-
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
+                        
                         test_bench[configId](configId);
                     } else {
                         dd3.on('ready', test_bench[configId].bind(null, configId));
@@ -71,9 +79,10 @@
 
                 dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
-                console.log(dd3);
+                test_bench['0'] = function () {
 
-                test_bench[0] = function () {
+                    //DD3 app scatter
+
                     var xScale, yScale;
                     var data, pathData;
                     var dataId = "";
@@ -102,9 +111,34 @@
 
                     };
 
+                    var renderData = function (d, dim) {
+                        var extentX = dim.x.max - dim.x.min,
+                            extentY = dim.y.max - dim.y.min,
+                            coef = 0.05, c = 1;
+
+                        var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
+                            yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
+
+                        // Setup Scales
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
+
+                        data = d;
+                        draw();
+
+                        /*
+                        dd3.getPathData('pathData', dataId, function (d) {
+                            pathData = d;
+                            draw();
+                        }, xScale, yScale, ['x'], ['y']);
+                        */
+
+                    };
+
                     var draw = function () {
-                        if (!data || !pathData)
+                        if (!data) {
                             return;
+                        }
 
                         var svg = dd3.svgCanvas,
                             pathGroup = svg.append("g").attr("id", "dd3_path"),
@@ -159,14 +193,38 @@
                                 .y(function (d) { return yScale(d['y']); })
                                 .interpolate("monotone");
 
-                        //*
+                        /*
                         pathGroup.append("path").datum(pathData)
                             .unwatch()
                             .attr("d", lineFunction)
                             .attr("stroke", "blue")
                             .attr("stroke-width", 2)
                             .attr("fill", "none");
-                        //*/
+                        */
+                    };
+
+                    // p to true try to parse numbers
+                    var d = function (k, p) {
+                        return function (d) { return ((p && +d[k]) || d[k]); };
+                    };
+
+                    var getDims = function (data) {
+                        var dimensions = {},
+                        prop = [];
+
+                        for (var p in data[0])
+                            if (data[0].hasOwnProperty(p))
+                                prop.push(p);
+
+                        prop.forEach(function (p) {
+                            dimensions[p] = {};
+                            dimensions[p].min = d3.min(data, d(p, true));
+                            dimensions[p].max = d3.max(data, d(p, true));
+                        });
+
+                        dimensions.length = data.length;
+
+                        return dimensions;
                     };
 
                     orderController.orders['plot'] = function (id) {
@@ -175,6 +233,14 @@
                         dd3.svgCanvas.selectAll("g").remove();
                         dd3.getDataDimensions(dataId, requestData);
                     };
+
+                    orderController.orders['plotdatascatter'] = function (data) {
+                        data = data;
+                        dd3.svgCanvas.selectAll("g").remove();
+                        var dims = getDims(data);
+                        renderData(data, dims);
+                    };
+ 
                 };
             });
             //window.orderController = orderController;

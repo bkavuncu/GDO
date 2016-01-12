@@ -226,7 +226,7 @@ namespace GDO.Apps.Hercules.BackEnd
 
                 case AType.Text:
                     for (int r = 0, nrows = values.Count; r < nrows; r++) {
-                        data[r] = values[r][col].Length; // Use Length for strings.
+                        data[r] = values[r][col].ToString().Length; // Use Length for strings.
                     }
                     return Stats.DynamicStats(data);
 
