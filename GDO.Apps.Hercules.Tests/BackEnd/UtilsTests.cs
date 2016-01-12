@@ -1,10 +1,35 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using GDO.Apps.Hercules.BackEnd;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GDO.Apps.Hercules.BackEnd.New;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+namespace GDO.Apps.Hercules.BackEnd.Tests
+{
+    [TestClass()]
+    public class UtilsTests
+    {
+        [TestMethod()]
+        public void AxesMapToPlotOrderTest()
+        {
+            string axesMap = "{x: [\"oranges\"], y: [\"clementines\"]}";
+            JsonDS dataset = Database.JsonFromFile("../../TestFiles/falcon.csv", "falcon", "punch");
+            if (dataset == null)
+            {
+                throw new Exception(Database.GetError());
+            }
+            
+            string result = Utils.AxesMapToPlotOrder(axesMap, dataset);
+            string expected = "[{\"x\":\"4\",\"y\":\"6\"},{\"x\":\"9\",\"y\":\"0\"},{\"x\":\"4\",\"y\":\"2\"},{\"x\":\"1\",\"y\":\"7\"},{\"x\":\"1\",\"y\":\"9\"},{\"x\":\"6\",\"y\":\"4\"},{\"x\":\"8\",\"y\":\"5\"},{\"x\":\"20\",\"y\":\"5\"},{\"x\":\"6\",\"y\":\"6\"}]";
+
+
+            Assert.AreEqual<string>(result, expected);
+        }
+    }
+}
 
 namespace GDO.Apps.Hercules.BackEnd.New.Tests
 {

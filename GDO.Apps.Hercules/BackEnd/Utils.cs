@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.Hercules.BackEnd
 {
@@ -92,7 +93,64 @@ namespace GDO.Apps.Hercules.BackEnd
         {
             return (s == null || s.Length <= 0) ? b : s;
         }
+
+        public static string AxesMapToPlotOrder (string axesMap, JsonDS dataset)
+        {
+            // Parse axesMap into an AxesMap object
+            AxesMap am = new AxesMap(axesMap);
+            // List<Pair<Axis, Field> ps
+            List<dynamic[]> rows = dataset.rows;
+            List<KeyValuePair<string, string>> pairs = am.getPairs();
+            Dictionary<string, int> fieldMap = dataset.getFieldIndexMap();
+            // for each row in dataset
+            List<Dictionary<String, String>> result = new List<Dictionary<String, String>>();
+            foreach (dynamic[] row in rows)
+            {
+                // create an object
+                Dictionary<String, String> obj = new Dictionary<String, String> ();
+                // for each pair in ps , add axis -> row[field] in object
+                foreach (KeyValuePair<string, string> axisFieldPair in pairs)
+                {
+                    string axisName = axisFieldPair.Key;
+                    int fieldIndex = fieldMap[axisFieldPair.Value];
+                    dynamic fieldValue = row[fieldIndex];
+                    obj.Add(axisName, fieldValue.ToString());
+                }
+                result.Add(obj);
+            }
+
+            return JsonConvert.SerializeObject(result);
+        }
+
+        private class AxesMap
+        {
+            Dictionary<String, List<String>> axesMap;
+
+            public AxesMap(string mapString)
+            {
+                axesMap = JsonConvert.DeserializeObject<Dictionary<String, List<String>>> (mapString);
+            }
+
+            public List<KeyValuePair<string, string>> getPairs()
+            {
+                List<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
+
+                foreach (string k in axesMap.Keys)
+                {
+                    List<String> fields = axesMap[k];
+
+                    foreach (string field in fields)
+                    {
+                        KeyValuePair<string, string> pair = new KeyValuePair<string, string>(k, field);
+                        pairs.Add(pair);
+                    }
+                }
+
+                return pairs;
+            }
+        }
     }
+
 
 
 }

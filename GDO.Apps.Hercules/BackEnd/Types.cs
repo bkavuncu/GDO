@@ -81,6 +81,19 @@ namespace GDO.Apps.Hercules.BackEnd
         {
             return string.Format("{0}\n{1}", schema.ToString(), Utils.Lines(rows, "\n\t"));
         }
+
+        public Dictionary<string, int> getFieldIndexMap()
+        {
+            Dictionary<string, int> map = new Dictionary<string, int>();
+            JsonField[] fields = schema.fields;
+            for (int i = 0; i < fields.Length; i++)
+            {
+                JsonField f = fields[i];
+                map.Add(f.name, i);
+            }
+
+            return map;
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////

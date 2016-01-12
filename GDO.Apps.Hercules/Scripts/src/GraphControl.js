@@ -15,7 +15,7 @@ var gdo = parent.gdo,
     instanceId = 0;
 var testData = [
       {
-          "x": 0,
+          "x": 5,
           "y": 1
       },
       {
@@ -160,10 +160,22 @@ class GraphPanel extends React.Component {
         };
     }
 
+    /**
+    *   x - > {'oranges', 'clementine'}
+
+    {x: 'oranges', x: 'clementines}
+    */
+
     plot () {
         //Pass box contents from store to render
-        server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);
-        this.state.plotted = true;
+        var axesMap = GraphBuilderStore.getAxes();
+        server.setAxesMap(JSON.serialize(axesMap));
+        //server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);
+        this.setState({plotted: true});
+    }
+
+    trimData (fields) {
+        
     }
 
     render () {

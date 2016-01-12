@@ -111,7 +111,8 @@
 
                     };
 
-                    var renderData = function (d, dim) {
+                    //Scatter plot
+                    var renderScatterData = function (d, dim) {
                         var extentX = dim.x.max - dim.x.min,
                             extentY = dim.y.max - dim.y.min,
                             coef = 0.05, c = 1;
@@ -124,7 +125,7 @@
                         yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
 
                         data = d;
-                        draw();
+                        drawScatter();
 
                         /*
                         dd3.getPathData('pathData', dataId, function (d) {
@@ -135,7 +136,7 @@
 
                     };
 
-                    var draw = function () {
+                    var drawScatter = function () {
                         if (!data) {
                             return;
                         }
@@ -203,6 +204,47 @@
                         */
                     };
 
+                    //Table
+                    var renderTableData = function (d) {
+                        var table = d3.select("body").append("table")
+                            .attr("style", "margin-left: 250px"),
+                            thead = table.append("thead"),
+                            tbody = table.append("tbody");
+
+                        data = d;
+                            
+
+                        // append the header row
+                        thead.append("tr")
+                            .selectAll("th")
+                            .data(columns)
+                            .enter()
+                            .append("th")
+                                .text(function (column) { return column; });
+
+                        // create a row for each object in the data
+                        var rows = tbody.selectAll("tr")
+                            .data(data)
+                            .enter()
+                            .append("tr");
+
+                        // create a cell in each row for each column
+                        var cells = rows.selectAll("td")
+                            .data(function (row) {
+                                return columns.map(function (column) {
+                                    return { column: column, value: row[column] };
+                                });
+                            })
+                            .enter()
+                            .append("td")
+                            .attr("style", "font-family: Courier") // sets the font style
+                                .html(function (d) { return d.value; })
+                    };
+
+                    var drawTable = function() {
+
+                    };
+
                     // p to true try to parse numbers
                     var d = function (k, p) {
                         return function (d) { return ((p && +d[k]) || d[k]); };
@@ -238,7 +280,13 @@
                         data = data;
                         dd3.svgCanvas.selectAll("g").remove();
                         var dims = getDims(data);
-                        renderData(data, dims);
+                        renderScatterData(data, dims);
+                    };
+
+                    orderController.orders['plotdatatable'] = function (data) {
+                        data = data;
+                        dd3.svgCanvas.selectAll("g").remove();
+                        renderTableData(data);
                     };
  
                 };
