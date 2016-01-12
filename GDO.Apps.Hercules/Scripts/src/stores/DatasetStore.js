@@ -63,15 +63,21 @@ class DatasetStore extends BaseStore {
     }
 
     toHerculesObject () {
+        // converts Immutable List to simple Array
         return this.getAllSets().toJS();
     }
 
-    _fromHerculesObject (obj) {
+    _fromHerculesObject (minisetArray) {
         this._clear();
+        // Store minisets in minisetArray in this temporarily mutable Map, using `id' as key
+        var newMinisets = Immutable.Map().asMutable();
 
-        obj.forEach((miniset) => {
-            this.miniSets = this.miniSets.set(miniset.id, miniset);
+        minisetArray.forEach((miniset) => {
+            newMinisets.set(miniset.id, miniset);
         });
+
+
+        this.miniSets = newMinisets.asImmutable();
     }
 }
 

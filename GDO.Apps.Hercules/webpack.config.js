@@ -6,6 +6,7 @@ var webpack = require('webpack'),
 module.exports = _.extend({}, commonConfig, {
     cache: true,
     debug: false,
+    console: false,
     entry: [
         './Scripts/src/Hercules.js'
     ],

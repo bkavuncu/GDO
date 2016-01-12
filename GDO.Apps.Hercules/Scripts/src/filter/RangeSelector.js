@@ -36,6 +36,8 @@ class Slider extends React.Component {
                             onMouseMove={drag}
                             onTouchEnd={end}
                             onMouseUp={end}
+                            onMouseLeave={end}
+                            onTouchCancel={end}
                     >
                     <InlineSVG src={svg} ref="svg"/>
                 </div>;
@@ -65,8 +67,7 @@ class Slider extends React.Component {
         }
     }
 
-    _onDragEnd (e) {
-        console.log('end');
+    _onDragEnd () {
         this.setState({
             step: REST
         });
