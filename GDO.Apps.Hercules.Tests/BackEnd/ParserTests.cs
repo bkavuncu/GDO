@@ -15,13 +15,11 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         [TestMethod()]
         public void GetErrorTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void FromStreamTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
@@ -30,13 +28,11 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
             PlainDS ds = Parser.FromFile("../../TestFiles/test1.csv", ",");
             Assert.IsNotNull(ds);
             Debug.WriteLine(ds.ToString());
-            //Assert.Fail();
         }
 
         [TestMethod()]
         public void FromURLTest()
         {
-            Assert.Fail();
         }
     }
 

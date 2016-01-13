@@ -40,7 +40,7 @@ namespace GDO.Apps.Hercules.BackEnd
             MongoClient = new MongoClient("mongodb://localhost/datasets");
             MongoDB = MongoClient.GetDatabase("datasets");
             JsonRows = MongoDB.GetCollection<JsonRows>("jsonrows");
-            JsonMinisets = MongoDB.GetCollection<JsonMiniset>("jsonminisetss");
+            JsonMinisets = MongoDB.GetCollection<JsonMiniset>("jsonminisets");
             return true;
         }
 
@@ -149,7 +149,6 @@ namespace GDO.Apps.Hercules.BackEnd
                 return null;
             }
         }
-
 
 
         // JsonDS must be set with JsonFromRich

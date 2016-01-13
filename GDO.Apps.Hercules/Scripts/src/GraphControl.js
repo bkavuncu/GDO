@@ -9,10 +9,11 @@ const React = require('react'),
     DeployerStore = require('./stores/DeployerStore'),
     SideMenu = require('./ui/SideMenu');
 
-//var gdo = parent.gdo,
-//    server = gdo.net.app.Hercules.server,
-//    //instanceId = gdo.net.app["Hercules"].getInstanceId();
-//    instanceId = 0;
+var gdo = parent.gdo,
+    server = gdo.net.app.Hercules.server,
+    instanceId = gdo.management.selectedInstance,
+    geeting = 'wabalubadubdub';
+
 var testData = [
       {
           "x": 5,
@@ -160,16 +161,11 @@ class GraphPanel extends React.Component {
         };
     }
 
-    /**
-    *   x - > {'oranges', 'clementine'}
-
-    {x: 'oranges', x: 'clementines}
-    */
-
     plot () {
         //Pass box contents from store to render
-        //var axesMap = GraphBuilderStore.getAxes();
-        //server.setAxesMap(JSON.serialize(axesMap));
+        var axesMap = GraphBuilderStore.getAxes().toJS();
+        console.log(axesMap);
+        server.setAxesMap(0, JSON.stringify(axesMap));
         //server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);
         this.setState({plotted: true});
     }
