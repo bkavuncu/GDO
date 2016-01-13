@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="BackEnd\AugmenterTests.cs" />
     <Compile Include="BackEnd\DatabaseTests.cs" />
+    <Compile Include="BackEnd\JsonDSTests.cs" />
     <Compile Include="BackEnd\ParserTests.cs" />
     <Compile Include="BackEnd\StatsTests.cs" />
     <Compile Include="BackEnd\UtilsTests.cs" />
@@ -101,6 +102,7 @@
     <None Include="TestFiles\WellFormed\TB_outcomes_2016-01-13.csv" />
     <None Include="TestFiles\WellFormed\TB_strategy_2016-01-13.csv" />
     <None Include="TestFiles\WellFormed\TechCrunchcontinentalUSA.csv" />
+    <None Include="TestFiles\WellFormed\test1.csv" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
