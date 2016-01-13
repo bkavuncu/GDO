@@ -11,6 +11,7 @@ class GraphBuilderStore extends BaseStore {
         //sectionDataMap<sectionId, Map<axisName, dimension>>
         this.sectionDataMap = Immutable.Map();
         this.activeSection;
+        this.empty = true;
 
         this.subscribe(() => this._registerToActions.bind(this))
     }
@@ -28,7 +29,12 @@ class GraphBuilderStore extends BaseStore {
     }
 
     init (sectionData) {
-        this.activeSection = sectionData[0].sectionId;
+        if(sectionData.length > 0) {
+            this.activeSection = sectionData[0].sectionId;
+            this.isEmpty = false;
+        } else {
+            this.isEmpty = true;
+        }
         for (var i=0; i<sectionData.length; i++) {
             var sectionId = sectionData[i].sectionId;
             var dimensions = sectionData[i].graphData.dimensions;
@@ -92,6 +98,10 @@ class GraphBuilderStore extends BaseStore {
 
     getYAxis() {
         return this.selectedY;
+    }
+
+    isEmpty() {
+        return this.empty;
     }
 
     toHerculesObject (sectionId) {

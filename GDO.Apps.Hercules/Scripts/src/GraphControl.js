@@ -9,10 +9,10 @@ const React = require('react'),
     DeployerStore = require('./stores/DeployerStore'),
     SideMenu = require('./ui/SideMenu');
 
-var gdo = parent.gdo,
-    server = gdo.net.app.Hercules.server, 
-    //instanceId = gdo.net.app["Hercules"].getInstanceId();
-    instanceId = 0;
+//var gdo = parent.gdo,
+//    server = gdo.net.app.Hercules.server,
+//    //instanceId = gdo.net.app["Hercules"].getInstanceId();
+//    instanceId = 0;
 var testData = [
       {
           "x": 5,
@@ -168,14 +168,10 @@ class GraphPanel extends React.Component {
 
     plot () {
         //Pass box contents from store to render
-        var axesMap = GraphBuilderStore.getAxes();
-        server.setAxesMap(JSON.serialize(axesMap));
+        //var axesMap = GraphBuilderStore.getAxes();
+        //server.setAxesMap(JSON.serialize(axesMap));
         //server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);
         this.setState({plotted: true});
-    }
-
-    trimData (fields) {
-        
     }
 
     render () {
@@ -200,6 +196,12 @@ class GraphPanel extends React.Component {
             if(this.props.activeId == section.sectionId) {
                 graphData = section.graphData;
             }
+        }
+
+        if (GraphBuilderStore.isEmpty) {
+            plotButtonStyle.display = 'none';
+        } else {
+            plotButtonStyle.display = 'block';
         }
 
         return <div style={panelStyle}>
