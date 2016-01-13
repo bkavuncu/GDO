@@ -20,7 +20,8 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         {
             Utils.WriteSeparator();
             JsonDS ds = Database.JsonDSFromFile("../../TestFiles/WellFormed/" + name, name, "");
-            Debug.WriteLine(ds.schema);
+            //Debug.WriteLine(ds.schema);
+            Debug.WriteLine(name + " (" + (expectedRowNo - ds.schema.nrows).ToString() + ")");
         }
 
         [TestMethod()]
@@ -28,8 +29,8 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         {
             try {
                 Database.Init();
-                go("askscience.csv", 1000);
                 go("MDR-TB_burden_estimates_2016-01-13.csv", 218);
+                go("askscience.csv", 1000);
                 go("SacramentocrimeJanuary2006.csv", 7585);
                 go("Sacramentorealestatetransactions.csv", 986);
                 go("SalesJan2009.csv", 999);

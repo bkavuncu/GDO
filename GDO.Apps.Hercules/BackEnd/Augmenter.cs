@@ -76,7 +76,7 @@ namespace GDO.Apps.Hercules.BackEnd
             }
 
             for (int c = 0, ncols = cols.Length; c < ncols; c++) { // Compute stats.
-                cols[c].Stats = ColumnStats(values, c, cols[c].Type);
+                cols[c].Stats = ColumnStats(correct, c, cols[c].Type);
             }
 
             RichDS rich = new RichDS(); // We done!!!

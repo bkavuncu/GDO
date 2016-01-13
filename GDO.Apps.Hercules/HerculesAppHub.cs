@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Apps.Hercules.BackEnd;
+using System.Diagnostics;
 
 namespace GDO.Apps.Hercules
 {
@@ -182,20 +183,21 @@ namespace GDO.Apps.Hercules
 
         public void setAxesMap(int instanceId, string map)
         {
-            string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
-            JsonDS dataset = Database.JsonFromFile(path, "Falcon", "Puuawnch");
-            if (dataset == null)
-            {
-                throw new Exception(Database.GetError());
+            try {
+                string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
+                JsonDS dataset = Database.JsonDSFromFile(path, "Falcon", "Puuawnch");
+   
+                string data = Utils.AxesMapToPlotOrder(map, dataset);
+                string order = "{ \"name\": \"plotdatascatter\", \"args\": [" + data + "]}";
+
+                instances = Cave.Apps["Hercules"].Instances;
+                HerculesApp app = ((HerculesApp)instances[instanceId]);
+                app.setAxesMap(data);
+
+                sendOrder(instanceId, order, true);
+            } catch (Exception e) {
+                Debug.WriteLine("HerculesAppHub.setAxesMap: " + e.Message);
             }
-            string data = Utils.AxesMapToPlotOrder(map, dataset);
-            string order = "{ \"name\": \"plotdatascatter\", \"args\": [" + data + "]}";
-
-            instances = Cave.Apps["Hercules"].Instances;
-            HerculesApp app = ((HerculesApp)instances[instanceId]);
-            app.setAxesMap(data);
-
-            sendOrder(instanceId, order, true);
         }
 
     }
