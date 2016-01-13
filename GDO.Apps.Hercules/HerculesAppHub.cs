@@ -195,13 +195,10 @@ namespace GDO.Apps.Hercules
 
         public void setAxesMap(int instanceId, string map, string id)
         {
+            try {
             string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
-            //JsonDS dataset = Database.JsonFromFile(path, "Falcon", "Puuawnch");
-            JsonDS dataset = Database.QueryJsonDS(id);
-            if (dataset == null)
-            {
-                throw new Exception(Database.GetError());
-            }
+            JsonDS dataset = Database.JsonDSFromFile(path, "Falcon", "Puuawnch");
+   
             string data = Utils.AxesMapToPlotOrder(map, dataset);
             string order = "{ \"name\": \"plotdatascatter\", \"args\": [" + data + "]}";
 
@@ -210,6 +207,9 @@ namespace GDO.Apps.Hercules
             app.setAxesMap(data);
 
             sendOrder(instanceId, order, true);
+            } catch (Exception e) {
+                Debug.WriteLine("HerculesAppHub.setAxesMap: " + e.Message);
+            }
         }
 
     }

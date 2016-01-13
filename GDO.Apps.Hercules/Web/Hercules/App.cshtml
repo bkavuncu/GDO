@@ -176,7 +176,7 @@
                           .style("text-anchor", "end")
                           .text("Y axis");
 
-                        // Draw dots
+                        // Draw dots green
                         circleGroup.selectAll(".dot")
                           .data(data)
                         .enter()
@@ -187,7 +187,25 @@
                           .attr("cy", function (d) { return yScale(d['y']); })
                           .attr("r", 3)
                           .style("fill", function (d, i) { return "black"; })
-                          .style("stroke", "red");
+                          .style("stroke", "green");
+
+                        /*// Change colour to red, if this one doesn't work, replot is needed
+                        circleGroup.selectAll(".dot")
+                            .style("stroke", "red");
+
+                        // Replot
+                        circleGroup.selectAll(".dot").remove();
+                        circleGroup.selectAll(".dot")
+                         .data(data)
+                       .enter()
+                         .append("g")
+                         .append("circle")
+                         .attr("class", "dot")
+                         .attr("cx", function (d) { return xScale(d['x']); })
+                         .attr("cy", function (d) { return yScale(d['y']); })
+                         .attr("r", 3)
+                         .style("fill", function (d, i) { return "black"; })
+                         .style("stroke", "red");*/
 
                         var lineFunction = d3.svg.line()
                                 .x(function (d) { return xScale(d['x']); })
