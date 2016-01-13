@@ -5,6 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
+// C:\Program Files\MongoDB\Server\3.0\bin
+// C:\data\db
+
 namespace GDO.Apps.Hercules.BackEnd
 {
 

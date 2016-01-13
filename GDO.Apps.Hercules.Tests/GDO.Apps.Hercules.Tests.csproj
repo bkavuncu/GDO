@@ -86,8 +86,21 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TestFiles\test1.csv" />
-    <None Include="TestFiles\test2.csv" />
+    <None Include="TestFiles\IllFormed\empty.csv" />
+    <None Include="TestFiles\WellFormed\askscience.csv" />
+    <None Include="TestFiles\WellFormed\headers_only.csv" />
+    <None Include="TestFiles\WellFormed\MDR-TB_burden_estimates_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\SacramentocrimeJanuary2006.csv" />
+    <None Include="TestFiles\WellFormed\Sacramentorealestatetransactions.csv" />
+    <None Include="TestFiles\WellFormed\SalesJan2009.csv" />
+    <None Include="TestFiles\WellFormed\TB_burden_countries_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TB_data_dictionary_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TB_hiv_nonroutine_surveillance_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TB_laboratories_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TB_notifications_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TB_outcomes_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TB_strategy_2016-01-13.csv" />
+    <None Include="TestFiles\WellFormed\TechCrunchcontinentalUSA.csv" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
