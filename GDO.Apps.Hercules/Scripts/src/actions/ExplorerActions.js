@@ -1,7 +1,7 @@
 const Dispatcher = require('../Dispatcher'),
-    schemas = require('../schemas/DatasetStructure');
-
-var datasets = [
+    schemas = require('../schemas/DatasetStructure'),
+    gdo = parent.gdo,
+    datasets = [
     {
         id: 1,
         name: 'George Lemon',
@@ -48,18 +48,29 @@ var datasets = [
     }
 ];
 
+if (typeof $ != undefined) {
+    gdo.net.app.Hercules.receiveMinisets = (minisets) => {
+        console.log('your butt', minisets);
+        if (typeof minisets == 'string') {
+            minisets = JSON.parse(minisets);
+        }
+
+        minisets.map ((d) => {
+            var valid = schemas.validMiniset;
+
+            if (!valid(d))
+                console.error(valid.errors(d));
+
+            Dispatcher.dispatch({
+                actionType: 'addMiniset',
+                data: d
+            })
+        });
+    }
+}
+
 export function requestMinisets () {
-    datasets.map ((d) => {
-        var valid = schemas.validMiniset;
-
-        if (!valid(d))
-            console.error(valid.errors(d));
-
-        Dispatcher.dispatch({
-            actionType: 'addMiniset',
-            data: d
-        })
-    })
+    gdo.net.app.Hercules.server.getDatasets(0);
 }
 
 export function selectDataset (datasetId) {

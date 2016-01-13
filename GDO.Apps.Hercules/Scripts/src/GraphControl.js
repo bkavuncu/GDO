@@ -162,10 +162,12 @@ class GraphPanel extends React.Component {
     }
 
     plot () {
-        //Pass box contents from store to render
+        //Pass box contents from store to renderer
         var axesMap = GraphBuilderStore.getAxes().toJS();
+        var activeMiniSet = DataStore.getActiveMiniset();
+        var dsId = activeMiniSet.id;
         console.log(axesMap);
-        server.setAxesMap(0, JSON.stringify(axesMap));
+        server.setAxesMap(0, JSON.stringify(axesMap), dsId);
         //server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);
         this.setState({plotted: true});
     }

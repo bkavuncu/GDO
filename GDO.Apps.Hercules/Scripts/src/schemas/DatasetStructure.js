@@ -30,7 +30,7 @@ export var validField = schema({
 export var validMiniset = schema({
     name: String,
     description: String,
-    id: Number.above(0),
+    id: String,
     length: Number.above(0),
     source: [{
         type: 'URL',

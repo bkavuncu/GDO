@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json;
+using GDO.Apps.Hercules.BackEnd;
 
 
 namespace GDO.Apps.Hercules
@@ -107,6 +108,8 @@ namespace GDO.Apps.Hercules
         public void defineController(string id)
         {
             controllerId = id;
+            Database.EnsureDatasetsAreLoaded();
+
             if (browserList.Count == Section.NumNodes)
             {
                 // 1 = Launched
@@ -158,6 +161,15 @@ namespace GDO.Apps.Hercules
         internal void setAxesMap(string axesMap)
         {
             System.Diagnostics.Debug.WriteLine(axesMap);
+        }
+
+        internal void BroadcastData()
+        {
+            JsonMiniset[] minisets = Database.QueryJsonMinisets();
+            string encodedMinisets = JsonConvert.SerializeObject(minisets);
+
+
+            HerculesAppHub.self.updateMinisets(controllerId, encodedMinisets);
         }
     }
 

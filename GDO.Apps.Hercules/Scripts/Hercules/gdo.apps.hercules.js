@@ -2302,10 +2302,10 @@
             return dd3;
         };
 
-        HerculesServer = $.connection.herculesAppHub;
-        var signalR_callback = {};
-        var main_callback; // Callback inside the html file
-        var orderTransmitter; // Callback inside the html file
+        var HerculesServer = $.connection.herculesAppHub,
+            signalR_callback = {},
+            main_callback, // Callback inside the html file
+            orderTransmitter; // Callback inside the html file
 
         // Function used for dd3 callback
         HerculesServer.client.dd3Receive = function (f) {
@@ -2339,6 +2339,11 @@
             main_callback && main_callback(JSON.parse(obj));
         };
 
+        HerculesServer.client.receiveMinisets = function (minisets) {
+            console.log('wargwan from the server side', minisets);
+            HerculesApp.receiveMinisets(minisets);
+        };
+
         var HerculesApp = gdo.net.app.Hercules;
 
 
@@ -2370,6 +2375,8 @@
             }
         }
 
+        console.log('DON\'T DROP THAT TUNTUTUN EEEEHHHHHH');
+
         HerculesApp.initControl = function (callback) {
             gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Control at Instance ' + gdo.clientId);
             main_callback = callback;
@@ -2389,13 +2396,6 @@
         HerculesApp.terminateControl = function () {
             gdo.consoleOut('.Hercules', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
         }
-
-        HerculesApp.porcaMadonna = function () {
-            console.error('Things -> ', HerculesApp.server, HerculesApp.server.dataTest, HerculesServer);
-            HerculesServer.server.porcaMadonna(54);
-        }
-
-        console.error('Loaded: -> ', HerculesApp);
     });
     
 }

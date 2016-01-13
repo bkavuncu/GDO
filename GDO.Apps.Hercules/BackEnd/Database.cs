@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace GDO.Apps.Hercules.BackEnd
 {
-    //
     public class Database
     {
 
         // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
+        private static string datasetPath = "../../../GDO.Apps.Hercules.Tests/TestFiles";
 
         // Returns the last error that occurred from the methods in ServerDS.
         public static string GetError() { return LastError; }
@@ -93,6 +93,28 @@ namespace GDO.Apps.Hercules.BackEnd
             } catch (Exception ouch) {
                 LastError = string.Format("Database.QueryJsonMinisets: database error ({0}).", ouch.Message);
                 return null;
+            }
+        }
+
+        public static void EnsureDatasetsAreLoaded()
+        {
+            JsonMiniset[] ms = QueryJsonMinisets();
+            if (ms == null)
+            {
+                //BALLS
+            } else
+            {
+                if(ms.Length == 0)
+                {
+                    string[] files = Directory.GetFiles(datasetPath, "*.csv", SearchOption.TopDirectoryOnly);
+                    foreach (String file in files)
+                    {
+                        JsonDS ds = Database.JsonFromFile(file, "", "");
+                        if (ds != null) {
+                            Database.UploadJsonDS(ds);
+                        } 
+                    }
+                }
             }
         }
 

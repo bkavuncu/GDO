@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Apps.Hercules.BackEnd;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.Hercules
 {
@@ -180,10 +181,23 @@ namespace GDO.Apps.Hercules
             Clients.Client(controllerId).updateController(message);
         }
 
-        public void setAxesMap(int instanceId, string map)
+        public void updateMinisets(string controllerId, string JSONMinisets)
+        {
+            Clients.Client(controllerId).receiveMinisets(JSONMinisets);
+        }
+
+        public void getDatasets(int instanceId)
+        {
+            HerculesApp app = (HerculesApp) Cave.Apps["Hercules"].Instances[instanceId];
+
+            app.BroadcastData();
+        }
+
+        public void setAxesMap(int instanceId, string map, string id)
         {
             string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
-            JsonDS dataset = Database.JsonFromFile(path, "Falcon", "Puuawnch");
+            //JsonDS dataset = Database.JsonFromFile(path, "Falcon", "Puuawnch");
+            JsonDS dataset = Database.QueryJsonDS(id);
             if (dataset == null)
             {
                 throw new Exception(Database.GetError());
