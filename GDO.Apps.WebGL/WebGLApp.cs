@@ -32,13 +32,13 @@ namespace GDO.Apps.WebGL
 
     public class Camera
     {
-        public string[] Position { get; set; }
-        public string[] Quaternion { get; set; }
+        public string[] position { get; set; }
+        public string[] quaternion { get; set; }
 
         public Camera()
         {
-            this.Position = new string[3];
-            this.Quaternion = new string[4];
+            this.position = new string[3];
+            this.quaternion = new string[4];
         }
     }
 }

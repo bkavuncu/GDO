@@ -10,7 +10,7 @@ namespace GDO.Apps.WebGL
     public class WebGLAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "WebGL";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new WebGLApp().GetType();
 
         public void JoinGroup(int instanceId)

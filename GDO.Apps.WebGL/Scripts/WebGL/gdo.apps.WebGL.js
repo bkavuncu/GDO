@@ -10,13 +10,13 @@ $(function () {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
 
-            cameraParent.position.set(parseFloat(newCamera.Position[0]),
-                                      parseFloat(newCamera.Position[1]),
-                                      parseFloat(newCamera.Position[2]));
-            cameraParent.quaternion.set(parseFloat(newCamera.Quaternion[0]),
-                                        parseFloat(newCamera.Quaternion[1]),
-                                        parseFloat(newCamera.Quaternion[2]),
-                                        parseFloat(newCamera.Quaternion[3]));
+            cameraParent.position.set(parseFloat(newCamera.position[0]),
+                                      parseFloat(newCamera.position[1]),
+                                      parseFloat(newCamera.position[2]));
+            cameraParent.quaternion.set(parseFloat(newCamera.quaternion[0]),
+                                        parseFloat(newCamera.quaternion[1]),
+                                        parseFloat(newCamera.quaternion[2]),
+                                        parseFloat(newCamera.quaternion[3]));
             cameraParent.updateMatrix();
 
             //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera parent: " + JSON.stringify(cameraParent));

@@ -43,7 +43,7 @@
         void main() {
 
         float h = normalize( vWorldPosition + offset ).y;
-        h = max(0,h);
+        h = max(0.0, h);
         gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
 
         }
@@ -115,6 +115,33 @@
                 gdo.net.app["WebGL"].initClient(cameraParent);
 
                 world.startRendering();
+
+                /*
+
+                // PeerJS fiddling
+
+                //TODO: REMOVE THIS HORRIBLE HACK
+                gdo.net.receiveData = function (data) {
+                    console.log("TESTing peerjs crap");
+                    console.log(data.peerpayload);
+                    console.log(data.data);
+                }
+
+                for (var connectedNode in gdo.net.node[gdo.clientId].connectedNodeList) {
+                    var conn = gdo.net.peer.connections[gdo.net.node[connectedNode].peerId][0];
+                    
+                    // Receive messages
+                    conn.on('data', function (data) {
+                        console.log("TESTing peerjs crap");
+                        console.log(data.peerpayload);
+                        console.log(data.data);
+                    });
+
+                    conn.send({ type: 'count', value: gdo.clientId });
+                }
+
+                */
+
             });
         });
     </script>
