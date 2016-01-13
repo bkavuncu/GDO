@@ -30,11 +30,11 @@ namespace GDO.Apps.Hercules
         public int P2PMode { get; set; }
         public Type InstanceType { get; set; }
 
-        public HerculesAppHub()
+        public HerculesAppHub ()
         {
             self = this;
             this.Name = "Hercules";
-            this.P2PMode = (int)Cave.P2PModes.None;
+            this.P2PMode = (int) Cave.P2PModes.None;
             this.InstanceType = new HerculesApp().GetType();
         }
 
@@ -178,6 +178,7 @@ namespace GDO.Apps.Hercules
             else
             {
                 //Maybe should we make more checks to ensure we always send order to the same node...
+                System.Diagnostics.Debug.WriteLine(order);
                 instances = Cave.Apps["Hercules"].Instances;
                 var cid = ((HerculesApp)instances[instanceId]).getFirstNode();
                 if (cid != null)
@@ -188,6 +189,14 @@ namespace GDO.Apps.Hercules
         public void updateController(string controllerId, string message)
         {
             Clients.Client(controllerId).updateController(message);
+        }
+
+        public void setAxesMap(int instanceId, string map)
+        {
+            //var data = GIVE ME TEH DATA HERE PLZ
+            instances = Cave.Apps["Hercules"].Instances;
+            HerculesApp herculesApp = (HerculesApp)instances[instanceId];
+            herculesApp.setAxesMap(map);
         }
 
     }

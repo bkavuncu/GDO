@@ -155,6 +155,10 @@ namespace GDO.Apps.Hercules
             }
         }
 
+        internal void setAxesMap(string axesMap)
+        {
+            System.Diagnostics.Debug.WriteLine(axesMap);
+        }
     }
 
 
