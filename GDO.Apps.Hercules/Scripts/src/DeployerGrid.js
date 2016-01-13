@@ -4,7 +4,8 @@ const React = require('react'),
     _ = require('underscore'),
     DeployerStore = require('./stores/DeployerStore'),
     DeployerActions = require('./actions/DeployerActions'),
-    colors = require('colors').deployerColors;
+    colors = require('colors').deployerColors,
+    MeasureComponent = require('ui/MeasureComponent');
 
 const NODE_PADDING = 3;
 let [REST, SELECT, MERGE, SECTION, SECTION_SELECTED] = [1,2,3,4];
@@ -78,102 +79,100 @@ class DeployerNode extends React.Component {
     }
 }
 
-
-let [MEASURE, RENDER] = [0,1];
 const NODE_NUMBER = 64,
     ROWS = 4,
     COLUMNS = NODE_NUMBER / ROWS,
     PADDING = 10;
-class DeployerGrid extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            step: MEASURE
+
+class JustTheGrid extends React.Component {
+    _getOuterStyle () {
+        return  {
+            display: 'flex',
+            flexWrap: 'wrap-reverse',
+            //padding: PADDING + 'px',
+            backgroundColor: '#80cbc4'
         };
     }
-    componentDidMount () {
-        var listener = () => this.resize();
-        this.setState({listener});
-        window.addEventListener('resize', listener);
-        this.resize();
-    }
 
-    componentWillUnmount () {
-        window.removeEventListener('resize', this.state.listener);
-    }
-
-    resize () {
-        var el = ReactDOM.findDOMNode(this),
-            width = el.offsetWidth - 2 * PADDING,
-            height = el.offsetHeight - 2 * PADDING,
-            nW = width / COLUMNS,
-            nH = height / ROWS,
-            edge = Math.min(nW, nH),
-            containerHeight = edge * ROWS;
-
-        this.setState({
-            step: RENDER,
-            edge: edge,
-            containerHeight: containerHeight
+    render () {
+        var {width, height, mergeable, selectedNodes, sections} = this.props,
+        edge = width / COLUMNS,
+        containerHeight = edge * ROWS,
+        style = _.extend({}, this._getOuterStyle(), {
+            width: width + 'px',
+            height: containerHeight + 'px'
         });
-    }
 
+        console.log(width);
+
+        var getNodeStep = (nodeId) => {
+            if (selectedNodes.contains(nodeId))
+                return mergeable? MERGE : SELECT;
+
+            if (sections.size > 0 && DeployerStore.nodeInSection(nodeId)){
+                return DeployerStore.isNodeInSelectedSection(nodeId)? SECTION_SELECTED : SECTION;
+            }
+
+            return REST;
+        },
+        nodeList = _.range(0, NODE_NUMBER)
+            .map((i) => <DeployerNode
+                key={i} id={i}
+                step={getNodeStep(i)}
+                edge={edge} />);
+
+        return <div style={style}>
+            {nodeList}
+        </div>;
+    }
+}
+class DeployerGrid extends React.Component {
     render() {
         var outerStyle = {
-                padding: 0,
-                justifyContent: 'flex-start',
                 alignItems: 'stretch',
+                width: '100%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center'
+            },
+            topStyle = {
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                flexGrow: 1
+            },
+            bottomStyle = {
+                display: 'flex',
+                flexDirection: 'row',
+                //alignItems: 'stretch',
+                justifyContent:'flex-end',
+                flexGrow: 2
             },
             gridStyle = {
+                display: 'flex',
                 flexGrow: 1,
                 flexWrap: 'wrap-reverse',
+                alignItems: 'stretch',
                 height: 'auto',
                 padding: PADDING + 'px',
                 backgroundColor: '#80cbc4',
                 width: 'auto'
             };
 
-        switch (this.state.step) {
-            case MEASURE:
-                return <View style={gridStyle}/>;
-                break;
-            case RENDER:
-                var {edge, containerHeight} = this.state,
-                    {mergeable, selectedNodes, sections} = this.props;
+        var {mergeable, selectedNodes, sections} = this.props;
 
-                var getNodeStep = (nodeId) => {
-                        if (selectedNodes.contains(nodeId))
-                            return mergeable? MERGE : SELECT;
-
-                        if (sections.size > 0 && DeployerStore.nodeInSection(nodeId)){
-                            return DeployerStore.isNodeInSelectedSection(nodeId)? SECTION_SELECTED : SECTION;
-                        }
-
-                        return REST;
-                    },
-                    nodeList = _.range(0, NODE_NUMBER)
-                        .map((i) => <DeployerNode
-                            key={i} id={i}
-                            step={getNodeStep(i)}
-                            edge={edge} />);
-
-                // set max height for grid
-                gridStyle = _.extend({}, gridStyle, {
-                    maxHeight: containerHeight + 'px'
-                });
-
-                return <View style={outerStyle}>
-                    <View  id="grid" style={gridStyle}>
-                        {nodeList}
-                    </View>
-                    <SectionManager selectedNodes={selectedNodes} mergeable={mergeable}/>
-                    <SectionViewer sections={sections} selectedSectionId={this.props.selectedSectionId}/>
-                    <GraphPicker selectedSectionId={this.props.selectedSectionId} />
-                </View>;
-                break;
-        }
+        return <div style={outerStyle}>
+            <View style={topStyle}>
+                <SectionManager selectedNodes={selectedNodes} mergeable={mergeable}/>
+                <MeasureComponent getChildren={({width, height}) => <JustTheGrid {...{width, sections, height, selectedNodes}} />} />
+            </View>
+            <View style={bottomStyle}>
+                <SectionViewer sections={sections} selectedSectionId={this.props.selectedSectionId}/>
+                <GraphPicker selectedSectionId={this.props.selectedSectionId} />
+            </View>
+        </div>;
     }
 }
 
@@ -181,9 +180,10 @@ class GraphPicker extends React.Component {
     _getOuterStyle () {
         return {
             display: 'flex',
-            flex: '0 1 80px',
-            justifyContent: 'center',
-            alignItems: 'stretch'
+            alignItems: 'stretch',
+            flexDirection: 'column',
+            textAlign: 'center',
+            flex: '0 0 100px'
         };
     }
 
@@ -199,11 +199,12 @@ class GraphPicker extends React.Component {
         var {selectedSectionId} = this.props,
             graphMap = DeployerStore.getGraphMap(),
             commonStyle = {
-                margin: '10px',
-                flex: '0 1 200px',
+                margin: '5px',
+                flex: '0 1 100px',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                flexGrow: 1
             };
 
         if (selectedSectionId === false) {
@@ -252,18 +253,18 @@ class SectionManager extends React.Component {
     render () {
         var style = {
             display: 'flex',
-            alignSelf: 'stretch',
-            flex: '0 0 80px',
-            width: 'auto',
-            justifyContent: 'center'
+            alignItems: 'stretch',
+            flexDirection: 'column',
+            textAlign: 'center',
+            flex: '0 0 100px'
         }, mergeable = this.props.mergeable,
             nodeSet = this.props.selectedNodes;
 
-        return <View style={style}>
+        return <div style={style}>
             <CreateSection handler={this._createSection.bind(this)} mergeable={mergeable}/>
             <ClearSelection clearable={nodeSet.size > 0} mergeable={mergeable}/>
             <DestroySection />
-        </View>;
+        </div>;
     }
 }
 
@@ -285,9 +286,9 @@ class DeployerButton extends React.Component {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexBasis: '200px',
+            flexGrow: 1,
             color: 'white',
-            margin: '10px',
+            margin: '5px',
             borderRadius: '3px',
             boxShadow: '0 0 10px gray',
             backgroundColor: colors.NODE,

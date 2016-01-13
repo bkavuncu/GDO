@@ -1,20 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Web.Helpers;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Apps.DD3;
-using GDO.Utility;
-using Newtonsoft.Json;
+using GDO.Apps.Hercules.BackEnd;
 
 namespace GDO.Apps.Hercules
 {
@@ -193,10 +182,20 @@ namespace GDO.Apps.Hercules
 
         public void setAxesMap(int instanceId, string map)
         {
-            //var data = GIVE ME TEH DATA HERE PLZ
+            string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
+            JsonDS dataset = Database.JsonFromFile(path, "Falcon", "Puuawnch");
+            if (dataset == null)
+            {
+                throw new Exception(Database.GetError());
+            }
+            string data = Utils.AxesMapToPlotOrder(map, dataset);
+            string order = "{ \"name\": \"plotdatascatter\", \"args\": [" + data + "]}";
+
             instances = Cave.Apps["Hercules"].Instances;
-            HerculesApp herculesApp = (HerculesApp)instances[instanceId];
-            herculesApp.setAxesMap(map);
+            HerculesApp app = ((HerculesApp)instances[instanceId]);
+            app.setAxesMap(data);
+
+            sendOrder(instanceId, order, true);
         }
 
     }
