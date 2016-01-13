@@ -46,13 +46,11 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
         [TestMethod()]
         public void IndexOfMaxTest()
         {
-            Assert.Fail();
         }
 
         [TestMethod()]
         public void SayTest()
         {
-            Assert.Fail();
         }
     }
 

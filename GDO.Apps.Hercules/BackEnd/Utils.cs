@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,16 +84,23 @@ namespace GDO.Apps.Hercules.BackEnd
             return string.Join(separator, from o in arr select o.ToString());
         }
 
-        public static string Lines<T>(List<T> arr, string separator)
+        public static string Lines<T>(List<T[]> arr, string separator)
         {
-            return string.Join(separator, from o in arr select o.ToString());
+            return string.Join(separator, from o in arr select Lines(o, ","));
         }
 
         public static string Maybe(string s, string b)
         {
             return (s == null || s.Length <= 0) ? b : s;
         }
+
+        public static void WriteSeparator()
+        {
+           Debug.WriteLine("***********************************************************************************");
+        }
+
     }
-
-
 }
+
+
+

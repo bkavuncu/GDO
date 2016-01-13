@@ -23,8 +23,16 @@ namespace GDO.Apps.Hercules.BackEnd
 
         public override string ToString()
         {
-            return string.Format("{0} Count:{1} Min:{2} Max:{3} Sum:{4} Mean:{5} Median:{6} Var:{7} SD:{8}",
-                                 isEnum ? "ENUM" : "NOT-ENUM", count, min, max, sum, mean, median, variance, sd);
+            return string.Format("{0,-8} Count:{1,-6} Min:{2,-6} Max:{3,-6} Sum:{4,-6} Mean:{5,-6} Median:{6,-6} Var:{7,-6} SD:{8,-6}",
+                                 isEnum ? "ENUM" : "NOT-ENUM", 
+                                 count.ToString("0.00"), 
+                                 min.ToString("0.00"), 
+                                 max.ToString("0.00"), 
+                                 sum.ToString("0.00"), 
+                                 mean.ToString("0.00"), 
+                                 median.ToString("0.00"), 
+                                 variance.ToString("0.00"), 
+                                 sd.ToString("0.00"));
         }
     }
 
@@ -40,7 +48,7 @@ namespace GDO.Apps.Hercules.BackEnd
 
         public override string ToString()
         {
-            return string.Format("{0}#{1} {2} {3} {5} :: {4} --> {6}",
+            return string.Format("{0,3}#{1,10} {2} {3} {5,8} :: {4,10} --> {6}",
                                  index, name, description, origin, type, disabled ? "DISABLED" : "ACTIVE", stats.ToString());
         }
     }
@@ -79,7 +87,7 @@ namespace GDO.Apps.Hercules.BackEnd
 
         public override string ToString()
         {
-            return string.Format("{0}\n{1}", schema.ToString(), Utils.Lines(rows, "\n\t"));
+            return string.Format("{0}\n{1}\t\t", schema.ToString(), Utils.Lines(rows, "\n"));
         }
     }
 
