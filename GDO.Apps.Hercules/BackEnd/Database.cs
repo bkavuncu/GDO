@@ -40,9 +40,10 @@ namespace GDO.Apps.Hercules.BackEnd
             MongoDB = MongoClient.GetDatabase("datasets");
             JsonRows = MongoDB.GetCollection<JsonRows>("jsonrows");
             JsonMinisets = MongoDB.GetCollection<JsonMiniset>("jsonminisets");
-            if (MongoDB == null || JsonRows == null || JsonMinisets == null) {
+            if (MongoDB == null || JsonRows == null || JsonMinisets == null)
+            {
                 throw new Exception("Something wrong with MongoDB...");
-        }
+            }
         }
 
         // Each JsDataset contains the data (rows) and thse JsMiniset (schema).
@@ -79,7 +80,7 @@ namespace GDO.Apps.Hercules.BackEnd
                 var minisets = task.Result; 
     
                 return minisets.ToArray();
-            }
+        }
 
         public static void EnsureDatasetsAreLoaded()
         {
@@ -94,7 +95,7 @@ namespace GDO.Apps.Hercules.BackEnd
                     string[] files = Directory.GetFiles(datasetPath, "*.csv", SearchOption.TopDirectoryOnly);
                     foreach (String file in files)
                     {
-                        JsonDS ds = Database.JsonFromFile(file, "", "");
+                        JsonDS ds = Database.JsonDSFromFile(file, "", "");
                         if (ds != null) {
                             Database.UploadJsonDS(ds);
                         } 

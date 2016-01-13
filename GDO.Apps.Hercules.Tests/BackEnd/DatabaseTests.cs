@@ -43,7 +43,10 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
                 int final = Database.QueryJsonMinisets().Length;
 
                 Assert.IsFalse(final == 0);
-                [TestMethod()]
+            }
+        }
+
+       [TestMethod()]
         public void InitTest()
         {
             try {
@@ -63,7 +66,7 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
                 go("TechCrunchcontinentalUSA.csv", 1461);
             } catch (Exception e) {
                 Debug.WriteLine("OUCH: " + e.Message);
-        }
+            }
         }
     }
 }

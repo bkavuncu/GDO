@@ -183,7 +183,9 @@ namespace GDO.Apps.Hercules
 
         public void updateMinisets(string controllerId, string JSONMinisets)
         {
-            Clients.Client(controllerId).receiveMinisets(JSONMinisets);
+            dynamic cli = Clients.Client(controllerId);
+            cli.receiveMinisets(JSONMinisets);
+            
         }
 
         public void getDatasets(int instanceId)
@@ -195,7 +197,6 @@ namespace GDO.Apps.Hercules
 
         public void setAxesMap(int instanceId, string map, string id)
         {
-            try {
             string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
             JsonDS dataset = Database.JsonDSFromFile(path, "Falcon", "Puuawnch");
    
@@ -207,9 +208,6 @@ namespace GDO.Apps.Hercules
             app.setAxesMap(data);
 
             sendOrder(instanceId, order, true);
-            } catch (Exception e) {
-                Debug.WriteLine("HerculesAppHub.setAxesMap: " + e.Message);
-            }
         }
 
     }

@@ -39,7 +39,7 @@ namespace GDO.Apps.Hercules
             this.ConfigurationId = (int)value;
 
             data = new Data(this.Configuration.Name);
-            
+            Database.Init();
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();
