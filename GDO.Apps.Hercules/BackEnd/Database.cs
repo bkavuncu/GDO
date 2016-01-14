@@ -15,6 +15,7 @@ namespace GDO.Apps.Hercules.BackEnd
 
         // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
+
         private static string datasetPath = "../../GDO.Apps.Hercules.Tests/TestFiles/WellFormed";
 
         // Returns the last error that occurred from the methods in ServerDS.
