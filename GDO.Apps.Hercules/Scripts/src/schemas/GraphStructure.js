@@ -40,11 +40,11 @@ export var scatterGraph = {
     graphType: 'SCATTER',
     dimensions : [
         {
-            name: 'xAxis',
+            name: 'x',
             singleField: true,
             validTypes: ['Floating', 'Integral', 'DateTime']
         },{
-            name: 'yAxis',
+            name: 'y',
             singleField: false,
             validTypes: ['Floating', 'Integral']
         }
@@ -55,11 +55,11 @@ export var barGraph = {
     graphType: 'BAR',
     dimensions : [
         {
-            name: 'xAxis',
+            name: 'x',
             singleField: true,
             validTypes: ['Integer']
         },{
-            name: 'yAxis',
+            name: 'y',
             singleField: false,
             validTypes: ['Floating', 'Integral']
         }
@@ -70,11 +70,11 @@ export var pieGraph = {
     graphType: 'PIE',
     dimensions : [
         {
-            name: 'xAxis',
+            name: 'x',
             singleField: true,
             validTypes: []
         },{
-            name: 'yAxis',
+            name: 'y',
             singleField: true,
             validTypes: ['Floating', 'Integral']
         }

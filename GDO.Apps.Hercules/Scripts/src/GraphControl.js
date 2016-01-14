@@ -12,8 +12,7 @@ const React = require('react'),
 if (parent.gdo) {
     var gdo = parent.gdo,
         server = gdo.net.app.Hercules.server,
-        instanceId = gdo.management.selectedInstance,
-        geeting = 'wabalubadubdub';
+        instanceId = gdo.management.selectedInstance;
 }
 
 
@@ -167,12 +166,11 @@ class GraphPanel extends React.Component {
 
     plot () {
         //Pass box contents from store to renderer
-        var axesMap = GraphBuilderStore.getAxes().toJS();
+        var axesMap = GraphBuilderStore.getAxesSet().toJS();
         var activeMiniSet = DataStore.getActiveMiniset();
         var dsId = activeMiniSet._id;
         console.log(axesMap);
         server.setAxesMap(0, JSON.stringify(axesMap), dsId);
-        //server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);
         this.setState({plotted: true});
     }
 

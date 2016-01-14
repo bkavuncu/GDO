@@ -81,6 +81,30 @@ class GraphBuilderStore extends BaseStore {
         return this.sectionMap.get(this.activeSection);
     }
 
+    getAxesSet() {
+        var axisMap = this.sectionMap.get(this.activeSection);
+        var nameMap = Immutable.Map();
+
+        var entryIter = axisMap.entries();
+        var entry = entryIter.next();
+
+        while(!entry.done){   
+            var fields = entry.value[1];
+            var fieldIter = fields.values();
+            var f = fieldIter.next();
+
+            while(!f.done){
+                console.log(f);
+                nameMap = nameMap.set(entry.value[0], [f.value.name]);
+                f = fieldIter.next();
+            }
+            
+            entry = entryIter.next();
+        }
+
+        return nameMap;
+    }
+
     //Returns and object 'dimension' with fields {name, singleField, validTypes}
     getDimensionData(dimensionName) {
         var dimensionSet = this.sectionDataMap.get(this.activeSection);

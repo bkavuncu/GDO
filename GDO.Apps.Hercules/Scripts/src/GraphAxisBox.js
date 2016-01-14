@@ -14,7 +14,6 @@ const DragTypes = {
 
 const boxTarget = {
     drop(props, monitor, component) {
-        console.log("flap flap falp");
         if ((props.singleField && component.getNumEntries() < 1) || !props.singleField ) {
             var type = monitor.getItem().type;
             var validTypes = props.validTypes;
@@ -23,7 +22,6 @@ const boxTarget = {
                     Builder.addField(monitor.getItem(), props.axisData[0]);
                 } else {
                     //Wrong type error
-                    console.log("WRONG TYPE FOOL! ");
                 }
             }
         } else {
