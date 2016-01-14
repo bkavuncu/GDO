@@ -116,32 +116,33 @@
 
                 world.startRendering();
 
-                /*
-
                 // PeerJS fiddling
 
-                //TODO: REMOVE THIS HORRIBLE HACK
-                gdo.net.receiveData = function (data) {
-                    console.log("TESTing peerjs crap");
-                    console.log(data.peerpayload);
-                    console.log(data.data);
-                }
 
-                for (var connectedNode in gdo.net.node[gdo.clientId].connectedNodeList) {
-                    var conn = gdo.net.peer.connections[gdo.net.node[connectedNode].peerId][0];
-                    
-                    // Receive messages
-                    conn.on('data', function (data) {
-                        console.log("TESTing peerjs crap");
-                        console.log(data.peerpayload);
-                        console.log(data.data);
-                    });
+                // Sends clientId to all connected neighbour nodes once a second
+                var connectedNodes = [];
 
-                    conn.send({ type: 'count', value: gdo.clientId });
-                }
+                setInterval(function() {
+                    for (var index in gdo.net.neighbour) {
+                        var neighbourId = gdo.net.neighbour[index];
 
-                */
+                        if (neighbourId == -1) continue;
 
+                        if (gdo.net.node[neighbourId].connectedToPeer) {
+                            var conn = gdo.net.peer.connections[gdo.net.node[neighbourId].peerId][0];
+
+                            if (connectedNodes.indexOf(neighbourId) == -1) {
+                                // Receive messages
+                                conn.on('data', function (data) {
+                                    gdo.consoleOut('.WebGL', 2, "Received data: " + data.toString());
+                                });
+                                connectedNodes.push(neighbourId); 
+                            } else {
+                                conn.send(JSON.stringify({ type: 'id', value: gdo.clientId }));
+                            }
+                        }
+                    }
+                }, 1000);
             });
         });
     </script>
