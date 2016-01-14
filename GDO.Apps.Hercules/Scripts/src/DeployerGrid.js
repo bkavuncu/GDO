@@ -48,6 +48,9 @@ class DeployerNode extends React.Component {
         var edge = this.props.edge - 2 * NODE_PADDING,
             fontSize = Math.floor(Math.max(8, Math.min(edge / 2, 30)));
 
+        var isGraphAssigned = DeployerStore.isGraphAssigned(DeployerStore.getNodeSectionId(this.props.id));
+        var selected = (this.props.step === SECTION_SELECTED);
+
         var outerStyle = {
                 display: "flex",
                 justifyContent: "center",
@@ -60,7 +63,7 @@ class DeployerNode extends React.Component {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: this.getColour(),
+                backgroundColor: selected ? this.getColour() : (isGraphAssigned ? 'green' : this.getColour()),
                 boxShadow: this.getBoxShadow(),
                 transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
                 color: 'white',
@@ -100,7 +103,8 @@ class JustTheGrid extends React.Component {
         containerHeight = edge * ROWS,
         style = _.extend({}, this._getOuterStyle(), {
             width: width + 'px',
-            height: containerHeight + 'px'
+            alignItems: 'center'
+            //height: containerHeight + 'px'
         });
 
         console.log(width);
@@ -134,7 +138,7 @@ class DeployerGrid extends React.Component {
                 display: 'flex',
                 flexDirection: 'column',
                 display: 'flex',
-                flexWrap: 'wrap',
+                //flexWrap: 'wrap',
                 justifyContent: 'center'
             },
             topStyle = {
@@ -148,7 +152,8 @@ class DeployerGrid extends React.Component {
                 flexDirection: 'row',
                 //alignItems: 'stretch',
                 justifyContent:'flex-end',
-                flexGrow: 2
+                flexWrap: 'no-wrap'
+                //flexGrow: 2
             },
             gridStyle = {
                 display: 'flex',
@@ -344,8 +349,8 @@ class ClearSelection extends DeployerButton {
     }
 
     getStyle () {
-        var buttonColor = this.props.mergeable? colors.NODE_MERGE
-            : this.props.clearable? colors.NODE_SELECT : colors.NODE;
+        var buttonColor = /*this.props.mergeable? colors.NODE_MERGE
+            : */this.props.clearable? colors.NODE_SELECT : colors.NODE;
         return {
             backgroundColor: buttonColor
         };
@@ -363,9 +368,10 @@ class Section extends React.Component {
 
     _getOuterStyle () {
         var {selected, data} = this.props;
+        var isGraphAssigned = DeployerStore.isGraphAssigned(data.id)
 
         return  {
-            backgroundColor: selected? colors.NODE_SECTION_SELECT : colors.NODE_SECTION,
+            backgroundColor: selected? colors.NODE_SECTION_SELECT : (isGraphAssigned ? 'green' : colors.NODE_SECTION),
             display: 'flex',
             transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
             color: 'white',
@@ -383,7 +389,7 @@ class Section extends React.Component {
 
         return <div style={this._getOuterStyle()} onTouchTap={this._onTap.bind(this)}>
             <div>Section ID: {data.id}</div>
-            <div>Nodes: {data.nodeList.sort().map(n => n+1).toArray().toString()}</div>
+            <div>Nodes: {data.nodeList.sort().map(n => ' '+(n+1)).toArray().toString()}</div>
             <div>Graph: {selectedGraph ? selectedGraph : 'Assign'}</div>
         </div>;
     }
@@ -394,13 +400,18 @@ class SectionViewer extends React.Component {
         return {
             display: 'flex',
             flexWrap: 'wrap',
-            padding: '10px'
+            padding: '10px',
+            //alignItems: 'flex-start'
         };
     }
     render () {
-        var {selectedSectionId, sections} = this.props;
+        var {width, selectedSectionId, sections} = this.props;
+        var style = _.extend({}, this._getOuterStyle(), {
+            width: width + 'px',
+            //height: containerHeight + 'px'
+        });
 
-        return <div style={this._getOuterStyle()}>
+        return <div style={style}>
             {sections.map(s => <Section data={s} key={s.id} selected={selectedSectionId === s.id} />)}
         </div>;
     }
