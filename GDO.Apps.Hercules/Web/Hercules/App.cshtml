@@ -177,7 +177,7 @@
                           .text("Y axis");
 
                         // Draw dots green
-                        circleGroup.selectAll(".dot")
+                        var drawDots = circleGroup.selectAll(".dot")
                           .data(data)
                         .enter()
                           .append("g")
@@ -190,10 +190,9 @@
                           .style("stroke", "green");
 
                         /*// Change colour to red, if this one doesn't work, replot is needed
-                        circleGroup.selectAll(".dot")
-                            .style("stroke", "red");
+                        drawDots.style("stroke", "red");*/
 
-                        // Replot
+                        /*// Replot
                         circleGroup.selectAll(".dot").remove();
                         circleGroup.selectAll(".dot")
                          .data(data)
