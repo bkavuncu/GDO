@@ -15,7 +15,7 @@ namespace GDO.Apps.Hercules.BackEnd
 
         // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
-        private static string datasetPath = "../../../Desktop/GDO/GDO.Apps.Hercules.Tests/TestFiles/WellFormed";
+        private static string datasetPath = "../../GDO.Apps.Hercules.Tests/TestFiles/WellFormed";
 
         // Returns the last error that occurred from the methods in ServerDS.
         public static string GetError() { return LastError; }
@@ -85,21 +85,16 @@ namespace GDO.Apps.Hercules.BackEnd
         public static void EnsureDatasetsAreLoaded()
         {
             JsonMiniset[] ms = QueryJsonMinisets();
-            if (ms == null)
+            if (ms.Length == 0)
             {
-                //BALLS
-            } else
-            {
-                if(ms.Length == 0)
+                string[] files = Directory.GetFiles(datasetPath, "*.csv", SearchOption.TopDirectoryOnly);
+                foreach (String file in files)
                 {
-                    string[] files = Directory.GetFiles(datasetPath, "*.csv", SearchOption.TopDirectoryOnly);
-                    foreach (String file in files)
+                    JsonDS ds = Database.JsonDSFromFile(file, Path.GetFileName(file), "");
+                    if (ds != null)
                     {
-                        JsonDS ds = Database.JsonDSFromFile(file, Path.GetFileName(file), "");
-                        if (ds != null) {
-                            Database.UploadJsonDS(ds);
-                        } 
-                    }
+                        Database.UploadJsonDS(ds);
+                    } 
                 }
             }
         }
