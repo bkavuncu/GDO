@@ -119,7 +119,7 @@ class NavBar extends React.Component {
     }
     render () {
         var style = {
-            color: 'white',
+            color: 'gray',
             display: 'flex',
             justifyContent: 'flex-start',
             flex: '0 0 40px',

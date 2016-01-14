@@ -49,28 +49,33 @@ const Dispatcher = require('../Dispatcher'),
 ];
 
 if (typeof $ != undefined) {
-    gdo.net.app.Hercules.receiveMinisets = (minisets) => {
-        console.log('your butt', minisets);
-        if (typeof minisets == 'string') {
-            minisets = JSON.parse(minisets);
+    if (gdo) {
+        gdo.net.app.Hercules.receiveMinisets = (minisets) => {
+            console.log('your butt', minisets);
+            if (typeof minisets == 'string') {
+                minisets = JSON.parse(minisets);
+            }
+
+            minisets.map ((d) => {
+                var valid = schemas.validMiniset;
+
+                if (!valid(d))
+                    console.error(valid.errors(d));
+
+                Dispatcher.dispatch({
+                    actionType: 'addMiniset',
+                    data: d
+                })
+            });
         }
-
-        minisets.map ((d) => {
-            var valid = schemas.validMiniset;
-
-            if (!valid(d))
-                console.error(valid.errors(d));
-
-            Dispatcher.dispatch({
-                actionType: 'addMiniset',
-                data: d
-            })
-        });
     }
+    
 }
 
 export function requestMinisets () {
-    gdo.net.app.Hercules.server.getDatasets(0);
+    if (gdo) {
+        gdo.net.app.Hercules.server.getDatasets(0);
+    }
 }
 
 export function selectDataset (datasetId) {

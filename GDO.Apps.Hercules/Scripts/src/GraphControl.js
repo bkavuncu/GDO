@@ -9,10 +9,14 @@ const React = require('react'),
     DeployerStore = require('./stores/DeployerStore'),
     SideMenu = require('./ui/SideMenu');
 
-var gdo = parent.gdo,
-    server = gdo.net.app.Hercules.server,
-    instanceId = gdo.management.selectedInstance,
-    geeting = 'wabalubadubdub';
+if (parent.gdo) {
+    var gdo = parent.gdo,
+        server = gdo.net.app.Hercules.server,
+        instanceId = gdo.management.selectedInstance,
+        geeting = 'wabalubadubdub';
+}
+
+
 
 var testData = [
       {
