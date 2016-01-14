@@ -45,7 +45,7 @@ namespace GDO.Apps.Hercules.BackEnd
             List<AType[]> types = new List<AType[]>(ds.NRows); // Initializeee!
             List<dynamic[]> values = new List<dynamic[]>(ds.NRows);
 
-            for (int r = 0, nrows = ds.NRows; r < nrows; r++) { // Parse all rows.
+            for (int r = 0, length = ds.NRows; r < length; r++) { // Parse all rows.
                 AType[] rtypes = new AType[ds.NHeaders];
                 dynamic[] rvalues = new dynamic[ds.NHeaders];
                 for (int c = 0, ncols = ds.NHeaders; c < ncols; c++) {
@@ -69,7 +69,7 @@ namespace GDO.Apps.Hercules.BackEnd
             }
 
             List<dynamic[]> correct = new List<dynamic[]>(); // Prune inconsistent rows.
-            for (int r = 0, nrows = ds.NRows; r < nrows; r++) {
+            for (int r = 0, length = ds.NRows; r < length; r++) {
                 if (!ShouldPruneRow(types, r, principals)) {
                     correct.Add(values[r]);
                 }
@@ -150,7 +150,7 @@ namespace GDO.Apps.Hercules.BackEnd
         {
             int[] modes = new int[Enum.GetNames(typeof(AType)).Length];
 
-            for (int r = 0, nrows = types.Count; r < nrows; r++) {
+            for (int r = 0, length = types.Count; r < length; r++) {
                 modes[(int)types[r][col]]++;
             }
 
@@ -192,13 +192,13 @@ namespace GDO.Apps.Hercules.BackEnd
                 case AType.Floating:
                 case AType.Integral:
                 case AType.DateTime:
-                    for (int r = 0, nrows = values.Count; r < nrows; r++) {
+                    for (int r = 0, length = values.Count; r < length; r++) {
                         data[r] = values[r][col];
                     }
                     return Stats.DynamicStats(data);
 
                 case AType.Text:
-                    for (int r = 0, nrows = values.Count; r < nrows; r++) {
+                    for (int r = 0, length = values.Count; r < length; r++) {
                         data[r] = values[r][col].ToString().Length; // Use Length for strings.
                     }
                     return Stats.DynamicStats(data);

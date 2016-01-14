@@ -15,7 +15,7 @@ namespace GDO.Apps.Hercules.BackEnd
 
         // A description of the last error that occurred from calling methods in this class.
         private static string LastError = "";
-        private static string datasetPath = "../../../GDO.Apps.Hercules.Tests/TestFiles";
+        private static string datasetPath = "../../../Desktop/GDO/GDO.Apps.Hercules.Tests/TestFiles/WellFormed";
 
         // Returns the last error that occurred from the methods in ServerDS.
         public static string GetError() { return LastError; }
@@ -95,7 +95,7 @@ namespace GDO.Apps.Hercules.BackEnd
                     string[] files = Directory.GetFiles(datasetPath, "*.csv", SearchOption.TopDirectoryOnly);
                     foreach (String file in files)
                     {
-                        JsonDS ds = Database.JsonDSFromFile(file, "", "");
+                        JsonDS ds = Database.JsonDSFromFile(file, Path.GetFileName(file), "");
                         if (ds != null) {
                             Database.UploadJsonDS(ds);
                         } 
@@ -214,7 +214,7 @@ namespace GDO.Apps.Hercules.BackEnd
             json.schema.sourceOrigin = Utils.Maybe(origin, "<unknown origin>");
             json.schema.sourceType = Utils.Maybe(type, "<unknown type>");
             json.schema.name = Utils.Maybe(name, "<unknown name>");
-            json.schema.nrows = rich.NRows;
+            json.schema.length = rich.NRows;
             json.schema.fields = new JsonField[rich.NColumns];
 
             for (int c = 0, ncols = rich.NColumns; c < ncols; c++) {
@@ -222,6 +222,7 @@ namespace GDO.Apps.Hercules.BackEnd
                 json.schema.fields[c].name = rich.Columns[c].Header;
                 json.schema.fields[c].index = rich.Columns[c].Index;
                 json.schema.fields[c].type = rich.Columns[c].Type.ToString();
+                json.schema.fields[c].origin = "native";
 
                 json.schema.fields[c].stats = new JsonStats();
                 json.schema.fields[c].stats.min = rich.Columns[c].Stats.Min;
@@ -229,9 +230,10 @@ namespace GDO.Apps.Hercules.BackEnd
                 json.schema.fields[c].stats.mean = rich.Columns[c].Stats.Mean;
                 json.schema.fields[c].stats.median = rich.Columns[c].Stats.Median;
                 json.schema.fields[c].stats.variance = rich.Columns[c].Stats.Variance;
-                json.schema.fields[c].stats.sd = rich.Columns[c].Stats.StdDev;
+                json.schema.fields[c].stats.stdDev = rich.Columns[c].Stats.StdDev;
                 json.schema.fields[c].stats.sum = rich.Columns[c].Stats.Sum;
                 json.schema.fields[c].stats.count = rich.Columns[c].Stats.Count;
+                json.schema.fields[c].stats.isEnum = rich.Columns[c].Stats.Enum;
             }
 
             return json;

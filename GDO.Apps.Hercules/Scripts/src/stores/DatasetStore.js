@@ -19,7 +19,7 @@ class DatasetStore extends BaseStore {
         switch (action.actionType) {
             case 'addMiniset':
                 var miniset = action.data;
-                this.miniSets = this.miniSets.set(miniset.id, miniset);
+                this.miniSets = this.miniSets.set(miniset._id, miniset);
                 break;
             case 'selectDataset':
                 this._select(action.datasetId);
@@ -70,7 +70,7 @@ class DatasetStore extends BaseStore {
         this._clear();
 
         obj.forEach((miniset) => {
-            this.miniSets = this.miniSets.set(miniset.id, miniset);
+            this.miniSets = this.miniSets.set(miniset._id, miniset);
         });
     }
 }

@@ -72,7 +72,6 @@
   <ItemGroup>
     <Compile Include="BackEnd\AugmenterTests.cs" />
     <Compile Include="BackEnd\DatabaseTests.cs" />
-    <Compile Include="BackEnd\JsonDSTests.cs" />
     <Compile Include="BackEnd\ParserTests.cs" />
     <Compile Include="BackEnd\StatsTests.cs" />
     <Compile Include="BackEnd\UtilsTests.cs" />
@@ -89,6 +88,7 @@
     <None Include="packages.config" />
     <None Include="TestFiles\IllFormed\empty.csv" />
     <None Include="TestFiles\WellFormed\askscience.csv" />
+    <None Include="TestFiles\WellFormed\falcon.csv" />
     <None Include="TestFiles\WellFormed\headers_only.csv" />
     <None Include="TestFiles\WellFormed\MDR-TB_burden_estimates_2016-01-13.csv" />
     <None Include="TestFiles\WellFormed\SacramentocrimeJanuary2006.csv" />

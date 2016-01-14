@@ -3,7 +3,7 @@ const Dispatcher = require('../Dispatcher'),
     gdo = parent.gdo,
     datasets = [
     {
-        id: 1,
+        _id: 1,
         name: 'George Lemon',
         description: 'a family friend',
         fields: [
@@ -41,10 +41,8 @@ const Dispatcher = require('../Dispatcher'),
         ],
         disabled: false,
         length: 500,
-        source: {
-            type: 'URL',
-            url: 'http://deez.nuts/data.csv'
-        }
+        sourceType: 'URL',
+        sourceOrigin: 'http://deez.nuts/data.csv'
     }
 ];
 

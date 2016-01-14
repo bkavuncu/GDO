@@ -21,7 +21,7 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
             Utils.WriteSeparator();
             JsonDS ds = Database.JsonDSFromFile("../../TestFiles/WellFormed/" + name, name, "");
             //Debug.WriteLine(ds.schema);
-            Debug.WriteLine(name + " (" + (expectedRowNo - ds.schema.nrows).ToString() + ")");
+            Debug.WriteLine(name + " (" + (expectedRowNo - ds.schema.length).ToString() + ")");
         }
 
         [TestMethod()]

@@ -12,22 +12,22 @@ namespace GDO.Apps.Hercules.BackEnd
     {
         public dynamic min;
         public dynamic max;
-        public dynamic mean;
         public dynamic median;
+        public dynamic mean;
+        public bool isEnum;
         public dynamic variance;
-        public dynamic sd;
+        public dynamic stdDev;
         public dynamic sum;
         public int count;
-        public bool isEnum;
 
         public override string ToString()
         {
-            return string.Format("{0,-8} Count:{1,-20} Min:{2,-20} Max:{3,-20} Sum:{4,-20} Mean:{5,-20} Median:{6,-20} Var:{7,-20} SD:{8,-20}", isEnum ? "ENUM" : "NOT-ENUM", count.ToString("0.00"), min.ToString("0.00"), max.ToString("0.00"), sum.ToString("0.00"), mean.ToString("0.00"), median.ToString("0.00"), variance.ToString("0.00"), sd.ToString("0.00"));
+            return string.Format("{0,-8} Count:{1,-20} Min:{2,-20} Max:{3,-20} Sum:{4,-20} Mean:{5,-20} Median:{6,-20} Var:{7,-20} SD:{8,-20}", isEnum ? "ENUM" : "NOT-ENUM", count.ToString("0.00"), min.ToString("0.00"), max.ToString("0.00"), sum.ToString("0.00"), mean.ToString("0.00"), median.ToString("0.00"), variance.ToString("0.00"), stdDev.ToString("0.00"));
         }
 
         public JsonStats clone()
         {
-            return new JsonStats { min = min, max = max, mean = mean, median = median, variance = variance, sd = sd, sum = sum, count = count, isEnum = isEnum };
+            return new JsonStats { min = min, max = max, mean = mean, median = median, variance = variance, stdDev = stdDev, sum = sum, count = count, isEnum = isEnum };
         }
     }
 
@@ -35,12 +35,12 @@ namespace GDO.Apps.Hercules.BackEnd
     public class JsonField
     {
         public string name;
-        public int index;
         public string description;
         public string type;
         public string origin;
         public bool disabled;
         public JsonStats stats;
+        public int index;
 
         public override string ToString()
         {
@@ -58,12 +58,13 @@ namespace GDO.Apps.Hercules.BackEnd
         }
     }
 
+
     // The miniset: metadata on the fields.
     public class JsonMiniset
     {
         public string name;
         public string description;
-        public int nrows;
+        public int length;
         public string sourceType;
         public string sourceOrigin;
         public bool disabled;
@@ -72,12 +73,12 @@ namespace GDO.Apps.Hercules.BackEnd
 
         public override string ToString()
         {
-            return string.Format("{0} | {1} | {2} rows | {3} | {4} | {5} | {6}\n{7}", name, _id, nrows, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", Utils.Lines(fields, "\n"));
+            return string.Format("{0} | {1} | {2} rows | {3} | {4} | {5} | {6}\n{7}", name, _id, length, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", Utils.Lines(fields, "\n"));
         }
 
         public JsonMiniset clone()
         {
-            return new JsonMiniset { name = name, description = description, nrows = nrows, sourceType = sourceType, sourceOrigin = sourceOrigin, disabled = disabled, fields = fields.Select(f => f.clone()).ToArray(), _id = _id };
+            return new JsonMiniset { name = name, description = description, length = length, sourceType = sourceType, sourceOrigin = sourceOrigin, disabled = disabled, fields = fields.Select(f => f.clone()).ToArray(), _id = _id };
         }
     }
 

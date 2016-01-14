@@ -169,7 +169,7 @@ class GraphPanel extends React.Component {
         //Pass box contents from store to renderer
         var axesMap = GraphBuilderStore.getAxes().toJS();
         var activeMiniSet = DataStore.getActiveMiniset();
-        var dsId = activeMiniSet.id;
+        var dsId = activeMiniSet._id;
         console.log(axesMap);
         server.setAxesMap(0, JSON.stringify(axesMap), dsId);
         //server.sendOrder(instanceId, order("plotdatascatter", [testData]), true);

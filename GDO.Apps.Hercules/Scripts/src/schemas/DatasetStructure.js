@@ -6,16 +6,18 @@
  * */
 var schema = require('js-schema');
 
-export var types = schema(['String', 'Integer', 'Float', 'Datetime', 'URL', 'Enum', 'Boolean']);
+export var types = schema(['Text', 'Integral', 'Floating', 'DateTime', 'URL', 'GPSCoords', 'Boolean', 'Unknown']);
 
 var stats = schema({
     min: Number,
     max: Number,
     median: Number,
     mean: Number,
-    enum: Boolean,
+    isEnum: Boolean,
     variance: Number,
-    stdDev: Number
+    stdDev: Number,
+    sum: Number,
+    count: Number
 });
 
 export var validField = schema({
@@ -24,23 +26,19 @@ export var validField = schema({
     type: types,
     origin: ['native', 'artificial'],
     disabled: Boolean,
-    stats: [stats, null]
+    stats: [stats, null],
+    index: Number
 });
 
 export var validMiniset = schema({
     name: String,
     description: String,
-    id: String,
     length: Number.above(0),
-    source: [{
-        type: 'URL',
-        url: String
-    },{
-        type: 'FILE',
-        path: String
-    }],
+    sourceType: String,
+    sourceOrigin: String,
     disabled: Boolean,
-    fields: Array.of(validField)
+    fields: Array.of(validField),
+    _id: String,
 });
 
 

@@ -46,7 +46,7 @@ var ds = {
 		description: "No description",
 		sourceType: "File|URL",
 		sourceOrigin: "filepath|urladdress",
-		nrows: 2,
+		length: 2,
 		disabled: true, // dont care
 		_id: "ajksdh234k2j34", // dont care
 		fields: [col1, col2, col3]
