@@ -380,7 +380,8 @@ class Section extends React.Component {
             margin: '0px 5px 5px 0px',
             boxShadow: '0 0 ' + (selected? 15 : 5) + 'px gray',
             alignItems: 'center',
-            padding: '10px'
+            padding: '10px',
+            maxWidth: '200px'
         };
     }
     render () {
@@ -389,8 +390,8 @@ class Section extends React.Component {
 
         return <div style={this._getOuterStyle()} onTouchTap={this._onTap.bind(this)}>
             <div>Section ID: {data.id}</div>
-            <div>Nodes: {data.nodeList.sort().map(n => ' '+(n+1)).toArray().toString()}</div>
             <div>Graph: {selectedGraph ? selectedGraph : 'Assign'}</div>
+            <div>Nodes: {data.nodeList.sort().map(n => ' '+(n+1)).toArray().toString()}</div>
         </div>;
     }
 }
@@ -400,8 +401,7 @@ class SectionViewer extends React.Component {
         return {
             display: 'flex',
             flexWrap: 'wrap',
-            padding: '10px',
-            //alignItems: 'flex-start'
+            padding: '10px'
         };
     }
     render () {
