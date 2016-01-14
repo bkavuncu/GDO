@@ -197,8 +197,8 @@ namespace GDO.Apps.Hercules
 
         public void setAxesMap(int instanceId, string map, string id)
         {
-            string path = "../GDO.Apps.Hercules.Tests/TestFiles/falcon.csv";
-            JsonDS dataset = Database.JsonDSFromFile(path, "Falcon", "Puuawnch");
+            string path = "../GDO.Apps.Hercules.Tests/TestFiles/WellFormed/falcon.csv";
+            JsonDS dataset = Database.QueryJsonDS(id);
    
             string data = Utils.AxesMapToPlotOrder(map, dataset);
             string order = "{ \"name\": \"plotdatascatter\", \"args\": [" + data + "]}";

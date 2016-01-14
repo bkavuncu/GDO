@@ -127,6 +127,8 @@ class DatasetLoaderButton extends React.Component {
             }, text = text,
             icon = iconName;
 
+        console.log(this.props);
+
         return <div style={btnStyle} onTouchTap={this._clickHandler.bind(this)}>
             <span>{text}</span>
             <i className="material-icons">{icon}</i>
@@ -230,7 +232,7 @@ class Dataset extends React.Component {
                 {fields}
             </div>
             {extraFullInfo}
-            <DatasetLoaderButton active={active} datasetId={d.id} />
+            <DatasetLoaderButton active={active} datasetId={d._id} />
         </Paper>;
     }
 }

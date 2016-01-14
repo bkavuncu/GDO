@@ -38,7 +38,7 @@ export var validMiniset = schema({
     sourceOrigin: String,
     disabled: Boolean,
     fields: Array.of(validField),
-    _id: String,
+    _id: String
 });
 
 

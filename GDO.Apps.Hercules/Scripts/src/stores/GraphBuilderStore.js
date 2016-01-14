@@ -10,7 +10,6 @@ class GraphBuilderStore extends BaseStore {
         this.sectionMap = Immutable.Map();
         //sectionDataMap<sectionId, Map<axisName, dimension>>
         this.sectionDataMap = Immutable.Map();
-        this.activeSection;
         this.empty = true;
 
         this.subscribe(() => this._registerToActions.bind(this))

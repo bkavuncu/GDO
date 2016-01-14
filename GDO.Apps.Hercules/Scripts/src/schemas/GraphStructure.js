@@ -6,7 +6,7 @@
  * */
 var schema = require('js-schema');
 
-export var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Bool']);
+export var type = schema(['Text', 'Integral', 'Floating', 'DateTime', 'URL', 'GPSCoords', 'Boolean', 'Unknown']);
 
 export const graphTypes = schema(['LINE', 'SCATTER', 'BAR', 'PIE']);
 
@@ -27,11 +27,11 @@ export var lineGraph = {
         {
             name: 'xAxis',
             singleField: true,
-            validTypes: ['Float', 'Integer', 'Datetime']
+            validTypes: ['Floating', 'Integral', 'DateTime']
         },{
             name: 'yAxis',
             singleField: false,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -42,11 +42,11 @@ export var scatterGraph = {
         {
             name: 'xAxis',
             singleField: true,
-            validTypes: ['Float', 'Integer', 'Datetime']
+            validTypes: ['Floating', 'Integral', 'DateTime']
         },{
             name: 'yAxis',
             singleField: false,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -57,11 +57,11 @@ export var barGraph = {
         {
             name: 'xAxis',
             singleField: true,
-            validTypes: ['Enum', 'Integer']
+            validTypes: ['Integer']
         },{
             name: 'yAxis',
             singleField: false,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -72,11 +72,11 @@ export var pieGraph = {
         {
             name: 'xAxis',
             singleField: true,
-            validTypes: ['Enum']
+            validTypes: []
         },{
             name: 'yAxis',
             singleField: true,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -86,7 +86,7 @@ export var table = {
     dimensions: [{
         name: 'Columns',
         singleField: false,
-        validTypes: ['Float', 'Integer', 'Datetime', 'Enum', 'Boolean']
+        validTypes: ['Floating', 'Integral', 'DateTime', 'Boolean']
     }]
 }
 
