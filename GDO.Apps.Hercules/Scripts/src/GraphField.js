@@ -20,11 +20,6 @@ function collect(connect, monitor) {
 }
 
 class GraphField extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {};
-    }
 
     _onRemove () {
         this.props.remove(this.props.field);

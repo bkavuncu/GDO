@@ -10,9 +10,7 @@ class GraphBuilderStore extends BaseStore {
         this.sectionMap = Immutable.Map();
         //sectionDataMap<sectionId, Map<axisName, dimension>>
         this.sectionDataMap = Immutable.Map();
-        //sectionMap<sectionId, Map<axisName, Set<field>>> (Only for plotted graphs)
-        this.deployedMap = Immutable.Map();
-        this.activeSection;
+        this.empty = true;
 
         this.subscribe(() => this._registerToActions.bind(this))
     }
@@ -25,18 +23,17 @@ class GraphBuilderStore extends BaseStore {
             case 'addField':
                 this.addField(action.dest, action.field);
                 break;
-            case 'plotGraph':
-                this.plotGraph(action.id);
-                break;
-            case 'unplotGraph':
-                this.unplotGraph(action.id);
-                break;
         }
         this.emitChange();
     }
 
     init (sectionData) {
-        this.activeSection = sectionData[0].sectionId;
+        if(sectionData.length > 0) {
+            this.activeSection = sectionData[0].sectionId;
+            this.isEmpty = false;
+        } else {
+            this.isEmpty = true;
+        }
         for (var i=0; i<sectionData.length; i++) {
             var sectionId = sectionData[i].sectionId;
             var dimensions = sectionData[i].graphData.dimensions;
@@ -70,17 +67,6 @@ class GraphBuilderStore extends BaseStore {
         this.emitChange();
     }
 
-    plotGraph(sectionId) {
-        var axesSet = this.sectionMap.get(sectionId);
-        this.deployedMap = this.deployedMap.set(sectionId, axesSet);
-        this.emitChange();
-    }
-
-    unplotGraph(sectionId) {
-        this.deployedMap = this.deployedMap.remove(sectionId);
-        this.emitChange();
-    }
-
     setActiveSection (sectionId) {
         this.activeSection = sectionId;
         this.emitChange();
@@ -93,6 +79,30 @@ class GraphBuilderStore extends BaseStore {
     //Returns a Map<axisName, Set<Field>>
     getAxes() {
         return this.sectionMap.get(this.activeSection);
+    }
+
+    getAxesSet() {
+        var axisMap = this.sectionMap.get(this.activeSection);
+        var nameMap = Immutable.Map();
+
+        var entryIter = axisMap.entries();
+        var entry = entryIter.next();
+
+        while(!entry.done){   
+            var fields = entry.value[1];
+            var fieldIter = fields.values();
+            var f = fieldIter.next();
+
+            while(!f.done){
+                console.log(f);
+                nameMap = nameMap.set(entry.value[0], [f.value.name]);
+                f = fieldIter.next();
+            }
+            
+            entry = entryIter.next();
+        }
+
+        return nameMap;
     }
 
     //Returns and object 'dimension' with fields {name, singleField, validTypes}
@@ -111,6 +121,10 @@ class GraphBuilderStore extends BaseStore {
 
     getYAxis() {
         return this.selectedY;
+    }
+
+    isEmpty() {
+        return this.empty;
     }
 
     toHerculesObject (sectionId) {

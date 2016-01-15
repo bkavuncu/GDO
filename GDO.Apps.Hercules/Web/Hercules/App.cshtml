@@ -8,6 +8,15 @@
         html, body {
             background-color: white;
             color: black;
+            margin: 0;
+        }
+
+         .unselectable {
+            -moz-user-select: -moz-none;
+            /*-khtml-user-select: none;*/
+            -webkit-user-select: none;
+           /*-o-user-select: none;*/
+            user-select: none;
         }
 
         .axis path,
@@ -32,7 +41,7 @@
 
         $(function () {
             $(document).ready(function () {
-                var gdo = parent.gdo;
+                var gdo = parent.gdo,
                 configName,
                 configId,
                 test_bench = {};
@@ -41,9 +50,9 @@
                     throw new Error('gdo was not defined in parent');
 
 
-
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
+                        
                         test_bench[configId](configId);
                     } else {
                         dd3.on('ready', test_bench[configId].bind(null, configId));
@@ -71,9 +80,10 @@
 
                 dd3 = gdo.net.app["Hercules"].initDD3(launcher, orderController);
 
-                console.log(dd3);
+                test_bench['0'] = function () {
 
-                test_bench[0] = function () {
+                    //DD3 app scatter
+
                     var xScale, yScale;
                     var data, pathData;
                     var dataId = "";
@@ -102,9 +112,35 @@
 
                     };
 
-                    var draw = function () {
-                        if (!data || !pathData)
+                    //Scatter plot
+                    var renderScatterData = function (d, dim) {
+                        var extentX = dim.x.max - dim.x.min,
+                            extentY = dim.y.max - dim.y.min,
+                            coef = 0.05, c = 1;
+
+                        var xDomain = [dim.x.min - coef * extentX - c, dim.x.max + coef * extentX + c],
+                            yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
+
+                        // Setup Scales
+                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
+
+                        data = d;
+                        drawScatter();
+
+                        /*
+                        dd3.getPathData('pathData', dataId, function (d) {
+                            pathData = d;
+                            draw();
+                        }, xScale, yScale, ['x'], ['y']);
+                        */
+
+                    };
+
+                    var drawScatter = function () {
+                        if (!data) {
                             return;
+                        }
 
                         var svg = dd3.svgCanvas,
                             pathGroup = svg.append("g").attr("id", "dd3_path"),
@@ -141,8 +177,8 @@
                           .style("text-anchor", "end")
                           .text("Y axis");
 
-                        // Draw dots
-                        circleGroup.selectAll(".dot")
+                        // Draw dots green
+                        var drawDots = circleGroup.selectAll(".dot")
                           .data(data)
                         .enter()
                           .append("g")
@@ -152,21 +188,109 @@
                           .attr("cy", function (d) { return yScale(d['y']); })
                           .attr("r", 3)
                           .style("fill", function (d, i) { return "black"; })
-                          .style("stroke", "red");
+                          .style("stroke", "green");
+
+                        /*// Change colour to red, if this one doesn't work, replot is needed
+                        drawDots.style("stroke", "red");*/
+
+                        /*// Replot
+                        circleGroup.selectAll(".dot").remove();
+                        circleGroup.selectAll(".dot")
+                         .data(data)
+                       .enter()
+                         .append("g")
+                         .append("circle")
+                         .attr("class", "dot")
+                         .attr("cx", function (d) { return xScale(d['x']); })
+                         .attr("cy", function (d) { return yScale(d['y']); })
+                         .attr("r", 3)
+                         .style("fill", function (d, i) { return "black"; })
+                         .style("stroke", "red");*/
 
                         var lineFunction = d3.svg.line()
                                 .x(function (d) { return xScale(d['x']); })
                                 .y(function (d) { return yScale(d['y']); })
                                 .interpolate("monotone");
 
-                        //*
+                        /*
                         pathGroup.append("path").datum(pathData)
                             .unwatch()
                             .attr("d", lineFunction)
                             .attr("stroke", "blue")
                             .attr("stroke-width", 2)
                             .attr("fill", "none");
-                        //*/
+                        */
+                    };
+
+                    //Table
+                    var renderTableData = function (d,columns) {
+                        var table = d3.select("body").append("table")
+                            .attr("style", "margin-left: 250px"),
+                            thead = table.append("thead"),
+                            tbody = table.append("tbody");
+
+                        data = d;
+                            
+
+                        // append the header row
+                        thead.append("tr")
+                            .selectAll("th")
+                            .data(columns)
+                            .enter()
+                            .append("th")
+                                .text(function (column) { return column; });
+
+                        // create a row for each object in the data
+                        var rows = tbody.selectAll("tr")
+                            .data(data)
+                            .enter()
+                            .append("tr");
+
+                        // create a cell in each row for each column
+                        var cells = rows.selectAll("td")
+                            .data(function (row) {
+                                return columns.map(function (column) {
+                                    return { column: column, value: row[column] };
+                                });
+                            })
+                            .enter()
+                            .append("td")
+                            .attr("style", "font-family: Courier") // sets the font style
+                                .html(function (d) { return d.value; })
+                    };
+
+
+                    var drawTable = function() {
+                        if (!data) {
+                            return;
+                        }
+
+                        var table = renderTableData(data, ["x", "y"]);
+
+                    };
+
+                    // p to true try to parse numbers
+                    var d = function (k, p) {
+                        return function (d) { return ((p && +d[k]) || d[k]); };
+                    };
+
+                    var getDims = function (data) {
+                        var dimensions = {},
+                        prop = [];
+
+                        for (var p in data[0])
+                            if (data[0].hasOwnProperty(p))
+                                prop.push(p);
+
+                        prop.forEach(function (p) {
+                            dimensions[p] = {};
+                            dimensions[p].min = d3.min(data, d(p, true));
+                            dimensions[p].max = d3.max(data, d(p, true));
+                        });
+
+                        dimensions.length = data.length;
+
+                        return dimensions;
                     };
 
                     orderController.orders['plot'] = function (id) {
@@ -175,50 +299,25 @@
                         dd3.svgCanvas.selectAll("g").remove();
                         dd3.getDataDimensions(dataId, requestData);
                     };
+
+                    orderController.orders['plotdatascatter'] = function (data) {
+                        data = data;
+                        dd3.svgCanvas.selectAll("g").remove();
+                        var dims = getDims(data);
+                        renderScatterData(data, dims);
+                    };
+
+                    orderController.orders['plotdatatable'] = function (data) {
+                        data = data;
+                        dd3.svgCanvas.selectAll("g").remove();
+                        renderTableData(data);
+                    };
+ 
                 };
             });
-            //window.orderController = orderController;
-            //window.viz = viz;
-
-            //viz();
-            //orderController.orders.plot();
+ 
         });
 
-       /* test_bench[1] = function () {
-            var table = d3.select("body").append("table")
-           .attr("style", "margin-left: 250px"),
-       thead = table.append("thead"),
-       tbody = table.append("tbody");
-
-            // append the header row
-            thead.append("tr")
-                .selectAll("th")
-                .data(columns)
-                .enter()
-                .append("th")
-                    .text(function (column) { return column; });
-
-            // create a row for each object in the data
-            var rows = tbody.selectAll("tr")
-                .data(data)
-                .enter()
-                .append("tr");
-
-            // create a cell in each row for each column
-            var cells = rows.selectAll("td")
-                .data(function (row) {
-                    return columns.map(function (column) {
-                        return { column: column, value: row[column] };
-                    });
-                })
-                .enter()
-                .append("td")
-                .attr("style", "font-family: Courier") // sets the font style
-                    .html(function (d) { return d.value; });*/
-
-            
-       
-
-    </script>
+          </script>
 </body>
 </html>

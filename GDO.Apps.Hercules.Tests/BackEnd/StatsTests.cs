@@ -11,40 +11,5 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
     [TestClass()]
     public class StatsTests
     {
-        [TestMethod()]
-        public void DynamicStatsTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DynamicSumTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DynamicMedianTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DynamicVarianceTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DynamicModesTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void IsEnumTest()
-        {
-            Assert.Fail();
-        }
     }
 }

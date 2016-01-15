@@ -2,84 +2,10 @@
     throw new Error('jQuery is not defined');
 } else {
     $(document).ready(function () {
-        var initDD3App; // defined at the bottom of the file
+        var d3;
 
-        HerculesServer = $.connection.herculesAppHub;
-
-        var signalR_callback = {};
-        var main_callback; // Callback inside the html file
-        var orderTransmitter; // Callback inside the html file
-
-        // Function used for dd3 callback
-        HerculesServer.client.dd3Receive = function (f) {
-            signalR_callback[f].apply(null, [].slice.call(arguments, 1));
-        };
-
-        // Non-dd3 functions
-
-        HerculesServer.client.receiveGDOConfiguration = function (id) {
-            if (main_callback)
-                main_callback(id);
-            else
-                gdo.consoleOut('.DD3', 1, 'No callback defined');
-        };
-
-        HerculesServer.client.receiveControllerOrder = function (orders) {
-            if (orderTransmitter) {
-                orders = JSON.parse(orders)
-                gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
-                orderTransmitter(orders);
-            } else {
-                gdo.consoleOut('.DD3', 4, 'No test controller defined');
-            }
-        };
-
-        var HerculesApp = gdo.net.app.Hercules;
-
-
-        HerculesApp.displayMode = 0;
-
-        HerculesApp.initClient = function () {
-            gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Client at Node ' + gdo.clientId);
-            HerculesServer.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-        }
-
-        HerculesApp.initDD3 = function (launcher, orderController) {
-           /* var d3 = document.getElementById('app_frame_content').contentWindow['d3'] || window.d3 || d3;
-            orderTransmitter = orderController;
-            main_callback = launcher;*/
-
-            if (typeof initDD3App === 'function') {
-                return initDD3App(d3, HerculesServer, $, Peer, signalR_callback);
-            } else {
-                throw new Error('cannot find initDD3App');
-            }
-        }
-
-        HerculesApp.initControl = function (callback) {
-            gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Control at Instance ' + gdo.clientId);
-        }
-
-        HerculesApp.terminateClient = function () {
-            gdo.consoleOut('.Hercules', 1, 'Terminating Hercules App Client at Node ' + gdo.clientId);
-            HerculesServer.server.removeClient(HerculesServer.instanceId);
-        }
-
-        HerculesApp.terminateControl = function () {
-            gdo.consoleOut('.Hercules', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
-        }
-
-        HerculesApp.porcaMadonna = function () {
-            console.error('Things -> ', HerculesApp.server, HerculesApp.server.dataTest, HerculesServer);
-            HerculesServer.server.porcaMadonna(54);
-        }
-
-        console.error('Loaded: -> ', HerculesApp);
-
-        initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
+        var initDD3App = function (d3, dd3Server, jQuery, Peer, signalR_callback) {
             var $ = jQuery;
-
-            console.log(d3, dd3Server, jQuery, Peer, signalR_callback);
 
             var utils = (function () {
                 return {
@@ -178,6 +104,7 @@
                 api.dataPoints.testSet = [{ x: 1, y: 2 }, { x: 4.5, y: 3.3 }, { x: 1, y: 5 }, { x: 8, y: 2 }];
                 api.dataPoints.barData = [{ country: "USA", gdp: "17.4" }, { country: "China", gdp: "10.3" }, { country: "England", gdp: "2.9" }, { country: "France", gdp: "2.8" }, { country: "Germany", gdp: "3.8" }, { country: "Japan", gdp: "4.6" }];
                 api.dataPoints.scatterplot4000 = d3.range(0, 200, 0.05).map(function (d) { return { id: uid++, x: d, y: Math.cos(d) * 3 }; });
+             
 
                 var sorter = function (_) {
                     return function (a, b) {
@@ -191,6 +118,29 @@
                     var dimensions = {},
                         prop = [],
                         data = api.dataPoints[dataId];
+
+                    for (var p in data[0])
+                        if (data[0].hasOwnProperty(p))
+                            prop.push(p);
+
+                    prop.forEach(function (p) {
+                        dimensions[p] = {};
+                        dimensions[p].min = d3.min(data, utils.d(p, true));
+                        dimensions[p].max = d3.max(data, utils.d(p, true));
+                    });
+
+                    dimensions.length = data.length;
+
+                    // Simulate api response time
+                    setTimeout(function () {
+                        dd3Server.client.dd3Receive("receiveDimensions", dataId, JSON.stringify(dimensions));
+                    }, 500);
+                };
+
+                api.getGivenDataDimensions = function (data) {
+                    var dimensions = {},
+                        prop = [];
+
 
                     for (var p in data[0])
                         if (data[0].hasOwnProperty(p))
@@ -247,6 +197,7 @@
                         dd3Server.client.dd3Receive("receiveData", request.dataName, request.dataId, JSON.stringify(requestedData));
                     }, 500);
                 };
+
 
                 api.getBarData = function (request) {
                     var data = api.dataPoints[request.dataId],
@@ -561,7 +512,7 @@
                             height: browser.height,
                             width: browser.width
                         };
-
+                        
                         signalR.server.updateInformation(signalR.sid, thisInfo);
                     };
 
@@ -613,9 +564,7 @@
                         launch();
                     };
 
-
                     return init;
-
                 })();
 
                 // Create all dd3 functions	
@@ -2352,6 +2301,101 @@
 
             return dd3;
         };
+
+        var HerculesServer = $.connection.herculesAppHub,
+            signalR_callback = {},
+            main_callback, // Callback inside the html file
+            orderTransmitter; // Callback inside the html file
+
+        // Function used for dd3 callback
+        HerculesServer.client.dd3Receive = function (f) {
+            signalR_callback[f].apply(null, [].slice.call(arguments, 1));
+        };
+
+        // Non-dd3 functions
+
+        HerculesServer.client.receiveGDOConfiguration = function (id) {
+           
+            if (main_callback)
+                main_callback(id);
+            else
+                gdo.consoleOut('.DD3', 1, 'No callback defined');
+        };
+
+        HerculesServer.client.receiveControllerOrder = function (orders) {
+            if (orderTransmitter) {
+                orders = JSON.parse(orders)
+                gdo.consoleOut('.Hercules', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
+                orderTransmitter(orders);
+            } else {
+                gdo.consoleOut('.Hercules', 4, 'No test controller defined');
+            }
+        };
+
+        // ==== IF THIS NODE IS A CONTROLLER ====
+
+        HerculesServer.client.updateController = function (obj) {
+            gdo.consoleOut('.Hercules', 1, 'Controller : Receiving update from server');
+            main_callback && main_callback(JSON.parse(obj));
+        };
+
+        HerculesServer.client.receiveMinisets = function (minisets) {
+            console.log('wargwan from the server side', minisets);
+            HerculesApp.receiveMinisets(minisets);
+        };
+
+        var HerculesApp = gdo.net.app.Hercules;
+
+
+        HerculesApp.displayMode = 0;
+
+        HerculesApp.initClient = function (launcher, orderController) {
+            gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Client at Node ' + gdo.clientId);
+            HerculesServer.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+            orderTransmitter = orderController;
+            main_callback = launcher;
+
+            if (typeof initDD3App === 'function') {
+                return initDD3App(d3, HerculesServer, $, Peer, signalR_callback);
+            } else {
+                throw new Error('cannot find initDD3App');
+            }
+        }
+
+        HerculesApp.initDD3 = function (launcher, orderController) {
+            var d3 = document.getElementById('app_frame_content').contentWindow['d3'] || window.d3 || d3;
+            HerculesServer.instanceId = gdo.net.node[gdo.clientId].appInstanceId;       
+            orderTransmitter = orderController;
+            main_callback = launcher;
+
+            if (typeof initDD3App === 'function') {
+                return initDD3App(d3, HerculesServer, $, Peer, signalR_callback);
+            } else {
+                throw new Error('cannot find initDD3App');
+            }
+        }
+
+        console.log('DON\'T DROP THAT TUNTUTUN EEEEHHHHHH');
+
+        HerculesApp.initControl = function (callback) {
+            gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Control at Instance ' + gdo.clientId);
+            main_callback = callback;
+            HerculesServer.server.defineController(gdo.management.selectedInstance);
+            return gdo.management.selectedInstance;
+        }
+
+        HerculesApp.getInstanceId = function () {
+            return gdo.management.selectedInstance;
+        }
+
+        HerculesApp.terminateClient = function () {
+            gdo.consoleOut('.Hercules', 1, 'Terminating Hercules App Client at Node ' + gdo.clientId);
+            HerculesServer.server.removeClient(HerculesServer.instanceId);
+        }
+
+        HerculesApp.terminateControl = function () {
+            gdo.consoleOut('.Hercules', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
+        }
     });
     
 }

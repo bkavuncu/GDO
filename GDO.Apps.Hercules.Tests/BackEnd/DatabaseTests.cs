@@ -15,99 +15,58 @@ namespace GDO.Apps.Hercules.BackEnd.New.Tests
     public class DatabaseTests
     {
 
-        [TestMethod()]
-        public void GetErrorTest()
+     
+        public void go(string name, int expectedRowNo)
         {
-
+            Utils.WriteSeparator();
+            JsonDS ds = Database.JsonDSFromFile("../../TestFiles/WellFormed/" + name, name, "");
+            //Debug.WriteLine(ds.schema);
+            Debug.WriteLine(name + " (" + (expectedRowNo - ds.schema.length).ToString() + ")");
         }
 
         [TestMethod()]
-        public void InitTest()
+        public void initialLoad()
         {
-            Assert.IsTrue(Database.Init());
-            JsonDS ds1 = Database.JsonFromFile("../../TestFiles/test1.csv", "Test1", "Descriptive description.");
-            JsonDS ds2 = Database.JsonFromFile("../../TestFiles/test2.csv", "Test2", "The brown fox jumped over the lazy dog#.");
-            if (ds1 == null && ds2 == null) {
-                Debug.WriteLine(Database.GetError());
-            } else {
-               
-                //string id1 = Database.UploadJsonDS(ds1);
-                string id1 = "565c7fe75e0c5c0d282cee30";
-                JsonMiniset ms1 = Database.QueryJsonMiniset(id1);
-                Assert.AreEqual(id1, ms1._id.ToString());
-                JsonRows rs1 = Database.QueryJsonRows(id1);
-                Assert.AreEqual(id1, rs1._id.ToString());
-                ds1 = Database.QueryJsonDS(id1);
-                Assert.AreEqual(id1, ds1.schema._id.ToString());
+            Database.Init();
+            JsonMiniset[] minisets = Database.QueryJsonMinisets();
 
+            if (minisets == null)
+            {
+                throw new Exception(Database.GetError());
+            }
 
-                string id2 = Database.UploadJsonDS(ds2);
-                JsonMiniset ms2 = Database.QueryJsonMiniset(id2);
-                Assert.AreEqual(id2, ms2._id.ToString());
-                JsonRows rs2 = Database.QueryJsonRows(id2);
-                Assert.AreEqual(id2, rs2._id.ToString());
-                ds2 = Database.QueryJsonDS(id2);
-                Assert.AreEqual(id2, ds2.schema._id.ToString());
+            int initial = minisets.Length;
 
-                JsonMiniset[] mss = Database.QueryJsonMinisets();
+            if (initial == 0)
+            {
+                Database.EnsureDatasetsAreLoaded();
+                int final = Database.QueryJsonMinisets().Length;
 
+                Assert.IsFalse(final == 0);
             }
         }
 
-        [TestMethod()]
-        public void GetMinisetTest()
+       [TestMethod()]
+        public void InitTest()
         {
-            Assert.Fail();
+            try {
+                Database.Init();
+                go("MDR-TB_burden_estimates_2016-01-13.csv", 218);
+                go("askscience.csv", 1000);
+                go("SacramentocrimeJanuary2006.csv", 7585);
+                go("Sacramentorealestatetransactions.csv", 986);
+                go("SalesJan2009.csv", 999);
+                go("TB_burden_countries_2016-01-13.csv", 5338);
+                go("TB_data_dictionary_2016-01-13.csv", 328);
+                go("TB_hiv_nonroutine_surveillance_2016-01-13.csv", 253);
+                go("TB_laboratories_2016-01-13.csv", 1299);
+                go("TB_notifications_2016-01-13.csv", 7458);
+                go("TB_outcomes_2016-01-13.csv", 4275);
+                go("TB_strategy_2016-01-13.csv", 218);
+                go("TechCrunchcontinentalUSA.csv", 1461);
+            } catch (Exception e) {
+                Debug.WriteLine("OUCH: " + e.Message);
+            }
         }
-
-        [TestMethod()]
-        public void GetMinisetsTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetDatasetTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void UploadDSFromRichTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void UploadDSFromFileTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void UploadDSFromStreamTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void UploadDSFromURLTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void JsonFromRichTest()
-        {
-            
-            Assert.Fail();
-        }
-
-        //[TestMethod()]
-        //public void InitTest()
-        //{
-        //    Assert.IsTrue(ServerDS.Init());
-        //    Debug.WriteLine(ServerDS.UploadDSFromFile("", "", ""));
-        //}
     }
 }

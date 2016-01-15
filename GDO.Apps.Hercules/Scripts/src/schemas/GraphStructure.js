@@ -6,7 +6,7 @@
  * */
 var schema = require('js-schema');
 
-export var type = schema(['Float', 'Integer', 'Datetime', 'Enum', 'Bool']);
+export var type = schema(['Text', 'Integral', 'Floating', 'DateTime', 'URL', 'GPSCoords', 'Boolean', 'Unknown']);
 
 export const graphTypes = schema(['LINE', 'SCATTER', 'BAR', 'PIE']);
 
@@ -27,11 +27,11 @@ export var lineGraph = {
         {
             name: 'xAxis',
             singleField: true,
-            validTypes: ['Float', 'Integer', 'Datetime']
+            validTypes: ['Floating', 'Integral', 'DateTime']
         },{
             name: 'yAxis',
             singleField: false,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -40,13 +40,13 @@ export var scatterGraph = {
     graphType: 'SCATTER',
     dimensions : [
         {
-            name: 'xAxis',
+            name: 'x',
             singleField: true,
-            validTypes: ['Float', 'Integer', 'Datetime']
+            validTypes: ['Floating', 'Integral', 'DateTime']
         },{
-            name: 'yAxis',
+            name: 'y',
             singleField: false,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -55,13 +55,13 @@ export var barGraph = {
     graphType: 'BAR',
     dimensions : [
         {
-            name: 'xAxis',
+            name: 'x',
             singleField: true,
-            validTypes: ['Enum', 'Integer']
+            validTypes: ['Integer']
         },{
-            name: 'yAxis',
+            name: 'y',
             singleField: false,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -70,13 +70,13 @@ export var pieGraph = {
     graphType: 'PIE',
     dimensions : [
         {
-            name: 'xAxis',
+            name: 'x',
             singleField: true,
-            validTypes: ['Enum']
+            validTypes: []
         },{
-            name: 'yAxis',
+            name: 'y',
             singleField: true,
-            validTypes: ['Float', 'Integer']
+            validTypes: ['Floating', 'Integral']
         }
     ]
 };
@@ -86,7 +86,7 @@ export var table = {
     dimensions: [{
         name: 'Columns',
         singleField: false,
-        validTypes: ['Float', 'Integer', 'Datetime', 'Enum', 'Boolean']
+        validTypes: ['Floating', 'Integral', 'DateTime', 'Boolean']
     }]
 }
 

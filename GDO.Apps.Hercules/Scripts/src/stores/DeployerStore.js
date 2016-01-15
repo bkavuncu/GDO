@@ -139,7 +139,9 @@ class DeployerStore extends BaseStore {
     }
 
     getNodeSectionId (nodeId) {
-        assert(this.nodeInSection(nodeId), 'the node does not belong in any section');
+        //assert(this.nodeInSection(nodeId), 'the node does not belong in any section');
+        if (!this.nodeInSection(nodeId))
+            return -1;
 
         var targetSections = this.sections.filter(s => s.nodeList.contains(nodeId));
 
@@ -183,6 +185,10 @@ class DeployerStore extends BaseStore {
         if (this.hasSelectedSection()) {
             this.graphMap = this.graphMap.set(this.getSelectedSectionId(), graphName);
         }
+    }
+
+    isGraphAssigned (sectionId) {
+        return this.graphMap.get(sectionId);
     }
 
     toHerculesObject () {

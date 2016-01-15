@@ -22,7 +22,7 @@ namespace GDO.Apps.Hercules.BackEnd
         public Dimension[] Dimensions;   
     }
 
-    public class Section
+    public class HerculesSection
     {
         public int Id;
         public List<int> NodeList;
@@ -48,7 +48,7 @@ namespace GDO.Apps.Hercules.BackEnd
     {
         public List<JsonMiniset> Minisets;
         public string LoadedDatasetID;
-        public List<Section> Sections;
+        public List<HerculesSection> Sections;
         public List<Filter> Filters;
     } 
  

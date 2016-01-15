@@ -15,19 +15,29 @@ class GraphBuilder extends React.Component {
 
         this.state = {
             baseFields: fields,
-            axes: []            //Use Immutable set?
+            axes: [],            //Use Immutable set?
+            empty: true
         };
     }
 
     _onChange () {
         this.state.axes = [];
-        var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
-        var axesSetIter = axesSet.entries();
-        var axis = axesSetIter.next();
+        if (!GraphBuilderStore.isEmpty) {
+            this.setState({
+                empty: false
+            });
+            var axesSet = GraphBuilderStore.getAxes(this.props.sectionId);
+            var axesSetIter = axesSet.entries();
+            var axis = axesSetIter.next();
 
-        while (!axis.done) {
-            this.state.axes.push(axis.value);
-            axis = axesSetIter.next();
+            while (!axis.done) {
+                this.state.axes.push(axis.value);
+                axis = axesSetIter.next();
+            }
+        } else {
+            this.setState({
+                empty: true
+            });
         }
     }
 
@@ -71,34 +81,43 @@ class GraphBuilder extends React.Component {
             backgroundColor: '#2196F3',
             padding: '5px',
             color: 'white'
+        }, errorStyle = {
+            alignSelf: 'center',
+            fontSize: 'x-large',
+            color: 'white'
+
         }, stopScroll = (e) => {
-            e.stopPropagation();
+                e.stopPropagation();
         }
 
-        return <div id='buider' onScroll={stopScroll} style={builderStyle}>
-            <div id='fieldBoxWrapper' style={wrapperStyle}>
-                <div id="title" style={titleStyle} >
-                    Available Fields
+        if(this.state.empty) {
+            return <div id='error' style={errorStyle}> Please assign a graph to your section! </div>;
+        } else {
+            return <div id='buider' onScroll={stopScroll} style={builderStyle}>
+                <div id='fieldBoxWrapper' style={wrapperStyle}>
+                    <div id="title" style={titleStyle}>
+                        Available Fields
+                    </div>
+                    <div id='fieldsBox' style={fieldsBoxStyle}>
+                        {this.state.baseFields.map(
+                            (f, i) => <GraphField key={i} field={f} isRemovable={false}/>
+                        )}
+                    </div>
                 </div>
-                <div id='fieldsBox' style={fieldsBoxStyle}>
-                    {this.state.baseFields.map(
-                        (f, i) => <GraphField key={i} field={f} isRemovable={false}/>
+                <div id='axes' style={axisStyle}>
+                    {this.state.axes.map(
+                            axis => {
+                            var dimData = GraphBuilderStore.getDimensionData(axis[0]);
+                            return <AxisBox key={axis[0]}
+                                            axisData={axis}
+                                            sectionId={this.props.sectionId}
+                                            singleField={dimData.singleField}
+                                            validTypes={dimData.validTypes}/>;
+                        }
                     )}
                 </div>
-            </div>
-            <div id='axes' style={axisStyle}>
-                {this.state.axes.map(
-                    axis => {
-                        var dimData = GraphBuilderStore.getDimensionData(axis[0]);
-                        return <AxisBox key={axis[0]}
-                                        axisData={axis}
-                                        sectionId={this.props.sectionId}
-                                        singleField={dimData.singleField}
-                                        validTypes={dimData.validTypes}/>;
-                    }
-                )}
-            </div>
-        </div>;
+            </div>;
+        }
     }
 }
 

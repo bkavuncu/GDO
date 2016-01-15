@@ -64,7 +64,7 @@ class Explorer extends React.Component {
                 .map((d) => <Dataset
                     key={d.name}
                     data={d}
-                    active={d.id === activeDatasetId}
+                    active={d._id === activeDatasetId}
                     parentSize={pSize}/>)}
         </View>;
     }

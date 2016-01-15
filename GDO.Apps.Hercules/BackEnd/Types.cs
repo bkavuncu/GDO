@@ -7,71 +7,89 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace GDO.Apps.Hercules.BackEnd
 {
-    //////////////////////////////////////////////////////////////////////////////////////////
-
+    // Field statistics.
     public class JsonStats
     {
         public dynamic min;
         public dynamic max;
-        public dynamic mean;
         public dynamic median;
+        public dynamic mean;
+        public bool isEnum;
         public dynamic variance;
-        public dynamic sd;
+        public dynamic stdDev;
         public dynamic sum;
         public int count;
-        public bool isEnum;
 
         public override string ToString()
         {
-            return string.Format("{0} Count:{1} Min:{2} Max:{3} Sum:{4} Mean:{5} Median:{6} Var:{7} SD:{8}",
-                                 isEnum ? "ENUM" : "NOT-ENUM", count, min, max, sum, mean, median, variance, sd);
+            return string.Format("{0,-8} Count:{1,-20} Min:{2,-20} Max:{3,-20} Sum:{4,-20} Mean:{5,-20} Median:{6,-20} Var:{7,-20} SD:{8,-20}", isEnum ? "ENUM" : "NOT-ENUM", count.ToString("0.00"), min.ToString("0.00"), max.ToString("0.00"), sum.ToString("0.00"), mean.ToString("0.00"), median.ToString("0.00"), variance.ToString("0.00"), stdDev.ToString("0.00"));
+        }
+
+        public JsonStats clone()
+        {
+            return new JsonStats { min = min, max = max, mean = mean, median = median, variance = variance, stdDev = stdDev, sum = sum, count = count, isEnum = isEnum };
         }
     }
 
+    // One field in a dataset.
     public class JsonField
     {
         public string name;
-        public int index;
         public string description;
         public string type;
         public string origin;
         public bool disabled;
         public JsonStats stats;
+        public int index;
 
         public override string ToString()
         {
-            return string.Format("{0}#{1} {2} {3} {5} :: {4} --> {6}",
-                                 index, name, description, origin, type, disabled ? "DISABLED" : "ACTIVE", stats.ToString());
+            return string.Format("{0,3}#{1,23} {2} {3} {5,8} :: {4,10} --> {6}", index, name, description, origin, type, disabled ? "DISABLED" : "ACTIVE", stats.ToString());
+        }
+
+        public JsonField clone()
+        {
+            return new JsonField { name = name, index = index, description = description, type = type, origin = origin, disabled = disabled, stats = stats.clone() };
+        }
+
+        public bool isNumeric()
+        {
+            return type.Equals("Integral") || type.Equals("Floating") || type.Equals("DateTime");
         }
     }
 
+
+    // The miniset: metadata on the fields.
     public class JsonMiniset
     {
         public string name;
         public string description;
-        public int nrows;
+        public int length;
         public string sourceType;
         public string sourceOrigin;
         public bool disabled;
         public JsonField[] fields;
         public MongoDB.Bson.ObjectId _id;
 
-
         public override string ToString()
         {
-            return string.Format("{0}#{1} {2} {3} {4} {5} | {6} rows\n{7}",
-                                 _id, name, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", nrows,
-                                 Utils.Lines(fields, "\n"));
+            return string.Format("{0} | {1} | {2} rows | {3} | {4} | {5} | {6}\n{7}", name, _id, length, description, sourceOrigin, sourceType, disabled ? "DISABLED" : "ACTIVE", Utils.Lines(fields, "\n"));
+        }
+
+        public JsonMiniset clone()
+        {
+            return new JsonMiniset { name = name, description = description, length = length, sourceType = sourceType, sourceOrigin = sourceOrigin, disabled = disabled, fields = fields.Select(f => f.clone()).ToArray(), _id = _id };
         }
     }
 
-
+    // Just the tabular data.
     public class JsonRows
     {
         public MongoDB.Bson.ObjectId _id;
         public List<dynamic[]> rows;
     }
 
+    // Dataset: rows + miniset.
     public class JsonDS
     {
         public JsonMiniset schema;
@@ -79,8 +97,73 @@ namespace GDO.Apps.Hercules.BackEnd
 
         public override string ToString()
         {
-            return string.Format("{0}\n{1}", schema.ToString(), Utils.Lines(rows, "\n\t"));
+            return string.Format("{0}\n{1}\t\t", schema.ToString(), Utils.Lines(rows, "\n"));
         }
+
+        public Dictionary<string, int> getFieldIndexMap()
+        {
+            Dictionary<string, int> map = new Dictionary<string, int>();
+            JsonField[] fields = schema.fields;
+            for (int i = 0; i < fields.Length; i++)
+            {
+                JsonField f = fields[i];
+                map.Add(f.name, i);
+            }
+
+            return map;
+        }
+
+        private JsonField findField(string fieldName)
+        {
+            foreach (JsonField field in schema.fields) {
+                if (field.name.Equals(fieldName)) {
+                    return field;
+                }
+            }
+            return null;
+        }
+
+        public JsonDS filter(JsonFilter filter)
+        {
+            JsonField field = findField(filter.fieldName);
+            if (field == null) {
+                throw new Exception(string.Format("JsonDS.field: this JsonDS does not contain field name {0}.", filter.fieldName));
+            }
+
+            JsonDS ds = new JsonDS();
+            ds.schema = schema.clone();
+            ds.rows = new List<dynamic[]>();
+
+            if (field.isNumeric()) {
+                foreach (dynamic[] row in this.rows) {
+                    dynamic value = row[field.index];
+                    if (value >= filter.min && value <= filter.max) {
+                        ds.rows.Add(row);
+                    }
+                }
+            } else if (field.type.Equals("Text")) {
+                foreach (dynamic[] row in this.rows) {
+                    dynamic value = row[field.index].Length;
+                    if (value >= filter.min || value <= filter.max) {
+                        ds.rows.Add(row);
+                    }
+                }
+            } else {
+                foreach (dynamic[] row in this.rows) {
+                    dynamic value = row[field.index];
+                    ds.rows.Add(row);
+                }
+            }
+
+            return ds;
+        }
+    }
+
+    public class JsonFilter
+    {
+        public string fieldName;
+        public dynamic min;
+        public dynamic max;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////

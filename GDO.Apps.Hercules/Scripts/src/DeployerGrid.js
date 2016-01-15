@@ -4,7 +4,8 @@ const React = require('react'),
     _ = require('underscore'),
     DeployerStore = require('./stores/DeployerStore'),
     DeployerActions = require('./actions/DeployerActions'),
-    colors = require('colors').deployerColors;
+    colors = require('colors').deployerColors,
+    MeasureComponent = require('ui/MeasureComponent');
 
 const NODE_PADDING = 3;
 let [REST, SELECT, MERGE, SECTION, SECTION_SELECTED] = [1,2,3,4];
@@ -47,6 +48,9 @@ class DeployerNode extends React.Component {
         var edge = this.props.edge - 2 * NODE_PADDING,
             fontSize = Math.floor(Math.max(8, Math.min(edge / 2, 30)));
 
+        var isGraphAssigned = DeployerStore.isGraphAssigned(DeployerStore.getNodeSectionId(this.props.id));
+        var selected = (this.props.step === SECTION_SELECTED);
+
         var outerStyle = {
                 display: "flex",
                 justifyContent: "center",
@@ -59,7 +63,7 @@ class DeployerNode extends React.Component {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: this.getColour(),
+                backgroundColor: selected ? this.getColour() : (isGraphAssigned ? 'green' : this.getColour()),
                 boxShadow: this.getBoxShadow(),
                 transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
                 color: 'white',
@@ -78,102 +82,102 @@ class DeployerNode extends React.Component {
     }
 }
 
-
-let [MEASURE, RENDER] = [0,1];
 const NODE_NUMBER = 64,
     ROWS = 4,
     COLUMNS = NODE_NUMBER / ROWS,
     PADDING = 10;
-class DeployerGrid extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            step: MEASURE
+
+class JustTheGrid extends React.Component {
+    _getOuterStyle () {
+        return  {
+            display: 'flex',
+            flexWrap: 'wrap-reverse',
+            //padding: PADDING + 'px',
+            backgroundColor: '#80cbc4'
         };
     }
-    componentDidMount () {
-        var listener = () => this.resize();
-        this.setState({listener});
-        window.addEventListener('resize', listener);
-        this.resize();
-    }
 
-    componentWillUnmount () {
-        window.removeEventListener('resize', this.state.listener);
-    }
-
-    resize () {
-        var el = ReactDOM.findDOMNode(this),
-            width = el.offsetWidth - 2 * PADDING,
-            height = el.offsetHeight - 2 * PADDING,
-            nW = width / COLUMNS,
-            nH = height / ROWS,
-            edge = Math.min(nW, nH),
-            containerHeight = edge * ROWS;
-
-        this.setState({
-            step: RENDER,
-            edge: edge,
-            containerHeight: containerHeight
+    render () {
+        var {width, height, mergeable, selectedNodes, sections} = this.props,
+        edge = width / COLUMNS,
+        containerHeight = edge * ROWS,
+        style = _.extend({}, this._getOuterStyle(), {
+            width: width + 'px',
+            alignItems: 'center'
+            //height: containerHeight + 'px'
         });
-    }
 
+        console.log(width);
+
+        var getNodeStep = (nodeId) => {
+            if (selectedNodes.contains(nodeId))
+                return mergeable? MERGE : SELECT;
+
+            if (sections.size > 0 && DeployerStore.nodeInSection(nodeId)){
+                return DeployerStore.isNodeInSelectedSection(nodeId)? SECTION_SELECTED : SECTION;
+            }
+
+            return REST;
+        },
+        nodeList = _.range(0, NODE_NUMBER)
+            .map((i) => <DeployerNode
+                key={i} id={i}
+                step={getNodeStep(i)}
+                edge={edge} />);
+
+        return <div style={style}>
+            {nodeList}
+        </div>;
+    }
+}
+class DeployerGrid extends React.Component {
     render() {
         var outerStyle = {
-                padding: 0,
-                justifyContent: 'flex-start',
                 alignItems: 'stretch',
+                width: '100%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                display: 'flex',
+                //flexWrap: 'wrap',
+                justifyContent: 'center'
+            },
+            topStyle = {
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                flexGrow: 1
+            },
+            bottomStyle = {
+                display: 'flex',
+                flexDirection: 'row',
+                //alignItems: 'stretch',
+                justifyContent:'flex-end',
+                flexWrap: 'no-wrap'
+                //flexGrow: 2
             },
             gridStyle = {
+                display: 'flex',
                 flexGrow: 1,
                 flexWrap: 'wrap-reverse',
+                alignItems: 'stretch',
                 height: 'auto',
                 padding: PADDING + 'px',
                 backgroundColor: '#80cbc4',
                 width: 'auto'
             };
 
-        switch (this.state.step) {
-            case MEASURE:
-                return <View style={gridStyle}/>;
-                break;
-            case RENDER:
-                var {edge, containerHeight} = this.state,
-                    {mergeable, selectedNodes, sections} = this.props;
+        var {mergeable, selectedNodes, sections} = this.props;
 
-                var getNodeStep = (nodeId) => {
-                        if (selectedNodes.contains(nodeId))
-                            return mergeable? MERGE : SELECT;
-
-                        if (sections.size > 0 && DeployerStore.nodeInSection(nodeId)){
-                            return DeployerStore.isNodeInSelectedSection(nodeId)? SECTION_SELECTED : SECTION;
-                        }
-
-                        return REST;
-                    },
-                    nodeList = _.range(0, NODE_NUMBER)
-                        .map((i) => <DeployerNode
-                            key={i} id={i}
-                            step={getNodeStep(i)}
-                            edge={edge} />);
-
-                // set max height for grid
-                gridStyle = _.extend({}, gridStyle, {
-                    maxHeight: containerHeight + 'px'
-                });
-
-                return <View style={outerStyle}>
-                    <View  id="grid" style={gridStyle}>
-                        {nodeList}
-                    </View>
-                    <SectionManager selectedNodes={selectedNodes} mergeable={mergeable}/>
-                    <SectionViewer sections={sections} selectedSectionId={this.props.selectedSectionId}/>
-                    <GraphPicker selectedSectionId={this.props.selectedSectionId} />
-                </View>;
-                break;
-        }
+        return <div style={outerStyle}>
+            <View style={topStyle}>
+                <SectionManager selectedNodes={selectedNodes} mergeable={mergeable}/>
+                <MeasureComponent getChildren={({width, height}) => <JustTheGrid {...{width, sections, height, selectedNodes}} />} />
+            </View>
+            <View style={bottomStyle}>
+                <SectionViewer sections={sections} selectedSectionId={this.props.selectedSectionId}/>
+                <GraphPicker selectedSectionId={this.props.selectedSectionId} />
+            </View>
+        </div>;
     }
 }
 
@@ -181,9 +185,10 @@ class GraphPicker extends React.Component {
     _getOuterStyle () {
         return {
             display: 'flex',
-            flex: '0 1 80px',
-            justifyContent: 'center',
-            alignItems: 'stretch'
+            alignItems: 'stretch',
+            flexDirection: 'column',
+            textAlign: 'center',
+            flex: '0 0 100px'
         };
     }
 
@@ -199,11 +204,12 @@ class GraphPicker extends React.Component {
         var {selectedSectionId} = this.props,
             graphMap = DeployerStore.getGraphMap(),
             commonStyle = {
-                margin: '10px',
-                flex: '0 1 200px',
+                margin: '5px',
+                flex: '0 1 100px',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                flexGrow: 1
             };
 
         if (selectedSectionId === false) {
@@ -251,18 +257,18 @@ class SectionManager extends React.Component {
     render () {
         var style = {
             display: 'flex',
-            alignSelf: 'stretch',
-            flex: '0 0 80px',
-            width: 'auto',
-            justifyContent: 'center'
+            alignItems: 'stretch',
+            flexDirection: 'column',
+            textAlign: 'center',
+            flex: '0 0 100px'
         }, mergeable = this.props.mergeable,
             nodeSet = this.props.selectedNodes;
 
-        return <View style={style}>
+        return <div style={style}>
             <CreateSection handler={this._createSection.bind(this)} mergeable={mergeable}/>
             <ClearSelection clearable={nodeSet.size > 0} mergeable={mergeable}/>
             <DestroySection />
-        </View>;
+        </div>;
     }
 }
 
@@ -284,9 +290,9 @@ class DeployerButton extends React.Component {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexBasis: '200px',
+            flexGrow: 1,
             color: 'white',
-            margin: '10px',
+            margin: '5px',
             borderRadius: '3px',
             boxShadow: '0 0 10px gray',
             backgroundColor: colors.NODE,
@@ -342,8 +348,8 @@ class ClearSelection extends DeployerButton {
     }
 
     getStyle () {
-        var buttonColor = this.props.mergeable? colors.NODE_MERGE
-            : this.props.clearable? colors.NODE_SELECT : colors.NODE;
+        var buttonColor = /*this.props.mergeable? colors.NODE_MERGE
+            : */this.props.clearable? colors.NODE_SELECT : colors.NODE;
         return {
             backgroundColor: buttonColor
         };
@@ -361,9 +367,10 @@ class Section extends React.Component {
 
     _getOuterStyle () {
         var {selected, data} = this.props;
+        var isGraphAssigned = DeployerStore.isGraphAssigned(data.id)
 
         return  {
-            backgroundColor: selected? colors.NODE_SECTION_SELECT : colors.NODE_SECTION,
+            backgroundColor: selected? colors.NODE_SECTION_SELECT : (isGraphAssigned ? 'green' : colors.NODE_SECTION),
             display: 'flex',
             transition: 'box-shadow ease 0.3s, background-color ease 0.2s',
             color: 'white',
@@ -372,7 +379,8 @@ class Section extends React.Component {
             margin: '0px 5px 5px 0px',
             boxShadow: '0 0 ' + (selected? 15 : 5) + 'px gray',
             alignItems: 'center',
-            padding: '10px'
+            padding: '10px',
+            maxWidth: '200px'
         };
     }
     render () {
@@ -381,8 +389,8 @@ class Section extends React.Component {
 
         return <div style={this._getOuterStyle()} onTouchTap={this._onTap.bind(this)}>
             <div>Section ID: {data.id}</div>
-            <div>Nodes: {data.nodeList.sort().map(n => n+1).toArray().toString()}</div>
             <div>Graph: {selectedGraph ? selectedGraph : 'Assign'}</div>
+            <div>Nodes: {data.nodeList.sort().map(n => ' '+(n+1)).toArray().toString()}</div>
         </div>;
     }
 }
@@ -396,9 +404,13 @@ class SectionViewer extends React.Component {
         };
     }
     render () {
-        var {selectedSectionId, sections} = this.props;
+        var {width, selectedSectionId, sections} = this.props;
+        var style = _.extend({}, this._getOuterStyle(), {
+            width: width + 'px',
+            //height: containerHeight + 'px'
+        });
 
-        return <div style={this._getOuterStyle()}>
+        return <div style={style}>
             {sections.map(s => <Section data={s} key={s.id} selected={selectedSectionId === s.id} />)}
         </div>;
     }

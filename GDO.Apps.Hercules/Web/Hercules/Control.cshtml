@@ -18,6 +18,46 @@
             overflow: hidden;
         }
 
+        
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+
+        .table_control td {
+            text-align:center;
+            border: 1px solid #FFF;
+            padding: 8px;
+            font-size:1.4em;
+
+            /* Unselectable */
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        table.table_control {
+            /*border-collapse:collapse;*/
+        }
+
+        .green {
+            background-color:#006400;
+        }
+
+          .green:active {
+            background-color:#005400;
+        }
         .material-icons.md-18 {
             font-size: 18px;
         }
@@ -62,6 +102,11 @@
 
 </head>
 <body>
+
+    <div id="control_1" style="display:none">
+        <table class="table_control"></table>
+    </div>
+   
     <script src="~/Scripts/jquery-2.1.4.min.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
@@ -87,66 +132,64 @@
         }
 
         $(function () {
-            console.log(parent, parent.gdo);
-            var gdo = parent.gdo;
-            window.gdo = gdo;
-            server = gdo.net.app.Hercules.server;
-            gdo.controlId = getUrlVar("controlId");
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                window.gdo = gdo;
+                server = gdo.net.app.Hercules.server;
+                gdo.controlId = getUrlVar("controlId"),
+                HerculesApp = gdo.net.app.Hercules;
 
-            var instanceId,
-                confId,
-                numClients;
+                var instanceId,
+                    confId,
+                    numClients;
 
-            var test_bench = [];
+                var test_bench = [];
 
-            var callback = function (message) {
-                gdo.consoleOut(".Hercules", 1, "Callback Message: " + message);
-                confId = message.configurationId;
-                numClients = message.numClient;
-                if (message.state == 1) {
-                    test_bench[confId] && test_bench[confId]();
-                    test_bench[confId] = null;
-                    $("#wait").css("display", "none");
-                    if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
-                        $("#control_6").css("display", "");
-                    } else {
-                        $("#control_" + confId).css("display", "");
+                var callback = function (message) {
+                    gdo.consoleOut(".Hercules", 1, "Callback Message: " + message);
+                    confId = message.configurationId;
+                    numClients = message.numClient;
+                    if (message.state == 1) {
+                        test_bench[confId] && test_bench[confId]();
+                        test_bench[confId] = null;
                     }
-                }
-            };
-
-            var order = function (name, args) {
-                return JSON.stringify({ name: name, args: args });
-            };
-
-            if (!gdo.net.app["Hercules"].initControl) {
-                $("#wait").css("display", "none");
-                $("#error").css("display", "");
-                return;
-            }
-
-            instanceId = gdo.net.app["Hercules"].initControl(callback);
-
-            test_bench[0] = function () {
-                var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
-
-                var table = $("#control_1 table");
-                var send = function (value) {
-                    server.sendOrder(instanceId, order("plot", [value]), true);
                 };
 
-                dataIds.forEach(function (d) {
-                    table.append('<tr><td>' + d + '</td></tr>');
-                    table.find("tr:last td").addClass('green').click(send.bind(null, d));
-                });
-            };
+                var order = function (name, args) {
+                    return JSON.stringify({ name: name, args: args });
+                };
 
-            //gdo.consoleOut('.Hercules', 1, 'Init Control');
-            gdo.net.app['Hercules'].initControl();
-            gdo.net.app['Hercules'].server.testSignalR(gdo.controlId);
+                HerculesApp.initControl = function (callback) {
+                    gdo.consoleOut('.Hercules', 1, 'Initializing Hercules App Control at Instance ' + gdo.clientId);
+                    server.defineController(gdo.management.selectedInstance);
+                    return gdo.management.selectedInstance;
+                }
+
+                instanceId = gdo.net.app.Hercules.initControl(callback);
+
+                test_bench[0] = function () {
+                    var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
+
+                    var table = $("#control_1 table");
+                    var send = function (value) {
+                        server.sendOrder(instanceId, order("plot", [value]), true);
+                    };
+
+                    dataIds.forEach(function (d) {
+                        table.append('<tr><td>' + d + '</td></tr>');
+                        table.find("tr:last td").addClass('green').click(send.bind(null, d));
+                    });
+                };
+
+                //gdo.consoleOut('.Hercules', 1, 'Init Control');
+                //gdo.net.app['Hercules'].initControl();
+                //gdo.net.app['Hercules'].server.testSignalR(gdo.controlId);
+            });
         });
     </script>
-
+    <div id="control_1" style="display:none">
+        <table class="table_control"></table>
+    </div>
     <div id="react-target"></div>
     <script src="~/Web/Hercules/assets/HerculesControl.js"></script>
     <div class="hidden">
@@ -194,5 +237,7 @@
 
         window.HerculesExchange = HerculesExchange;
     </script>
+
+    
 </body>
 </html>
