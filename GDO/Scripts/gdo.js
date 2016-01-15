@@ -24,8 +24,8 @@ gdo.initGDO = function (clientMode) {
 
     gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
     gdo.clientMode = clientMode;
-    //$("title").append(" :" + gdo.clientId);
-    gdo.updateInterval = 14000;
+    $("title").append("" + gdo.clientId);
+    gdo.updateInterval = 21000;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
@@ -41,7 +41,7 @@ gdo.initGDO = function (clientMode) {
             gdo.net.initNet(clientMode);
             if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 500, 20, 'Node Failed to Initialize');
-                setTimeout(function() { setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval); }, Math.random() * gdo.updateInterval);
+                setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
             }
@@ -77,34 +77,34 @@ gdo.consoleOut = function (module, type, msg) {
     }
     if (type == 0) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#77B200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:#77B200; font-size:10; font-family: monospace;">' + timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 1) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#4CBFF8; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 2) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#FFF; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log('GDO' + moduleConsole + ': ' + msg);
     } if (type == 3) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:gray; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log('GDO' + moduleConsole + ': ' + msg);
     } else if (type == 4) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#FF9900; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.warn(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.warn('GDO' + moduleConsole + ': ' + msg);
     } else if (type == 5) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#FF2200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.error(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.error('GDO' + moduleConsole + ': ' + msg);
     }
 }
 
@@ -141,7 +141,7 @@ gdo.loadModule = function (submodule, module, moduleType) {
 gdo.timeStamp = function() {
     var now = new Date();
     var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
-    var time = [now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()];
+    var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
     var suffix = (time[0] < 12) ? "AM" : "PM";
     time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
     time[0] = time[0] || 12;
@@ -149,12 +149,6 @@ gdo.timeStamp = function() {
         if (time[i] < 10) {
             time[i] = "0" + time[i];
         }
-    }
-    if (time[3] < 100) {
-        time[3] = "0" + time[3];
-    }
-    if (time[3] < 10) {
-        time[3] = "00" + time[3];
     }
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }
