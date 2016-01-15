@@ -1,5 +1,5 @@
-Width := 1000
-Height := 500
+Width := 1920
+Height := 1080
 Cols := 1
 Rows := 2
 URL := "http://dsigdopreprod.doc.ic.ac.uk//Web/Node.cshtml"
