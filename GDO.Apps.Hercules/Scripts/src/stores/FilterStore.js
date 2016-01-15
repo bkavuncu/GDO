@@ -15,13 +15,17 @@ class FilterStore extends BaseStore {
     }
 
     _registerToActions (action) {
-        switch (action.type) {
+        switch (action.actionType) {
             case 'setFilter':
-                var filter = action.data;
-                this._applyFilter(filter);
+                var {fieldName, data} = action;
+                this._applyFilter(fieldName, data);
                 break;
         }
         this.emitChange();
+    }
+
+    getFieldNameList () {
+        return this.fields.map(f => f.name).toList();
     }
 
     _onDatasetChange () {
@@ -37,11 +41,9 @@ class FilterStore extends BaseStore {
         this.emitChange();
     }
 
-    _applyFilter (filter) {
-        var fieldName = filter.field;
-
-        if (this.fields.has(fieldName)) {
-            this.filters.set(fieldName, filter);
+    _applyFilter (fieldName, filter) {
+        if (this.getFieldNameList().contains(fieldName)) {
+            this.filters = this.filters.set(fieldName, filter);
         }
     }
 

@@ -42,9 +42,10 @@ class ControlBar extends React.Component {
     }
 
     render () {
-        var {value} = this.props,
+        var {value, onDone} = this.props,
             getButton = (val, i) => {
-                return <Button key={i} value={val} handler={this._getHandler(val)} />;
+                return <Button key={i} value={val}
+                               handler={this._getHandler(val)} onDone={onDone}/>;
             }, left = [-10, -1].map(getButton),
             right = [1,10].map(getButton);
 
@@ -138,17 +139,17 @@ class RangeControl extends React.Component {
     }
 
     render () {
-        var {min, max, field, onUpdateMin, onUpdateMax} = this.props,
+        var {min, max, field, onUpdateMin, onUpdateMax, onDone} = this.props,
             deltaMin = (delta) => {
                 onUpdateMin(min + delta);
             }, deltaMax = (delta) => {
                 onUpdateMax(max + delta);
-            }
+            };
 
         return <div style={this._getOuterStyle()}>
-            <ControlBar value={min} onDelta={deltaMin}/>
+            <ControlBar value={min} onDelta={deltaMin} {...{onDone}}/>
             <StatViewer field={field} />
-            <ControlBar value={max} onDelta={deltaMax}/>
+            <ControlBar value={max} onDelta={deltaMax} {...{onDone}}/>
         </div>;
     }
 }

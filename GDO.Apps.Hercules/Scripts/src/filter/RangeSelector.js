@@ -3,7 +3,8 @@ const React = require('react'),
     InlineSVG = require('svg-inline-react'),
     ReactDOM = require('react-dom'),
     d3 = require('d3'),
-    RangeControl = require('./RangeControl');
+    RangeControl = require('./RangeControl'),
+    FilterActions = require('actions/FilterActions');
 
 const WIDTH = 50;
 
@@ -68,6 +69,8 @@ class Slider extends React.Component {
     }
 
     _onDragEnd () {
+        this.props.onDone();
+
         this.setState({
             step: REST
         });
@@ -213,7 +216,8 @@ class SliderView extends React.Component {
     }
 
     render () {
-        var {minOffset, minUpdate, maxOffset, maxUpdate, height} = this.props,
+        var {minOffset, minUpdate, maxOffset,
+                maxUpdate, height, onDone} = this.props,
             {width} = this.state,
             onRangeBarRender = (w) => {
             this.setState({
@@ -222,11 +226,11 @@ class SliderView extends React.Component {
         };
 
         return <div style={this._getOuterStyle()}>
-            <SliderMin width={width}
+            <SliderMin {...{width, onDone}}
                        offset={minOffset}
                        onDelta={minUpdate} />
             <RangeBar height={height} onFindWidth={onRangeBarRender}/>
-            <SliderMax width={width}
+            <SliderMax {...{width, onDone}}
                        offset={maxOffset}
                        onDelta={maxUpdate} />
         </div>;
@@ -293,11 +297,18 @@ class RangeSelector extends React.Component {
         });
     }
 
+    _onDone () {
+        var {field} = this.props,
+            {min, max} = this.state;
+        FilterActions.setFilter(field.name, {min, max});
+    }
+
     render () {
         var {min, max} = this.state,
             {width, height, field} = this.props,
             minOffset = this._valueToOffset(min),
             maxOffset = Math.max(height - this._valueToOffset(max), 0),
+            onDone = this._onDone.bind(this),
             deltaUpdate = (previousOffset, delta) => {
                 var newOffset = Math.max(previousOffset + delta, 0),
                     newValue = this._offsetToValue(newOffset);
@@ -319,8 +330,8 @@ class RangeSelector extends React.Component {
             };
 
         return <div style={this._getOuterStyle()}>
-            <SliderView {...{minOffset, minUpdate, maxOffset, maxUpdate, height}} />
-            <RangeControl {...{min, max, field}}
+            <SliderView {...{minOffset, minUpdate, maxOffset, maxUpdate, height, onDone}} />
+            <RangeControl {...{min, max, field, onDone}}
                 onUpdateMin={this._updateMin.bind(this)}
                 onUpdateMax={this._updateMax.bind(this)}/>
         </div>;

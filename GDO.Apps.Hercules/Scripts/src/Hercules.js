@@ -51,7 +51,7 @@ class Hercules extends React.Component {
         GraphBuilderStore.removeChangeListener(listener);
     }
 
-    _getState () {
+    _getStep () {
         if (DatasetStore.hasActiveDataset()) {
             if (DeployerStore.hasSelectedSection())
                 return GRAPH;
@@ -62,7 +62,7 @@ class Hercules extends React.Component {
 
     _onChange () {
         this.setState({
-            step: this._getState(),
+            step: this._getStep(),
             route: NavStore.getRoute()
         });
     }

@@ -23,7 +23,6 @@ class Button extends React.Component {
     }
 
     _action () {
-        console.log('action');
         this.props.handler();
     }
 
@@ -66,17 +65,20 @@ class Button extends React.Component {
     }
 
     _onUp () {
-        var {step, interval, timeout} = this.state;
+        var {step, interval, timeout} = this.state,
+            {onDone} = this.props;
 
-        switch (step) {
-            case TAP:
-                clearTimeout(timeout);
-                this._action();
-            case PRESS:
-            case HOLD:
-                clearInterval(interval);
+        clearInterval(interval);
+        clearTimeout(timeout);
+
+        if (step === TAP) {
+            this._action();
         }
-        this.setState({step: REST});
+
+        if (step !== REST) {
+            this.setState({step: REST});
+            onDone();
+        }
     }
 
     _onCancel (e) {
