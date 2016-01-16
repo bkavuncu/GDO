@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScenarioHub.cs" />
     <Compile Include="SpreadsheetsApp.cs" />
     <Compile Include="SpreadsheetsAppHub.cs" />
   </ItemGroup>

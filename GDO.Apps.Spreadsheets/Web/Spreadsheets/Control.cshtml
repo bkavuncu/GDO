@@ -1,4 +1,5 @@
 ﻿@using System.IO
+@using System.Net.Mime
 @using System.Web.Helpers
 @using GDO.Core
 @{
@@ -27,9 +28,7 @@
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <style>
-        body {
-            color: #FFF;
-        }
+        body { color: #FFF; }
 
         .unselectable {
             -moz-user-select: -moz-none;
@@ -42,6 +41,7 @@
         .btn-file {
             position: relative;
             overflow: hidden;
+            background-color: #2a9fd6 !important;
         }
 
         .btn-file input[type=file] {
@@ -59,7 +59,7 @@
         }
 
         input[readonly] {
-            background-color: #555 !important;
+            background-color: #2a9fd6 !important;
             cursor: text !important;
         }
 
@@ -84,7 +84,7 @@
             height: 40px;
             border: 1px solid #333;
             background: #333;
-            color: #0094ff;
+            color: #2a9fd6;
             padding: 0px;
             display: inline-block;
             position: relative;
@@ -93,76 +93,120 @@
     </style>
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
-    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
-    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script>
-        $(function () {
-            var gdo = parent.gdo;
-            gdo.net.app["Spreadsheets"].initControl();
-            $(document).on('change', '.btn-file :file', function () {
-                var input = $(this),
-                    numFiles = input.get(0).files ? input.get(0).files.length : 1,
-                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-                    input.trigger('fileselect', [numFiles, label]);
-            });
-            $(document).ready(function () {
-                $('.btn-file :file').on('fileselect', function (event, numFiles, label) {
-                    var id = '#filename-' + event.target.id;
-                    console.log(id);
-                    if (label === "" || label === undefined) {
-                        $(id).text('No file Selected');
-                    } else {
-                        $(id).text(label);
-                    }
-                });
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+<script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+<script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script>
+    $(function() {
+        var gdo = parent.gdo;
+        gdo.net.app["Spreadsheets"].initControl();
+        $(document).on('change', '.btn-file :file', function() {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+        });
+        $(document).ready(function() {
+            $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+                var id = '#filename-' + event.target.id;
+                if (label === "" || label === undefined) {
+                    $(id).text('No file Selected');
+                } else {
+                    $(id).text(label);
+                }
+
             });
         });
-    </script>
-    <div class="wrapper" style="width:97%">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Upload</h6>
-                    </div>
-                    <div class="panel-body">
-                        <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
-                            <tr>
-                                <td>
-                                    <div style="background-color:transparent"><h6>Upload Spreadsheet File:</h6></div>
-                                </td>
-                                <td>
-                                    <div class="fileinput fileinput-new" data-provides="fileinput">
-                                        <span class="btn btn-default btn-file"><span>Choose file</span><input id="sheet" type="file" /></span>
-                                        <span class="fileinput-filename"></span><span id="filename-sheet" class="fileinput-new">No file chosen</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="background-color:transparent"><h6>Upload Variables:</h6></div>
-                                </td>
-                                <td>
-                                    <div class="fileinput fileinput-new" data-provides="fileinput">
-                                        <span class="btn btn-default btn-file"><span>Choose file</span><input id="var" type="file" /></span>
-                                        <span class="fileinput-filename"></span><span id="filename-var" class="fileinput-new">No file chosen</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="panel-footer">
-                        <fieldset>
-                            <button id="spreadsheet_submit" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                        </fieldset>
-                    </div>
+    });
+</script>
+<div class="wrapper" style="width: 97%">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Upload</h6>
+                </div>
+                <div class="panel-body">
+                    @{
+                        var sheetPath = "";
+                        var sheet = "";
+                        var variable = "";
+                        var variablePath = "";
+                        if (IsPost)
+                        {
+                            HttpPostedFileBase sheetFile = Request.Files[0];
+                            HttpPostedFileBase inputFile = Request.Files[1];
+                            if (sheetFile != null && inputFile != null)
+                            {
+                                //Spreadsheet Excel Specification
+                                sheet = Path.GetFileName(sheetFile.FileName);
+                                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Sheet/"));
+                                sheetPath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Sheet/") + sheet;
+                                sheetFile.SaveAs(sheetPath);
+                                //Variable Excel Specification
+                                variable = Path.GetFileName(inputFile.FileName);
+                                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Var/"));
+                                variablePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Var/") + variable;
+                                inputFile.SaveAs(variablePath);
+                            }
+                        }
+                    }
+                    <form id="file_upload_form" action="" method="post" data-ajax="false" enctype="multipart/form-data">
+                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                        <tr>
+                            <td>
+                                <div style="background-color: transparent">
+                                    <h6>Upload Spreadsheet File:</h6>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fileinput fileinput-new" data-provides="fileinput">
+                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="sheet" name="sheet" type="file" accept=".xls,.xlsx" /></span>
+                                    <span class="fileinput-filename"></span><span id="filename-sheet" class="fileinput-new">No file chosen</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="background-color: transparent">
+                                    <h6>Upload Variables:</h6>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fileinput fileinput-new" data-provides="fileinput">
+                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="var" name="input" type="file" accept=".xls,.xlsx" /></span>
+                                    <span class="fileinput-filename"></span><span id="filename-var" class="fileinput-new">No file chosen</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <fieldset>
+                        <button id="spreadsheet_submit" class="btn btn-success btn-circle btn-xl center-block format_button ">
+                            <i class='fa  fa-check fa-fw'></i>
+                        </button>
+                    </fieldset>
                 </div>
             </div>
         </div>
     </div>
+</div>
+@if (sheetPath != "" && variablePath != "")
+{
+    <script>
+        $(function() {
+            $(document).ready(function() {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.Spreadsheet', 1, 'Instance ' + gdo.controlId + ": Uploaded files [" + "@sheet" + "," + "@variable" + "]");
+            });
+
+        });
+    </script>
+}
 </body>
 </html>

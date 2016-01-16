@@ -3,6 +3,7 @@ using GDO.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -14,7 +15,6 @@ namespace GDO.Apps.Spreadsheets
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-
         public string Name { get; set; }
 
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
@@ -23,9 +23,9 @@ namespace GDO.Apps.Spreadsheets
             this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
-
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Spreadsheet/Sheet"));
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Spreadsheet/Var"));
         }
-
         public void SetName(string name)
         {
             Name = name;
@@ -35,5 +35,6 @@ namespace GDO.Apps.Spreadsheets
         {
             return Name;
         }
+
     }
 }

@@ -10,9 +10,9 @@ namespace GDO.Apps.Spreadsheets
     public class SpreadsheetsAppHub : Hub, IAppHub
     {
         public string Name { get; set; } = "Spreadsheets";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.Section;
         public Type InstanceType { get; set; } = new SpreadsheetsApp().GetType();
-
+        public ScenarioHub ScenarioHub { get; set; } = new ScenarioHub();   
         public void JoinGroup(int instanceId)
         {
             Groups.Add(Context.ConnectionId, "" + instanceId);
