@@ -938,6 +938,8 @@
     <None Include="Properties\PublishProfiles\emergency.pubxml" />
     <None Include="Properties\PublishProfiles\PreProd.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
+    <None Include="Properties\PublishProfiles\studentserver.pubxml" />
+    <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
