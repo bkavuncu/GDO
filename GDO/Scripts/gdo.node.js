@@ -23,15 +23,15 @@ gdo.updateDisplayCanvas = function () {
     /// <returns></returns>
 
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-        //if (gdo.currentDisplayedAppInstance != gdo.net.node[gdo.clientId].appInstanceId) {
+        if (gdo.currentDisplayedAppInstance != gdo.net.node[gdo.clientId].appInstanceId) {
             if (gdo.net.node[gdo.clientId].appInstanceId == -1) {
                 gdo.closeAppFrame();
-               // gdo.currentDisplayedAppInstance = -1;
+                gdo.currentDisplayedAppInstance = -1;
             } else if (gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].appName != null) {
                 gdo.loadAppFrame(gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].appName);
-                //gdo.currentDisplayedAppInstance = gdo.net.node[gdo.clientId].appInstanceId;
+                gdo.currentDisplayedAppInstance = gdo.net.node[gdo.clientId].appInstanceId;
             }
-        //}
+        }
         if (gdo.net.maintenanceMode) {
             $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("Node <b>" + gdo.clientId + "</b>");
             if (!gdo.maintenance.nodeTableDrawn) {

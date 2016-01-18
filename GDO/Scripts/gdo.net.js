@@ -29,6 +29,7 @@ gdo.net.NEIGHBOUR_ENUM = {
 };
 
 gdo.net.time = new Date();
+gdo.net.connectionState = 0;
 
 $(function() {
     // We need to register functions that server calls on client before hub connection established,
@@ -40,7 +41,7 @@ $(function() {
 
     $.connection.caveHub.client.receiveHeartbeat = function (heartbeat) {
         gdo.net.time.setTime(heartbeat);
-        gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
+        //gdo.consoleOut(".NET", 3, "Received Heartbeat: " + gdo.net.time.getHours() + ":" + gdo.net.time.getMinutes() + ":" + +gdo.net.time.getSeconds() + ":" + gdo.net.time.getMilliseconds());
     }
 
     $.connection.caveHub.client.setMaintenanceMode = function (maintenanceMode) {
@@ -164,9 +165,36 @@ $(function() {
             gdo.updateSelf();
         }
     }
-
+    $.connection.caveHub.connection.stateChanged(gdo.net.connectionStateChanged);
 });
 
+
+gdo.net.connectionStateChanged = function (state) {
+    gdo.net.connectionState = state.newState;
+    var stateConversion = { 0: 'CONNECTING', 1: 'CONNECTED', 2: 'RECONNECTING', 4: 'DISCONNECTED' };
+    $("#connection_icon")
+        .removeClass("fa-arrow-right")
+        .removeClass("fa-check")
+        .removeClass("fa-repeat")
+        .removeClass("fa-times");
+    if (state.newState == 0) {
+        gdo.consoleOut('.NET', 1,'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#2A9FD6");
+        $("#connection_icon").addClass("fa-arrow-right");
+    }else if (state.newState == 1) {
+        gdo.consoleOut('.NET', 0, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#77B300");
+        $("#connection_icon").addClass("fa-check");
+    }else if (state.newState == 2) {
+        gdo.consoleOut('.NET', 4, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#FF8800");
+        $("#connection_icon").addClass("fa-repeat");
+    } else if (state.newState == 4) {
+        gdo.consoleOut('.NET', 5, 'SignalR state changed from ' + stateConversion[state.oldState]+ ' to ' + stateConversion[state.newState]);
+        $("#connection_status").css("background", "#CC0000");
+        $("#connection_icon").addClass("fa-times");
+    }
+}
 
 gdo.net.initHub = function () {
     /// <summary>
@@ -224,9 +252,7 @@ gdo.net.initPeer = function () {
     gdo.consoleOut('.NET', 2, 'Initializing Peer Connections');
    // gdo.net.peer = new Peer({ key: 'x7fwx2kavpy6tj4i', debug: true }); // public server for testing outside of college
 
-    //gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
-    gdo.net.peer = new Peer({ host: "146.169.32.109", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
-
+    gdo.net.peer = new Peer({ host: "dsigdoprod.doc.ic.ac.uk", port: 55555 }); //DSI Server only accessible within VPN own server will replace here
     gdo.net.peer.on('open', function(peerId) {
         gdo.consoleOut('.NET', 0, 'Connected to PeerServer with Id:' + peerId);
         gdo.net.node[gdo.clientId].peerId = peerId;
@@ -772,5 +798,35 @@ gdo.net.processState = function (state, id, exists) {
     } else {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
+    }
+}
+
+gdo.net.setTimeout = function(func, start) {
+    /// <summary>
+    /// Synced Timout
+    /// </summary>
+    /// <param name="func">The function.</param>
+    /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
+    /// <returns></returns>
+    setTimeout(func, gdo.net.time - start);
+}
+
+gdo.net.setInterval = function (statement, start, current, interval, conditionFunc) {
+    /// <summary>
+    /// Synced Interval
+    /// </summary>
+    /// <param name="func">The function to execute.</param>
+    /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
+    /// <param name="current">The current time: get it by gdo.net.time.getTime()</param>
+    /// <param name="interval">The interval in milliseconds</param>
+    /// <param name="conditionFunc">The condition function input for breaking the recursion when needed, 
+    /// if it returns true it loops otherwise it breaks.
+    /// </param>
+    /// <returns></returns>
+    if (conditionFunc()) {
+        setTimeout(function () {
+            eval(statement);
+            gdo.net.setInterval(statement, (start + interval), gdo.net.time.getTime(), interval, conditionFunc);
+        }, start - current);
     }
 }

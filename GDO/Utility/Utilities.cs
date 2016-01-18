@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.IO;
+using GDO.Core;
 using Newtonsoft.Json;
 
 namespace GDO.Utility
 {
-    public static class Utilities
+    public class Utilities
     {
         public static int GetAvailableSlot<T>(ConcurrentDictionary<int, T> dictionary)
         {
             int slot = -1;
-            for (int i = 0; i < 1000; i++)//TODO comment why 1000 is used...
+            for (int i = 0; i < 1000; i++)
             {
                 if (!dictionary.ContainsKey(i))
                 {
@@ -25,7 +28,7 @@ namespace GDO.Utility
         public static int GetFirstKey<T>(ConcurrentDictionary<int, T> dictionary)
         {
             int slot = -1;
-            for (int i = 0; i < 1000; i++)//TODO comment why 1000 is used...
+            for (int i = 0; i < 1000; i++)
             {
                 if (dictionary.ContainsKey(i))
                 {
@@ -38,7 +41,7 @@ namespace GDO.Utility
         public static int GetAvailableSlot<T>(Dictionary<int, T> dictionary)
         {
             int slot = -1;
-            for (int i = 0; i < 1000000; i++)//TODO comment why 1000000 is used...
+            for (int i = 0; i < 1000000; i++)
             {
                 if (!dictionary.ContainsKey(i))
                 {
@@ -70,7 +73,7 @@ namespace GDO.Utility
         public static byte[] GetBytes(string str)
         {
             byte[] bytes = new byte[str.Length * sizeof(char)];
-            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
             return bytes;
         }
 
@@ -84,21 +87,21 @@ namespace GDO.Utility
             }
         }
     }
-    public class GenericDictionary<TU>
+    public class GenericDictionary<U>
     {
-        private Dictionary<int, TU> _dict;
+        private Dictionary<int, U> _dict;
 
         public void Init()
         {
-            _dict = new Dictionary<int, TU>();
+            _dict = new Dictionary<int, U>();
         } 
 
-        public void Add<T>(int key, T value) where T : TU
+        public void Add<T>(int key, T value) where T : U
         {
             _dict.Add(key, value);
         }
 
-        public int AddNextAvailableSlot<T>(T value) where T : TU
+        public int AddNextAvailableSlot<T>(T value) where T : U
         {
             int key = this.GetAvailableSlot();
             _dict.Add(key, value);
@@ -120,7 +123,7 @@ namespace GDO.Utility
             return _dict.Count;
         }
 
-        public T GetValue<T>(int key) where T : TU
+        public T GetValue<T>(int key) where T : U
         {
             return (T)_dict[key];
         }
@@ -139,16 +142,16 @@ namespace GDO.Utility
             return slot;
         }
 
-        public Dictionary<int, TU> GetDictionary()
+        public Dictionary<int, U> GetDictionary()
         {
             return _dict;
         }
 
-        public TU[] ToArray()
+        public U[] ToArray()
         {
             int i = 0;
-            TU[] array = new TU[_dict.Count];
-            foreach (KeyValuePair<int,TU> pair in _dict)
+            U[] array = new U[_dict.Count];
+            foreach (KeyValuePair<int,U> pair in _dict)
             {
                 array[i] = pair.Value;
                 i++;

@@ -51,7 +51,7 @@ namespace GDO.Core
             if (!Cave.InitializedSync)
             {
                 Cave.InitializedSync = true;
-                Cave.SyncTimer = new System.Timers.Timer(1000);
+                Cave.SyncTimer = new System.Timers.Timer(70);
                 Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
                 Cave.SyncTimer.Start();
             }
