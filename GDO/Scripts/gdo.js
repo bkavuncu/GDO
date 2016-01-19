@@ -21,16 +21,16 @@ gdo.initGDO = function (clientMode) {
     /// </summary>
     /// <returns></returns>
     gdo.consoleOut('', 1, 'Initializing GDO');
-
     gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
     gdo.clientMode = clientMode;
-    $("title").append("" + gdo.clientId);
+
     gdo.updateInterval = 21000;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
         gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
     } else {
+        $("title").append("" + gdo.clientId);
         gdo.loadModule('node', 'node', gdo.MODULE_TYPE.CORE);
         gdo.loadModule('base', 'node', gdo.MODULE_TYPE.CORE);
         gdo.loadModule('maintenance', 'maintenance', gdo.MODULE_TYPE.CORE);
