@@ -133,13 +133,13 @@
                     @{
                         var sheetPath = "";
                         var sheet = "";
-                        var variable = "";
-                        var variablePath = "";
+                        var config = "";
+                        var configPath = "";
                         if (IsPost)
                         {
                             HttpPostedFileBase sheetFile = Request.Files[0];
-                            HttpPostedFileBase inputFile = Request.Files[1];
-                            if (sheetFile != null && inputFile != null)
+                            HttpPostedFileBase configFile = Request.Files[1];
+                            if (sheetFile != null && configFile != null)
                             {
                                 //Spreadsheet Excel Specification
                                 sheet = Path.GetFileName(sheetFile.FileName);
@@ -147,10 +147,10 @@
                                 sheetPath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Sheet/") + sheet;
                                 sheetFile.SaveAs(sheetPath);
                                 //Variable Excel Specification
-                                variable = Path.GetFileName(inputFile.FileName);
-                                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Var/"));
-                                variablePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Var/") + variable;
-                                inputFile.SaveAs(variablePath);
+                                config = Path.GetFileName(configFile.FileName);
+                                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Config/"));
+                                configPath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Config/") + config;
+                                configFile.SaveAs(configPath);
                             }
                         }
                     }
@@ -196,13 +196,14 @@
         </div>
     </div>
 </div>
-@if (sheetPath != "" && variablePath != "")
+@if (sheetPath != "" && configPath != "")
 {
     <script>
         $(function() {
             $(document).ready(function() {
                 var gdo = parent.gdo;
-                gdo.consoleOut('.Spreadsheet', 1, 'Instance ' + gdo.controlId + ": Uploaded files [" + "@sheet" + "," + "@variable" + "]");
+                gdo.consoleOut('.Spreadsheets', 1, 'Instance ' + gdo.controlId + ": Uploaded files [" + "@sheet" + "," + "@config" + "]");
+                gdo.net.app["Spreadsheets"].server.fileAdded(gdo.controlId, ["@sheet", "@config"]);
             });
 
         });

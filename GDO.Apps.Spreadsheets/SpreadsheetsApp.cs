@@ -3,6 +3,7 @@ using GDO.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,6 +17,9 @@ namespace GDO.Apps.Spreadsheets
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public string Name { get; set; }
+        public string SpreadsheetFile { get; set; }
+        public string ConfigFile { get; set; }
+        public string FileNumber { get; set; } = "";
 
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
@@ -34,6 +38,12 @@ namespace GDO.Apps.Spreadsheets
         public string GetName()
         {
             return Name;
+        }
+        public void FileAdded(string[] files)
+        {
+            if (files.Length != 2) return;
+            SpreadsheetFile = files[0];
+            ConfigFile = files[1];
         }
 
     }

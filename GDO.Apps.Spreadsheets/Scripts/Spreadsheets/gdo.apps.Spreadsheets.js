@@ -8,6 +8,9 @@
             $("iframe").contents().find("#sheet_details").empty().append(name);
         }
     }
+    $.connection.spreadsheetsAppHub.client.serverToConsole = function (instanceId, level, text) {
+        gdo.consoleOut('.Spreadsheets', level, 'Instance - ' + instanceId + ": SERVER : " + text);
+    }
 });
 
 gdo.net.app["Spreadsheets"].initClient = function () {
@@ -25,14 +28,21 @@ gdo.net.app["Spreadsheets"].initControl = function () {
         var type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         var spreadSheet = $("iframe").contents().find("#sheet").get(0).files[0];
         var config = $("iframe").contents().find("#var").get(0).files[0];
-        if (spreadSheet.type === type && config.type === type) {
-            $("iframe").contents().find("#file_upload_form").submit();
-            gdo.net.app["Spreadsheets"].server.setName(gdo.controlId, spreadSheet.name + " <br /> " + config.name);
-        } else {
-            alert("files should be of type .xls or .xlsx");
-            gdo.consoleOut('.Spreadsheets', 5, 'files should be of type .xls or .xlsx');
-        }
-    });
+            if (spreadSheet != undefined && config != undefined) {
+                if (spreadSheet.type === type && config.type === type) {
+                    gdo.net.app["Spreadsheets"].server.setName(gdo.controlId, spreadSheet.name + " <br /> " + config.name);
+                    gdo.consoleOut(".Spreadsheets", 1, "Set Name, now calling FileAdded on Server");
+                    gdo.consoleOut(".Spreadsheets", 1, "called function.");
+                    $("iframe").contents().find("#file_upload_form").submit();
+                } else {
+                    alert("files should be of type .xls or .xlsx");
+                    gdo.consoleOut('.Spreadsheets', 5, 'files should be of type .xls or .xlsx');
+                }
+            } else {
+                alert("please enter a file for both sections.");
+                gdo.consoleOut('.Spreadsheets', 5, 'please enter a file for both sections.');
+            }
+        });
 }
 
 gdo.net.app["Spreadsheets"].terminateClient = function () {
