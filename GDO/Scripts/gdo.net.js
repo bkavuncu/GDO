@@ -72,7 +72,7 @@ $(function() {
         }
         gdo.updateSelf();
     }
-    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,appList,nodes,sections,apps,instances,states) {
+    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states) {
         gdo.consoleOut('.NET', 1, 'Received the image of the Cave');
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.net.blankMode = blankMode;
@@ -83,6 +83,8 @@ $(function() {
         }
         gdo.net.apps = JSON.parse(appList);
         gdo.net.numApps = gdo.net.apps.length;
+        gdo.net.modules = JSON.parse(moduleList);
+        gdo.net.numModules = gdo.net.modules.length;
         for (var i = 0; i < nodes.length; i++) {
             if (nodes[i] != null) {
                 var node = JSON.parse(nodes[i]);
@@ -93,6 +95,13 @@ $(function() {
             if (sections[i] != null) {
                 var section = JSON.parse(sections[i]);
                 gdo.net.processSection(true,section.Id,section);
+            }
+        }
+        for (var i = 0; i < modules.length; i++) {
+            gdo.consoleOut('.NET', 4, modules);
+            if (modules[i] != null) {
+                var module = JSON.parse(modules[i]);
+                gdo.net.processModule(module);
             }
         }
         for (var i = 0; i < apps.length; i++) {
@@ -697,6 +706,16 @@ gdo.net.processSection = function(exists, id, section) {
             }
         }
     }
+}
+
+gdo.net.processModule = function (module) {
+    if (gdo.net.module[module.Name] == null) {
+        gdo.net.module[module.Name] = {};
+    }
+    gdo.consoleOut('.NET', 2, 'Updating Module: ' + module.Name);
+    gdo.net.module[module.Name].name = module.Name;
+    var hubName = lowerCaseFirstLetter(module.Name) + "ModuleHub";
+    gdo.net.module[module.Name].server = $.connection[hubName].server;
 }
 
 gdo.net.processApp = function (app) {

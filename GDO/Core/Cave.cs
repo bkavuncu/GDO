@@ -5,6 +5,8 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using GDO.Utility;
 
 namespace GDO.Core
@@ -33,6 +35,7 @@ namespace GDO.Core
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
         public static ConcurrentDictionary<int, CaveState> States { get; set; }
+        public static ConcurrentDictionary<string, IModule> Modules { get; set; }
 
         public enum P2PModes
         {
@@ -61,12 +64,26 @@ namespace GDO.Core
             Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
             States = new ConcurrentDictionary<int, CaveState>();
+            Modules = new ConcurrentDictionary<string, IModule>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
             Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
             NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
             NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
             DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
             InitializedSync = false;
+
+            Assembly asm = Assembly.GetExecutingAssembly();
+
+            foreach (Type type in asm.GetTypes())
+            {
+                if (Regex.IsMatch(type.FullName, "GDO.Core.Modules.*Module") && !Regex.IsMatch(type.FullName, "GDO.Core.Modules.*ModuleHub"))
+                {
+                    IModule module = (IModule)Activator.CreateInstance(type, new object[0]);
+                    module.Init();
+                    Modules.TryAdd(module.Name, module);
+                }
+            }
+
             for (int id = 1; id <= Cols * Rows; id++)
             {
                 string[] s = ConfigurationManager.AppSettings["node" + id].Split(',');
@@ -276,6 +293,11 @@ namespace GDO.Core
             return Sections.ContainsKey(sectionId);
         }
 
+        public static bool ContainsModule(string moduleName)
+        {
+            return Modules.ContainsKey(moduleName);
+        }
+
         public static bool ContainsApp(string appName) {
             return Apps.ContainsKey(appName);
         }
@@ -462,6 +484,13 @@ namespace GDO.Core
                 }
             }
             return configurations;
+        }
+
+        public static List<string> GetModuleList()
+        {
+            List<string> moduleList = Modules.Select(moduleEntry => moduleEntry.Value.Name).ToList();
+            moduleList.Sort();
+            return moduleList;
         }
 
         /// <summary>

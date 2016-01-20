@@ -334,6 +334,8 @@ namespace GDO.Core
                     nodes.AddRange(Cave.Nodes.Select(nodeEntry => GetNodeUpdate(nodeEntry.Value.Id)));
                     List<string> sections = new List<string>(Cave.Sections.Count);
                     sections.AddRange(Cave.Sections.Select(sectionEntry => GetSectionUpdate(sectionEntry.Value.Id)));
+                    List<string> modules = new List<string>(Cave.Modules.Count);
+                    modules.AddRange(Cave.Modules.Select(moduleEntry => GetModuleUpdate(moduleEntry.Value.Name)));
                     List<string> apps = new List<string>(Cave.Apps.Count);
                     apps.AddRange(Cave.Apps.Select(appEntry => GetAppUpdate(appEntry.Value.Name)));
                     List<string> instances = new List<string>(Cave.Instances.Count);
@@ -342,8 +344,9 @@ namespace GDO.Core
                     states.AddRange(Cave.States.Select(stateEntry => GetStateUpdate(stateEntry.Value.Id)));
                     string nodeMap = JsonConvert.SerializeObject(Cave.GetNodeMap());
                     string neighbourMap = JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
+                    string moduleList = JsonConvert.SerializeObject(Cave.GetModuleList());
                     string appList = JsonConvert.SerializeObject(Cave.GetAppList());
-                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, appList, nodes, sections, apps, instances, states);
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, moduleList, appList, nodes, sections, modules, apps, instances, states);
                 }
                 catch (Exception e)
                 {
@@ -412,6 +415,27 @@ namespace GDO.Core
             {
                 Console.WriteLine(e);
                 Log.Error("failed to GetNodeUpdate", e);
+                return null;
+            }
+        }
+        private string GetModuleUpdate(string moduleName)
+        {
+            try
+            {
+                if (Cave.ContainsModule(moduleName))
+                {
+                    IModule module;
+                    Cave.Modules.TryGetValue(moduleName, out module);
+                    return module.SerializeJSON();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 return null;
             }
         }

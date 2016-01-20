@@ -625,6 +625,7 @@
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.states.js" />
+    <Content Include="Scripts\gdo.module.eyeTracking.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
     <Content Include="Scripts\gdo.management.instances.js" />
@@ -960,6 +961,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IAdvancedAppHub.cs" />
+    <Compile Include="Core\IModuleHub.cs" />
     <Compile Include="Core\IBaseAppHub.cs" />
     <Compile Include="Core\IBaseAppInstance.cs" />
     <Compile Include="Core\AdvancedApp.cs" />
@@ -970,6 +972,9 @@
     <Compile Include="Core\IAppHub.cs" />
     <Compile Include="Core\IAdvancedAppInstance.cs" />
     <Compile Include="Core\IAppInstance.cs" />
+    <Compile Include="Core\IModule.cs" />
+    <Compile Include="Core\Modules\EyeTracking\EyeTrackingModule.cs" />
+    <Compile Include="Core\Modules\EyeTracking\EyeTrackingModuleHub.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />
@@ -989,6 +994,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />
+    <Folder Include="Core\Modules\Kinect\" />
     <Folder Include="Data\" />
   </ItemGroup>
   <PropertyGroup>

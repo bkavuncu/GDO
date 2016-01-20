@@ -337,7 +337,7 @@ gdo.management.drawButtonTable = function() {
 
     gdo.management.selectNodes();
     $(".create_section_button_div").unbind();
-    $(".create_section_button_div").click(function() {
+    $(".create_section_button_div").click(function () {
         if (gdo.management.isRectangle && gdo.management.isStarted) {
             gdo.net.server.createSection(gdo.management.colStart, gdo.management.rowStart, gdo.management.colEnd, gdo.management.rowEnd);
             for (var i = gdo.management.colStart; i <= gdo.management.colEnd; i++) {
@@ -377,12 +377,12 @@ gdo.management.drawButtonTable = function() {
         .append("<div id='button_Enter_coordinates'> " +
             "<table id='section_coordinate_table' style='width: 99%;' >" +
             "<tr>" +
-            "<td id='section_coordinate_table_start'' style='width:28%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2'/></input></td>" +
-            "<td id='section_coordinate_table_end' style='width:28%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2' /></input></td>" +
-            "<td id='section_coordinate_table_select' style='width:42%;'></td>" +
+            "<td id='section_coordinate_table_start'' style='width:49%'><input type='text' id='section_coordinate_table_start_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2'/></input></td>" +
+            "<td id='section_coordinate_table_end' style='width:49%'><input type='text' id='section_coordinate_table_end_input' pattern='[1-9]{10}' style='background:#222; width: 100%;height: 100%;' maxlength='2' /></input></td>" +
+            "<td id='section_coordinate_table_select' style='width:35%;'></td>" +
             "</tr>" +
             "</table>")
-        .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css("width", 2*(gdo.management.table_width / gdo.management.button_cols) + "%")
         .css("color", "#FFF")
         .css('padding', 0)
         .attr("align", "center")
@@ -457,6 +457,8 @@ gdo.management.drawButtonTable = function() {
             .addClass("btn-default")
             .removeClass("btn-primary");
     }
+
+    
 
     //Close Section
 
