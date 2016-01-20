@@ -57,28 +57,12 @@ namespace GDO.Apps.Spreadsheets
                 try
                 {
                     SpreadsheetsApp app = ((SpreadsheetsApp) Cave.Apps["Spreadsheets"].Instances[instanceId]);
-                    app.SpreadsheetFile = files[0];
-                    app.ConfigFile = files[1];
-                    String basePath = HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Sheet/");
-                    String path1 = basePath + app.SpreadsheetFile;
-                    Random imgDigitGenerator = new Random();
-                    while (Directory.Exists(basePath + app.FileNumber))
-                    {
-                        app.FileNumber = imgDigitGenerator.Next(10000, 99999).ToString();
-                    }
-                    String path2 = basePath + app.FileNumber + "\\" + app.SpreadsheetFile;
-                    Directory.CreateDirectory(basePath + app.FileNumber);
-                    File.Copy(path1,path2);
-                    File.Delete(path1);
-                    Clients.Caller.ServerToConsole(instanceId,LogLevel.INFO, "file path for model : " + path2);
-                    Clients.Caller.ServerToConsole(instanceId,LogLevel.INFO, "sending model : " + app.SpreadsheetFile + " with fileID: " + app.FileNumber);
-                    var context = GlobalHost.ConnectionManager.GetHubContext<ScenarioHub>();
-                    context.Clients.All.FileAdded(new List<string>() { app.FileNumber, app.SpreadsheetFile });
-                    Clients.Caller.ServerToConsole(instanceId,LogLevel.INFO, "sent file description to excel component.");
+                    string output = app.FileAdded(instanceId,files);
+                    Clients.Caller.ServerToConsole(instanceId, LogLevel.Info, output);
                 }
                 catch (Exception e)
                 {
-                    Clients.Caller.ServerToConsole(instanceId,LogLevel.ERROR, "Exception[SpreadSheetsAppHub]: " + e);
+                    Clients.Caller.ServerToConsole(instanceId,LogLevel.Error, "Exception[SpreadSheetsAppHub]: " + e);
                 }
             }
         }
