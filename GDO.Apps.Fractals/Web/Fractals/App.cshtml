@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width" />
     <title></title>
 </head>
-<body unselectable="on" class="unselectable">
+<body unselectable="on" class="unselectable" style="margin:0">
+    <canvas id="glscreen"></canvas>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
@@ -32,8 +33,8 @@
         // Set up canvas
         canvas = document.getElementById('glscreen');
         gl = canvas.getContext('experimental-webgl');
-        canvas.width = 640;
-        canvas.height = 480;
+        canvas.width = 1920;
+        canvas.height = 1080;
 
         // Initialise view port
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -111,16 +112,49 @@
     </script>
 
     <script id="2d-fragment-shader" type="x-shader/x-fragment">
+        #define NUM_STEPS   100
+        #define ZOOM_FACTOR 2.0
+        #define WIDTH 1920.0
+        #define HEIGHT 1080.0
+
+        #ifdef GL_FRAGMENT_PRECISION_HIGH
+        precision highp float;
+        #else
+        precision mediump float;
+        #endif
+        precision mediump int;
+
         void main() {
-        gl_FragColor = vec4(gl_FragCoord.x / 640.0, gl_FragCoord.y / 480.0, 0, 1);
-        }
+        vec2 z;
+        float x,y;
+        int steps;
+        // x between -2.05 and 0.95
+        // y between -1.3 and 1.3
+        float normalizedX = (gl_FragCoord.x / WIDTH) * 3.0 - 2.05;
+        float normalizedY = (gl_FragCoord.y / HEIGHT) * 2.6 - 1.3;
+
+        z.x = normalizedX;
+        z.y = normalizedY;
+
+        for (int i=0; i<NUM_STEPS; i++) {
+                        steps=i;
+                        x=(z.x * z.x - z.y * z.y) + normalizedX;
+                        y=(z.y * z.x + z.x * z.y) + normalizedY;
+                        if((x * x + y * y)>
+            4.0) {
+            break;
+            }
+
+            z.x = x;
+            z.y = y;
+
+            }
+
+            float stepFloat = float(steps);
+            gl_FragColor = vec4(stepFloat/float(NUM_STEPS), stepFloat/float(NUM_STEPS), 1.0, 1.0);
+
+            }
     </script>
 
-    <canvas id="glscreen"></canvas>
-    <div id="wrapper" style="background-color:#000;width:97vw;height:97vh;text-align:center; vertical-align: middle;" align="center">
-        <div style="display: table; width:100%;height: 100%; overflow: hidden; text-align:center;">
-            <div id="hello_text" style="display: table-cell; font-size: 35vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;"></div>
-        </div>
-    </div>
 </body>
 </html>
