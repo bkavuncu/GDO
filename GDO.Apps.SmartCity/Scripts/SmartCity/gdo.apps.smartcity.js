@@ -193,14 +193,14 @@ gdo.net.app["SmartCity"].initClient = function (clientId) {
     gdo.net.app["SmartCity"].initializeArrays(instanceId);
 
     //Load Modules
-    gdo.loadModule('utilities', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('format', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('interaction', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('layer', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('source', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('style', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('view', 'smartCity', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('utilities', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('format', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('interaction', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('layer', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('source', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('style', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('view', 'smartCity', gdo.SCRIPT_TYPE.APP);
 
     //Calculate Necessary Parameters
     gdo.net.instance[instanceId].isInitialized = false;
@@ -222,17 +222,17 @@ gdo.net.app["SmartCity"].initControl = function (instanceId) {
     gdo.net.app["SmartCity"].initializeArrays(instanceId);
 
     //Load Modules
-    gdo.loadModule('utilities', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('format', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('interaction', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('layer', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('source', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('style', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('view', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('ui.visualisation', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('ui.map', 'smartCity', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('ui', 'smartCity', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('utilities', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('format', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('interaction', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('layer', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('source', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('style', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('view', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('ui.visualisation', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('ui.map', 'smartCity', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('ui', 'smartCity', gdo.SCRIPT_TYPE.APP);
 
     //Calculate Necessary Parameters
     gdo.net.instance[instanceId].isInitialized = false;

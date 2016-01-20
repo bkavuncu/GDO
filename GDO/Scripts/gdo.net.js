@@ -98,7 +98,6 @@ $(function() {
             }
         }
         for (var i = 0; i < modules.length; i++) {
-            gdo.consoleOut('.NET', 4, modules);
             if (modules[i] != null) {
                 var module = JSON.parse(modules[i]);
                 gdo.net.processModule(module);

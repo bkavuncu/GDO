@@ -3,15 +3,16 @@
     CONTROL: 2
 };
 
-gdo.MODULE_TYPE = {
+gdo.SCRIPT_TYPE = {
     CORE: 1,
-    APP: 2
+    MODULE: 2,
+    APP: 3
 };
 
 $(function () {
     /// <summary>
     /// Registering Event Handlers on load
-    gdo.loadModule('utilities', 'utilities', gdo.MODULE_TYPE.CORE);
+    gdo.loadScript('utilities', 'utilities', gdo.SCRIPT_TYPE.CORE);
     /// </summary>
     /// <returns></returns>
 });
@@ -22,18 +23,18 @@ gdo.initGDO = function (clientMode) {
     /// <returns></returns>
     gdo.consoleOut('', 1, 'Initializing GDO');
 
-    gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
+    gdo.loadScript('net', 'net', gdo.SCRIPT_TYPE.CORE);
     gdo.clientMode = clientMode;
     gdo.updateInterval = 14000;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
-        gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
+        gdo.loadScript('management', 'management', gdo.SCRIPT_TYPE.CORE);
     } else {
         $("title").append("" + gdo.clientId);
-        gdo.loadModule('node', 'node', gdo.MODULE_TYPE.CORE);
-        gdo.loadModule('base', 'node', gdo.MODULE_TYPE.CORE);
-        gdo.loadModule('maintenance', 'maintenance', gdo.MODULE_TYPE.CORE);
+        gdo.loadScript('node', 'node', gdo.SCRIPT_TYPE.CORE);
+        gdo.loadScript('base', 'node', gdo.SCRIPT_TYPE.CORE);
+        gdo.loadScript('maintenance', 'maintenance', gdo.SCRIPT_TYPE.CORE);
     }
     if (gdo.clientId > 0) {
         $.connection.hub.start().done(function () {
@@ -108,32 +109,39 @@ gdo.consoleOut = function (module, type, msg) {
     }
 }
 
-gdo.loadModule = function (submodule, module, moduleType) {
+gdo.loadScript = function (subscript, script, scriptType) {
     /// <summary>
-    /// Loads the JS module.
+    /// Loads the JS script.
     /// </summary>
     /// <param name="js">The js.</param>
     /// <returns></returns>
     var $head = $('head');
     //gdo.window[js] = {};
     //eval("gdo." + js + " = {}");
-    if (moduleType == gdo.MODULE_TYPE.CORE) {
+    if (scriptType == gdo.SCRIPT_TYPE.CORE) {
 
-        if (submodule == module) {
-            gdo.consoleOut('', 1, 'Loading core module ' + module + ' at ' + '../scripts/gdo.' + module + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + module + '.js\'></script>');
+        if (subscript == script) {
+            gdo.consoleOut('', 1, 'Loading core script ' + script + ' at ' + '../scripts/gdo.' + script + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + script + '.js\'></script>');
         } else {
-            gdo.consoleOut('', 1, 'Loading core submodule ' + submodule + ' at of ' + module + ' at ../scripts/gdo.' + module + '.' + submodule + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + module + '.' + submodule + '.js\'></script>');
+            gdo.consoleOut('', 1, 'Loading core subscript ' + subscript + ' at of ' + script + ' at ../scripts/gdo.' + script + '.' + subscript + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + script + '.' + subscript + '.js\'></script>');
         }
-
-    } else if (moduleType == gdo.MODULE_TYPE.APP) {
-        if (submodule == module) {
-            gdo.consoleOut('', 1, 'Loading app module ' + module + ' at ' + '../scripts/' + module + '/gdo.app.' + module + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + module + '/gdo.apps.' + module + '.js\'></script>');
+    } else if (scriptType == gdo.SCRIPT_TYPE.MODULE) {
+        if (subscript == script) {
+            gdo.consoleOut('', 1, 'Loading module script ' + script + ' at ' + '../scripts/' + script + '/gdo.module.' + script + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.module.' + script + '.js\'></script>');
         } else {
-            gdo.consoleOut('', 1, 'Loading app submodule ' + submodule + ' at of ' + module + ' ../scripts/' + module + '/gdo.app.' + module + '.' + submodule + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + module + '/gdo.apps.' + module + '.' + submodule + '.js\'></script>');
+            gdo.consoleOut('', 1, 'Loading module subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.module.' + script + '.' + subscript + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.module.' + script + '.' + subscript + '.js\'></script>');
+        }
+    } else if (scriptType == gdo.SCRIPT_TYPE.APP) {
+        if (subscript == script) {
+            gdo.consoleOut('', 1, 'Loading app script ' + script + ' at ' + '../scripts/' + script + '/gdo.app.' + script + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.apps.' + script + '.js\'></script>');
+        } else {
+            gdo.consoleOut('', 1, 'Loading app subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.app.' + script + '.' + subscript + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.apps.' + script + '.' + subscript + '.js\'></script>');
         }
     }
 }

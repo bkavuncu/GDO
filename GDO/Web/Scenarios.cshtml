@@ -54,12 +54,17 @@
         gdo.net.nodes = {};
         gdo.net.neighbour = {};
         @{
+            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+            {
+                @:gdo.net.app["@moduleEntry.Value.Name"] = {};
+                @:gdo.net.app["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
+            }
             foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
             {
                 @:gdo.net.app["@appEntry.Value.Name"] = {};
                 @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
             }
-            @: var a ={}
+            @: var a = {}
         }
     </script>
 </head>
@@ -189,10 +194,14 @@
                     @{
                         foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                         {
-                            @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
+                            @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
+                        }
+                        foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+                        {
+                            @:gdo.loadScript("@moduleEntry.Value.Name","@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                         }
                     }
-                    gdo.loadModule('console', 'management', gdo.MODULE_TYPE.CORE);
+                    gdo.loadScript('console', 'management', gdo.SCRIPT_TYPE.CORE);
                     gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
                 });

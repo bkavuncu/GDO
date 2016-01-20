@@ -417,8 +417,8 @@ gdo.net.app["BasicMaps"].calculateLocalCenter = function (topLeft, bottomRight) 
 gdo.net.app["BasicMaps"].initClient = function (clientId) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.BasicMaps', 1, 'Initializing BasicMaps App Instance ' + instanceId + ' Client at Node ' + clientId);
-    gdo.loadModule('ui', 'basicMaps', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'basicMaps', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('ui', 'basicMaps', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'basicMaps', gdo.SCRIPT_TYPE.APP);
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.app["BasicMaps"].C = 156543.034;
     gdo.net.app["BasicMaps"].R = 6378137;
@@ -443,8 +443,8 @@ gdo.net.app["BasicMaps"].initClient = function (clientId) {
 }
 
 gdo.net.app["BasicMaps"].initControl = function (instanceId) {
-    gdo.loadModule('ui', 'basicMaps', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'basicMaps', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('ui', 'basicMaps', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'basicMaps', gdo.SCRIPT_TYPE.APP);
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;

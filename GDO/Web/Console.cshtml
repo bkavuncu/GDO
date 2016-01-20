@@ -54,12 +54,17 @@
         gdo.net.nodes = {};
         gdo.net.neighbour = {};
         @{
+            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+            {
+                @:gdo.net.app["@moduleEntry.Value.Name"] = {};
+                @:gdo.net.app["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
+            }
             foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
             {
                 @:gdo.net.app["@appEntry.Value.Name"] = {};
                 @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
             }
-            @: var a ={}
+            @: var a = {}
         }
     </script>
 </head>
@@ -188,32 +193,36 @@
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
     <script>
-            gdo.updateDisplayCanvas = function () {
-                gdo.management.updateMaintenanceButton();
-            }
-            $(function () {
-                $( document ).ready(function() {
-                    @{
-                        foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                        {
-                            @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
-                        }
+        gdo.updateDisplayCanvas = function () {
+            gdo.management.updateMaintenanceButton();
+        }
+        $(function () {
+            $(document).ready(function () {
+                @{
+                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                    {
+                        @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
                     }
-                    gdo.loadModule('console', 'management', gdo.MODULE_TYPE.CORE);
-                    gdo.clientId = 1;
-                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-                });
+                    foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+                    {
+                        @:gdo.loadScript("@moduleEntry.Value.Name","@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
+                    }
+                }
+                gdo.loadScript('console', 'management', gdo.SCRIPT_TYPE.CORE);
+                gdo.clientId = 1;
+                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
             });
-            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                var space = "<br /> ";
-                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-            }
-            initApp = function () {
-                gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.management.drawConsoleInput();
-                gdo.updateSelf();
-            }
+        });
+        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+            var space = "<br /> ";
+            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+        }
+        initApp = function () {
+            gdo.consoleOut('', 1, 'GDO Initialized');
+            gdo.management.drawConsoleInput();
+            gdo.updateSelf();
+        }
     </script>
 </body>
 </html>

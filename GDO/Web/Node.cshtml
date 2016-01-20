@@ -63,11 +63,17 @@
         gdo.net.nodes = {};
         gdo.net.neighbour = {};
         @{
+            foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+            {
+                @:gdo.net.app["@moduleEntry.Value.Name"] = {};
+                @:gdo.net.app["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
+            }
             foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
             {
                 @:gdo.net.app["@appEntry.Value.Name"] = {};
                 @:gdo.net.app["@appEntry.Value.Name"].name = "@appEntry.Value.Name";
             }
+            @: var a = {}
         }
     </script>
 </head>
@@ -86,8 +92,12 @@
                 @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
-                        @:gdo.loadModule("@appEntry.Value.Name","@appEntry.Value.Name", gdo.MODULE_TYPE.APP);
-                                    }
+                        @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
+                    }
+                    foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+                    {
+                        @:gdo.loadScript("@moduleEntry.Value.Name","@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
+                    }
                 }
                 $(document).ready(function () {
                     gdo.clientId = getUrlVar('clientId');
@@ -98,7 +108,7 @@
                     }else{
                         gdo.net.maintenanceMode = true;
                         gdo.net.blankMode = false;
-                        gdo.loadModule('maintenance', 'maintenance', gdo.MODULE_TYPE.CORE);
+                        gdo.loadScript('maintenance', 'maintenance', gdo.SCRIPT_TYPE.CORE);
                         $("#maintenance_title").empty().css({ fontSize: 140 }).css("color", "#FFF").append("<b>Node</b> ");
                         $("#console_area").css("height", "517px");
                         gdo.maintenance.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
