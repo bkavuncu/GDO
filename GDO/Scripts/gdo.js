@@ -143,6 +143,8 @@ gdo.loadScript = function (subscript, script, scriptType) {
             gdo.consoleOut('', 1, 'Loading app subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.app.' + script + '.' + subscript + '.js\'');
             $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.apps.' + script + '.' + subscript + '.js\'></script>');
         }
+    } else {
+        gdo.consoleOut('', 5, 'Failed Loading app script ' + script + ', subscript ' + subscript + ', scriptType ' + scriptType);
     }
 }
 

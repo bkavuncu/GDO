@@ -1,0 +1,25 @@
+﻿{
+  "topLeft": [ 0, 0 ],
+  "center": [ 0.5, 0.5 ],
+  "bottomRight": [ 1, 1 ],
+  "zoom": 1,
+  "width": 1244,
+  "height": 700,
+  "properties": {
+    "id": "contentDiv",
+    "prefixUrl": "/scripts/GigaImages/OpenSeaDragon/images/",
+    "tileSources": {
+      "Image": {
+          "xmlns":    "http://schemas.microsoft.com/deepzoom/2008",
+          "Url":      "/data/GigaImages/lake/dzc_output_files/",
+          "Format":   "jpg", 
+          "Overlap":  "2", 
+          "TileSize": "256",
+          "Size": {
+              "Width": "14529",
+              "Height":  "4347"
+          }
+      }
+    }
+  }
+}

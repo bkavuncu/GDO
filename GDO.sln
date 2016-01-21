@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.HelloWorld", "GDO.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.SAGE2", "GDO.Apps.SAGE2\GDO.Apps.SAGE2.csproj", "{C48A1B26-5035-4746-8405-5EE23276EFBA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.GigaImages", "GDO.Apps.GigaImages\GDO.Apps.GigaImages.csproj", "{741AE1F3-3877-425A-BB95-DAC0F1586B74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{C48A1B26-5035-4746-8405-5EE23276EFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C48A1B26-5035-4746-8405-5EE23276EFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C48A1B26-5035-4746-8405-5EE23276EFBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
