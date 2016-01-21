@@ -85,8 +85,16 @@
                 //
                 // Setup camera and camera parent
 
-                // TODO: Work out correct fov values
-                var camera = new THREE.PerspectiveCamera(12.0354097, 16 / 9, 3, 10000);
+                var physicalTotalHeight = 2530;  // in mm
+                var physicalScreenHeight = physicalTotalHeight / 4;
+                var physicalRadius = 3000;
+
+                var numberScreensHigh = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height / 1080; 
+
+                var virticalFov = Math.atan(((numberScreensHigh * physicalScreenHeight) / 2) / 3000) * 2;
+                virticalFov = virticalFov * (180 / Math.PI);
+
+                var camera = new THREE.PerspectiveCamera(virticalFov, 16 / 9, 3, 10000);
 
                 var world = new UFOWorld(renderer, camera);
                 world.initScene();
@@ -96,7 +104,7 @@
                 var nodeOffset = gdo.net.node[gdo.clientId].sectionCol - (numNodesWide / 2);
 
                 gdo.consoleOut('.WebGL', 1, 'Node offset - ' + (numNodesWide % 2));
-                camera.rotateY(nodeOffset * (-0.374/(gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height / 1080)));
+                camera.rotateY(nodeOffset * (-0.374));
 
                 var w = 1920;
                 var h = 1080;

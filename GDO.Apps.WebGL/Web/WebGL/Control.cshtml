@@ -174,7 +174,7 @@
                 //
                 // Create camera and periodically send its position to clients
 
-                var camera = new THREE.PerspectiveCamera(12.0354097, 16 / 9, 3, 10000);
+                var camera = new THREE.PerspectiveCamera(35, 16 / 9, 3, 10000);
 
                 function sendCameraPositionToClients() {
                     var position = camera.getWorldPosition();
