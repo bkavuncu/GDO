@@ -11,8 +11,8 @@ $(function () {
             var nodePixels = gdo.net.node[gdo.clientId].width * gdo.net.node[gdo.clientId].height;
             var controlPixels = parseFloat(width) * parseFloat(height);
             var numOfNodes = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols * gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows;
-            var localZoom = zoom / Math.sqrt((nodePixels * numOfNodes) / controlPixels);
-            
+            var localZoom = zoom * Math.sqrt((nodePixels * numOfNodes) / controlPixels);
+            gdo.consoleOut('.GigaImages', 1, 'Received Position: localCenter:' + localCenter + ', localZoom:'+ localZoom );
             if (!gdo.net.instance[instanceId].isInitialized) {
                 gdo.net.app["GigaImages"].initGigaImage(instanceId, localCenter, localZoom, gdo.net.app["GigaImages"].config[gdo.net.instance[instanceId].configName].properties);
                 gdo.net.instance[instanceId].isInitialized = true;
@@ -116,15 +116,15 @@ gdo.net.app["GigaImages"].terminateControl = function (instanceId) {
 }
 
 gdo.net.app["GigaImages"].uploadPosition = function (instanceId) {
-    var center = [gdo.net.instance[0].osd.viewport.homeBounds.getCenter().x, gdo.net.instance[0].osd.viewport.homeBounds.getCenter().y];
-    var topLeft = [gdo.net.instance[0].osd.viewport.getBounds().x, gdo.net.instance[0].osd.viewport.getBounds().y];
-    var bottomRight = [gdo.net.instance[0].osd.viewport.getBounds().x + gdo.net.instance[0].osd.viewport.getBounds().width, gdo.net.instance[0].osd.viewport.getBounds().y + gdo.net.instance[0].osd.viewport.getBounds().height];
-    var zoom = gdo.net.instance[0].osd.viewport.getZoom();
+    var center = [gdo.net.instance[instanceId].osd.viewport.getBounds().x + (gdo.net.instance[instanceId].osd.viewport.getBounds().width/2),
+        gdo.net.instance[instanceId].osd.viewport.getBounds().y + (gdo.net.instance[instanceId].osd.viewport.getBounds().height /2)];
+    var topLeft = [gdo.net.instance[instanceId].osd.viewport.getBounds().x, gdo.net.instance[instanceId].osd.viewport.getBounds().y];
+    var bottomRight = [gdo.net.instance[instanceId].osd.viewport.getBounds().x + gdo.net.instance[instanceId].osd.viewport.getBounds().width, gdo.net.instance[instanceId].osd.viewport.getBounds().y + gdo.net.instance[instanceId].osd.viewport.getBounds().height];
+    var zoom = gdo.net.instance[instanceId].osd.viewport.getZoom();
     var width = parseInt($("iframe").contents().find(".openseadragon-container").css("width"));
     var height = parseInt($("iframe").contents().find(".openseadragon-container").css("height"));
     gdo.net.app["GigaImages"].server.uploadPosition(instanceId, topLeft, center, bottomRight, zoom, width, height);
 }
-
 gdo.net.app["GigaImages"].changeEvent = function (instanceId) {
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         if (gdo.net.instance[instanceId].isInitialized) {

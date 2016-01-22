@@ -11,13 +11,13 @@
     "tileSources": {
       "Image": {
           "xmlns":    "http://schemas.microsoft.com/deepzoom/2008",
-          "Url":      "/data/GigaImages/lake/dzc_output_files/",
+          "Url":      "/data/GigaImages/stadium/dzc_output_files/",
           "Format":   "jpg", 
           "Overlap":  "2", 
           "TileSize": "256",
           "Size": {
-              "Width": "14529",
-              "Height":  "4347"
+              "Width": "3264",
+              "Height":  "2448"
           }
       }
     }
