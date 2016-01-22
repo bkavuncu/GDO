@@ -83,8 +83,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\LondonCycles\London Exit.json" />
-    <Content Include="Configurations\LondonCycles\London Entry.json" />
+    <Content Include="Configurations\LondonCycles\Exit.json" />
+    <Content Include="Configurations\LondonCycles\Entry.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

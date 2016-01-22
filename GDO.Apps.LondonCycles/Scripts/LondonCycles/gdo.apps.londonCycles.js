@@ -57,21 +57,6 @@ $(function () {
             gdo.net.instance[instanceId].heatmapLayer.setBlur(blur);
             gdo.net.instance[instanceId].heatmapLayer.setRadius(radius);
         }
-        if (gdo.net.instance[instanceId].stationsLayer != null) {
-            gdo.net.instance[instanceId].stationsLayer.setStyle(new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: gdo.net.instance[instanceId].stationWidth * 3, //TODO nbDocks
-                    fill: new ol.style.Fill({
-                        color: 'white',
-                        width: gdo.net.instance[instanceId].stationWidth
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: 'black',
-                        width: gdo.net.instance[instanceId].stationWidth
-                    })
-                })
-            }));
-        }
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
              $('iframe').contents().find('#blur').val(blur);
             $('iframe').contents().find('#radius').val(radius);
@@ -330,6 +315,27 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
 
         gdo.net.instance[instanceId].stationWidth = $('iframe').contents().find('#station').val();
 
+        gdo.net.instance[instanceId].styleFunction = function (feature, resolution) {
+            if (typeof gdo.net.app["LondonCycles"].stations[feature.getId()] == 'undefined') {
+                gdo.consoleOut('.LondonCycles', 1, "Station has no information " + feature.getId());
+            } else {
+                var style = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks,
+                        fill: new ol.style.Fill({
+                            color: 'white',
+                            width: gdo.net.instance[instanceId].stationWidth * (gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks / 5)
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: 'black',
+                            width: gdo.net.instance[instanceId].stationWidth * (gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks / 5)
+                        })
+                    })
+                });
+            }
+
+        }
+
         $('iframe').contents().find('#blur').change(function () {
             gdo.net.app["LondonCycles"].uploadProperties(instanceId);
         });
@@ -357,22 +363,10 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
         }
 
         setTimeout(function () {
-            //gdo.net.app["LondonCycles"].drawFeatures(instanceId); //TODO Put it back
+            gdo.net.app["LondonCycles"].drawFeatures(instanceId); //TODO Put it back
             gdo.net.instance[instanceId].stationsLayer = new ol.layer.Vector({
                 source: gdo.net.instance[instanceId].stationSource,
-                style: new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: gdo.net.instance[instanceId].stationWidth * 4, //TODO radius based on size of the station
-                        fill: new ol.style.Fill({
-                            color: 'white',
-                            width: gdo.net.instance[instanceId].stationWidth
-                        }),
-                        stroke: new ol.style.Stroke({
-                            color: 'black',
-                            width: gdo.net.instance[instanceId].stationWidth
-                        })
-                    })
-                })
+                style: gdo.net.instance[instanceId].styleFunction   
             });
 
             gdo.net.instance[instanceId].heatmapLayer = new ol.layer.Heatmap({
@@ -391,7 +385,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
                 gdo.net.app["LondonCycles"].server.requestStationLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestHeatmapLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestProperties(instanceId);
-                gdo.net.app["LondonCycles"].server.startAnimation();
+                //gdo.net.app["LondonCycles"].server.startAnimation();
                 gdo.consoleOut('.LondonCycles', 1, "Requests sent");
             }, 700);
 
@@ -403,16 +397,18 @@ gdo.net.app["LondonCycles"].drawFeatures = function(instanceId) {
     for (var index1 in gdo.net.app["LondonCycles"].stations) {
         if (gdo.net.app["LondonCycles"].stations.hasOwnProperty((index1))) {
             var station1 = gdo.net.app["LondonCycles"].stations[index1];
-            var geom = new ol.geom.Point(ol.proj.transform([parseFloat(station1.coordinates[1]), parseFloat(station1.coordinates[0])], 'EPSG:4326', 'EPSG:3857'));
+            var geom = new ol.geom.Point(ol.proj.transform([parseFloat(station1.coordinates[0]), parseFloat(station1.coordinates[1])], 'EPSG:4326', 'EPSG:3857'));
             var feature = new ol.Feature({
                 geometry: geom,
                 id: parseInt(station1.id)
             });
+            feature.setId(station1.id);
             gdo.net.instance[instanceId].stationSource.addFeature(feature);
+            gdo.consoleOut('.LondonCycles', 3, "Adding Station " + station1.name + " with id " + station1.id);
         }
     }
 
-    for (var index3 in gdo.net.app["LondonCycles"].cycle_data.Data) {
+    /*for (var index3 in gdo.net.app["LondonCycles"].cycle_data.Data) {
         if (gdo.net.app["LondonCycles"].cycle_data.Data.hasOwnProperty((index3))) {
             var dataPoint = gdo.net.app["LondonCycles"].cycle_data.Data[index3];
             datax = dataPoint;
@@ -425,7 +421,7 @@ gdo.net.app["LondonCycles"].drawFeatures = function(instanceId) {
             feature2.set('exits', dataPoint.exits);
             gdo.net.instance[instanceId].cycleSource.addFeature(feature2);
         }
-    }
+    }*/
 
     //do for all
 }
