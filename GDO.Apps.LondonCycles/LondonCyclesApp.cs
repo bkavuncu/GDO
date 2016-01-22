@@ -30,6 +30,7 @@ namespace GDO.Apps.LondonCycles
         public int Blur { get; set; }
         public int Radius { get; set; }
         public int StationWidth { get; set; }
+        public bool Entry { get; set; }
         public bool mode { get; set; }
         public string Style { get; set; }
         public bool IsInitialized = false;
@@ -52,6 +53,7 @@ namespace GDO.Apps.LondonCycles
             this.Radius = (int)Configuration.Json.SelectToken("radius");
             this.Opacity = (float) Configuration.Json.SelectToken("opacity");
             this.StationWidth = (int)Configuration.Json.SelectToken("station");
+            this.Entry = (bool)Configuration.Json.SelectToken("entry");
             this.BingLayer = false;
             this.StamenLayer = false;
             this.OpenCycleLayer = true;
