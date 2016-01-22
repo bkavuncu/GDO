@@ -7,12 +7,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2159FF04-A104-4830-BAB4-86F1F0202967}</ProjectGuid>
+    <ProjectGuid>{6233F7A3-4E1E-4566-ADB7-41C313508BFC}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GDO.Apps.ShanghaiMetro</RootNamespace>
-    <AssemblyName>GDO.Apps.ShanghaiMetro</AssemblyName>
+    <RootNamespace>GDO.Apps.LondonCycles</RootNamespace>
+    <AssemblyName>GDO.Apps.LondonCycles</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -83,13 +83,13 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\ShanghaiMetro\Shangai.json" />
+    <Content Include="Configurations\LondonCycles\Cycle Usage.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\ShanghaiMetro\jquery.csv-0.71.min.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3cesium.js.map" />
+    <Content Include="Scripts\LondonCycles\jquery.csv-0.71.min.js" />
+    <Content Include="Scripts\LondonCycles\ol3cesium.js.map" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -97,17 +97,17 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Scripts\ShanghaiMetro\exports.js" />
-    <Content Include="Scripts\ShanghaiMetro\gdo.apps.shanghaiMetro.3d.js" />
-    <Content Include="Scripts\ShanghaiMetro\gdo.apps.shanghaiMetro.js" />
-    <Content Include="Scripts\ShanghaiMetro\gdo.apps.shanghaiMetro.ui.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3cesium-debug.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3cesium.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3\ol-debug.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3\ol.css" />
-    <Content Include="Scripts\ShanghaiMetro\ol3\ol.js" />
-    <Content Include="Web\ShanghaiMetro\App.cshtml" />
-    <Content Include="Web\ShanghaiMetro\Control.cshtml" />
+    <Content Include="Scripts\LondonCycles\exports.js" />
+    <Content Include="Scripts\LondonCycles\gdo.apps.londonCycles.3d.js" />
+    <Content Include="Scripts\LondonCycles\gdo.apps.londonCycles.js" />
+    <Content Include="Scripts\LondonCycles\gdo.apps.londonCycles.ui.js" />
+    <Content Include="Scripts\LondonCycles\ol3cesium-debug.js" />
+    <Content Include="Scripts\LondonCycles\ol3cesium.js" />
+    <Content Include="Scripts\LondonCycles\ol3\ol-debug.js" />
+    <Content Include="Scripts\LondonCycles\ol3\ol.css" />
+    <Content Include="Scripts\LondonCycles\ol3\ol.js" />
+    <Content Include="Web\LondonCycles\App.cshtml" />
+    <Content Include="Web\LondonCycles\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
@@ -115,8 +115,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ShanghaiMetroApp.cs" />
-    <Compile Include="ShanghaiMetroAppHub.cs" />
+    <Compile Include="LondonCyclesApp.cs" />
+    <Compile Include="LondonCyclesAppHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
@@ -155,12 +155,14 @@
   </Target>
   <Target Name="AfterBuild">
     <ItemGroup>
+      <GDOAppData Include="$(ProjectDir)Data\**\*.*" />
       <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*" />
       <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*" />
       <GDOAppWeb Include="$(ProjectDir)Web\**\*.*" />
       <GDOAppBin Include="$(ProjectDir)bin\*.*" />
     </ItemGroup>
     <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
+    <Copy SourceFiles="@(GDOAppData)" DestinationFiles="@(GDOAppData->'$(SolutionDir)GDO\Data\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(GDOAppScripts)" DestinationFiles="@(GDOAppScripts->'$(SolutionDir)GDO\Scripts\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(GDOAppWeb)" DestinationFiles="@(GDOAppWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />

@@ -1321,7 +1321,7 @@ namespace GDO.Apps.SmartCity
             BingMapsSource.Name = BingMapsSource.ClassName;
             BingMapsSource.MaxZoom = 19;
             BingMapsSource.ImagerySet = "AerialWithLabels";
-            BingMapsSource.Key = "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3";
+            BingMapsSource.Key = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM";
             BingMapsSource.Projection = "EPSG:4326";
             clusterSource.Prepare();
             clusterSource.Id = 1;

@@ -282,7 +282,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
             visible: false,
             preload: Infinity,
             source: new ol.source.BingMaps({
-                key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+                key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
                 imagerySet: gdo.net.instance[instanceId].styles[i],
                 maxZoom: 19
             })
@@ -303,7 +303,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
             visible: false,
             preload: Infinity,
             source: new ol.source.BingMaps({
-                key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+                key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
                 imagerySet: 'Aerial',
                 maxZoom: 19
             })
