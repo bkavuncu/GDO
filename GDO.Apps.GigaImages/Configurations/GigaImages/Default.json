@@ -8,6 +8,7 @@
   "properties": {
     "id": "contentDiv",
     "prefixUrl": "/scripts/GigaImages/OpenSeaDragon/images/",
+    "animationTime": 0,
     "tileSources": {
       "Image": {
           "xmlns":    "http://schemas.microsoft.com/deepzoom/2008",

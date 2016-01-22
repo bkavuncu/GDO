@@ -4,15 +4,15 @@ $(function () {
     gdo.consoleOut('.GigaImages', 1, 'Loaded GigaImages JS');
 
     $.connection.gigaImagesAppHub.client.receivePosition = function (instanceId, topLeft, center, bottomRight, zoom, width, height) {
-        gdo.consoleOut('.GigaImages', 1, 'Received Position: topLeft:'+topLeft+', center:'+center+', bottomRight:'+bottomRight+', zoom:'+zoom+', width:'+width+', height:'+height);
+        gdo.consoleOut('.GigaImages', 1, 'Received Position: topLeft:' + topLeft + ', center:' + center + ', bottomRight:' + bottomRight + ', zoom:' + zoom + ', width:' + width + ', height:' + height);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             zoom = parseFloat(zoom);
             var localCenter = gdo.net.app["GigaImages"].calculateLocalCenter(topLeft, bottomRight);
             var nodePixels = gdo.net.node[gdo.clientId].width * gdo.net.node[gdo.clientId].height;
             var controlPixels = parseFloat(width) * parseFloat(height);
             var numOfNodes = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols * gdo.net.section[gdo.net.node[gdo.clientId].sectionId].rows;
-            var localZoom = zoom * Math.sqrt((nodePixels * numOfNodes) / controlPixels);
-            gdo.consoleOut('.GigaImages', 1, 'Received Position: localCenter:' + localCenter + ', localZoom:'+ localZoom );
+            var localZoom = zoom * gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols;
+            gdo.consoleOut('.GigaImages', 1, 'Received Position: localCenter:' + localCenter + ', localZoom:' + localZoom);
             if (!gdo.net.instance[instanceId].isInitialized) {
                 gdo.net.app["GigaImages"].initGigaImage(instanceId, localCenter, localZoom, gdo.net.app["GigaImages"].config[gdo.net.instance[instanceId].configName].properties);
                 gdo.net.instance[instanceId].isInitialized = true;
@@ -46,8 +46,9 @@ $(function () {
 gdo.net.app["GigaImages"].initGigaImage = function (instanceId, center, zoom, properties) {
     gdo.consoleOut('.GigaImages', 1, 'Initializing OpenSeaDragon on ' + instanceId + ' with Properties:' + properties);
     var osd = OpenSeadragon(properties);
-    osd.setFullPage(true);
+
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
+        osd.setFullPage(true);
         osd.clearControls();
     }
     gdo.net.instance[instanceId].osd = osd;
@@ -100,8 +101,8 @@ gdo.net.app["GigaImages"].initControl = function (instanceId) {
         gdo.net.instance[instanceId].controlHeight = gdo.net.instance[instanceId].controlMaxHeight;
         gdo.net.instance[instanceId].controlWidth = (gdo.net.instance[instanceId].sectionWidth * gdo.net.instance[instanceId].controlHeight) / gdo.net.instance[instanceId].sectionHeight;
     }
-    $("iframe").contents().find(".openseadragon-container").css("width", gdo.net.instance[instanceId].controlWidth);
-    $("iframe").contents().find(".openseadragon-container").css("height", gdo.net.instance[instanceId].controlHeight);
+    $("iframe").contents().find("#contentDiv").css("width", gdo.net.instance[instanceId].controlWidth);
+    $("iframe").contents().find("#contentDiv").css("height", gdo.net.instance[instanceId].controlHeight);
 
     gdo.net.app["GigaImages"].server.requestPosition(instanceId, true);
     gdo.consoleOut('.GigaImages', 1, 'Initializing GigaImages Control at Instance ' + instanceId);
@@ -116,8 +117,8 @@ gdo.net.app["GigaImages"].terminateControl = function (instanceId) {
 }
 
 gdo.net.app["GigaImages"].uploadPosition = function (instanceId) {
-    var center = [gdo.net.instance[instanceId].osd.viewport.getBounds().x + (gdo.net.instance[instanceId].osd.viewport.getBounds().width/2),
-        gdo.net.instance[instanceId].osd.viewport.getBounds().y + (gdo.net.instance[instanceId].osd.viewport.getBounds().height /2)];
+    var center = [gdo.net.instance[instanceId].osd.viewport.getBounds().x + (gdo.net.instance[instanceId].osd.viewport.getBounds().width / 2),
+        gdo.net.instance[instanceId].osd.viewport.getBounds().y + (gdo.net.instance[instanceId].osd.viewport.getBounds().height / 2)];
     var topLeft = [gdo.net.instance[instanceId].osd.viewport.getBounds().x, gdo.net.instance[instanceId].osd.viewport.getBounds().y];
     var bottomRight = [gdo.net.instance[instanceId].osd.viewport.getBounds().x + gdo.net.instance[instanceId].osd.viewport.getBounds().width, gdo.net.instance[instanceId].osd.viewport.getBounds().y + gdo.net.instance[instanceId].osd.viewport.getBounds().height];
     var zoom = gdo.net.instance[instanceId].osd.viewport.getZoom();
