@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../../Scripts/three.min.js"></script>
 
     <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/ViewportTestWorld.js"></script>
     <script type="text/javascript" src="../../Scripts/WebGL/UFOWorld.js"></script>
 
     <script type="x-shader/x-vertex" id="vertexShader">
@@ -96,7 +97,7 @@
 
                 var camera = new THREE.PerspectiveCamera(virticalFov, 16 / 9, 3, 10000);
 
-                var world = new UFOWorld(renderer, camera);
+                var world = new ViewportTestWorld(renderer, camera);
                 world.initScene();
 
                 var numNodesWide = (gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width / 1920) - 1;

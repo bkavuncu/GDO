@@ -104,6 +104,7 @@
     <script src="../../Scripts/stats.min.js"></script>
 
     <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/ViewportTestWorld.js"></script>
 
     <script type="text/javascript" src="../../Scripts/WebGL/UFOWorld.js"></script>
     <script type="text/javascript" src="../../Scripts/WebGL/PointerLockControls.js"></script>
@@ -197,7 +198,7 @@
                 //
                 // Create 3d world
 
-                var world = new UFOWorld(renderer, camera);
+                var world = new ViewportTestWorld(renderer, camera);
                 world.initScene();
                 world.setAsControl();
                 world.startRendering();
