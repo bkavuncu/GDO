@@ -551,7 +551,6 @@ gdo.net.app["ShanghaiMetro"].drawFeatures = function(instanceId) {
     for (var index3 in gdo.net.app["ShanghaiMetro"].entry_and_exits.Data) {
         if (gdo.net.app["ShanghaiMetro"].entry_and_exits.Data.hasOwnProperty((index3))) {
             var dataPoint = gdo.net.app["ShanghaiMetro"].entry_and_exits.Data[index3];
-            datax = dataPoint;
             var geom2 = new ol.geom.Point(ol.proj.transform([parseFloat(dataPoint.coordinates[0]), parseFloat(dataPoint.coordinates[1])], 'EPSG:4326', 'EPSG:3857'));
             var feature2 = new ol.Feature({
                 geometry: geom2

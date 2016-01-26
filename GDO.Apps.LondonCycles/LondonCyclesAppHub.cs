@@ -126,7 +126,7 @@ namespace GDO.Apps.LondonCycles
                     {
                         System.Threading.Thread.Sleep(
                             ((LondonCyclesApp) Cave.Apps["LondonCycles"].Instances[instanceId]).WaitTime);
-                        if (((LondonCyclesApp) Cave.Apps["LondonCycles"].Instances[instanceId]).TimeStep >= 540)
+                        if (((LondonCyclesApp) Cave.Apps["LondonCycles"].Instances[instanceId]).TimeStep >= 285)
                         {
                             ((LondonCyclesApp) Cave.Apps["LondonCycles"].Instances[instanceId]).TimeStep = 0;
                         }

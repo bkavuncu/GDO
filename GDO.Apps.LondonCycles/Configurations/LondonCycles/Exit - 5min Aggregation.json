@@ -10,5 +10,6 @@
   "radius": 70,
   "blur": 70,
   "station": 1,
-  "entry": false
+  "entry": false,
+  "file": "entry_exit_data_TIMEAGGREGATION"
 }

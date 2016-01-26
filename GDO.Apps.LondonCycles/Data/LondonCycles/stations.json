@@ -22,7 +22,7 @@
 	},
 	"4": {
 		"id": "4",
-		"name": "St. Chad\u0027s Street, King\u0027s Cross",
+		"name": "St. Chad's Street, King's Cross",
 		"nbDocks": 23,
 		"coordinates": ["51.53005939",
 		"-0.120973687"]
@@ -43,14 +43,14 @@
 	},
 	"7": {
 		"id": "7",
-		"name": "Charlbert Street, St. John\u0027s Wood",
+		"name": "Charlbert Street, St. John's Wood",
 		"nbDocks": 16,
 		"coordinates": ["51.53430039",
 		"-0.1680743"]
 	},
 	"8": {
 		"id": "8",
-		"name": "Lodge Road, St. John\u0027s Wood",
+		"name": "Lodge Road, St. John's Wood",
 		"nbDocks": 18,
 		"coordinates": ["51.52834133",
 		"-0.170134484"]
@@ -92,7 +92,7 @@
 	},
 	"14": {
 		"id": "14",
-		"name": "Belgrove Street , King\u0027s Cross",
+		"name": "Belgrove Street , King's Cross",
 		"nbDocks": 21,
 		"coordinates": ["51.52994371",
 		"-0.123616824"]
@@ -218,7 +218,7 @@
 	},
 	"34": {
 		"id": "34",
-		"name": "Pancras Road, King\u0027s Cross",
+		"name": "Pancras Road, King's Cross",
 		"nbDocks": 16,
 		"coordinates": ["51.5341235",
 		"-0.129386874"]
@@ -232,7 +232,7 @@
 	},
 	"37": {
 		"id": "37",
-		"name": "Penywern Road, Earl\u0027s Court",
+		"name": "Penywern Road, Earl's Court",
 		"nbDocks": 17,
 		"coordinates": ["51.49159394",
 		"-0.192369256"]
@@ -309,7 +309,7 @@
 	},
 	"48": {
 		"id": "48",
-		"name": "Godliman Street, St. Paul\u0027s",
+		"name": "Godliman Street, St. Paul's",
 		"nbDocks": 25,
 		"coordinates": ["51.51248445",
 		"-0.099141408"]
@@ -337,7 +337,7 @@
 	},
 	"52": {
 		"id": "52",
-		"name": "Roscoe Street, St. Luke\u0027s",
+		"name": "Roscoe Street, St. Luke's",
 		"nbDocks": 18,
 		"coordinates": ["51.52295439",
 		"-0.094934859"]
@@ -393,7 +393,7 @@
 	},
 	"60": {
 		"id": "60",
-		"name": "Lisson Grove, St. John\u0027s Wood",
+		"name": "Lisson Grove, St. John's Wood",
 		"nbDocks": 18,
 		"coordinates": ["51.52644828",
 		"-0.172190727"]
@@ -449,7 +449,7 @@
 	},
 	"68": {
 		"id": "68",
-		"name": "Theobald\u0027s Road , Holborn",
+		"name": "Theobald's Road , Holborn",
 		"nbDocks": 26,
 		"coordinates": ["51.52059681",
 		"-0.116688468"]
@@ -463,14 +463,14 @@
 	},
 	"70": {
 		"id": "70",
-		"name": "Calshot Street , King\u0027s Cross",
+		"name": "Calshot Street , King's Cross",
 		"nbDocks": 24,
 		"coordinates": ["51.53136059",
 		"-0.117069978"]
 	},
 	"71": {
 		"id": "71",
-		"name": "Newgate Street , St. Paul\u0027s",
+		"name": "Newgate Street , St. Paul's",
 		"nbDocks": 34,
 		"coordinates": ["51.5154186",
 		"-0.098850915"]
@@ -484,7 +484,7 @@
 	},
 	"73": {
 		"id": "73",
-		"name": "Old Street Station, St. Luke\u0027s",
+		"name": "Old Street Station, St. Luke's",
 		"nbDocks": 37,
 		"coordinates": ["51.52572618",
 		"-0.088486188"]
@@ -505,7 +505,7 @@
 	},
 	"76": {
 		"id": "76",
-		"name": "Longford Street, The Regent\u0027s Park",
+		"name": "Longford Street, The Regent's Park",
 		"nbDocks": 21,
 		"coordinates": ["51.52559505",
 		"-0.144083893"]
@@ -596,7 +596,7 @@
 	},
 	"92": {
 		"id": "92",
-		"name": "Borough Road, Elephant \u0026 Castle",
+		"name": "Borough Road, Elephant & Castle",
 		"nbDocks": 41,
 		"coordinates": ["51.49889832",
 		"-0.100440521"]
@@ -701,7 +701,7 @@
 	},
 	"107": {
 		"id": "107",
-		"name": "Finsbury Leisure Centre, St. Luke\u0027s",
+		"name": "Finsbury Leisure Centre, St. Luke's",
 		"nbDocks": 20,
 		"coordinates": ["51.52600832",
 		"-0.096317627"]
@@ -722,7 +722,7 @@
 	},
 	"110": {
 		"id": "110",
-		"name": "Wellington Road, St. John\u0027s Wood",
+		"name": "Wellington Road, St. John's Wood",
 		"nbDocks": 17,
 		"coordinates": ["51.53304322",
 		"-0.172528678"]
@@ -750,7 +750,7 @@
 	},
 	"114": {
 		"id": "114",
-		"name": "Park Road (Baker Street), The Regent\u0027s Park",
+		"name": "Park Road (Baker Street), The Regent's Park",
 		"nbDocks": 22,
 		"coordinates": ["51.52451738",
 		"-0.158963647"]
@@ -785,7 +785,7 @@
 	},
 	"119": {
 		"id": "119",
-		"name": "Bath Street, St. Luke\u0027s",
+		"name": "Bath Street, St. Luke's",
 		"nbDocks": 18,
 		"coordinates": ["51.52589324",
 		"-0.090847761"]
@@ -848,7 +848,7 @@
 	},
 	"128": {
 		"id": "128",
-		"name": "Emperor\u0027s Gate, South Kensington",
+		"name": "Emperor's Gate, South Kensington",
 		"nbDocks": 22,
 		"coordinates": ["51.49536226",
 		"-0.185296516"]
@@ -904,7 +904,7 @@
 	},
 	"136": {
 		"id": "136",
-		"name": "Queen Victoria Street, St. Paul\u0027s",
+		"name": "Queen Victoria Street, St. Paul's",
 		"nbDocks": 32,
 		"coordinates": ["51.51196176",
 		"-0.097441687"]
@@ -946,7 +946,7 @@
 	},
 	"142": {
 		"id": "142",
-		"name": "West Cromwell Road, Earl\u0027s Court",
+		"name": "West Cromwell Road, Earl's Court",
 		"nbDocks": 24,
 		"coordinates": ["51.49372451",
 		"-0.198286569"]
@@ -1051,14 +1051,14 @@
 	},
 	"157": {
 		"id": "157",
-		"name": "Wright\u0027s Lane, Kensington",
+		"name": "Wright's Lane, Kensington",
 		"nbDocks": 37,
 		"coordinates": ["51.50039792",
 		"-0.193068385"]
 	},
 	"158": {
 		"id": "158",
-		"name": "Trebovir Road, Earl\u0027s Court",
+		"name": "Trebovir Road, Earl's Court",
 		"nbDocks": 18,
 		"coordinates": ["51.49085368",
 		"-0.196170309"]
@@ -1072,7 +1072,7 @@
 	},
 	"160": {
 		"id": "160",
-		"name": "Waterloo Place, St. James\u0027s",
+		"name": "Waterloo Place, St. James's",
 		"nbDocks": 20,
 		"coordinates": ["51.50663341",
 		"-0.131773845"]
@@ -1149,7 +1149,7 @@
 	},
 	"171": {
 		"id": "171",
-		"name": "Collingham Gardens, Earl\u0027s Court",
+		"name": "Collingham Gardens, Earl's Court",
 		"nbDocks": 14,
 		"coordinates": ["51.4916156",
 		"-0.186753859"]
@@ -1254,7 +1254,7 @@
 	},
 	"187": {
 		"id": "187",
-		"name": "Queen\u0027s Gate (South), South Kensington",
+		"name": "Queen's Gate (South), South Kensington",
 		"nbDocks": 25,
 		"coordinates": ["51.49247977",
 		"-0.178433004"]
@@ -1450,14 +1450,14 @@
 	},
 	"218": {
 		"id": "218",
-		"name": "St. Luke\u0027s Church, Chelsea",
+		"name": "St. Luke's Church, Chelsea",
 		"nbDocks": 20,
 		"coordinates": ["51.48971651",
 		"-0.170194408"]
 	},
 	"219": {
 		"id": "219",
-		"name": "Bramham Gardens, Earl\u0027s Court",
+		"name": "Bramham Gardens, Earl's Court",
 		"nbDocks": 29,
 		"coordinates": ["51.49016361",
 		"-0.19039362"]
@@ -1492,7 +1492,7 @@
 	},
 	"224": {
 		"id": "224",
-		"name": "Whiteley\u0027s, Bayswater",
+		"name": "Whiteley's, Bayswater",
 		"nbDocks": 16,
 		"coordinates": ["51.51476963",
 		"-0.188129731"]
@@ -1520,7 +1520,7 @@
 	},
 	"228": {
 		"id": "228",
-		"name": "St. James\u0027s Square, St. James\u0027s",
+		"name": "St. James's Square, St. James's",
 		"nbDocks": 40,
 		"coordinates": ["51.50742485",
 		"-0.134621209"]
@@ -1541,7 +1541,7 @@
 	},
 	"231": {
 		"id": "231",
-		"name": "Queen\u0027s Gate (Central), South Kensington",
+		"name": "Queen's Gate (Central), South Kensington",
 		"nbDocks": 31,
 		"coordinates": ["51.49396755",
 		"-0.17873226"]
@@ -1646,7 +1646,7 @@
 	},
 	"247": {
 		"id": "247",
-		"name": "St. John\u0027s Wood Church, The Regent\u0027s Park",
+		"name": "St. John's Wood Church, The Regent's Park",
 		"nbDocks": 50,
 		"coordinates": ["51.530052",
 		"-0.168314"]
@@ -1744,7 +1744,7 @@
 	},
 	"262": {
 		"id": "262",
-		"name": "LSBU (Borough Road), Elephant \u0026 Castle",
+		"name": "LSBU (Borough Road), Elephant & Castle",
 		"nbDocks": 35,
 		"coordinates": ["51.49874469",
 		"-0.103132904"]
@@ -1772,7 +1772,7 @@
 	},
 	"266": {
 		"id": "266",
-		"name": "Queen\u0027s Gate (North), Kensington",
+		"name": "Queen's Gate (North), Kensington",
 		"nbDocks": 19,
 		"coordinates": ["51.50102668",
 		"-0.180246101"]
@@ -1807,7 +1807,7 @@
 	},
 	"271": {
 		"id": "271",
-		"name": "London Zoo,  The Regent\u0027s Park",
+		"name": "London Zoo,  The Regent's Park",
 		"nbDocks": 32,
 		"coordinates": ["51.53583617",
 		"-0.156285395"]
@@ -1891,7 +1891,7 @@
 	},
 	"286": {
 		"id": "286",
-		"name": "St. John\u0027s Wood Road, St. John\u0027s Wood",
+		"name": "St. John's Wood Road, St. John's Wood",
 		"nbDocks": 35,
 		"coordinates": ["51.5272947",
 		"-0.174653609"]
@@ -1947,7 +1947,7 @@
 	},
 	"294": {
 		"id": "294",
-		"name": "St. George\u0027s Square, Pimlico",
+		"name": "St. George's Square, Pimlico",
 		"nbDocks": 16,
 		"coordinates": ["51.488226",
 		"-0.135635511"]
@@ -1961,14 +1961,14 @@
 	},
 	"296": {
 		"id": "296",
-		"name": "Knaresborough Place, Earl\u0027s Court",
+		"name": "Knaresborough Place, Earl's Court",
 		"nbDocks": 18,
 		"coordinates": ["51.49363156",
 		"-0.190603326"]
 	},
 	"297": {
 		"id": "297",
-		"name": "Geraldine Street, Elephant \u0026 Castle",
+		"name": "Geraldine Street, Elephant & Castle",
 		"nbDocks": 17,
 		"coordinates": ["51.49612799",
 		"-0.106000855"]
@@ -2073,7 +2073,7 @@
 	},
 	"312": {
 		"id": "312",
-		"name": "Grove End Road, St. John\u0027s Wood",
+		"name": "Grove End Road, St. John's Wood",
 		"nbDocks": 20,
 		"coordinates": ["51.53088935",
 		"-0.176770502"]
@@ -2094,7 +2094,7 @@
 	},
 	"315": {
 		"id": "315",
-		"name": "The Tennis Courts, The Regent\u0027s Park",
+		"name": "The Tennis Courts, The Regent's Park",
 		"nbDocks": 16,
 		"coordinates": ["51.52536703",
 		"-0.153463612"]
@@ -2122,7 +2122,7 @@
 	},
 	"319": {
 		"id": "319",
-		"name": "Baldwin Street, St. Luke\u0027s",
+		"name": "Baldwin Street, St. Luke's",
 		"nbDocks": 21,
 		"coordinates": ["51.52702563",
 		"-0.088542771"]
@@ -2157,14 +2157,14 @@
 	},
 	"324": {
 		"id": "324",
-		"name": "Ontario Street, Elephant \u0026 Castle",
+		"name": "Ontario Street, Elephant & Castle",
 		"nbDocks": 15,
 		"coordinates": ["51.49652013",
 		"-0.101384068"]
 	},
 	"325": {
 		"id": "325",
-		"name": "St. Martin\u0027s Street, West End",
+		"name": "St. Martin's Street, West End",
 		"nbDocks": 18,
 		"coordinates": ["51.50908747",
 		"-0.129697889"]
@@ -2192,7 +2192,7 @@
 	},
 	"329": {
 		"id": "329",
-		"name": "Prince Albert Road, The Regent\u0027s Park",
+		"name": "Prince Albert Road, The Regent's Park",
 		"nbDocks": 24,
 		"coordinates": ["51.53589283",
 		"-0.160854428"]
@@ -2213,7 +2213,7 @@
 	},
 	"332": {
 		"id": "332",
-		"name": "Nevern Place, Earl\u0027s Court",
+		"name": "Nevern Place, Earl's Court",
 		"nbDocks": 20,
 		"coordinates": ["51.49334336",
 		"-0.194757949"]
@@ -2283,7 +2283,7 @@
 	},
 	"343": {
 		"id": "343",
-		"name": "London Zoo Car Park, The Regent\u0027s Park",
+		"name": "London Zoo Car Park, The Regent's Park",
 		"nbDocks": 36,
 		"coordinates": ["51.53692216",
 		"-0.150181444"]
@@ -2325,7 +2325,7 @@
 	},
 	"350": {
 		"id": "350",
-		"name": "Queen\u0027s Gate, Kensington Gardens",
+		"name": "Queen's Gate, Kensington Gardens",
 		"nbDocks": 21,
 		"coordinates": ["51.5017154373867",
 		"-0.1798541843891"]
@@ -2416,7 +2416,7 @@
 	},
 	"363": {
 		"id": "363",
-		"name": "Lord\u0027s, St. John\u0027s Wood",
+		"name": "Lord's, St. John's Wood",
 		"nbDocks": 24,
 		"coordinates": ["51.5291212008901",
 		"-0.171185284853"]
@@ -2619,7 +2619,7 @@
 	},
 	"394": {
 		"id": "394",
-		"name": "Aberdeen Place, St. John\u0027s Wood",
+		"name": "Aberdeen Place, St. John's Wood",
 		"nbDocks": 18,
 		"coordinates": ["51.524826",
 		"-0.176268"]
@@ -2703,14 +2703,14 @@
 	},
 	"406": {
 		"id": "406",
-		"name": "Speakers\u0027 Corner 2, Hyde Park",
+		"name": "Speakers' Corner 2, Hyde Park",
 		"nbDocks": 25,
 		"coordinates": ["51.51222",
 		"-0.160785"]
 	},
 	"407": {
 		"id": "407",
-		"name": "Speakers\u0027 Corner 1, Hyde Park",
+		"name": "Speakers' Corner 1, Hyde Park",
 		"nbDocks": 20,
 		"coordinates": ["51.512303",
 		"-0.159988"]
@@ -2724,7 +2724,7 @@
 	},
 	"409": {
 		"id": "409",
-		"name": "Strata, Elephant \u0026 Castle",
+		"name": "Strata, Elephant & Castle",
 		"nbDocks": 21,
 		"coordinates": ["51.493146",
 		"-0.099828"]
@@ -2738,7 +2738,7 @@
 	},
 	"411": {
 		"id": "411",
-		"name": "Walworth Road, Elephant \u0026 Castle",
+		"name": "Walworth Road, Elephant & Castle",
 		"nbDocks": 21,
 		"coordinates": ["51.49337264",
 		"-0.09968067"]
@@ -2822,7 +2822,7 @@
 	},
 	"431": {
 		"id": "431",
-		"name": "Crinan Street, King\u0027s Cross",
+		"name": "Crinan Street, King's Cross",
 		"nbDocks": 20,
 		"coordinates": ["51.534474",
 		"-0.122203"]
@@ -2864,7 +2864,7 @@
 	},
 	"439": {
 		"id": "439",
-		"name": "Killick Street, King\u0027s Cross",
+		"name": "Killick Street, King's Cross",
 		"nbDocks": 22,
 		"coordinates": ["51.5338",
 		"-0.118677"]
@@ -2927,7 +2927,7 @@
 	},
 	"448": {
 		"id": "448",
-		"name": "Fisherman\u0027s Walk West, Canary Wharf",
+		"name": "Fisherman's Walk West, Canary Wharf",
 		"nbDocks": 36,
 		"coordinates": ["51.50623",
 		"-0.02296"]
@@ -2955,7 +2955,7 @@
 	},
 	"452": {
 		"id": "452",
-		"name": "St. Katharine\u0027s Way, Tower",
+		"name": "St. Katharine's Way, Tower",
 		"nbDocks": 24,
 		"coordinates": ["51.505697",
 		"-0.070542"]
@@ -3039,7 +3039,7 @@
 	},
 	"464": {
 		"id": "464",
-		"name": "St. Mary \u0026 St. Michael Church, Stepney",
+		"name": "St. Mary & St. Michael Church, Stepney",
 		"nbDocks": 25,
 		"coordinates": ["51.51417",
 		"-0.052099"]
@@ -3221,7 +3221,7 @@
 	},
 	"491": {
 		"id": "491",
-		"name": "Queen Mary\u0027s, Mile End",
+		"name": "Queen Mary's, Mile End",
 		"nbDocks": 45,
 		"coordinates": ["51.522507",
 		"-0.041378"]
@@ -3256,7 +3256,7 @@
 	},
 	"504": {
 		"id": "504",
-		"name": "St. John\u0027s Park, Cubitt Town",
+		"name": "St. John's Park, Cubitt Town",
 		"nbDocks": 30,
 		"coordinates": ["51.496454",
 		"-0.009506"]
@@ -3312,7 +3312,7 @@
 	},
 	"512": {
 		"id": "512",
-		"name": "Pritchard\u0027s Road, Bethnal Green",
+		"name": "Pritchard's Road, Bethnal Green",
 		"nbDocks": 30,
 		"coordinates": ["51.532091",
 		"-0.06142"]
@@ -3459,7 +3459,7 @@
 	},
 	"534": {
 		"id": "534",
-		"name": "Goldsmith\u0027s Row, Haggerston",
+		"name": "Goldsmith's Row, Haggerston",
 		"nbDocks": 27,
 		"coordinates": ["51.531864",
 		"-0.066035"]
@@ -3501,7 +3501,7 @@
 	},
 	"540": {
 		"id": "540",
-		"name": "Albany Street, The Regent\u0027s Park",
+		"name": "Albany Street, The Regent's Park",
 		"nbDocks": 27,
 		"coordinates": ["51.528302",
 		"-0.144466"]
@@ -3557,14 +3557,14 @@
 	},
 	"548": {
 		"id": "548",
-		"name": "Westminster Bridge Road, Elephant \u0026 Castle",
+		"name": "Westminster Bridge Road, Elephant & Castle",
 		"nbDocks": 26,
 		"coordinates": ["51.498386",
 		"-0.107913"]
 	},
 	"549": {
 		"id": "549",
-		"name": "Gaywood  Street, Elephant \u0026 Castle",
+		"name": "Gaywood  Street, Elephant & Castle",
 		"nbDocks": 45,
 		"coordinates": ["51.49605",
 		"-0.104193"]
@@ -3592,7 +3592,7 @@
 	},
 	"553": {
 		"id": "553",
-		"name": "Regent\u0027s Row , Haggerston ",
+		"name": "Regent's Row , Haggerston ",
 		"nbDocks": 24,
 		"coordinates": ["51.535678",
 		"-0.062546"]
@@ -3606,7 +3606,7 @@
 	},
 	"555": {
 		"id": "555",
-		"name": "Westfield Eastern Access Road, Shepherd\u0027s Bush",
+		"name": "Westfield Eastern Access Road, Shepherd's Bush",
 		"nbDocks": 56,
 		"coordinates": ["51.509424",
 		"-0.219712"]
@@ -3662,7 +3662,7 @@
 	},
 	"563": {
 		"id": "563",
-		"name": "Preston\u0027s Road, Cubitt Town",
+		"name": "Preston's Road, Cubitt Town",
 		"nbDocks": 26,
 		"coordinates": ["51.499286",
 		"-0.009152"]
@@ -3690,7 +3690,7 @@
 	},
 	"568": {
 		"id": "568",
-		"name": "Bishop\u0027s Bridge Road West, Bayswater",
+		"name": "Bishop's Bridge Road West, Bayswater",
 		"nbDocks": 18,
 		"coordinates": ["51.51616",
 		"-0.18697"]
@@ -3711,7 +3711,7 @@
 	},
 	"571": {
 		"id": "571",
-		"name": "Westfield Southern Terrace ,Shepherd\u0027s Bush",
+		"name": "Westfield Southern Terrace ,Shepherd's Bush",
 		"nbDocks": 29,
 		"coordinates": ["51.506256",
 		"-0.218337"]
@@ -3823,28 +3823,28 @@
 	},
 	"590": {
 		"id": "590",
-		"name": "Greenberry Street, St.John\u0027s Wood",
+		"name": "Greenberry Street, St.John's Wood",
 		"nbDocks": 26,
 		"coordinates": ["51.53256",
 		"-0.16862"]
 	},
 	"591": {
 		"id": "591",
-		"name": "Westfield Library Corner, Shepherd\u0027s Bush",
+		"name": "Westfield Library Corner, Shepherd's Bush",
 		"nbDocks": 27,
 		"coordinates": ["51.506093",
 		"-0.2242237"]
 	},
 	"592": {
 		"id": "592",
-		"name": "Bishop\u0027s Bridge Road East, Bayswater",
+		"name": "Bishop's Bridge Road East, Bayswater",
 		"nbDocks": 20,
 		"coordinates": ["51.5171",
 		"-0.18377"]
 	},
 	"593": {
 		"id": "593",
-		"name": "Northdown Street, King\u0027s Cross",
+		"name": "Northdown Street, King's Cross",
 		"nbDocks": 21,
 		"coordinates": ["51.531066",
 		"-0.11934"]
@@ -3865,7 +3865,7 @@
 	},
 	"596": {
 		"id": "596",
-		"name": "Parson\u0027s Green , Parson\u0027s Green",
+		"name": "Parson's Green , Parson's Green",
 		"nbDocks": 21,
 		"coordinates": ["51.472817",
 		"-0.199783"]
@@ -3984,7 +3984,7 @@
 	},
 	"613": {
 		"id": "613",
-		"name": "Woodstock Grove, Shepherd\u0027s Bush",
+		"name": "Woodstock Grove, Shepherd's Bush",
 		"nbDocks": 24,
 		"coordinates": ["51.50403821",
 		"-0.217400093"]
@@ -4068,7 +4068,7 @@
 	},
 	"625": {
 		"id": "625",
-		"name": "Queen\u0027s Circus, Battersea Park",
+		"name": "Queen's Circus, Battersea Park",
 		"nbDocks": 28,
 		"coordinates": ["51.47761941",
 		"-0.149551631"]
@@ -4180,7 +4180,7 @@
 	},
 	"641": {
 		"id": "641",
-		"name": "Archbishop\u0027s Park, Waterloo",
+		"name": "Archbishop's Park, Waterloo",
 		"nbDocks": 23,
 		"coordinates": ["51.49824168",
 		"-0.117495865"]
@@ -4194,7 +4194,7 @@
 	},
 	"643": {
 		"id": "643",
-		"name": "All Saints\u0027 Road, Portobello",
+		"name": "All Saints' Road, Portobello",
 		"nbDocks": 22,
 		"coordinates": ["51.5190427",
 		"-0.204764421"]
@@ -4222,7 +4222,7 @@
 	},
 	"647": {
 		"id": "647",
-		"name": "Richmond Way, Shepherd\u0027s Bush",
+		"name": "Richmond Way, Shepherd's Bush",
 		"nbDocks": 27,
 		"coordinates": ["51.50035306",
 		"-0.217515071"]
@@ -4236,14 +4236,14 @@
 	},
 	"649": {
 		"id": "649",
-		"name": "World\u0027s End Place, West Chelsea",
+		"name": "World's End Place, West Chelsea",
 		"nbDocks": 22,
 		"coordinates": ["51.48180515",
 		"-0.18027465"]
 	},
 	"650": {
 		"id": "650",
-		"name": "St. Mark\u0027s Road, North Kensington",
+		"name": "St. Mark's Road, North Kensington",
 		"nbDocks": 23,
 		"coordinates": ["51.51687069",
 		"-0.213872396"]
@@ -4292,7 +4292,7 @@
 	},
 	"657": {
 		"id": "657",
-		"name": "Blythe Road West, Shepherd\u0027s Bush",
+		"name": "Blythe Road West, Shepherd's Bush",
 		"nbDocks": 21,
 		"coordinates": ["51.4996806",
 		"-0.221791552"]
@@ -4362,7 +4362,7 @@
 	},
 	"667": {
 		"id": "667",
-		"name": "Shepherd\u0027s Bush Road North, Shepherd\u0027s Bush",
+		"name": "Shepherd's Bush Road North, Shepherd's Bush",
 		"nbDocks": 34,
 		"coordinates": ["51.5015946",
 		"-0.222293381"]
@@ -4411,7 +4411,7 @@
 	},
 	"674": {
 		"id": "674",
-		"name": "Carnegie Street, King\u0027s Cross",
+		"name": "Carnegie Street, King's Cross",
 		"nbDocks": 40,
 		"coordinates": ["51.53546778",
 		"-0.11619105"]
@@ -4460,7 +4460,7 @@
 	},
 	"681": {
 		"id": "681",
-		"name": "Bishop\u0027s Avenue, Fulham",
+		"name": "Bishop's Avenue, Fulham",
 		"nbDocks": 46,
 		"coordinates": ["51.47303687",
 		"-0.214749808"]
@@ -4691,7 +4691,7 @@
 	},
 	"714": {
 		"id": "714",
-		"name": "Stewart\u0027s Road, Wandsworth Road",
+		"name": "Stewart's Road, Wandsworth Road",
 		"nbDocks": 28,
 		"coordinates": ["51.47311696",
 		"-0.137235175"]
@@ -4796,7 +4796,7 @@
 	},
 	"729": {
 		"id": "729",
-		"name": "St. Peter\u0027s Terrace, Fulham",
+		"name": "St. Peter's Terrace, Fulham",
 		"nbDocks": 24,
 		"coordinates": ["51.47893931",
 		"-0.208485293"]
@@ -4845,7 +4845,7 @@
 	},
 	"736": {
 		"id": "736",
-		"name": "Queensdale Road, Shepherd\u0027s Bush",
+		"name": "Queensdale Road, Shepherd's Bush",
 		"nbDocks": 27,
 		"coordinates": ["51.50659035",
 		"-0.216104479"]
@@ -5027,7 +5027,7 @@
 	},
 	"762": {
 		"id": "762",
-		"name": "Storey\u0027s Gate, Westminster",
+		"name": "Storey's Gate, Westminster",
 		"nbDocks": 21,
 		"coordinates": ["51.50070305",
 		"-0.129698963"]
@@ -5041,7 +5041,7 @@
 	},
 	"764": {
 		"id": "764",
-		"name": "St. John\u0027s Road, Clapham Junction",
+		"name": "St. John's Road, Clapham Junction",
 		"nbDocks": 33,
 		"coordinates": ["51.46239255",
 		"-0.16829214"]
@@ -5171,12 +5171,5 @@
 		"nbDocks": 27,
 		"coordinates": ["51.5403114",
 		"-0.021630358"]
-	},
-	"791": {
-		"id": "791",
-		"name": "Test Desktop ",
-		"nbDocks": 0,
-		"coordinates": ["0.0",
-		"0.0"]
 	}
 }
