@@ -125,6 +125,7 @@ $(function() {
         gdo.updateSelf();
         if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.management.updateInstancesMenu();
+            gdo.management.updateModulesMenu();
         }
     }
 

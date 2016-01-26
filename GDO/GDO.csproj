@@ -621,11 +621,11 @@
     <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\enscroll-0.6.1.min.js" />
+    <Content Include="Scripts\gdo.management.modules.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.states.js" />
-    <Content Include="Scripts\gdo.module.eyeTracking.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
     <Content Include="Scripts\gdo.management.instances.js" />
@@ -958,6 +958,7 @@
     <Content Include="Web\Instances.cshtml" />
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Scenarios.cshtml" />
+    <Content Include="Web\Modules.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\IAdvancedAppHub.cs" />
@@ -973,8 +974,6 @@
     <Compile Include="Core\IAdvancedAppInstance.cs" />
     <Compile Include="Core\IAppInstance.cs" />
     <Compile Include="Core\IModule.cs" />
-    <Compile Include="Core\Modules\EyeTracking\EyeTrackingModule.cs" />
-    <Compile Include="Core\Modules\EyeTracking\EyeTrackingModuleHub.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />
@@ -994,7 +993,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />
-    <Folder Include="Core\Modules\Kinect\" />
     <Folder Include="Data\" />
   </ItemGroup>
   <PropertyGroup>

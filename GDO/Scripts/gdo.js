@@ -130,10 +130,10 @@ gdo.loadScript = function (subscript, script, scriptType) {
     } else if (scriptType == gdo.SCRIPT_TYPE.MODULE) {
         if (subscript == script) {
             gdo.consoleOut('', 1, 'Loading module script ' + script + ' at ' + '../scripts/' + script + '/gdo.module.' + script + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.module.' + script + '.js\'></script>');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.module.' + script + '.js\'></script>');
         } else {
             gdo.consoleOut('', 1, 'Loading module subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.module.' + script + '.' + subscript + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.module.' + script + '.' + subscript + '.js\'></script>');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.module.' + script + '.' + subscript + '.js\'></script>');
         }
     } else if (scriptType == gdo.SCRIPT_TYPE.APP) {
         if (subscript == script) {

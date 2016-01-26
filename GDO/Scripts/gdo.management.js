@@ -98,4 +98,17 @@ gdo.management.updateInstancesMenu = function () {
    // $("#side-menu").metisMenu();
 }
 
-                                
+gdo.management.updateModulesMenu = function () {
+    $("#nav_modules")
+        .empty();
+    for (var moduleName in gdo.net.module) {
+        if (gdo.net.module.hasOwnProperty(moduleName)) {
+            var count = 0;
+            $("#nav_modules").append("<li id='nav_li_" + gdo.net.module[moduleName].name + "'><a href='Modules.cshtml?name=" + gdo.net.module[moduleName].name + "'><i class='fa fa-codepen  fa-fw'></i><font color='#fff' size='3px'>&nbsp;" + gdo.net.module[moduleName].name + "</font> </a></li>");
+            if (count == 0) {
+                $("#nav_li_" + gdo.net.module[moduleName].name).empty();
+            }
+        }
+    }
+    // $("#side-menu").metisMenu();
+}

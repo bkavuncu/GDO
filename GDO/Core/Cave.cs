@@ -72,7 +72,7 @@ namespace GDO.Core
             DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
             InitializedSync = false;
 
-            Assembly asm = Assembly.GetExecutingAssembly();
+            /*Assembly asm = Assembly.GetExecutingAssembly();
 
             foreach (Type type in asm.GetTypes())
             {
@@ -82,7 +82,7 @@ namespace GDO.Core
                     module.Init();
                     Modules.TryAdd(module.Name, module);
                 }
-            }
+            }*/
 
             for (int id = 1; id <= Cols * Rows; id++)
             {
@@ -453,6 +453,18 @@ namespace GDO.Core
                 {
                     Apps[name].Configurations.TryAdd(configuration.Name, configuration);
                 }
+                return true;
+            }
+            return false;
+        }
+
+        public static bool RegisterModule(string name, Type moduleClassType)
+        {
+            if (!Modules.ContainsKey(name))
+            {
+                IModule module = (IModule)Activator.CreateInstance(moduleClassType, new object[0]);
+                module.Init();
+                Modules.TryAdd(module.Name, module);
                 return true;
             }
             return false;

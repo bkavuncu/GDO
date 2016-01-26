@@ -62,6 +62,9 @@ namespace GDO
         [ImportMany(typeof(IAppHub))]
         private List<IAppHub> _caveapps { get; set; }
 
+        [ImportMany(typeof(IModuleHub))]
+        private List<IModuleHub> _cavemodules { get; set; }
+
         public IList<Assembly> GetAssemblies()
         {
         IList<Assembly> assemblies = new List<Assembly>();
@@ -92,6 +95,11 @@ namespace GDO
                 }
 
                 //assemblies.Add(caveapp.InstanceType.Assembly);
+            }
+            foreach (var cavemodule in _cavemodules)
+            {
+                Cave.RegisterModule(cavemodule.Name,  cavemodule.ModuleType);
+                assemblies.Add(cavemodule.GetType().Assembly);
             }
             return assemblies;
         }

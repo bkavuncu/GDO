@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.GigaImages", "GDO.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.LondonCycles", "GDO.Apps.LondonCycles\GDO.Apps.LondonCycles.csproj", "{6233F7A3-4E1E-4566-ADB7-41C313508BFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Modules.EyeTracking", "GDO.Modules.EyeTracking\GDO.Modules.EyeTracking.csproj", "{74CC3CD2-3404-4478-B074-F30CDD34F052}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +121,10 @@ Global
 		{6233F7A3-4E1E-4566-ADB7-41C313508BFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6233F7A3-4E1E-4566-ADB7-41C313508BFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6233F7A3-4E1E-4566-ADB7-41C313508BFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
