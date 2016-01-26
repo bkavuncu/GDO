@@ -32,11 +32,6 @@
     </script>
 
     <script id="2d-fragment-shader" type="x-shader/x-fragment">
-        #define NUM_STEPS   100
-        #define ZOOM_FACTOR 2.0
-        #define WIDTH 1920.0
-        #define HEIGHT 1080.0
-
         #ifdef GL_FRAGMENT_PRECISION_HIGH
         precision highp float;
         #else
@@ -44,36 +39,113 @@
         #endif
         precision mediump int;
 
+        uniform float width;
+        uniform float height;
+        uniform float xRot;
+        uniform float yRot;
+        uniform float focal;
+        uniform vec3 translation;
+
+
+        // Cylinder function
+        float primitiveCylinder(vec3 p, vec2 h) {
+        vec2 d = abs(vec2(length(p.xz),p.y)) - h;
+        return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+        }
+
+        // Sphere function
+        float primitiveSphere(vec3 p, float r) {
+        return length(p)-r;
+        }
+
+        // Merge function
+        float mergePrimitives(vec3 p) {
+        float d1 = primitiveCylinder(p, vec2(0.5,0.5));
+        float d2 = primitiveSphere(p, 0.6);
+        return min( d1, d2 );
+        }
+
+        // Mod function
+        vec3 modPoint(vec3 p, float gap) {
+        return mod(p,gap)-vec3(gap/2.0);
+        }
+
+        vec4 march(vec3 ro, vec3 rd) {
+
+        // Sky color
+        vec4 color = vec4(0.2,0.2,0.4,1.0);
+
+        // t - total distance ray travelled
+        float t = 0.0;
+        const int maxSteps = 100;
+        for(int i = 0; i < maxSteps; ++i)  {
+
+        // p - point of current ray
+        // ray origin + ray direction * total distance
+        vec3 p = ro + rd * t;
+
+        // distance estimator
+        p = modPoint(p, 2.0);
+        float d = mergePrimitives(p);
+
+        if(d < 0.00001) {
+        // Sphere color
+        color = vec4(1.0-float(i)/float(maxSteps),0.2,1.0/(t/100.0),1.0);
+        break;
+        }
+
+        // increase total distance by ray distance
+        t += d;
+        }
+
+        return color;
+
+        }
+
+        void rayMarch() {
+
+        // Keep eye in the origin of the scene
+        vec3 eye = vec3(0,0,0);
+
+        // Get x between -1.0 - 1.0
+        float x = gl_FragCoord.x * 2.0 / width - 1.0;
+
+        // Get y between -1.0 - 1.0
+        float y = gl_FragCoord.y * 2.0 / height - 1.0;
+
+        // Apply aspect ratio
+        float ratio = width/height;
+        x *= ratio;
+
+        // y rotation
+        float y2 = y*cos(yRot) - focal*sin(yRot);
+        float focal2 = y*sin(yRot) + focal*cos(yRot);
+        y = y2;
+
+        // x rotation
+        float x2 = x*cos(xRot) - focal2*sin(xRot);
+        focal2 = x*sin(xRot) + focal2*cos(xRot);
+        x = x2;
+
+        // ro - ray origin
+        // calculate where ray passes through the screen
+        vec3 ro = vec3(x,y,focal2);
+
+        // rd - ray direction
+        // calculate direction of ray
+        vec3 rd = normalize(ro-eye);
+
+        // Translation
+        ro += translation;
+
+        // Set pixel colour
+        vec4 color = march(ro,rd);
+        gl_FragColor = color;
+        }
+
         void main() {
-        vec2 z;
-        float x,y;
-        int steps;
-        // x between -2.05 and 0.95
-        // y between -1.3 and 1.3
-        float normalizedX = (gl_FragCoord.x / WIDTH) * 3.0 - 2.05;
-        float normalizedY = (gl_FragCoord.y / HEIGHT) * 2.6 - 1.3;
-
-        z.x = normalizedX;
-        z.y = normalizedY;
-
-        for (int i=0; i<NUM_STEPS; i++) {
-                        steps=i;
-                        x=(z.x * z.x - z.y * z.y) + normalizedX;
-                        y=(z.y * z.x + z.x * z.y) + normalizedY;
-                        if((x * x + y * y)>
-            4.0) {
-            break;
-            }
-
-            z.x = x;
-            z.y = y;
-
-            }
-
-            float stepFloat = float(steps);
-            gl_FragColor = vec4(stepFloat/float(NUM_STEPS), stepFloat/float(NUM_STEPS), 1.0, 1.0);
-
-            }
+        rayMarch();
+        }
     </script>
 
 </body>
