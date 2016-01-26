@@ -65,8 +65,8 @@
         @{
             foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
             {
-                @:gdo.net.app["@moduleEntry.Value.Name"] = {};
-                @:gdo.net.app["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
+                @:gdo.net.module["@moduleEntry.Value.Name"] = {};
+                @:gdo.net.module["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
             }
             foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
             {

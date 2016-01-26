@@ -122,6 +122,7 @@ $(function() {
             }
         }
         gdo.net.NodeInitialized = true;
+        gdo.net.initModules();
         gdo.updateSelf();
         if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.management.updateInstancesMenu();
@@ -817,6 +818,16 @@ gdo.net.processState = function (state, id, exists) {
     } else {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
+    }
+}
+
+gdo.net.initModules = function () {
+    gdo.consoleOut('.NET', 1, 'Initializing Modules');
+    for (var index in gdo.net.module) {
+        if (!gdo.net.module.hasOwnProperty((index))) {
+            continue;
+        }
+        gdo.net.module[index].initModule();
     }
 }
 

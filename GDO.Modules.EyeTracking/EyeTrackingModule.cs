@@ -10,10 +10,12 @@ namespace GDO.Modules.EyeTracking
     public class EyeTrackingModule : IModule
     {
         public string Name { get; set; }
+        public bool QRCodeMode { get; set; }
 
         public void Init()
         {
             this.Name = "EyeTracking";
+            this.QRCodeMode = false;
         }
 
         public string SerializeJSON()

@@ -20,6 +20,7 @@ namespace GDO.Core
         static Cave Self = null;
         public static readonly object ServerLock = new object();
         public static readonly List<object> AppLocks = new List<object>();
+        public static readonly Dictionary<string,object> ModuleLocks = new Dictionary<string,object>();
 
         public static bool MaintenanceMode { get; set; }
         public static bool BlankMode { get; set; }
@@ -465,6 +466,7 @@ namespace GDO.Core
                 IModule module = (IModule)Activator.CreateInstance(moduleClassType, new object[0]);
                 module.Init();
                 Modules.TryAdd(module.Name, module);
+                ModuleLocks.Add(module.Name, new object());
                 return true;
             }
             return false;

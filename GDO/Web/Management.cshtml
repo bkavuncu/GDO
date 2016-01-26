@@ -56,8 +56,8 @@
         @{
             foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
             {
-                @:gdo.net.app["@moduleEntry.Value.Name"] = {};
-                @:gdo.net.app["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
+                @:gdo.net.module["@moduleEntry.Value.Name"] = {};
+                @:gdo.net.module["@moduleEntry.Value.Name"].name = "@moduleEntry.Value.Name";
             }
             foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
             {
@@ -121,7 +121,7 @@
     </script>
     <div id="wrapper">
         <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
-            <table unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
+            <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
                 <tr>
                     <td>
                         <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button>

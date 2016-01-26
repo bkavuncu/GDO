@@ -21,5 +21,37 @@ namespace GDO.Modules.EyeTracking
         {
             Groups.Remove(Context.ConnectionId, "" + moduleName);
         }
+        public void RequestQRCodeMode()
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    Clients.Caller.updateQRCodeMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).QRCodeMode);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void SetQRCodeMode(bool mode)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).QRCodeMode = mode;
+                    Clients.All.updateQRCodeMode(mode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
     }
 }
