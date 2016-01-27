@@ -151,6 +151,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\" />
     <Folder Include="Data\EyeTracking\" />
   </ItemGroup>
   <ItemGroup>

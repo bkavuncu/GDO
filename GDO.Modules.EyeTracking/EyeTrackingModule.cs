@@ -19,7 +19,7 @@ namespace GDO.Modules.EyeTracking
             this.Name = "EyeTracking";
             this.ReferenceMode = false;
             this.CursorMode = false;
-            this.ReferenceSize = 35;
+            this.ReferenceSize = 21;
         }
 
         public string SerializeJSON()
