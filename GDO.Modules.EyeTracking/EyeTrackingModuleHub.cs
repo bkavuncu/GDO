@@ -118,7 +118,24 @@ namespace GDO.Modules.EyeTracking
             }
         }
 
-        public void BroadcastData(int timestamp, int userId, int nodeId, int x, int y, int angle, int distance)
+        public void UploadData(int timestamp, int userId, int nodeId, int x, int y, int angle, int distance)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    //((EyeTrackingModule)Cave.Modules["EyeTracking"]). ;
+                    BroadcastData(timestamp, userId, nodeId, x, y, angle, distance);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        private void BroadcastData(int timestamp, int userId, int nodeId, int x, int y, int angle, int distance)
         {
             try
             {
@@ -131,5 +148,7 @@ namespace GDO.Modules.EyeTracking
                 Clients.Caller.setMessage(e.GetType().ToString());
             }
         }
+
+
     }
 }
