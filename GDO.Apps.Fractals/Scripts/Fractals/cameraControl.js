@@ -1,4 +1,4 @@
-// Camera settings
+﻿// Camera settings
 var sensitivity = 0.05;
 
 var xRotLoc;
@@ -26,6 +26,10 @@ var down = false;
 var xTrans = 0.0;
 var yTrans = 0.0;
 var zTrans = 0.0;
+
+rotate = function () {
+
+}
 
 window.onkeydown = function () {
     //alert(event.keyCode);

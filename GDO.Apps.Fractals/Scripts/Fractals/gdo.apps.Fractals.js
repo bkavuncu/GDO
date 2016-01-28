@@ -1,11 +1,11 @@
-﻿$(function () {
+﻿
+$(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
     $.connection.fractalsAppHub.client.receiveName = function (instanceId, name) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
-            $("iframe").contents().find("#hello_text").empty().append("Hello " + name);
+            gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name + " testing --------");
         }
     }
 });
