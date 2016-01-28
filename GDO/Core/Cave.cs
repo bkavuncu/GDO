@@ -627,15 +627,13 @@ namespace GDO.Core
             CaveState caveState = new CaveState(slot, name);
             States.TryAdd(slot, caveState);
             //TODO Add support advanced app
-            /*foreach(KeyValuePair<int,IAdvancedAppInstance> instaKeyValuePair in Instances)
+            foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Instances)
             {
-                IAdvancedAppInstance instance = instaKeyValuePair.Value;
-                //TODO State Mechanism for both Vapps and apps
-                if(instance.GetType())
+                IBaseAppInstance instance = (IBaseAppInstance)instaKeyValuePair.Value;
                 Section section = instance.Section;
-                AppState appState = new AppState(section.Col,section.Row,section.Cols,section.Rows,instance.AppName,instance.Configuration.Name);
+                AppState appState = new AppState(section.Col, section.Row, section.Cols, section.Rows, instance.AppName, instance.Configuration.Name);
                 caveState.States.Add(appState);
-            }*/
+            }
             return slot;
         }
 

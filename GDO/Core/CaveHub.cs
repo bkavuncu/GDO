@@ -82,7 +82,10 @@ namespace GDO.Core
                     BroadcastNodeUpdate(nodeId);
                     return true;
                 }
-                return false;
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -100,7 +103,10 @@ namespace GDO.Core
                     BroadcastNodeUpdate(nodeId);
                     return true;
                 }
-                return false;
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -116,18 +122,23 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                Log.Info("Creating Section at ("+colStart+","+rowStart+" of dimensions "+colEnd+","+rowEnd);
                 List<Node> deployedNodes = Cave.CreateSection(colStart, rowStart, colEnd, rowEnd);
-                if (deployedNodes.Capacity <= 0) {
+                if (deployedNodes.Capacity > 0)
+                {
+                    foreach (Node node in deployedNodes)
+                    {
+                        if (node.ConnectionId != null)
+                        {
+                            Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                        }
+                    }
+                    BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart));
+                    return true;
+                }
+                else
+                {
                     return false;
                 }
-
-                foreach (Node node in deployedNodes.Where(node => node.ConnectionId != null)) {
-                    Groups.Add(node.ConnectionId, node.SectionId.ToString());
-                }
-                BroadcastSectionUpdate(Cave.GetSectionId(colStart, rowStart));
-
-                return true;
             }
         }
 
@@ -138,18 +149,25 @@ namespace GDO.Core
         /// <returns></returns>
         public bool CloseSection(int sectionId)
         {
-            lock (Cave.ServerLock) {
-                Log.Info("Closing section "+sectionId);
+            lock (Cave.ServerLock)
+            {
                 List<Node> freedNodes = Cave.CloseSection(sectionId);
-                if (freedNodes.Capacity <= 0) {
+                if (freedNodes.Capacity > 0)
+                {
+                    foreach (Node node in freedNodes)
+                    {
+                        if (node.ConnectionId != null)
+                        {
+                            Groups.Remove(node.ConnectionId, node.SectionId.ToString());
+                        }
+                    }
+                    BroadcastSectionUpdate(sectionId);
+                    return true;
+                }
+                else
+                {
                     return false;
                 }
-
-                foreach (Node node in freedNodes.Where(node => node.ConnectionId != null)) {
-                    Groups.Remove(node.ConnectionId, node.SectionId.ToString());
-                }
-                BroadcastSectionUpdate(sectionId);
-                return true;
             }
         }
 
@@ -162,18 +180,20 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                Log.Info("Setting section "+sectionId+" p2pmode to "+p2pmode);
                 List<Node> affectedNodes = Cave.SetSectionP2PMode(sectionId, p2pmode);
-                if (affectedNodes.Capacity <= 0) {
+                if (affectedNodes.Capacity > 0)
+                {
+                    BroadcastSectionUpdate(sectionId);
+                    foreach (Node node in affectedNodes)
+                    {
+                        BroadcastNodeUpdate(node.Id);
+                    }
+                    return true;
+                }
+                else
+                {
                     return false;
                 }
-
-                BroadcastSectionUpdate(sectionId);
-                foreach (Node node in affectedNodes)
-                {
-                    BroadcastNodeUpdate(node.Id);
-                }
-                return true;
             }
         }
         /// <summary>
@@ -252,12 +272,12 @@ namespace GDO.Core
                     string serializedInstance = GetInstanceUpdate(instanceId);
                     if (Cave.Apps[appName].Instances[instanceId] is IBaseAppInstance)
                     {
-                        int sectionId = ((IBaseAppInstance) Cave.Apps[appName].Instances[instanceId]).Section.Id;
+                        int sectionId = ((IBaseAppInstance)Cave.Apps[appName].Instances[instanceId]).Section.Id;
                         Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     }
                     else if (Cave.Apps[appName].Instances[instanceId] is IAdvancedAppInstance)
                     {
-                        List<int> integratedInstances =((IAdvancedAppInstance) Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        List<int> integratedInstances = ((IAdvancedAppInstance)Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
                     }
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
@@ -265,17 +285,7 @@ namespace GDO.Core
                         return true;
                     }
                 }
-
-                string appName = Cave.GetAppName(instanceId);
-                int sectionId = Cave.Apps[appName].Instances[instanceId].Section.Id;
-                Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
-
-                if (!Cave.DisposeAppInstance(appName, instanceId)) {
-                    return false;
-                }
-
-                BroadcastAppUpdate(sectionId, appName, "", instanceId, (int) Cave.P2PModes.None, false);
-                return true;
+                return false;
             }
         }
         /// <summary>
@@ -291,24 +301,22 @@ namespace GDO.Core
             {
                 Node node;
                 Cave.Nodes.TryGetValue(nodeId, out node);
-                if (node == null) {
-                    Log.Error(" failed to get node "+nodeId);
-                    // todo any error handling?
-                    return;
-                }
-
                 node.IsConnectedToCaveServer = true;
                 node.ConnectionId = connectionId;
                 node.PeerId = peerId;
                 node.IsConnectedToPeerServer = isConnectedToPeerServer;
                 int[] deserializedConnectedNodes = JsonConvert.DeserializeObject<int[]>(connectedNodes);
                 node.ConnectedNodeList.Clear();
-                foreach (int connectedNode in deserializedConnectedNodes) {
+                foreach (int connectedNode in deserializedConnectedNodes)
+                {
                     node.ConnectedNodeList.Add(connectedNode);
                 }
-                if (node.IsDeployed) {
+                if (node.IsDeployed)
+                {
                     Groups.Add(node.ConnectionId, node.SectionId.ToString());
-                } else {
+                }
+                else
+                {
                     Groups.Remove(node.ConnectionId, node.SectionId.ToString());
                 }
                 node.AggregateConnectionHealth();
@@ -342,7 +350,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-                    Log.Error("failed to prepare Cave Update ",e); 
+                    Log.Error("failed to prepare Cave Update ", e);
                 }
             }
         }
@@ -368,44 +376,43 @@ namespace GDO.Core
 
         private string GetNodeUpdate(int nodeId)
         {
-            if (!Cave.ContainsNode(nodeId)) {
-                return null;
-            }
-            try {
-                Node node;
-                Cave.Nodes.TryGetValue(nodeId, out node);
-                if (node == null) {
-                    Log.Error(" failed to get node " + nodeId);
-                    // todo any error handling?
+            if (Cave.ContainsNode(nodeId))
+            {
+                try
+                {
+                    Node node;
+                    Cave.Nodes.TryGetValue(nodeId, out node);
+                    node.AggregateConnectionHealth();
+                    return node.SerializeJSON();
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to GetNodeUpdate", e);
                     return null;
                 }
-
-                node.AggregateConnectionHealth();
-                return node.SerializeJSON();
             }
-            catch (Exception e) {
-                Log.Error("failed to GetNodeUpdate", e);
-                return null;
-            }
+            return null;
         }
+
+
 
         private string GetSectionUpdate(int sectionId)
         {
-            try {
-                if (!Cave.ContainsSection(sectionId)) {
-                    return null;
-                }
-
-                Section section;
-                Cave.Sections.TryGetValue(sectionId, out section);
-                if (section != null) {
+            try
+            {
+                if (Cave.ContainsSection(sectionId))
+                {
+                    Section section;
+                    Cave.Sections.TryGetValue(sectionId, out section);
                     return section.SerializeJSON();
                 }
-                Log.Error("Unable to find section ID "+sectionId);
-
-                return null;                
+                else
+                {
+                    return null;
+                }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine(e);
                 Log.Error("failed to GetNodeUpdate", e);
                 return null;
@@ -433,87 +440,101 @@ namespace GDO.Core
             }
         }
 
-        private string GetAppUpdate(string appName) {
-            try {
-                if (Cave.ContainsApp(appName)) {
+        private string GetAppUpdate(string appName)
+        {
+            try
+            {
+                if (Cave.ContainsApp(appName))
+                {
                     App app;
                     Cave.Apps.TryGetValue(appName, out app);
-                    if (app != null) {
-                        return app.SerializeJSON();
-                    }
+                    return app.SerializeJSON();
                 }
-                Log.Error("unable to get app update " + appName);
-                return null;
-
+                else
+                {
+                    return null;
+                }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine(e);
-                Log.Error("Exception getting App Update", e);
                 return null;
             }
         }
 
         private string GetInstanceUpdate(int instanceId)
         {
-            try {
-                if (!Cave.ContainsInstance(instanceId)) {
+            try
+            {
+                if (Cave.ContainsInstance(instanceId))
+                {
+                    IAppInstance instance;
+                    Cave.Instances.TryGetValue(instanceId, out instance);
+                    return JsonConvert.SerializeObject(instance);
+                }
+                else
+                {
                     return null;
                 }
-                IAppInstance instance;
-                Cave.Instances.TryGetValue(instanceId, out instance);
-                return JsonConvert.SerializeObject(instance);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Log.Error("Exception getting Instance Update", e);
                 return null;
             }
         }
 
         private string GetStateUpdate(int stateId)
         {
-            try {
-                if (!Cave.ContainsState(stateId)) {
+            try
+            {
+                if (Cave.ContainsState(stateId))
+                {
+                    CaveState state;
+                    Cave.States.TryGetValue(stateId, out state);
+                    return JsonConvert.SerializeObject(state);
+                }
+                else
+                {
                     return null;
                 }
-                CaveState state;
-                Cave.States.TryGetValue(stateId, out state);
-                return JsonConvert.SerializeObject(state);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Log.Error("Exception getting State Update", e);
                 return null;
             }
         }
-
-        #region broadcasting of updates
 
         /// <summary>
         /// Broadcasts the node update.
         /// </summary>
         /// <param name="nodeId">The node identifier.</param>
-        private bool BroadcastNodeUpdate(int nodeId) {
-            if (!Cave.ContainsNode(nodeId)) {
-                return false;
-            }
-            try
+        private bool BroadcastNodeUpdate(int nodeId)
+        {
+            if (Cave.ContainsNode(nodeId))
             {
-                string serializedNode = GetNodeUpdate(nodeId);
-                if (serializedNode == null) {
+                try
+                {
+                    string serializedNode = GetNodeUpdate(nodeId);
+                    if (serializedNode != null)
+                    {
+                        Clients.All.receiveNodeUpdate(serializedNode);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                     return false;
                 }
-                Clients.All.receiveNodeUpdate(serializedNode);
-                return true;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Log.Error("Exception broadcasting node"+ nodeId + " Update ", e);
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
@@ -521,20 +542,25 @@ namespace GDO.Core
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <returns></returns>
-        private bool BroadcastSectionUpdate(int sectionId) {
-            try {
+        private bool BroadcastSectionUpdate(int sectionId)
+        {
+            try
+            {
                 string serializedSection = GetSectionUpdate(sectionId);
-                if (Cave.ContainsSection(sectionId) && serializedSection != null) {
+                if (Cave.ContainsSection(sectionId) && serializedSection != null)
+                {
                     Clients.All.receiveSectionUpdate(true, sectionId, serializedSection);
+                    return true;
                 }
-                else {
+                else
+                {
                     Clients.All.receiveSectionUpdate(false, sectionId, "");
+                    return true;
                 }
-                return true;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine(e);
-                Log.Error("Exception broadcasting section Update "+sectionId, e);
                 return false;
             }
         }
@@ -544,17 +570,15 @@ namespace GDO.Core
             try
             {
                 Clients.All.receiveAppUpdate(exists, instanceId, serializedInstance);
-                 return true;
+                return true;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Console.WriteLine(e);
-                Log.Error("Exception broadcasting app Update "+ appName, e);
                 return false;
             }
             return false;
         }
-
-        #endregion
 
         /// <summary>
         /// Sends the data.
@@ -565,13 +589,12 @@ namespace GDO.Core
         public void SendData(int senderId, int receiverId, string data)
         {
             try
-            { 
+            {
                 Clients.Client(Cave.Nodes[receiverId].ConnectionId).receiveData(senderId, data);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Log.Error("Exception sending data", e);
             }
         }
 
@@ -582,12 +605,12 @@ namespace GDO.Core
         /// <param name="data">The data.</param>
         public void BroadcastData(int senderID, string data)
         {
-            try { 
+            try
+            {
                 Clients.Others.receiveBroadcast(senderID, data);
             }
             catch (Exception e)
             {
-                Log.Error("Exception broadcasting data from "+senderID+" data "+data, e);
                 Console.WriteLine(e);
             }
         }
@@ -598,7 +621,7 @@ namespace GDO.Core
             {
                 Cave.MaintenanceMode = mode;
                 Clients.All.setMaintenanceMode(mode);
-              //  Clients.All.reloadNodeIFrame(mode); TODO This is showing up a concurrency bug which is crashing the server and some nodes! possibly related to issue #15
+                //  Clients.All.reloadNodeIFrame(mode); TODO This is showing up a concurrency bug which is crashing the server and some nodes! possibly related to issue #15
             }
         }
 
@@ -663,17 +686,16 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                try {
-                    Log.Info("Clearing Cave");
-                    foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances) {
-                        CloseApp(instanceKeyValuePair.Value.Id);
-                    }
-                    foreach (var sectionKeyValuePair in Cave.Sections.Where(kvp => kvp.Key != 0)) {
+                foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances)
+                {
+                    CloseApp(instanceKeyValuePair.Value.Id);
+                }
+                foreach (KeyValuePair<int, Section> sectionKeyValuePair in Cave.Sections)
+                {
+                    if (sectionKeyValuePair.Key != 0)
+                    {
                         CloseSection(sectionKeyValuePair.Value.Id);
                     }
-                } catch (Exception e) {
-                    Console.WriteLine(e);
-                    Log.Error("Exceptionw while clearing CAVE ", e);
                 }
             }
         }
@@ -684,17 +706,14 @@ namespace GDO.Core
             {
                 CaveState caveState = Cave.States[id];
                 ClearCave();
+                
                 //TODO Advanced apps
-                /*foreach (AppState appState in caveState.States)
+                foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
                         (appState.Row + appState.Rows -1));
                     Cave.GetSectionId(appState.Col, appState.Row);
-                    DeployApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.ConfigName);
-                }*/
-                catch (Exception e) {
-                    Console.WriteLine(e);
-                    Log.Error("Exceptionw while restoring CAVE to state "+id, e);
+                    DeployBaseApp(Cave.GetSectionId(appState.Col, appState.Row), appState.AppName, appState.ConfigName);
                 }
             }
 
@@ -710,7 +729,7 @@ namespace GDO.Core
 
         public void BroadcastStates()
         {
-            foreach (KeyValuePair<int,CaveState> caveState in Cave.States)
+            foreach (KeyValuePair<int, CaveState> caveState in Cave.States)
             {
                 BroadcastCaveState(caveState.Value.Id);
             }

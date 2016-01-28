@@ -7,7 +7,7 @@
         .css("color", "#DDD")
         .css("background", "#222")
         .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
+        .attr("align", "top")
         .css("vertical-align", "top")
         .css({ fontSize: gdo.management.button_font_size });
     $("#state_table_state_header_table")
