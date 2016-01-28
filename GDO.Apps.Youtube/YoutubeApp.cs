@@ -19,13 +19,14 @@ namespace GDO.Apps.Youtube
         CROP=1,
         FIT=0
     };
-    public class YoutubeApp : IAppInstance
+    public class YoutubeApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public string Keywords { get; set; }
         public string ChannelId { get; set; }
         public string PlaylistId { get; set; }
@@ -246,12 +247,8 @@ namespace GDO.Apps.Youtube
             return yJson;
         }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.key = "AIzaSyCVoYXZZHaRNqnJw6pINn9PG3wly3_xNYY";
             this.baseURL = "https://www.googleapis.com/youtube/v3/";
             this.Error = false;
@@ -263,7 +260,7 @@ namespace GDO.Apps.Youtube
             this.NextVideoUrls = null;
             this.SearchMode = 0;
 
-            string keywords = (string) configuration.Json.SelectToken("channel");
+            string keywords = (string) Configuration.Json.SelectToken("channel");
             if (keywords != "")
             {
                 Keywords = keywords;

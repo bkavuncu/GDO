@@ -1,0 +1,78 @@
+/*!
+ * Start Bootstrap - SB Admin 2 Bootstrap Admin Theme (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+        iframe {
+            border: 0 none;
+            width: 98.5%;
+            height: 98.5%;
+            display: block;
+        }
+        .track4 {
+            width: 20px;
+            background-clip: padding-box;
+            background: #333;
+            border-style: solid;
+            border-color: transparent;
+            border-width: 0;
+            border-left-width: 1px;
+        }
+
+        .track4.dragging,
+        .track4:hover {
+            background: #333; /* No RGBA support */
+
+        }
+
+        .track4:active {
+            background: #222; /* No RGBA support */
+
+        }
+
+        .handle4 {
+            width: 20px;
+            background-clip: padding-box;
+            background: #444; /* No RGBA support */
+
+        }
+
+        .handle4:hover {
+            background: #555; /* No RGBA support */
+        }
+
+        .dragging .handle4,
+        .handle4:active {
+            background: #444; /* No RGBA support */
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            cursor: inherit;
+            display: block;
+        }
+
+        .btn:focus {outline: none;box-shadow: none;border:2px solid transparent;}

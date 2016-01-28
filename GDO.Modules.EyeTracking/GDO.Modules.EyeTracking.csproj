@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,12 +9,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2159FF04-A104-4830-BAB4-86F1F0202967}</ProjectGuid>
+    <ProjectGuid>{74CC3CD2-3404-4478-B074-F30CDD34F052}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GDO.Apps.ShanghaiMetro</RootNamespace>
-    <AssemblyName>GDO.Apps.ShanghaiMetro</AssemblyName>
+    <RootNamespace>GDO.Modules.EyeTracking</RootNamespace>
+    <AssemblyName>GDO.Modules.EyeTracking</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -20,6 +22,8 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +56,18 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
@@ -65,6 +81,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.Registration" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -74,6 +91,30 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -83,13 +124,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\ShanghaiMetro\Shangai.json" />
-    <None Include="packages.config" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\ShanghaiMetro\jquery.csv-0.71.min.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3cesium.js.map" />
+    <Content Include="packages.config" />
+    <Content Include="Scripts\EyeTracking\gdo.module.eyeTracking.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -97,32 +133,30 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Scripts\ShanghaiMetro\exports.js" />
-    <Content Include="Scripts\ShanghaiMetro\gdo.apps.shanghaiMetro.3d.js" />
-    <Content Include="Scripts\ShanghaiMetro\gdo.apps.shanghaiMetro.js" />
-    <Content Include="Scripts\ShanghaiMetro\gdo.apps.shanghaiMetro.ui.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3cesium-debug.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3cesium.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3\ol-debug.js" />
-    <Content Include="Scripts\ShanghaiMetro\ol3\ol.css" />
-    <Content Include="Scripts\ShanghaiMetro\ol3\ol.js" />
-    <Content Include="Web\ShanghaiMetro\App.cshtml" />
-    <Content Include="Web\ShanghaiMetro\Control.cshtml" />
+    <Content Include="Web\EyeTracking\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\jquery-2.1.4.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ShanghaiMetroApp.cs" />
-    <Compile Include="ShanghaiMetroAppHub.cs" />
+    <Compile Include="EyeTrackingModule.cs" />
+    <Compile Include="EyeTrackingModuleHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\" />
+    <Folder Include="Data\EyeTracking\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
-      <Project>{4A27F694-1D9A-420A-A3A6-62521EAA047E}</Project>
+      <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>
       <Name>GDO</Name>
     </ProjectReference>
   </ItemGroup>
@@ -139,9 +173,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>32870</DevelopmentServerPort>
+          <DevelopmentServerPort>50564</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:32870/</IISUrl>
+          <IISUrl>http://localhost:50287/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -151,19 +185,26 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
     <ItemGroup>
-      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*" />
-      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*" />
-      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*" />
-      <GDOAppBin Include="$(ProjectDir)bin\*.*" />
+      <GDOModuleData Include="$(ProjectDir)Data\**\*.*" />
+      <GDOModuleScripts Include="$(ProjectDir)Scripts\**\*.*" />
+      <GDOModuleWeb Include="$(ProjectDir)Web\**\*.*" />
+      <GDOModuleBin Include="$(ProjectDir)bin\*.*" />
     </ItemGroup>
-    <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
-    <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(GDOAppScripts)" DestinationFiles="@(GDOAppScripts->'$(SolutionDir)GDO\Scripts\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(GDOAppWeb)" DestinationFiles="@(GDOAppWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(GDOAppBin)" DestinationFiles="@(GDOAppBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
+    <Message Text="Exporting $(ProjectName) to Module directory ..." Importance="high" />
+    <Copy SourceFiles="@(GDOModuleData)" DestinationFiles="@(GDOModuleData->'$(SolutionDir)GDO\Data\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOModuleScripts)" DestinationFiles="@(GDOModuleScripts->'$(SolutionDir)GDO\Scripts\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOModuleWeb)" DestinationFiles="@(GDOModuleWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOModuleBin)" DestinationFiles="@(GDOModuleBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
   </Target>
 </Project>

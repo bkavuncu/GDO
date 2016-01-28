@@ -282,7 +282,7 @@ gdo.net.app["ShanghaiMetro"].initMap = function (instanceId, center, resolution,
             visible: false,
             preload: Infinity,
             source: new ol.source.BingMaps({
-                key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+                key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
                 imagerySet: gdo.net.instance[instanceId].styles[i],
                 maxZoom: 19
             })
@@ -551,7 +551,6 @@ gdo.net.app["ShanghaiMetro"].drawFeatures = function(instanceId) {
     for (var index3 in gdo.net.app["ShanghaiMetro"].entry_and_exits.Data) {
         if (gdo.net.app["ShanghaiMetro"].entry_and_exits.Data.hasOwnProperty((index3))) {
             var dataPoint = gdo.net.app["ShanghaiMetro"].entry_and_exits.Data[index3];
-            datax = dataPoint;
             var geom2 = new ol.geom.Point(ol.proj.transform([parseFloat(dataPoint.coordinates[0]), parseFloat(dataPoint.coordinates[1])], 'EPSG:4326', 'EPSG:3857'));
             var feature2 = new ol.Feature({
                 geometry: geom2
@@ -576,8 +575,8 @@ gdo.net.app["ShanghaiMetro"].calculateLocalCenter = function (topLeft, bottomRig
 gdo.net.app["ShanghaiMetro"].initClient = function (clientId) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.ShanghaiMetro', 1, 'Initializing ShanghaiMetro App Instance ' + instanceId + ' Client at Node ' + clientId);
-    gdo.loadModule('ui', 'shanghaiMetro', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'shanghaiMetro', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('ui', 'shanghaiMetro', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'shanghaiMetro', gdo.SCRIPT_TYPE.APP);
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.app["ShanghaiMetro"].C = 156543.034;
     gdo.net.app["ShanghaiMetro"].R = 6378137;
@@ -601,8 +600,8 @@ gdo.net.app["ShanghaiMetro"].initClient = function (clientId) {
 }
 
 gdo.net.app["ShanghaiMetro"].initControl = function (instanceId) {
-    gdo.loadModule('ui', 'shanghaiMetro', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'shanghaiMetro', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('ui', 'shanghaiMetro', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'shanghaiMetro', gdo.SCRIPT_TYPE.APP);
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;

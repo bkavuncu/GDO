@@ -14,6 +14,10 @@
         }
     }
 }
+gdo.management.processNodeUpdate = function (id) {
+    $("#node_table_node_" + id + '_u').css("background", "#559100");
+    setTimeout(function () { $("#node_table_node_" + id + '_u').css("background", "#2F2F2F"); }, 700);
+}
 
 gdo.management.drawNodeTable = function (nodeId) {
     /// <summary>
@@ -37,21 +41,29 @@ gdo.management.drawNodeTable = function (nodeId) {
     }
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
-        $("#node_table_row_" + node.row + "_col_" + node.col)
-             .empty()
-             .css("vertical-align","top")
-             .append("<div id='node_table_node_" + node.id + "_i' style='text-align:center;background:#444'> <font size='4px'><b> " + node.id + "</b></font></div>")
-             .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-             .append("<div id='node_table_node_" + node.id + "_s'> <b>&nbsp;Section ID:</b> " + node.sectionId + "</div>")
-             //.append("<div id='node_table_node_" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
-             //.append("<div id='node_table_node_" + node.id + "_c'> <b>Conn ID:</b> " + node.connectionId + "</div>")
-             .append("<div id='node_table_node_" + node.id + "_p'> <b>&nbsp;Peer Conn</b></div>")
-             .append("<div id='node_table_node_" + node.id + "_c'> <b>&nbsp;Server Conn</b></div>")
-             .append("<div id='node_table_node_" + node.id + "_h'> <b>&nbsp;Node Health</b></div>")
-             .css("height", (gdo.management.table_height / gdo.net.rows) + "")
-             .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
-             .css({ fontSize: gdo.management.table_font_size })
-             .css('padding', 0);
+        if (!gdo.management.nodeTableDrawn) {
+            $("#node_table_row_" + node.row + "_col_" + node.col)
+                .empty()
+                .css("vertical-align", "top")
+                .append("<div id='node_table_node_" + node.id + "_i' style='text-align:center;background:#333;position:relative'> <font size='4px'><b> " + node.id + "</b></font> " +
+                    "<div class='circle img-circle' style='width:15px;height:15px;position:absolute;top:4px;right:4px;background:#111'></div>" +
+                    "<div id='node_table_node_" + node.id + "_u' class='circle img-circle' style='width:13px;height:13px;position:absolute;top:5px;right:5px;background:#2F2F2F'></div>" +
+                    "</div>")
+                .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+                .append("<div id='node_table_node_" + node.id + "_s'> <b>&nbsp;Section ID:</b> " + node.sectionId + "</div>")
+                //.append("<div id='node_table_node_" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
+                //.append("<div id='node_table_node_" + node.id + "_c'> <b>Conn ID:</b> " + node.connectionId + "</div>")
+                .append("<div id='node_table_node_" + node.id + "_p'> <b>&nbsp;Peer Conn</b></div>")
+                .append("<div id='node_table_node_" + node.id + "_c'> <b>&nbsp;Server Conn</b></div>")
+                .append("<div id='node_table_node_" + node.id + "_h'> <b>&nbsp;Node Health</b></div>")
+                .css("height", (gdo.management.table_height / gdo.net.rows) + "%")
+                .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
+                .css({ fontSize: gdo.management.table_font_size })
+                .css('padding', 0);
+            if (i == gdo.net.cols * gdo.net.rows) {
+                gdo.management.nodeTableDrawn = true;
+            }
+        }
         if (node.id == gdo.nodeId) {
             $("#selected_node").css("background", " #222").css("border", "1px solid #333").css('padding', 4);
             $("#selected_node_id").empty().append("<b>&nbsp;Node Id:</b> " + node.id).css("width", 7 + "%").css("height", gdo.management.info_height).css("border", "1px solid #333").css('padding', 4);
@@ -156,5 +168,6 @@ gdo.management.drawNodeTable = function (nodeId) {
             $("#node_table_row_" + node.row + "_col_" + node.col).css("background", "#222");
         }
     }
+
 }
 
