@@ -17,12 +17,33 @@ $(function () {
         }
         gdo.net.module["EyeTracking"].updateButtons();
     }
+
+    $.connection.eyeTrackingModuleHub.client.receiveData = function (timestamp, userId, nodeId, x, y, angle, distance) {
+        //save it ?
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            //put it on cursor
+            //if nodeId is one of the neighbours or us display
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            //gdo.net.module["EyeTracking"].displayDataOnUserTable(userId, )
+            //light up location,
+            //put it on gdo circle
+            //convert to x y coordinates
+            //pass it to flot
+        }
+    }
+
+    //create a debug function to upload fake data
+    //create a function to update gdo map
+    //create a function to update gdo circle
+    //create a function to pass data to morris
+
     $.connection.eyeTrackingModuleHub.client.updateCursorMode = function (mode) {
         gdo.consoleOut('.EyeTracking', 1, 'Cursor Mode: ' + mode);
         gdo.net.module["EyeTracking"].cursorMode = mode;
         gdo.net.module["EyeTracking"].updateButtons();
     }
-    $.connection.eyeTrackingModuleHub.client.updateReferenceSize = function (size) {
+    $.connection
+        .eyeTrackingModuleHub.client.updateReferenceSize = function (size) {
         gdo.consoleOut('.EyeTracking', 1, 'Reference Size: ' + size * 8 + 'px');
         gdo.net.module["EyeTracking"].referenceSize = size;
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -30,6 +51,7 @@ $(function () {
                 $("body").append("<div id='eyetracking_references_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:white; width:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px'></div>");
                 $("body").append("<div id='eyetracking_references_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize + "px; right: " + gdo.net.module["EyeTracking"].referenceSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px'></div>");
                 $("body").append("<table id='eyetracking_references_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].referenceSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
+                //create cursors
             }
             gdo.net.module["EyeTracking"].drawReferenceTable(parseInt(gdo.clientId));
         }
@@ -57,12 +79,41 @@ gdo.net.module["EyeTracking"].terminateControl = function () {
     gdo.consoleOut('.EyeTracking', 1, 'Terminating EyeTracking Module Control');
 }
 
+gdo.net.module["EyeTracking"].displayStatusOnUserPanel = function(userId, message) {
+    $("iframe").contents().find("#user_" + userId + "_status").empty().append(message);
+}
+
+gdo.net.module["EyeTracking"].displayDataOnUserTable = function(userId, col, row) {
+    for (var i = 0; i < gdo.net.cols; i++) {
+        for (var j = 0; j < gdo.net.rows; j++) {
+            $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + j + "_col_" + i).css("background", "#111111");
+        }
+    }
+    switch (userId) {
+        case 1:
+            $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + row + "_col_" + col).css("background", "#2A9FD6");
+            break;
+        case 2:
+            $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + row + "_col_" + col).css("background", "#77B300");
+            break;
+        case 3:
+            $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + row + "_col_" + col).css("background", "#FF8800");
+            break;
+        case 4:
+            $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + row + "_col_" + col).css("background", "#CC0000");
+            break;
+        default:
+            break;
+    }
+    //setTimeout(function () { $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + row + "_col_" + col).css("background", "#111111"); }, 700);
+}
+
 gdo.net.module["EyeTracking"].drawEmptyUserTable = function (userId, maxCol, maxRow) {
     $("iframe").contents().find("#user_" + userId + "_table").empty();
     for (var i = 0; i < maxRow; i++) {
-        $("iframe").contents().find("#user_" + userId + "_table").append("<tr id='user_" + userId + "_table_row_" + i + "' row='" + i + "'></tr>");
+        $("iframe").contents().find("#user_" + userId + "_coordinates").append("<tr id='user_" + userId + "_coordinates_row_" + i + "' row='" + i + "'></tr>");
         for (var j = 0; j < maxCol; j++) {
-            $("iframe").contents().find("#user_" + userId + "_table tr:last").append("<td id='user_" + userId + "_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>").css('overflow', 'hidden');
+            $("iframe").contents().find("#user_" + userId + "_coordinates tr:last").append("<td id='user_" + userId + "_coordinates_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>").css('overflow', 'hidden');
         }
     }
 }
@@ -71,10 +122,10 @@ gdo.net.module["EyeTracking"].drawUserTable = function (userId, maxCol, maxRow) 
     gdo.net.module["EyeTracking"].drawEmptyUserTable(userId, maxCol, maxRow);
     for (var i = 0; i < maxCol; i++) {
         for (var j = 0; j < maxRow; j++) {
-            $("iframe").contents().find("#user_" + userId + "_table_row_" + j + "_col_" + i)
+            $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + j + "_col_" + i)
                 .empty()
-                .css("width", 50/maxCol + "vw")
-                .css("height", 14 / maxRow + "vh")
+                .css("width", 50 / maxCol + "vw")
+                .css("height", 8 / maxRow + "vh")
                 .css("border", "1px solid grey")
                 .css('padding', 0)
                 .css('overflow', 'hidden');

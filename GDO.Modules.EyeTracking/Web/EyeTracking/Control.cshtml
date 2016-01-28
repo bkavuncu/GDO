@@ -90,6 +90,9 @@
             position: relative;
             text-align: center;
         }
+        .circleDiv {
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -126,75 +129,91 @@
         <br>
         <br>
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="panel panel-primary disabled">
                     <div class="panel-heading">
                         <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 1</h6>
                     </div>
                     <div class="panel-body">
-                        <div class="col-lg-6"><table id="user_1_table" unselectable="on" class="unselectable" style=""></table></div>
-                        <div class="col-lg-6">
-                            <div class="flot-chart" style="height:14vh">
+                        <div class="col-lg-8">
+                            <div><table id="user_1_coordinates" unselectable="on" class="unselectable" style=""></table></div>
+                            <div class="flot-chart" style="height:10vh">
                                 <div class="flot-chart-content" id="user_1_chart"></div>
                             </div>
+
+                        </div>
+                        <div class="col-lg-4">
+                            <div id="user_1_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px;background: #171717; border:1px solid grey"></div>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        Messages
+                    <div id="user_1_status" class="panel-footer">
+                        Status
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 2</h6>
                     </div>
                     <div class="panel-body">
-                        <div class="col-lg-6"><table id="user_2_table" unselectable="on" class="unselectable" style=""></table></div>
-                        <div class="col-lg-6">
-                            <div class="flot-chart" style="height:14vh">
+                        <div class="col-lg-8">
+                            <div><table id="user_2_coordinates" unselectable="on" class="unselectable" style=""></table></div>
+                            <div class="flot-chart" style="height:10vh">
                                 <div class="flot-chart-content" id="user_2_chart"></div>
                             </div>
+
+                        </div>
+                        <div class="col-lg-4">
+                            <div id="user_2_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px;background: #171717; border:1px solid grey"></div>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        Messages
+                    <div id="user_2_status" class="panel-footer">
+                        Status
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="panel panel-warning">
                     <div class="panel-heading">
                         <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 3</h6>
                     </div>
                     <div class="panel-body">
-                        <div class="col-lg-6"><table id="user_3_table" unselectable="on" class="unselectable" style=""></table></div>
-                        <div class="col-lg-6">
-                            <div class="flot-chart" style="height:14vh">
+                        <div class="col-lg-8">
+                            <div><table id="user_3_coordinates" unselectable="on" class="unselectable" style=""></table></div>
+                            <div class="flot-chart" style="height:10vh">
                                 <div class="flot-chart-content" id="user_3_chart"></div>
                             </div>
+
+                        </div>
+                        <div class="col-lg-4">
+                            <div id="user_3_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px;background: #171717; border:1px solid grey"></div>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        Messages
+                    <div id="user_3_status" class="panel-footer">
+                        Status
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <div class="panel panel-danger">
                     <div class="panel-heading">
                         <h6><i class='fa  fa-user  fa-fw'></i>&nbsp;User 4</h6>
                     </div>
                     <div class="panel-body">
-                        <div class="col-lg-6"><table id="user_4_table" unselectable="on" class="unselectable" style=""></table></div>
-                        <div class="col-lg-6">
-                            <div class="flot-chart" style="height:14vh">
+                        <div class="col-lg-8">
+                            <div><table id="user_4_coordinates" unselectable="on" class="unselectable" style=""></table></div>
+                            <div class="flot-chart" style="height:10vh">
                                 <div class="flot-chart-content" id="user_4_chart"></div>
                             </div>
+
+                        </div>
+                        <div class="col-lg-4">
+                            <div id="user_4_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px;background: #171717; border:1px solid grey"></div>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        Messages
+                    <div id="user_4_status" class="panel-footer">
+                        Status
                     </div>
                 </div>
             </div>

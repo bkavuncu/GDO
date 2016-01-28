@@ -117,5 +117,19 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
+
+        public void BroadcastData(int timestamp, int userId, int nodeId, int x, int y, int angle, int distance)
+        {
+            try
+            {
+                //((EyeTrackingModule)Cave.Modules["EyeTracking"]). = ;
+                Clients.All.receiveData(timestamp, userId, nodeId, x, y, angle, distance);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Clients.Caller.setMessage(e.GetType().ToString());
+            }
+        }
     }
 }
