@@ -32,6 +32,7 @@
     </script>
 
     <script id="2d-fragment-shader" type="x-shader/x-fragment">
+
         #ifdef GL_FRAGMENT_PRECISION_HIGH
         precision highp float;
         #else
@@ -58,11 +59,19 @@
         return length(p)-r;
         }
 
-        // Merge function
-        float mergePrimitives(vec3 p) {
-        float d1 = primitiveCylinder(p, vec2(0.5,0.5));
-        float d2 = primitiveSphere(p, 0.6);
-        return min( d1, d2 );
+        // Torus function
+        float sdTorus( vec3 p, vec2 t ) {
+        vec2 q = vec2(length(p.xz)-t.x,p.y);
+        return length(q)-t.y;
+        }
+
+        // Twist function
+        float opTwist( vec3 p ) {
+        float c = cos(20.0*p.y);
+        float s = sin(20.0*p.y);
+        mat2  m = mat2(c,-s,s,c);
+        vec3  q = vec3(m*p.xz,p.y);
+        return sdTorus(q, vec2(0.2, 0.4));
         }
 
         // Mod function
@@ -86,7 +95,7 @@
 
         // distance estimator
         p = modPoint(p, 2.0);
-        float d = mergePrimitives(p);
+        float d = opTwist(p);
 
         if(d < 0.00001) {
         // Sphere color
@@ -146,6 +155,7 @@
         void main() {
         rayMarch();
         }
+
     </script>
 
 </body>
