@@ -1,5 +1,6 @@
 ﻿
 $(function () {
+    gdo.net.module["EyeTracking"].mapRadius = 100;
     gdo.consoleOut('.EyeTracking', 1, 'Loaded EyeTracking JS');
     gdo.net.module["EyeTracking"].numUsers = 4;
 
@@ -24,17 +25,13 @@ $(function () {
             //put it on cursor
             //if nodeId is one of the neighbours or us display
         } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            //gdo.net.module["EyeTracking"].displayDataOnUserTable(userId, )
-            //light up location,
-            //put it on gdo circle
-            //convert to x y coordinates
+            gdo.net.module["EyeTracking"].displayDataOnUserTable(userId, gdo.net.node[nodeId].col, gdo.net.node[nodeId].row);
+            gdo.net.module["EyeTracking"].displayLocationOnUserMap(userId, angle, distance);
             //pass it to flot
         }
     }
 
     //create a debug function to upload fake data
-    //create a function to update gdo map
-    //create a function to update gdo circle
     //create a function to pass data to morris
 
     $.connection.eyeTrackingModuleHub.client.updateCursorMode = function (mode) {
@@ -44,18 +41,18 @@ $(function () {
     }
     $.connection
         .eyeTrackingModuleHub.client.updateReferenceSize = function (size) {
-        gdo.consoleOut('.EyeTracking', 1, 'Reference Size: ' + size * 8 + 'px');
-        gdo.net.module["EyeTracking"].referenceSize = size;
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            if (!$('#eyetracking_references_outer')[1]) {
-                $("body").append("<div id='eyetracking_references_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:white; width:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px'></div>");
-                $("body").append("<div id='eyetracking_references_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize + "px; right: " + gdo.net.module["EyeTracking"].referenceSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px'></div>");
-                $("body").append("<table id='eyetracking_references_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].referenceSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
-                //create cursors
+            gdo.consoleOut('.EyeTracking', 1, 'Reference Size: ' + size * 8 + 'px');
+            gdo.net.module["EyeTracking"].referenceSize = size;
+            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                if (!$('#eyetracking_references_outer')[1]) {
+                    $("body").append("<div id='eyetracking_references_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:white; width:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px'></div>");
+                    $("body").append("<div id='eyetracking_references_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize + "px; right: " + gdo.net.module["EyeTracking"].referenceSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px'></div>");
+                    $("body").append("<table id='eyetracking_references_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].referenceSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
+                    //create cursors
+                }
+                gdo.net.module["EyeTracking"].drawReferenceTable(parseInt(gdo.clientId));
             }
-            gdo.net.module["EyeTracking"].drawReferenceTable(parseInt(gdo.clientId));
         }
-    }
 });
 
 
@@ -72,6 +69,14 @@ gdo.net.module["EyeTracking"].initControl = function () {
     gdo.net.module["EyeTracking"].updateButtons();
     for (var i = 1; i < gdo.net.module["EyeTracking"].numUsers + 1; i++) {
         gdo.net.module["EyeTracking"].drawUserTable(i, gdo.net.cols, gdo.net.rows);
+        $("iframe").contents().find("#user_" + i + "_location")
+            .css("width", gdo.net.module["EyeTracking"].mapRadius * 2)
+            .css("height", gdo.net.module["EyeTracking"].mapRadius * 2);
+        $("iframe").contents().find("#user_" + i + "_marker")
+            .css("width", gdo.net.module["EyeTracking"].mapRadius / 5)
+            .css("height", gdo.net.module["EyeTracking"].mapRadius / 5)
+            .css("top", (gdo.net.module["EyeTracking"].mapRadius / 10) * 9)
+            .css("left", (gdo.net.module["EyeTracking"].mapRadius / 10) * 9);
     }
 }
 
@@ -79,11 +84,17 @@ gdo.net.module["EyeTracking"].terminateControl = function () {
     gdo.consoleOut('.EyeTracking', 1, 'Terminating EyeTracking Module Control');
 }
 
-gdo.net.module["EyeTracking"].displayStatusOnUserPanel = function(userId, message) {
+gdo.net.module["EyeTracking"].displayStatusOnUserPanel = function (userId, message) {
     $("iframe").contents().find("#user_" + userId + "_status").empty().append(message);
 }
 
-gdo.net.module["EyeTracking"].displayDataOnUserTable = function(userId, col, row) {
+gdo.net.module["EyeTracking"].displayLocationOnUserMap = function (userId, angle, distance) {
+    var x = (gdo.net.module["EyeTracking"].mapRadius + Math.round((((gdo.net.module["EyeTracking"].mapRadius / 100) * distance) * Math.sin(angle * (Math.PI / 180))))) - (gdo.net.module["EyeTracking"].mapRadius / 10);
+    var y = (gdo.net.module["EyeTracking"].mapRadius + Math.round((((gdo.net.module["EyeTracking"].mapRadius / 100) * distance) * Math.cos(angle * (Math.PI / 180))))) - (gdo.net.module["EyeTracking"].mapRadius / 10);
+    $("iframe").contents().find("#user_" + userId + "_marker").css("top", y).css("left", x);
+}
+
+gdo.net.module["EyeTracking"].displayDataOnUserTable = function (userId, col, row) {
     for (var i = 0; i < gdo.net.cols; i++) {
         for (var j = 0; j < gdo.net.rows; j++) {
             $("iframe").contents().find("#user_" + userId + "_coordinates_row_" + j + "_col_" + i).css("background", "#111111");

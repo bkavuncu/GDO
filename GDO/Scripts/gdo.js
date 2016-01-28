@@ -24,7 +24,7 @@ gdo.initGDO = function (clientMode) {
     gdo.consoleOut('', 1, 'Initializing GDO');
     gdo.loadScript('net', 'net', gdo.SCRIPT_TYPE.CORE);
     gdo.clientMode = clientMode;
-    gdo.updateInterval = 7000;
+    gdo.updateInterval = 4900;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
