@@ -202,10 +202,10 @@
     </div>
     <!-- /#wrapper -->
     <script>
-        gdo.updateDisplayCanvas = function () {
+        gdo.updateDisplayCanvas = function() {
             gdo.management.updateMaintenanceButton();
         }
-        $(function () {
+        $(function() {
             @{
                 foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                 {
@@ -217,24 +217,31 @@
                 }
             }
             gdo.loadScript('modules', 'management', gdo.SCRIPT_TYPE.CORE);
-            $( document ).ready(function() {
+            $(document).ready(function() {
                 gdo.clientId = 1;
                 gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
             });
         });
-        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+        window.onerror = function(errorMsg, url, lineNumber, column, errorObj) {
             var space = "<br /> ";
             gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
                 + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
         }
-        initApp = function () {
+        initApp = function() {
             gdo.consoleOut('', 1, 'GDO Initialized');
             gdo.updateSelf();
             var moduleName = getUrlVar('name');
-            if(gdo.net.module[moduleName] != null && typeof gdo.net.module[moduleName] != "undefined"){
+            if (gdo.net.module[moduleName] != null && typeof gdo.net.module[moduleName] != "undefined") {
                 gdo.management.loadModuleControlFrame(moduleName);
             }
         }
     </script>
+    <!-- Flot Charts JavaScript -->
+    <script src="../../Bootstrap/bower_components/flot/excanvas.min.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.pie.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.resize.js"></script>
+    <script src="../../Bootstrap/bower_components/flot/jquery.flot.time.js"></script>
+    <script src="../../Bootstrap/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
 </body>
 </html>

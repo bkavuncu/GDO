@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Modules.EyeTracking
@@ -117,15 +119,30 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
-
-        public void UploadData(int timestamp, int userId, int nodeId, int x, int y, int angle, int distance)
+        public void RequestCacheSize()
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
                 try
                 {
-                    //((EyeTrackingModule)Cave.Modules["EyeTracking"]). ;
-                    BroadcastData(timestamp, userId, nodeId, x, y, angle, distance);
+                    Clients.Caller.updateCacheSize(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void SetCacheSize(int size)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize = size;
+                    Clients.All.updateCacheSize(size);
                 }
                 catch (Exception e)
                 {
@@ -135,12 +152,36 @@ namespace GDO.Modules.EyeTracking
             }
         }
 
-        private void BroadcastData(int timestamp, int userId, int nodeId, int x, int y, int angle, int distance)
+
+        public void UploadData(string serializedData)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    EyeTrackingModule.TrackData deserializedData = JsonConvert.DeserializeObject<EyeTrackingModule.TrackData>(serializedData);
+                    if (((EyeTrackingModule) Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Count >
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CacheSize)
+                    {
+                        EyeTrackingModule.TrackData remove;
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryRemove(((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Keys.First(),out remove);
+                    }
+                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryAdd(deserializedData.TimeStamp, deserializedData); ;
+                    BroadcastData(serializedData);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        private void BroadcastData(string serializedData)
         {
             try
             {
-                //((EyeTrackingModule)Cave.Modules["EyeTracking"]). = ;
-                Clients.All.receiveData(timestamp, userId, nodeId, x, y, angle, distance);
+                Clients.All.receiveData(serializedData);
             }
             catch (Exception e)
             {
