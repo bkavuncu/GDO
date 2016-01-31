@@ -125,8 +125,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Scripts\Fractals\cameraControl.js" />
-    <Content Include="Scripts\Fractals\webgl.js" />
+    <Content Include="Scripts\Fractals\gdo.apps.Fractals.cameraControl.js" />
+    <Content Include="Scripts\Fractals\gdo.apps.Fractals.webgl.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
