@@ -5171,5 +5171,47 @@
 		"nbDocks": 27,
 		"coordinates": ["51.5403114",
 		"-0.021630358"]
+	},
+	"789": {
+		"id": "789",
+		"name": "Podium/Stratford Walk",
+		"nbDocks": 40,
+		"coordinates": ["51.538717",
+		"-0.011889481"]
+	},
+	"788": {
+		"id": "788",
+		"name": "Copperbox, Newham",
+		"nbDocks": 33,
+		"coordinates": ["51.544835",
+		"-0.019524751"]
+	},
+	"784": {
+		"id": "784",
+		"name": "East Village, Newham",
+		"nbDocks": 34,
+		"coordinates": ["51.546325",
+		"-0.00993525"]
+	},
+	"785": {
+		"id": "785",
+		"name": "Aquatic Centre, Newham",
+		"nbDocks": 64,
+		"coordinates": ["51.54094",
+		"-0.010510565"]
+	},
+	"786": {
+		"id": "786",
+		"name": "Velodrome, Newham",
+		"nbDocks": 44,
+		"coordinates": ["51.549368",
+		"-0.015717613"]
+	},
+	"787": {
+		"id": "787",
+		"name": "Timber Lodge, Newham",
+		"nbDocks": 35,
+		"coordinates": ["51.546804",
+		"-0.01469125"]
 	}
 }
