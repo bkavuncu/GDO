@@ -8,8 +8,8 @@ function init() {
     // Set up canvas
     canvas = document.getElementById('glscreen');
     gl = canvas.getContext('experimental-webgl');
-    canvas.width = 1920.0;
-    canvas.height = 1080.0;
+    canvas.width = 960;
+    canvas.height = 540;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -69,6 +69,10 @@ function init() {
     // Setup translation
     transLoc = gl.getUniformLocation(program, "translation");
     gl.uniform3f(transLoc, xTrans, yTrans, zTrans);
+
+    // Setup eye
+    eyeLoc = gl.getUniformLocation(program, "eyeHeight");
+    gl.uniform1f(eyeLoc, -rotationParams.yHeight);
 
     // Set page size
     widthloc = gl.getUniformLocation(program, "width");

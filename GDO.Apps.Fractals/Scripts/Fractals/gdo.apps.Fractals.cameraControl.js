@@ -1,4 +1,12 @@
-﻿// Camera settings
+﻿
+function rotationParams(xRot, yHeight) {
+    this.xRot = xRot;
+    this.yHeight = yHeight;
+}
+
+var rotationParams;
+
+// Camera settings
 var sensitivity = 0.05;
 
 var xRotLoc;
@@ -12,7 +20,7 @@ var yRotUp = false;
 var yRotDown = false;
 
 var focalLoc;
-var focal = 1.0;
+var focal = 1/Math.tan((315/32)*(Math.PI/180));
 var focalIn = false;
 var focalOut = false;
 
@@ -26,6 +34,12 @@ var down = false;
 var xTrans = 0.0;
 var yTrans = 0.0;
 var zTrans = 0.0;
+
+var eyeLoc;
+var xEye = 0.0;
+var yEye = 0.0;
+var zEye = 0.0;
+
 
 window.onkeydown = function () {
     //alert(event.keyCode);
@@ -167,7 +181,7 @@ function cameraMovements() {
     if (xRotRight) {
         xRot -= sensitivity;
     }
-    gl.uniform1f(xRotLoc, xRot);
+    gl.uniform1f(xRotLoc, rotationParams.xRot);
 
     if (focalIn) {
         focal += sensitivity;
@@ -197,4 +211,5 @@ function cameraMovements() {
     }
     gl.uniform3f(transLoc, xTrans, yTrans, zTrans);
 
+    gl.uniform1f(eyeLoc, -rotationParams.yHeight);
 }
