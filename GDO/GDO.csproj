@@ -938,7 +938,6 @@
     <Content Include="Bootstrap\less\variables.less" />
     <Content Include="Bootstrap\LICENSE" />
     <Content Include="Bootstrap\README.md" />
-    <Content Include="Bootstrap\gdo.management" />
     <None Include="Properties\PublishProfiles\emergency.pubxml" />
     <None Include="Properties\PublishProfiles\PreProd.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
