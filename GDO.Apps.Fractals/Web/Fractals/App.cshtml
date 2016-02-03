@@ -136,7 +136,7 @@
         void rayMarch() {
 
             // Keep eye in the origin of the scene
-            vec3 eye = vec3(0, eyeHeight, 0);
+            vec3 eye = vec3(0, 0, 0);
 
             // Get x between -1.0 - 1.0
             float x = gl_FragCoord.x * 2.0 / width - 1.0;
@@ -160,7 +160,7 @@
 
             // ro - ray origin
             // calculate where ray passes through the screen
-            vec3 ro = vec3(x,y,focal2);
+            vec3 ro = vec3(x,y-eyeHeight,focal2);
 
             // rd - ray direction
             // calculate direction of ray

@@ -8,8 +8,8 @@ function init() {
     // Set up canvas
     canvas = document.getElementById('glscreen');
     gl = canvas.getContext('experimental-webgl');
-    canvas.width = 960;
-    canvas.height = 540;
+    canvas.width = 1080;
+    canvas.height = 1920;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
