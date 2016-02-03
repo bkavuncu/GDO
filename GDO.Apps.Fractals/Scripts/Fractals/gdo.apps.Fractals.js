@@ -23,7 +23,7 @@ gdo.net.app["Fractals"].initClient = function (rotationParams) {
     // Set vertical height
     var y = Math.floor((gdo.clientId - 1) / 16) - 1.5;
     var ratio = (1080 / 1920);
-    rotationParams.yHeight = 2 * ratio * y;
+    rotationParams.yHeight = 2.0 * ratio * y;
     gdo.consoleOut('.Fractals', 1, 'Eye height = ' + rotationParams.yHeight);
 
     rot = rotationParams;

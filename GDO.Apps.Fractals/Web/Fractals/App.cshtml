@@ -52,111 +52,130 @@
 
         // Cylinder function
         float primitiveCylinder(vec3 p, vec2 h) {
-        vec2 d = abs(vec2(length(p.xz),p.y)) - h;
-        return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+            vec2 d = abs(vec2(length(p.xz),p.y)) - h;
+            return min(max(d.x,d.y),0.0) + length(max(d,0.0));
         }
 
         // Sphere function
         float primitiveSphere(vec3 p, float r) {
-        return length(p)-r;
+            return length(p)-r;
         }
 
         // Torus function
         float sdTorus( vec3 p, vec2 t ) {
-        vec2 q = vec2(length(p.xz)-t.x,p.y);
-        return length(q)-t.y;
+            vec2 q = vec2(length(p.xz)-t.x,p.y);
+            return length(q)-t.y;
         }
 
         // Twist function
-        float opTwist( vec3 p ) {
-        float c = cos(20.0*p.y);
-        float s = sin(20.0*p.y);
-        mat2  m = mat2(c,-s,s,c);
-        vec3  q = vec3(m*p.xz,p.y);
-        return sdTorus(q, vec2(0.2, 0.4));
+            float opTwist( vec3 p ) {
+            float c = cos(20.0*p.y);
+            float s = sin(20.0*p.y);
+            mat2  m = mat2(c,-s,s,c);
+            vec3  q = vec3(m*p.xz,p.y);
+            return sdTorus(q, vec2(0.2, 0.4));
         }
 
         // Mod function
         vec3 modPoint(vec3 p, float gap) {
-        return mod(p,gap)-vec3(gap/2.0);
+            return mod(p,gap)-vec3(gap/2.0);
         }
 
         vec4 march(vec3 ro, vec3 rd) {
 
-        // Sky color
-        vec4 color = vec4(0.2,0.2,0.4,1.0);
+            // Sky color
+            vec4 color = vec4(0.2,0.2,0.4,1.0);
 
-        // t - total distance ray travelled
-        float t = 0.0;
-        const int maxSteps = 100;
-        for(int i = 0; i < maxSteps; ++i)  {
+            // t - total distance ray travelled
+            float t = 0.0;
+            const int maxSteps = 100;
+            for(int i = 0; i < maxSteps; ++i)  {
 
-        // p - point of current ray
-        // ray origin + ray direction * total distance
-        vec3 p = ro + rd * t;
+                // p - point of current ray
+                // ray origin + ray direction * total distance
+                vec3 p = ro + rd * t;
 
-        // distance estimator
-        p = modPoint(p, 2.0);
-        //float d = opTwist(p);
-        float d = primitiveSphere(p, 0.5);
+                // distance estimator
+                p = modPoint(p, 2.0);
+                //float d = opTwist(p);
+                float d = primitiveSphere(p, 0.5);
 
-        if(d < 0.00001) {
-        // Sphere color
-        color = vec4(1.0-float(i)/float(maxSteps),0.2,1.0/(t/100.0),1.0);
-        break;
-        }
+                if(d < 0.00001) {
 
-        // increase total distance by ray distance
-        t += d;
-        }
+                    // Shading
+                    vec4 ambientColour = vec4(0.1, 0.9, 0.2, 1.0);
+                    vec4 diffuseColour = vec4(1.0, 1.0, 1.0, 1.0);
+                    vec4 specularColour = vec4(1.0, 1.0, 1.0, 1.0);
 
-        return color;
+                    vec3 lightDirection = normalize(vec3(-1,1,-1));
+
+                    vec3 xDir = vec3(0.01,0.0,0.0);
+                    vec3 yDir = vec3(0.0,0.01,0.0);
+                    vec3 zDir = vec3(0.0,0.0,0.01);
+                    vec3 normal = normalize(vec3(primitiveSphere(p+xDir, 0.5)-primitiveSphere(p-xDir, 0.5),
+                    primitiveSphere(p+yDir, 0.5)-primitiveSphere(p-yDir, 0.5),
+                    primitiveSphere(p+zDir, 0.5)-primitiveSphere(p-zDir, 0.5)));
+
+                    color = ambientColour + diffuseColour * max(dot(normal, lightDirection), 0.0)
+                    + specularColour * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 10.0);
+
+                    break;
+                }
+
+                // increase total distance by ray distance
+                t += d;
+            }
+
+            vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
+            color = mix(color, fogColor, 1.0 - exp(-t*0.2));
+
+            return color;
 
         }
 
         void rayMarch() {
 
-        // Keep eye in the origin of the scene
-        vec3 eye = vec3(0, eyeHeight, 0);
+            // Keep eye in the origin of the scene
+            vec3 eye = vec3(0, eyeHeight, 0);
 
-        // Get x between -1.0 - 1.0
-        float x = gl_FragCoord.x * 2.0 / width - 1.0;
+            // Get x between -1.0 - 1.0
+            float x = gl_FragCoord.x * 2.0 / width - 1.0;
 
-        // Get y between -1.0 - 1.0
-        float y = gl_FragCoord.y * 2.0 / height - 1.0;
+            // Get y between -1.0 - 1.0
+            float y = gl_FragCoord.y * 2.0 / height - 1.0;
 
-        // Apply aspect ratio
-        float ratio = height/width;
-        y *= ratio;
+            // Apply aspect ratio
+            float ratio = height/width;
+            y *= ratio;
 
-        // y rotation
-        float y2 = y*cos(yRot) - focal*sin(yRot);
-        float focal2 = y*sin(yRot) + focal*cos(yRot);
-        y = y2;
+            // y rotation
+            float y2 = y*cos(yRot) - focal*sin(yRot);
+            float focal2 = y*sin(yRot) + focal*cos(yRot);
+            y = y2;
 
-        // x rotation
-        float x2 = x*cos(xRot) - focal2*sin(xRot);
-        focal2 = x*sin(xRot) + focal2*cos(xRot);
-        x = x2;
+            // x rotation
+            float x2 = x*cos(xRot) - focal2*sin(xRot);
+            focal2 = x*sin(xRot) + focal2*cos(xRot);
+            x = x2;
 
-        // ro - ray origin
-        // calculate where ray passes through the screen
-        vec3 ro = vec3(x,y,focal2);
+            // ro - ray origin
+            // calculate where ray passes through the screen
+            vec3 ro = vec3(x,y,focal2);
 
-        // rd - ray direction
-        // calculate direction of ray
-        vec3 rd = normalize(ro-eye);
+            // rd - ray direction
+            // calculate direction of ray
+            vec3 rd = normalize(ro-eye);
 
-        // Translation
-        ro += translation;
+            // Translation
+            ro += translation;
 
-        // Set pixel colour
-        vec4 color = march(ro,rd);
-        gl_FragColor = color;
+            // Set pixel colour
+            vec4 color = march(ro,rd);
+            gl_FragColor = color;
         }
 
         void main() {
-        rayMarch();
+            rayMarch();
         }
 
     </script>
