@@ -28,14 +28,14 @@ gdo.net.app["LondonCycles"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_0_col_1")
         .empty()
-        .append("<div><button type='button' id='stamen_button' class='btn btn-danger btn-block'>Stamen Maps</button></div>")
+        .append("<div><button type='button' id='cartodb_button' class='btn btn-danger btn-block'>CartoDB Maps</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["LondonCycles"].numButtons + "%")
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["LondonCycles"].server.setStamenLayerVisible(instanceId);
+            gdo.net.app["LondonCycles"].server.setCartoDBLayerVisible(instanceId);
         });
     $("iframe").contents().find("#map_table_row_0_col_2")
         .empty()

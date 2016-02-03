@@ -18,7 +18,7 @@ namespace GDO.Apps.LondonCycles
         public MapPosition Position { get; set; }
         
         public bool BingLayer { get; set; }
-        public bool StamenLayer { get; set; }
+        public bool CartoDBLayer { get; set; }
         public bool OpenCycleLayer { get; set; }
         public bool StationLayer { get; set; }
         public bool HeatmapLayer { get; set; }
@@ -55,7 +55,7 @@ namespace GDO.Apps.LondonCycles
             this.StationWidth = (int)Configuration.Json.SelectToken("station");
             this.Entry = (bool)Configuration.Json.SelectToken("entry");
             this.BingLayer = false;
-            this.StamenLayer = false;
+            this.CartoDBLayer = false;
             this.OpenCycleLayer = true;
             this.StationLayer = true;
             this.HeatmapLayer = true;

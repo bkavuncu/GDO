@@ -101,14 +101,14 @@ $(function () {
         }
     }
 
-    $.connection.londonCyclesAppHub.client.setStamenLayerVisible = function (instanceId, visible) {
-        gdo.consoleOut('.LondonCycles', 1, 'Seting Stamen Maps Layer Visibility: ' + visible);
-        gdo.net.instance[instanceId].stamenLayer.setVisible(visible);
+    $.connection.londonCyclesAppHub.client.setCartoDBLayerVisible = function (instanceId, visible) {
+        gdo.consoleOut('.LondonCycles', 1, 'Seting CartoDB Maps Layer Visibility: ' + visible);
+        gdo.net.instance[instanceId].cartodbLayer.setVisible(visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
-                $("iframe").contents().find("#stamen_button").removeClass("btn-danger").addClass("btn-success");
+                $("iframe").contents().find("#cartodb_button").removeClass("btn-danger").addClass("btn-success");
             } else {
-                $("iframe").contents().find("#stamen_button").removeClass("btn-success").addClass("btn-danger");
+                $("iframe").contents().find("#cartodb_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
@@ -281,10 +281,10 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
         })
     });
 
-    gdo.net.instance[instanceId].stamenLayer = new ol.layer.Tile({
+    gdo.net.instance[instanceId].cartodbLayer = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.Stamen({
-            layer: 'toner'
+        source: new ol.source.XYZ({
+            url: 'http://s.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
         })
     });
 
@@ -296,7 +296,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
     });
     gdo.net.instance[instanceId].layers = [];
     //gdo.net.instance[instanceId].layers[0] = gdo.net.instance[instanceId].bingLayer;
-    //gdo.net.instance[instanceId].layers[1] = gdo.net.instance[instanceId].stamenLayer;
+    //gdo.net.instance[instanceId].layers[1] = gdo.net.instance[instanceId].cartodbLayer;
     //gdo.net.instance[instanceId].layers[2] = gdo.net.instance[instanceId].openCycleLayer;
     map = new ol.Map({
         controls: new Array(),
@@ -324,14 +324,14 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
         gdo.net.instance[instanceId].styleFunction = function (feature, resolution) {
             var style = new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks), //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
+                    radius: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks)/2, //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
                     fill: new ol.style.Fill({
                         color: 'lightblue',
-                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 3 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
+                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 7 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     }),
                     stroke: new ol.style.Stroke({
                         color: 'black',
-                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 4 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
+                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 8 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     })
                 })
             });
@@ -393,12 +393,12 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
             });
             setTimeout(function () {
                 map.addLayer(gdo.net.instance[instanceId].bingLayer);
-                map.addLayer(gdo.net.instance[instanceId].stamenLayer);
+                map.addLayer(gdo.net.instance[instanceId].cartodbLayer);
                 map.addLayer(gdo.net.instance[instanceId].openCycleLayer);
                 map.addLayer(gdo.net.instance[instanceId].stationsLayer);
                 map.addLayer(gdo.net.instance[instanceId].heatmapLayer);
                 gdo.net.app["LondonCycles"].server.requestBingLayerVisible(instanceId);
-                gdo.net.app["LondonCycles"].server.requestStamenLayerVisible(instanceId);
+                gdo.net.app["LondonCycles"].server.requestCartoDBLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestOpenCycleLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestStationLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestHeatmapLayerVisible(instanceId);

@@ -177,22 +177,22 @@ namespace GDO.Apps.LondonCycles
             }
         }
 
-        public void SetStamenLayerVisible(int instanceId)
+        public void SetCartoDBLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StamenLayer)
+                    if (((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).CartoDBLayer)
                     {
-                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StamenLayer = false;
+                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).CartoDBLayer = false;
                     }
                     else
                     {
-                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StamenLayer = true;
+                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).CartoDBLayer = true;
                     }
-                    Clients.Group("" + instanceId).setStamenLayerVisible(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StamenLayer);
-                    Clients.Caller.setStamenLayerVisible(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StamenLayer);
+                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -310,13 +310,13 @@ namespace GDO.Apps.LondonCycles
             }
         }
 
-        public void RequestStamenLayerVisible(int instanceId)
+        public void RequestCartoDBLayerVisible(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setStamenLayerVisible(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StamenLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
