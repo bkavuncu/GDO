@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 
 namespace GDO.Modules.EyeTracking
@@ -52,6 +53,12 @@ namespace GDO.Modules.EyeTracking
             {
                 return JsonConvert.SerializeObject(this);
             }
+        }
+
+        public void ReceiveData(string data)
+        {
+            var context = GlobalHost.ConnectionManager.GetHubContext<EyeTrackingModuleHub>();
+            context.Clients.All.displayIncomingData(data);
         }
     }
 }

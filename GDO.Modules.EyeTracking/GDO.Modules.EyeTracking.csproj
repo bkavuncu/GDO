@@ -134,6 +134,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="Web\EyeTracking\Control.cshtml" />
+    <Content Include="Web\EyeTracking\User1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />

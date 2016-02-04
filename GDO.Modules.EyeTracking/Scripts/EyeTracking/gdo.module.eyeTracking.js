@@ -32,6 +32,9 @@ $(function () {
         }
         gdo.net.module["EyeTracking"].updateButtons();
     }
+    $.connection.eyeTrackingModuleHub.client.displayIncomingData = function(data) {
+        gdo.consoleOut('.EyeTracking', 4, data);
+    }
 
     $.connection.eyeTrackingModuleHub.client.receiveData = function (serializedData) {
         var deserializedData = JSON.parse(serializedData);
