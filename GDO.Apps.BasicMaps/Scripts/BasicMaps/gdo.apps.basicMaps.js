@@ -171,6 +171,7 @@ gdo.net.app["BasicMaps"].clearInput = function () {
 gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoom) {
     gdo.net.instance[instanceId].view = new ol.View({
         center: [parseFloat(center[0]), parseFloat(center[1])],
+        enableRotation: false,
         resolution: parseFloat(resolution),
         zoom: parseInt(zoom)
     });

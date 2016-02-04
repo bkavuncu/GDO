@@ -368,7 +368,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_4_col_4")
         .empty()
-        .append("<div><button type='button' id='basicMaps_layer_38' class='btn  btn-primary  btn-outline btn-block'>Strava Heatmap Bike (Blue)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_38' class='btn btn-danger  btn-outline btn-block'>Strava Heatmap Bike (Blue)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
@@ -379,7 +379,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_4_col_5")
         .empty()
-        .append("<div><button type='button' id='basicMaps_layer_39' class='btn  btn-primary  btn-outline btn-block'>Strava Heatmap Running (Blue)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_39' class='btn  btn-danger  btn-outline btn-block'>Strava Heatmap Running (Blue)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
@@ -434,7 +434,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_5_col_4")
         .empty()
-        .append("<div><button type='button' id='basicMaps_layer_36' class='btn btn-primary  btn-outline btn-block'>Strava Heatmap Bike (Orange)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_36' class='btn btn-danger  btn-outline btn-block'>Strava Heatmap Bike (Orange)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
@@ -445,7 +445,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         });
     $("iframe").contents().find("#map_table_row_5_col_5")
         .empty()
-        .append("<div><button type='button' id='basicMaps_layer_37' class='btn btn-primary  btn-outline btn-block'>Strava Heatmap Running (Orange)</button></div>")
+        .append("<div><button type='button' id='basicMaps_layer_37' class='btn btn-danger  btn-outline btn-block'>Strava Heatmap Running (Orange)</button></div>")
         .css("margin", "0px")
         .css("padding", "0px")
         .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
