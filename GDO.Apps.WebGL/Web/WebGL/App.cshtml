@@ -100,13 +100,6 @@
                 var world = new ViewportTestWorld(renderer, camera);
                 world.initScene();
 
-                var numNodesWide = (gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width / 1920) - 1;
-
-                var nodeOffset = gdo.net.node[gdo.clientId].sectionCol - (numNodesWide / 2);
-
-                gdo.consoleOut('.WebGL', 1, 'Node offset - ' + (numNodesWide % 2));
-                camera.rotateY(nodeOffset * (-0.374));
-
                 var w = 1920;
                 var h = 1080;
                 var fullWidth = w;
@@ -116,6 +109,11 @@
                 gdo.consoleOut('.WebGL', 1, 'Y Offset- ' + yOffset);
 
                 camera.setViewOffset(fullWidth, fullHeight, 0, yOffset, w, h);
+
+                var numNodesWide = (gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width / 1920) - 1;
+                var nodeOffset = gdo.net.node[gdo.clientId].sectionCol - (numNodesWide / 2);
+                gdo.consoleOut('.WebGL', 1, 'Node offset - ' + (numNodesWide % 2));
+                camera.rotateY(nodeOffset * (-0.374));
 
                 var cameraParent = new THREE.Object3D();
                 cameraParent.add(camera);
@@ -127,6 +125,7 @@
 
                 // PeerJS fiddling
 
+                /*
 
                 // Sends clientId to all connected neighbour nodes once a second
                 var connectedNodes = [];
@@ -152,6 +151,8 @@
                         }
                     }
                 }, 1000);
+
+                */
             });
         });
     </script>

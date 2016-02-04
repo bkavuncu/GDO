@@ -7,9 +7,11 @@
 
     this.initScene = function () {
 
+        camera.position.y = 30;
+
         for (var i = 0; i < 8; i++) {
             var stick = createStick();
-            stick.position.z = 1000;
+            stick.position.z = 500;
 
             var pivot = new THREE.Object3D();
             pivot.add(stick);
@@ -96,7 +98,7 @@
     function createStick() {
         // model
 
-        var geometry = new THREE.BoxGeometry(20, 100, 20);
+        var geometry = new THREE.BoxGeometry(20, 80, 20);
 
         var material = new THREE.MeshPhongMaterial({
             color: 0xffffff,
@@ -110,17 +112,26 @@
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
+        mesh.rotation.y = Math.PI / 8.1;
+
         return mesh;
     }
 
     this.setAsControl = function () {
-
         var controls = new THREE.PointerLockControls(this.camera);
+
         controls.enabled = true;
-
-        controls.getObject().position.y = 200;
-
         this.scene.add(controls.getObject());
+
+        var keyup = function (event) {
+            console.log("Key up: " + event.keyCode);
+            if (event.keyCode == 87) { //W
+                controls.enabled = !controls.enabled;
+                console.log("its a W!!");
+            }
+        };
+
+        document.addEventListener('keyup', keyup);
     }
 
     this.startRendering = function () {
