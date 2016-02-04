@@ -74,6 +74,15 @@
             filter: alpha(opacity=0);
         }
 
+        .btn-group .btn{
+            background-color: #2a9fd6 !important;
+        }
+
+        .btn:hover, .btn:focus{
+            background-color: #333 !important;
+            font-weight: bold !important;
+        }
+
         .input_field_div {
             margin: 0px;
             padding: 0px;
@@ -124,7 +133,7 @@
 </script>
 <div class="wrapper" style="width: 97%">
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-3" style="width:100%">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Upload</h6>
@@ -154,7 +163,7 @@
                             }
                         }
                     }
-                    <form id="file_upload_form" action="" method="post" data-ajax="false" enctype="multipart/form-data">
+                    <form id="file_upload_form" action="http://localhost:1395/File/Upload" method="post" data-ajax="false" enctype="multipart/form-data">
                     <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
                         <tr>
                             <td>
@@ -164,7 +173,7 @@
                             </td>
                             <td>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="sheet" name="sheet" type="file" accept=".xls,.xlsx" /></span>
+                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="sheet" name="files" type="file" accept=".xls,.xlsx" /></span>
                                     <span class="fileinput-filename"></span><span id="filename-sheet" class="fileinput-new">No file chosen</span>
                                 </div>
                             </td>
@@ -177,9 +186,19 @@
                             </td>
                             <td>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="var" name="input" type="file" accept=".xls,.xlsx" /></span>
+                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="var" name="files" type="file" accept=".xls,.xlsx" /></span>
                                     <span class="fileinput-filename"></span><span id="filename-var" class="fileinput-new">No file chosen</span>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="background-color: transparent">
+                                    <h6>Uploaded Files:</h6>
+                                </div>
+                            </td>
+                            <td>
+                                <span id="uploaded_files">None</span>
                             </td>
                         </tr>
                     </table>
@@ -191,6 +210,24 @@
                             <i class='fa  fa-check fa-fw'></i>
                         </button>
                     </fieldset>
+                </div>
+            </div>
+            <div class="panel panel-primary" id="operation">
+                <div class="panel-heading">
+                    <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Operations</h6>
+                </div>
+                <div class="panel-body">
+                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                        <tr>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button id="view_model" type="button" class="btn">View Model</button>
+                                    <button id="scenario_analysis" type="button" class="btn">Scenario Analysis</button>
+                                    <button id="link_outputs" type="button" class="btn">Link Outputs</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
