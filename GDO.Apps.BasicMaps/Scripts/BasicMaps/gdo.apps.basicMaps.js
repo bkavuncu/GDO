@@ -11,7 +11,7 @@ var terrainProvider;
 
 $(function () {
     gdo.consoleOut('.BasicMaps', 1, 'Loaded BasicMaps JS');
-    gdo.net.app["BasicMaps"].numLayers = 32;
+    gdo.net.app["BasicMaps"].numLayers = 40;
     $.connection.basicMapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["BasicMaps"].updateCenter(instanceId);
@@ -504,8 +504,85 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
     gdo.net.instance[instanceId].layers[31].wms = true;
 
+    //Strava Bike Heatmap (Purple)
+    gdo.net.instance[instanceId].layers[32] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color1/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[32].wms = true;
 
+    //Strava Running Heatmap (Purple)
+    gdo.net.instance[instanceId].layers[33] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color1/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[33].wms = true;
 
+    //Strava Bike Heatmap (Green)
+    gdo.net.instance[instanceId].layers[34] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color2/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[34].wms = true;
+
+    //Strava Running Heatmap (Green)
+    gdo.net.instance[instanceId].layers[35] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[35].wms = true;
+
+    //Strava Bike Heatmap (Orange)
+    gdo.net.instance[instanceId].layers[36] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color8/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[36].wms = true;
+
+    //Strava Running Heatmap (Orange)
+    gdo.net.instance[instanceId].layers[37] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color8/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[37].wms = true;
+
+    //Strava Bike Heatmap (Blue)
+    gdo.net.instance[instanceId].layers[38] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color7/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[38].wms = true;
+
+    //Strava Running Heatmap (Blue)
+    gdo.net.instance[instanceId].layers[39] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color7/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[39].wms = true;
     //BGS Bedrock and Superficial Geology
     /*gdo.net.instance[instanceId].layers[32] = new ol.layer.Tile({
         visible: false,

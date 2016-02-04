@@ -324,14 +324,14 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
         gdo.net.instance[instanceId].styleFunction = function (feature, resolution) {
             var style = new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks)/2, //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
+                    radius: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks)/3, //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
                     fill: new ol.style.Fill({
                         color: 'lightblue',
-                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 7 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
+                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 12 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     }),
                     stroke: new ol.style.Stroke({
                         color: 'black',
-                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 8 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
+                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 14 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     })
                 })
             });

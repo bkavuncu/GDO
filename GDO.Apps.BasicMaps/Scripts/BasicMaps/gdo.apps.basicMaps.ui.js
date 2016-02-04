@@ -12,7 +12,7 @@ gdo.net.app["BasicMaps"].numButtons =7;
 
 
 gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
-    gdo.net.app["BasicMaps"].drawEmptyMapTable(7,5);
+    gdo.net.app["BasicMaps"].drawEmptyMapTable(7,6);
 
     $("iframe").contents().find("#map_table_row_0_col_0")
         .empty()
@@ -365,6 +365,94 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .unbind()
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 31);
+        });
+    $("iframe").contents().find("#map_table_row_4_col_4")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_38' class='btn  btn-primary  btn-outline btn-block'>Strava Heatmap Bike (Blue)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 38);
+        });
+    $("iframe").contents().find("#map_table_row_4_col_5")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_39' class='btn  btn-primary  btn-outline btn-block'>Strava Heatmap Running (Blue)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 39);
+        });
+    $("iframe").contents().find("#map_table_row_5_col_0")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_32' class='btn  btn-danger  btn-outline btn-block'>Strava Heatmap Bike (Purple)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 32);
+        });
+    $("iframe").contents().find("#map_table_row_5_col_1")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_33' class='btn  btn-danger  btn-outline btn-block'>Strava Heatmap Running (Purple)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 33);
+        });
+    $("iframe").contents().find("#map_table_row_5_col_2")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_34' class='btn  btn-danger  btn-outline btn-block'>Strava Heatmap Bike (Green)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 34);
+        });
+    $("iframe").contents().find("#map_table_row_5_col_3")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_35' class='btn  btn-danger  btn-outline btn-block'>Strava Heatmap Running (Green)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 35);
+        });
+    $("iframe").contents().find("#map_table_row_5_col_4")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_36' class='btn btn-primary  btn-outline btn-block'>Strava Heatmap Bike (Orange)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 36);
+        });
+    $("iframe").contents().find("#map_table_row_5_col_5")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_37' class='btn btn-primary  btn-outline btn-block'>Strava Heatmap Running (Orange)</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 37);
         });
     /*$("iframe").contents().find("#map_table_row_4_col_4")
         .empty()
