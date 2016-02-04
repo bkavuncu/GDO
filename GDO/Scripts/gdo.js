@@ -3,15 +3,16 @@
     CONTROL: 2
 };
 
-gdo.MODULE_TYPE = {
+gdo.SCRIPT_TYPE = {
     CORE: 1,
-    APP: 2
+    MODULE: 2,
+    APP: 3
 };
 
 $(function () {
     /// <summary>
     /// Registering Event Handlers on load
-    gdo.loadModule('utilities', 'utilities', gdo.MODULE_TYPE.CORE);
+    gdo.loadScript('utilities', 'utilities', gdo.SCRIPT_TYPE.CORE);
     /// </summary>
     /// <returns></returns>
 });
@@ -21,19 +22,18 @@ gdo.initGDO = function (clientMode) {
     /// </summary>
     /// <returns></returns>
     gdo.consoleOut('', 1, 'Initializing GDO');
-
-    gdo.loadModule('net', 'net', gdo.MODULE_TYPE.CORE);
+    gdo.loadScript('net', 'net', gdo.SCRIPT_TYPE.CORE);
     gdo.clientMode = clientMode;
-    //$("title").append(" :" + gdo.clientId);
-    gdo.updateInterval = 21000;
+    gdo.updateInterval = 4900;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
-        gdo.loadModule('management', 'management', gdo.MODULE_TYPE.CORE);
+        gdo.loadScript('management', 'management', gdo.SCRIPT_TYPE.CORE);
     } else {
-        gdo.loadModule('node', 'node', gdo.MODULE_TYPE.CORE);
-        gdo.loadModule('base', 'node', gdo.MODULE_TYPE.CORE);
-        gdo.loadModule('maintenance', 'maintenance', gdo.MODULE_TYPE.CORE);
+        $("title").append("" + gdo.clientId);
+        gdo.loadScript('node', 'node', gdo.SCRIPT_TYPE.CORE);
+        gdo.loadScript('base', 'node', gdo.SCRIPT_TYPE.CORE);
+        gdo.loadScript('maintenance', 'maintenance', gdo.SCRIPT_TYPE.CORE);
     }
     if (gdo.clientId > 0) {
         $.connection.hub.start().done(function () {
@@ -41,7 +41,7 @@ gdo.initGDO = function (clientMode) {
             gdo.net.initNet(clientMode);
             if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 500, 20, 'Node Failed to Initialize');
-                setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval);
+                setTimeout(function() { setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval); }, Math.random() * gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
             }
@@ -77,71 +77,80 @@ gdo.consoleOut = function (module, type, msg) {
     }
     if (type == 0) {
         if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#77B200; font-size:10; font-family: monospace;">' + timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+            $("#console_area").append('<div style="color:#77B200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log('GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     } if (type == 1) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#4CBFF8; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log('GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     } if (type == 2) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#FFF; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log('GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     } if (type == 3) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:gray; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.log('GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     } else if (type == 4) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#FF9900; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.warn('GDO' + moduleConsole + ': ' + msg);
+        console.warn(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     } else if (type == 5) {
         if ($("#console_area").length > 0) {
             $("#console_area").append('<div style="color:#FF2200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
         }
-        console.error('GDO' + moduleConsole + ': ' + msg);
+        console.error(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     }
 }
 
-gdo.loadModule = function (submodule, module, moduleType) {
+gdo.loadScript = function (subscript, script, scriptType) {
     /// <summary>
-    /// Loads the JS module.
+    /// Loads the JS script.
     /// </summary>
     /// <param name="js">The js.</param>
     /// <returns></returns>
     var $head = $('head');
     //gdo.window[js] = {};
     //eval("gdo." + js + " = {}");
-    if (moduleType == gdo.MODULE_TYPE.CORE) {
+    if (scriptType == gdo.SCRIPT_TYPE.CORE) {
 
-        if (submodule == module) {
-            gdo.consoleOut('', 1, 'Loading core module ' + module + ' at ' + '../scripts/gdo.' + module + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + module + '.js\'></script>');
+        if (subscript == script) {
+            gdo.consoleOut('', 1, 'Loading core script ' + script + ' at ' + '../scripts/gdo.' + script + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + script + '.js\'></script>');
         } else {
-            gdo.consoleOut('', 1, 'Loading core submodule ' + submodule + ' at of ' + module + ' at ../scripts/gdo.' + module + '.' + submodule + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + module + '.' + submodule + '.js\'></script>');
+            gdo.consoleOut('', 1, 'Loading core subscript ' + subscript + ' at of ' + script + ' at ../scripts/gdo.' + script + '.' + subscript + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/gdo.' + script + '.' + subscript + '.js\'></script>');
         }
-
-    } else if (moduleType == gdo.MODULE_TYPE.APP) {
-        if (submodule == module) {
-            gdo.consoleOut('', 1, 'Loading app module ' + module + ' at ' + '../scripts/' + module + '/gdo.app.' + module + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + module + '/gdo.apps.' + module + '.js\'></script>');
+    } else if (scriptType == gdo.SCRIPT_TYPE.MODULE) {
+        if (subscript == script) {
+            gdo.consoleOut('', 1, 'Loading module script ' + script + ' at ' + '../scripts/' + script + '/gdo.module.' + script + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.module.' + script + '.js\'></script>');
         } else {
-            gdo.consoleOut('', 1, 'Loading app submodule ' + submodule + ' at of ' + module + ' ../scripts/' + module + '/gdo.app.' + module + '.' + submodule + '.js\'');
-            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + module + '/gdo.apps.' + module + '.' + submodule + '.js\'></script>');
+            gdo.consoleOut('', 1, 'Loading module subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.module.' + script + '.' + subscript + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.module.' + script + '.' + subscript + '.js\'></script>');
         }
+    } else if (scriptType == gdo.SCRIPT_TYPE.APP) {
+        if (subscript == script) {
+            gdo.consoleOut('', 1, 'Loading app script ' + script + ' at ' + '../scripts/' + script + '/gdo.app.' + script + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.apps.' + script + '.js\'></script>');
+        } else {
+            gdo.consoleOut('', 1, 'Loading app subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.app.' + script + '.' + subscript + '.js\'');
+            $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.apps.' + script + '.' + subscript + '.js\'></script>');
+        }
+    } else {
+        gdo.consoleOut('', 5, 'Failed Loading app script ' + script + ', subscript ' + subscript + ', scriptType ' + scriptType);
     }
 }
 
 gdo.timeStamp = function() {
     var now = new Date();
     var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
-    var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+    var time = [now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()];
     var suffix = (time[0] < 12) ? "AM" : "PM";
     time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
     time[0] = time[0] || 12;
@@ -149,6 +158,12 @@ gdo.timeStamp = function() {
         if (time[i] < 10) {
             time[i] = "0" + time[i];
         }
+    }
+    if (time[3] < 100) {
+        time[3] = "0" + time[3];
+    }
+    if (time[3] < 10) {
+        time[3] = "00" + time[3];
     }
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }

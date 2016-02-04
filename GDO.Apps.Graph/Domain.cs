@@ -2,6 +2,12 @@
 
 namespace GDO.Apps.Graph.Domain
 {
+    public class GraphInfo
+    {
+        public List<string> NodeMandatoryFields { get; set; }
+        public List<string> NodeOtherFields { get; set; }
+        public List<string> LinkKeys { get; set; }
+    }
     public class Position
     {
         public float X { get; set; }

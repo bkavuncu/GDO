@@ -90,6 +90,19 @@
             var textarea2 = document.getElementById('textarea2');
             var titleDIV = document.getElementById('titleDIV');
 
+            function transmit(payload) {
+                bcWebsocket.send(JSON.stringify(payload));
+            }
+
+            function onOpen(openEvent) {
+                console.log("connecting");
+                //subscribe to realtime transaction notifications
+                transmit({ "op": "unconfirmed_sub" });
+                console.log("subscribed to unconfirmed transactions");
+                //subscribe to realtime block notifications
+                transmit({ "op": "blocks_sub" });
+                console.log("subscribed to new block notifications");
+            }
 
             switch (configName) {
             case "Globe":
@@ -169,20 +182,6 @@
                     xmlhttp.open("GET", url, true);
                     xmlhttp.send();
                     console.log('Retrieved current backbone nodes');
-                }
-
-                function transmit(payload) {
-                    bcWebsocket.send(JSON.stringify(payload));
-                }
-
-                function onOpen(openEvent) {
-                    console.log("connecting");
-                    //subscribe to realtime transaction notifications
-                    transmit({ "op": "unconfirmed_sub" });
-                    console.log("subscribed to unconfirmed transactions");
-                    //subscribe to realtime block notifications
-                    transmit({ "op": "blocks_sub" });
-                    console.log("subscribed to new block notifications");
                 }
 
                 function onMessage(msgEvent) {
@@ -325,14 +324,14 @@
                         applyFilters();
                         renderGraph();
 
-                        $("txMaxVal").innerHTML = (txMaxVal / 100000000).toLocaleString() + 'B / $' +
+                        document.getElementById("txMaxVal").innerHTML = (txMaxVal / 100000000).toLocaleString() + 'B / $' +
                         (currUSDBTC * txMaxVal / 100000000).toLocaleString();
-                        $("txTotalVal").innerHTML = (txTotalVal / 100000000).toLocaleString() + 'B / $' +
+                        document.getElementById("txTotalVal").innerHTML = (txTotalVal / 100000000).toLocaleString() + 'B / $' +
                         (currUSDBTC * txTotalVal / 100000000).toLocaleString();
-                        $("txAvgVal").innerHTML = ((txTotalVal / numTx) * 1000 / 100000000).toLocaleString() + 'mB / $' +
+                        document.getElementById("txAvgVal").innerHTML = ((txTotalVal / numTx) * 1000 / 100000000).toLocaleString() + 'mB / $' +
                         ((currUSDBTC * txTotalVal / numTx) / 100000000).toLocaleString();
 
-                        $("#txMaxFee").innerHTML = (txMaxFee * 1000 / 100000000).toLocaleString() + 'mB / $' +
+                        document.getElementById("txMaxFee").innerHTML = (txMaxFee * 1000 / 100000000).toLocaleString() + 'mB / $' +
                         (currUSDBTC * txMaxFee / 100000000).toLocaleString();
                         document.getElementById('txTotalFee').innerHTML = (txTotalFee / 100000000).toLocaleString() + 'B / $' +
                         (currUSDBTC * txTotalFee / 100000000).toLocaleString();
@@ -357,6 +356,16 @@
                                 lastRateTx = numTx;
                             }
                         }
+
+                        //refresh page when number of graph vertices >3000
+                        if (numNodes > 3000) {
+                            console.log("Reloading page because we have many graph vertices");
+                            location.reload(true);  //this reload the iframe
+                            /* the following don't work because this page does not know it will be within an iframe */
+                            // document.getElementById('app_frame_content').contentWindow.location.reload(true);
+                            //document.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
+                            //document.body.getElementsByTagName("iframe")[0].contentWindow.location.reload(true);
+                        }
                     }
                 }
 
@@ -374,7 +383,7 @@
                     getFX();
                     // Handle events
                     //peerConnect(-1);
-                    bindEvents(-1);
+                    bindEvents(-1, parent.gdo.clientId);  // pass the clientId of function caller
 
                     // Get Transactions
                     runWebSocket();
@@ -499,7 +508,7 @@
                     var queryparam = getParameterByName('block');
 
                     //peerConnect(queryparam)
-                    bindEvents(queryparam);
+                    bindEvents(queryparam, parent.gdo.clientId);  // pass the clientId of function caller
 
                     //if we're given a height rather than hash
                     if (queryparam.length <= 6) {
@@ -509,6 +518,7 @@
 
                                 console.log('Retrieved block details successfully');
                                 var resObj = JSON.parse(xmlhttp.responseText);
+                                document.getElementById('createdAt').innerHTML = new Date(1000 * resObj.blocks[0].time);
 
                                 for (var i = 0; i < resObj.blocks.length; i++) {
                                     if (resObj.blocks[i].main_chain) {
@@ -527,13 +537,12 @@
                     // else... do nothing
                 }
 
+                populateTextAreas_block();
+                initBlock();
+                break;
 
-                    populateTextAreas_block();
-                    initBlock();
-                    break;
 
-
-                default:
+            default:
                     $("#graphcontainer").text("THIS IS A WRONG CONFIGURATION!");
 
             }

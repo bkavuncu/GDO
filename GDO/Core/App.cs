@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using GDO.Utility;
+using log4net;
 using Newtonsoft.Json;
 
 
@@ -10,10 +11,13 @@ namespace GDO.Core
 {
     public class App
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(App));
+
         public string Name { get; set; }
         public int P2PMode { get; set; }
         [JsonIgnore]
-        public Type AppType { get; set; }
+        public Type AppClassType { get; set; }
+        public int AppType { get; set; }
         [JsonIgnore]
         public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
         public List<string> ConfigurationList { get; set; }
@@ -24,10 +28,11 @@ namespace GDO.Core
         {
 
         }
-        public void Init(string name, int p2pmode, Type appType)
+        public void Init(string name, int p2pmode, Type appClassType, int appType)
         {
             this.Name = name;
             this.P2PMode = p2pmode;
+            this.AppClassType = appClassType;
             this.AppType = appType;
             this.Configurations = new ConcurrentDictionary<string, AppConfiguration>();
             this.Instances = new ConcurrentDictionary<int, IAppInstance>();
@@ -39,11 +44,16 @@ namespace GDO.Core
             }
 
             int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-            IAppInstance instance = (IAppInstance) Activator.CreateInstance(this.AppType, new object[0]);
+            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
             AppConfiguration conf;
             Cave.Sections[sectionId].CalculateDimensions();
             Configurations.TryGetValue(configName, out conf);
-            instance.init(instanceId, this.Name, Cave.Sections[sectionId], conf);
+            instance.Id = instanceId;
+            instance.AppName = this.Name;
+            instance.Section = Cave.Sections[sectionId];
+            instance.Configuration = conf;
+            ((IBaseAppInstance) instance).IntegrationMode = conf.IntegrationMode;
+            instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Instances.TryAdd(instanceId,instance);
             return instanceId;

@@ -10,7 +10,7 @@ using Microsoft.AspNet.SignalR;
 namespace GDO.Apps.BasicMaps
 {
     [Export(typeof(IAppHub))]
-    public class BasicMapsAppHub : Hub, IAppHub
+    public class BasicMapsAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "BasicMaps";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace GDO.Core
@@ -40,7 +41,7 @@ namespace GDO.Core
         /// <param name="row">The row.</param>
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
-        /// <param name="numNodes">The number nodes.</param>
+        /// <param name="numNodes">The number nodes.</param>TODO this is never used?
         public Node(int id, int col, int row, int width, int height, int numNodes)
         {
             this.IsConnectedToCaveServer = false;
@@ -97,13 +98,13 @@ namespace GDO.Core
         /// <returns></returns>
         public string SerializeJSON()
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this);
         }
 
         /// <summary>
         /// Aggregates the connection health.
         /// </summary>
-        public void aggregateConnectionHealth()
+        public void AggregateConnectionHealth()
         {
             if (!IsConnectedToCaveServer)
             {
@@ -114,57 +115,40 @@ namespace GDO.Core
             {
                 AggregatedConnectionHealth = 2; return;
             }
-            if (P2PMode == (int) Cave.P2PModes.Cave)
-            {
-                foreach (KeyValuePair<int, Node> nodeEntry in Cave.Nodes)
-                {
-                    if (!ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)
-                    {
+            switch (P2PMode) {
+                case (int) Cave.P2PModes.Cave:
+                    if (Cave.Nodes.Any(nodeEntry => !ConnectedNodeList.Contains(nodeEntry.Value.Id) && nodeEntry.Value.Id != Id)) {
                         AggregatedConnectionHealth = 3;
                         return;
                     }
-                }
-            }
-            else if (P2PMode == (int)Cave.P2PModes.Section)
-            {
-                foreach (Node node in Section.Nodes)
-                {
-                    if (!ConnectedNodeList.Contains(node.Id) && node.Id != Id)
-                    {
+                    break;
+                case (int)Cave.P2PModes.Section:
+                    if (Section.Nodes.Cast<Node>().Any(node => !ConnectedNodeList.Contains(node.Id) && node.Id != Id)) {
                         AggregatedConnectionHealth = 3;
                         return;
                     }
-                }
-            }
-            else if (P2PMode == (int)Cave.P2PModes.Neighbours)
-            {
-                int[,] neighbours = Cave.GetNeighbourMap(Id);
-                foreach (int neighbourId in neighbours)
-                {
-                    if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id && neighbourId > 0)
+                    break;
+                case (int)Cave.P2PModes.Neighbours:
+                    int[,] neighbours = Cave.GetNeighbourMap(Id);
+                    foreach (int neighbourId in neighbours)
                     {
-                        if (Cave.Nodes[neighbourId].SectionId == SectionId)
+                        if (!ConnectedNodeList.Contains(neighbourId) && neighbourId != Id && neighbourId > 0)
                         {
-                            AggregatedConnectionHealth = 3;
-                            return;
+                            if (Cave.Nodes[neighbourId].SectionId == SectionId)
+                            {
+                                AggregatedConnectionHealth = 3;
+                                return;
+                            }
                         }
                     }
-                }
+                    break;
             }
             AggregatedConnectionHealth = 4;
 
         }
 
-        public bool isRunningApp()
-        {
-            if (AppInstanceId < 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+        public bool IsRunningApp() {
+            return AppInstanceId >= 0;
         }
     }
 

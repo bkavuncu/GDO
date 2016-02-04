@@ -7,7 +7,7 @@
         .css("color", "#DDD")
         .css("background", "#222")
         .css('padding', gdo.management.cell_padding)
-        .attr("align", "center")
+        .attr("align", "top")
         .css("vertical-align", "top")
         .css({ fontSize: gdo.management.button_font_size });
     $("#state_table_state_header_table")
@@ -105,6 +105,8 @@ gdo.management.drawStateTable = function () {
             .css({ fontSize: gdo.management.button_font_size * 0.7 })
             .unbind()
             .click(function () {
+                gdo.net.server.clearCave();
+                gdo.consoleOut(".NET", 4, "Requested Restoring Cave State " + $(this).attr('row'));
                 gdo.net.server.restoreCaveState($(this).attr('row'));
             });
         $("#state_table_state_list_table_row_" + i + "_col_3")

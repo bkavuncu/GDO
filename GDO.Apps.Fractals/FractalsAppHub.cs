@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
@@ -7,7 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.Fractals
 {
     [Export(typeof(IAppHub))]
-    public class FractalsAppHub : Hub, IAppHub
+    public class FractalsAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "Fractals";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

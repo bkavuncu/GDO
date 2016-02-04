@@ -2,36 +2,35 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
 using log4net;
-using log4net.Filter;
 
 namespace GDO.Apps.Graph
 {
 
-    public class GraphApp : IAppInstance {
+    public class GraphApp : IBaseAppInstance {
         private static readonly ILog Log = LogManager.GetLogger(typeof(GraphApp));
 
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
 
+        private GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
 
-        // init is run when 'Deploy' is clicked
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
             try {
-                this.Id = instanceId;
-                this.AppName = appName;
-                this.Section = section;
-                this.Configuration = configuration;
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
             catch (Exception e) {
                 Log.Error("failed to launch the Graphs App",e);
@@ -47,19 +46,18 @@ namespace GDO.Apps.Graph
 
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
-        public string ProcessGraph(string inputFolder, bool zoomed, string folderName)
+        public string ProcessGraph(string filename, bool zoomed, string folderName)
         {
-            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/" + inputFolder + "/"+ inputFolder + @".graphml");
-            GraphDataReader.ReadGraphMLData(graphMLfile, out Links, out Nodes, out rectDim);
+            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
+            GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
 
-            //create Dictionaries for quick search of Labels and Nodes
-            //SetupLabelDictionary();
-            //SetupNodeDictionary();
+            //File.Delete(graphMLfile);
+
+            //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();
 
             //compute node adjacencies
             ComputeNodeAdjacencies();
-
 
             #region calculate viewport and scales
             int singleDisplayWidth = Section.Width / Section.Cols;
@@ -135,6 +133,7 @@ namespace GDO.Apps.Graph
 
             // 1. Distribute nodes & labels
             sw.Restart();
+            Debug.WriteLine("About to DistributeNodesInPartitions");
             // Set up a 2D array to store nodes data in each partition
             partitions = GraphPartitioning.DistributeNodesInPartitions(partitions, Nodes, Section);
             sw.Stop();
@@ -144,6 +143,7 @@ namespace GDO.Apps.Graph
             // 2. Distribute links
             sw.Restart();
             // Set up a 2D array to store nodes data in each partition
+            Debug.WriteLine("About to distribute Links");
             partitions = GraphPartitioning.DistributeLinksInPartitions(partitions,Links, singleDisplayWidth, singleDisplayHeight,Section);
             sw.Stop();
             Debug.WriteLine("Time taken to distribute links across browsers: " + sw.ElapsedMilliseconds + "ms");
@@ -151,6 +151,8 @@ namespace GDO.Apps.Graph
 
             // write to individual browser file
             // i. create sub-directories to store partition files
+            Debug.WriteLine("Writing partition files");
+            GraphAppHub.self.LogTime("Writing partition files");
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
@@ -178,22 +180,40 @@ namespace GDO.Apps.Graph
 
 
             // ii. write to files
+            WriteAllNodesFile(nodesPath, Nodes);
             WriteNodeFiles(totalRows, totalCols, nodesPath, partitions);
             WriteLinkFiles(totalRows, totalCols, linksPath, partitions);
+
+            Debug.WriteLine("Writen partition files");
+            
             #endregion
 
             return this.FolderNameDigit;
         }
 
+        private static void WriteAllNodesFile(string nodesPath, List<GraphNode> nodes)
+        {   
+            // writes a json file containing the information about all nodes in the graph; all browser will need this information for searching
+            using (StreamWriter streamWriter = new StreamWriter(nodesPath +  @"all" + @".json")
+            {
+                AutoFlush = true
+            })
+            {
+                JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(jsonWriter, nodes);
+            }
+        }
 
         private static void WriteNodeFiles(int totalRows, int totalCols, string linksPath, Partition[,] partitions)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < totalRows; ++i)
+            Parallel.For(0,totalCols, j => { 
+            //for (int j = 0; j < totalCols; ++j) {
+                for (int i = 0; i < totalRows; ++i)
             {
-                for (int j = 0; j < totalCols; ++j)
-                {
+            
                     using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json")
                     {
                         AutoFlush = true
@@ -204,7 +224,7 @@ namespace GDO.Apps.Graph
                         serializer.Serialize(jsonWriter, partitions[i, j].Nodes);
                     }
                 }
-            }
+            });
             sw.Stop();
             Debug.WriteLine("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write nodes file: " + sw.ElapsedMilliseconds + "ms");
@@ -214,21 +234,20 @@ namespace GDO.Apps.Graph
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            for (int i = 0; i < totalRows; ++i)
-            {
-                for (int j = 0; j < totalCols; ++j)
+            Parallel.For(0, totalCols, j => {
+                //for (int j = 0; j < totalCols; ++j)
                 {
-                    using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json")
-                    {
-                        AutoFlush = true
-                    })
-                    {
-                        JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
-                        JsonSerializer serializer = new JsonSerializer();
-                        serializer.Serialize(jsonWriter, partitions[i,j].Links);
+                    for (int i = 0; i < totalRows; ++i) {
+                        using (StreamWriter streamWriter = new StreamWriter(linksPath + i + @"_" + j + @".json") {
+                            AutoFlush = true
+                        }) {
+                            JsonWriter jsonWriter = new JsonTextWriter(streamWriter);
+                            JsonSerializer serializer = new JsonSerializer();
+                            serializer.Serialize(jsonWriter, partitions[i, j].Links);
+                        }
                     }
                 }
-            }
+            });
             sw.Stop();
             Debug.WriteLine("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time taken to write links file: " + sw.ElapsedMilliseconds + "ms");
@@ -245,7 +264,6 @@ namespace GDO.Apps.Graph
                 {
                     this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
                 }
-
                 Directory.CreateDirectory(basePath + FolderNameDigit);
             }
             else
@@ -257,7 +275,6 @@ namespace GDO.Apps.Graph
 
         //have a dictionary of the nodes indexed by ID
         Dictionary<string, GraphNode> _nodesDictionary;
-
         private void SetupNodesDictionary()
         {
             Stopwatch sw = new Stopwatch();

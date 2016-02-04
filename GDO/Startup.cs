@@ -62,6 +62,9 @@ namespace GDO
         [ImportMany(typeof(IAppHub))]
         private List<IAppHub> _caveapps { get; set; }
 
+        [ImportMany(typeof(IModuleHub))]
+        private List<IModuleHub> _cavemodules { get; set; }
+
         public IList<Assembly> GetAssemblies()
         {
         IList<Assembly> assemblies = new List<Assembly>();
@@ -76,9 +79,27 @@ namespace GDO
             assemblies.Add(typeof(CaveHub).Assembly);
             foreach (var caveapp in _caveapps)
             {
-                Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType);
-                assemblies.Add(caveapp.GetType().Assembly);
+                if (caveapp is IBaseAppHub)
+                {
+                    Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
+                    assemblies.Add(caveapp.GetType().Assembly);
+                }
+                else if(caveapp is IAdvancedAppHub)
+                {
+                    Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IAdvancedAppHub)caveapp).SupportedApps);
+                    assemblies.Add(caveapp.GetType().Assembly);
+                }
+                else
+                {
+                    throw new Exception("Cave App Class not recognized");
+                }
+
                 //assemblies.Add(caveapp.InstanceType.Assembly);
+            }
+            foreach (var cavemodule in _cavemodules)
+            {
+                Cave.RegisterModule(cavemodule.Name,  cavemodule.ModuleType);
+                assemblies.Add(cavemodule.GetType().Assembly);
             }
             return assemblies;
         }

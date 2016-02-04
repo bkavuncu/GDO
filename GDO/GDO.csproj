@@ -616,9 +616,12 @@
     <Content Include="Bootstrap\pages\panels-wells.html" />
     <Content Include="Bootstrap\pages\tables.html" />
     <Content Include="Bootstrap\pages\typography.html" />
+    <Content Include="CSS\gdo.management.css" />
     <Content Include="Img\gdo.png" />
     <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\enscroll-0.6.1.min.js" />
+    <Content Include="Scripts\gdo.management.modules.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.console.js" />
@@ -935,8 +938,11 @@
     <Content Include="Bootstrap\less\variables.less" />
     <Content Include="Bootstrap\LICENSE" />
     <Content Include="Bootstrap\README.md" />
+    <None Include="Properties\PublishProfiles\emergency.pubxml" />
     <None Include="Properties\PublishProfiles\PreProd.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
+    <None Include="Properties\PublishProfiles\studentserver.pubxml" />
+    <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -954,14 +960,22 @@
     <Content Include="Web\Instances.cshtml" />
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Scenarios.cshtml" />
+    <Content Include="Web\Modules.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\IAdvancedAppHub.cs" />
+    <Compile Include="Core\IModuleHub.cs" />
+    <Compile Include="Core\IBaseAppHub.cs" />
+    <Compile Include="Core\IBaseAppInstance.cs" />
+    <Compile Include="Core\AdvancedApp.cs" />
     <Compile Include="Core\CaveHub.cs" />
     <Compile Include="Core\AppConfiguration.cs" />
     <Compile Include="Core\App.cs" />
     <Compile Include="Core\CaveState.cs" />
     <Compile Include="Core\IAppHub.cs" />
+    <Compile Include="Core\IAdvancedAppInstance.cs" />
     <Compile Include="Core\IAppInstance.cs" />
+    <Compile Include="Core\IModule.cs" />
     <Compile Include="Core\Node.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />
