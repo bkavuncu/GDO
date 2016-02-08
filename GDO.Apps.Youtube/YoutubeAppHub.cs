@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Web.Helpers;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
 using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Youtube.Scripts.Youtube.js", "application/x-javascript")]
@@ -41,7 +30,6 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
-
                     Clients.Caller.setMessage("Initializing for keywords...");
 
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
@@ -306,7 +294,7 @@ namespace GDO.Apps.Youtube
                             videoName[i*yf.Section.Cols + j].nextName = yf.NextVideoName[i, j];
                         }
                     }
-                    Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName));
+                    Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName), instanceId);
                     Clients.Caller.setMessage("Got video titles Success!");
                 }
                 catch (Exception e)

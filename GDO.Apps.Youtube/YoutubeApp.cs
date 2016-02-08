@@ -1,24 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Web;
-using System.Web.Configuration;
 using GDO.Core;
-using GDO.Utility;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Youtube
 {
-    enum Mode
-    {
-        CROP=1,
-        FIT=0
-    };
     public class YoutubeApp : IBaseAppInstance
     {
         public int Id { get; set; }
