@@ -57,7 +57,12 @@ $(function() {
             // do nothing
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Youtube', 1, 'Update video url ');
-            $("iframe").contents().find("#ytplayer").attr("src", videoUrl);
+            //$("iframe").contents().find("#ytplayer").attr("src", videoUrl);  //old code
+
+            //load new video and mute it
+            var player = gdo.net.node[gdo.clientId].player;
+            player.loadVideoByUrl(videoUrl);  
+            player.mute();
         }
     }
     $.connection.youtubeAppHub.client.updateVideoList = function (videoName, instanceId) {
@@ -73,18 +78,21 @@ $(function() {
                 '<td><font size="3"><b>Next Videos</b></font></td>' +
             '</tr>');
         for (var i = 0; i < videoName.length; i++) {
-            var screenNumber = instance.nodeMap[i % instance.rows][Math.floor(i / instance.cols)];
+            var screenNumber = instance.nodeMap[i % instance.cols][Math.floor(i / instance.cols)];
             $("iframe").contents().find("#video_table").append('' +
                 '<tr class="video_table_content">' +
                     '<td><font size="3">' + (i + 1) + '</font></td>' +
-                    '<td><font size="3">' + screenNumber + '</font></td>' +   //TODO FIX
+                    '<td class="screenSelector"><font size="3">' + screenNumber + '</font></td>' +
                     '<td><font size="3">' + videoName[i]["currentName"] + '</font></td>' +
                     '<td><font size="3">' + videoName[i]["nextName"] + '</font></td>' +
                 '</tr>');
         }
     }
-    $.connection.youtubeAppHub.client.muteUnmute = function() {
-            //    
+    $.connection.youtubeAppHub.client.toggleMute = function (screen) {
+        if (screen == gdo.clientId) {
+            var player = gdo.net.node[gdo.clientId].player;
+            player.isMuted() ? player.unMute() : player.mute();
+        }
     }
     $.connection.youtubeAppHub.client.updateSearchMode = function(search_mode) {
         gdo.net.app["Youtube"].searchMode = search_mode;

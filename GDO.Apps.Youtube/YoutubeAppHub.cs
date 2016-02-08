@@ -72,7 +72,7 @@ namespace GDO.Apps.Youtube
 
                     yf.VideoReady = false;
                     string baseUrl = "http://www.youtube.com/embed/";
-                    string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+                    string tailUrl = "?autoplay=1&controls=0&version=3&loop=1&playlist=";
 
                     //init
                     if (yf.NextVideoUrls != null)
@@ -204,8 +204,11 @@ namespace GDO.Apps.Youtube
                     Clients.Caller.setMessage("Getting next group of videos...");
 
                     yf.VideoReady = false;
-                    string baseUrl = "http://www.youtube.com/embed/";
-                    string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+                    //string baseUrl = "http://www.youtube.com/embed/";
+                    //string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+
+                    string baseUrl = "http://www.youtube.com/v/";
+                    string tailUrl = "?version=3&loop=1&playlist=";
 
                     //init
                     if (yf.NextVideoUrls != null)
@@ -371,6 +374,24 @@ namespace GDO.Apps.Youtube
                         Clients.Caller.setMessage("Error! Illegal search mode!");
                     }
 
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void ToggleMute(int instanceId, int node)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting toggle mute node " + node + "...");
+                    Clients.Group("" + instanceId).toggleMute(node);
+                    Clients.Caller.setMessage("Node " + node + ": muted/unmuted!");
                 }
                 catch (Exception e)
                 {
