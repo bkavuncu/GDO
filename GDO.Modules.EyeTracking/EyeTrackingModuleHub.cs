@@ -23,13 +23,14 @@ namespace GDO.Modules.EyeTracking
         {
             Groups.Remove(Context.ConnectionId, "" + moduleName);
         }
-        public void RequestReferenceMode()
+        //Request Marker input node id
+        public void RequestMarkerMode()
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
                 try
                 {
-                    Clients.Caller.updateReferenceMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).ReferenceMode);
+                    Clients.Caller.updateMarkerMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerMode);
 
                 }
                 catch (Exception e)
@@ -39,14 +40,30 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
-        public void SetReferenceMode(bool mode)
+        public void SetMarkerMode(bool mode)
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
                 try
                 {
-                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).ReferenceMode = mode;
-                    Clients.All.updateReferenceMode(mode);
+                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).MarkerMode = mode;
+                    Clients.All.updateMarkerMode(mode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void RequestMarkers()
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    Clients.Caller.receiveMarkers(((EyeTrackingModule)Cave.Modules["EyeTracking"]).SerializeMarkers());
+
                 }
                 catch (Exception e)
                 {
@@ -87,13 +104,13 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
-        public void RequestReferenceSize()
+        public void RequestMarkerSize()
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
                 try
                 {
-                    Clients.Caller.updateReferenceSize(((EyeTrackingModule)Cave.Modules["EyeTracking"]).ReferenceSize);
+                    Clients.Caller.updateMarkerSize(((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize);
 
                 }
                 catch (Exception e)
@@ -103,14 +120,14 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
-        public void SetReferenceSize(int size)
+        public void SetMarkerSize(int size)
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).ReferenceSize = size;
-                    Clients.All.updateReferenceSize(size);
+                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize = size;
+                    Clients.All.updateMarkerSize(size);
                 }
                 catch (Exception e)
                 {
@@ -185,7 +202,7 @@ namespace GDO.Modules.EyeTracking
         }
 
 
-        public void UploadData(string serializedData)
+        /*public void UploadData(string serializedData)
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
@@ -207,7 +224,7 @@ namespace GDO.Modules.EyeTracking
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
-        }
+        }*/
 
         private void BroadcastData(string serializedData)
         {

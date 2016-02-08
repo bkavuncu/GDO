@@ -505,6 +505,8 @@ namespace GDO.Core
             return configurations;
         }
 
+
+
         public static List<string> GetModuleList()
         {
             List<string> moduleList = Modules.Select(moduleEntry => moduleEntry.Value.Name).ToList();

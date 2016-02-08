@@ -7,6 +7,7 @@ $(function () {
     gdo.net.module["EyeTracking"].flotSize = 10;
     gdo.net.module["EyeTracking"].timeStamp = 1;
     gdo.net.module["EyeTracking"].user = new Array(gdo.net.module["EyeTracking"].numUsers);
+    gdo.net.module["EyeTracking"].marker = [];
     for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
         gdo.net.module["EyeTracking"].user[l] = {};
         gdo.net.module["EyeTracking"].user[l].data = [];
@@ -18,19 +19,29 @@ $(function () {
         }
     }
 
-    $.connection.eyeTrackingModuleHub.client.updateReferenceMode = function (mode) {
-        gdo.consoleOut('.EyeTracking', 1, 'Reference Mode: ' + mode);
-        gdo.net.module["EyeTracking"].referenceMode = mode;
+    $.connection.eyeTrackingModuleHub.client.updateMarkerMode = function (mode) {
+        gdo.consoleOut('.EyeTracking', 1, 'Marker Mode: ' + mode);
+        gdo.net.module["EyeTracking"].markerMode = mode;
         if (mode) {
-            $('#eyetracking_references_outer').show();
-            $('#eyetracking_references_inner').show();
-            $('#eyetracking_references_table').show();
+            $('#eyetracking_markers_outer').show();
+            $('#eyetracking_markers_inner').show();
+            $('#eyetracking_markers_table').show();
         } else {
-            $('#eyetracking_references_outer').hide();
-            $('#eyetracking_references_inner').hide();
-            $('#eyetracking_references_table').hide();
+            $('#eyetracking_markers_outer').hide();
+            $('#eyetracking_markers_inner').hide();
+            $('#eyetracking_markers_table').hide();
         }
         gdo.net.module["EyeTracking"].updateButtons();
+    }
+
+    $.connection.eyeTrackingModuleHub.client.receiveMarkers = function (serializedMarkers) {
+        var deserializedMarkers = JSON.parse(serializedMarkers);
+        gdo.consoleOut('.EyeTracking', 1, "Received " + deserializedMarkers.length + " Markers");
+        gdo.net.module["EyeTracking"].marker = new Array(gdo.net.cols * gdo.net.rows);
+        for (var m = 0; m < gdo.net.cols * gdo.net.rows; m++) {
+            gdo.net.module["EyeTracking"].marker[m] = deserializedMarkers[m];
+        }
+
     }
     $.connection.eyeTrackingModuleHub.client.displayIncomingData = function(data) {
         gdo.consoleOut('.EyeTracking', 4, data);
@@ -74,16 +85,16 @@ $(function () {
         }
         gdo.net.module["EyeTracking"].updateButtons();
     }
-    $.connection.eyeTrackingModuleHub.client.updateReferenceSize = function (size) {
-        gdo.consoleOut('.EyeTracking', 1, 'Reference Size: ' + size * 8 + 'px');
-        gdo.net.module["EyeTracking"].referenceSize = size;
+    $.connection.eyeTrackingModuleHub.client.updateMarkerSize = function (size) {
+        gdo.consoleOut('.EyeTracking', 1, 'Marker Size: ' + size * 8 + 'px');
+        gdo.net.module["EyeTracking"].markerSize = size;
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            if (!$('#eyetracking_references_outer')[1]) {
-                $("body").append("<div id='eyetracking_references_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:white; width:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 8 + "px'></div>");
-                $("body").append("<div id='eyetracking_references_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize + "px; right: " + gdo.net.module["EyeTracking"].referenceSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 6 + "px'></div>");
-                $("body").append("<table id='eyetracking_references_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].referenceSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].referenceSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].referenceSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
+            if (!$('#eyetracking_markers_outer')[1]) {
+                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:white; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
+                $("body").append("<div id='eyetracking_markers_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize + "px; right: " + gdo.net.module["EyeTracking"].markerSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px'></div>");
+                $("body").append("<table id='eyetracking_markers_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].markerSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
             }
-            gdo.net.module["EyeTracking"].drawReferenceTable(parseInt(gdo.clientId));
+            gdo.net.module["EyeTracking"].drawMarkerTable(parseInt(gdo.clientId));
         }
     }
     $.connection.eyeTrackingModuleHub.client.updateCursorSize = function (size) {
@@ -113,7 +124,7 @@ $(function () {
                     $("body").append("<div id='eyetracking_cursor_" + l + "'  unselectable='on' class='unselectable' style='border-radius: 100%; opacity:0.7;padding: 0; margin: 0; float: left;position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:" + cursorColor + "; width:" + gdo.net.module["EyeTracking"].cursorSize + "px; height:" + gdo.net.module["EyeTracking"].cursorSize + "px'></div>");
                 }
             }
-            gdo.net.module["EyeTracking"].drawReferenceTable(parseInt(gdo.clientId));
+            gdo.net.module["EyeTracking"].drawMarkerTable(parseInt(gdo.clientId));
         }
     }
     $.connection.eyeTrackingModuleHub.client.updateCacheSize = function (size) {
@@ -126,16 +137,17 @@ $(function () {
 
 gdo.net.module["EyeTracking"].initModule = function () {
     gdo.consoleOut('.EyeTracking', 1, 'Initializing EyeTracking Module');
-    gdo.consoleOut('.EyeTracking', 1, 'Loading ' + '/Data/EyeTracking/QRCodes.json');
-    $.getJSON('/Data/EyeTracking/QRCodes.json', function (data) {
-        gdo.net.module["EyeTracking"].qrCodes = data;
-    });
-    gdo.net.module["EyeTracking"].server.requestReferenceSize();
-    gdo.net.module["EyeTracking"].server.requestCursorSize();
-    gdo.net.module["EyeTracking"].server.requestCacheSize();
-    gdo.net.module["EyeTracking"].server.requestReferenceMode();
-    gdo.net.module["EyeTracking"].server.requestCursorMode();
-    gdo.net.module["EyeTracking"].simulatedData = new Array(gdo.net.module["EyeTracking"].numUsers + 1);
+
+    setTimeout(function () {
+        gdo.net.module["EyeTracking"].server.requestMarkers();
+        gdo.net.module["EyeTracking"].server.requestCursorSize();
+        gdo.net.module["EyeTracking"].server.requestCacheSize();
+        gdo.net.module["EyeTracking"].server.requestMarkerSize();
+        gdo.net.module["EyeTracking"].server.requestMarkerMode();
+        gdo.net.module["EyeTracking"].server.requestCursorMode();
+        gdo.net.module["EyeTracking"].simulatedData = new Array(gdo.net.module["EyeTracking"].numUsers + 1);
+    }, 700);
+
 }
 
 gdo.net.module["EyeTracking"].initializeFakeData = function () {
@@ -408,33 +420,33 @@ gdo.net.module["EyeTracking"].drawUserTable = function (userId, maxCol, maxRow) 
     }
 }
 
-gdo.net.module["EyeTracking"].drawEmptyReferenceTable = function () {
-    $("#eyetracking_references_table").empty();
+gdo.net.module["EyeTracking"].drawEmptyMarkerTable = function () {
+    $("#eyetracking_markers_table").empty();
     for (var i = 0; i < 4; i++) {
-        $("#eyetracking_references_table").append("<tr id='eyetracking_references_table_row_" + i + "' row='" + i + "'></tr>");
+        $("#eyetracking_markers_table").append("<tr id='eyetracking_markers_table_row_" + i + "' row='" + i + "'></tr>");
         for (var j = 0; j < 4; j++) {
-            $("#eyetracking_references_table tr:last").append("<td id='eyetracking_references_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>").css('overflow', 'hidden');
+            $("#eyetracking_markers_table tr:last").append("<td id='eyetracking_markers_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>").css('overflow', 'hidden');
         }
     }
 }
 
-gdo.net.module["EyeTracking"].drawReferenceTable = function (input) {
-    var dataMatrix = gdo.net.module["EyeTracking"].qrCodes.OfficialQRCodeMarkers[input - 1].pattern;
-    gdo.net.module["EyeTracking"].drawEmptyReferenceTable();
+gdo.net.module["EyeTracking"].drawMarkerTable = function (input) {
+    var dataMatrix = gdo.net.module["EyeTracking"].marker[input].DataMatrix;
+    gdo.net.module["EyeTracking"].drawEmptyMarkerTable();
     for (var i = 0; i < 4; i++) {
         for (var j = 0; j < 4; j++) {
-            $("#eyetracking_references_table_row_" + i + "_col_" + j)
+            $("#eyetracking_markers_table_row_" + i + "_col_" + j)
                 .empty()
-                .css("width", gdo.net.module["EyeTracking"].referenceSize + "px")
-                .css("height", gdo.net.module["EyeTracking"].referenceSize + "px")
+                .css("width", gdo.net.module["EyeTracking"].markerSize + "px")
+                .css("height", gdo.net.module["EyeTracking"].markerSize + "px")
                 .css("border", "0px solid")
                 .css('padding', 0)
                 .css('overflow', 'hidden');
             if (dataMatrix[i][j] == 1) {
-                $("#eyetracking_references_table_row_" + i + "_col_" + j)
+                $("#eyetracking_markers_table_row_" + i + "_col_" + j)
                     .css("background", "black");
             } else if (dataMatrix[i][j] == 0) {
-                $("#eyetracking_references_table_row_" + i + "_col_" + j)
+                $("#eyetracking_markers_table_row_" + i + "_col_" + j)
                     .css("background", "white");
             }
         }
@@ -461,27 +473,27 @@ gdo.net.module["EyeTracking"].convertToDataMatrix = function (input) {
 }
 
 gdo.net.module["EyeTracking"].updateButtons = function () {
-    if (gdo.net.module["EyeTracking"].referenceMode) {
-        $("iframe").contents().find("#referenceButton")
+    if (gdo.net.module["EyeTracking"].markerMode) {
+        $("iframe").contents().find("#markerButton")
             .empty()
             .removeClass("btn-outline")
-            .append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;References ON");
+            .append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;Markers ON");
     } else {
-        $("iframe").contents().find("#referenceButton")
+        $("iframe").contents().find("#markerButton")
             .empty()
             .addClass("btn-outline")
-            .append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;References OFF");
+            .append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;Markers OFF");
     }
-    $("iframe").contents().find("#referenceButton")
+    $("iframe").contents().find("#markerButton")
         .unbind()
         .click(function () {
-            if (gdo.net.module["EyeTracking"].referenceMode) {
-                gdo.net.module["EyeTracking"].referenceMode = false;
+            if (gdo.net.module["EyeTracking"].markerMode) {
+                gdo.net.module["EyeTracking"].markerMode = false;
             } else {
-                gdo.net.module["EyeTracking"].referenceMode = true;
+                gdo.net.module["EyeTracking"].markerMode = true;
             }
             gdo.updateDisplayCanvas();
-            gdo.net.module["EyeTracking"].server.setReferenceMode(gdo.net.module["EyeTracking"].referenceMode);
+            gdo.net.module["EyeTracking"].server.setMarkerMode(gdo.net.module["EyeTracking"].markerMode);
 
         });
     if (gdo.net.module["EyeTracking"].cursorMode) {
