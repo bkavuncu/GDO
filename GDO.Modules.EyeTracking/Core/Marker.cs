@@ -10,13 +10,13 @@ namespace GDO.Modules.EyeTracking.Core
 {
     public class Marker
     {
-        public string Id;
-        public string Name;
-        public int NodeId;
-        public int [,] DataMatrix;
-        public float[] X;
-        public float[] Y;
-        public float Angle;
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public int NodeId { get; set; }
+        public int [,] DataMatrix { get; set; }
+        public float[] X { get; set; }
+        public float[] Y { get; set; }
+        public float Angle { get; set; }
 
         [JsonIgnore]
         public MarkerData[] Cache;

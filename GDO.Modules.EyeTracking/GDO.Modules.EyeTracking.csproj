@@ -135,7 +135,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="Web\EyeTracking\Control.cshtml" />
-    <Content Include="Web\EyeTracking\User1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
@@ -150,6 +149,7 @@
   <ItemGroup>
     <Compile Include="Core\Data.cs" />
     <Compile Include="Core\Marker.cs" />
+    <Compile Include="Core\User.cs" />
     <Compile Include="EyeTrackingModule.cs" />
     <Compile Include="EyeTrackingModuleHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

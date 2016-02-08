@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
@@ -239,6 +240,59 @@ namespace GDO.Modules.EyeTracking
             }
         }
 
+        public void RequestConnectionStatus(int userId)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    Clients.Caller.receiveConnectionStatus(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsListening);
 
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void SetConnectionStatus(int userId, bool status)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsListening = status;
+                    if (status)
+                    {
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].Thread = new Thread(((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StartTCPListener);
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].Thread.Start();
+                    }
+                    else
+                    {
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StopTCPListener();
+                    }
+                    BroadcastConnectionStatus(userId, status);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        private void BroadcastConnectionStatus(int userId, bool status)
+        {
+            try
+            {
+                Clients.All.receiveConnectionStatus(userId, status);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Clients.Caller.setMessage(e.GetType().ToString());
+            }
+        }
     }
 }

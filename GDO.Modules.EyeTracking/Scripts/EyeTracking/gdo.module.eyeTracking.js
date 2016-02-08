@@ -10,6 +10,7 @@ $(function () {
     gdo.net.module["EyeTracking"].marker = [];
     for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
         gdo.net.module["EyeTracking"].user[l] = {};
+        gdo.net.module["EyeTracking"].user[l].socket = false;
         gdo.net.module["EyeTracking"].user[l].data = [];
         gdo.net.module["EyeTracking"].user[l].x = new Array(gdo.net.module["EyeTracking"].flotSize);
         gdo.net.module["EyeTracking"].user[l].y = new Array(gdo.net.module["EyeTracking"].flotSize);
@@ -43,6 +44,20 @@ $(function () {
         }
 
     }
+
+    $.connection.eyeTrackingModuleHub.client.receiveConnectionStatus = function (userId, status) {
+        gdo.consoleOut('.EyeTracking', 2, "Received Connection Status for User " + userId + ", " + status);
+        if (status) {
+            $("iframe").contents().find("#user_" + userId + "_socket").removeClass("btn-outline");
+            $("iframe").contents().find("#user_" + userId + "_socket_icon").addClass("fa-check").removeClass("fa-times");
+            gdo.net.module["EyeTracking"].user[userId].socket = true;
+        } else {
+            $("iframe").contents().find("#user_" + userId + "_socket").addClass("btn-outline");
+            $("iframe").contents().find("#user_" + userId + "_socket_icon").addClass("fa-times").removeClass("fa-check");
+            gdo.net.module["EyeTracking"].user[userId].socket = false;
+        }
+    }
+
     $.connection.eyeTrackingModuleHub.client.displayIncomingData = function(data) {
         gdo.consoleOut('.EyeTracking', 4, data);
     }
@@ -145,6 +160,9 @@ gdo.net.module["EyeTracking"].initModule = function () {
         gdo.net.module["EyeTracking"].server.requestMarkerSize();
         gdo.net.module["EyeTracking"].server.requestMarkerMode();
         gdo.net.module["EyeTracking"].server.requestCursorMode();
+        for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
+            gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
+        }
         gdo.net.module["EyeTracking"].simulatedData = new Array(gdo.net.module["EyeTracking"].numUsers + 1);
     }, 700);
 
@@ -518,4 +536,17 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
             gdo.updateDisplayCanvas();
             gdo.net.module["EyeTracking"].server.setCursorMode(gdo.net.module["EyeTracking"].cursorMode);
         });
+    for (var i = 1; i < gdo.net.module["EyeTracking"].numUsers + 1; i++) {
+        $("iframe").contents().find("#user_" + i + "_socket")
+            .unbind()
+            .click(function () {
+                if (gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket) {
+                    gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket = false;
+                } else {
+                    gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket = true;
+                }
+                gdo.updateDisplayCanvas();
+                gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'),gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket);
+            });
+    }
 }

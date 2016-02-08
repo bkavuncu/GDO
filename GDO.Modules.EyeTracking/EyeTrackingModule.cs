@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 using System.Web;
 using GDO.Core;
 using GDO.Modules.EyeTracking.Core;
@@ -22,9 +26,9 @@ namespace GDO.Modules.EyeTracking
         public int CursorSize { get; set; }
         public int CacheSize { get; set; }
         public int NumUsers { get; set; } = 4;
-
+        public int MainPort = 11000;
         public Marker[]  Markers { get; set; }
-        //public ConcurrentDictionary<int,TrackData>[]  User{ get; set; }
+        public User[] Users { get; set; }
 
         public void Init()
         {
@@ -58,6 +62,15 @@ namespace GDO.Modules.EyeTracking
                         Markers[i].Init(id,name,i+1,dataMatrix,MarkerSize,CacheSize);
                     }
                 }
+            }
+            Users = new User[NumUsers + 1];
+            for (int i = 1; i < NumUsers+1; i++)
+            {
+                Users[i] = new User();
+                Users[i].Id = i;
+                Users[i].IsListening = false;
+                Users[i].Port = MainPort + i;
+                Users[i].Thread = new Thread(Users[i].StartTCPListener);
             }
         }
 
@@ -104,26 +117,10 @@ namespace GDO.Modules.EyeTracking
 
         public LocationData CalculateLocation(MarkerData[] data)
         {
+            //calculate angle on each marker
+            //calulate location
             return null;
         }
-
-
-        //TODO receive data and write it to variable
-        //TODO for loop markers for last data and calculate current eye position on gdo
-        //TODO for loop go through each marker and calculate vector for marker for given
-        //TODO algorithm to converge vectors to calculate location of the user
-
-        //TODO Receive Data function input is XY1-4andE for 64 markers and process it 
-        //TODO input receveid data and calculate position in gdo
-        //TODO function2 input marker data, output vector
-        //TODO process data, call function1, in function1 call function2 for each marker
-        //TODO function3 calculate postion from calculated marker vectors
-        //TODO broadcast 
-
-
-
-
-
 
         public void BroadcastData(string data)
         {
