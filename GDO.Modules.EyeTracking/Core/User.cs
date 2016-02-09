@@ -6,41 +6,40 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Infrastructure;
 
 namespace GDO.Modules.EyeTracking.Core
 {
     public class User
     {
         public int Id { get; set; }
-        public bool IsListening { get; set; }
+        public bool IsConnected { get; set; }
+        public bool IsReceiving { get; set; }
         public Thread Thread { get; set; }
+        public string IP { get; set; }
         public int Port { get; set; }
-        TcpListener ServerSocket { get; set; }
         TcpClient ClientSocket { get; set; }
+        
         public string noise = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
         
         //TODO DATA?
-        public void StartTCPListener()
+        public void StartTCPClient()
         {
-            ServerSocket = new TcpListener(IPAddress.Parse("127.0.0.1"),Port);
-            ServerSocket.Stop();
-            ServerSocket.ExclusiveAddressUse = false;
-            ClientSocket = default(TcpClient);
+            ClientSocket = new System.Net.Sockets.TcpClient();
             try
             {
-                ServerSocket.Start();
-                ClientSocket = ServerSocket.AcceptTcpClient();
+
+                ClientSocket.Connect(IP,Port);
+                IsConnected = true;
             }
             catch (Exception e)
             {
-                ServerSocket.Stop();
+                IsConnected = false;
+                IsReceiving = false;
                 Console.WriteLine(e.ToString());
             }
 
-  
-            IsListening = true;
-            //Socket Started
-            while (IsListening)
+            while (IsConnected)
             {
                 try
                 {
@@ -50,9 +49,10 @@ namespace GDO.Modules.EyeTracking.Core
                     string data = System.Text.Encoding.ASCII.GetString(bytes);
                     if (data == noise)
                     {
-                        StopTCPListener();
+                        StopTCPClient();
                     }
                     Console.WriteLine(data);
+                    IsReceiving = true;
                 }
                 catch (Exception e)
                 {
@@ -62,7 +62,8 @@ namespace GDO.Modules.EyeTracking.Core
             try
             {
                 ClientSocket.Close();
-                ServerSocket.Stop();
+                IsConnected = false;
+                IsReceiving = false;
             }
             catch (Exception e)
             {
@@ -71,14 +72,15 @@ namespace GDO.Modules.EyeTracking.Core
 
         }
 
-        public void StopTCPListener()
+        public void StopTCPClient()
         {
-            IsListening = false;
+            IsConnected = false;
+            IsReceiving = false;
             try
             {
-                ServerSocket.Stop();
-                var context = GlobalHost.ConnectionManager.GetHubContext<EyeTrackingModuleHub>();
-                context.Clients.All.receiveConnectionStatus(Id, IsListening);
+                ClientSocket.Close();
+                //var context = GlobalHost.ConnectionManager.GetHubContext<EyeTrackingModuleHub>();
+                //context.Clients.All.receiveConnectionStatus(Id, IsListening);
             }
             catch (Exception e)
             {

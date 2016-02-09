@@ -81,7 +81,7 @@
 
         .input_field {
             width: 100%;
-            height: 40px;
+            height: 32px;
             border: 1px solid #333;
             background: #333;
             color: #FFF;
@@ -171,13 +171,35 @@
                             <div id="user_1_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
                         </div>
                     </div>
-                    <div id="user_1_status" class="panel-footer">
+                    <div class="panel-footer">
                         <div class="row">
-                            <div class="col-lg-10">
-                                Status
-                            </div>
-                            <div class="col-lg-2">
-                                <button type='button' id="user_1_socket" style="align-content: flex-start" userId="1" class='btn btn-primary btn-outline center-block  btn-sm'><i id="user_1_socket_icon"  align="center" class='fa  fa-times fa-fw'></i>&nbsp;Socket</button>
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
+                                    <tr>
+                                        <td style="width:50%">
+                                            <div style="background-color:transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color:transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_1_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width:1%"></td>
+                                        <td>
+                                            <div style="background-color:transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div"><input type="text" class="input_field" pattern="[0-9]" id="user_1_port" maxlength="5" size="5"></div>
+                                        </td>
+                                        <td style="width:3%"></td>
+                                        <td>
+                                            <button type='button' id="user_1_socket" style="align-content: flex-start" userId="1" class='btn btn-primary btn-outline center-block  btn-sm'><i id="user_1_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -220,13 +242,35 @@
                             <div id="user_2_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
                         </div>
                     </div>
-                    <div id="user_2_status" class="panel-footer">
+                    <div class="panel-footer">
                         <div class="row">
-                            <div class="col-lg-10">
-                                Status
-                            </div>
-                            <div class="col-lg-2">
-                                <button type='button' id="user_2_socket" style="align-content: flex-start" userId="2"class='btn btn-success btn-outline center-block  btn-sm'><i id="user_2_socket_icon" align="center" class='fa  fa-times fa-fw'></i>&nbsp;Socket</button>
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
+                                    <tr>
+                                        <td style="width:50%">
+                                            <div style="background-color:transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color:transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_2_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width:1%"></td>
+                                        <td>
+                                            <div style="background-color:transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div"><input type="text" class="input_field" pattern="[0-9]" id="user_2_port" maxlength="5" size="5"></div>
+                                        </td>
+                                        <td style="width:3%"></td>
+                                        <td>
+                                            <button type='button' id="user_2_socket" style="align-content: flex-start" userId="2" class='btn btn-success btn-outline center-block  btn-sm'><i id="user_2_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -271,13 +315,35 @@
                             <div id="user_3_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
                         </div>
                     </div>
-                    <div id="user_3_status" class="panel-footer">
+                    <div class="panel-footer">
                         <div class="row">
-                            <div class="col-lg-10">
-                                Status
-                            </div>
-                            <div class="col-lg-2">
-                                <button type='button' id="user_3_socket" style="align-content: flex-start" userId="3" class='btn btn-warning btn-outline center-block  btn-sm'><i id="user_3_socket_icon"  align="center" class='fa  fa-times fa-fw'></i>&nbsp;Socket</button>
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
+                                    <tr>
+                                        <td style="width:50%">
+                                            <div style="background-color:transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color:transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_3_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width:1%"></td>
+                                        <td>
+                                            <div style="background-color:transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div"><input type="text" class="input_field" pattern="[0-9]" id="user_3_port" maxlength="5" size="5"></div>
+                                        </td>
+                                        <td style="width:3%"></td>
+                                        <td>
+                                            <button type='button' id="user_3_socket" style="align-content: flex-start" userId="3" class='btn btn-warning btn-outline center-block  btn-sm'><i id="user_3_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -321,13 +387,35 @@
                             <div id="user_4_location" unselectable="on" class="unselectable circleDiv" style="width: 200px; height: 200px; background: #171717; border: 1px solid grey"></div>
                         </div>
                     </div>
-                    <div id="user_4_status" class="panel-footer">
+                    <div class="panel-footer">
                         <div class="row">
-                            <div class="col-lg-10">
-                                Status
-                            </div>
-                            <div class="col-lg-2">
-                                <button type='button' id="user_4_socket" style="align-content: flex-start" userId="4" class='btn btn-danger btn-outline center-block  btn-sm'><i id="user_4_socket_icon"  align="center" class='fa  fa-times fa-fw'></i>&nbsp;Socket</button>
+                            <div class="col-lg-12">
+                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
+                                    <tr>
+                                        <td style="width:50%">
+                                            <div style="background-color:transparent">Not Connected</div>
+                                        </td>
+                                        <td>
+                                            <div style="background-color:transparent">IP:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <input type="text" class="input_field" id="user_4_ip" maxlength="15" size="15">
+                                            </div>
+                                        </td>
+                                        <td style="width:1%"></td>
+                                        <td>
+                                            <div style="background-color:transparent">Port:</div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div"><input type="text" class="input_field" pattern="[0-9]" id="user_4_port" maxlength="5" size="5"></div>
+                                        </td>
+                                        <td style="width:3%"></td>
+                                        <td>
+                                            <button type='button' id="user_4_socket" style="align-content: flex-start" userId="4" class='btn btn-danger btn-outline center-block  btn-sm'><i id="user_4_socket_icon" align="center" class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect</button>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>

@@ -45,20 +45,26 @@ $(function () {
 
     }
 
-    $.connection.eyeTrackingModuleHub.client.receiveConnectionStatus = function (userId, status) {
-        gdo.consoleOut('.EyeTracking', 2, "Received Connection Status for User " + userId + ", " + status);
-        if (status) {
+    $.connection.eyeTrackingModuleHub.client.receiveConnectionStatus = function (userId, connectionStatus, streamStatus) {
+        gdo.consoleOut('.EyeTracking', 2, "Received Connection Status for User " + userId + ", Is connected: " + connectionStatus + ', Is Receiving: ' + streamStatus);
+        if (connectionStatus) {
             $("iframe").contents().find("#user_" + userId + "_socket").removeClass("btn-outline");
-            $("iframe").contents().find("#user_" + userId + "_socket_icon").addClass("fa-check").removeClass("fa-times");
+            $("iframe").contents().find("#user_" + userId + "_socket").empty().append("<i id='user_" + userId + "_socket_icon' align='center' class='fa  fa-times  fa-fw'></i>&nbsp;Disconnect");
+            if (streamStatus) {
+                $("iframe").contents().find("#user_" + userId + "_status").empty().append("Connected to Device and Receiving Data");
+            } else {
+                $("iframe").contents().find("#user_" + userId + "_status").empty().append("Connected to Device");
+            }
             gdo.net.module["EyeTracking"].user[userId].socket = true;
         } else {
             $("iframe").contents().find("#user_" + userId + "_socket").addClass("btn-outline");
-            $("iframe").contents().find("#user_" + userId + "_socket_icon").addClass("fa-times").removeClass("fa-check");
+            $("iframe").contents().find("#user_" + userId + "_socket").empty().append("<i id='user_" + userId + "_socket_icon' align='center' class='fa  fa-arrow-right  fa-fw'></i>&nbsp;Connect");
+            $("iframe").contents().find("#user_" + userId + "_status").empty().append("Not Connected");
             gdo.net.module["EyeTracking"].user[userId].socket = false;
         }
     }
 
-    $.connection.eyeTrackingModuleHub.client.displayIncomingData = function(data) {
+    $.connection.eyeTrackingModuleHub.client.displayIncomingData = function (data) {
         gdo.consoleOut('.EyeTracking', 4, data);
     }
 
@@ -164,74 +170,22 @@ gdo.net.module["EyeTracking"].initModule = function () {
             gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
         }
         gdo.net.module["EyeTracking"].simulatedData = new Array(gdo.net.module["EyeTracking"].numUsers + 1);
+        //gdo.net.module["EyeTracking"].periodicCheck();
     }, 700);
 
 }
 
-gdo.net.module["EyeTracking"].initializeFakeData = function () {
-    for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
-        gdo.net.module["EyeTracking"].uploadUserData(1, j, 24, 0, 0, 180, 50);
-    }
+gdo.net.module["EyeTracking"].periodicCheck = function () {
+    setTimeout(function () {
+        for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
+            gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
+        }
+        gdo.net.module["EyeTracking"].periodicCheck();
+    }, 1400);
+
 }
 
-gdo.net.module["EyeTracking"].generateFakeData = function () {
-    for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
-        var timestamp = gdo.net.module["EyeTracking"].timeStamp + Math.floor(Math.random() * (4 - (-4) + 1) + (-4));
-        var nodeId = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].NodeId;
-        var col = gdo.net.node[nodeId].col;
-        var row = gdo.net.node[nodeId].row;
-        var x = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].X + Math.floor(Math.random() * (70 - (-70) + 1) + (-70));
-        if (x > gdo.net.node[1].width) {
-            if (col < gdo.net.cols - 1) {
-                col = col + 1;
-                x = x - gdo.net.node[1].width;
-            } else {
-                x = gdo.net.node[1].width;
-            }
-        } else if (x < 0) {
-            if (col > 1) {
-                col = col - 1;
-                x = x + gdo.net.node[1].width;
-            } else {
-                x = 0;
-            }
-        }
-        var y = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Y + Math.floor(Math.random() * (70 - (-70) + 1) + (-70));
-        if (y > gdo.net.node[1].height) {
-            if (row < gdo.net.rows - 1) {
-                row = row + 1;
-                y = y - gdo.net.node[1].height;
-            } else {
-                y = gdo.net.node[1].height;
-            }
-        } else if (y < 0) {
-            if (row > 1) {
-                row = row - 1;
-                y = y + gdo.net.node[1].height;
-            } else {
-                y = 0;
-            }
-        }
-        nodeId = gdo.net.getNodeId(col, row);
 
-
-        var angle = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Angle + Math.floor(Math.random() * (7 - (-7) + 1) + (-7));
-        var distance = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Distance + Math.floor(Math.random() * (7 - (-7) + 1) + (-7));
-        if (distance > 100) {
-            distance = 100;
-        } else if (distance < -100) {
-            distance = -100;
-        }
-        if (angle > 360) {
-            angle = 360;
-        } else if (angle < 0) {
-            angle = 0;
-        }
-        //gdo.consoleOut('.EyeTracking', 1, 'Data Created - TimeStamp:'+timestamp+' ,UserId: ' + j + ', NodeId:' + nodeId + ', Col:'+col+', Row:' + row+' X:' + x + ', Y:' + y + ', Angle:' + angle + ', Distance:' + distance); 
-        gdo.net.module["EyeTracking"].uploadUserData(timestamp, j, nodeId, x, y, angle, distance);
-    }
-    setTimeout(gdo.net.module["EyeTracking"].generateFakeData, 70);
-}
 
 gdo.net.module["EyeTracking"].update = function () {
     for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
@@ -540,13 +494,83 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
         $("iframe").contents().find("#user_" + i + "_socket")
             .unbind()
             .click(function () {
+                var ip = $("iframe").contents().find("#user_" + $(this).attr('userId') + "_ip").val();
+                var port = parseInt($("iframe").contents().find("#user_" + $(this).attr('userId') + "_port").val());
                 if (gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket) {
                     gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket = false;
+                    gdo.consoleOut('.EyeTracking', 1, 'Requesting Disconnection from Device for User ' + $(this).attr('userId'));
                 } else {
                     gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket = true;
+                    gdo.consoleOut('.EyeTracking', 1, 'Requesting Connection to Device at ' + ip + ':' + port + ' for User ' + $(this).attr('userId'));
                 }
                 gdo.updateDisplayCanvas();
-                gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'),gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket);
+
+                gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'), gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket, ip, port);
             });
     }
 }
+
+/*gdo.net.module["EyeTracking"].initializeFakeData = function () {
+    for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
+        gdo.net.module["EyeTracking"].uploadUserData(1, j, 24, 0, 0, 180, 50);
+    }
+}
+
+gdo.net.module["EyeTracking"].generateFakeData = function () {
+    for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
+        var timestamp = gdo.net.module["EyeTracking"].timeStamp + Math.floor(Math.random() * (4 - (-4) + 1) + (-4));
+        var nodeId = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].NodeId;
+        var col = gdo.net.node[nodeId].col;
+        var row = gdo.net.node[nodeId].row;
+        var x = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].X + Math.floor(Math.random() * (70 - (-70) + 1) + (-70));
+        if (x > gdo.net.node[1].width) {
+            if (col < gdo.net.cols - 1) {
+                col = col + 1;
+                x = x - gdo.net.node[1].width;
+            } else {
+                x = gdo.net.node[1].width;
+            }
+        } else if (x < 0) {
+            if (col > 1) {
+                col = col - 1;
+                x = x + gdo.net.node[1].width;
+            } else {
+                x = 0;
+            }
+        }
+        var y = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Y + Math.floor(Math.random() * (70 - (-70) + 1) + (-70));
+        if (y > gdo.net.node[1].height) {
+            if (row < gdo.net.rows - 1) {
+                row = row + 1;
+                y = y - gdo.net.node[1].height;
+            } else {
+                y = gdo.net.node[1].height;
+            }
+        } else if (y < 0) {
+            if (row > 1) {
+                row = row - 1;
+                y = y + gdo.net.node[1].height;
+            } else {
+                y = 0;
+            }
+        }
+        nodeId = gdo.net.getNodeId(col, row);
+
+
+        var angle = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Angle + Math.floor(Math.random() * (7 - (-7) + 1) + (-7));
+        var distance = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Distance + Math.floor(Math.random() * (7 - (-7) + 1) + (-7));
+        if (distance > 100) {
+            distance = 100;
+        } else if (distance < -100) {
+            distance = -100;
+        }
+        if (angle > 360) {
+            angle = 360;
+        } else if (angle < 0) {
+            angle = 0;
+        }
+        //gdo.consoleOut('.EyeTracking', 1, 'Data Created - TimeStamp:'+timestamp+' ,UserId: ' + j + ', NodeId:' + nodeId + ', Col:'+col+', Row:' + row+' X:' + x + ', Y:' + y + ', Angle:' + angle + ', Distance:' + distance); 
+        gdo.net.module["EyeTracking"].uploadUserData(timestamp, j, nodeId, x, y, angle, distance);
+    }
+    setTimeout(gdo.net.module["EyeTracking"].generateFakeData, 70);
+}*/

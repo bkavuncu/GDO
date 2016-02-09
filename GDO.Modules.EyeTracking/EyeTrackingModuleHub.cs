@@ -246,7 +246,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.receiveConnectionStatus(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsListening);
+                    Clients.Caller.receiveConnectionStatus(userId, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsConnected, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsReceiving);
 
                 }
                 catch (Exception e)
@@ -256,23 +256,25 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
-        public void SetConnectionStatus(int userId, bool status)
+        public void SetConnectionStatus(int userId, bool status, string ip, int port)
         {
             lock (Cave.ModuleLocks["EyeTracking"])
             {
                 try
                 {
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsListening = status;
                     if (status)
                     {
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].Thread = new Thread(((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StartTCPListener);
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IP = ip;
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].Port = port;
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].Thread = new Thread(((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StartTCPClient);
                         ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].Thread.Start();
                     }
                     else
                     {
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StopTCPListener();
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].StopTCPClient();
                     }
-                    BroadcastConnectionStatus(userId, status);
+                    System.Threading.Thread.Sleep(700);
+                    BroadcastConnectionStatus(userId, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsConnected, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsReceiving);
                 }
                 catch (Exception e)
                 {
@@ -282,11 +284,11 @@ namespace GDO.Modules.EyeTracking
             }
         }
 
-        private void BroadcastConnectionStatus(int userId, bool status)
+        private void BroadcastConnectionStatus(int userId, bool connectionStatus, bool streamStatus)
         {
             try
             {
-                Clients.All.receiveConnectionStatus(userId, status);
+                Clients.All.receiveConnectionStatus(userId, connectionStatus, streamStatus);
             }
             catch (Exception e)
             {

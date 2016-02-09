@@ -26,7 +26,6 @@ namespace GDO.Modules.EyeTracking
         public int CursorSize { get; set; }
         public int CacheSize { get; set; }
         public int NumUsers { get; set; } = 4;
-        public int MainPort = 11000;
         public Marker[]  Markers { get; set; }
         public User[] Users { get; set; }
 
@@ -68,20 +67,15 @@ namespace GDO.Modules.EyeTracking
             {
                 Users[i] = new User();
                 Users[i].Id = i;
-                Users[i].IsListening = false;
-                Users[i].Port = MainPort + i;
-                Users[i].Thread = new Thread(Users[i].StartTCPListener);
+                Users[i].IsConnected = false;
+                Users[i].IsReceiving = false;
+                Users[i].Thread = new Thread(Users[i].StartTCPClient);
             }
         }
 
         public string SerializeMarkers()
         {
             return JsonConvert.SerializeObject(Markers);
-        }
-
-        public string SerializeJSON()
-        {
-            return JsonConvert.SerializeObject(this);
         }
 
         public void ReceivedData()
