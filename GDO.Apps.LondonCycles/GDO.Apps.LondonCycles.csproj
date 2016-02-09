@@ -85,6 +85,7 @@
   <ItemGroup>
     <Content Include="Configurations\LondonCycles\Exit - 5min Aggregation.json" />
     <Content Include="Configurations\LondonCycles\Entry - 5min Aggregation.json" />
+    <Content Include="Configurations\LondonCycles\Emptiness - 5min Aggregation.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

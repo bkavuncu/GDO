@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using GDO.Core;
+﻿using GDO.Core;
 
 namespace GDO.Apps.LondonCycles
 {
@@ -30,7 +25,7 @@ namespace GDO.Apps.LondonCycles
         public int Blur { get; set; }
         public int Radius { get; set; }
         public int StationWidth { get; set; }
-        public bool Entry { get; set; }
+        public string Dataserie { get; set; }
         public bool mode { get; set; }
         public string Style { get; set; }
         public bool IsInitialized = false;
@@ -53,7 +48,7 @@ namespace GDO.Apps.LondonCycles
             this.Radius = (int)Configuration.Json.SelectToken("radius");
             this.Opacity = (float) Configuration.Json.SelectToken("opacity");
             this.StationWidth = (int)Configuration.Json.SelectToken("station");
-            this.Entry = (bool)Configuration.Json.SelectToken("entry");
+            this.Dataserie = (string)Configuration.Json.SelectToken("dataserie");
             this.BingLayer = false;
             this.CartoDBLayer = false;
             this.OpenCycleLayer = true;
@@ -65,14 +60,16 @@ namespace GDO.Apps.LondonCycles
         public void SetMapPosition(string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
         {
             IsInitialized = true;
-            Position = new MapPosition();
-            Position.TopLeft = topLeft;
-            Position.Center = center;
-            Position.BottomRight = bottomRight;
-            Position.Resolution = resolution;
-            Position.Width = width;
-            Position.Height = height;
-            Position.Zoom = zoom;
+            Position = new MapPosition
+            {
+                TopLeft = topLeft,
+                Center = center,
+                BottomRight = bottomRight,
+                Resolution = resolution,
+                Width = width,
+                Height = height,
+                Zoom = zoom
+            };
         }
 
         public MapPosition GetMapPosition()

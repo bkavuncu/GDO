@@ -10,6 +10,6 @@
   "radius": 70,
   "blur": 70,
   "station": 1,
-  "entry": true,
+  "dataserie": "entries",
   "file": "entry_exit_data_TIMEAGGREGATION"
 }

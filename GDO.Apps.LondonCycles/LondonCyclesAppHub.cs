@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Web;
 using GDO.Core;
 using GDO.Utility;
 using Microsoft.AspNet.SignalR;
@@ -57,7 +55,7 @@ namespace GDO.Apps.LondonCycles
             }
         }
 
-        public void SetProperties(int instanceId, int blur, int radius, float opacity, int station, bool entry)
+        public void SetProperties(int instanceId, int blur, int radius, float opacity, int station, string dataseries)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -67,9 +65,9 @@ namespace GDO.Apps.LondonCycles
                     ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Radius = radius;
                     ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Opacity = opacity;
                     ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StationWidth = station;
-                    ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Entry = entry;
-                    Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, station, entry);
-                    Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, entry);
+                    ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie = dataseries;
+                    Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
+                    Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
                 catch (Exception e)
                 {
@@ -88,8 +86,8 @@ namespace GDO.Apps.LondonCycles
                     int radius = ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Radius;
                     float opacity = ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Opacity;
                     int station = ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).StationWidth;
-                    bool entry = ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Entry;
-                    Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, entry);
+                    string dataseries = ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie;
+                    Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
                 catch (Exception e)
                 {
@@ -272,28 +270,41 @@ namespace GDO.Apps.LondonCycles
             }
         }
 
-        public void SetEntry(int instanceId)
+ /*       public void SetEntry(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    if (((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Entry)
+                    switch (((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie)
                     {
-                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Entry = false;
+                        case "entries":
+                            ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie = "entries";
+                            break;
+                        case "exits":
+                            ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie = "exits";
+                            break;
+                        case "emptiness":
+                            ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie = "emptiness";
+                            break;
+                    }*/
+                    /*
+                    if (((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie)
+                    {
+                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie = false;
                     }
                     else
                     {
-                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Entry = true;
-                    }
-                    Clients.Group("" + instanceId).setEntry(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Entry);
+                        ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie = true;
+                    }*/
+ /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((LondonCyclesApp)Cave.Apps["LondonCycles"].Instances[instanceId]).Dataserie);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
             }
-        }
+        } */
 
         public void RequestBingLayerVisible(int instanceId)
         {
