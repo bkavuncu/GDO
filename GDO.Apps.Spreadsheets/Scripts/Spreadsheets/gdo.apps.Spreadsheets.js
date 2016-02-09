@@ -19,9 +19,10 @@ gdo.net.app["Spreadsheets"].initClient = function () {
 
 gdo.net.app["Spreadsheets"].initControl = function () {
     gdo.loadModule('viewModel', 'Spreadsheets', gdo.MODULE_TYPE.APP);
+    gdo.loadModule('clearModel', 'Spreadsheets', gdo.MODULE_TYPE.APP);
     gdo.controlId = getUrlVar("controlId");
     gdo.net.app["Spreadsheets"].server.requestName(gdo.controlId);
-    gdo.consoleOut(".Spreadsheets", 1, "Initializing Spreadsheets App Con trol at Instance " + gdo.controlId);
+    gdo.consoleOut(".Spreadsheets", 1, "Initializing Spreadsheets App Control at Instance " + gdo.controlId);
     $("iframe").contents().find('#operation').hide();
     $("iframe").contents().find("#spreadsheet_submit")
     .unbind()
@@ -40,7 +41,7 @@ gdo.net.app["Spreadsheets"].initControl = function () {
                         formData.append('files', config);
                         gdo.consoleOut(".Spreadsheets", 1, "Submitting form to Spreadsheet Server");
                         $.ajax({
-                            url: 'http://localhost:1395/File/Upload',
+                            url: 'http://146.169.45.194/SheetServer/File/Upload',
                             type: 'POST',
                             data: formData,
                             success: function (message) {
@@ -50,6 +51,10 @@ gdo.net.app["Spreadsheets"].initControl = function () {
                                 $('iframe').contents().find('#view_model').unbind().click(function() {
                                     gdo.consoleOut('.Spreadsheets', 1, "viewModel selected, now to run task.");
                                     gdo.net.app["Spreadsheets"].viewModel(gdo.controlId,message.data[0], message.data[1]);
+                                });
+                                $('iframe').contents().find('#clear_model').unbind().click(function () {
+                                    gdo.consoleOut('.Spreadsheets', 1, "clearing model files from console applications.");
+                                    gdo.net.app["Spreadsheets"].clearModel(gdo.controlId);
                                 });
                             },
                             processData: false,

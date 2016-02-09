@@ -14,7 +14,7 @@
     <RootNamespace>GDO</RootNamespace>
     <AssemblyName>GDO</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -935,9 +935,12 @@
     <Content Include="Bootstrap\less\variables.less" />
     <Content Include="Bootstrap\LICENSE" />
     <Content Include="Bootstrap\README.md" />
+    <None Include="Properties\PublishProfiles\Default Settings %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\emergency.pubxml" />
     <None Include="Properties\PublishProfiles\PreProd.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
+    <None Include="Properties\PublishProfiles\WebDeploy.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -999,7 +1002,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>12332</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:12332/</IISUrl>
+          <IISUrl>http://localhost/GDO</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

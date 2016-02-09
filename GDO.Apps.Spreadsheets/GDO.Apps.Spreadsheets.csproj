@@ -16,7 +16,7 @@
     <RootNamespace>GDO.Apps.Spreadsheets</RootNamespace>
     <AssemblyName>GDO.Apps.Spreadsheets</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -83,6 +83,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.Composition.Registration" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -127,7 +128,9 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.clearModel.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.viewModel.js" />
+    <None Include="Properties\PublishProfiles\Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -219,7 +222,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50564</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50287/</IISUrl>
+          <IISUrl>http://localhost/GDO.Apps.Spreadsheets</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

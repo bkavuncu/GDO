@@ -139,31 +139,7 @@
                     <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Upload</h6>
                 </div>
                 <div class="panel-body">
-                    @{
-                        var sheetPath = "";
-                        var sheet = "";
-                        var config = "";
-                        var configPath = "";
-                        if (IsPost)
-                        {
-                            HttpPostedFileBase sheetFile = Request.Files[0];
-                            HttpPostedFileBase configFile = Request.Files[1];
-                            if (sheetFile != null && configFile != null)
-                            {
-                                //Spreadsheet Excel Specification
-                                sheet = Path.GetFileName(sheetFile.FileName);
-                                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Sheet/"));
-                                sheetPath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Sheet/") + sheet;
-                                sheetFile.SaveAs(sheetPath);
-                                //Variable Excel Specification
-                                config = Path.GetFileName(configFile.FileName);
-                                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Config/"));
-                                configPath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Spreadsheets/Config/") + config;
-                                configFile.SaveAs(configPath);
-                            }
-                        }
-                    }
-                    <form id="file_upload_form" action="http://localhost:1395/File/Upload" method="post" data-ajax="false" enctype="multipart/form-data">
+                    <form id="file_upload_form" action="http://146.169.45.194/SheetServer/File/Upload" method="post" data-ajax="false" enctype="multipart/form-data">
                     <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
                         <tr>
                             <td>
@@ -226,6 +202,9 @@
                                     <button id="link_outputs" type="button" class="btn">Link Outputs</button>
                                 </div>
                             </td>
+                            <td>
+                                <button id="clear_model" type="button" class="btn btn-danger">Clear Model</button>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -233,18 +212,5 @@
         </div>
     </div>
 </div>
-@if (sheetPath != "" && configPath != "")
-{
-    <script>
-        $(function() {
-            $(document).ready(function() {
-                var gdo = parent.gdo;
-                gdo.consoleOut('.Spreadsheets', 1, 'Instance ' + gdo.controlId + ": Uploaded files [" + "@sheet" + "," + "@config" + "]");
-                gdo.net.app["Spreadsheets"].server.fileAdded(gdo.controlId, ["@sheet", "@config"]);
-            });
-
-        });
-    </script>
-}
 </body>
 </html>

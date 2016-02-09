@@ -50,22 +50,6 @@ namespace GDO.Apps.Spreadsheets
             }
         }
 
-        public void FileAdded(int instanceId, List<string> files)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    SpreadsheetsApp app = ((SpreadsheetsApp) Cave.Apps["Spreadsheets"].Instances[instanceId]);
-                    string output = app.FileAdded(instanceId,files);
-                    Clients.Caller.ServerToConsole(instanceId, LogLevel.Info, output);
-                }
-                catch (Exception e)
-                {
-                    Clients.Caller.ServerToConsole(instanceId,LogLevel.Error, "Exception[SpreadSheetsAppHub]: " + e);
-                }
-            }
-        }
 
         public void RequestName(int instanceId)
         {
