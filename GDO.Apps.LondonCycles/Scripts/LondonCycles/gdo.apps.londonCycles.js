@@ -132,8 +132,10 @@ $(function () {
         gdo.consoleOut('.LondonCycles', 1, 'Seting Stations Layer Visibility: ' + visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             gdo.net.instance[instanceId].stationsLayer.setVisible(visible);
+            gdo.net.instance[instanceId].trainstationsLayer.setVisible(visible);
         } else {
             gdo.net.instance[instanceId].stationsLayer.setVisible(false);
+            gdo.net.instance[instanceId].trainstationsLayer.setVisible(false);
         }
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
@@ -247,6 +249,11 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
         gdo.net.app["LondonCycles"].stations = data;
     });
 
+    gdo.consoleOut('.LondonCycles', 1, 'Loading ' + '/Data/LondonCycles/trainstations.json');
+    $.getJSON('/Data/LondonCycles/trainstations.json', function (data) {
+        gdo.net.app["LondonCycles"].trainstations = data;
+    });
+
     gdo.consoleOut('.LondonCycles', 1, 'Loading ' + '/Data/LondonCycles/' + gdo.net.app["LondonCycles"].config[gdo.net.instance[instanceId].configName].file + '.json');
     $.getJSON('/Data/LondonCycles/' + gdo.net.app["LondonCycles"].config[gdo.net.instance[instanceId].configName].file + '.json', function (data) {
         gdo.net.app["LondonCycles"].data = data;
@@ -314,6 +321,8 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
 
         gdo.net.instance[instanceId].stationSource = new ol.source.Vector();
 
+        gdo.net.instance[instanceId].trainstationSource = new ol.source.Vector();
+
         gdo.net.instance[instanceId].cycleSource = new ol.source.Vector();
 
         gdo.net.app["LondonCycles"].server.requestProperties(instanceId);
@@ -341,6 +350,24 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
             });
             return [style];
         }
+
+       /* gdo.net.instance[instanceId].trainsstyleFunction = function (feature, resolution) {
+            var style = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 100,
+                    fill: new ol.style.Fill({
+                        color: 'green',
+                        width: 100
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 1
+                    })
+                })
+            });
+            return [style];
+        } */
+
 
         $('iframe').contents().find('#blur').change(function () {
             gdo.net.app["LondonCycles"].uploadProperties(instanceId);
@@ -388,6 +415,23 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
                 gdo.net.instance[instanceId].styleFunction
             });
 
+            gdo.net.instance[instanceId].trainstationsLayer = new ol.layer.Vector({
+                source: gdo.net.instance[instanceId].trainstationSource,
+                style: new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: gdo.net.instance[instanceId].stationWidth * 15,
+                        fill: new ol.style.Fill({
+                            color: 'green',
+                            width: gdo.net.instance[instanceId].stationWidth * 15,
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: 'black',
+                            width: 1
+                        })
+                    })
+                })
+            });
+
             gdo.net.instance[instanceId].heatmapLayer = new ol.layer.Heatmap({
                 //gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
                 source: gdo.net.instance[instanceId].cycleSource,
@@ -400,6 +444,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
                 map.addLayer(gdo.net.instance[instanceId].cartodbLayer);
                 map.addLayer(gdo.net.instance[instanceId].openCycleLayer);
                 map.addLayer(gdo.net.instance[instanceId].stationsLayer);
+                map.addLayer(gdo.net.instance[instanceId].trainstationsLayer);
                 map.addLayer(gdo.net.instance[instanceId].heatmapLayer);
                 gdo.net.app["LondonCycles"].server.requestBingLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestCartoDBLayerVisible(instanceId);
@@ -416,6 +461,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
 }
 
 gdo.net.app["LondonCycles"].drawFeatures = function (instanceId) {
+    //BIKE DOCKS
     for (var index1 in gdo.net.app["LondonCycles"].stations) {
         if (gdo.net.app["LondonCycles"].stations.hasOwnProperty((index1))) {
             var station1 = gdo.net.app["LondonCycles"].stations[index1];
@@ -430,6 +476,22 @@ gdo.net.app["LondonCycles"].drawFeatures = function (instanceId) {
         }
     }
 
+    //TRAIN STATIONS
+    for (var index1 in gdo.net.app["LondonCycles"].trainstations) {
+        if (gdo.net.app["LondonCycles"].trainstations.hasOwnProperty((index1))) {
+            var station1 = gdo.net.app["LondonCycles"].trainstations[index1];
+            var geom = new ol.geom.Point(ol.proj.transform([parseFloat(station1.coordinates[1]), parseFloat(station1.coordinates[0])], 'EPSG:4326', 'EPSG:3857'));
+            var feature = new ol.Feature({
+                geometry: geom,
+                id: parseInt(station1.id)
+            });
+            feature.setId(station1.id);
+            gdo.net.instance[instanceId].trainstationSource.addFeature(feature);
+            gdo.consoleOut('.LondonCycles', 3, "Adding TrainStation " + station1.name + " with id " + station1.id);
+        }
+    }
+
+    //DATA
     for (var index3 in gdo.net.app["LondonCycles"].data) {
         if (gdo.net.app["LondonCycles"].data.hasOwnProperty((index3))) {
             var dataPoint = gdo.net.app["LondonCycles"].data[index3];
