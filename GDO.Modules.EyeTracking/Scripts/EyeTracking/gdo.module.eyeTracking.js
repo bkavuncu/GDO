@@ -497,15 +497,15 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
                 var ip = $("iframe").contents().find("#user_" + $(this).attr('userId') + "_ip").val();
                 var port = parseInt($("iframe").contents().find("#user_" + $(this).attr('userId') + "_port").val());
                 if (gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket) {
-                    gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket = false;
                     gdo.consoleOut('.EyeTracking', 1, 'Requesting Disconnection from Device for User ' + $(this).attr('userId'));
+                    gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'), false, "", 0);
                 } else {
-                    gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket = true;
                     gdo.consoleOut('.EyeTracking', 1, 'Requesting Connection to Device at ' + ip + ':' + port + ' for User ' + $(this).attr('userId'));
+                    gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'), true, ip, port);
                 }
                 gdo.updateDisplayCanvas();
 
-                gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'), gdo.net.module["EyeTracking"].user[$(this).attr('userId')].socket, ip, port);
+
             });
     }
 }

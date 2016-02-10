@@ -18,10 +18,7 @@ namespace GDO.Modules.EyeTracking.Core
         public float[] Y { get; set; }
         public float Angle { get; set; }
 
-        [JsonIgnore]
-        public MarkerData[] Cache;
-
-        public void Init(string id,string name, int nodeId, int[,] dataMatrix, int markerSize, int cacheSize)
+        public void Init(string id,string name, int nodeId, int[,] dataMatrix, int markerSize)
         {
             this.Id = id;
             this.Name = name;
@@ -37,8 +34,6 @@ namespace GDO.Modules.EyeTracking.Core
             Y[1] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height) - markerSize;
             Y[2] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height) - markerSize;
             Y[3] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height);
-            //TODO Calculate angle
-            this.Cache = new MarkerData[cacheSize];
         }
     }
 }

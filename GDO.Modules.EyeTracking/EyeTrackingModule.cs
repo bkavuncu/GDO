@@ -58,7 +58,7 @@ namespace GDO.Modules.EyeTracking
                             }
                         }
                         Markers[i] = new Marker();
-                        Markers[i].Init(id,name,i+1,dataMatrix,MarkerSize,CacheSize);
+                        Markers[i].Init(id,name,i+1,dataMatrix,MarkerSize);
                     }
                 }
             }
@@ -66,10 +66,7 @@ namespace GDO.Modules.EyeTracking
             for (int i = 1; i < NumUsers+1; i++)
             {
                 Users[i] = new User();
-                Users[i].Id = i;
-                Users[i].IsConnected = false;
-                Users[i].IsReceiving = false;
-                Users[i].Thread = new Thread(Users[i].StartTCPClient);
+                Users[i].Init(i, Cave.Cols * Cave.Rows, CacheSize);
             }
         }
 
@@ -82,39 +79,7 @@ namespace GDO.Modules.EyeTracking
         {
 
         }
-        public PositionData CalculatePosition(MarkerData[] data, double x, double y)
-        {
 
-            double totalX = 0;
-            double totalY = 0;
-            double totalCount = 0;
-            PositionData position = new PositionData();
-            for (int i = 0; i < Cave.Cols*Cave.Rows; i++)
-            {
-                double[] offset = data[i].CalculateOffset(x, y, MarkerSize);
-                if (offset != null)
-                {
-                    totalX += offset[0]* offset[2];
-                    totalY += offset[1]* offset[2];
-                    totalCount += offset[2];
-                }
-            }
-            position.X = Convert.ToInt32(totalX/totalCount);
-            position.Y = Convert.ToInt32(totalY / totalCount);
-            int col = position.X/Cave.Nodes[0].Width;
-            int row = position.Y/Cave.Nodes[0].Height;
-            position.NodeId = Cave.GetNodeId(col, row);
-            position.X = position.X - (col * Cave.Nodes[0].Width);
-            position.Y = position.Y - (row * Cave.Nodes[0].Height);
-            return position;
-        }
-
-        public LocationData CalculateLocation(MarkerData[] data)
-        {
-            //calculate angle on each marker
-            //calulate location
-            return null;
-        }
 
         public void BroadcastData(string data)
         {

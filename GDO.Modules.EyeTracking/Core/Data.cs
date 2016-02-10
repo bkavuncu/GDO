@@ -74,6 +74,11 @@ namespace GDO.Modules.EyeTracking.Core
 
         }
     }
+    public class EyeData
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
     public class PositionData
     {
         public int NodeId { get; set; }
@@ -86,7 +91,7 @@ namespace GDO.Modules.EyeTracking.Core
         public double Height { get; set; }
         public int Distance { get; set; }
     }
-    public class ConvertedData
+    public class TrackData
     {
         public int TimeStamp { get; set; }
         public int UserId { get; set; }

@@ -125,10 +125,6 @@
     <Content Include="packages.config" />
     <Content Include="Configurations\Images\Default.json" />
     <Content Include="Configurations\Images\Integration Mode.json" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -141,8 +137,6 @@
     <Content Include="Web\Images\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Scripts\Images\gdo.apps.images.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
