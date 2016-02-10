@@ -14,9 +14,9 @@ namespace GDO.Modules.EyeTracking.Core
         public string Name { get; set; }
         public int NodeId { get; set; }
         public int [,] DataMatrix { get; set; }
-        public float[] X { get; set; }
-        public float[] Y { get; set; }
-        public float Angle { get; set; }
+        public double[] X { get; set; }
+        public double[] Y { get; set; }
+        public double Angle { get; set; }
 
         public void Init(string id,string name, int nodeId, int[,] dataMatrix, int markerSize)
         {
@@ -24,8 +24,8 @@ namespace GDO.Modules.EyeTracking.Core
             this.Name = name;
             this.NodeId = nodeId;
             this.DataMatrix = dataMatrix;
-            this.X = new float[4];
-            this.Y = new float[4];
+            this.X = new double[4];
+            this.Y = new double[4];
             X[0] = ((Cave.Nodes[nodeId].Col+1)*Cave.Nodes[nodeId].Width) - markerSize;
             X[1] = ((Cave.Nodes[nodeId].Col+1) * Cave.Nodes[nodeId].Width) - markerSize;
             X[2] = ((Cave.Nodes[nodeId].Col+1)*Cave.Nodes[nodeId].Width);

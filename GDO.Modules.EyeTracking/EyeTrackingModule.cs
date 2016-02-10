@@ -79,12 +79,5 @@ namespace GDO.Modules.EyeTracking
         {
 
         }
-
-
-        public void BroadcastData(string data)
-        {
-            var context = GlobalHost.ConnectionManager.GetHubContext<EyeTrackingModuleHub>();
-            context.Clients.All.receiveData(data);
-        }
     }
 }

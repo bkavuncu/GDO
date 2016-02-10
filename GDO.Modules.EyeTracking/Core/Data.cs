@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.UI;
 using Newtonsoft.Json;
 
 namespace GDO.Modules.EyeTracking.Core
@@ -9,8 +10,8 @@ namespace GDO.Modules.EyeTracking.Core
     public class MarkerData
     {
 
-        public double[] X;
-        public double[] Y;
+        public double[] X = new double[4];
+        public double[] Y = new double[4];
 
         public double A;
         public double B;
@@ -19,6 +20,7 @@ namespace GDO.Modules.EyeTracking.Core
 
         public double[] Vector;//X,Y,Z 
 
+        
         public void CalculateVector()
         {
 
@@ -61,10 +63,11 @@ namespace GDO.Modules.EyeTracking.Core
         {
             if (VisibleCheck())
             {
-                double[] offset = new double[2];
+                double[] offset = new double[3];
+                CalculateSides();
                 offset[0] = (x - X[3]) / ((B + D) / (markerSize * 2));
                 offset[1] = (y - Y[3]) / ((A + C) / (markerSize * 2));
-                offset[3] = Math.Sqrt(Math.Pow(offset[0], 2) + Math.Pow(offset[0], 2));
+                offset[2] = Math.Sqrt(Math.Pow(offset[0], 2) + Math.Pow(offset[1], 2));
                 return offset;
             }
             else
@@ -104,6 +107,14 @@ namespace GDO.Modules.EyeTracking.Core
         public string SerializeJSON()
         {
             return JsonConvert.SerializeObject(this);
+        }
+
+        public void setPosition(int userId, PositionData pos)
+        {
+            UserId = userId;
+            X = pos.X;
+            Y = pos.Y;
+            NodeId = pos.NodeId;
         }
     }
 

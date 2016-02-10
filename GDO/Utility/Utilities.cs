@@ -23,13 +23,19 @@ namespace GDO.Utility
                 index = str.IndexOf(divider, index);
                 if (index > 0)
                 {
-                    lines.Add(str.Substring(lastIndex, index - lastIndex));
+                    string line = str.Substring(lastIndex, index - lastIndex);
+                    lines.Add(line);
                     lastIndex = index + divider.Length;
+                }
+                else
+                {
+                    break;
                 }
             }
             if (includeRemainder)
             {
-                lines.Add(str.Substring(lastIndex,str.Length));
+                string remainder = str.Substring(lastIndex, str.Length - lastIndex);
+                lines.Add(remainder);
             }
             return lines;
         }
