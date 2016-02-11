@@ -164,6 +164,7 @@
     $("#video_table").on("click", ".screenSelector", function () {
         var gdo = parent.gdo;
         gdo.consoleOut('.Youtube', 1, 'Toggle mute for node : ' + $(this).text());
+        $(this).toggleClass("btn-success");
         gdo.net.app["Youtube"].server.toggleMute(gdo.controlId, $(this).text());
     });
     $("#search_mode").click(function () {
