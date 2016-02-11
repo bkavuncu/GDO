@@ -28,6 +28,9 @@ namespace GDO.Modules.EyeTracking
         public int NumUsers { get; set; } = 4;
         public Marker[]  Markers { get; set; }
         public User[] Users { get; set; }
+        public Action<string> CallBackFunction { get; set; }
+
+
 
         public void Init()
         {
@@ -36,7 +39,7 @@ namespace GDO.Modules.EyeTracking
             this.CursorMode = false;
             this.MarkerSize = 21;
             this.CursorSize = 210;
-            this.CacheSize = 1000;
+            this.CacheSize = 10000;
             string path = Directory.GetCurrentDirectory() + @"\Data\EyeTracking";
             if (Directory.Exists(path))
             {
@@ -78,6 +81,10 @@ namespace GDO.Modules.EyeTracking
         public void ReceivedData()
         {
 
+        }
+        public void LinkCallbackFunction(Action<string> callback)
+        {
+            CallBackFunction = callback;
         }
     }
 }

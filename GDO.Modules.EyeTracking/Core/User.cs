@@ -28,6 +28,8 @@ namespace GDO.Modules.EyeTracking.Core
         public MarkerData[] MarkerData { get; set; }
         public EyeData EyeData { get; set; }
         public TrackData[] TrackCache { get; set; }
+        //public Queue<TrackData> TrackQueue { get; set; }
+        //public int TrackQueueSize = 10; 
         public int MaxOffset { get; set; }
 
         public string noise = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -42,6 +44,7 @@ namespace GDO.Modules.EyeTracking.Core
             MarkerData = new MarkerData[NumMarkers];
             EyeData = new EyeData();
             TrackCache = new TrackData[cacheSize];
+            //TrackQueue = new Queue<TrackData>(TrackQueueSize+1);
             MaxOffset = Convert.ToInt32(Math.Sqrt(Math.Pow((Cave.Cols/2)* Cave.NodeWidth, 2) + Math.Pow((Cave.Rows) * Cave.NodeHeight, 2)));
         }
 
@@ -67,10 +70,10 @@ namespace GDO.Modules.EyeTracking.Core
                 try
                 {
                     NetworkStream networkStream = ClientSocket.GetStream();
-                    byte[] bytes = new byte[512];
+                    byte[] bytes = new byte[6144];
                     networkStream.Read(bytes, 0, bytes.Length);
                     string data = System.Text.Encoding.ASCII.GetString(bytes);
-                    if (data == noise)
+                    if (Cave.Nodes == null)
                     {
                         StopTCPClient();
                     }
@@ -200,7 +203,16 @@ namespace GDO.Modules.EyeTracking.Core
                     TrackData trackData = new TrackData();
                     trackData.setPosition(Id, position);
                     trackData.TimeStamp = secondsSinceEpoch;
-                    BroadcastData(trackData.SerializeJSON());
+                    //if (TrackQueue.Count < TrackQueueSize)
+                    //{
+                    //    TrackQueue.Enqueue(trackData);
+                    // }
+                    //else
+                    //{
+                    //    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(TrackQueue.ToArray()));
+                    //    TrackQueue.Clear();
+                    //}
+                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(trackData));
                 }
             }
 
@@ -237,14 +249,21 @@ namespace GDO.Modules.EyeTracking.Core
                     totalCount += MaxOffset - offset[2];
                 }
             }
-            double x = Convert.ToInt32(totalX / totalCount);
-            double y = Convert.ToInt32(totalY / totalCount);
-            int col = Convert.ToInt32(Math.Floor(x / Cave.NodeWidth));
-            int row = Convert.ToInt32(Math.Floor(y / Cave.NodeHeight));
-            position.NodeId = Cave.GetNodeId(col, row);
-            position.X = Convert.ToInt32(x - (double)(col * Cave.NodeWidth));
-            position.Y = Convert.ToInt32(y - (double)(row * Cave.NodeHeight));
-            return position;
+            if (totalX > 0 && totalY > 0)
+            {
+                double x = Convert.ToInt32(totalX/totalCount);
+                double y = Convert.ToInt32(totalY/totalCount);
+                int col = Convert.ToInt32(Math.Floor(x/Cave.NodeWidth));
+                int row = Convert.ToInt32(Math.Floor(y/Cave.NodeHeight));
+                position.NodeId = Cave.GetNodeId(col, row);
+                position.X = Convert.ToInt32(x - (double) (col*Cave.NodeWidth));
+                position.Y = Convert.ToInt32(y - (double) (row*Cave.NodeHeight));
+                return position;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public LocationData CalculateLocation(MarkerData[] data)
@@ -253,11 +272,5 @@ namespace GDO.Modules.EyeTracking.Core
             //calulate location
             return null;
         }
-        public void BroadcastData(string data)
-        {
-            var context = GlobalHost.ConnectionManager.GetHubContext<EyeTrackingModuleHub>();
-            context.Clients.All.receiveData(data);
-        }
-
     }
 }

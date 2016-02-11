@@ -3,8 +3,8 @@ $(function () {
     gdo.consoleOut('.EyeTracking', 1, 'Loaded EyeTracking JS');
     gdo.net.module["EyeTracking"].mapRadius = 100;
     gdo.net.module["EyeTracking"].numUsers = 4;
-    gdo.net.module["EyeTracking"].updateInterval = 50;
-    gdo.net.module["EyeTracking"].flotSize = 10;
+    gdo.net.module["EyeTracking"].updateInterval = 100;
+    gdo.net.module["EyeTracking"].flotSize = 100;
     gdo.net.module["EyeTracking"].timeStamp = 1;
     gdo.net.module["EyeTracking"].user = new Array(gdo.net.module["EyeTracking"].numUsers);
     gdo.net.module["EyeTracking"].marker = [];
@@ -70,29 +70,38 @@ $(function () {
 
     $.connection.eyeTrackingModuleHub.client.receiveData = function (serializedData) {
         var deserializedData = JSON.parse(serializedData);
-        gdo.consoleOut('.EyeTracking', 4, deserializedData);
-        if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length > gdo.net.module["EyeTracking"].cacheSize) {
-            gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
-        }
-        gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
 
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            if (gdo.net.module["EyeTracking"].cursorMode && deserializedData.NodeId == gdo.clientId) {
-                $('#eyetracking_cursor_' + deserializedData.UserId).show();
-                $('#eyetracking_cursor_' + deserializedData.UserId)
-                    .css("top", deserializedData.Y - (gdo.net.module["EyeTracking"].cursorSize / 2))
-                    .css("left", deserializedData.X - (gdo.net.module["EyeTracking"].cursorSize / 2));
-            } else if (gdo.net.node[deserializedData.NodeId].isNeighbour) {
-                var colOffset = gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col;
-                var rowOffset = gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row;
-                $('#eyetracking_cursor_' + deserializedData.UserId).show();
-                $('#eyetracking_cursor_' + deserializedData.UserId)
-                    .css("top", (rowOffset * gdo.net.node[deserializedData.NodeId].height) + deserializedData.Y - (gdo.net.module["EyeTracking"].cursorSize / 2))
-                    .css("left", (colOffset * gdo.net.node[deserializedData.NodeId].width) + deserializedData.X - (gdo.net.module["EyeTracking"].cursorSize / 2));
-            }
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.net.module["EyeTracking"].displayDataOnUserTable(deserializedData.UserId, gdo.net.node[deserializedData.NodeId].col, gdo.net.node[deserializedData.NodeId].row);
-            gdo.net.module["EyeTracking"].displayLocationOnUserMap(deserializedData.UserId, deserializedData.Angle, deserializedData.Distance);
+        if (gdo.net.isNodeInitialized) {
+                if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                    if (gdo.net.module["EyeTracking"].cursorMode && deserializedData.NodeId == gdo.clientId) {
+                        if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length > gdo.net.module["EyeTracking"].cacheSize) {
+                            gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
+                        }
+                        gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
+                        $('#eyetracking_cursor_' + deserializedData.UserId).show();
+                        $('#eyetracking_cursor_' + deserializedData.UserId)
+                            .css("top", deserializedData.Y - (gdo.net.module["EyeTracking"].cursorSize / 2))
+                            .css("left", deserializedData.X - (gdo.net.module["EyeTracking"].cursorSize / 2));
+                    } else if (gdo.net.node[deserializedData.NodeId].isNeighbour) {
+                        if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length > gdo.net.module["EyeTracking"].cacheSize) {
+                            gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
+                        }
+                        gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
+                        var colOffset = gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col;
+                        var rowOffset = gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row;
+                        $('#eyetracking_cursor_' + deserializedData.UserId).show();
+                        $('#eyetracking_cursor_' + deserializedData.UserId)
+                            .css("top", (rowOffset * gdo.net.node[deserializedData.NodeId].height) + deserializedData.Y - (gdo.net.module["EyeTracking"].cursorSize / 2))
+                            .css("left", (colOffset * gdo.net.node[deserializedData.NodeId].width) + deserializedData.X - (gdo.net.module["EyeTracking"].cursorSize / 2));
+                    }
+                } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                    if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length > gdo.net.module["EyeTracking"].cacheSize) {
+                        gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
+                    }
+                    gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length);
+                    gdo.net.module["EyeTracking"].displayDataOnUserTable(deserializedData.UserId, gdo.net.node[deserializedData.NodeId].col, gdo.net.node[deserializedData.NodeId].row);
+                    gdo.net.module["EyeTracking"].displayLocationOnUserMap(deserializedData.UserId, deserializedData.Angle, deserializedData.Distance);
+                }
         }
     }
 
@@ -160,6 +169,7 @@ gdo.net.module["EyeTracking"].initModule = function () {
     gdo.consoleOut('.EyeTracking', 1, 'Initializing EyeTracking Module');
 
     setTimeout(function () {
+        gdo.net.module["EyeTracking"].server.linkCallbackFunction();
         gdo.net.module["EyeTracking"].server.requestMarkers();
         gdo.net.module["EyeTracking"].server.requestCursorSize();
         gdo.net.module["EyeTracking"].server.requestCacheSize();
@@ -175,7 +185,7 @@ gdo.net.module["EyeTracking"].initModule = function () {
 
 }
 
-gdo.net.module["EyeTracking"].periodicCheck = function () {
+/*gdo.net.module["EyeTracking"].periodicCheck = function () {
     setTimeout(function () {
         for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
             gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
@@ -183,7 +193,7 @@ gdo.net.module["EyeTracking"].periodicCheck = function () {
         gdo.net.module["EyeTracking"].periodicCheck();
     }, 1400);
 
-}
+}*/
 
 
 

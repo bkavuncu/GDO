@@ -24,7 +24,11 @@ namespace GDO.Modules.EyeTracking
         {
             Groups.Remove(Context.ConnectionId, "" + moduleName);
         }
-        //Request Marker input node id
+
+        public void LinkCallbackFunction()
+        {
+            ((EyeTrackingModule)Cave.Modules["EyeTracking"]).LinkCallbackFunction(BroadcastData);
+        }
         public void RequestMarkerMode()
         {
             lock (Cave.ModuleLocks["EyeTracking"])
@@ -48,7 +52,7 @@ namespace GDO.Modules.EyeTracking
                 try
                 {
                     ((EyeTrackingModule) Cave.Modules["EyeTracking"]).MarkerMode = mode;
-                    Clients.All.updateMarkerMode(mode);
+                    Clients.Group("EyeTracking").updateMarkerMode(mode);
                 }
                 catch (Exception e)
                 {
@@ -79,7 +83,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Caller.updateCursorMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode);
+                    Clients.Group("EyeTracking").updateCursorMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode);
 
                 }
                 catch (Exception e)
@@ -96,7 +100,7 @@ namespace GDO.Modules.EyeTracking
                 try
                 {
                     ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode = mode;
-                    Clients.All.updateCursorMode(mode);
+                    Clients.Group("EyeTracking").updateCursorMode(mode);
                 }
                 catch (Exception e)
                 {
@@ -128,7 +132,7 @@ namespace GDO.Modules.EyeTracking
                 try
                 {
                     ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize = size;
-                    Clients.All.updateMarkerSize(size);
+                    Clients.Group("EyeTracking").updateMarkerSize(size);
                 }
                 catch (Exception e)
                 {
@@ -160,7 +164,7 @@ namespace GDO.Modules.EyeTracking
                 try
                 {
                     ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorSize = size;
-                    Clients.All.updateCursorSize(size);
+                    Clients.Group("EyeTracking").updateCursorSize(size);
                 }
                 catch (Exception e)
                 {
@@ -192,7 +196,7 @@ namespace GDO.Modules.EyeTracking
                 try
                 {
                     ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize = size;
-                    Clients.All.updateCacheSize(size);
+                    Clients.Group("EyeTracking").updateCacheSize(size);
                 }
                 catch (Exception e)
                 {
@@ -231,7 +235,7 @@ namespace GDO.Modules.EyeTracking
         {
             try
             {
-                Clients.All.receiveData(serializedData);
+                Clients.Group("EyeTracking").receiveData(serializedData);
             }
             catch (Exception e)
             {
@@ -288,7 +292,7 @@ namespace GDO.Modules.EyeTracking
         {
             try
             {
-                Clients.All.receiveConnectionStatus(userId, connectionStatus, streamStatus);
+                Clients.Group("EyeTracking").receiveConnectionStatus(userId, connectionStatus, streamStatus);
             }
             catch (Exception e)
             {

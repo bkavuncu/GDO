@@ -104,10 +104,6 @@ namespace GDO.Modules.EyeTracking.Core
         public int Angle { get; set; }
         public double Height { get; set; }
         public int Distance { get; set; }
-        public string SerializeJSON()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
 
         public void setPosition(int userId, PositionData pos)
         {
