@@ -17,7 +17,7 @@ namespace GDO.Apps.BasicMaps
         public IAdvancedAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         public string[] MarkerPosition { get; set; }
-        public int MaxLayers { get; set; } = 40;
+        public int MaxLayers { get; set; } = 50;
         public bool[] LayerVisibility { get; set; }
 
         public bool IsInitialized = false;

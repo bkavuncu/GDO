@@ -11,7 +11,7 @@ var terrainProvider;
 
 $(function () {
     gdo.consoleOut('.BasicMaps', 1, 'Loaded BasicMaps JS');
-    gdo.net.app["BasicMaps"].numLayers = 40;
+    gdo.net.app["BasicMaps"].numLayers = 41;
     $.connection.basicMapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["BasicMaps"].updateCenter(instanceId);
@@ -584,6 +584,26 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         })
     });
     gdo.net.instance[instanceId].layers[39].wms = true;
+
+    //Imperial College Map
+    gdo.net.instance[instanceId].layers[40] = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            url: '/Data/BasicMaps/sk.json',
+            format: new ol.format.GeoJSON()
+        }),
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: '#64AAD2'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#468CD2',
+                width: 5
+            })
+        }),
+        opacity: 0.7
+    });
+    gdo.net.instance[instanceId].layers[40].wms = true;
+
     //BGS Bedrock and Superficial Geology
     /*gdo.net.instance[instanceId].layers[32] = new ol.layer.Tile({
         visible: false,
