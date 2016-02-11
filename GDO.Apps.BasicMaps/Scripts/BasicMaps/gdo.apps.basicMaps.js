@@ -597,7 +597,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
             }),
             stroke: new ol.style.Stroke({
                 color: '#468CD2',
-                width: 5
+                width: 4
             })
         }),
         opacity: 0.7
