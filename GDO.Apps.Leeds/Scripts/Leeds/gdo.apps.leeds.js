@@ -24,7 +24,6 @@ $(function () {
                 case "entries":
                     gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
                         feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
-                        //time = feature.get("timestamps")[timestep];
                     });
                     break;
                 case "exits":
@@ -39,12 +38,13 @@ $(function () {
                     break;
             }
             if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
+                var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
                 var time = new Date(gdo.net.app["Leeds"].data[0].timestamps[timestep] * 1000 );
                 $("iframe").contents().find("#timelabel")
                     .empty()
                     .css("visibility", "visible")
-                    .append("" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + " - " + time.getHours() + ":" + time.getMinutes() );
+                    .append("" + ('0' + time.getDate()).slice(-2) + " " + monthNames[time.getMonth()] + " " + time.getFullYear() + " - " + ('0' + time.getHours()).slice(-2) + ":00");
 
               /*  var temp = ((timestep + 237) * 5);
                 if (temp > 1440) {
@@ -132,6 +132,18 @@ $(function () {
                 $("iframe").contents().find("#opencycle_button").removeClass("btn-danger").addClass("btn-success");
             } else {
                 $("iframe").contents().find("#opencycle_button").removeClass("btn-success").addClass("btn-danger");
+            }
+        }
+    }
+
+    $.connection.leedsAppHub.client.setStamenLayerVisible = function (instanceId, visible) {
+        gdo.consoleOut('.Leeds', 1, 'Seting Stamen Layer Visibility: ' + visible);
+        gdo.net.instance[instanceId].stamenLayer.setVisible(visible);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            if (visible) {
+                $("iframe").contents().find("#stamen_button").removeClass("btn-danger").addClass("btn-success");
+            } else {
+                $("iframe").contents().find("#stamen_button").removeClass("btn-success").addClass("btn-danger");
             }
         }
     }
@@ -306,19 +318,19 @@ gdo.net.app["Leeds"].initMap = function (instanceId, center, resolution, zoom) {
         })
     });
 
-    gdo.net.instance[instanceId].openCycleLayer = new ol.layer.Tile({
+    gdo.net.instance[instanceId].stamenLayer = new ol.layer.Tile({
         visible: false,
         source: new ol.source.Stamen({
             layer: 'toner'
         })
     });
 
-    /*gdo.net.instance[instanceId].openCycleLayer = new ol.layer.Tile({
+    gdo.net.instance[instanceId].openCycleLayer = new ol.layer.Tile({
         visible: false,
         source: new ol.source.OSM({
             url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
         })
-    }); */
+    });
 
     gdo.net.instance[instanceId].layers = [];
     //gdo.net.instance[instanceId].layers[0] = gdo.net.instance[instanceId].bingLayer;
@@ -459,12 +471,14 @@ gdo.net.app["Leeds"].initMap = function (instanceId, center, resolution, zoom) {
                 map.addLayer(gdo.net.instance[instanceId].bingLayer);
                 map.addLayer(gdo.net.instance[instanceId].cartodbLayer);
                 map.addLayer(gdo.net.instance[instanceId].openCycleLayer);
+                map.addLayer(gdo.net.instance[instanceId].stamenLayer);
                 map.addLayer(gdo.net.instance[instanceId].stationsLayer);
                 map.addLayer(gdo.net.instance[instanceId].trainstationsLayer);
                 map.addLayer(gdo.net.instance[instanceId].heatmapLayer);
                 gdo.net.app["Leeds"].server.requestBingLayerVisible(instanceId);
                 gdo.net.app["Leeds"].server.requestCartoDBLayerVisible(instanceId);
                 gdo.net.app["Leeds"].server.requestOpenCycleLayerVisible(instanceId);
+                gdo.net.app["Leeds"].server.requestStamenLayerVisible(instanceId);
                 gdo.net.app["Leeds"].server.requestStationLayerVisible(instanceId);
                 gdo.net.app["Leeds"].server.requestHeatmapLayerVisible(instanceId);
                 gdo.net.app["Leeds"].server.requestProperties(instanceId);

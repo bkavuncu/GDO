@@ -209,6 +209,25 @@ namespace GDO.Apps.Leeds
                 }
             }
         }
+        public void SetStamenLayerVisible(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    //change its value with !
+                    ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer =
+                        !((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer;
+
+                    Clients.Group("" + instanceId).setStamenLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer);
+                    Clients.Caller.setStamenLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         public void SetStationLayerVisible(int instanceId)
         {
@@ -322,6 +341,20 @@ namespace GDO.Apps.Leeds
                 try
                 {
                     Clients.Caller.setOpenCycleLayerVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).OpenCycleLayer);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        public void RequestStamenLayerVisible(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setStamenVisible(instanceId, ((LeedsApp)Cave.Apps["Leeds"].Instances[instanceId]).StamenLayer);
                 }
                 catch (Exception e)
                 {

@@ -15,6 +15,7 @@ namespace GDO.Apps.Leeds
         public bool BingLayer { get; set; }
         public bool CartoDBLayer { get; set; }
         public bool OpenCycleLayer { get; set; }
+        public bool StamenLayer { get; set; }
         public bool StationLayer { get; set; }
         public bool HeatmapLayer { get; set; }
         public int TimeStep { get; set; } = 0;
@@ -59,6 +60,7 @@ namespace GDO.Apps.Leeds
             this.BingLayer = false;
             this.CartoDBLayer = false;
             this.OpenCycleLayer = true;
+            this.StamenLayer = true;
             this.StationLayer = true;
             this.HeatmapLayer = true;
             //TODO Read CSV into data dictionaries
