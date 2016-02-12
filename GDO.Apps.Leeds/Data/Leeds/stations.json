@@ -1,0 +1,65 @@
+{
+"1": {
+    "id": "1",
+    "name": "Albion Street North",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.797420",
+      "-1.545108"    ]
+	},
+  "2":   {
+    "id": "2",
+    "name": "Albion Street South",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.797355",
+      "-1.545108"    ]
+	},
+  "3":   {
+    "id": "3",
+    "name": "Briggate",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.796638",
+      "-1.542586"    ]
+	},
+  "4":   {
+    "id": "4",
+    "name": "Briggate At Mcdonalds",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.798852",
+      "-1.541925"    ]
+	},
+  "5": {
+    "id": "5",
+    "name": "The Headrow",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.799264",
+      "-1.543958"    ]
+	},
+  "6":   {
+    "id": "6",
+    "name": "Dortmund Square",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.799465",
+      "-1.543984"    ]
+	},
+  "7":   {
+    "id": "7",
+    "name": "Commercial Street at Lush",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.797364",
+      "-1.543970"    ]
+	},
+  "8": {
+    "id": "8",
+    "name": "Commercial Street at Barratts",
+			"nbDocks": 10,
+    "coordinates": [
+      "53.797403",
+      "-1.543744"    ]
+	}}
