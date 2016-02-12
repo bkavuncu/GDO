@@ -58,9 +58,9 @@ namespace GDO.Apps.Leeds
             this.StationWidth = (int)Configuration.Json.SelectToken("station");
             this.Dataserie = (string)Configuration.Json.SelectToken("dataserie");
             this.BingLayer = false;
-            this.CartoDBLayer = false;
-            this.OpenCycleLayer = true;
-            this.StamenLayer = true;
+            this.CartoDBLayer = true;
+            this.OpenCycleLayer = false;
+            this.StamenLayer = false;
             this.StationLayer = true;
             this.HeatmapLayer = true;
             //TODO Read CSV into data dictionaries

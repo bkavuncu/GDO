@@ -26,7 +26,7 @@ $(function () {
                         feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
                     });
                     break;
-                case "exits":
+         /*       case "exits":
                     gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
                         feature.set("weight", Math.log(parseFloat(feature.get("exits")[timestep])) / 7);
                     });
@@ -35,33 +35,14 @@ $(function () {
                     gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
                         feature.set("weight", parseFloat(feature.get("emptiness")[timestep]));
                     });
-                    break;
+                    break; */
             }
             if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
                 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
                 var time = new Date(gdo.net.app["Leeds"].data[0].timestamps[timestep] * 1000 );
-                $("iframe").contents().find("#timelabel")
-                    .empty()
-                    .css("visibility", "visible")
+                $("iframe").contents().find("#timelabel").empty().css("visibility", "visible")
                     .append("" + ('0' + time.getDate()).slice(-2) + " " + monthNames[time.getMonth()] + " " + time.getFullYear() + " - " + ('0' + time.getHours()).slice(-2) + ":00");
-
-              /*  var temp = ((timestep + 237) * 5);
-                if (temp > 1440) {
-                    temp = temp - 1440;
-                }
-                var hour = parseInt(temp / 60);
-                var minutes = parseInt(temp - hour * 60);
-                if (hour < 10) {
-                    hour = "0" + hour;
-                }
-                if (minutes < 10) {
-                    minutes = "0" + minutes;
-                }
-                $("iframe").contents().find("#timelabel")
-                    .empty()
-                    .css("visibility", "visible")
-                    .append("" + hour + ":" + minutes); */
             }
         }
     }
@@ -89,12 +70,12 @@ $(function () {
                     case "entries":
                         $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("");
                         break;
-                    case "exits":
+               /*     case "exits":
                         $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("People Taking Bikes");
                         break;
                     case "emptiness":
                         $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("Docks' Emptiness level");
-                        break;
+                        break; */
                     }
         }
         //gdo.net.instance[instanceId].map.render();
@@ -348,9 +329,7 @@ gdo.net.app["Leeds"].initMap = function (instanceId, center, resolution, zoom) {
     setTimeout(function () {
 
         gdo.net.instance[instanceId].stationSource = new ol.source.Vector();
-
         gdo.net.instance[instanceId].trainstationSource = new ol.source.Vector();
-
         gdo.net.instance[instanceId].cycleSource = new ol.source.Vector();
 
         gdo.net.app["Leeds"].server.requestProperties(instanceId);
@@ -378,24 +357,6 @@ gdo.net.app["Leeds"].initMap = function (instanceId, center, resolution, zoom) {
             });
             return [style];
         }
-
-       /* gdo.net.instance[instanceId].trainsstyleFunction = function (feature, resolution) {
-            var style = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 100,
-                    fill: new ol.style.Fill({
-                        color: 'green',
-                        width: 100
-                    }),
-                    stroke: new ol.style.Stroke({
-                        color: 'black',
-                        width: 1
-                    })
-                })
-            });
-            return [style];
-        } */
-
 
         $('iframe').contents().find('#blur').change(function () {
             gdo.net.app["Leeds"].uploadProperties(instanceId);
