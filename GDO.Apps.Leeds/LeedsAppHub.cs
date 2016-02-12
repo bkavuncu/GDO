@@ -124,7 +124,7 @@ namespace GDO.Apps.Leeds
                     {
                         System.Threading.Thread.Sleep(
                             ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).WaitTime);
-                        if (((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).TimeStep >= 285)
+                        if (((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).TimeStep >= 8523)
                         {
                             ((LeedsApp) Cave.Apps["Leeds"].Instances[instanceId]).TimeStep = 0;
                         }

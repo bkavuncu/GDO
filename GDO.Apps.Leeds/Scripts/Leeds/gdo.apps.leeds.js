@@ -24,6 +24,7 @@ $(function () {
                 case "entries":
                     gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
                         feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
+                        //time = feature.get("timestamps")[timestep];
                     });
                     break;
                 case "exits":
@@ -38,7 +39,14 @@ $(function () {
                     break;
             }
             if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
-                var temp = ((timestep + 237) * 5);
+
+                var time = new Date(gdo.net.app["Leeds"].data[0].timestamps[timestep] * 1000 );
+                $("iframe").contents().find("#timelabel")
+                    .empty()
+                    .css("visibility", "visible")
+                    .append("" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + " - " + time.getHours() + ":" + time.getMinutes() );
+
+              /*  var temp = ((timestep + 237) * 5);
                 if (temp > 1440) {
                     temp = temp - 1440;
                 }
@@ -53,7 +61,7 @@ $(function () {
                 $("iframe").contents().find("#timelabel")
                     .empty()
                     .css("visibility", "visible")
-                    .append("" + hour + ":" + minutes);
+                    .append("" + hour + ":" + minutes); */
             }
         }
     }
@@ -79,7 +87,7 @@ $(function () {
             && gdo.net.node[gdo.clientId].sectionRow == 0) {
                 switch (series) {
                     case "entries":
-                        $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("Football passion");
+                        $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("");
                         break;
                     case "exits":
                         $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("People Taking Bikes");

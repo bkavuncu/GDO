@@ -19,7 +19,7 @@ namespace GDO.Apps.Leeds
         public bool HeatmapLayer { get; set; }
         public int TimeStep { get; set; } = 0;
         public bool IsAnimating { get; set; } = false;
-        public int WaitTime { get; set; } = 210;
+        public int WaitTime { get; set; } = 42;
 
         public float Opacity { get; set; }
         public int Blur { get; set; }
