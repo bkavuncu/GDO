@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using GDO.Core;
+using GDO.Modules.EyeTracking.Core;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -93,6 +94,29 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
+        public void RequestHeatmapVisible(int userId)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    
+                    if (userId > 0)
+                    {
+                        Clients.Group("EyeTracking").updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible);
+                    }
+                    else
+                    {
+                        Clients.Group("EyeTracking").updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).IsHeatmapVisible);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
         public void SetCursorMode(bool mode)
         {
             lock (Cave.ModuleLocks["EyeTracking"])
@@ -101,6 +125,30 @@ namespace GDO.Modules.EyeTracking
                 {
                     ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode = mode;
                     Clients.Group("EyeTracking").updateCursorMode(mode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void SetHeatmapVisible(int userId, bool visible)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    if (userId > 0)
+                    {
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible = visible;
+                    }
+                    else
+                    {
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).IsHeatmapVisible = visible;
+                    }
+                    Clients.Group("EyeTracking").updateHeatmapVisible(userId, visible);
                 }
                 catch (Exception e)
                 {
@@ -205,7 +253,28 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
-
+        public void ClearSession()
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    foreach (User user in ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users)
+                    {
+                        if (user != null)
+                        {
+                            user.Clear(user.Id, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize);
+                        }
+                    }
+                    Clients.Group("EyeTracking").clearSession();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
 
         /*public void UploadData(string serializedData)
         {

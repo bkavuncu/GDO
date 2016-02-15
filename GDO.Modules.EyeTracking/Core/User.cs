@@ -28,6 +28,7 @@ namespace GDO.Modules.EyeTracking.Core
         public MarkerData[] MarkerData { get; set; }
         public EyeData EyeData { get; set; }
         public TrackData[] TrackCache { get; set; }
+        public bool IsHeatmapVisible { get; set; }   
         //public Queue<TrackData> TrackQueue { get; set; }
         //public int TrackQueueSize = 10; 
         public int MaxOffset { get; set; }
@@ -44,8 +45,16 @@ namespace GDO.Modules.EyeTracking.Core
             MarkerData = new MarkerData[NumMarkers];
             EyeData = new EyeData();
             TrackCache = new TrackData[cacheSize];
+            IsHeatmapVisible = false;
             //TrackQueue = new Queue<TrackData>(TrackQueueSize+1);
             MaxOffset = Convert.ToInt32(Math.Sqrt(Math.Pow((Cave.Cols/2)* Cave.NodeWidth, 2) + Math.Pow((Cave.Rows) * Cave.NodeHeight, 2)));
+        }
+
+        public void Clear(int id, int cacheSize)
+        {
+            MarkerData = new MarkerData[NumMarkers];
+            EyeData = new EyeData();
+            TrackCache = new TrackData[cacheSize];
         }
 
         public void StartTCPClient()
@@ -118,104 +127,107 @@ namespace GDO.Modules.EyeTracking.Core
         }
         public void ProcessPacket(string data)
         {
-            List<string> lines = Utilities.ParseString(data, "\r\n", false);
-            int startLine = 0;
-            if (!IsReceiving)
+            lock (Cave.ModuleLocks["EyeTracking"])
             {
-                List<string> headerLine = Utilities.ParseString(lines[0], "\t", true);
-                PacketOrder = new int[headerLine.Count][];
-                for (int i = 0; i < headerLine.Count; i++)
+                List<string> lines = Utilities.ParseString(data, "\r\n", false);
+                int startLine = 0;
+                if (!IsReceiving)
                 {
-                    string tmp = headerLine[i].Substring(5);
-                    int index = tmp.IndexOf(" ");
-                    string markerName = tmp.Substring(0, index);
-                    string axis = tmp.Substring(index + 1, 1);
-                    if (markerName == "Gaze")
+                    List<string> headerLine = Utilities.ParseString(lines[0], "\t", true);
+                    PacketOrder = new int[headerLine.Count][];
+                    for (int i = 0; i < headerLine.Count; i++)
                     {
-                        if (axis == "X")
+                        string tmp = headerLine[i].Substring(5);
+                        int index = tmp.IndexOf(" ");
+                        string markerName = tmp.Substring(0, index);
+                        string axis = tmp.Substring(index + 1, 1);
+                        if (markerName == "Gaze")
                         {
-                            PacketOrder[i] = new int[3] { -1, 0, 0 };
-                        }
-                        else if (axis == "Y")
-                        {
-                            PacketOrder[i] = new int[3] { -1, 1, 0 };
-                        }
-                    }
-                    else
-                    {
-                        string point = tmp.Substring(index + 2, 1);
-                        for (int j=0; j< ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers.Length; j++)
-                        {
-
-                            if (((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[j].Name == markerName)
+                            if (axis == "X")
                             {
-                                if (axis == "X")
+                                PacketOrder[i] = new int[3] {-1, 0, 0};
+                            }
+                            else if (axis == "Y")
+                            {
+                                PacketOrder[i] = new int[3] {-1, 1, 0};
+                            }
+                        }
+                        else
+                        {
+                            string point = tmp.Substring(index + 2, 1);
+                            for (int j = 0; j < ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers.Length; j++)
+                            {
+
+                                if (((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers[j].Name == markerName)
                                 {
-                                    PacketOrder[i] = new int[3] { j, 0, Convert.ToInt32(point) -1};
+                                    if (axis == "X")
+                                    {
+                                        PacketOrder[i] = new int[3] {j, 0, Convert.ToInt32(point) - 1};
+                                    }
+                                    else if (axis == "Y")
+                                    {
+                                        PacketOrder[i] = new int[3] {j, 1, Convert.ToInt32(point) - 1};
+                                    }
+
                                 }
-                                else if(axis == "Y")
-                                {
-                                    PacketOrder[i] = new int[3] { j, 1, Convert.ToInt32(point) - 1 };
-                                }
-                                
                             }
                         }
                     }
+                    startLine = 1;
                 }
-                startLine = 1;
-            }
 
-            for (int i = startLine; i < lines.Count; i++)
-            {
-                ResetTempData();
-                List<string> line = Utilities.ParseString(lines[0], "\t", true);
-                for (int j = 0; j < line.Count; j++)
+                for (int i = startLine; i < lines.Count; i++)
                 {
-                    if (PacketOrder[j][0] == -1)
+                    ResetTempData();
+                    List<string> line = Utilities.ParseString(lines[0], "\t", true);
+                    for (int j = 0; j < line.Count; j++)
                     {
-                        if (PacketOrder[j][1] == 0)
+                        if (PacketOrder[j][0] == -1)
                         {
-                            EyeData.X = Convert.ToDouble(line[j]);
+                            if (PacketOrder[j][1] == 0)
+                            {
+                                EyeData.X = Convert.ToDouble(line[j]);
+                            }
+                            else if (PacketOrder[j][1] == 1)
+                            {
+                                EyeData.Y = Convert.ToDouble(line[j]);
+                            }
                         }
-                        else if (PacketOrder[j][1] == 1)
+                        else
                         {
-                            EyeData.Y = Convert.ToDouble(line[j]);
+                            if (PacketOrder[j][1] == 0)
+                            {
+                                MarkerData[PacketOrder[j][0]].X[PacketOrder[j][2]] = Convert.ToDouble(line[j]);
+                            }
+                            else if (PacketOrder[j][1] == 1)
+                            {
+                                MarkerData[PacketOrder[j][0]].Y[PacketOrder[j][2]] = Convert.ToDouble(line[j]);
+                            }
+
                         }
                     }
-                    else
+                    PositionData position = CalculatePosition(MarkerData, EyeData);
+                    if (position != null)
                     {
-                        if (PacketOrder[j][1] == 0)
-                        {
-                            MarkerData[PacketOrder[j][0]].X[PacketOrder[j][2]] = Convert.ToDouble(line[j]);
-                        }
-                        else if (PacketOrder[j][1] == 1)
-                        {
-                            MarkerData[PacketOrder[j][0]].Y[PacketOrder[j][2]] = Convert.ToDouble(line[j]);
-                        }
-                       
+                        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                        int secondsSinceEpoch = (int) t.TotalSeconds;
+                        TrackData trackData = new TrackData();
+                        trackData.setPosition(Id, position);
+                        trackData.TimeStamp = secondsSinceEpoch;
+                        //if (TrackQueue.Count < TrackQueueSize)
+                        //{
+                        //    TrackQueue.Enqueue(trackData);
+                        // }
+                        //else
+                        //{
+                        //    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(TrackQueue.ToArray()));
+                        //    TrackQueue.Clear();
+                        //}
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CallBackFunction(
+                            JsonConvert.SerializeObject(trackData));
                     }
                 }
-                PositionData position = CalculatePosition(MarkerData, EyeData);
-                if (position != null)
-                {
-                    TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-                    int secondsSinceEpoch = (int)t.TotalSeconds;
-                    TrackData trackData = new TrackData();
-                    trackData.setPosition(Id, position);
-                    trackData.TimeStamp = secondsSinceEpoch;
-                    //if (TrackQueue.Count < TrackQueueSize)
-                    //{
-                    //    TrackQueue.Enqueue(trackData);
-                    // }
-                    //else
-                    //{
-                    //    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(TrackQueue.ToArray()));
-                    //    TrackQueue.Clear();
-                    //}
-                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CallBackFunction(JsonConvert.SerializeObject(trackData));
-                }
             }
-
         }
 
         public void ResetTempData()

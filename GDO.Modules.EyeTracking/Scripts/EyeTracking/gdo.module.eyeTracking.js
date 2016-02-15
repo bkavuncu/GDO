@@ -18,7 +18,7 @@ $(function () {
             gdo.net.module["EyeTracking"].user[l].x[k] = 0;
             gdo.net.module["EyeTracking"].user[l].y[k] = 0;
         }
-        gdo.net.module["EyeTracking"].user[l].lastNodeId = 0;
+        gdo.net.module["EyeTracking"].user[l].isHeatmapVisible = false;
     }
 
     $.connection.eyeTrackingModuleHub.client.updateMarkerMode = function (mode) {
@@ -34,6 +34,32 @@ $(function () {
             $('#eyetracking_markers_table').hide();
         }
         gdo.net.module["EyeTracking"].updateButtons();
+    }
+
+    $.connection.eyeTrackingModuleHub.client.clearSession = function () {
+        gdo.consoleOut('.EyeTracking', 1, 'Clearing Session');
+        var data = {
+            data: []
+        };
+        for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
+            gdo.net.module["EyeTracking"].user[l].data = [];
+            gdo.net.module["EyeTracking"].user[l].x = new Array(gdo.net.module["EyeTracking"].flotSize);
+            gdo.net.module["EyeTracking"].user[l].y = new Array(gdo.net.module["EyeTracking"].flotSize);
+            for (var k = 0; k < gdo.net.module["EyeTracking"].flotSize; k++) {
+                gdo.net.module["EyeTracking"].user[l].x[k] = 0;
+                gdo.net.module["EyeTracking"].user[l].y[k] = 0;
+            }
+
+            gdo.net.module["EyeTracking"].user[l].isHeatmapVisible = false;
+            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                gdo.net.module["EyeTracking"].user[l].heatmap.setData(data);
+                gdo.net.module["EyeTracking"].user[l].heatmap.repaint();
+            }
+        }
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.net.module["EyeTracking"].heatmap.setData(data);
+            gdo.net.module["EyeTracking"].heatmap.repaint();
+        }
     }
 
     $.connection.eyeTrackingModuleHub.client.receiveMarkers = function (serializedMarkers) {
@@ -78,6 +104,8 @@ $(function () {
                         gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
                     }
                     gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
+                    gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap.addData([{ x: deserializedData.X, y: deserializedData.Y, value: 1 }]);
+                    gdo.net.module["EyeTracking"].heatmap.addData([{ x: deserializedData.X, y: deserializedData.Y, value: 1 }]);
                     $('#eyetracking_cursor_' + deserializedData.UserId).show();
                     $('#eyetracking_cursor_' + deserializedData.UserId)
                         .css("top", deserializedData.Y - (gdo.net.module["EyeTracking"].cursorSize / 2))
@@ -114,6 +142,27 @@ $(function () {
                 $('#eyetracking_cursor_' + l).hide();
             }
         }
+        gdo.net.module["EyeTracking"].updateButtons();
+    }
+    $.connection.eyeTrackingModuleHub.client.updateHeatmapVisible = function (userId, visible) {
+        gdo.consoleOut('.EyeTracking', 1, 'Heatmap Visibility for User: ' + userId + ' is ' + visible);
+
+        if (userId > 0) {
+            if (visible) {
+                $('#eyetracking_heatmap_user_' + userId).show();
+            } else {
+                $('#eyetracking_heatmap_user_' + userId).hide();
+            }
+            gdo.net.module["EyeTracking"].isHeatmapVisible = visible;
+        } else {
+            if (visible) {
+                $('#eyetracking_heatmap').show();
+            } else {
+                $('#eyetracking_heatmap').hide();
+            }
+            gdo.net.module["EyeTracking"].isHeatmapVisible = visible;
+        }
+
         gdo.net.module["EyeTracking"].updateButtons();
     }
     $.connection.eyeTrackingModuleHub.client.updateMarkerSize = function (size) {
@@ -168,7 +217,47 @@ $(function () {
 
 gdo.net.module["EyeTracking"].initModule = function () {
     gdo.consoleOut('.EyeTracking', 1, 'Initializing EyeTracking Module');
-
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
+            $("body").append("<div id='eyetracking_heatmap_user_" + l + "'  unselectable='on' class='unselectable' style='position: fixed; display: none; top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:100vw; height:100vh'></div>");
+            var gradientColor;
+            switch (l) {
+                case 1:
+                    gradientColor = "#2A9FD6";
+                    break;
+                case 2:
+                    gradientColor = "#77B300";
+                    break;
+                case 3:
+                    gradientColor = "#FF8800";
+                    break;
+                case 4:
+                    gradientColor = "#CC0000";
+                    break;
+                default:
+                    gradientColor = "white";
+                    break;
+            }
+            gdo.net.module["EyeTracking"].user[l].heatmap = h337.create({
+                container: document.getElementById('eyetracking_heatmap_user_' + l),
+                radius: 21,
+                maxOpacity: .5,
+                minOpacity: 0,
+                blur: 1,
+                gradient: {
+                    '.3': gradientColor,
+                }
+            });
+        }
+        $("body").append("<div id='eyetracking_heatmap'  unselectable='on' class='unselectable' style='position: fixed; display: none; top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:100vw; height:100vh'></div>");
+        gdo.net.module["EyeTracking"].heatmap = h337.create({
+            container: document.getElementById('eyetracking_heatmap'),
+            radius: 21,
+            maxOpacity: .5,
+            minOpacity: 0,
+            blur: 1
+        });
+    }
     setTimeout(function () {
         gdo.net.module["EyeTracking"].server.linkCallbackFunction();
         gdo.net.module["EyeTracking"].server.requestMarkers();
@@ -177,43 +266,14 @@ gdo.net.module["EyeTracking"].initModule = function () {
         gdo.net.module["EyeTracking"].server.requestMarkerSize();
         gdo.net.module["EyeTracking"].server.requestMarkerMode();
         gdo.net.module["EyeTracking"].server.requestCursorMode();
+        gdo.net.module["EyeTracking"].server.requestHeatmapVisible(0);
         for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
             gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
+            gdo.net.module["EyeTracking"].server.requestHeatmapVisible(j);
         }
-        gdo.net.module["EyeTracking"].simulatedData = new Array(gdo.net.module["EyeTracking"].numUsers + 1);
-        //gdo.net.module["EyeTracking"].periodicCheck();
     }, 700);
 
-}
 
-/*gdo.net.module["EyeTracking"].periodicCheck = function () {
-    setTimeout(function () {
-        for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
-            gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
-        }
-        gdo.net.module["EyeTracking"].periodicCheck();
-    }, 1400);
-
-}*/
-
-
-gdo.net.module["EyeTracking"].addDataToFlot = function (userId, nodeId, timestamp, x, y) {
-    if (gdo.net.module["EyeTracking"].user[userId].x.length > gdo.net.module["EyeTracking"].flotSize) {
-        gdo.net.module["EyeTracking"].user[userId].x.splice(0, 1);
-    }
-    if (gdo.net.module["EyeTracking"].user[userId].y.length > gdo.net.module["EyeTracking"].flotSize) {
-        gdo.net.module["EyeTracking"].user[userId].y.splice(0, 1);
-    }
-    gdo.net.module["EyeTracking"].user[userId].x.push([timestamp, x + (gdo.net.node[nodeId].col * gdo.net.node[nodeId].width)]);
-    gdo.net.module["EyeTracking"].user[userId].y.push([timestamp, y + (gdo.net.node[nodeId].row * gdo.net.node[nodeId].height)]);
-    gdo.net.module["EyeTracking"].xPlots[userId].setData([gdo.net.module["EyeTracking"].user[userId].x]);
-    gdo.net.module["EyeTracking"].yPlots[userId].setData([gdo.net.module["EyeTracking"].user[userId].y]);
-    //gdo.net.module["EyeTracking"].xPlots[userId].setData([getRandomData()]);
-    //gdo.net.module["EyeTracking"].yPlots[userId].setData([getRandomData()]);
-    gdo.net.module["EyeTracking"].xPlots[userId].draw();
-    gdo.net.module["EyeTracking"].yPlots[userId].draw();
-    gdo.net.module["EyeTracking"].xPlots[userId].setupGrid();
-    gdo.net.module["EyeTracking"].yPlots[userId].setupGrid();
 }
 
 gdo.net.module["EyeTracking"].updateFlot = function () {
@@ -229,17 +289,8 @@ gdo.net.module["EyeTracking"].updateFlot = function () {
             gdo.net.module["EyeTracking"].user[j].x.push(0);
             gdo.net.module["EyeTracking"].user[j].y.push(0);
         } else {
-            //if (gdo.net.module["EyeTracking"].timeStamp > gdo.net.module["EyeTracking"].getLatestUserData(j).TimeStamp) {
-            //    gdo.net.module["EyeTracking"].user[j].x.push(0);
-            //    gdo.net.module["EyeTracking"].user[j].y.push(0);
-            //} else {
-            //gdo.consoleOut('.EyeTracking', 1, 'Data Injected ' + gdo.net.module["EyeTracking"].getLatestUserData(j).X + ',' + gdo.net.module["EyeTracking"].getLatestUserData(j).Y);
             gdo.net.module["EyeTracking"].user[j].x.push(gdo.net.module["EyeTracking"].getLatestUserData(j).X + (gdo.net.node[gdo.net.module["EyeTracking"].getLatestUserData(j).NodeId].col * gdo.net.node[1].width));
             gdo.net.module["EyeTracking"].user[j].y.push(gdo.net.module["EyeTracking"].getLatestUserData(j).Y + (gdo.net.node[gdo.net.module["EyeTracking"].getLatestUserData(j).NodeId].row * gdo.net.node[1].height));
-            //if (gdo.net.module["EyeTracking"].getLatestUserData(j).TimeStamp > gdo.net.module["EyeTracking"].timeStamp) {
-            //    gdo.net.module["EyeTracking"].timeStamp = gdo.net.module["EyeTracking"].getLatestUserData(j).TimeStamp;
-            //}
-            //}
         }
         gdo.net.module["EyeTracking"].user[j].xData = new Array(gdo.net.module["EyeTracking"].flotSize);
         gdo.net.module["EyeTracking"].user[j].yData = new Array(gdo.net.module["EyeTracking"].flotSize);
@@ -249,8 +300,6 @@ gdo.net.module["EyeTracking"].updateFlot = function () {
         }
         gdo.net.module["EyeTracking"].xPlots[j].setData([gdo.net.module["EyeTracking"].user[j].xData]);
         gdo.net.module["EyeTracking"].yPlots[j].setData([gdo.net.module["EyeTracking"].user[j].yData]);
-        //gdo.net.module["EyeTracking"].xPlots[j].setData([getRandomData()]);
-        //gdo.net.module["EyeTracking"].yPlots[j].setData([getRandomData()]);
         gdo.net.module["EyeTracking"].xPlots[j].draw();
         gdo.net.module["EyeTracking"].yPlots[j].draw();
         gdo.net.module["EyeTracking"].xPlots[j].setupGrid();
@@ -479,14 +528,14 @@ gdo.net.module["EyeTracking"].convertToDataMatrix = function (input) {
 gdo.net.module["EyeTracking"].updateButtons = function () {
     if (gdo.net.module["EyeTracking"].markerMode) {
         $("iframe").contents().find("#markerButton")
-            .empty()
+            //.empty()
             .removeClass("btn-outline")
-            .append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;Markers ON");
+        //.append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;Markers ON");
     } else {
         $("iframe").contents().find("#markerButton")
-            .empty()
+            //.empty()
             .addClass("btn-outline")
-            .append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;Markers OFF");
+        //.append("<i class='fa  fa-qrcode fa-fw'></i>&nbsp;Markers OFF");
     }
     $("iframe").contents().find("#markerButton")
         .unbind()
@@ -502,14 +551,14 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
         });
     if (gdo.net.module["EyeTracking"].cursorMode) {
         $("iframe").contents().find("#cursorButton")
-            .empty()
-            .removeClass("btn-outline")
-            .append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors ON");
+            //.empty()
+            .removeClass("btn-outline");
+        //.append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors ON");
     } else {
         $("iframe").contents().find("#cursorButton")
-            .empty()
-            .addClass("btn-outline")
-           .append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors OFF");
+            //.empty()
+            .addClass("btn-outline");
+        //.append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors OFF");
     }
     $("iframe").contents().find("#cursorButton")
         .unbind()
@@ -521,6 +570,12 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
             }
             gdo.updateDisplayCanvas();
             gdo.net.module["EyeTracking"].server.setCursorMode(gdo.net.module["EyeTracking"].cursorMode);
+        });
+    $("iframe").contents().find("#clearSessionButton")
+        .unbind()
+        .click(function () {
+            gdo.updateDisplayCanvas();
+            gdo.net.module["EyeTracking"].server.clearSession();
         });
     for (var i = 1; i < gdo.net.module["EyeTracking"].numUsers + 1; i++) {
         $("iframe").contents().find("#user_" + i + "_socket")
@@ -536,73 +591,50 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
                     gdo.net.module["EyeTracking"].server.setConnectionStatus($(this).attr('userId'), true, ip, port);
                 }
                 gdo.updateDisplayCanvas();
-
-
             });
+        if (gdo.net.module["EyeTracking"].user[i].isHeatmapVisible) {
+            $("iframe").contents().find("#heatmapUser" + i + "Button")
+                //.empty()
+                .removeClass("btn-outline");
+            //.append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors ON");
+        } else {
+            $("iframe").contents().find("#heatmapUser" + i + "Button")
+                //.empty()
+                .addClass("btn-outline");
+            //.append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors OFF");
+        }
+        $("iframe").contents().find("#heatmapUser" + i + "Button")
+           .unbind()
+           .click(function () {
+               if (gdo.net.module["EyeTracking"].user[$(this).attr('userId')].isHeatmapVisible) {
+                   gdo.net.module["EyeTracking"].user[$(this).attr('userId')].isHeatmapVisible = false;
+               } else {
+                   gdo.net.module["EyeTracking"].user[$(this).attr('userId')].isHeatmapVisible = true;
+               }
+               gdo.updateDisplayCanvas();
+               gdo.net.module["EyeTracking"].server.setHeatmapVisible($(this).attr('userId'), gdo.net.module["EyeTracking"].user[$(this).attr('userId')].isHeatmapVisible);
+           });
+    }
+    $("iframe").contents().find("#heatmapButton")
+       .unbind()
+       .click(function () {
+           if (gdo.net.module["EyeTracking"].isHeatmapVisible) {
+               gdo.net.module["EyeTracking"].isHeatmapVisible = false;
+           } else {
+               gdo.net.module["EyeTracking"].isHeatmapVisible = true;
+           }
+           gdo.updateDisplayCanvas();
+           gdo.net.module["EyeTracking"].server.setHeatmapVisible(0, gdo.net.module["EyeTracking"].isHeatmapVisible);
+       });
+    if (gdo.net.module["EyeTracking"].isHeatmapVisible) {
+        $("iframe").contents().find("#heatmapButton")
+            //.empty()
+            .removeClass("btn-outline");
+        //.append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors ON");
+    } else {
+        $("iframe").contents().find("#heatmapButton")
+            //.empty()
+            .addClass("btn-outline");
+        //.append("<i class='fa  fa-crosshairs fa-fw'></i>&nbsp;Cursors OFF");
     }
 }
-
-/*gdo.net.module["EyeTracking"].initializeFakeData = function () {
-    for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
-        gdo.net.module["EyeTracking"].uploadUserData(1, j, 24, 0, 0, 180, 50);
-    }
-}
-
-gdo.net.module["EyeTracking"].generateFakeData = function () {
-    for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
-        var timestamp = gdo.net.module["EyeTracking"].timeStamp + Math.floor(Math.random() * (4 - (-4) + 1) + (-4));
-        var nodeId = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].NodeId;
-        var col = gdo.net.node[nodeId].col;
-        var row = gdo.net.node[nodeId].row;
-        var x = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].X + Math.floor(Math.random() * (70 - (-70) + 1) + (-70));
-        if (x > gdo.net.node[1].width) {
-            if (col < gdo.net.cols - 1) {
-                col = col + 1;
-                x = x - gdo.net.node[1].width;
-            } else {
-                x = gdo.net.node[1].width;
-            }
-        } else if (x < 0) {
-            if (col > 1) {
-                col = col - 1;
-                x = x + gdo.net.node[1].width;
-            } else {
-                x = 0;
-            }
-        }
-        var y = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Y + Math.floor(Math.random() * (70 - (-70) + 1) + (-70));
-        if (y > gdo.net.node[1].height) {
-            if (row < gdo.net.rows - 1) {
-                row = row + 1;
-                y = y - gdo.net.node[1].height;
-            } else {
-                y = gdo.net.node[1].height;
-            }
-        } else if (y < 0) {
-            if (row > 1) {
-                row = row - 1;
-                y = y + gdo.net.node[1].height;
-            } else {
-                y = 0;
-            }
-        }
-        nodeId = gdo.net.getNodeId(col, row);
-
-
-        var angle = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Angle + Math.floor(Math.random() * (7 - (-7) + 1) + (-7));
-        var distance = gdo.net.module["EyeTracking"].user[j].data[gdo.net.module["EyeTracking"].user[j].data.length - 1].Distance + Math.floor(Math.random() * (7 - (-7) + 1) + (-7));
-        if (distance > 100) {
-            distance = 100;
-        } else if (distance < -100) {
-            distance = -100;
-        }
-        if (angle > 360) {
-            angle = 360;
-        } else if (angle < 0) {
-            angle = 0;
-        }
-        //gdo.consoleOut('.EyeTracking', 1, 'Data Created - TimeStamp:'+timestamp+' ,UserId: ' + j + ', NodeId:' + nodeId + ', Col:'+col+', Row:' + row+' X:' + x + ', Y:' + y + ', Angle:' + angle + ', Distance:' + distance); 
-        gdo.net.module["EyeTracking"].uploadUserData(timestamp, j, nodeId, x, y, angle, distance);
-    }
-    setTimeout(gdo.net.module["EyeTracking"].generateFakeData, 70);
-}*/
