@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
@@ -11,7 +12,7 @@ using MongoDB.Driver;
 namespace GDO.Apps.TimeV
 {
     [Export(typeof (IAppHub))]
-    public class TimeVAppHub : Hub, IAppHub
+    public class TimeVAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "TimeV";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.Neighbours;

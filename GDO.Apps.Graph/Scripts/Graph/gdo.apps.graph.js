@@ -19,6 +19,9 @@ $(function () {
     // boolean to track if current graph is zoomed
     var globalZoomed;
 
+    // flag to indicate if all nodes should have the same size. If so, 'normalRadius' is the value to be used.
+    var allNodesSameSize = true;
+
     // set size of nodes and links
     var zoomedRadius = 5;
     var zoomedStrokeWidth = 2;
@@ -325,11 +328,12 @@ $(function () {
             //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
             nodes.forEach(function (node) {
-
                 var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
+                var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size);
+
                 nodesDom.append("circle")
-                    .attr("r", Math.ceil(node.Size)) // radius
+                    .attr("r", radius) // radius
                     .attr("cx", node.Pos.X)
                     .attr("cy", node.Pos.Y)
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
@@ -362,7 +366,7 @@ $(function () {
                     .attr("x2", link.EndPos.X)
                     .attr("y2", link.EndPos.Y)
                     .attr("stroke-width", strokeWidth)
-                    .attr("stroke", "#B8B8B8");
+                    .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
             });
         }
     }
@@ -814,7 +818,7 @@ $(function () {
                                         .attr("x2", link.EndPos.X)
                                         .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", zoomedStrokeWidth)
-                                        .attr("stroke", "#B8B8B8");
+                                        .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
                                 });
 
                                 console.log("Time after appending links: " + window.performance.now());
@@ -1257,7 +1261,7 @@ $(function () {
 
                                 svgRoot.attr("viewBox", offset.x + " " + offset.y + " " + settings.defaultDisplayDimension.width + " " + settings.defaultDisplayDimension.height);
 
-                                var radius = zoomed ? zoomedRadius : normalRadius;
+                                //var radius = zoomed ? zoomedRadius : normalRadius;
 
                                 nodes.forEach(function (node) {
 
@@ -1265,9 +1269,11 @@ $(function () {
                                         mostConnectedNodes.push(node);
                                     }
 
+                                    var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size);
+
                                     //var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
                                     nodesDom.append("circle")
-                                        .attr("r", Math.ceil(node.Size)) // radius
+                                        .attr("r", radius) // radius
                                         .attr("cx", node.Pos.X)
                                         .attr("cy", node.Pos.Y)
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
@@ -1303,7 +1309,7 @@ $(function () {
                                         .attr("x2", link.EndPos.X)
                                         .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", strokeWidth)
-                                        .attr("stroke", "#B8B8B8");
+                                        .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
                                 });
                                 console.log("Time after appending links: " + window.performance.now());
                             }

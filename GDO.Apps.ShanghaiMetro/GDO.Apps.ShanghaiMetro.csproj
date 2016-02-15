@@ -83,7 +83,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\ShanghaiMetro\Shangai.json" />
+    <Content Include="Configurations\ShanghaiMetro\Shangai Entry.json" />
+    <Content Include="Configurations\ShanghaiMetro\Shangai Exit.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

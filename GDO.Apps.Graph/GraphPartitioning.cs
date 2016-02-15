@@ -177,6 +177,9 @@ namespace GDO.Apps.Graph
                             StartPos = intersections[j],
                             EndPos = intersections[j + 1],
                             Weight = link.Weight,
+                            R = link.R,
+                            G = link.G,
+                            B = link.B,
                             Attrs = link.Attrs   // copy rest of attributes
                         };
 

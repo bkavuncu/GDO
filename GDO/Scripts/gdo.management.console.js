@@ -1,4 +1,9 @@
 ﻿gdo.management.drawConsoleInput = function () {
+    $("#console_area").enscroll({
+        showOnHover: false,
+        verticalTrackClass: 'track4',
+        verticalHandleClass: 'handle4'
+    }).css("padding-right", "0px");
     $("#console_input_div")
         .css("margin", "0px")
         .css("padding", "0px")

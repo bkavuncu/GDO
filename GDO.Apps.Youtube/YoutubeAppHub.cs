@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Web.Helpers;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using GDO.Core;
-using GDO.Utility;
 using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Youtube.Scripts.Youtube.js", "application/x-javascript")]
@@ -21,7 +10,7 @@ using Newtonsoft.Json;
 namespace GDO.Apps.Youtube
 {
     [Export(typeof (IAppHub))]
-    public class YoutubeAppHub : Hub, IAppHub
+    public class YoutubeAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "Youtube";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
@@ -41,7 +30,6 @@ namespace GDO.Apps.Youtube
             {
                 try
                 {
-
                     Clients.Caller.setMessage("Initializing for keywords...");
 
                     YoutubeApp yf = ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]);
@@ -84,7 +72,7 @@ namespace GDO.Apps.Youtube
 
                     yf.VideoReady = false;
                     string baseUrl = "http://www.youtube.com/embed/";
-                    string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+                    string tailUrl = "?autoplay=1&controls=0&version=3&loop=1&playlist=";
 
                     //init
                     if (yf.NextVideoUrls != null)
@@ -216,8 +204,11 @@ namespace GDO.Apps.Youtube
                     Clients.Caller.setMessage("Getting next group of videos...");
 
                     yf.VideoReady = false;
-                    string baseUrl = "http://www.youtube.com/embed/";
-                    string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+                    //string baseUrl = "http://www.youtube.com/embed/";
+                    //string tailUrl = "?autoplay=1&controls=0&loop=1&version=3&playlist=";
+
+                    string baseUrl = "http://www.youtube.com/v/";
+                    string tailUrl = "?version=3&loop=1&playlist=";
 
                     //init
                     if (yf.NextVideoUrls != null)
@@ -306,7 +297,7 @@ namespace GDO.Apps.Youtube
                             videoName[i*yf.Section.Cols + j].nextName = yf.NextVideoName[i, j];
                         }
                     }
-                    Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName));
+                    Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName), instanceId);
                     Clients.Caller.setMessage("Got video titles Success!");
                 }
                 catch (Exception e)
@@ -383,6 +374,24 @@ namespace GDO.Apps.Youtube
                         Clients.Caller.setMessage("Error! Illegal search mode!");
                     }
 
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void ToggleMute(int instanceId, int node)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting toggle mute node " + node + "...");
+                    Clients.Group("" + instanceId).toggleMute(node);
+                    Clients.Caller.setMessage("Node " + node + ": muted/unmuted!");
                 }
                 catch (Exception e)
                 {

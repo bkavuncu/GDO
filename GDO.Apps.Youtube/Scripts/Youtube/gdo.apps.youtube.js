@@ -1,6 +1,6 @@
 ﻿
 $(function() {
-    gdo.consoleOut('.Youtube', 1, 'Loaded Image Tiles JS');
+    gdo.consoleOut('.Youtube', 1, 'Loaded Youtube JS');
     $.connection.youtubeAppHub.client.updateKeywords = function (message) {
         gdo.consoleOut('.Youtube', 1, 'Current Channel Name: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -57,25 +57,41 @@ $(function() {
             // do nothing
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Youtube', 1, 'Update video url ');
-            $("iframe").contents().find("#ytplayer").attr("src", videoUrl);
+            //$("iframe").contents().find("#ytplayer").attr("src", videoUrl);  //old code
+
+            //load new video and mute it
+            var player = gdo.net.node[gdo.clientId].player;
+            player.loadVideoByUrl(videoUrl);  
+            player.mute();
         }
     }
-    $.connection.youtubeAppHub.client.updateVideoList = function (videoName) {
+    $.connection.youtubeAppHub.client.updateVideoList = function (videoName, instanceId) {
+        var instance = gdo.net.section[gdo.net.instance[instanceId].sectionId];
+        
         videoName = JSON.parse(videoName);
         $("iframe").contents().find("#video_table tr").remove();
         $("iframe").contents().find("#video_table").append('' +
             '<tr id="video_table_title">' +
                 '<td><font size="3"><b>Rank</b></font></td>' +
+                '<td><font size="3"><b>Screen</b></font></td>' +
                 '<td><font size="3"><b>Current Videos</b></font></td>' +
                 '<td><font size="3"><b>Next Videos</b></font></td>' +
             '</tr>');
         for (var i = 0; i < videoName.length; i++) {
+            var screenNumber = instance.nodeMap[i % instance.cols][Math.floor(i / instance.cols)];
             $("iframe").contents().find("#video_table").append('' +
                 '<tr class="video_table_content">' +
                     '<td><font size="3">' + (i + 1) + '</font></td>' +
+                    '<td class="screenSelector"><font size="3">' + screenNumber + '</font></td>' +
                     '<td><font size="3">' + videoName[i]["currentName"] + '</font></td>' +
                     '<td><font size="3">' + videoName[i]["nextName"] + '</font></td>' +
                 '</tr>');
+        }
+    }
+    $.connection.youtubeAppHub.client.toggleMute = function (screen) {
+        if (screen == gdo.clientId) {
+            var player = gdo.net.node[gdo.clientId].player;
+            player.isMuted() ? player.unMute() : player.mute();
         }
     }
     $.connection.youtubeAppHub.client.updateSearchMode = function(search_mode) {
@@ -96,7 +112,7 @@ $(function() {
 gdo.net.app["Youtube"].searchMode = 0;
 
 gdo.net.app["Youtube"].initClient = function () {
-    gdo.consoleOut('.Youtube', 1, 'Initializing Image Tiles App Client at Node ' + gdo.clientId);
+    gdo.consoleOut('.Youtube', 1, 'Initializing Youtube App Client at Node ' + gdo.clientId);
     gdo.net.app["Youtube"].server.requestVideoUrls(gdo.net.node[gdo.clientId].appInstanceId,
                                                    gdo.net.node[gdo.clientId].sectionCol,
                                                    gdo.net.node[gdo.clientId].sectionRow);

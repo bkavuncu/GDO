@@ -7,43 +7,39 @@ using GDO.Core;
 
 namespace GDO.Apps.BasicMaps
 {
-    public class BasicMapsApp : IAppInstance
+    public class BasicMapsApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         public string[] MarkerPosition { get; set; }
-        public int MaxLayers { get; set; } = 35;
+        public int MaxLayers { get; set; } = 50;
         public bool[] LayerVisibility { get; set; }
 
         public bool IsInitialized = false;
-
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-
             this.Position = new MapPosition();
-            this.Position.Center[0] = (string)configuration.Json.SelectToken("center[0]");
-            this.Position.Center[1] = (string)configuration.Json.SelectToken("center[1]");
-            this.Position.TopLeft[0] = (string)configuration.Json.SelectToken("topLeft[0]");
-            this.Position.TopLeft[1] = (string)configuration.Json.SelectToken("topLeft[1]");
-            this.Position.BottomRight[0] = (string)configuration.Json.SelectToken("bottomRight[0]");
-            this.Position.BottomRight[1] = (string)configuration.Json.SelectToken("bottomRight[1]");
-            this.Position.Resolution = (string)configuration.Json.SelectToken("resolution");
-            this.Position.Zoom = (int)configuration.Json.SelectToken("zoom");
-            this.Position.Width = (int)configuration.Json.SelectToken("width");
-            this.Position.Height = (int)configuration.Json.SelectToken("height");
+            this.Position.Center[0] = (string)Configuration.Json.SelectToken("center[0]");
+            this.Position.Center[1] = (string)Configuration.Json.SelectToken("center[1]");
+            this.Position.TopLeft[0] = (string)Configuration.Json.SelectToken("topLeft[0]");
+            this.Position.TopLeft[1] = (string)Configuration.Json.SelectToken("topLeft[1]");
+            this.Position.BottomRight[0] = (string)Configuration.Json.SelectToken("bottomRight[0]");
+            this.Position.BottomRight[1] = (string)Configuration.Json.SelectToken("bottomRight[1]");
+            this.Position.Resolution = (string)Configuration.Json.SelectToken("resolution");
+            this.Position.Zoom = (int)Configuration.Json.SelectToken("zoom");
+            this.Position.Width = (int)Configuration.Json.SelectToken("width");
+            this.Position.Height = (int)Configuration.Json.SelectToken("height");
             LayerVisibility = new bool[MaxLayers];
             for (int i = 0; i < MaxLayers; i++)
             {
                 LayerVisibility[i] = false;
             }
-            SetLayerVisible(1);
+            SetLayerVisible(10);
         }
 
         public void SetLayerVisible(int id)

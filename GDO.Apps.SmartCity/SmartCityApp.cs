@@ -17,13 +17,15 @@ using Style = GDO.Apps.SmartCity.Core.Style;
 
 namespace GDO.Apps.SmartCity
 {
-    public class SmartCityApp : IAppInstance
+    public class SmartCityApp : IAdvancedAppInstance
     {
         JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public List<IBaseAppInstance> IntegratedInstances { get; set; }
+
         public Map Map;
         public View View { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
@@ -34,14 +36,9 @@ namespace GDO.Apps.SmartCity
         public GenericDictionary<Format> Formats { get; set; }
         public ZindexTable ZindexTable { get; set; }
         public bool IsInitialized = false;
-        //public bool Mode { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
 
             SaveEmptyMap();
             Layers= new GenericDictionary<Layer>();
@@ -59,7 +56,7 @@ namespace GDO.Apps.SmartCity
             Formats.Init();
             ZindexTable.Init();
 
-            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(configuration.Json.ToString(), JsonSettings);
+            Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
 
             foreach (Format format in Map.Formats)
             {
@@ -79,6 +76,16 @@ namespace GDO.Apps.SmartCity
                 //TODO update zindex
             }
             View = Map.View;
+        }
+
+        public List<int> GetListofIntegratedInstances()
+        {
+            List<int> list = new List<int>();
+            foreach (var instance in IntegratedInstances)
+            {
+                list.Add(instance.Id);
+            }
+            return list;
         }
 
         //Map
@@ -1314,7 +1321,7 @@ namespace GDO.Apps.SmartCity
             BingMapsSource.Name = BingMapsSource.ClassName;
             BingMapsSource.MaxZoom = 19;
             BingMapsSource.ImagerySet = "AerialWithLabels";
-            BingMapsSource.Key = "Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3";
+            BingMapsSource.Key = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM";
             BingMapsSource.Projection = "EPSG:4326";
             clusterSource.Prepare();
             clusterSource.Id = 1;

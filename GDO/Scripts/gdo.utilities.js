@@ -106,3 +106,4 @@ function timeStamp() {
     }
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }
+
