@@ -129,7 +129,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Scripts\WebGL\shaders\skydomeFrag.txt" />
+    <Content Include="Data\WebGL\shaders\skydomeFrag.txt" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -143,7 +143,7 @@
     <Content Include="Scripts\stats.min.js" />
     <Content Include="Scripts\three.min.js" />
     <Content Include="Scripts\WebGL\PointerLockControls.js" />
-    <Content Include="Scripts\WebGL\shaders\skydomeVert.txt" />
+    <Content Include="Data\WebGL\shaders\skydomeVert.txt" />
     <Content Include="Scripts\WebGL\ThreejsSetup.js" />
     <Content Include="Scripts\WebGL\ViewportTestWorld.js" />
     <Content Include="Scripts\WebGL\UFOWorld.js" />
