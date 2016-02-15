@@ -213,14 +213,14 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    EyeTrackingModule.TrackData deserializedData = JsonConvert.DeserializeObject<EyeTrackingModule.TrackData>(serializedData);
-                    if (((EyeTrackingModule) Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Count >
-                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CacheSize)
-                    {
-                        EyeTrackingModule.TrackData remove;
-                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryRemove(((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Keys.First(),out remove);
-                    }
-                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryAdd(deserializedData.TimeStamp, deserializedData); ;
+                    //EyeTrackingModule.TrackData deserializedData = JsonConvert.DeserializeObject<EyeTrackingModule.TrackData>(serializedData);
+                    //if (((EyeTrackingModule) Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Count >
+                    //    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).CacheSize)
+                    //{
+                    //    EyeTrackingModule.TrackData remove;
+                    //    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryRemove(((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].Keys.First(),out remove);
+                    //}
+                    //((EyeTrackingModule)Cave.Modules["EyeTracking"]).User[deserializedData.UserId].TryAdd(deserializedData.TimeStamp, deserializedData); ;
                     BroadcastData(serializedData);
                 }
                 catch (Exception e)
