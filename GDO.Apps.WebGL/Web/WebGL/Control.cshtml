@@ -103,6 +103,8 @@
     <script src="../../Scripts/three.min.js"></script>
     <script src="../../Scripts/stats.min.js"></script>
 
+    <script type="text/javascript" src="../../Scripts/WebGL/ThreejsSetup.js"></script>
+
     <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
     <script type="text/javascript" src="../../Scripts/WebGL/ViewportTestWorld.js"></script>
 
@@ -118,8 +120,8 @@
 
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
-
     </script>
+
     <script type="x-shader/x-fragment" id="fragmentShader">
         uniform vec3 topColor;
         uniform vec3 bottomColor;
@@ -143,62 +145,8 @@
 
             $(document).ready(function () {
 
-                //
-                // Set up renderer on window
-
-                var container = document.getElementById('wrapper');
-
-                var renderer = new THREE.WebGLRenderer({ antialias: true });
-                renderer.setClearColor(0xffffff);
-                renderer.setPixelRatio(window.devicePixelRatio);
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                container.appendChild(renderer.domElement);
-
-                function onWindowResize() {
-                    var effectiveWidth = window.innerHeight * (16 / 9);
-                    var effectiveHeight = window.innerWidth * (9 / 16);
-
-                    if (effectiveWidth > window.innerWidth) {
-                        renderer.setSize(window.innerWidth, effectiveHeight);
-                    } else {
-                        renderer.setSize(effectiveWidth, window.innerHeight);
-                    }
-                }
-
-                onWindowResize();
-                window.addEventListener('resize', onWindowResize, false);
-
-                //
-                // Create camera and periodically send its position to clients
-
-                var camera = new THREE.PerspectiveCamera(35, 16 / 9, 3, 10000);
-
-                function sendCameraPositionToClients() {
-                    var position = camera.getWorldPosition();
-                    var quaternion = camera.getWorldQuaternion();
-
-                    gdo.net.app["WebGL"].server.setCameraPosition(gdo.controlId,
-                        {
-                            position:   [position.x,
-                                         position.y,
-                                         position.z],
-                            quaternion: [quaternion.x,
-                                         quaternion.y,
-                                         quaternion.z,
-                                         quaternion.w]
-                        });
-                }
-
-                setInterval(sendCameraPositionToClients, 1000 / 60);
-
-                //
-                // Create 3d world
-
-                var world = new ViewportTestWorld(renderer, camera);
-                world.initScene();
-                world.setAsControl();
-                world.startRendering();
-
+                var threejsSetup = new ThreejsSetup(document.getElementById('wrapper'), gdo);
+                threejsSetup.setupControl();
             });
         });
     </script>
