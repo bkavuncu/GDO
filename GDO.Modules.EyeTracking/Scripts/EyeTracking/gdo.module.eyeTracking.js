@@ -35,7 +35,9 @@ $(function () {
             $('#eyetracking_markers_inner').hide();
             $('#eyetracking_markers_table').hide();
         }
-        gdo.net.module["EyeTracking"].updateButtons();
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.net.module["EyeTracking"].updateButtons();
+        }
     }
 
     $.connection.eyeTrackingModuleHub.client.clearSession = function () {
@@ -149,7 +151,9 @@ $(function () {
             }
         }
 
-        gdo.net.module["EyeTracking"].updateButtons();
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.net.module["EyeTracking"].updateButtons();
+        }
     }
     $.connection.eyeTrackingModuleHub.client.updateHeatmapVisible = function (userId, visible) {
         gdo.consoleOut('.EyeTracking', 1, 'Heatmap Visibility for User: ' + userId + ' is ' + visible);
@@ -170,7 +174,9 @@ $(function () {
             gdo.net.module["EyeTracking"].isHeatmapVisible = visible;
         }
 
-        gdo.net.module["EyeTracking"].updateButtons();
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.net.module["EyeTracking"].updateButtons();
+        }
     }
     $.connection.eyeTrackingModuleHub.client.updateMarkerSize = function (size) {
         gdo.consoleOut('.EyeTracking', 1, 'Marker Size: ' + size * 8 + 'px');

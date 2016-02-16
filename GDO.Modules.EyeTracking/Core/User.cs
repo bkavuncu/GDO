@@ -203,10 +203,12 @@ namespace GDO.Modules.EyeTracking.Core
                             {
                                 MarkerData[PacketOrder[j][0]].Y[PacketOrder[j][2]] = Convert.ToDouble(line[j]);
                             }
+                            MarkerData[PacketOrder[j][0]].Angle = ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Markers[PacketOrder[j][0]].Angle;
 
                         }
                     }
                     PositionData position = CalculatePosition(MarkerData, EyeData);
+                    //LocationData location = CalculateOverallLocation(MarkerData);
                     if (position != null)
                     {
                         TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
@@ -214,6 +216,7 @@ namespace GDO.Modules.EyeTracking.Core
                         TrackData trackData = new TrackData();
                         trackData.setPosition(Id, position);
                         trackData.TimeStamp = secondsSinceEpoch;
+                        //trackData.setLocation(location);
                         //if (TrackQueue.Count < TrackQueueSize)
                         //{
                         //    TrackQueue.Enqueue(trackData);
@@ -283,10 +286,63 @@ namespace GDO.Modules.EyeTracking.Core
             }
         }
 
-        public LocationData CalculateLocation(MarkerData[] data)
+        public LocationData CalculateOverallLocation(MarkerData[] data)
         {
-            //calculate angle on each marker
-            //calulate location
+            List<LocationData> locationDatas = new List<LocationData>();
+            for (int i = 0; i < Cave.Cols*Cave.Rows; i++)
+            {
+                data[i].CalculateAngle();
+                for (int j = 0; j < Cave.Cols * Cave.Rows; j++)
+                {
+                    if (data[i].VisibleCheck() && data[j].VisibleCheck())
+                    {
+                        locationDatas.Add(CalculateLocation(data[i],data[j]));
+                    }
+                }
+            }
+            double totalAngle = 0;
+            double totalDistance = 0;
+            double totalPriority = 0;
+            foreach (LocationData eachData in locationDatas)
+            {
+                totalAngle += eachData.Angle * eachData.Priority;
+                totalDistance += eachData.Distance* eachData.Priority;
+                totalPriority += eachData.Priority;
+            }
+            LocationData overallLocationData = new LocationData();
+            if (totalPriority > 0)
+            {
+                overallLocationData.Angle = Convert.ToInt32(totalAngle / totalPriority);
+                overallLocationData.Distance = Convert.ToInt32(totalDistance / totalPriority);
+            }
+            else
+            {
+                overallLocationData.Angle = 0;
+                overallLocationData.Distance = 100;
+            }
+            return overallLocationData;
+        }
+
+        public LocationData CalculateLocation(MarkerData a, MarkerData b)
+        {
+            double r1 = Math.Sin((Math.PI / 180) * (90 - 2 - a.AngleOffset)) / Math.Sin((Math.PI / 180) * (Math.Abs(a.AngleOffset)));
+            double r2 = Math.Sin((Math.PI / 180) * (90 - 2 - b.AngleOffset)) / Math.Sin((Math.PI / 180) * (Math.Abs(b.AngleOffset)));
+            double eq = 1/(r1*r2);
+            double result = -10;
+            for (int i = 0; i < 360; i++)
+            {
+                double alpha = Math.Abs(a.Angle - i);
+                double beta = Math.Abs(b.Angle - i);
+                double temp = Math.Sin((Math.PI/180)*(alpha))/Math.Sin((Math.PI/180)*(beta));
+                if (Math.Abs(temp - eq) > Math.Abs(result - eq))
+                {
+                    LocationData data = new LocationData();
+                    data.Angle = i;
+                    data.Distance = 50;
+                    data.Priority = (a.Priority + b.Priority)/2;
+                    return data;
+                }
+            }
             return null;
         }
     }

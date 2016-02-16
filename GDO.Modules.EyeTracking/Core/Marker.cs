@@ -34,6 +34,7 @@ namespace GDO.Modules.EyeTracking.Core
             Y[1] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height) - markerSize;
             Y[2] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height) - markerSize;
             Y[3] = ((Cave.Nodes[nodeId].Row+1) * Cave.Nodes[nodeId].Height);
+            Angle = (Cave.Nodes[nodeId].Col*19.5) + 43;
         }
     }
 }
