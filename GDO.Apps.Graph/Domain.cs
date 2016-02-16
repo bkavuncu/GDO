@@ -53,6 +53,9 @@ namespace GDO.Apps.Graph.Domain
         public Position StartPos { get; set; }
         public Position EndPos { get; set; }
         public float Weight { get; set; }
+        public int R { get; set; }
+        public int G { get; set; }
+        public int B { get; set; }
         public Dictionary<string, string> Attrs { get; set; }
     }
 

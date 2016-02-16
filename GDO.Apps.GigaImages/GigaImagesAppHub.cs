@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Web;
 using GDO.Core;
-using GDO.Utility;
 using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.GigaImages

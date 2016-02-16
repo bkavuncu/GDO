@@ -84,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\GigaImages\Default.json" />
+    <Content Include="Configurations\GigaImages\In2White.json" />
+    <Content Include="Configurations\GigaImages\chetif.json" />
+    <Content Include="Configurations\GigaImages\northface.json" />
     <None Include="packages.config" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.min.js.map" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\changelog.txt" />

@@ -327,9 +327,7 @@ $(function () {
 
             //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
-
             nodes.forEach(function (node) {
-
                 var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
                 var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size);
@@ -368,7 +366,7 @@ $(function () {
                     .attr("x2", link.EndPos.X)
                     .attr("y2", link.EndPos.Y)
                     .attr("stroke-width", strokeWidth)
-                    .attr("stroke", "#B8B8B8");
+                    .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
             });
         }
     }
@@ -820,7 +818,7 @@ $(function () {
                                         .attr("x2", link.EndPos.X)
                                         .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", zoomedStrokeWidth)
-                                        .attr("stroke", "#B8B8B8");
+                                        .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
                                 });
 
                                 console.log("Time after appending links: " + window.performance.now());
@@ -1311,7 +1309,7 @@ $(function () {
                                         .attr("x2", link.EndPos.X)
                                         .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", strokeWidth)
-                                        .attr("stroke", "#B8B8B8");
+                                        .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
                                 });
                                 console.log("Time after appending links: " + window.performance.now());
                             }
