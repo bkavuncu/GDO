@@ -118,6 +118,13 @@ $(function () {
                         gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
                     }
                     gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
+                    ((gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col) * gdo.net.node[gdo.clientId].width) + deserializedData.X;
+                    gdo.net.module["EyeTracking"].heatmap.addData([
+                    {
+                        x: ((gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col) * gdo.net.node[gdo.clientId].width) + deserializedData.X,
+                        y: ((gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row) * gdo.net.node[gdo.clientId].eight) + deserializedData.Y,
+                        value: 1
+                    }]);
                     var colOffset = gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col;
                     var rowOffset = gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row;
                     $('#eyetracking_cursor_' + deserializedData.UserId)
@@ -214,7 +221,7 @@ $(function () {
                         break;
                 }
                 if (!$('#eyetracking_cursor_' + l)[1]) {
-                    $("body").append("<div id='eyetracking_cursor_" + l + "'  unselectable='on' class='unselectable' style='border-radius: 100%; opacity:0.7;padding: 0; margin: 0; float: left;position: absolute; display: none; bottom: 0px; right: 0px; z-index: 900; background:" + cursorColor + "; width:" + gdo.net.module["EyeTracking"].cursorSize + "px; height:" + gdo.net.module["EyeTracking"].cursorSize + "px'></div>");
+                    $("body").append("<div id='eyetracking_cursor_" + l + "'  unselectable='on' class='unselectable' style='border-radius: 100%; opacity:0.7;padding: 0; margin: 0; float: left;position: absolute; display: none; top:-500px; left:-500px; z-index: 900; background:" + cursorColor + "; width:" + gdo.net.module["EyeTracking"].cursorSize + "px; height:" + gdo.net.module["EyeTracking"].cursorSize + "px'></div>");
                 }
             }
             gdo.net.module["EyeTracking"].drawMarkerTable(parseInt(gdo.clientId));

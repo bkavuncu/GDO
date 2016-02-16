@@ -37,7 +37,7 @@ namespace GDO.Modules.EyeTracking
             this.Name = "EyeTracking";
             this.MarkerMode = false;
             this.CursorMode = false;
-            this.MarkerSize = 35;
+            this.MarkerSize = 28;
             this.CursorSize = 210;
             this.CacheSize = 10000;
             this.IsHeatmapVisible = false;
