@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Scripts\EyeTracking\gdo.module.eyeTracking.control.js" />
     <Content Include="Scripts\EyeTracking\gdo.module.eyeTracking.js" />
     <Content Include="Data\EyeTracking\QRCodes.json" />
     <None Include="Web.Debug.config">
