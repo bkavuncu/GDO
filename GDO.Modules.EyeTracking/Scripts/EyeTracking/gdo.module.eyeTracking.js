@@ -176,7 +176,7 @@ $(function () {
         gdo.net.module["EyeTracking"].markerSize = size;
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             if (!$('#eyetracking_markers_outer')[1]) {
-                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 950; background:#aaa; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
+                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 950; background:#777; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
                 $("body").append("<div id='eyetracking_markers_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize + "px; right: " + gdo.net.module["EyeTracking"].markerSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px'></div>");
                 $("body").append("<table id='eyetracking_markers_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].markerSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
             }
@@ -225,7 +225,7 @@ gdo.net.module["EyeTracking"].initModule = function () {
     gdo.consoleOut('.EyeTracking', 1, 'Initializing EyeTracking Module');
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
-            $("body").append("<div id='eyetracking_heatmap_user_" + l + "'  unselectable='on' class='unselectable' style='position: fixed; display: none; overflow:hidden top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:120vw; height:120vh'></div>");
+            $("body").append("<div id='eyetracking_heatmap_user_" + l + "'  unselectable='on' class='unselectable' style='position: fixed; display: none; overflow:hidden top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:120vw; height:1500px'></div>");
             var gradientColor;
             switch (l) {
                 case 1:
@@ -255,7 +255,7 @@ gdo.net.module["EyeTracking"].initModule = function () {
                 }
             });
         }
-        $("body").append("<div id='eyetracking_heatmap'  unselectable='on' class='unselectable' style='position: fixed; display: none; top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:100vw; height:100vh'></div>");
+        $("body").append("<div id='eyetracking_heatmap'  unselectable='on' class='unselectable' style='position: fixed; display: none; top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:100vw; height:1500px'></div>");
         gdo.net.module["EyeTracking"].heatmap = h337.create({
             container: document.getElementById('eyetracking_heatmap'),
             radius: 21,
@@ -506,7 +506,7 @@ gdo.net.module["EyeTracking"].drawMarkerTable = function (input) {
                     .css("background", "black");
             } else if (dataMatrix[i][j] == 0) {
                 $("#eyetracking_markers_table_row_" + i + "_col_" + j)
-                    .css("background", "#999");
+                    .css("background", "#777");
             }
         }
     }
