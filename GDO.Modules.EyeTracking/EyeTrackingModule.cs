@@ -23,6 +23,7 @@ namespace GDO.Modules.EyeTracking
         public bool MarkerMode { get; set; }
         public bool CursorMode { get; set; }
         public int MarkerSize { get; set; }
+        public string MarkerColor { get; set; }
         public int CursorSize { get; set; }
         public int CacheSize { get; set; }
         public int NumUsers { get; set; } = 4;
@@ -38,6 +39,7 @@ namespace GDO.Modules.EyeTracking
             this.MarkerMode = false;
             this.CursorMode = false;
             this.MarkerSize = 28;
+            this.MarkerColor = "#AAA";
             this.CursorSize = 210;
             this.CacheSize = 10000;
             this.IsHeatmapVisible = false;

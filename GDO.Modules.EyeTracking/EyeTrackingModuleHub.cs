@@ -189,6 +189,39 @@ namespace GDO.Modules.EyeTracking
                 }
             }
         }
+
+        public void RequestMarkerColor()
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    Clients.Caller.updateMarkerColor(((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerColor);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void SetMarkerColor(string color)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerColor = color;
+                    Clients.Group("EyeTracking").updateMarkerColor(color);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
         public void RequestCursorSize()
         {
             lock (Cave.ModuleLocks["EyeTracking"])

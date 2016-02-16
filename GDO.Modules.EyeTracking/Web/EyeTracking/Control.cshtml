@@ -126,23 +126,27 @@
                     </div>
                     <div class="panel-body">
                         <div class="col-lg-2">
-                            <button type="button" id="markerButton" class="btn btn-outline btn-primary"><i class='fa  fa-qrcode fa-fw'></i>&nbsp;<font color="#fff">Markers</font></button>
                             <button type="button" id="cursorButton" class="btn btn-outline btn-primary"><i class='fa  fa-crosshairs fa-fw'></i>&nbsp;<font color="#fff">Cursors</font></button>
+                            <button type="button" id="markerButton" class="btn btn-outline btn-primary"><i class='fa  fa-qrcode fa-fw'></i>&nbsp;<font color="#fff">Markers</font></button>
+
                         </div>
-                        <div class="col-lg-1">
-                            <div style="background-color:transparent"><h6>Heatmap:</h6></div>
+                        <div class="col-lg-3">
+                            <h7>Contrast:&nbsp;&nbsp;</h7>
+                            <button type="button" id="markerContrastLowButton" class="btn" style="background:#333333"><i class='fa  fa-arrow-down  fa-fw'></i>&nbsp;<font color="#fff">Low</font></button>
+                            <button type="button" id="markerContrastMedButton" class="btn" style="background:#555"><i class='fa  fa-minus  fa-fw'></i>&nbsp;<font color="#fff">Med</font></button>
+                            <button type="button" id="markerContrastHighButton" class="btn" style="background:#777"><i class='fa  fa-arrow-up  fa-fw'></i>&nbsp;<font color="#fff">High</font></button>
+
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-7">
+
+                            <h7>Heatmap: &nbsp;&nbsp;</h7>
                             <button type="button" id="heatmapButton" class="btn btn-outline btn-info"><i class='fa  fa-users fa-fw'></i>&nbsp;<font color="#fff">All</font></button>
                             <button type="button" id="heatmapUser1Button" userId="1" class="btn btn-outline btn-primary"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 1</font></button>
                             <button type="button" id="heatmapUser2Button" userId="2" class="btn btn-outline btn-success"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 2</font></button>
                             <button type="button" id="heatmapUser3Button" userId="3" class="btn btn-outline btn-warning"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 3</font></button>
                             <button type="button" id="heatmapUser4Button" userId="4" class="btn btn-outline btn-danger"><i class='fa  fa-user fa-fw'></i>&nbsp;<font color="#fff">User 4</font></button>
-                        </div>
-                        <div class="col-lg-1">
                             <button type="button" id="clearSessionButton" class="btn btn-danger"><i class='fa  fa-times fa-fw'></i>&nbsp;<font color="#fff">Clear Session</font></button>
-                        </div>
-                        <div class="col-lg-4">
+
                         </div>
                     </div>
                 </div>

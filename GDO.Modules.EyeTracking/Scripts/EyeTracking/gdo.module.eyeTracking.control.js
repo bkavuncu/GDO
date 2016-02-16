@@ -201,6 +201,43 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
             gdo.net.module["EyeTracking"].server.setMarkerMode(gdo.net.module["EyeTracking"].markerMode);
 
         });
+    $("iframe").contents().find("#markerContrastLowButton")
+.unbind()
+.click(function () {
+    if (gdo.net.module["EyeTracking"].markerMode) {
+        gdo.net.module["EyeTracking"].markerMode = false;
+    } else {
+        gdo.net.module["EyeTracking"].markerMode = true;
+    }
+    gdo.updateDisplayCanvas();
+    gdo.net.module["EyeTracking"].server.setMarkerColor("#666");
+
+});
+    $("iframe").contents().find("#markerContrastMedButton")
+        .unbind()
+        .click(function () {
+            if (gdo.net.module["EyeTracking"].markerMode) {
+                gdo.net.module["EyeTracking"].markerMode = false;
+            } else {
+                gdo.net.module["EyeTracking"].markerMode = true;
+            }
+            gdo.updateDisplayCanvas();
+            gdo.net.module["EyeTracking"].server.setMarkerColor("#aaa");
+
+        });
+    $("iframe").contents().find("#markerContrastHighButton")
+        .unbind()
+        .click(function () {
+            if (gdo.net.module["EyeTracking"].markerMode) {
+                gdo.net.module["EyeTracking"].markerMode = false;
+            } else {
+                gdo.net.module["EyeTracking"].markerMode = true;
+            }
+            gdo.updateDisplayCanvas();
+            gdo.net.module["EyeTracking"].server.setMarkerColor("#eee");
+
+        });
+
     if (gdo.net.module["EyeTracking"].cursorMode) {
         $("iframe").contents().find("#cursorButton")
             //.empty()
