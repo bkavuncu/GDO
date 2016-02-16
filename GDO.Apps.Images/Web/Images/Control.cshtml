@@ -442,7 +442,21 @@
                                                 <div style="background-color:transparent"><h6>Digits:</h6></div>
                                             </td>
                                             <td>
-                                                <div class="input_field_div"><input type="text" class="input_field" id="image_digit"></div><!-- TODO Replace this with a drop down list populated from the /Web/Images/Database.txt file, its 1 image per line, Name|number -->
+                                                <div class="input_field_div"><input type="text" class="input_field" id="image_digit">
+                                                    <select>
+                                                        <option value="23456">Something</option>
+                                                        @{
+                                                            path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
+                                                            string[] contents = File.ReadAllLines(path);
+                                                        }
+                                                            @foreach (var s in contents)
+                                                            {
+                                                                <option value="@s.Split('|')[1]">@s.Split('|')[0]</option>
+                                                            }
+                                                    </select>
+                                                </div>
+                                                <!-- TODO Replace this with a drop down list populated from the /Web/Images/Database.txt file, its 1 image per line, Name|number -->
+
                                             </td>
                                             <td>
                                                 <button type='button' id="image_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
