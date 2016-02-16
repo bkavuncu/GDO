@@ -247,6 +247,11 @@ namespace GDO.Modules.EyeTracking.Core
             {
                 return null;
             }
+            if (eyeData.X == 0 && eyeData.Y == 0)
+            {
+                eyeData.X = 1920/2;
+                eyeData.Y = 1080/2;
+            }
             double totalX = 0;
             double totalY = 0;
             double totalCount = 0;

@@ -84,7 +84,7 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
-                    Clients.Group("EyeTracking").updateCursorMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode);
+                    Clients.Caller.updateCursorMode(((EyeTrackingModule)Cave.Modules["EyeTracking"]).CursorMode);
 
                 }
                 catch (Exception e)
@@ -103,11 +103,11 @@ namespace GDO.Modules.EyeTracking
                     
                     if (userId > 0)
                     {
-                        Clients.Group("EyeTracking").updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible);
+                        Clients.Caller.updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible);
                     }
                     else
                     {
-                        Clients.Group("EyeTracking").updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).IsHeatmapVisible);
+                        Clients.Caller.updateHeatmapVisible(userId,((EyeTrackingModule)Cave.Modules["EyeTracking"]).IsHeatmapVisible);
                     }
                 }
                 catch (Exception e)
