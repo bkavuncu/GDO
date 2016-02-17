@@ -83,7 +83,7 @@
         }
 
         .input_field {
-            width: 100%;
+            width: 120%;
             height: 40px;
             border: 1px solid #333;
             background: #333;
@@ -126,6 +126,17 @@
         $(function () {
 
             var gdo = parent.gdo;
+
+            $("#image_digit_button").click(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["Graph"].server.findPreviousGraph(gdo.controlId, $("#graph_digit").val());
+            });
+
+            $("#graph_digit").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    $("#image_digit_button").click();
+                }
+            });
 
             $("#hide_links").click(function () {
                 gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
@@ -288,7 +299,7 @@
         <div>
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Graph</h6>
@@ -304,7 +315,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <input id="submit_graph" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Render Graph" />
+                                                <input id="submit_graph" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Render Graph"/>
                                             </td>
                                         </tr>
                                     </table>
@@ -313,7 +324,41 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Find Processed Graph</h6>
+                        </div>
+                        <div class="panel-body">
+                            <fieldset>
+                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
+                                    <tr>
+                                        <td>
+                                            <div style="background-color:transparent"><h6>Previous Graph:</h6></div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <select class="input_field" id="graph_digit">
+                                                    @{
+                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls");
+                                                        string[] files = Directory.GetFiles(graphfolder);
+                                                    }
+                                                    @foreach (var s in files)
+                                                    {
+                                                        <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type='button' id="image_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Messages</h6>
