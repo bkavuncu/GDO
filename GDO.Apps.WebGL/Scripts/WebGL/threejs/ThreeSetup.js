@@ -1,4 +1,4 @@
-﻿ThreejsSetup = function (container, gdo) {
+﻿ThreeSetup = function (container, gdo) {
 
     this.gdo = gdo;
 
@@ -36,7 +36,7 @@
             var position = camera.getWorldPosition();
             var quaternion = camera.getWorldQuaternion();
 
-            this.gdo.net.app["WebGL"].server.setCameraPosition(this.gdo.controlId,
+            this.gdo.net.app["WebGL"].server.setThreejsCameraPosition(this.gdo.controlId,
                 {
                     position: [position.x,
                                  position.y,
@@ -98,7 +98,7 @@
         cameraParent.add(camera);
         world.scene.add(cameraParent);
 
-        gdo.net.app["WebGL"].initClient(cameraParent);
+        gdo.net.app["WebGL"].initThreejsClient(cameraParent);
 
         world.startRendering();
     }

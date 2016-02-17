@@ -8,37 +8,47 @@ using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.WebGL
 {
-    public class WebGLApp : IAppInstance
+    public class WebGLApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
 
-        public Camera Camera { get; set; }
+        public ThreejsCamera ThreejsCamera { get; set; }
+        public BabylonjsCamera BabylonjsCamera { get; set; }
 
-        public string Name { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-
-            this.Camera = new Camera();
+            this.ThreejsCamera = new ThreejsCamera();
+            this.BabylonjsCamera = new BabylonjsCamera();
         }
     }
 
-    public class Camera
+    public class ThreejsCamera
     {
-        public string[] position { get; set; }
-        public string[] quaternion { get; set; }
+        public float[] position { get; set; }
+        public float[] quaternion { get; set; }
 
-        public Camera()
+        public ThreejsCamera()
         {
-            this.position = new string[3];
-            this.quaternion = new string[4];
+            this.position = new float[3];
+            this.quaternion = new float[4];
+        }
+    }
+
+    public class BabylonjsCamera
+    {
+        public float[] position { get; set; }
+        public float[] rotation { get; set; }
+
+        public BabylonjsCamera()
+        {
+            this.position = new float[3];
+            this.rotation = new float[3];
         }
     }
 }

@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace GDO.Apps.WebGL
 {
     [Export(typeof(IAppHub))]
-    public class WebGLAppHub : Hub, IAppHub
+    public class WebGLAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "WebGL";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
@@ -23,14 +23,30 @@ namespace GDO.Apps.WebGL
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void SetCameraPosition(int instanceId, Camera camera)
+        public void SetThreejsCameraPosition(int instanceId, ThreejsCamera camera)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera = camera;
-                    Clients.Group("" + instanceId).receiveCameraPosition(instanceId, camera);
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).ThreejsCamera = camera;
+                    Clients.Group("" + instanceId).receiveThreejsCameraPosition(instanceId, camera);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void SetBabylonjsCameraPosition(int instanceId, BabylonjsCamera camera)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).BabylonjsCamera = camera;
+                    Clients.Group("" + instanceId).receiveBabylonjsCameraPosition(instanceId, camera);
                 }
                 catch (Exception e)
                 {

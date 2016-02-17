@@ -15,12 +15,15 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
     <script type="text/javascript" src="../../Scripts/three.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/babylon.js"></script>
+    <script type="text/javascript" src="../../Scripts/babylon.objFileLoader.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/WebGL/ThreejsSetup.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/ThreeSetup.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/TestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/ViewportTestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/UFOWorld.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/ViewportTestWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/UFOWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/babylonjs/BabylonSetup.js"></script>
 
     <script type="x-shader/x-vertex" id="vertexShader">
         varying vec3 vWorldPosition;
@@ -57,14 +60,18 @@
         $(function () {
             var gdo = parent.gdo;
             $(document).ready(function () {
-                var threejsSetup = new ThreejsSetup(document.getElementById('wrapper'), gdo);
-                threejsSetup.setupApp();
+                /*
+                var threeSetup = new ThreeSetup(document.getElementById('wrapper'), gdo);
+                threeSetup.setupApp();
+                */
+
+                var babylonSetup = new BabylonSetup(document.getElementById('renderCanvas'), document.getElementById('stats'), gdo);
+                babylonSetup.setupApp();
             });
         });
     </script>
 
-    <div id="wrapper" style="background-color:#000;width:100vw;height:100vh;text-align:center; vertical-align: middle;" align="center">
-    </div>
-
+    <canvas id="renderCanvas" style="background-color:#000;width:100vw;height:100vh;text-align:center; vertical-align: middle;" align="center"></canvas>
+    <div id="stats" style="position: absolute; top: 10px; right: 10px; background-color: #fff5ee;"></div>
 </body>
 </html>

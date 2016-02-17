@@ -124,12 +124,27 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\WebGL\textures\skybox_nx.jpg" />
+    <Content Include="Data\WebGL\textures\skybox_ny.jpg" />
+    <Content Include="Data\WebGL\textures\skybox_nz.jpg" />
+    <Content Include="Data\WebGL\textures\skybox_px.jpg" />
+    <Content Include="Data\WebGL\textures\skybox_py.jpg" />
+    <Content Include="Data\WebGL\textures\skybox_pz.jpg" />
     <Content Include="Data\WebGL\UV_Grid_Sm.jpg" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Scripts\babylon.js" />
+    <Content Include="Scripts\babylon.objFileLoader.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Data\WebGL\shaders\skydomeFrag.txt" />
+    <None Include="Data\WebGL\shaders\skydome.frag" />
+    <Content Include="Configurations\WebGL\Babylon.json" />
+    <Content Include="Data\WebGL\scenes\noChairsNegativeZforward.mtl" />
+    <Content Include="Data\WebGL\scenes\noChairsNegativeZforward.obj" />
+    <Content Include="Data\WebGL\scenes\noChairsZforward.mtl" />
+    <Content Include="Data\WebGL\scenes\noChairsZforward.obj" />
+    <Content Include="Data\WebGL\scenes\officedesignfbx.mtl" />
+    <Content Include="Data\WebGL\scenes\officeDesignFBX.obj" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -140,21 +155,19 @@
   <ItemGroup>
     <Content Include="Configurations\WebGL\Default.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\stats.min.js" />
     <Content Include="Scripts\three.min.js" />
-    <Content Include="Scripts\WebGL\PointerLockControls.js" />
-    <Content Include="Data\WebGL\shaders\skydomeVert.txt" />
-    <Content Include="Scripts\WebGL\ThreejsSetup.js" />
-    <Content Include="Scripts\WebGL\ViewportTestWorld.js" />
-    <Content Include="Scripts\WebGL\UFOWorld.js" />
-    <Content Include="Scripts\WebGL\TestWorld.js" />
+    <Content Include="Scripts\WebGL\babylonjs\BabylonSetup.js" />
+    <Content Include="Scripts\WebGL\threejs\PointerLockControls.js" />
+    <None Include="Data\WebGL\shaders\skydome.vert" />
+    <Content Include="Scripts\WebGL\threejs\ThreeSetup.js" />
+    <Content Include="Scripts\WebGL\threejs\ViewportTestWorld.js" />
+    <Content Include="Scripts\WebGL\threejs\UFOWorld.js" />
+    <Content Include="Scripts\WebGL\threejs\TestWorld.js" />
     <Content Include="Scripts\WebGL\gdo.apps.WebGL.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-    <Content Include="Scripts\WebGL\Input.js" />
-    <Content Include="Scripts\WebGL\JuicyCamera.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

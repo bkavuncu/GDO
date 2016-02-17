@@ -100,15 +100,16 @@
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 
-    <script src="../../Scripts/three.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/three.min.js"></script>
+    <script type="text/javascript" src="../../Scripts/babylon.js"></script>
+    <script type="text/javascript" src="../../Scripts/babylon.objFileLoader.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/WebGL/ThreejsSetup.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/ThreeSetup.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/TestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/ViewportTestWorld.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/threejs/UFOWorld.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/WebGL/TestWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/ViewportTestWorld.js"></script>
-
-    <script type="text/javascript" src="../../Scripts/WebGL/UFOWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/PointerLockControls.js"></script>
+    <script type="text/javascript" src="../../Scripts/WebGL/babylonjs/BabylonSetup.js"></script>
 
     <script type="x-shader/x-vertex" id="vertexShader">
         varying vec3 vWorldPosition;
@@ -140,16 +141,21 @@
     <script>
         $(function () {
             var gdo = parent.gdo;
-            gdo.net.app["WebGL"].initControl();
 
             $(document).ready(function () {
 
-                var threejsSetup = new ThreejsSetup(document.getElementById('wrapper'), gdo);
-                threejsSetup.setupControl();
+                /* 
+                var threeSetup = new ThreeSetup(document.getElementById('wrapper'), gdo);
+                threeSetup.setupControl();
+                */
+
+                var babylonSetup = new BabylonSetup(document.getElementById('renderCanvas'), document.getElementById('stats'), gdo);
+                babylonSetup.setupControl();
+
             });
         });
     </script>
-    <div class="wrapper" id="wrapper" style="width:97%">
-    </div>
+    <canvas id="renderCanvas" style="width:99%"></canvas>
+    <div id="stats" style="position: absolute; top: 10px; right: 10px; background-color: #fff5ee; color: black;"></div>
 </body>
 </html>
