@@ -16,7 +16,7 @@ gdo.net.app["Fractals"].initClient = function (rotationParams) {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Client at Node ' + gdo.clientId);
 
     // Set horizontal rotation
-    var x = (gdo.clientId % 16) - 1;
+    var x = ((gdo.clientId - 1) % 16) - 7.5;
     var angle = (315 / 16) * (Math.PI / 180);
     rotationParams.xRot = -angle * x;
 
