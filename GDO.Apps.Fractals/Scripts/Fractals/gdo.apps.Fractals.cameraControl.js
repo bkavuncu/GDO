@@ -1,10 +1,12 @@
 ﻿
-function rotationParams(xRot, yRot, yHeight) {
+function rotationParams(xRot, yRot, yHeight, modToggle) {
     this.xRot = xRot;
     this.yRot = yRot;
     this.yHeight = yHeight;
+    this.modToggle = modToggle;
 }
 
+var modLoc;
 var rotationParams;
 
 // Camera settings

@@ -46,6 +46,19 @@ $(function () {
             rot.yRot += 0.01;
         }
     }
+
+    $.connection.fractalsAppHub.client.modToggle = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            if (rot.modToggle == 0) {
+                rot.modToggle = 1;
+            } else {
+                rot.modToggle = 0;
+            }
+        }
+    }
 });
 
 gdo.net.app["Fractals"].initClient = function (rotationParams) {
@@ -104,6 +117,13 @@ gdo.net.app["Fractals"].initControl = function () {
     gdo.consoleOut('.Fractals', 1, 'Down button clicked');
     gdo.net.app["Fractals"].server.downButton(gdo.controlId);
     });
+
+    $("iframe").contents().find("#mod_toggle")
+    .unbind()
+    .click(function () {
+    gdo.consoleOut('.Fractals', 1, 'Toggled inifinite objects');
+    gdo.net.app["Fractals"].server.modToggle(gdo.controlId);
+});
 }
 
 gdo.net.app["Fractals"].terminateClient = function () {

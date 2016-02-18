@@ -80,6 +80,8 @@ function init() {
     heightloc = gl.getUniformLocation(program, "height");
     gl.uniform1f(heightloc, canvas.height);
 
+    modLoc = gl.getUniformLocation(program, "modFunction");
+    gl.uniform1i(modLoc, 0);
     // Render the scene
     render();
 
@@ -92,6 +94,7 @@ function render() {
 
     // Perform camera movements
     cameraMovements();
+    gl.uniform1i(modLoc, rotationParams.modToggle);
 
     // Set position data of vertex shader
     positionLocation = gl.getAttribLocation(program, "a_position");

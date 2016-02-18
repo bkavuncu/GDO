@@ -119,5 +119,21 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void ModToggle(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
+                    Clients.Group("" + instanceId).modToggle(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
     }
 }

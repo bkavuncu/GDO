@@ -18,7 +18,7 @@
     <script>
         $(function () {          
             $(document).ready(function () {
-                rotationParams = new rotationParams(0.0, 0.0, 0.0);
+                rotationParams = new rotationParams(0.0, 0.0, 0.0, 0.0);
                 var gdo = parent.gdo;
                 gdo.net.app["Fractals"].initClient(rotationParams);
             });
@@ -33,7 +33,7 @@
         }
     </script>
 
-    <script id="2d-fragment-shader" type="x-shader/x-fragment">
+<script id="2d-fragment-shader" type="x-shader/x-fragment">
 
         #ifdef GL_FRAGMENT_PRECISION_HIGH
         precision highp float;
@@ -49,6 +49,8 @@
         uniform float focal;
         uniform vec3 translation;
         uniform float eyeHeight;
+    
+        uniform int modFunction;
 
         // Cylinder function
         float primitiveCylinder(vec3 p, vec2 h) {
@@ -82,7 +84,11 @@
         }
 
         float DE(vec3 pos) {
-        //pos = modPoint(pos, 3.0);
+        //
+    
+        if (modFunction == 1) {
+            pos = modPoint(pos, 3.0);
+        }
         //float d = opTwist(p);
         // float d = primitiveSphere(p, 0.5);
         //return d;
@@ -222,7 +228,7 @@
 
         // Fog
         vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
-        color = mix(color, fogColor, 1.0 - exp(-t*0.2));
+        color = mix(color, fogColor, 1.0 - exp(-t*0.01));
 
         return color;
 
