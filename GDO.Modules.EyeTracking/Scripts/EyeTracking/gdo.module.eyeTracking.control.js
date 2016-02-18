@@ -201,19 +201,21 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
             gdo.net.module["EyeTracking"].server.setMarkerMode(gdo.net.module["EyeTracking"].markerMode);
 
         });
-    $("iframe").contents().find("#markerContrastLowButton")
-.unbind()
-.click(function () {
-    if (gdo.net.module["EyeTracking"].markerMode) {
-        gdo.net.module["EyeTracking"].markerMode = false;
-    } else {
-        gdo.net.module["EyeTracking"].markerMode = true;
-    }
-    gdo.updateDisplayCanvas();
-    gdo.net.module["EyeTracking"].server.setMarkerColor("#666");
+    $("iframe").contents().find("#markerSizeIncreaseButton")
+        .unbind()
+        .click(function () {
+            gdo.updateDisplayCanvas();
+            gdo.net.module["EyeTracking"].server.setMarkerSize(gdo.net.module["EyeTracking"].markerSize + 1);
+        });
 
-});
-    $("iframe").contents().find("#markerContrastMedButton")
+    $("iframe").contents().find("#markerSizeDecreaseButton")
+    .unbind()
+    .click(function () {
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerSize(gdo.net.module["EyeTracking"].markerSize - 1);
+    });
+
+    $("iframe").contents().find("#markerContrast1Button")
         .unbind()
         .click(function () {
             if (gdo.net.module["EyeTracking"].markerMode) {
@@ -222,21 +224,83 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
                 gdo.net.module["EyeTracking"].markerMode = true;
             }
             gdo.updateDisplayCanvas();
-            gdo.net.module["EyeTracking"].server.setMarkerColor("#aaa");
+            gdo.net.module["EyeTracking"].server.setMarkerColor("#333");
 
         });
-    $("iframe").contents().find("#markerContrastHighButton")
-        .unbind()
-        .click(function () {
-            if (gdo.net.module["EyeTracking"].markerMode) {
-                gdo.net.module["EyeTracking"].markerMode = false;
-            } else {
-                gdo.net.module["EyeTracking"].markerMode = true;
-            }
-            gdo.updateDisplayCanvas();
-            gdo.net.module["EyeTracking"].server.setMarkerColor("#eee");
+    $("iframe").contents().find("#markerContrast2Button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.module["EyeTracking"].markerMode) {
+            gdo.net.module["EyeTracking"].markerMode = false;
+        } else {
+            gdo.net.module["EyeTracking"].markerMode = true;
+        }
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerColor("#444");
 
-        });
+    });
+    $("iframe").contents().find("#markerContrast3Button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.module["EyeTracking"].markerMode) {
+            gdo.net.module["EyeTracking"].markerMode = false;
+        } else {
+            gdo.net.module["EyeTracking"].markerMode = true;
+        }
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerColor("#666");
+
+    });
+    $("iframe").contents().find("#markerContrast4Button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.module["EyeTracking"].markerMode) {
+            gdo.net.module["EyeTracking"].markerMode = false;
+        } else {
+            gdo.net.module["EyeTracking"].markerMode = true;
+        }
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerColor("#888");
+
+    });
+    $("iframe").contents().find("#markerContrast5Button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.module["EyeTracking"].markerMode) {
+            gdo.net.module["EyeTracking"].markerMode = false;
+        } else {
+            gdo.net.module["EyeTracking"].markerMode = true;
+        }
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerColor("#aaa");
+
+    });
+    $("iframe").contents().find("#markerContrast6Button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.module["EyeTracking"].markerMode) {
+            gdo.net.module["EyeTracking"].markerMode = false;
+        } else {
+            gdo.net.module["EyeTracking"].markerMode = true;
+        }
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerColor("#ccc");
+
+    });
+    $("iframe").contents().find("#markerContrast7Button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.module["EyeTracking"].markerMode) {
+            gdo.net.module["EyeTracking"].markerMode = false;
+        } else {
+            gdo.net.module["EyeTracking"].markerMode = true;
+        }
+        gdo.updateDisplayCanvas();
+        gdo.net.module["EyeTracking"].server.setMarkerColor("#fff");
+
+    });
+
+
 
     if (gdo.net.module["EyeTracking"].cursorMode) {
         $("iframe").contents().find("#cursorButton")
