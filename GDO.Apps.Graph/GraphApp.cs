@@ -156,6 +156,10 @@ namespace GDO.Apps.Graph
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
+            // log to index file  
+            String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/Database.txt");
+            File.AppendAllLines(indexFile, new[] { filename + "|" + FolderNameDigit });
+
             string nodesPath, linksPath;
 
             if (!zoomed)
