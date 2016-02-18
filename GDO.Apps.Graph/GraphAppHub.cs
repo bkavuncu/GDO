@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -27,7 +26,38 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
- 
+
+        public void FindPreviousGraph(int instanceId, string filename)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    // create GraphApp project and call its function to process graph
+                    ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
+
+                    Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
+                    string folderNameDigit = ga.ProcessGraph(filename, false, null);
+                    Clients.Caller.setMessage("Processing of raw graph data is completed.");
+
+                    // Clients.Group to broadcast and get all clients to update graph
+                    Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
+                    Clients.Caller.setMessage("Graph is now being rendered.");
+                }
+                catch (WebException e)
+                {
+                    Clients.Caller.setMessage("Error: File cannot be loaded. Please check if filename is valid.");
+                    Debug.WriteLine(e);
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Processing of raw graph data failed to initiate.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
         public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
@@ -51,9 +81,10 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Graph is now being rendered.");
 
                     // After rendering, start processing graph for zooming
+                    /* //TODO commented by now 
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
                     ga.ProcessGraph(filename, true, folderNameDigit);
-                    Clients.Caller.setMessage("Graph is now ready for zooming.");
+                    Clients.Caller.setMessage("Graph is now ready for zooming."); */
                 }
                 catch (WebException e)
                 {
