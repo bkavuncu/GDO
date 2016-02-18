@@ -39,10 +39,12 @@ $(function () {
             }
             if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
                 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                var daysNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
                 var time = new Date(gdo.net.app["Leeds"].data[0].timestamps[timestep] * 1000 );
                 $("iframe").contents().find("#timelabel").empty().css("visibility", "visible")
-                    .append("" + ('0' + time.getDate()).slice(-2) + " " + monthNames[time.getMonth()] + " " + time.getFullYear() + " - " + ('0' + time.getHours()).slice(-2) + ":00");
+                    .append("" + daysNames[time.getDay()] + ", "
+                    +('0' + time.getDate()).slice(-2) + " " + monthNames[time.getMonth()] + " " + time.getFullYear() + " - " + ('0' + time.getHours()).slice(-2) + ":00");
             }
         }
     }

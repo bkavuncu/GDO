@@ -18,9 +18,9 @@ namespace GDO.Apps.Leeds
         public bool StamenLayer { get; set; }
         public bool StationLayer { get; set; }
         public bool HeatmapLayer { get; set; }
-        public int TimeStep { get; set; } = 0;
+        public int TimeStep { get; set; }
         public bool IsAnimating { get; set; } = false;
-        public int WaitTime { get; set; } = 42;
+        public int WaitTime { get; set; }
 
         public float Opacity { get; set; }
         public int Blur { get; set; }
@@ -57,6 +57,8 @@ namespace GDO.Apps.Leeds
             this.Opacity = (float) Configuration.Json.SelectToken("opacity");
             this.StationWidth = (int)Configuration.Json.SelectToken("station");
             this.Dataserie = (string)Configuration.Json.SelectToken("dataserie");
+            this.WaitTime = (int) Configuration.Json.SelectToken("waitMilliseconds");
+            this.TimeStep = (int) Configuration.Json.SelectToken("startingTime");
             this.BingLayer = false;
             this.CartoDBLayer = true;
             this.OpenCycleLayer = false;
