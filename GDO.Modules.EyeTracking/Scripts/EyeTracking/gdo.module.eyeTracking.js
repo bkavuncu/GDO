@@ -82,10 +82,9 @@ $(function () {
         if (connectionStatus) {
             $("iframe").contents().find("#user_" + userId + "_socket").removeClass("btn-outline");
             $("iframe").contents().find("#user_" + userId + "_socket").empty().append("<i id='user_" + userId + "_socket_icon' align='center' class='fa  fa-times  fa-fw'></i>&nbsp;Disconnect");
+            $("iframe").contents().find("#user_" + userId + "_status").empty().append("Connected to Device");
             if (streamStatus) {
                 $("iframe").contents().find("#user_" + userId + "_status").empty().append("Connected to Device and Receiving Data");
-            } else {
-                $("iframe").contents().find("#user_" + userId + "_status").empty().append("Connected to Device");
             }
             gdo.net.module["EyeTracking"].user[userId].socket = true;
         } else {

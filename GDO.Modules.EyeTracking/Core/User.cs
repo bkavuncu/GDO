@@ -47,7 +47,7 @@ namespace GDO.Modules.EyeTracking.Core
             TrackCache = new TrackData[cacheSize];
             IsHeatmapVisible = false;
             //TrackQueue = new Queue<TrackData>(TrackQueueSize+1);
-            MaxOffset = Convert.ToInt32(Math.Sqrt(Math.Pow((Cave.Cols/2)* Cave.NodeWidth, 2) + Math.Pow((Cave.Rows) * Cave.NodeHeight, 2)));
+            MaxOffset = Convert.ToInt32(Math.Sqrt(Math.Pow((Cave.Cols/4)* Cave.NodeWidth, 2) + Math.Pow((Cave.Rows/2) * Cave.NodeHeight, 2)));
         }
 
         public void Clear(int id, int cacheSize)
@@ -262,7 +262,7 @@ namespace GDO.Modules.EyeTracking.Core
             for (int i = 0; i < Cave.Cols * Cave.Rows; i++)
             {
                 double[] offset = markerData[i].CalculateOffset(eyeData.X, eyeData.Y, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize*6);
-                if (offset != null)
+                if (offset != null && MaxOffset - offset[2] > 0)
                 {
                     totalX += (offset[0] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].X[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
                     totalY += (offset[1] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].Y[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
