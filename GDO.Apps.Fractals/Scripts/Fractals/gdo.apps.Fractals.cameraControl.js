@@ -1,6 +1,7 @@
 ﻿
-function rotationParams(xRot, yHeight) {
+function rotationParams(xRot, yRot, yHeight) {
     this.xRot = xRot;
+    this.yRot = yRot;
     this.yHeight = yHeight;
 }
 
@@ -173,7 +174,7 @@ function cameraMovements() {
     if (yRotDown) {
         yRot -= sensitivity;
     }
-    gl.uniform1f(yRotLoc, yRot);
+    gl.uniform1f(yRotLoc, rotationParams.yRot);
 
     if (xRotLeft) {
         xRot += sensitivity;

@@ -54,5 +54,70 @@ namespace GDO.Apps.Fractals
                 }
             }
         }
+
+        public void LeftButton(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
+                    Clients.Group("" + instanceId).leftButton(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RightButton(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
+                    Clients.Group("" + instanceId).rightButton(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpButton(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
+                    Clients.Group("" + instanceId).upButton(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void DownButton(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
+                    Clients.Group("" + instanceId).downButton(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
     }
 }

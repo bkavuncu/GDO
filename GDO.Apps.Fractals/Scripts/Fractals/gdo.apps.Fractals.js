@@ -7,7 +7,43 @@ $(function () {
             gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name + " testing --------");
-            rot.yHeight += 0.01;
+            rot.xRot += 0.01;
+        }
+    }
+
+    $.connection.fractalsAppHub.client.leftButton = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            
+            rot.xRot += 0.01;
+        }
+    }
+
+    $.connection.fractalsAppHub.client.rightButton = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            rot.xRot -= 0.01;
+        }
+    }
+
+    $.connection.fractalsAppHub.client.upButton = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            rot.yRot -= 0.01;
+        }
+    }
+
+    $.connection.fractalsAppHub.client.downButton = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            rot.yRot += 0.01;
         }
     }
 });
@@ -39,6 +75,34 @@ gdo.net.app["Fractals"].initControl = function () {
     .click(function () {
         gdo.consoleOut('.Fractals', 1, 'Sending Name to Clients :' + $("iframe").contents().find('#hello_input').val());
         gdo.net.app["Fractals"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
+    });
+
+    $("iframe").contents().find("#left_button")
+    .unbind()
+    .click(function () {
+        gdo.consoleOut('.Fractals', 1, 'Left button clicked');
+        gdo.net.app["Fractals"].server.leftButton(gdo.controlId);
+    });
+
+    $("iframe").contents().find("#right_button")
+    .unbind()
+    .click(function () {
+    gdo.consoleOut('.Fractals', 1, 'Right button clicked');
+    gdo.net.app["Fractals"].server.rightButton(gdo.controlId);
+    });
+
+    $("iframe").contents().find("#up_button")
+    .unbind()
+    .click(function () {
+    gdo.consoleOut('.Fractals', 1, 'Up button clicked');
+    gdo.net.app["Fractals"].server.upButton(gdo.controlId);
+    });
+
+    $("iframe").contents().find("#down_button")
+    .unbind()
+    .click(function () {
+    gdo.consoleOut('.Fractals', 1, 'Down button clicked');
+    gdo.net.app["Fractals"].server.downButton(gdo.controlId);
     });
 }
 
