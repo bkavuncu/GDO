@@ -304,6 +304,12 @@ gdo.net.module["EyeTracking"].initModule = function () {
                     '.75': gradientColor[2]
                 }
             });
+            //var data = {
+            //  max: 100,
+            //  min: 0,
+            //  data: []
+            //};
+            //gdo.net.module["EyeTracking"].user[l].heatmap.setData(data);
         }
         $("body").append("<div id='eyetracking_heatmap'  unselectable='on' class='unselectable' style='position: fixed; display: none; top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:" + gdo.net.node[gdo.clientId].width + "px; height:" + gdo.net.node[gdo.clientId].height + "px'></div>");
         gdo.net.module["EyeTracking"].heatmap = h337.create({
@@ -313,6 +319,12 @@ gdo.net.module["EyeTracking"].initModule = function () {
             minOpacity: 0,
             blur: 1
         });
+        //var data = {
+        //  max: 100,
+        //  min: 0,
+        //  data: []
+        //};
+        //gdo.net.module["EyeTracking"].heatmap.setData(data);
     } else {
         gdo.loadScript('control', 'EyeTracking', gdo.SCRIPT_TYPE.MODULE);
     }
