@@ -82,6 +82,22 @@ $(function () {
     }
 
 
+    $.connection.graphAppHub.client.setFields = function (options) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.Graph', 1, 'Set fields ');
+
+            //add fields in loaded graph to the appropriate droplists
+            var elem1 = $("iframe").contents().find("#select_label");
+            var elem2 = $("iframe").contents().find("#select_SearchField");
+            elem1.html();
+            elem2.html();
+            $.each(options, function () {
+                elem1.append($("<option />").val(this).text(this));
+                elem2.append($("<option />").val(this).text(this));
+            });
+        } 
+    }
+
     $.connection.graphAppHub.client.renderLabels = function (field) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 

@@ -51,19 +51,19 @@
             overflow: hidden;
         }
 
-            .btn-file input[type=file] {
-                position: absolute;
-                top: 0;
-                right: 0;
-                min-width: 100%;
-                min-height: 100%;
-                font-size: 100px;
-                text-align: right;
-                filter: alpha(opacity=0);
-                opacity: 0;
-                cursor: inherit;
-                display: block;
-            }
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            cursor: inherit;
+            display: block;
+        }
 
         input[readonly] {
             background-color: #555 !important;
@@ -87,7 +87,7 @@
         }
 
         .input_field {
-            width: 120%;
+            width: 100%;
             height: 40px;
             border: 1px solid #333;
             background: #333;
@@ -133,7 +133,7 @@
 
             $("#image_digit_button").click(function () {
                 var gdo = parent.gdo;
-                gdo.net.app["Graph"].server.findPreviousGraph(gdo.controlId, $("#graph_digit").val());
+                gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#graph_digit").val());
             });
 
             $("#graph_digit").keypress(function (e) {
@@ -180,14 +180,12 @@
                 gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
             });
 
-            /*
-            // Panning using key is disabled for now
+            /* //TODO Panning using key is disabled for now
             // because it's being triggered unnecessarily sometimes when typing
 
             window.addEventListener('keydown', processKeyPress, true);
 
             function processKeyPress(evt) {
-
                 var key = evt.keyCode;
                 var direction = null;
 
@@ -237,13 +235,11 @@
 
             $("#show_mostConnectedNodes").click(function () {
                 gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering most connected nodes.");
-
                 gdo.net.app["Graph"].server.renderMostConnectedNodes(gdo.controlId, parseInt($("#numLinks").val()));
             });
 
             $("#show_mostConnectedLabels").click(function () {
                 gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of most connected nodes.");
-
                 gdo.net.app["Graph"].server.renderMostConnectedLabels(gdo.controlId, parseInt($("#numLinks").val()));
             });
 
@@ -256,14 +252,11 @@
 
             $("#startSearch").click(function () {
                 gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
-
                 gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchField").val());
             });
 
-
             $("#show_searchLabels").click(function () {
                 gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
-
                 gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchField").val());
             });
 
@@ -274,6 +267,7 @@
             $("#hide_search").click(function () {
                 gdo.net.app["Graph"].server.hideSearch(gdo.controlId);
             });
+
 
             gdo.net.app["Graph"].initControl();
         });
@@ -287,7 +281,7 @@
             {
 
                 HttpPostedFileBase file = Request.Files[0];
-                if (file != null && !file.FileName.IsEmpty())   //need to add this check, because iot tried to save empty file in subsequent button clicks
+                if (file != null && !file.FileName.IsEmpty())   //need to add this check, because it tried to save empty file in subsequent button clicks
                 {
                     filename = Path.GetFileName(file.FileName);
                     //foldername
@@ -301,7 +295,6 @@
                 }
         }
         <div>
-
             <div class="row">
                 <div class="col-lg-4">
                     <div class="panel panel-primary">
@@ -348,8 +341,7 @@
                                                         string[] files = Directory.GetFiles(graphfolder);
                                                     }
                                                     @foreach (var s in files)
-                                                    {
-                                                        <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
+                                                    {  <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
                                                 </select>
                                             </div>
                                         </td>
@@ -392,14 +384,16 @@
                                             <br />
                                             <br />
                                             <label> Toggle labels </label>
-                                            <br/>
-                                            <select id="select_label" required style="color: black;">
-                                                <option value="label">Label</option>
-                                                <option value="title">Title</option>
-                                                <option value="keywords">Keywords</option>
-                                            </select>
-                                            <button class='btn btn-default' id="show_labels">Show labels</button>
-                                            <button class='btn btn-default' id="hide_labels">Hide labels</button>
+                                            <br />
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td>
+                                                        <select id="select_label" required class="input_field"></select>
+                                                    </td>
+                                                    <td><button class='btn btn-default' id="show_labels">Show labels</button></td>
+                                                    <td><button class='btn btn-default' id="hide_labels">Hide labels</button></td>
+                                                </tr>
+                                            </table>
                                             <br />
                                             <br />
                                             <br />
@@ -413,14 +407,14 @@
                                             <br />
                                             <br />
                                             <!-- //TODO zooming functionality removed
-                                            <label> Toggle zooming </label>
-                                            <br/>
-                                            <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
-                                            <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
-                                            <br/>
-                                            <br/>
-                                            <br/>
-                                            -->
+                        <label> Toggle zooming </label>
+                        <br/>
+                        <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
+                        <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
+                        <br/>
+                        <br/>
+                        <br/>
+                        -->
                                         </td>
                                         <td style="width: 50%;">
                                             <label> Colour Scheme </label>
@@ -438,7 +432,7 @@
 
                                             <table style="border-collapse: separate; border-spacing: 1px;">
                                                 <tr>
-                                                    <td><input class="input_field" size="175" type="text" id="numLinks" /></td>
+                                                    <td><input class="input_field" size="10" type="text" id="numLinks" /></td>
                                                     <td><button class='btn btn-default' id="show_mostConnectedNodes">Highlight nodes</button></td>
                                                     <td><button class='btn btn-default' id="show_mostConnectedLabels">Show labels</button></td>
                                                     <td><button class='btn btn-default' id="hide_mostConnected">Hide all</button></td>
@@ -452,12 +446,10 @@
                                             <br />
                                             <table style="border-collapse: separate; border-spacing: 1px;">
                                                 <tr>
-                                                    <select id="select_SearchField" required style="color: black;">
-                                                        <option value="label">Label</option>
-                                                        <option value="title">Title</option>
-                                                        <option value="keywords">Keywords</option>
-                                                    </select>
-                                                    <td><input class="input_field" size="75" type="text" id="searchKeywords"/></td>
+                                                    <td>
+                                                        <select id="select_SearchField" required class="input_field"></select>
+                                                    </td>
+                                                    <td><input class="input_field" size="75" type="text" id="searchKeywords" /></td>
                                                     <td><button class='btn btn-default' id="startSearch">Search</button></td>
                                                     <td><button class='btn btn-default' id="show_searchLabels">Show labels</button></td>
                                                     <td><button class='btn btn-default' id="hide_sublinks">Hide links</button></td>
@@ -489,7 +481,6 @@
                     gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Uploaded Graph " + "@filename");
                     gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, "@filename");
                 });
-
             });
         </script>
     }
