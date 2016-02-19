@@ -60,6 +60,9 @@ $(function () {
                 gdo.net.module["EyeTracking"].user[l].heatmap.setData(data);
                 gdo.net.module["EyeTracking"].user[l].heatmap.repaint();
             }
+            $('#eyetracking_cursor_' + l)
+                .css("top", -500)
+                .css("left", -500);
         }
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.net.module["EyeTracking"].heatmap.setData(data);
@@ -95,13 +98,9 @@ $(function () {
         }
     }
 
-    $.connection.eyeTrackingModuleHub.client.displayIncomingData = function (data) {
-        gdo.consoleOut('.EyeTracking', 4, data);
-    }
-
     $.connection.eyeTrackingModuleHub.client.receiveData = function (serializedData) {
         var deserializedData = JSON.parse(serializedData);
-        if (gdo.net.isNodeInitialized && deserializedData.NodeId != null && deserializedData.NodeId >0) {
+        if (gdo.net.isNodeInitialized && deserializedData.NodeId != null && deserializedData.NodeId > 0) {
             if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 if (deserializedData.NodeId == gdo.clientId) {
                     if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length > gdo.net.module["EyeTracking"].cacheSize) {
@@ -121,12 +120,8 @@ $(function () {
                     var nx = ((gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col) * gdo.net.node[gdo.clientId].width) + deserializedData.X;
                     var ny = ((gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row) * gdo.net.node[gdo.clientId].height) + deserializedData.Y;
                     if (nx > -500 && nx < gdo.net.node[gdo.clientId].width + 500 && ny > -500 && ny < gdo.net.node[gdo.clientId].height + 500) {
-                        gdo.net.module["EyeTracking"].heatmap.addData([
-                        {
-                            x: nx,
-                            y: ny,
-                            value: 1
-                        }]);
+                        gdo.net.module["EyeTracking"].heatmap.addData([{ x: nx, y: ny, value: 1 }]);
+                        gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap.addData([{ x: nx, y: ny, value: 1 }]);
                     }
 
                     var colOffset = gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col;
@@ -168,14 +163,19 @@ $(function () {
     }
     $.connection.eyeTrackingModuleHub.client.updateHeatmapVisible = function (userId, visible) {
         gdo.consoleOut('.EyeTracking', 1, 'Heatmap Visibility for User: ' + userId + ' is ' + visible);
-
+        for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
+            $('#eyetracking_heatmap_user_' + l).hide();
+            gdo.net.module["EyeTracking"].user[l].isHeatmapVisible = false;
+        }
+        $('#eyetracking_heatmap').hide();
+        gdo.net.module["EyeTracking"].isHeatmapVisible = false;
         if (userId > 0) {
             if (visible) {
                 $('#eyetracking_heatmap_user_' + userId).show();
             } else {
                 $('#eyetracking_heatmap_user_' + userId).hide();
             }
-            gdo.net.module["EyeTracking"].isHeatmapVisible = visible;
+            gdo.net.module["EyeTracking"].user[userId].isHeatmapVisible = visible;
         } else {
             if (visible) {
                 $('#eyetracking_heatmap').show();
@@ -194,8 +194,8 @@ $(function () {
         gdo.net.module["EyeTracking"].markerSize = size;
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             if (!$('#eyetracking_markers_outer')[1]) {
-                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 950; background:#aaa; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
-                $("body").append("<div id='eyetracking_markers_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize + "px; right: " + gdo.net.module["EyeTracking"].markerSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px'></div>");
+                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 960; background:#aaa; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
+                $("body").append("<div id='eyetracking_markers_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize + "px; right: " + gdo.net.module["EyeTracking"].markerSize + "px; z-index: 960; background:black; width:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px'></div>");
                 $("body").append("<table id='eyetracking_markers_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].markerSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
             }
             $('#eyetracking_markers_outer').css("width", gdo.net.module["EyeTracking"].markerSize * 8).css("height", gdo.net.module["EyeTracking"].markerSize * 8);
@@ -209,8 +209,8 @@ $(function () {
         gdo.net.module["EyeTracking"].markerColor = color;
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             if (!$('#eyetracking_markers_outer')[1]) {
-                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 950; background:#aaa; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
-                $("body").append("<div id='eyetracking_markers_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize + "px; right: " + gdo.net.module["EyeTracking"].markerSize + "px; z-index: 950; background:black; width:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px'></div>");
+                $("body").append("<div id='eyetracking_markers_outer'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: 0px; right: 0px; z-index: 960; background:#aaa; width:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 8 + "px'></div>");
+                $("body").append("<div id='eyetracking_markers_inner'  unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize + "px; right: " + gdo.net.module["EyeTracking"].markerSize + "px; z-index: 960; background:black; width:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 6 + "px'></div>");
                 $("body").append("<table id='eyetracking_markers_table' unselectable='on' class='unselectable' style='position: absolute; display: none; bottom: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; right: " + gdo.net.module["EyeTracking"].markerSize * 2 + "px; z-index:999;width: " + gdo.net.module["EyeTracking"].markerSize * 4 + "px; height:" + gdo.net.module["EyeTracking"].markerSize * 4 + "px;border-collapse: collapse; border-spacing: 0px;' ></table>");
                 $('#eyetracking_markers_outer').css("background", color);
             } else {
@@ -263,23 +263,33 @@ gdo.net.module["EyeTracking"].initModule = function () {
 
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
-            $("body").append("<div id='eyetracking_heatmap_user_" + l + "'  unselectable='on' class='unselectable' style='position: fixed; display: none; overflow:hidden top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:" + gdo.net.node[gdo.clientId].width + "px; height:" + gdo.net.node[gdo.clientId].height + "px'></div>");
-            var gradientColor;
+            $("body").append("<div id='eyetracking_heatmap_user_" + l + "' style='position: fixed; display: none; overflow:hidden top: 0px; left: 0px; border: 0 none; z-index: 95" + l + "; background:transparent; width:" + gdo.net.node[gdo.clientId].width + "px; height:" + gdo.net.node[gdo.clientId].height + "px'></div>");
+            var gradientColor = new Array(3);
             switch (l) {
                 case 1:
-                    gradientColor = "#2A9FD6";
+                    gradientColor[0] = "#144c67";
+                    gradientColor[1] = "#2A9FD6";
+                    gradientColor[2] = "#a1d5ed";
                     break;
                 case 2:
-                    gradientColor = "#77B300";
+                    gradientColor[0] = "#253800";
+                    gradientColor[1] = "#77B300";
+                    gradientColor[2] = "#c2ff47";
                     break;
                 case 3:
-                    gradientColor = "#FF8800";
+                    gradientColor[0] = "#4d2900";
+                    gradientColor[1] = "#FF8800";
+                    gradientColor[2] = "#ffc88a";
                     break;
                 case 4:
-                    gradientColor = "#CC0000";
+                    gradientColor[0] = "#470000";
+                    gradientColor[1] = "#CC0000";
+                    gradientColor[2] = "#ff7070";
                     break;
                 default:
-                    gradientColor = "white";
+                    gradientColor[0] = "#333";
+                    gradientColor[1] = "#888";
+                    gradientColor[2] = "#FFF";
                     break;
             }
             gdo.net.module["EyeTracking"].user[l].heatmap = h337.create({
@@ -289,7 +299,9 @@ gdo.net.module["EyeTracking"].initModule = function () {
                 minOpacity: 0,
                 blur: 1,
                 gradient: {
-                    '.3': gradientColor,
+                    '.25': gradientColor[0],
+                    '.5': gradientColor[1],
+                    '.75': gradientColor[2]
                 }
             });
         }
@@ -361,34 +373,3 @@ gdo.net.module["EyeTracking"].drawMarkerTable = function (input) {
         }
     }
 }
-
-/*gdo.net.module["EyeTracking"].convertToDataMatrix = function (input) {
-    var str = input.toString(2);
-    var dataMatrix = new Array(4);
-    for (var l = 0; l < 4; l++) {
-        dataMatrix[l] = new Array(4);
-    }
-    var length = str.length;
-    for (var k = 0; k < 16 - length; k++) {
-        var temp = "0";
-        str = temp.concat(str);
-    }
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
-            dataMatrix[i][j] = parseInt(str.substring((i * 4) + j, (i * 4) + j + 1));
-        }
-    }
-    return dataMatrix;
-}*/
-
-/*gdo.net.module["EyeTracking"].uploadUserData = function (timestamp, userId, nodeId, x, y, angle, distance) {
-    var data = {};
-    data.TimeStamp = timestamp;
-    data.UserId = userId;
-    data.NodeId = nodeId;
-    data.X = x;
-    data.Y = y;
-    data.Angle = angle;
-    data.Distance = distance;
-    gdo.net.module["EyeTracking"].server.uploadData(JSON.stringify(data));
-}*/

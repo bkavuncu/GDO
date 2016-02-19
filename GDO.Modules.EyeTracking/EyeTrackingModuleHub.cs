@@ -140,6 +140,11 @@ namespace GDO.Modules.EyeTracking
             {
                 try
                 {
+                    for (int i = 1; i < ((EyeTrackingModule)Cave.Modules["EyeTracking"]).NumUsers+1; i++)
+                    {
+                        ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[i].IsHeatmapVisible = false;
+                    }
+                    ((EyeTrackingModule) Cave.Modules["EyeTracking"]).IsHeatmapVisible = false;
                     if (userId > 0)
                     {
                         ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[userId].IsHeatmapVisible = visible;

@@ -30,17 +30,27 @@ namespace GDO.Modules.EyeTracking.Core
         
         public void CalculateAngle()
         {
-            CalculateDistanceToCenter();
-            double ratio = ((B + D)/2)/((A + C)/2);
-            Priority = ((E + G)/2)/((F + H)/2);
-            if (Priority > 1)
+            if (VisibleCheck2())
             {
-                Priority = 1/ Priority;
-            }
-            AngleOffset = Convert.ToInt32(ratio*90);
-            if (A > C)
-            {
-                AngleOffset = -AngleOffset;
+                CalculateDistanceToCenter();
+                if (VisibleCheck3())
+                {
+                    double ratio = ((B + D) / 2) / ((A + C) / 2);
+                    Priority = ((E + G) / 2) / ((F + H) / 2);
+                    if (Priority > 1)
+                    {
+                        Priority = 1 / Priority;
+                    }
+                    ratio = 1 - ratio;
+                    if (ratio < 1)
+                    {
+                        AngleOffset = Convert.ToInt32(ratio * 90);
+                        if (A > C)
+                        {
+                            AngleOffset = -AngleOffset;
+                        }
+                    }
+                }
             }
         }
 
@@ -63,10 +73,47 @@ namespace GDO.Modules.EyeTracking.Core
             H = Math.Sqrt(Math.Pow(X[3] - X[4], 2) + Math.Pow(Y[3] - Y[4], 2));
         }
 
-        public bool VisibleCheck()
+        public bool VisibleCheck1()
         {
             double total = X[0] + X[1] + X[2] + X[3] + Y[0] + Y[1] + Y[2] + Y[3];
-            if (total == 0)
+            if (total > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool VisibleCheck2()
+        {
+            double total = A + B + C + D;
+            if (total > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool VisibleCheck3()
+        {
+            double total = E + F + G + H;
+            if (total > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool VisibleCheck4()
+        {
+            if (AngleOffset == 0)
             {
                 return false;
             }
@@ -78,7 +125,7 @@ namespace GDO.Modules.EyeTracking.Core
 
         public double[] CalculateOffset(double x, double y, int markerSize)
         {
-            if (VisibleCheck())
+            if (VisibleCheck1())
             {
                 double[] offset = new double[3];
                 CalculateSides();

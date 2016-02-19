@@ -207,8 +207,8 @@ namespace GDO.Modules.EyeTracking.Core
 
                         }
                     }
-                    PositionData position = CalculatePosition(MarkerData, EyeData);
-                    //LocationData location = CalculateOverallLocation(MarkerData);
+                    PositionData position = CalculateOverallPosition(MarkerData, EyeData);
+                    LocationData location = CalculateOverallLocation(MarkerData);
                     if (position != null)
                     {
                         TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
@@ -216,7 +216,7 @@ namespace GDO.Modules.EyeTracking.Core
                         TrackData trackData = new TrackData();
                         trackData.setPosition(Id, position);
                         trackData.TimeStamp = secondsSinceEpoch;
-                        //trackData.setLocation(location);
+                        trackData.setLocation(location);
                         //if (TrackQueue.Count < TrackQueueSize)
                         //{
                         //    TrackQueue.Enqueue(trackData);
@@ -244,43 +244,50 @@ namespace GDO.Modules.EyeTracking.Core
         }
 
 
-        public PositionData CalculatePosition(MarkerData[] markerData, EyeData eyeData)
+        public PositionData CalculateOverallPosition(MarkerData[] markerData, EyeData eyeData)
         {
-            if (eyeData == null || eyeData.X <= -1920 || eyeData.Y <= -1080 || eyeData.X > 1920*2 || eyeData.Y > 1080*2)
+            try
             {
-                return null;
-            }
-            if (eyeData.X == 0 && eyeData.Y == 0)
-            {
-                eyeData.X = 1920/2;
-                eyeData.Y = 1080/2;
-            }
-            double totalX = 0;
-            double totalY = 0;
-            double totalCount = 0;
-            PositionData position = new PositionData();
-            for (int i = 0; i < Cave.Cols * Cave.Rows; i++)
-            {
-                double[] offset = markerData[i].CalculateOffset(eyeData.X, eyeData.Y, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize*6);
-                if (offset != null && MaxOffset - offset[2] > 0)
+                if (eyeData == null || eyeData.X <= -1920 || eyeData.Y <= -1080 || eyeData.X > 1920 * 2 || eyeData.Y > 1080 * 2)
                 {
-                    totalX += (offset[0] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].X[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
-                    totalY += (offset[1] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].Y[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
-                    totalCount += MaxOffset - offset[2];
+                    return null;
+                }
+                if (eyeData.X == 0 && eyeData.Y == 0)
+                {
+                    eyeData.X = 1920 / 2;
+                    eyeData.Y = 1080 / 2;
+                }
+                double totalX = 0;
+                double totalY = 0;
+                double totalCount = 0;
+                PositionData position = new PositionData();
+                for (int i = 0; i < Cave.Cols * Cave.Rows; i++)
+                {
+                    double[] offset = markerData[i].CalculateOffset(eyeData.X, eyeData.Y, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize * 6);
+                    if (offset != null && MaxOffset - offset[2] > 0)
+                    {
+                        totalX += (offset[0] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].X[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
+                        totalY += (offset[1] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Markers[i].Y[3] + ((EyeTrackingModule)Cave.Modules["EyeTracking"]).MarkerSize) * (MaxOffset - offset[2]);
+                        totalCount += MaxOffset - offset[2];
+                    }
+                }
+                if (totalX > 0 && totalY > 0)
+                {
+                    double x = Convert.ToInt32(totalX / totalCount);
+                    double y = Convert.ToInt32(totalY / totalCount);
+                    int col = Convert.ToInt32(Math.Floor(x / Cave.NodeWidth));
+                    int row = Convert.ToInt32(Math.Floor(y / Cave.NodeHeight));
+                    position.NodeId = Cave.GetNodeId(col, row);
+                    position.X = Convert.ToInt32(x - (double)(col * Cave.NodeWidth));
+                    position.Y = Convert.ToInt32(y - (double)(row * Cave.NodeHeight));
+                    return position;
+                }
+                else
+                {
+                    return null;
                 }
             }
-            if (totalX > 0 && totalY > 0)
-            {
-                double x = Convert.ToInt32(totalX/totalCount);
-                double y = Convert.ToInt32(totalY/totalCount);
-                int col = Convert.ToInt32(Math.Floor(x/Cave.NodeWidth));
-                int row = Convert.ToInt32(Math.Floor(y/Cave.NodeHeight));
-                position.NodeId = Cave.GetNodeId(col, row);
-                position.X = Convert.ToInt32(x - (double) (col*Cave.NodeWidth));
-                position.Y = Convert.ToInt32(y - (double) (row*Cave.NodeHeight));
-                return position;
-            }
-            else
+            catch (Exception e)
             {
                 return null;
             }
@@ -288,62 +295,129 @@ namespace GDO.Modules.EyeTracking.Core
 
         public LocationData CalculateOverallLocation(MarkerData[] data)
         {
-            List<LocationData> locationDatas = new List<LocationData>();
-            for (int i = 0; i < Cave.Cols*Cave.Rows; i++)
+            try
             {
-                data[i].CalculateAngle();
-                for (int j = 0; j < Cave.Cols * Cave.Rows; j++)
+                List<LocationData> locationDatas = new List<LocationData>();
+                for (int i = 0; i < Cave.Cols * Cave.Rows; i++)
                 {
-                    if (data[i].VisibleCheck() && data[j].VisibleCheck())
+                    for (int j = 0; j < Cave.Cols * Cave.Rows; j++)
                     {
-                        locationDatas.Add(CalculateLocation(data[i],data[j]));
+                        if (data[i].VisibleCheck1() && data[j].VisibleCheck1() && data[i].VisibleCheck2() && data[j].VisibleCheck2() && i != j && j > i)
+                        {
+                            data[i].CalculateAngle();
+                            data[j].CalculateAngle();
+                            if (data[i].VisibleCheck4() && data[j].VisibleCheck4())
+                            {
+                                LocationData a = CalculateLocation(data[i], data[j]);
+                                if (a != null)
+                                {
+                                    locationDatas.Add(a);
+                                }
+                            }
+                            /*LocationData temp = new LocationData();
+                            temp.Angle = Convert.ToInt32((data[i].AngleOffset + data[j].AngleOffset)/2);
+                            LocationData temp2 = CalculateLocation(data[i], data[j]);
+                            temp.Priority = temp2.Priority;
+                            temp.Distance = Convert.ToInt32(temp2.Priority * 100);
+                            locationDatas.Add(temp);*/
+                        }
                     }
                 }
+                double totalAngle = 0;
+                double totalDistance = 0;
+                double totalPriority = 0;
+                foreach (LocationData eachData in locationDatas)
+                {
+                    totalAngle += eachData.Angle * eachData.Priority;
+                    totalDistance += eachData.Distance * eachData.Priority;
+                    totalPriority += eachData.Priority;
+                }
+                LocationData overallLocationData = new LocationData();
+                if (totalPriority > 0)
+                {
+                    overallLocationData.Angle = Convert.ToInt32(totalAngle / totalPriority);
+                    overallLocationData.Distance = Convert.ToInt32(totalDistance / totalPriority);
+                }
+                else
+                {
+                    overallLocationData.Angle = 0;
+                    overallLocationData.Distance = 0;
+                }
+                return overallLocationData;
             }
-            double totalAngle = 0;
-            double totalDistance = 0;
-            double totalPriority = 0;
-            foreach (LocationData eachData in locationDatas)
+            catch (Exception e)
             {
-                totalAngle += eachData.Angle * eachData.Priority;
-                totalDistance += eachData.Distance* eachData.Priority;
-                totalPriority += eachData.Priority;
-            }
-            LocationData overallLocationData = new LocationData();
-            if (totalPriority > 0)
-            {
-                overallLocationData.Angle = Convert.ToInt32(totalAngle / totalPriority);
-                overallLocationData.Distance = Convert.ToInt32(totalDistance / totalPriority);
-            }
-            else
-            {
+                LocationData overallLocationData = new LocationData();
                 overallLocationData.Angle = 0;
-                overallLocationData.Distance = 100;
+                overallLocationData.Distance = 0;
+                return overallLocationData;
             }
-            return overallLocationData;
         }
 
         public LocationData CalculateLocation(MarkerData a, MarkerData b)
         {
-            double r1 = Math.Sin((Math.PI / 180) * (90 - 2 - a.AngleOffset)) / Math.Sin((Math.PI / 180) * (Math.Abs(a.AngleOffset)));
-            double r2 = Math.Sin((Math.PI / 180) * (90 - 2 - b.AngleOffset)) / Math.Sin((Math.PI / 180) * (Math.Abs(b.AngleOffset)));
-            double eq = 1/(r1*r2);
-            double result = -10;
-            for (int i = 0; i < 360; i++)
+            try
             {
-                double alpha = Math.Abs(a.Angle - i);
-                double beta = Math.Abs(b.Angle - i);
-                double temp = Math.Sin((Math.PI/180)*(alpha))/Math.Sin((Math.PI/180)*(beta));
-                if (Math.Abs(temp - eq) > Math.Abs(result - eq))
+                double r1 = Math.Sin((Math.PI / 180) * (Math.Abs(a.AngleOffset))) / Math.Sin((Math.PI / 180) * (90 - 2 - a.AngleOffset));
+                double r2 = Math.Sin((Math.PI / 180) * (Math.Abs(b.AngleOffset))) / Math.Sin((Math.PI / 180) * (90 - 2 + b.AngleOffset));
+                double eq = (r1 * r2);
+                double alpha = Math.Abs(a.Angle - 0);
+                double beta = Math.Abs(b.Angle - 0);
+                double temp = 0;
+                int angle = 0;
+                int distance = 0;
+
+                double minDifference = double.MaxValue;
+                int min = 0;
+                int max = 360;
+                if (a.AngleOffset < 0 && b.AngleOffset < 0)
                 {
-                    LocationData data = new LocationData();
-                    data.Angle = i;
-                    data.Distance = 50;
-                    data.Priority = (a.Priority + b.Priority)/2;
-                    return data;
+                    max = Convert.ToInt32(a.Angle);
+                    distance = Convert.ToInt32(100 *r2);
                 }
+                else if (a.AngleOffset > 0 && b.AngleOffset < 0)
+                {
+                    min = Convert.ToInt32(a.Angle);
+                    max = Convert.ToInt32(b.Angle);
+                    //distance = Convert.ToInt32(100 * ((r1+r2)/2));
+                    distance = Convert.ToInt32(100/(Cave.NodeHeight/((a.A + a.C + b.A + b.C))));
+                }
+                else if (a.AngleOffset > 0 && b.AngleOffset > 0)
+                {
+                    min = Convert.ToInt32(b.Angle);
+                    distance = Convert.ToInt32(100 * r1);
+                }
+
+                for (int i = min; i < max; i++)
+                {
+                    alpha = Math.Abs(a.Angle - i);
+                    beta = Math.Abs(b.Angle - i);
+                    if (alpha > beta)
+                    {
+                        temp = Math.Sin((Math.PI / 180) * (beta)) / Math.Sin((Math.PI / 180) * (alpha));
+                    }
+                    else
+                    {
+                        temp = Math.Sin((Math.PI / 180) * (alpha)) / Math.Sin((Math.PI / 180) * (beta));
+                    }
+                    var difference = Math.Abs(temp - eq);
+                    if (minDifference > difference)
+                    {
+                        minDifference = (double)difference;
+                        angle = i;
+                    }
+                }
+
+                LocationData data = new LocationData();
+                data.Angle = 360 - angle;
+                data.Distance = distance;
+                data.Priority = (a.Priority + b.Priority) / 2;
+                return data;
             }
-            return null;
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

@@ -368,6 +368,7 @@ gdo.net.module["EyeTracking"].updateButtons = function () {
                gdo.net.module["EyeTracking"].server.setHeatmapVisible($(this).attr('userId'), gdo.net.module["EyeTracking"].user[$(this).attr('userId')].isHeatmapVisible);
            });
     }
+
     $("iframe").contents().find("#heatmapButton")
        .unbind()
        .click(function () {
