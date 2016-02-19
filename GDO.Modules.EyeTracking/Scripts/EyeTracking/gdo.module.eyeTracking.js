@@ -119,6 +119,7 @@ $(function () {
                     gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
                     var nx = ((gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col) * gdo.net.node[gdo.clientId].width) + deserializedData.X;
                     var ny = ((gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row) * gdo.net.node[gdo.clientId].height) + deserializedData.Y;
+                    //reduce to 100 
                     if (nx > -500 && nx < gdo.net.node[gdo.clientId].width + 500 && ny > -500 && ny < gdo.net.node[gdo.clientId].height + 500) {
                         gdo.net.module["EyeTracking"].heatmap.addData([{ x: nx, y: ny, value: 1 }]);
                         gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap.addData([{ x: nx, y: ny, value: 1 }]);
