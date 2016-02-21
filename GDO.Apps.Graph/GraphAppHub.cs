@@ -151,14 +151,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void ShowLabels(int instanceId, string field)
+        public void ShowLabels(int instanceId, string field, string color)  //TODO add a default color
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Rendering '" + field +"' field as labels.");
-                    Clients.Group("" + instanceId).renderLabels(field);
+                    Clients.Group("" + instanceId).renderLabels(field, color);
                     Clients.Caller.setMessage("Labels are now being rendered.");
                 }
                 catch (Exception e)
@@ -268,14 +268,14 @@ namespace GDO.Apps.Graph
 
 
 
-        public void RenderMostConnectedNodes(int instanceId, int numLinks)
+        public void RenderMostConnectedNodes(int instanceId, int numLinks, string color)  //TODO add a default color
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Highlighting nodes with more than " + numLinks + " links.");
-                    Clients.Group("" + instanceId).renderMostConnectedNodes(numLinks);
+                    Clients.Group("" + instanceId).renderMostConnectedNodes(numLinks, color);
                     Clients.Caller.setMessage("Nodes with more than " + numLinks + " links are now being rendered.");
                 }
                 catch (Exception e)
@@ -287,14 +287,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void RenderMostConnectedLabels(int instanceId, int numLinks)
+        public void RenderMostConnectedLabels(int instanceId, int numLinks, string field, string color)  //TODO add a default color
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Showing labels for nodes with more than " + numLinks + " links.");
-                    Clients.Group("" + instanceId).renderMostConnectedLabels(numLinks);
+                    Clients.Group("" + instanceId).renderMostConnectedLabels(numLinks, field, color);
                     Clients.Caller.setMessage("Labels for nodes with more than " + numLinks + " links are now being rendered.");
                 }
                 catch (Exception e)
@@ -366,14 +366,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void RenderSearchLabels(int instanceId, string keywords, string field)
+        public void RenderSearchLabels(int instanceId, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Rendering labels for selected nodes.");
-                    Clients.Group("" + instanceId).renderSearchLabels(keywords, field);
+                    Clients.Group("" + instanceId).renderSearchLabels(field);
                     Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
                 }
                 catch (Exception e)
