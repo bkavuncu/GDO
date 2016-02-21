@@ -423,5 +423,29 @@ namespace GDO.Apps.Graph
             }
         }
 
+
+        /*
+            EXPERIMENTAL!
+            FOR FUZZY CONTROL
+        */
+        public void ComputeFuzzy(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Computing fuzzy query");
+                    Clients.Group("" + instanceId).renderFuzzy();
+                    Clients.Caller.setMessage("Fuzzy query computed. Graph rendered");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to compute fuzzy query.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
     }
 }

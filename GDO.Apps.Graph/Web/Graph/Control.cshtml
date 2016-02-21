@@ -289,6 +289,15 @@
         });
 
 
+        /*
+        EXPERIMENTAL!
+        FOR FUZZY CONTROL
+        */
+        $("#compute_fuzzy").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId);
+        });
+
+
         gdo.net.app["Graph"].initControl();
     });
 </script>
@@ -344,7 +353,7 @@
                 <div class="col-lg-4">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Find Processed Graph</h6>
+                            <h6><i class='fa  fa-folder-open fa-fw'></i>&nbsp;Find Processed Graph</h6>
                         </div>
                         <div class="panel-body">
                             <fieldset>
@@ -495,7 +504,13 @@
                                             </table>
                                                 <button class='btn btn-default' id="hide_sublinks">Hide links</button>
                                                 <button class='btn btn-default' id="hide_search">Hide all</button>
-                                            <br/>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <label> Fuzzy Logic </label>
+                                            <br />
+                                            <button class='btn btn-default' id="compute_fuzzy"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;Fuzzy 1</button>
+                                            <br />
                                       </td>
                                     </tr>
                                 </table>

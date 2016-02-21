@@ -91,10 +91,6 @@ $(function () {
             var elem2 = $("iframe").contents().find("#select_SearchFields");
             var elem3 = $("iframe").contents().find("#select_SearchLabels");
             var elem4 = $("iframe").contents().find("#select_mostConnectedLabels");
-            elem1.html();
-            elem2.html();
-            elem3.html();
-            elem4.html();
             $.each(options, function () {
                 elem1.append($("<option />").val(this).text(this));
                 elem2.append($("<option />").val(this).text(this));
@@ -131,6 +127,103 @@ $(function () {
             }
         }
     }
+
+
+    /*
+    EXPERIMENTAL
+    */
+    $.connection.graphAppHub.client.renderFuzzy = function () {
+
+        searchquery = "Imperial";
+        field = "year";
+
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
+            var linksDom = highlightDom.append("g").attr("id", "sublinks");
+
+            //findMatchingNodes(); // To render links properly, each browser needs to know all matched nodes.
+            //renderSearchNodes(); // Each browser renders its mathching and neighbour nodes
+            //renderSearchLinks(); // Each browser renders its links
+
+            alert("Fuzzy query correctly rendered!");
+
+            function findMatchingNodes() {
+                //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var
+                // the neighbour nodes are also stored in the highlightedNeighbours var
+                highlightedNodes = [];  // empty it from previous searches
+                highlightedNeighbours = [];  // empty it from previous searches
+
+                var queryRE = new RegExp(searchquery, 'i'); // case-insensitive
+                allnodes.forEach(function (node) {
+                    if (node.Attrs[field]) { // if the field does not exist for the curent node, skip
+                        if (node.Attrs[field].search(queryRE) != -1) {
+                            highlightedNodes.push(node.ID);
+                            node.Adj.forEach(function (neighbour) { // save all its neighbours in a variable
+                                highlightedNeighbours.push(neighbour);
+                            });
+                        }
+                    }
+                });
+            }
+
+            function renderSearchNodes() {
+                //var radius = globalZoomed ? zoomedRadius : normalRadius;
+
+                //Each browser render the matching and neighbour nodes among its nodes. 
+                nodes.forEach(function (node) {
+                    // is this node a match?
+                    if (highlightedNodes.indexOf(node.ID) != -1) {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size) + 5)
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                    }
+                        // else, is this a neighbour?
+                    else if (highlightedNeighbours.indexOf(node.ID) != -1) {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size) + 5)
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")");
+                    }
+                    /* // do nothing (or paint in a another way)
+                    else {
+                        highlightDom.append("circle")
+                            .attr("r", Math.ceil(node.Size))
+                            .attr("cx", node.Pos.X)
+                            .attr("cy", node.Pos.Y)
+                            .attr("fill", "gray"); // Nodes: search mode, not selected
+                        } */
+                });
+            }
+
+
+            function renderSearchLinks() {
+
+                var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
+
+                //because highlightedNodes has the relevant nodes for the whole graph, this will work even though matching nodes not being in the target browser
+                links.forEach(function (link) {
+                    //TODO we could improve this by using different colours depending on whether the searched node is the source or the target
+                    if (highlightedNodes.indexOf(link.Source) != -1
+                        || highlightedNodes.indexOf(link.Target) != -1) {
+
+                        linksDom.append("line")
+                            .attr("x1", link.StartPos.X)
+                            .attr("y1", link.StartPos.Y)
+                            .attr("x2", link.EndPos.X)
+                            .attr("y2", link.EndPos.Y)
+                            .attr("stroke-width", strokeWidth)
+                            .attr("stroke", "yellow");
+                    }
+                });
+            }
+        }
+    }
+
+    /**********************************************************************************************************/
 
 
     $.connection.graphAppHub.client.renderSearch = function (searchquery, field) {

@@ -126,9 +126,14 @@
     <Compile Include="GraphDataReader.cs" />
     <Compile Include="GraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestFuzzy.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\DotFuzzy-master\DotFuzzy.csproj">
+      <Project>{6B1E0CE9-725E-477F-938C-625A25DBCE70}</Project>
+      <Name>DotFuzzy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>
       <Name>GDO</Name>
