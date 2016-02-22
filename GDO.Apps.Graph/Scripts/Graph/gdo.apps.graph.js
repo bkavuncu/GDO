@@ -134,19 +134,25 @@ $(function () {
     */
     $.connection.graphAppHub.client.renderFuzzy = function () {
 
-        searchquery = "Imperial";
-        field = "year";
 
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
-            var linksDom = highlightDom.append("g").attr("id", "sublinks");
+            //var linksDom = highlightDom.append("g").attr("id", "sublinks");
 
             //findMatchingNodes(); // To render links properly, each browser needs to know all matched nodes.
             //renderSearchNodes(); // Each browser renders its mathching and neighbour nodes
             //renderSearchLinks(); // Each browser renders its links
 
-            alert("Fuzzy query correctly rendered!");
+            nodes.forEach(function (node) {
+                if (node.query1Result >= 0.5) {
+                    highlightDom.append("circle")
+                        .attr("r", Math.ceil(node.Size))
+                        .attr("cx", node.Pos.X)
+                        .attr("cy", node.Pos.Y)
+                        .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                }
+            });
 
             function findMatchingNodes() {
                 //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var

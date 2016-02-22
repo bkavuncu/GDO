@@ -83,5 +83,47 @@ namespace GDO.Apps.Graph
                 System.Console.WriteLine(e.Message);
             }
         }
+
+
+        static void Example3()
+        {
+            LinguisticVariable degree = new LinguisticVariable("Degree");
+            degree.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 1, 3));
+            degree.MembershipFunctionCollection.Add(new MembershipFunction("Medium", 1, 3, 12, 15));
+            degree.MembershipFunctionCollection.Add(new MembershipFunction("High", 12, 15, 150, 150));
+
+            LinguisticVariable weight = new LinguisticVariable("Weight");
+            weight.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 15, 20));
+            weight.MembershipFunctionCollection.Add(new MembershipFunction("Medium", 15, 20, 40, 50));
+            weight.MembershipFunctionCollection.Add(new MembershipFunction("High", 40, 50, 75, 75));
+
+            LinguisticVariable interest = new LinguisticVariable("Interest");
+            interest.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 0, 0.5));
+            interest.MembershipFunctionCollection.Add(new MembershipFunction("High", 0.5, 1, 1, 1));
+
+            FuzzyEngine fuzzyEngine = new FuzzyEngine();
+            fuzzyEngine.LinguisticVariableCollection.Add(degree);
+            fuzzyEngine.LinguisticVariableCollection.Add(weight);
+            fuzzyEngine.LinguisticVariableCollection.Add(interest);
+            fuzzyEngine.Consequent = "Interest";
+
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS High) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) AND (Weight IS Medium) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Low) OR (Weight IS Low) THEN Interest IS Low"));
+
+
+            degree.InputValue = 1;
+            weight.InputValue = 70;
+
+            try
+            {
+                System.Console.WriteLine(fuzzyEngine.Defuzzify().ToString());
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+            }
+        }
     }
 }

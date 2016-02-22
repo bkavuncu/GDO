@@ -57,6 +57,8 @@ namespace GDO.Apps.Graph
             //compute node adjacencies
             ComputeNodeAdjacencies();
 
+            doFuzzyQuery1();
+
             #region calculate viewport and scales
             int singleDisplayWidth = Section.Width / Section.Cols;
             int singleDisplayHeight = Section.Height / Section.Rows;
@@ -329,6 +331,16 @@ namespace GDO.Apps.Graph
         public void UpdateZoomVar(bool value)
         {
             zoomedIn = value;
+        }
+
+
+        private void doFuzzyQuery1()
+        {
+            FuzzyQuery1 fq1 = new FuzzyQuery1();
+            foreach (var n in Nodes)
+            {
+                n.query1Result = fq1.DoInference(n.NumLinks, n.Size);
+            }
         }
     }
 }

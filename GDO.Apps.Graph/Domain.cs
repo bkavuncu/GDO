@@ -44,6 +44,7 @@ namespace GDO.Apps.Graph.Domain
         public Dictionary<string, string> Attrs { get; set; }
         public int NumLinks { get; set; }
         public List<string> Adj { get; set; }  // adj = list of connectedNodes
+        public double query1Result { get; set; }
     }
 
     public class GraphLink

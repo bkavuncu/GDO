@@ -126,6 +126,7 @@
     <Compile Include="GraphDataReader.cs" />
     <Compile Include="GraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FuzzyQuery1.cs" />
     <Compile Include="TestFuzzy.cs" />
   </ItemGroup>
   <ItemGroup />
