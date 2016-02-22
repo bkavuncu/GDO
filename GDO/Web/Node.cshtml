@@ -1,4 +1,5 @@
-﻿@using GDO.Core
+﻿@using System.Collections.Generic
+@using GDO.Core
 @{
     Layout = null;
 }
@@ -49,6 +50,7 @@
         }
         body {
             overflow:hidden;
+            margin:0px;
         }
     </style>
     <script>
@@ -93,6 +95,7 @@
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
+    <script type="text/javascript" src="../Scripts/heatmap.min.js"></script>
     <script>
             $(function() {
                 @{

@@ -944,6 +944,8 @@
     <None Include="Properties\PublishProfiles\studentserver.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\heatmap.js" />
+    <Content Include="Scripts\heatmap.min.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.csv-0.71.min.js" />

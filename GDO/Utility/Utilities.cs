@@ -9,6 +9,36 @@ namespace GDO.Utility
 {
     public static class Utilities
     {
+        public static List<string> ParseString(string str, string divider, bool includeRemainder)
+        {
+            List<string> lines = new List<string>();
+            if (String.IsNullOrEmpty(str) || String.IsNullOrEmpty(divider))
+            {
+                return lines;
+            }
+            int lastIndex = 0;
+            for (int index = 0; index < str.Length; index += divider.Length)
+            {
+
+                index = str.IndexOf(divider, index);
+                if (index > 0)
+                {
+                    string line = str.Substring(lastIndex, index - lastIndex);
+                    lines.Add(line);
+                    lastIndex = index + divider.Length;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (includeRemainder)
+            {
+                string remainder = str.Substring(lastIndex, str.Length - lastIndex);
+                lines.Add(remainder);
+            }
+            return lines;
+        }
         public static int GetAvailableSlot<T>(ConcurrentDictionary<int, T> dictionary)
         {
             int slot = -1;

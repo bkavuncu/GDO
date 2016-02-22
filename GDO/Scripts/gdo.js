@@ -159,11 +159,10 @@ gdo.timeStamp = function() {
             time[i] = "0" + time[i];
         }
     }
-    if (time[3] < 100) {
-        time[3] = "0" + time[3];
-    }
     if (time[3] < 10) {
         time[3] = "00" + time[3];
+    }else if (time[3] < 100) {
+        time[3] = "0" + time[3];
     }
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }

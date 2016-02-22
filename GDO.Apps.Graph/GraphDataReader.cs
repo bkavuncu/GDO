@@ -16,7 +16,6 @@ namespace GDO.Apps.Graph
             Stopwatch sw = new Stopwatch();
             using (var xreader = XmlReader.Create(graphmlfile))
             {
-
                 XDocument doc = XDocument.Load(xreader);
                 XNamespace ns = @"http://graphml.graphdrawing.org/xmlns";
 
@@ -64,10 +63,8 @@ namespace GDO.Apps.Graph
 
                 graphinfo = new GraphInfo()
                 {
-                    NodeMandatoryFields =
-                        nodekeys.Where(f => mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList(),
-                    NodeOtherFields =
-                        nodekeys.Where(f => !mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList(),
+                    NodeMandatoryFields = nodekeys.Where(f => mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList(),
+                    NodeOtherFields = nodekeys.Where(f => !mandatoryNodeKeys.Contains(f.name)).Select(a => a.name).ToList(),
                     LinkKeys = edgekeys.Select(f => f.name).ToList()
                 };
 
@@ -132,8 +129,6 @@ namespace GDO.Apps.Graph
                     Width = 1,
                     Height = 1
                 };
-
-
                 #endregion
 
                 #region fill Links data structure 

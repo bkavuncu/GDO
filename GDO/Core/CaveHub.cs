@@ -424,9 +424,8 @@ namespace GDO.Core
             {
                 if (Cave.ContainsModule(moduleName))
                 {
-                    IModule module;
-                    Cave.Modules.TryGetValue(moduleName, out module);
-                    return module.SerializeJSON();
+
+                    return "{\"Name\":\""+moduleName+"\"}";
                 }
                 else
                 {

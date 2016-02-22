@@ -11,6 +11,5 @@ namespace GDO.Core
     {
         string Name { get; set; }
         void Init();
-        string SerializeJSON();
     }
 }

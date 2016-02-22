@@ -719,6 +719,7 @@ gdo.net.processModule = function (module) {
     gdo.net.module[module.Name].name = module.Name;
     var hubName = lowerCaseFirstLetter(module.Name) + "ModuleHub";
     gdo.net.module[module.Name].server = $.connection[hubName].server;
+    gdo.net.module[module.Name].server.joinGroup(module.Name);
 }
 
 gdo.net.processApp = function (app) {
