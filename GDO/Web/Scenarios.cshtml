@@ -70,6 +70,47 @@
     </script>
 </head>
 <body unselectable="on" class="unselectable">
+    <script src="../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/enscroll-0.6.1.min.js"></script>
+    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
+    <script type="text/javascript" src="../Scripts/gdo.js"></script>
+    <script src="../signalr/hubs"></script>
+    <script type="text/javascript" src="../Scripts/peer.js"></script>
+
+    <script>
+        gdo.updateDisplayCanvas = function () {
+            gdo.management.updateMaintenanceButton();
+        }
+        $(function () {
+            @{
+                    foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
+                    {
+                        @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
+                                }
+                    foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
+                    {
+                        @:gdo.loadScript("@moduleEntry.Value.Name", "@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
+                                }
+                }
+            gdo.loadScript("nodes", "management", gdo.SCRIPT_TYPE.CORE);
+            gdo.loadScript("console", "management", gdo.SCRIPT_TYPE.CORE);
+            $(document).ready(function () {
+                gdo.clientId = 1;
+                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
+            });
+        });
+        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+            var space = "<br /> ";
+            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+        }
+        initApp = function () {
+            gdo.consoleOut('', 1, 'GDO Initialized');
+            gdo.management.drawConsoleInput();
+            gdo.updateSelf();
+        }
+    </script>
     <div id="wrapper">
         <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
             <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
@@ -170,57 +211,75 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
-
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Scenarios</h2>
+                    <h3>Scenarios</h3>
                 </div>
                 <!-- /.col-lg-12 -->
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6><span class="glyphicon glyphicon-console"></span>&nbsp;Console</h6>
+                </div>
+                <div class="panel-body">
+                    <div id="console_area" style="font-size: 13px; width: 100.5%; height: 21vh; overflow: auto; border: 0px solid #333; background-color: #222; color: #FFF"></div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-8" id="console_input_div"></div>
+                            <!-- /.col-lg-12 -->
+                            <div class="col-lg-4" id="console_submit_div"></div>
+                        </div>
+                        <!-- /.col-lg-12 -->
+                    </div>
+
+                </div>
+            </div>
+            <div class="panel panel-default" >
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h6><span class="fa fa-list"></span>&nbsp;Scenarios</h6>
+                        </div>
+                        <div class="col-lg-4" style="text-align: right" >
+                            <button type='button' class='btn btn-success'><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;New</button>
+                            <button type='button' class='btn btn-primary'><i align="center" class='fa  fa-upload  fa-fw'></i>&nbsp;Load</button>
+                            <button type='button' class='btn btn-warning'><i align="center" class='fa  fa-save  fa-fw'></i>&nbsp;Save</button>
+                            <button type='button' class='btn btn-danger'><i align="center" class='fa  fa-times  fa-fw'></i>&nbsp;Delete</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel-body" style="height: 42vh;">
+                    <br/>
+                    <br/>
+                    <br/>
+
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align: center">
+
+                            <button type='button' class='btn btn-primary btn-circle btn-lg'><i  class='fa  fa-play  '></i></button>
+                            <button type='button' class='btn btn-success btn-circle btn-lg'><i  class='fa  fa-plus '></i></button>
+                            <button type='button' class='btn btn-warning btn-circle btn-lg'><i  class='fa  fa-minus '></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <!-- /#wrapper -->
-    <script src="../Scripts/jquery-2.1.4.min.js"></script>
+    <!--<script src="..//Bootstrap/bower_components/jquery/dist/jquery.min.js"></script>-->
+    <!-- Bootstrap Core JavaScript -->
     <script src="../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
     <script src="../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../Scripts/enscroll-0.6.1.min.js"></script>
-    <script src="../Scripts/jquery.csv-0.71.min.js"></script>
-    <script type="text/javascript" src="../Scripts/gdo.js"></script>
-    <script src="../signalr/hubs"></script>
-    <script type="text/javascript" src="../Scripts/peer.js"></script>
-    <script>
-            gdo.updateDisplayCanvas = function () {
-                gdo.management.updateMaintenanceButton();
-            }
-            $(function () {
-                $( document ).ready(function() {
-                    @{
-                        foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
-                        {
-                            @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
-                        }
-                        foreach (KeyValuePair<string, IModule> moduleEntry in Cave.Modules)
-                        {
-                            @:gdo.loadScript("@moduleEntry.Value.Name","@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
-                        }
-                    }
-                    gdo.loadScript('console', 'management', gdo.SCRIPT_TYPE.CORE);
-                    gdo.clientId = 1;
-                    gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-                });
-            });
-            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                var space = "<br /> ";
-                gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                    + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-            }
-            initApp = function () {
-                gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.updateSelf();
-            }
-    </script>
+    <!-- Custom Theme JavaScript -->
+    <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
+
 </body>
+
 </html>

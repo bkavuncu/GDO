@@ -10,7 +10,7 @@
         .css("width", "80%")
         .css("height", "40px")
         .empty()
-        .append("<input type='text' id='console_input' value='Enter Console Command' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
+        .append("<input type='text' id='console_input' value='&nbsp;Enter Console Command' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
     $("#console_input")
         .css("width", "100%")
         .css("height", "40px")
