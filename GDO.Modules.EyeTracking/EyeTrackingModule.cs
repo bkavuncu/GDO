@@ -27,6 +27,8 @@ namespace GDO.Modules.EyeTracking
         public int CursorSize { get; set; }
         public int CacheSize { get; set; }
         public int NumUsers { get; set; } = 4;
+        //public int HeatmapMax { get; set; }
+        public int DefaultHeatmapMax { get; set; } = 35;
         public Marker[]  Markers { get; set; }
         public User[] Users { get; set; }
         public Action<string> CallBackFunction { get; set; }
@@ -43,6 +45,7 @@ namespace GDO.Modules.EyeTracking
             this.CursorSize = 210;
             this.CacheSize = 10000;
             this.IsHeatmapVisible = false;
+
             string path = Directory.GetCurrentDirectory() + @"\Data\EyeTracking";
             if (Directory.Exists(path))
             {
@@ -69,10 +72,12 @@ namespace GDO.Modules.EyeTracking
                 }
             }
             Users = new User[NumUsers + 1];
+            //HeatmapMax = DefaultHeatmapMax;
             for (int i = 1; i < NumUsers+1; i++)
             {
                 Users[i] = new User();
                 Users[i].Init(i, Cave.Cols * Cave.Rows, CacheSize);
+                //Users[i].HeatmapMax = DefaultHeatmapMax;
             }
         }
 

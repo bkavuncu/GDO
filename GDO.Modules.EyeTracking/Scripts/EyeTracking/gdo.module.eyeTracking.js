@@ -9,6 +9,8 @@ $(function () {
     gdo.net.module["EyeTracking"].markerColor = "#aaa";
     gdo.net.module["EyeTracking"].user = new Array(gdo.net.module["EyeTracking"].numUsers);
     gdo.net.module["EyeTracking"].marker = [];
+    gdo.net.module["EyeTracking"].isHeatmapVisible = false;
+    gdo.net.module["EyeTracking"].heatmapMax = 35;
     for (var l = 1; l < gdo.net.module["EyeTracking"].numUsers + 1; l++) {
         gdo.net.module["EyeTracking"].user[l] = {};
         gdo.net.module["EyeTracking"].user[l].socket = false;
@@ -22,6 +24,7 @@ $(function () {
             gdo.net.module["EyeTracking"].user[l].y[k] = 0;
         }
         gdo.net.module["EyeTracking"].user[l].isHeatmapVisible = false;
+        gdo.net.module["EyeTracking"].user[l].heatmapMax = 35;
     }
 
     $.connection.eyeTrackingModuleHub.client.updateMarkerMode = function (mode) {
@@ -112,6 +115,12 @@ $(function () {
                     $('#eyetracking_cursor_' + deserializedData.UserId)
                         .css("top", deserializedData.Y - (gdo.net.module["EyeTracking"].cursorSize / 2))
                         .css("left", deserializedData.X - (gdo.net.module["EyeTracking"].cursorSize / 2));
+                    /*if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap._store._max > gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmapMax) {
+                        gdo.net.module["EyeTracking"].server.setHeatmapMax(deserializedData.UserId, gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap._store._max);
+                    }
+                    if (gdo.net.module["EyeTracking"].heatmap._store._max > gdo.net.module["EyeTracking"].heatmapMax) {
+                        gdo.net.module["EyeTracking"].server.setHeatmapMax(0, gdo.net.module["EyeTracking"].heatmap._store._max);
+                    }*/
                 } else if (gdo.net.node[deserializedData.NodeId].isNeighbour) {
                     if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.length > gdo.net.module["EyeTracking"].cacheSize) {
                         gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.splice(0, 1);
@@ -119,12 +128,16 @@ $(function () {
                     gdo.net.module["EyeTracking"].user[deserializedData.UserId].data.push(deserializedData);
                     var nx = ((gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col) * gdo.net.node[gdo.clientId].width) + deserializedData.X;
                     var ny = ((gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row) * gdo.net.node[gdo.clientId].height) + deserializedData.Y;
-                    //reduce to 100 
-                    if (nx > -500 && nx < gdo.net.node[gdo.clientId].width + 500 && ny > -500 && ny < gdo.net.node[gdo.clientId].height + 500) {
+                    if (nx > -100 && nx < gdo.net.node[gdo.clientId].width + 100 && ny > -100 && ny < gdo.net.node[gdo.clientId].height + 100) {
                         gdo.net.module["EyeTracking"].heatmap.addData([{ x: nx, y: ny, value: 1 }]);
                         gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap.addData([{ x: nx, y: ny, value: 1 }]);
                     }
-
+                    /*if (gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap._store._max > gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmapMax) {
+                        gdo.net.module["EyeTracking"].server.setHeatmapMax(deserializedData.UserId, gdo.net.module["EyeTracking"].user[deserializedData.UserId].heatmap._store._max);
+                    }
+                    if (gdo.net.module["EyeTracking"].heatmap._store._max > gdo.net.module["EyeTracking"].heatmapMax) {
+                        gdo.net.module["EyeTracking"].server.setHeatmapMax(0, gdo.net.module["EyeTracking"].heatmap._store._max);
+                    }*/
                     var colOffset = gdo.net.node[deserializedData.NodeId].col - gdo.net.node[gdo.clientId].col;
                     var rowOffset = gdo.net.node[deserializedData.NodeId].row - gdo.net.node[gdo.clientId].row;
                     $('#eyetracking_cursor_' + deserializedData.UserId)
@@ -205,6 +218,21 @@ $(function () {
             gdo.net.module["EyeTracking"].drawMarkerTable(parseInt(gdo.clientId));
         }
     }
+
+    /*$.connection.eyeTrackingModuleHub.client.updateHeatmapMax = function (index, max) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            if (index == 0) {
+                gdo.net.module["EyeTracking"].heatmap._store._max = max;
+                gdo.net.module["EyeTracking"].heatmap.repaint();
+                gdo.net.module["EyeTracking"].heatmapMax = max;
+            } else {
+                gdo.net.module["EyeTracking"].user[index].heatmap._store._max = max;
+                gdo.net.module["EyeTracking"].user[index].heatmap.repaint();
+                gdo.net.module["EyeTracking"].user[index].heatmapMax = max;
+            }
+        }
+    }*/
+
     $.connection.eyeTrackingModuleHub.client.updateMarkerColor = function (color) {
         gdo.consoleOut('.EyeTracking', 1, 'Marker color: ' + color + '');
         gdo.net.module["EyeTracking"].markerColor = color;
@@ -305,12 +333,15 @@ gdo.net.module["EyeTracking"].initModule = function () {
                     '.75': gradientColor[2]
                 }
             });
-            //var data = {
-            //  max: 100,
-            //  min: 0,
-            //  data: []
-            //};
-            //gdo.net.module["EyeTracking"].user[l].heatmap.setData(data);
+            var data = {
+                min: 0,
+                max: 35,
+                data: []
+            };
+            //gdo.net.module["EyeTracking"].user[l].heatmap.addData([{ x: -100, y: -100, value: 1 }]);
+            gdo.net.module["EyeTracking"].user[l].heatmap.setData(data);
+            gdo.net.module["EyeTracking"].user[l].heatmap.repaint();
+
         }
         $("body").append("<div id='eyetracking_heatmap'  unselectable='on' class='unselectable' style='position: fixed; display: none; top: 0px; left: 0px; border: 0 none; z-index: 950; background:transparent; width:" + gdo.net.node[gdo.clientId].width + "px; height:" + gdo.net.node[gdo.clientId].height + "px'></div>");
         gdo.net.module["EyeTracking"].heatmap = h337.create({
@@ -320,12 +351,15 @@ gdo.net.module["EyeTracking"].initModule = function () {
             minOpacity: 0,
             blur: 1
         });
-        //var data = {
-        //  max: 100,
-        //  min: 0,
-        //  data: []
-        //};
-        //gdo.net.module["EyeTracking"].heatmap.setData(data);
+        var data = {
+            min: 0,
+            max: 35,
+            data: []
+        };
+        //gdo.net.module["EyeTracking"].heatmap.addData([{ x: -100, y: -100, value: 1 }]);
+        gdo.net.module["EyeTracking"].heatmap.setData(data);
+        gdo.net.module["EyeTracking"].heatmap.repaint();
+
     } else {
         gdo.loadScript('control', 'EyeTracking', gdo.SCRIPT_TYPE.MODULE);
     }
@@ -338,9 +372,11 @@ gdo.net.module["EyeTracking"].initModule = function () {
         gdo.net.module["EyeTracking"].server.requestMarkerMode();
         gdo.net.module["EyeTracking"].server.requestCursorMode();
         gdo.net.module["EyeTracking"].server.requestHeatmapVisible(0);
+        //gdo.net.module["EyeTracking"].server.requestHeatmapMax(0);
         for (var j = 1; j < gdo.net.module["EyeTracking"].numUsers + 1; j++) {
             gdo.net.module["EyeTracking"].server.requestConnectionStatus(j);
             gdo.net.module["EyeTracking"].server.requestHeatmapVisible(j);
+            //gdo.net.module["EyeTracking"].server.requestHeatmapMax(j);
         }
     }, 700);
 }

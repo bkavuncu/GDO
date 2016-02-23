@@ -195,6 +195,54 @@ namespace GDO.Modules.EyeTracking
             }
         }
 
+        /*public void RequestHeatmapMax(int index)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    if (index == 0)
+                    {
+                        Clients.Caller.updateHeatmapMax(index,
+                            ((EyeTrackingModule) Cave.Modules["EyeTracking"]).HeatmapMax);
+                    }
+                    else
+                    {
+                        Clients.Caller.updateHeatmapMax(index,
+                            ((EyeTrackingModule) Cave.Modules["EyeTracking"]).Users[index].HeatmapMax);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void SetHeatmapMax(int index, int max)
+        {
+            lock (Cave.ModuleLocks["EyeTracking"])
+            {
+                try
+                {
+                    if (index == 0)
+                    {
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).HeatmapMax = max;
+                    }
+                    else
+                    {
+                        ((EyeTrackingModule)Cave.Modules["EyeTracking"]).Users[index].HeatmapMax = max;
+                    }
+                    Clients.Group("EyeTracking").updateHeatmapMax(index, max);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }*/
+
         public void RequestMarkerColor()
         {
             lock (Cave.ModuleLocks["EyeTracking"])
@@ -304,6 +352,7 @@ namespace GDO.Modules.EyeTracking
                             user.Clear(user.Id, ((EyeTrackingModule)Cave.Modules["EyeTracking"]).CacheSize);
                         }
                     }
+                    //((EyeTrackingModule) Cave.Modules["EyeTracking"]).HeatmapMax = ((EyeTrackingModule)Cave.Modules["EyeTracking"]).DefaultHeatmapMax;
                     Clients.Group("EyeTracking").clearSession();
                 }
                 catch (Exception e)

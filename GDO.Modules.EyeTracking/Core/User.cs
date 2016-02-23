@@ -29,6 +29,7 @@ namespace GDO.Modules.EyeTracking.Core
         public EyeData EyeData { get; set; }
         public TrackData[] TrackCache { get; set; }
         public bool IsHeatmapVisible { get; set; }   
+        //public int HeatmapMax { get; set; }
         //public Queue<TrackData> TrackQueue { get; set; }
         //public int TrackQueueSize = 10; 
         public int MaxOffset { get; set; }
@@ -55,6 +56,7 @@ namespace GDO.Modules.EyeTracking.Core
             MarkerData = new MarkerData[NumMarkers];
             EyeData = new EyeData();
             TrackCache = new TrackData[cacheSize];
+            //HeatmapMax = 35;
         }
 
         public void StartTCPClient()
@@ -380,8 +382,8 @@ namespace GDO.Modules.EyeTracking.Core
                     min = Convert.ToInt32(a.Angle);
                     max = Convert.ToInt32(b.Angle);
                     //distance = Convert.ToInt32(100 * ((r1+r2)/2));
-                    distance = Convert.ToInt32(100/(Cave.NodeHeight/((a.A + a.C + b.A + b.C))));
-                    //distance = Convert.ToInt32(200/(Cave.NodeHeight/((a.A + a.C + b.A + b.C)))) - 100;
+                    //distance = Convert.ToInt32(100/(Cave.NodeHeight/((a.A + a.C + b.A + b.C))));
+                    distance = Convert.ToInt32(200/(a.A + a.C + b.A + b.C)) - 100;
                 }
                 else if (a.AngleOffset > 0 && b.AngleOffset > 0)
                 {
@@ -410,10 +412,10 @@ namespace GDO.Modules.EyeTracking.Core
                 }
 
                 LocationData data = new LocationData();
-                //if(distance<0){
-                //    angle = angle +180;
-                //    distance = Math.Abs(distance);
-                //}
+                if(distance<0){
+                    angle = angle +180;
+                    distance = Math.Abs(distance);
+                }
                 data.Angle = 360 - angle;
                 data.Distance = distance;
                 data.Priority = (a.Priority + b.Priority) / 2;
