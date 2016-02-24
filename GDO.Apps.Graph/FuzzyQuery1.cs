@@ -28,16 +28,24 @@ namespace GDO.Apps.Graph
             interest.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 0, 0.5));
             interest.MembershipFunctionCollection.Add(new MembershipFunction("High", 0.5, 1, 1, 1));
 
+            interest = new LinguisticVariable("Danger");
+            interest.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 0, 0.5));
+            interest.MembershipFunctionCollection.Add(new MembershipFunction("High", 0.5, 1, 1, 1));
+
             fuzzyEngine = new FuzzyEngine();
             fuzzyEngine.LinguisticVariableCollection.Add(degree);
             fuzzyEngine.LinguisticVariableCollection.Add(weight);
             fuzzyEngine.LinguisticVariableCollection.Add(interest);
             fuzzyEngine.Consequent = "Interest";
 
-            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) OR (Weight IS High) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Low) AND (Weight IS Low) THEN Interest IS Low"));
+
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) AND (Weight IS Low) THEN Danger IS High"));
+
             fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS High) THEN Interest IS High"));
             fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) AND (Weight IS Medium) THEN Interest IS Low"));
-            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Low) OR (Weight IS Low) THEN Interest IS Low"));
+            
         }
 
 
