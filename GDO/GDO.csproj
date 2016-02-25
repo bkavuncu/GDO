@@ -625,6 +625,7 @@
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
     <Content Include="Scripts\gdo.management.console.js" />
+    <Content Include="Scripts\gdo.management.scenarios.js" />
     <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
@@ -975,7 +976,6 @@
     <Compile Include="Core\Apps\AppConfiguration.cs" />
     <Compile Include="Core\Apps\App.cs" />
     <Compile Include="Core\Scenarios\Loop.cs" />
-    <Compile Include="Core\Scenarios\Parameter.cs" />
     <Compile Include="Core\States\State.cs" />
     <Compile Include="Core\Apps\IAppHub.cs" />
     <Compile Include="Core\Apps\IAdvancedAppInstance.cs" />

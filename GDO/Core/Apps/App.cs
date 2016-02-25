@@ -27,7 +27,7 @@ namespace GDO.Core.Apps
         {
 
         }
-        public void Init(string name, int p2pmode, Type appClassType, int appType)
+        public App(string name, int p2pmode, Type appClassType, int appType)
         {
             this.Name = name;
             this.P2PMode = p2pmode;

@@ -15,7 +15,7 @@ namespace GDO.Core.Apps
 
         }
 
-        new public void Init(string name, Type appClassType, int appType, List<string> supportedApps)
+        public AdvancedApp(string name, Type appClassType, int appType, List<string> supportedApps)
         {
             this.Name = name;
             this.P2PMode = -1;

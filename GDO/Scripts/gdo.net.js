@@ -124,7 +124,7 @@ $(function() {
         for (var i = 0; i < scenarios.length; i++) {
             if (scenarios[i] != null) {
                 var scenario = JSON.parse(scenarios[i]);
-                gdo.net.processScenario(scenario, i, true);
+                gdo.net.processScenario(scenario, scenario.Name, true);
             }
         }
         gdo.net.NodeInitialized = true;

@@ -451,13 +451,11 @@ namespace GDO.Core
                 App app;
                 if (isAdvanced)
                 {
-                    app = new AdvancedApp();
-                    ((AdvancedApp)app).Init(name, appClassType, (int)Cave.AppTypes.Advanced, supportedApps);
+                    app = new AdvancedApp(name, appClassType, (int)Cave.AppTypes.Advanced, supportedApps);
                 }
                 else
                 {
-                    app = new App();
-                    app.Init(name, p2pmode, appClassType, (int)Cave.AppTypes.Base);
+                    app = new App(name, p2pmode, appClassType, (int)Cave.AppTypes.Base);
                 }
                 Apps.TryAdd(name, app);
                 List<AppConfiguration> configurations = LoadAppConfigurations(name);
@@ -499,10 +497,8 @@ namespace GDO.Core
                         Scenario scenario = Utilities.LoadJsonFile<Scenario>(filePath);
                         if (scenario != null)
                         {
-                            string scenarioName = Utilities.RemoveString(filePath, path + "\\");
-                            scenarioName = Utilities.RemoveString(scenarioName, ".json");
-                            Log.Info("Found scenario called " + scenarioName + " about to load");
-                            Scenarios.TryAdd(scenarioName, scenario);
+                            Log.Info("Found scenario called " + scenario.Name + " about to load");
+                            Scenarios.TryAdd(scenario.Name, scenario);
                         }
                     }
                     return true;

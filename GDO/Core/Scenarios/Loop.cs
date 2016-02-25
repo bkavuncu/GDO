@@ -13,5 +13,10 @@ namespace GDO.Core.Scenarios
         public string Name { get; set; }
         public List<Element> Elements { get; set; }
         public new bool IsLoop = true;
+
+        public Loop(int index, string function, int timeout) : base(index, function, timeout)
+        {
+
+        }
     }
 }

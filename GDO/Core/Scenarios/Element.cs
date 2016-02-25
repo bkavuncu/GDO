@@ -10,5 +10,10 @@ namespace GDO.Core.Scenarios
         public List<string> Parameters { get; set; }
         public int Timeout { get; set; }
         public bool IsLoop = false;
+
+        public Element(int index, string function, int timeout)
+        {
+            Parameters = new List<string>();
+        }
     }
 }
