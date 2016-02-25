@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using GDO.Core.Apps;
+using GDO.Core.Scenarios;
 using GDO.Core.States;
 using log4net;
 using Microsoft.AspNet.SignalR;
@@ -342,11 +343,14 @@ namespace GDO.Core
                     instances.AddRange(Cave.Instances.Select(instanceEntry => GetInstanceUpdate(instanceEntry.Value.Id)));
                     List<string> states = new List<string>(Cave.States.Count);
                     states.AddRange(Cave.States.Select(stateEntry => GetStateUpdate(stateEntry.Value.Id)));
+                    List<string> scenarios = new List<string>(Cave.Scenarios.Count);
+                    scenarios.AddRange(Cave.Scenarios.Select(scenarioEntry => GetScenarioUpdate(scenarioEntry.Value.Name)));
                     string nodeMap = JsonConvert.SerializeObject(Cave.GetNodeMap());
                     string neighbourMap = JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
                     string moduleList = JsonConvert.SerializeObject(Cave.GetModuleList());
                     string appList = JsonConvert.SerializeObject(Cave.GetAppList());
-                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, moduleList, appList, nodes, sections, modules, apps, instances, states);
+
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, moduleList, appList, nodes, sections, modules, apps, instances, states, scenarios);
                 }
                 catch (Exception e)
                 {
@@ -492,6 +496,28 @@ namespace GDO.Core
                     State state;
                     Cave.States.TryGetValue(stateId, out state);
                     return JsonConvert.SerializeObject(state);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private string GetScenarioUpdate(string scenarioName)
+        {
+            try
+            {
+                if (Cave.ContainsScenario(scenarioName))
+                {
+                    Scenario scenario;
+                    Cave.Scenarios.TryGetValue(scenarioName, out scenario);
+                    return JsonConvert.SerializeObject(scenario);
                 }
                 else
                 {

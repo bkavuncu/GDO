@@ -102,7 +102,7 @@ namespace GDO.Core
                 AppLocks.Add(new object());
             }
             CreateSection(0, 0, Cols - 1, Rows - 1); //Free Nodes Pool , id=0
-
+            LoadScenarios();
             Log.Info("Created new CAVE object");
         }
 
@@ -324,6 +324,11 @@ namespace GDO.Core
             return States.ContainsKey(stateId);
         }
 
+        public static bool ContainsScenario(string scenarioName)
+        {
+            return Scenarios.ContainsKey(scenarioName);
+        }
+
         /// <summary>
         /// Gets the section identifier.
         /// </summary>
@@ -507,6 +512,19 @@ namespace GDO.Core
                     return false;
                 }
 
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public static bool SaveScenario(Scenario scenario)
+        {
+            try
+            {
+                Utilities.SaveJsonFile<Scenario>(scenario.Name, "Scenarios", scenario);
+                return true;
             }
             catch (Exception e)
             {

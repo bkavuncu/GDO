@@ -7,7 +7,7 @@ namespace GDO.Core.Scenarios
         public int Index { get; set; }
         public string Module { get; set; }
         public string Function { get; set; }
-        public List<Parameter> Parameters { get; set; }
+        public List<string> Parameters { get; set; }
         public int Timeout { get; set; }
         public bool IsLoop = false;
     }

@@ -72,7 +72,7 @@ $(function() {
         }
         gdo.updateSelf();
     }
-    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states) {
+    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states,scenarios) {
         gdo.consoleOut('.NET', 1, 'Received the image of the Cave');
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.net.blankMode = blankMode;
@@ -119,6 +119,12 @@ $(function() {
             if (states[i] != null) {
                 var state = JSON.parse(states[i]);
                 gdo.net.processState(state, i, true);
+            }
+        }
+        for (var i = 0; i < scenarios.length; i++) {
+            if (scenarios[i] != null) {
+                var scenario = JSON.parse(scenarios[i]);
+                gdo.net.processScenario(scenario, i, true);
             }
         }
         gdo.net.NodeInitialized = true;
@@ -523,6 +529,7 @@ gdo.net.isNodeInitialized = function () {
 
 gdo.net.initializeArrays = function (num) {
     gdo.net.state = new Array(num);
+    gdo.net.scenario = new Array(num);
     gdo.net.node = new Array(num);
     for (var i = 0; i < num; i++) {
         gdo.net.node[i] = {};
@@ -821,6 +828,18 @@ gdo.net.processState = function (state, id, exists) {
     } else {
         gdo.consoleOut('.NET', 1, 'Received Cave State ' + id + ' (does not exist)');
         gdo.net.state[id] = null;
+    }
+}
+
+gdo.net.processScenario = function (scenario, name, exists) {
+    gdo.consoleOut('.NET', 2, 'Updating Scenario: ' + name);
+    if (exists) {
+        gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (exists)');
+        gdo.net.scenario[name] = {}
+        gdo.net.scenario[name] = scenario;
+    } else {
+        gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (does not exist)');
+        gdo.net.scenario[name] = null;
     }
 }
 
