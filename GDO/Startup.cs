@@ -9,6 +9,8 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin;
 using GDO.Core;
+using GDO.Core.Apps;
+using GDO.Core.Modules;
 using log4net;
 using Owin;
 using Microsoft.Owin.Cors;

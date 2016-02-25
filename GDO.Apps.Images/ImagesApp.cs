@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.Images
 {

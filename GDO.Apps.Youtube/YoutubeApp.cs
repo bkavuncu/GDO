@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using GDO.Core;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Youtube

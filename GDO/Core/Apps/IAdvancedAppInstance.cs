@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GDO.Core
+namespace GDO.Core.Apps
 {
     /// <summary>
     /// Advanced App Instance Interface

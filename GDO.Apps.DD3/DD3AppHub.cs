@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using System.ComponentModel.Composition;
+using GDO.Core.Apps;
+
 
 namespace GDO.Apps.DD3
 {

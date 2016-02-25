@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
-using System.Web.Mvc;
+using GDO.Core.Apps;
+using GDO.Core.States;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
-using Timer = System.Threading.Timer;
 
 namespace GDO.Core
 {
@@ -489,7 +489,7 @@ namespace GDO.Core
             {
                 if (Cave.ContainsState(stateId))
                 {
-                    CaveState state;
+                    State state;
                     Cave.States.TryGetValue(stateId, out state);
                     return JsonConvert.SerializeObject(state);
                 }
@@ -703,7 +703,7 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                CaveState caveState = Cave.States[id];
+                State caveState = Cave.States[id];
                 ClearCave();
                 
                 //TODO Advanced apps
@@ -720,7 +720,7 @@ namespace GDO.Core
 
         public void RequestStates()
         {
-            foreach (KeyValuePair<int, CaveState> caveState in Cave.States)
+            foreach (KeyValuePair<int, State> caveState in Cave.States)
             {
                 Clients.Caller.receiveCaveState(JsonConvert.SerializeObject(Cave.States[caveState.Value.Id]));
             }
@@ -728,7 +728,7 @@ namespace GDO.Core
 
         public void BroadcastStates()
         {
-            foreach (KeyValuePair<int, CaveState> caveState in Cave.States)
+            foreach (KeyValuePair<int, State> caveState in Cave.States)
             {
                 BroadcastCaveState(caveState.Value.Id);
             }

@@ -4,6 +4,8 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
+using GDO.Core.Apps;
+
 
 namespace GDO.Apps.Graph
 {

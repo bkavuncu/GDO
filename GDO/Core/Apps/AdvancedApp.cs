@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using GDO.Utility;
-using Newtonsoft.Json;
 
-
-namespace GDO.Core
+namespace GDO.Core.Apps
 {
     public class AdvancedApp : App
     {

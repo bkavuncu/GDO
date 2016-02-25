@@ -3,6 +3,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using GDO.Core;
+
+using GDO.Core.Modules;
 using GDO.Modules.EyeTracking.Core;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;

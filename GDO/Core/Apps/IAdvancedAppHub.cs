@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNet.SignalR.Hubs;
+﻿using System.Collections.Generic;
 
-
-namespace GDO.Core
+namespace GDO.Core.Apps
 {
     //[InheritedExport]
     /// <summary>

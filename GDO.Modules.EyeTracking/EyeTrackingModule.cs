@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using GDO.Core;
+
+using GDO.Core.Modules;
 using GDO.Modules.EyeTracking.Core;
 using GDO.Utility;
 using Microsoft.AspNet.SignalR;

@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Net;
 using System.IO;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.DD3

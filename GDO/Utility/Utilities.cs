@@ -89,6 +89,25 @@ namespace GDO.Utility
             return obj;
         }
 
+        public static dynamic LoadJsonFile<T>(string fileName)
+        {
+            dynamic obj = null;
+            using (StreamReader r = new StreamReader(fileName))
+            {
+                string json = r.ReadToEnd();
+                obj = JsonConvert.DeserializeObject<T>(json);
+            }
+            return obj;
+        }
+
+        public static void SaveJsonFile<T>(string fileName, string folderName, object obj)
+        {
+            T temp = (T) obj;
+            string json = JsonConvert.SerializeObject(temp);
+            String path = Directory.GetCurrentDirectory() + @"\\"+folderName+"\\" + fileName + ".json";
+            System.IO.File.WriteAllText(@path, json);
+        }
+
         public static string RemoveString(string source, string remove)
         {
             int index = source.IndexOf(remove);

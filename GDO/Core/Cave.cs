@@ -5,8 +5,10 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using GDO.Core.Apps;
+using GDO.Core.Modules;
+using GDO.Core.Scenarios;
+using GDO.Core.States;
 using GDO.Utility;
 using log4net;
 using Newtonsoft.Json.Linq;
@@ -36,11 +38,12 @@ namespace GDO.Core
         public static bool InitializedSync { get; set; }
         public static System.Timers.Timer SyncTimer { get; set; }
         public static ConcurrentDictionary<string, App> Apps { get; set; }
+        public static ConcurrentDictionary<string, IModule> Modules { get; set; }
         public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
         public static ConcurrentDictionary<int, Node> Nodes { get; set; }
         public static ConcurrentDictionary<int, Section> Sections { get; set; }
-        public static ConcurrentDictionary<int, CaveState> States { get; set; }
-        public static ConcurrentDictionary<string, IModule> Modules { get; set; }
+        public static ConcurrentDictionary<int, State> States { get; set; }
+        public static ConcurrentDictionary<string, Scenario> Scenarios { get; set; }
 
         public enum P2PModes
         {
@@ -65,11 +68,12 @@ namespace GDO.Core
             MaintenanceMode = true;
             BlankMode = false;
             Apps = new ConcurrentDictionary<string, App>();
+            Modules = new ConcurrentDictionary<string, IModule>();
             Instances = new ConcurrentDictionary<int, IAppInstance>();
             Nodes = new ConcurrentDictionary<int, Node>();
             Sections = new ConcurrentDictionary<int, Section>();
-            States = new ConcurrentDictionary<int, CaveState>();
-            Modules = new ConcurrentDictionary<string, IModule>();
+            States = new ConcurrentDictionary<int, State>();
+            Scenarios = new ConcurrentDictionary<string, Scenario>();
             Cols = int.Parse(ConfigurationManager.AppSettings["numCols"]);
             Rows = int.Parse(ConfigurationManager.AppSettings["numRows"]);
             NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
@@ -168,7 +172,7 @@ namespace GDO.Core
         /// <param name="row">The row.</param>
         /// <returns></returns>
         public static Node DeployNode(int sectionId, int nodeId, int col, int row) {
-            if (Cave.Sections.ContainsKey(sectionId) && Cave.Nodes.ContainsKey(nodeId)) {
+            if (Sections.ContainsKey(sectionId) && Nodes.ContainsKey(nodeId)) {
                 if (!Nodes[nodeId].IsDeployed) {
                     Nodes[nodeId].Deploy(Sections[sectionId], col, row);
                     Sections[sectionId].Nodes[col, row] = Nodes[nodeId];
@@ -184,7 +188,7 @@ namespace GDO.Core
         /// <param name="nodeId">The node identifier.</param>
         /// <returns></returns>
         public static Node FreeNode(int nodeId) {
-            if (Cave.Nodes.ContainsKey(nodeId)) {
+            if (Nodes.ContainsKey(nodeId)) {
                 Nodes[nodeId].Free();
                 return Nodes[nodeId];
             }
@@ -214,7 +218,7 @@ namespace GDO.Core
         public static List<Node> CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
             List<Node> deployedNodes = new List<Node>();
-            if (Cave.IsSectionFree(colStart, rowStart, colEnd, rowEnd))
+            if (IsSectionFree(colStart, rowStart, colEnd, rowEnd))
             {
                 int sectionId = Utilities.GetAvailableSlot<Section>(Sections);
                 Section section = new Section(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
@@ -240,9 +244,9 @@ namespace GDO.Core
         public static List<Node> CloseSection(int sectionId)
         {
             List<Node> freedNodes = new List<Node>();
-            if (Cave.ContainsSection(sectionId))
+            if (ContainsSection(sectionId))
             {
-                if (!Cave.Sections[sectionId].IsDeployed())
+                if (!Sections[sectionId].IsDeployed())
                 {
                     foreach (Node node in Sections[sectionId].Nodes)
                     {
@@ -312,7 +316,7 @@ namespace GDO.Core
         /// <param name="instanceId">The instance identifier.</param>
         /// <returns></returns>
         public static bool ContainsInstance(int instanceId) {
-            return Cave.Apps.Any(appEntry => appEntry.Value.Instances.ContainsKey(instanceId));
+            return Apps.Any(appEntry => appEntry.Value.Instances.ContainsKey(instanceId));
         }
 
         public static bool ContainsState(int stateId)
@@ -327,7 +331,7 @@ namespace GDO.Core
         /// <param name="row">The row.</param>
         /// <returns></returns>
         public static int GetSectionId(int col, int row) {
-            return Cave.Nodes[GetNodeId(col, row)].SectionId;
+            return Nodes[GetNodeId(col, row)].SectionId;
         }
         /// <summary>
         /// Gets the node identifier.
@@ -356,7 +360,7 @@ namespace GDO.Core
         public static List<Node> SetSectionP2PMode(int sectionId, int p2pmode)
         {
             List<Node> affectedNodes = new List<Node>();
-            if (Cave.ContainsSection(sectionId))
+            if (ContainsSection(sectionId))
             {
                 //close app
                 foreach (Node node in Sections[sectionId].Nodes)
@@ -389,7 +393,7 @@ namespace GDO.Core
         public static int[,] GetSectionMap(int sectionId)
         {
             int[,] sectionMap = null;
-            if (Cave.ContainsSection(sectionId))
+            if (ContainsSection(sectionId))
             {
                 sectionMap = new int[Sections[sectionId].Cols, Sections[sectionId].Rows];
                 foreach (var nodeEntry in Nodes)
@@ -411,7 +415,7 @@ namespace GDO.Core
         public static int[,] GetNeighbourMap(int nodeId)
         {
             int[,] neighbours = null;
-            if (Cave.ContainsNode(nodeId))
+            if (ContainsNode(nodeId))
             {
                 int[,] nodeMap = GetNodeMap();
                 neighbours = new int[3, 3];
@@ -475,6 +479,41 @@ namespace GDO.Core
             return false;
         }
 
+        public static bool LoadScenarios()
+        {
+            try
+            {
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                String path = Directory.GetCurrentDirectory() + @"\Scenarios\";  // TODO using server.map path
+                if (Directory.Exists(path))
+                {
+                    string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);
+                    //todo comment why the@ is needed
+                    foreach (string filePath in filePaths)
+                    {
+                        Scenario scenario = Utilities.LoadJsonFile<Scenario>(filePath);
+                        if (scenario != null)
+                        {
+                            string scenarioName = Utilities.RemoveString(filePath, path + "\\");
+                            scenarioName = Utilities.RemoveString(scenarioName, ".json");
+                            Log.Info("Found scenario called " + scenarioName + " about to load");
+                            Scenarios.TryAdd(scenarioName, scenario);
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Loads the application configurations.
         /// </summary>
@@ -498,7 +537,7 @@ namespace GDO.Core
                         string configurationName = Utilities.RemoveString(filePath, path + "\\");
                         configurationName = Utilities.RemoveString(configurationName, ".json");
                         Log.Info("Found config called "+configurationName+" for app "+appName+" about to load");
-                        Cave.Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
+                        Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
                     }
                 }
             }
@@ -535,9 +574,9 @@ namespace GDO.Core
         public static int CreateBaseAppInstance(int sectionId, string appName, string configName)
         {
             Log.Info($"Creating App instance {appName} {configName} on section {sectionId}");
-            if (!Cave.Sections[sectionId].IsDeployed() && Cave.Apps.ContainsKey(appName))
+            if (!Sections[sectionId].IsDeployed() && Apps.ContainsKey(appName))
             {
-                if (Cave.Apps[appName].Configurations.ContainsKey(configName))
+                if (Apps[appName].Configurations.ContainsKey(configName))
                 {
                     int instanceId =  Apps[appName].CreateAppInstance(configName, sectionId);
                     if (instanceId >= 0)
@@ -580,11 +619,11 @@ namespace GDO.Core
         /// <returns></returns>
         public static bool DisposeAppInstance(string appName, int instanceId)
         {
-            if (Cave.Apps.ContainsKey(appName))
+            if (Apps.ContainsKey(appName))
             {
-                if (Cave.Apps[appName].Instances.ContainsKey(instanceId))
+                if (Apps[appName].Instances.ContainsKey(instanceId))
                 {
-                    if (Cave.Apps[appName].AppType == (int)Cave.AppTypes.Base)
+                    if (Apps[appName].AppType == (int)Cave.AppTypes.Base)
                     {
                         Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
                         if (Apps[appName].DisposeAppInstance(instanceId))
@@ -593,7 +632,7 @@ namespace GDO.Core
                             return true;
                         }
                     }
-                    else if (Cave.Apps[appName].AppType == (int)Cave.AppTypes.Advanced)
+                    else if (Apps[appName].AppType == (int)Cave.AppTypes.Advanced)
                     {
                         if (Apps[appName].DisposeAppInstance(instanceId))
                         {
@@ -614,7 +653,7 @@ namespace GDO.Core
         /// <param name="instanceId">The instance identifier.</param>
         /// <returns></returns>
         public static string GetAppName(int instanceId) {
-            var app = Cave.Apps.Values.FirstOrDefault(a => a.Instances.ContainsKey(instanceId));
+            var app = Apps.Values.FirstOrDefault(a => a.Instances.ContainsKey(instanceId));
             if (app != null) {
                 return app.Name;
             }
@@ -625,8 +664,8 @@ namespace GDO.Core
         public static int SaveCaveState(string name)
         {
             Log.Info("Saving CAVE STATE "+name);
-            int slot = Utilities.GetAvailableSlot<CaveState>(States);
-            CaveState caveState = new CaveState(slot, name);
+            int slot = Utilities.GetAvailableSlot<State>(States);
+            State caveState = new State(slot, name);
             States.TryAdd(slot, caveState);
             //TODO Add support advanced app
             foreach(KeyValuePair<int,IAppInstance> instaKeyValuePair in Instances)
@@ -641,7 +680,7 @@ namespace GDO.Core
 
         public static void RemoveCaveState(int id)
         {
-            CaveState caveState;
+            State caveState;
             States.TryRemove(id, out caveState);
         }
 

@@ -1,4 +1,4 @@
-﻿namespace GDO.Core
+﻿namespace GDO.Core.States
 {
     public class AppState
     {

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNet.SignalR.Hubs;
 
-
-namespace GDO.Core
+namespace GDO.Core.Modules
 {
     public interface IModuleHub : IHub
     {

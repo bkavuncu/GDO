@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 using GDO.Utility;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;

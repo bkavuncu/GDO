@@ -6,8 +6,7 @@ using GDO.Utility;
 using log4net;
 using Newtonsoft.Json;
 
-
-namespace GDO.Core
+namespace GDO.Core.Apps
 {
     public class App
     {
