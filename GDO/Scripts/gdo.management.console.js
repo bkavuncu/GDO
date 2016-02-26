@@ -58,4 +58,5 @@ gdo.management.console.drawConsoleInput = function () {
         },
         source: gdo.functions.list
     });
+
 }
