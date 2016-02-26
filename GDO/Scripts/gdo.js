@@ -25,6 +25,9 @@ gdo.initGDO = function (clientMode) {
     gdo.loadScript('net', 'net', gdo.SCRIPT_TYPE.CORE);
     gdo.clientMode = clientMode;
     gdo.updateInterval = 4900;
+    gdo.functions = {};
+    gdo.functions.array = [];
+    gdo.functions.list = [];
     if (gdo.management == null) {
         gdo.management = {};
     }
@@ -47,6 +50,7 @@ gdo.initGDO = function (clientMode) {
                 setTimeout(function() { setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval); }, Math.random() * gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
+                gdo.populateFunctions("gdo", gdo);
             }
 
             //set intervl and 
@@ -168,4 +172,18 @@ gdo.timeStamp = function() {
         time[3] = "0" + time[3];
     }
     return date.join("/") + " " + time.join(":") + " " + suffix;
+}
+
+gdo.populateFunctions = function (root,object) {
+    for (var property in object) {
+        if (object.hasOwnProperty(property)) {
+            if (typeof object[property] == "object") {
+                gdo.populateFunctions(""+root+"."+property,object[property]);
+            }
+            else if (typeof object[property] == "function") {
+                gdo.functions.array.push([root, property, getParamNames(object[property])]);
+                gdo.functions.list.push(root + "." + property + "(" + getParamNames(object[property]) + ")");
+            }
+        }
+    }
 }

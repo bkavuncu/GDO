@@ -562,7 +562,7 @@ gdo.net.initializeArrays = function (num) {
         gdo.net.node[i].sectionId = 0;
         gdo.net.node[i].appInstanceId = -1;
         gdo.net.node[i].lastUpdate = 100;
-        gdo.net.node[i].sendData = function (id, type, command, data, mode) {
+        /*gdo.net.node[i].sendData = function (id, type, command, data, mode) {
             var dataObj = {};
             dataObj.type = type;
             dataObj.command = command;
@@ -578,7 +578,7 @@ gdo.net.initializeArrays = function (num) {
             } else if (mode == gdo.net.COMM_MODE.SERVER) {
                 gdo.net.server.sendData(gdo.clientId, id, msg);
             }
-        }
+        }*/
         gdo.net.section[i] = {};
         gdo.net.section[i].id = i;
         gdo.net.section[i].exists = false;

@@ -28,6 +28,7 @@
     <!-- Custom Fonts -->
     <link href="../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="../CSS/gdo.management.css" rel="stylesheet">
+    <link href="../CSS/jquery-ui.min.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -36,6 +37,20 @@
     <![endif]-->
 
     <style>
+        .ui-autocomplete {
+            background: #222;
+            color: #AAA;
+            border-radius: 0px;
+            height: 78.5vh;
+            overflow-y: scroll;
+            overflow-x: hidden ;
+        }
+        .ui-autocomplete.source:hover {
+            background: #454545;
+            color: #FFF;
+        }
+
+         
     </style>
     <script>
         var gdo = {};
@@ -182,7 +197,7 @@
             <div id="console_area_space"><br></div>
             <div style="width: 99.5%;">
                 <div class="col-lg-8" id="console_input_div"></div>
-                <!-- /.col-lg-12 -->
+                <datalist id="functions"></datalist>
                 <div class="col-lg-4" id="console_submit_div"></div>
             </div>
         </div>
@@ -195,6 +210,7 @@
     <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../Scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>

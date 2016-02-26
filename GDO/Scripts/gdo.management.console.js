@@ -29,11 +29,11 @@ gdo.management.console.drawConsoleInput = function () {
         .attr("text-align", "center")
         .attr("onfocus", "this.value=''")
         .css({ fontSize: gdo.management.button_font_size * 0.7 });
-    $("#console_input").keyup(function (event) {
-        if (event.keyCode == 13) {
-            $("#console_submit").click();
-        }
-    });
+    //$("#console_input").keyup(function (event) {
+    //    if (event.keyCode == 13) {
+    //        $("#console_submit").click();
+    //    }
+    //});
     $("#console_submit_div")
         .css("margin", "0px")
         .css("padding", "0px")
@@ -51,4 +51,11 @@ gdo.management.console.drawConsoleInput = function () {
             gdo.consoleOut(".MANAGEMENT", 1, "Executing: " + document.getElementById('console_input').value);
             eval(document.getElementById('console_input').value);
         });
+    $("#console_input").autocomplete({
+        position: {
+            my: "left bottom",
+            at: "left top"
+        },
+        source: gdo.functions.list
+    });
 }
