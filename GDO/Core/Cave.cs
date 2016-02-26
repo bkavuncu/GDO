@@ -11,6 +11,7 @@ using GDO.Core.Scenarios;
 using GDO.Core.States;
 using GDO.Utility;
 using log4net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Core
@@ -515,12 +516,33 @@ namespace GDO.Core
             }
         }
 
-        public static bool SaveScenario(Scenario scenario)
+        public static Scenario SaveScenario(string json)
         {
             try
             {
+                Scenario scenario = JsonConvert.DeserializeObject<Scenario>(json);
+                Scenarios.TryAdd(scenario.Name, scenario);
                 Utilities.SaveJsonFile<Scenario>(scenario.Name, "Scenarios", scenario);
-                return true;
+                return scenario;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public static bool RemoveScenario(string name)
+        {
+            try
+            {
+                if (ContainsScenario(name))
+                {
+                    Scenario s;
+                    Scenarios.TryRemove(name, out s);
+                    Utilities.RemoveJsonFile(name, "Scenarios");
+                    return true;
+                }
+                return false;
             }
             catch (Exception e)
             {

@@ -81,10 +81,17 @@ namespace GDO.Utility
         public static dynamic LoadJsonFile(string fileName)
         {
             dynamic obj = null;
-            using (StreamReader r = new StreamReader(fileName))
+            try
             {
-                string json = r.ReadToEnd();
-                obj = JsonConvert.DeserializeObject(json);
+                using (StreamReader r = new StreamReader(fileName))
+                {
+                    string json = r.ReadToEnd();
+                    obj = JsonConvert.DeserializeObject(json);
+                }
+            }
+            catch (Exception e)
+            {
+
             }
             return obj;
         }
@@ -92,20 +99,48 @@ namespace GDO.Utility
         public static dynamic LoadJsonFile<T>(string fileName)
         {
             dynamic obj = null;
-            using (StreamReader r = new StreamReader(fileName))
+            try
             {
-                string json = r.ReadToEnd();
-                obj = JsonConvert.DeserializeObject<T>(json);
+                using (StreamReader r = new StreamReader(fileName))
+                {
+                    string json = r.ReadToEnd();
+                    obj = JsonConvert.DeserializeObject<T>(json);
+                }
+            }
+            catch (Exception e)
+            {
+
             }
             return obj;
         }
 
         public static void SaveJsonFile<T>(string fileName, string folderName, object obj)
         {
-            T temp = (T) obj;
-            string json = JsonConvert.SerializeObject(temp);
-            String path = Directory.GetCurrentDirectory() + @"\\"+folderName+"\\" + fileName + ".json";
-            System.IO.File.WriteAllText(@path, json);
+            try
+            {
+                T temp = (T)obj;
+                string json = JsonConvert.SerializeObject(temp);
+                String path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
+                System.IO.File.WriteAllText(@path, json);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public static void RemoveJsonFile(string fileName, string folderName)
+        {
+            try
+            {
+                String path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
+                System.IO.File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                
+            }
+
         }
 
         public static string RemoveString(string source, string remove)

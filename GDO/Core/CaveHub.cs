@@ -771,5 +771,27 @@ namespace GDO.Core
                 Clients.All.receiveCaveState("", id, false);
             }
         }
+
+        public void SaveScenario(string json)
+        {
+            lock (Cave.ServerLock)
+            {
+                Scenario scenario = Cave.SaveScenario(json);
+                if (scenario != null)
+                {
+                    Clients.All.receiveScenarioUpdate(true, scenario.Name, GetScenarioUpdate(scenario.Name));
+                }
+            }
+        }
+        public void RemoveScenario(string name)
+        {
+            lock (Cave.ServerLock)
+            {
+                if (Cave.RemoveScenario(name))
+                {
+                    Clients.All.receiveScenarioUpdate(false, name, "");
+                }
+            }
+        }
     }
 }

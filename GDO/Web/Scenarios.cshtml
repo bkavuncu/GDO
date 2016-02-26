@@ -128,6 +128,7 @@
             gdo.consoleOut('', 1, 'GDO Initialized');
             gdo.management.console.drawConsoleInput();
             gdo.updateSelf();
+            gdo.management.scenarios.displayScenariosToLoad("");
         }
     </script>
 <div id="wrapper">
@@ -240,7 +241,7 @@
         </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h6><span class="glyphicon glyphicon-console"></span>&nbsp;Console</h6>
+                <h6><span class="glyphicon glyphicon-console"></span>&nbsp;&nbsp;Console</h6>
             </div>
             <div class="panel-body">
                 <div id="console_area" style="font-size: 13px; width: 100.5%; height: 21vh; overflow: auto; border: 0px solid #333; background-color: #222; color: #FFF"></div>
@@ -260,8 +261,8 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-lg-8">
-                        <h6><span class="fa fa-list"></span>&nbsp;Scenarios</h6>
+                    <div class="col-lg-8" id="scenario_label">
+                        <h6><span class="fa fa-list"></span>&nbsp;&nbsp;</h6>
                     </div>
                     <div class="col-lg-4" style="text-align: right">
                         <button type='button' class='btn btn-success' data-toggle='modal' data-target='#new-scenario'><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;New</button>
@@ -319,7 +320,10 @@
                 <h5><i align="center" class='fa  fa-upload  fa-fw'></i>&nbsp;<font color="white">Load Scenario</font></h5>
             </div>
             <div class="modal-body">
-                Select scenario to be loaded
+                <font color="white">Select scenario to be loaded</font>
+                <br>
+                &nbsp;
+                <br />
                 <div id="scenarios_load"></div>
             </div>
             <div class="modal-footer">

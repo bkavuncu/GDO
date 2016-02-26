@@ -3,22 +3,25 @@
 $(function () {
     gdo.management.scenarios.isActive = true;
     gdo.management.scenarios.currentScenario = null;
+    gdo.management.scenarios.displayScenariosToLoad("");
 });
 
 gdo.management.scenarios.newScenario = function (name) {
-    gdo.management.scenarios.currentScenario = name;
     gdo.net.scenario[name] = {};
     gdo.net.scenario[name].Name = name;
     gdo.net.scenario[name].CurrentElement = 0;
     gdo.net.scenario[name].Elements = [];
+    gdo.management.scenarios.currentScenario = name;
 }
 
 gdo.management.scenarios.loadScenario = function (name) {
-    //TODO load current scenario
+    gdo.management.scenarios.currentScenario = name;
+    $("#scenario_label").empty().append("<h6><span class='fa fa-list'></span>&nbsp;&nbsp;" + name + "</h6>");
 }
 
 gdo.management.scenarios.unloadScenario = function (name) {
-    //TODO delete current scenario
+    $("#scenario_label").empty().append("<h6><span class='fa fa-list'></span>&nbsp;&nbsp;</h6>");
+    gdo.management.scenarios.currentScenario = null;
 }
 
 gdo.management.scenarios.parseFunction = function (func) {
@@ -31,40 +34,54 @@ gdo.management.scenarios.parseFunction = function (func) {
     //func4 parse parameters
 }
 
-gdo.management.scenarios.displayScenariosToLoad = function () {
+gdo.management.scenarios.displayScenariosToLoad = function (scenarioName) {
     $("#scenarios_load").empty();
     for (var index in gdo.net.scenario) {
         if (!gdo.net.scenario.hasOwnProperty((index))) {
             continue;
-        }
-        if (gdo.net.scenario[index].Name) {
-            $("#scenarios_load").append("<div id='scenarios_load_" + gdo.net.scenario[index].Name + "'>" + gdo.net.scenario[index].Name + "</div>");
+        }else if (gdo.net.scenario[index] != null) {
+            
+            if (scenarioName == gdo.net.scenario[index].Name) {
+                $("#scenarios_load").append("<div id='scenarios_load_" + gdo.net.scenario[index].Name + "' name=" + gdo.net.scenario[index].Name + " style='color:#77B200'>" + gdo.net.scenario[index].Name + "</div>");
+            } else {
+                $("#scenarios_load").append("<div id='scenarios_load_" + gdo.net.scenario[index].Name + "' name=" + gdo.net.scenario[index].Name + ">" + gdo.net.scenario[index].Name + "</div>");
+            }
+            $("#scenarios_load_" + gdo.net.scenario[index].Name).unbind().click(function () {
+                gdo.management.scenarios.currentScenario = $(this).attr('name');
+                gdo.management.scenarios.displayScenariosToLoad($(this).attr('name'));
+            });
         }
     }
 }
 
 $("#createNewScenario").unbind().click(function() {
-    var name = parseInt(document.getElementById('scenario_name_input').value);
+    var name = document.getElementById('scenario_name_input').value;
+    document.getElementById('scenario_name_input').value = "";
     gdo.management.scenarios.newScenario(name);
     gdo.management.scenarios.loadScenario(gdo.management.scenarios.currentScenario);
+    gdo.management.scenarios.displayScenariosToLoad("");
 });
 
 $("#loadScenario").unbind().click(function () {
 
     if (gdo.management.scenarios.currentScenario != null) {
         gdo.management.scenarios.loadScenario(gdo.management.scenarios.currentScenario);
+        gdo.management.scenarios.displayScenariosToLoad("");
     }
 });
 
 $("#saveScenario").unbind().click(function () {
     if (gdo.management.scenarios.currentScenario != null) {
-        gdo.net.server.saveScenario(gdo.management.scenarios.currentScenario);
+        gdo.net.server.saveScenario(JSON.stringify(gdo.net.scenario[gdo.management.scenarios.currentScenario]));
+        gdo.management.scenarios.displayScenariosToLoad("");
     }
 });
 
 $("#deleteScenario").unbind().click(function() {
     if (gdo.management.scenarios.currentScenario != null) {
-        gdo.net.server.deleteScenario(gdo.management.scenarios.currentScenario);
+        gdo.net.scenario[gdo.management.scenarios.currentScenario] = null;
+        gdo.net.server.removeScenario(gdo.management.scenarios.currentScenario);
+        gdo.management.scenarios.displayScenariosToLoad("");
     }
 });
 

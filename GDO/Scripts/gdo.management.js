@@ -22,37 +22,44 @@ $(function () {
     gdo.management.isActive = true;
 
     if (gdo.management.apps == null) {
-        gdo.management.apps = {}
+        gdo.management.apps = {};
+        gdo.management.apps.isActive = false;
     }
-    gdo.management.apps.isActive = false;
+
     if (gdo.management.console == null) {
-        gdo.management.console = {}
+        gdo.management.console = {};
+        gdo.management.console.isActive = false;
     }
-    gdo.management.console.isActive = false;
+
     if (gdo.management.instances == null) {
-        gdo.management.instances = {}
+        gdo.management.instances = {};
+        gdo.management.instances.isActive = false;
     }
-    gdo.management.instances.isActive = false;
+
     if (gdo.management.modules == null) {
-        gdo.management.modules = {}
+        gdo.management.modules = {};
+        gdo.management.modules.isActive = false;
     }
-    gdo.management.modules.isActive = false;
+
     if (gdo.management.nodes == null) {
-        gdo.management.nodes = {}
+        gdo.management.nodes = {};
+        gdo.management.nodes.isActive = false;
     }
-    gdo.management.nodes.isActive = false;
+
     if (gdo.management.scenarios == null) {
-        gdo.management.scenarios = {}
+        gdo.management.scenarios = {};
+        gdo.management.scenarios.isActive = false;
     }
-    gdo.management.scenarios.isActive = false;
+
     if (gdo.management.sections == null) {
-        gdo.management.sections = {}
+        gdo.management.sections = {};
+        gdo.management.sections.isActive = false;
     }
-    gdo.management.sections.isActive = false;
+
     if (gdo.management.states == null) {
-        gdo.management.states = {}
+        gdo.management.states = {};
+        gdo.management.states.isActive = false;
     }
-    gdo.management.states.isActive = false;
 
     gdo.management.nodes.nodeTableDrawn = false;
 });

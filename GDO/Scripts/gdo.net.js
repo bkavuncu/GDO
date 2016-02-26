@@ -127,6 +127,7 @@ $(function() {
                 gdo.net.processScenario(scenario, scenario.Name, true);
             }
         }
+
         gdo.net.NodeInitialized = true;
         gdo.net.initModules();
         gdo.updateSelf();
@@ -185,11 +186,14 @@ $(function() {
     $.connection.caveHub.client.receiveScenarioUpdate = function (status, name, serializedScenario) {
         gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")");
         if (gdo.net.isNodeInitialized()) {
-            var scenario = JSON.parse(serializedScenario);
-            gdo.net.processInstance(scenario, name,status);
+            var scenario = null;
+            if (status) {
+                scenario = JSON.parse(serializedScenario);
+            }
+            gdo.net.processScenario(scenario, name, status);
             gdo.updateSelf();
             if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.management.scenarios.isActive) {
-                gdo.management.scenarios.displayScenariosToLoad();
+                gdo.management.scenarios.displayScenariosToLoad("");
                 if (status == false && gdo.management.scenarios.currentScenario == name) {
                     gdo.management.scenarios.unloadScenario(name);
                 }
