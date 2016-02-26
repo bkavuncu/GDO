@@ -1,4 +1,10 @@
-﻿gdo.management.drawStateInputTable = function () {
+﻿gdo.management.states = {};
+
+$(function () {
+    gdo.management.states.isActive = true;
+});
+
+gdo.management.states.drawStateInputTable = function () {
 
     $("#state_table_state_list")
         .css("height", ((gdo.management.table_height) + (gdo.management.info_height))*2.5)
@@ -68,7 +74,7 @@
     });
 }
 
-gdo.management.drawStateTable = function () {
+gdo.management.states.drawStateTable = function () {
     $("#state_table_state_list_table")
         .empty();
     for (var i = 0; i < gdo.net.state.length; i++) {

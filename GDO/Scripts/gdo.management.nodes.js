@@ -1,4 +1,10 @@
-﻿gdo.management.drawEmptyNodeTable = function (maxCol, maxRow) {
+﻿gdo.management.nodes = {};
+
+$(function () {
+    gdo.management.nodes.isActive = true;
+});
+
+gdo.management.nodes.drawEmptyNodeTable = function (maxCol, maxRow) {
     /// <summary>
     /// Draws the node table.
     /// </summary>
@@ -14,12 +20,12 @@
         }
     }
 }
-gdo.management.processNodeUpdate = function (id) {
+gdo.management.nodes.processNodeUpdate = function (id) {
     $("#node_table_node_" + id + '_u').css("background", "#559100");
     setTimeout(function () { $("#node_table_node_" + id + '_u').css("background", "#2F2F2F"); }, 700);
 }
 
-gdo.management.drawNodeTable = function (nodeId) {
+gdo.management.nodes.drawNodeTable = function (nodeId) {
     /// <summary>
     /// Draws the node table.
     /// </summary>
@@ -33,7 +39,7 @@ gdo.management.drawNodeTable = function (nodeId) {
                 table.rows[i].cells[j].onclick = (function (i, j) {
                     return function () {
                         gdo.nodeId = gdo.net.getNodeId(j, i);
-                        gdo.management.drawNodeTable(gdo.nodeId);
+                        gdo.management.nodes.drawNodeTable(gdo.nodeId);
                     };
                 }(i, j));
             }
@@ -41,7 +47,7 @@ gdo.management.drawNodeTable = function (nodeId) {
     }
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
-        if (!gdo.management.nodeTableDrawn) {
+        if (!gdo.management.nodes.nodeTableDrawn) {
             $("#node_table_row_" + node.row + "_col_" + node.col)
                 .empty()
                 .css("vertical-align", "top")
@@ -61,7 +67,7 @@ gdo.management.drawNodeTable = function (nodeId) {
                 .css({ fontSize: gdo.management.table_font_size })
                 .css('padding', 0);
             if (i == gdo.net.cols * gdo.net.rows) {
-                gdo.management.nodeTableDrawn = true;
+                gdo.management.nodes.nodeTableDrawn = true;
             }
         }
         if (node.id == gdo.nodeId) {

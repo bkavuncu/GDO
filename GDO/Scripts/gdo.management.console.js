@@ -1,4 +1,10 @@
-﻿gdo.management.drawConsoleInput = function () {
+﻿gdo.management.console = {};
+
+$(function () {
+    gdo.management.console.isActive = true;
+});
+
+gdo.management.console.drawConsoleInput = function () {
     $("#console_area").enscroll({
         showOnHover: false,
         verticalTrackClass: 'track4',

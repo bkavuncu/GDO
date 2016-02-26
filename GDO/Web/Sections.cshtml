@@ -89,11 +89,11 @@
 <script>
     gdo.updateDisplayCanvas = function () {
         gdo.management.updateMaintenanceButton();
-        gdo.management.drawSectionTable();
-        gdo.management.drawAdvancedSectionTable();
-        gdo.management.drawButtonTable();
-        gdo.management.drawAppTable();
-        gdo.management.drawAdvancedAppTable();
+        gdo.management.sections.drawSectionTable();
+        gdo.management.sections.drawAdvancedSectionTable();
+        gdo.management.sections.drawButtonTable();
+        gdo.management.apps.drawAppTable();
+        gdo.management.apps.drawAdvancedAppTable();
     }
     $(function () {
         @{
@@ -120,10 +120,10 @@
     }
     initApp = function () {
         gdo.consoleOut('', 1, 'GDO Initialized');
-        gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-        gdo.management.drawEmptyAdvancedSectionTable(gdo.net.cols, gdo.net.rows);
-        gdo.management.drawAppTable();
-        gdo.management.drawAdvancedAppTable();
+        gdo.management.sections.drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+        gdo.management.sections.drawEmptyAdvancedSectionTable(gdo.net.cols, gdo.net.rows);
+        gdo.management.apps.drawAppTable();
+        gdo.management.apps.drawAdvancedAppTable();
         gdo.updateSelf();
     }
 </script>

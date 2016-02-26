@@ -238,7 +238,7 @@
             gdo.updateSelf();
             var moduleName = getUrlVar('name');
             if (gdo.net.module[moduleName] != null && typeof gdo.net.module[moduleName] != "undefined") {
-                gdo.management.loadModuleControlFrame(moduleName);
+                gdo.management.modules.loadModuleControlFrame(moduleName);
             }
         }
     </script>

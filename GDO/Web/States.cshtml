@@ -86,7 +86,7 @@
     <script>
         gdo.updateDisplayCanvas = function () {
                 gdo.management.updateMaintenanceButton();
-                gdo.management.drawStateTable();
+                gdo.management.states.drawStateTable();
             }
             $(function () {
                 @{
@@ -112,8 +112,8 @@
             }
             initApp = function () {
                 gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.management.drawStateTable();
-                gdo.management.drawStateInputTable();
+                gdo.management.states.drawStateTable();
+                gdo.management.states.drawStateInputTable();
                 gdo.updateSelf();
             }
     </script>

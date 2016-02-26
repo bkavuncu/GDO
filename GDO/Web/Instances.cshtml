@@ -235,7 +235,7 @@
             gdo.updateSelf();
             var instanceId = getUrlVar('id');
             if(gdo.net.instance[instanceId] != null && typeof gdo.net.instance[instanceId] != "undefined"){
-                gdo.management.loadInstanceControlFrame(gdo.net.instance[instanceId].appName, instanceId, gdo.net.instance[instanceId].configName);
+                gdo.management.instances.loadInstanceControlFrame(gdo.net.instance[instanceId].appName, instanceId, gdo.net.instance[instanceId].configName);
             }
         }
     </script>

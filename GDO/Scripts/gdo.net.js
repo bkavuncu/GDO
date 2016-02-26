@@ -130,7 +130,7 @@ $(function() {
         gdo.net.NodeInitialized = true;
         gdo.net.initModules();
         gdo.updateSelf();
-        if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.management.updateInstancesMenu();
             gdo.management.updateModulesMenu();
         }
@@ -168,7 +168,7 @@ $(function() {
             gdo.net.processInstance(status, id, instance);
             setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 700 + Math.floor((Math.random() * 21000) + 1));
             gdo.updateSelf();
-            if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 gdo.management.updateInstancesMenu();
             }
         }
@@ -181,6 +181,22 @@ $(function() {
             gdo.updateSelf();
         }
     }
+
+    $.connection.caveHub.client.receiveScenarioUpdate = function (status, name, serializedScenario) {
+        gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")");
+        if (gdo.net.isNodeInitialized()) {
+            var scenario = JSON.parse(serializedScenario);
+            gdo.net.processInstance(scenario, name,status);
+            gdo.updateSelf();
+            if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.management.scenarios.isActive) {
+                gdo.management.scenarios.displayScenariosToLoad();
+                if (status == false && gdo.management.scenarios.currentScenario == name) {
+                    gdo.management.scenarios.unloadScenario(name);
+                }
+            }
+        }
+    }
+
     $.connection.caveHub.connection.stateChanged(gdo.net.connectionStateChanged);
 });
 
@@ -665,8 +681,8 @@ gdo.net.processNode = function (node)
         }
         gdo.net.section[gdo.net.node[node.Id].sectionId].health = gdo.net.section[gdo.net.node[node.Id].sectionId].health / (gdo.net.section[gdo.net.node[node.Id].sectionId].cols * gdo.net.section[gdo.net.node[node.Id].sectionId].rows);
     }
-    if (gdo.management.processNodeUpdate != null) {
-        gdo.management.processNodeUpdate(node.Id);
+    if (gdo.management.isActive && gdo.management.nodes.isActive) {
+        gdo.management.nodes.processNodeUpdate(node.Id);
     }
     //gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
 }

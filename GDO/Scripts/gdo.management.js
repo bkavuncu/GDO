@@ -1,5 +1,6 @@
-﻿$(function () {
-    gdo.management.nodeTableDrawn = false;
+﻿
+
+$(function () {
     gdo.management.table_font_size = 10;
     gdo.management.section_font_size = 11;
     gdo.management.button_font_size = 21;
@@ -17,6 +18,43 @@
     gdo.management.colEnd = -1;
     gdo.management.rowStart = 1000;
     gdo.management.rowEnd = -1;
+
+    gdo.management.isActive = true;
+
+    if (gdo.management.apps == null) {
+        gdo.management.apps = {}
+    }
+    gdo.management.apps.isActive = false;
+    if (gdo.management.console == null) {
+        gdo.management.console = {}
+    }
+    gdo.management.console.isActive = false;
+    if (gdo.management.instances == null) {
+        gdo.management.instances = {}
+    }
+    gdo.management.instances.isActive = false;
+    if (gdo.management.modules == null) {
+        gdo.management.modules = {}
+    }
+    gdo.management.modules.isActive = false;
+    if (gdo.management.nodes == null) {
+        gdo.management.nodes = {}
+    }
+    gdo.management.nodes.isActive = false;
+    if (gdo.management.scenarios == null) {
+        gdo.management.scenarios = {}
+    }
+    gdo.management.scenarios.isActive = false;
+    if (gdo.management.sections == null) {
+        gdo.management.sections = {}
+    }
+    gdo.management.sections.isActive = false;
+    if (gdo.management.states == null) {
+        gdo.management.states = {}
+    }
+    gdo.management.states.isActive = false;
+
+    gdo.management.nodes.nodeTableDrawn = false;
 });
 
 gdo.management.updateMaintenanceButton = function () {

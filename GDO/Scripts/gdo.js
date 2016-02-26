@@ -25,7 +25,10 @@ gdo.initGDO = function (clientMode) {
     gdo.loadScript('net', 'net', gdo.SCRIPT_TYPE.CORE);
     gdo.clientMode = clientMode;
     gdo.updateInterval = 4900;
-
+    if (gdo.management == null) {
+        gdo.management = {};
+    }
+    gdo.management.isActive = false;
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.nodeId = 1;
         gdo.loadScript('management', 'management', gdo.SCRIPT_TYPE.CORE);
