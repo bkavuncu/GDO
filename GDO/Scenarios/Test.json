@@ -1,0 +1,1 @@
+{"Name":"Test","CurrentElement":1,"Elements":[{"IsLoop":true,"Id":"0","Mod":"gdo.net","Func":"createSection","Params":["0","0","1","1"],"Wait":"10"},{"IsLoop":false,"Id":"1","Mod":"gdo.net","Func":"deleteSection","Params":["0","0","1","1"],"Wait":"10"}]}

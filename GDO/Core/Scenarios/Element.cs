@@ -4,16 +4,16 @@ namespace GDO.Core.Scenarios
 {
     public class Element
     {
-        public int Index { get; set; }
-        public string Module { get; set; }
-        public string Function { get; set; }
-        public List<string> Parameters { get; set; }
-        public int Timeout { get; set; }
+        public int Id { get; set; }
+        public string Mod { get; set; }
+        public string Func { get; set; }
+        public List<string> Params { get; set; }
+        public int Wait { get; set; }
         public bool IsLoop = false;
 
         public Element(int index, string function, int timeout)
         {
-            Parameters = new List<string>();
+            Params = new List<string>();
         }
     }
 }
