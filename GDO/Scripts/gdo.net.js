@@ -857,6 +857,13 @@ gdo.net.processScenario = function (scenario, name, exists) {
         gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (exists)');
         gdo.net.scenario[name] = {}
         gdo.net.scenario[name] = scenario;
+        for (var index in gdo.net.scenario[name].Elements) {
+            if (!gdo.net.scenario[name].Elements.hasOwnProperty((index))) {
+                continue;
+            }
+            gdo.net.scenario[name].Elements[index].Wait = gdo.net.scenario[name].Elements[index].DefaultWait;
+            gdo.net.scenario[name].Elements[index].Status = 0;
+        }
     } else {
         gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (does not exist)');
         gdo.net.scenario[name] = null;
