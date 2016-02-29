@@ -45,6 +45,12 @@ namespace GDO.Apps.Graph.Domain
         public int NumLinks { get; set; }
         public List<string> Adj { get; set; }  // adj = list of connectedNodes
         public double query1Result { get; set; }
+        public double query2Result { get; set; }
+        public double query3Result { get; set; }
+        public double query4Result { get; set; }
+        public double query5Result { get; set; }
+        public double query6Result { get; set; }
+        public double query7Result { get; set; }
     }
 
     public class GraphLink

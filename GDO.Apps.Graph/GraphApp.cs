@@ -57,7 +57,12 @@ namespace GDO.Apps.Graph
             //compute node adjacencies
             ComputeNodeAdjacencies();
 
+            // TODO FIX queries shouldn't be done when loading, but interactively
             doFuzzyQuery1();
+            doFuzzyQuery2();
+            doFuzzyQuery3();
+            doFuzzyQuery4and5();
+            doFuzzyQuery6and7();
 
             #region calculate viewport and scales
             int singleDisplayWidth = Section.Width / Section.Cols;
@@ -336,10 +341,56 @@ namespace GDO.Apps.Graph
 
         private void doFuzzyQuery1()
         {
-            FuzzyQuery1 fq1 = new FuzzyQuery1();
+            FuzzyQuery1 fq = new FuzzyQuery1();
             foreach (var n in Nodes)
             {
-                n.query1Result = fq1.DoInference(n.NumLinks, n.Size);
+                n.query1Result = fq.DoInference(n.NumLinks, n.Size);
+            }
+        }
+        private void doFuzzyQuery2()
+        {
+            FuzzyQuery2 fq = new FuzzyQuery2();
+            foreach (var n in Nodes)
+            {
+                n.query2Result = fq.DoInference(n.NumLinks, n.Size);
+            }
+        }
+        private void doFuzzyQuery3()
+        {
+            FuzzyQuery3 fq = new FuzzyQuery3();
+            foreach (var n in Nodes)
+            {
+                n.query3Result = fq.DoInference(n.NumLinks, n.Size);
+            }
+        }
+        private void doFuzzyQuery4and5()
+        {
+            FuzzyQuery4 fq4 = new FuzzyQuery4();
+            FuzzyQuery5 fq5 = new FuzzyQuery5();
+            foreach (var n in Nodes)
+            {
+                n.query4Result = fq4.DoInference(n.NumLinks, n.Size);
+                n.query5Result = fq5.DoInference(n.NumLinks, n.Size);
+            }
+        }
+        private void doFuzzyQuery6and7()
+        {
+            FuzzyQuery6 fq6 = new FuzzyQuery6();
+            FuzzyQuery7 fq7 = new FuzzyQuery7();
+            foreach (var n in Nodes)
+            {
+                n.query6Result = 0;
+                n.query7Result = 0;
+                if (n.Attrs.ContainsKey("type")) {
+                   if( n.Attrs["type"] == "Pers")
+                    {
+                        n.query6Result = fq6.DoInference(n.NumLinks, n.Size);
+                    }
+                    if (n.Attrs["type"] == "edit")
+                    {
+                        n.query7Result = fq7.DoInference(n.NumLinks, double.Parse(n.Attrs["editsize"])/1000);
+                    }
+                }
             }
         }
     }

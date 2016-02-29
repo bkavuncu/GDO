@@ -121,12 +121,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery4.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery7.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery6.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery3.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery2.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery5.cs" />
     <Compile Include="GraphApp.cs" />
     <Compile Include="GraphAppHub.cs" />
     <Compile Include="GraphDataReader.cs" />
     <Compile Include="GraphPartitioning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FuzzyQuery1.cs" />
+    <Compile Include="FuzzyQueries\FuzzyQuery1.cs" />
     <Compile Include="TestFuzzy.cs" />
   </ItemGroup>
   <ItemGroup />

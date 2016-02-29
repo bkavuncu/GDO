@@ -20,7 +20,7 @@ $(function () {
     var globalZoomed;
 
     // flag to indicate if all nodes should have the same size. If so, 'normalRadius' is the value to be used.
-    var allNodesSameSize = true;
+    var allNodesSameSize = false;
 
     // set size of nodes and links
     var zoomedRadius = 5;
@@ -132,29 +132,51 @@ $(function () {
     /*
     EXPERIMENTAL
     */
-    $.connection.graphAppHub.client.renderFuzzy = function () {
+    $.connection.graphAppHub.client.renderFuzzy = function (option, color) {
 
 
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
-            //var linksDom = highlightDom.append("g").attr("id", "sublinks");
-
-            //findMatchingNodes(); // To render links properly, each browser needs to know all matched nodes.
-            //renderSearchNodes(); // Each browser renders its mathching and neighbour nodes
-            //renderSearchLinks(); // Each browser renders its links
 
             nodes.forEach(function (node) {
-                if (node.query1Result >= 0.5) {
+                var value = 0;
+                switch (option) {
+                    case 1:
+                        value = node.query1Result;
+                        break;
+                    case 2:  //BC evil
+                        value = node.query2Result;
+                        break;
+                    case 3:  //Marvel interesting
+                        value = node.query3Result;
+                        break;
+                    case 4:  //Miserables popular
+                        value = node.query4Result;
+                        break;
+                    case 5:  //Miserables non-popular
+                        value = node.query5Result;
+                        break;
+                    case 6:  //Most active editors
+                        value = node.query6Result;
+                        break;
+                    case 7:  //Longest editions
+                        value = node.query7Result;
+                        break;
+                    default :
+                        alert("Invalid query number!");
+                }
+
+                if (value >= 0.5) {
                     highlightDom.append("circle")
-                        .attr("r", Math.ceil(node.Size))
+                        .attr("r", Math.ceil(node.Size)+5)
                         .attr("cx", node.Pos.X)
                         .attr("cy", node.Pos.Y)
-                        .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");
+                        .attr("fill", color);
                 }
             });
 
-            function findMatchingNodes() {
+            /*function findMatchingNodes() {
                 //each browser has to calculate the matching nodes for the whole graph, and store them in their highlightedNodes var
                 // the neighbour nodes are also stored in the highlightedNeighbours var
                 highlightedNodes = [];  // empty it from previous searches
@@ -171,9 +193,9 @@ $(function () {
                         }
                     }
                 });
-            }
+            } */
 
-            function renderSearchNodes() {
+            /*function renderSearchNodes() {
                 //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
                 //Each browser render the matching and neighbour nodes among its nodes. 
@@ -194,19 +216,10 @@ $(function () {
                             .attr("cy", node.Pos.Y)
                             .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")");
                     }
-                    /* // do nothing (or paint in a another way)
-                    else {
-                        highlightDom.append("circle")
-                            .attr("r", Math.ceil(node.Size))
-                            .attr("cx", node.Pos.X)
-                            .attr("cy", node.Pos.Y)
-                            .attr("fill", "gray"); // Nodes: search mode, not selected
-                        } */
                 });
-            }
+            }*/
 
-
-            function renderSearchLinks() {
+            /*function renderSearchLinks() {
 
                 var strokeWidth = globalZoomed ? zoomedStrokeWidth : normalStrokeWidth;
 
@@ -225,7 +238,7 @@ $(function () {
                             .attr("stroke", "yellow");
                     }
                 });
-            }
+            } */
         }
     }
 
@@ -397,7 +410,7 @@ $(function () {
             mostConnectedNodes.forEach(function (node) {
                 if (node.NumLinks >= numLinks) {  // mostConnectedNodes has all nodes with numLinks > 3
                     highlightDom.append("circle")
-                        .attr("r", Math.ceil(node.Size))
+                        .attr("r", Math.ceil(node.Size)+5)
                         .attr("cx", node.Pos.X)
                         .attr("cy", node.Pos.Y)
                         .attr("fill", color);   
@@ -419,7 +432,7 @@ $(function () {
                         .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
                         .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
                         .text(node.Attrs[field] ? node.Attrs[field] : "")  // if the field does not exist for the curent node, print nothing
-                        .attr("font-size", fontSize)
+                        .attr("font-size", fontSize+5)
                         .attr("fill", color); 
                 }
             });

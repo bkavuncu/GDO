@@ -3,13 +3,12 @@ using DotFuzzy;
 
 namespace GDO.Apps.Graph
 {
-    public class FuzzyQuery1
+    public class FuzzyQuery1 : FuzzyQuery
     {
 
         private LinguisticVariable degree;
         private LinguisticVariable weight;
         private readonly LinguisticVariable interest;
-        private FuzzyEngine fuzzyEngine;
 
 
         public FuzzyQuery1()
@@ -28,34 +27,52 @@ namespace GDO.Apps.Graph
             interest.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 0, 0.5));
             interest.MembershipFunctionCollection.Add(new MembershipFunction("High", 0.5, 1, 1, 1));
 
-            interest = new LinguisticVariable("Danger");
-            interest.MembershipFunctionCollection.Add(new MembershipFunction("Low", 0, 0, 0, 0.5));
-            interest.MembershipFunctionCollection.Add(new MembershipFunction("High", 0.5, 1, 1, 1));
-
             fuzzyEngine = new FuzzyEngine();
             fuzzyEngine.LinguisticVariableCollection.Add(degree);
             fuzzyEngine.LinguisticVariableCollection.Add(weight);
             fuzzyEngine.LinguisticVariableCollection.Add(interest);
             fuzzyEngine.Consequent = "Interest";
 
-            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) OR (Weight IS High) THEN Interest IS High"));
-            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Low) AND (Weight IS Low) THEN Interest IS Low"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) THEN Interest IS High"));
 
-            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) AND (Weight IS Low) THEN Danger IS High"));
-
-            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS High) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) AND (Weight IS Low) THEN Interest IS High"));
             fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) AND (Weight IS Medium) THEN Interest IS Low"));
-            
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) AND (Weight IS High) THEN Interest IS Low"));
+
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) THEN Interest IS Low"));
+
+
+            /* // HUMAN TRANSACTIONS
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Low) AND (Weight IS Low) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) OR (Degree IS High) THEN Interest IS Low"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS Medium) OR (Weight IS High) THEN Interest IS Low"));
+            */
+
+            /*// Poor TRANSACTIONS
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS High) THEN Interest IS Low"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS Low) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS Medium) THEN Interest IS Low"));
+            */
+
+            /*// NON-HUMAN TRANSACTIONS
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS High) AND (Weight IS Low) THEN Interest IS High"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Low) THEN Interest IS Low"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Degree IS Medium) THEN Interest IS Low"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS Low) THEN Interest IS Low"));
+            fuzzyEngine.FuzzyRuleCollection.Add(new FuzzyRule("IF (Weight IS Medium) THEN Interest IS Low"));
+            */
         }
 
 
-        public double DoInference(int degreeValue, double weightValue)
+        public override double DoInference(int degreeValue, double weightValue)
         {
             degree.InputValue = degreeValue;
             weight.InputValue = weightValue;
 
-            return fuzzyEngine.Defuzzify();
+            return Infer();
         }
+
 
 
         void RunExample()

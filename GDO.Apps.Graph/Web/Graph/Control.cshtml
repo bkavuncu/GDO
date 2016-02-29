@@ -293,10 +293,27 @@
         EXPERIMENTAL!
         FOR FUZZY CONTROL
         */
-        $("#compute_fuzzy").click(function () {
-            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId);
+        $("#compute_fuzzy1").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 1, $("#color_mostConnectedNodes").val());
         });
-
+        $("#compute_fuzzy2").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 2, $("#color_mostConnectedNodes").val());
+        });
+        $("#compute_fuzzy3").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 3, $("#color_mostConnectedNodes").val());
+        });
+        $("#compute_fuzzy4").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 4, $("#color_mostConnectedNodes").val());
+        });
+        $("#compute_fuzzy5").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 5, $("#color_mostConnectedNodes").val());
+        });
+        $("#compute_fuzzy6").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 6, $("#color_mostConnectedNodes").val());
+        });
+        $("#compute_fuzzy7").click(function () {
+            gdo.net.app["Graph"].server.computeFuzzy(gdo.controlId, 7, $("#color_mostConnectedNodes").val());
+        });
 
         gdo.net.app["Graph"].initControl();
     });
@@ -509,8 +526,16 @@
                                             <br />
                                             <label> Fuzzy Logic </label>
                                             <br />
-                                            <button class='btn btn-default' id="compute_fuzzy"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;Fuzzy 1</button>
-                                            <br />
+                                            <button class='btn btn-default' id="compute_fuzzy1"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;BC Interesting</button>
+                                            <button class='btn btn-default' id="compute_fuzzy2"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;BC Evil</button>
+                                            <br/>
+                                            <button class='btn btn-default' id="compute_fuzzy3"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;Marvel interesting</button>
+                                            <br/>
+                                            <button class='btn btn-default' id="compute_fuzzy4"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;Miserables popular</button>
+                                            <button class='btn btn-default' id="compute_fuzzy5"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;MIserables unpopular</button>
+                                            <br/>
+                                            <button class='btn btn-default' id="compute_fuzzy6"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;Most active editors</button>
+                                            <button class='btn btn-default' id="compute_fuzzy7"><i class='fa  fa-barcode  fa-fw'></i>&nbsp;Longest editions</button>
                                       </td>
                                     </tr>
                                 </table>

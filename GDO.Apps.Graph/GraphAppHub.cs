@@ -428,14 +428,14 @@ namespace GDO.Apps.Graph
             EXPERIMENTAL!
             FOR FUZZY CONTROL
         */
-        public void ComputeFuzzy(int instanceId)
+        public void ComputeFuzzy(int instanceId, int option, string color)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Computing fuzzy query");
-                    Clients.Group("" + instanceId).renderFuzzy();
+                    Clients.Caller.setMessage("Computing fuzzy query " + option);
+                    Clients.Group("" + instanceId).renderFuzzy(option, color);
                     Clients.Caller.setMessage("Fuzzy query computed. Graph rendered");
                 }
                 catch (Exception e)
