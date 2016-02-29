@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4A27F694-1D9A-420A-A3A6-62521EAA047E}"
 EndProject
@@ -42,6 +42,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.LondonCycles", "GDO.Apps.LondonCycles\GDO.Apps.LondonCycles.csproj", "{6233F7A3-4E1E-4566-ADB7-41C313508BFC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Modules.EyeTracking", "GDO.Modules.EyeTracking\GDO.Modules.EyeTracking.csproj", "{74CC3CD2-3404-4478-B074-F30CDD34F052}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Leeds", "GDO.Apps.Leeds\GDO.Apps.Leeds.csproj", "{CA9584C6-6400-4EEF-BA2C-30E619F90D13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,10 @@ Global
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
