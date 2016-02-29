@@ -26,7 +26,9 @@ gdo.initGDO = function (clientMode) {
     gdo.clientMode = clientMode;
     gdo.updateInterval = 4900;
     gdo.functions = {};
-    gdo.functions.array = [];
+    gdo.functions.array = {};
+    gdo.functions.array.mods = [];
+    gdo.functions.array.funcs = [];
     gdo.functions.list = [];
     if (gdo.management == null) {
         gdo.management = {};
@@ -50,7 +52,7 @@ gdo.initGDO = function (clientMode) {
                 setTimeout(function() { setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval); }, Math.random() * gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
-                gdo.populateFunctions("gdo", gdo);
+                setTimeout(function() { gdo.populateFunctions("gdo", eval("gdo")); }, 700 );
             }
 
             //set intervl and 
@@ -113,6 +115,13 @@ gdo.consoleOut = function (module, type, msg) {
         }
         console.error(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
     }
+}
+
+gdo.checkpoint = function(number) {
+    if ($("#console_area").length > 0) {
+        $("#console_area").append('<div style="color:#cc00cc; font-size:10; font-family: monospace;">CHECKPOINT: '+number+'&#10;</div>').scrollTop($("#console_area")[0].scrollHeight);
+    }
+    console.error("CHECKPOINT: " + number);
 }
 
 gdo.loadScript = function (subscript, script, scriptType) {
@@ -181,7 +190,13 @@ gdo.populateFunctions = function (root,object) {
                 gdo.populateFunctions(""+root+"."+property,object[property]);
             }
             else if (typeof object[property] == "function") {
-                gdo.functions.array.push([root, property, getParamNames(object[property])]);
+                if (!contains(gdo.functions.array.mods, root)) {
+                    gdo.functions.array.mods.push(root);
+                }
+                if (gdo.functions.array.funcs[root] == null) {
+                    gdo.functions.array.funcs[root] = [];
+                }
+                gdo.functions.array.funcs[root].push(property);
                 gdo.functions.list.push(root + "." + property + "(" + getParamNames(object[property]) + ")");
             }
         }

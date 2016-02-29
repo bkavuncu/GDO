@@ -182,13 +182,13 @@ $(function() {
             gdo.updateSelf();
         }
     }
-
     $.connection.caveHub.client.receiveScenarioUpdate = function (status, name, serializedScenario) {
-        gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")");
+        gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")" + serializedScenario);
         if (gdo.net.isNodeInitialized()) {
             var scenario = null;
             if (status) {
                 scenario = JSON.parse(serializedScenario);
+                sec = scenario;
             }
             gdo.net.processScenario(scenario, name, status);
             gdo.updateSelf();
@@ -862,7 +862,7 @@ gdo.net.processScenario = function (scenario, name, exists) {
                 continue;
             }
             gdo.net.scenario[name].Elements[index].Wait = gdo.net.scenario[name].Elements[index].DefaultWait;
-            gdo.net.scenario[name].Elements[index].Status = 0;
+            gdo.net.scenario[name].Elements[index].Status = 1;
         }
     } else {
         gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (does not exist)');

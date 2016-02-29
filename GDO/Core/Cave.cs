@@ -521,6 +521,11 @@ namespace GDO.Core
             try
             {
                 Scenario scenario = JsonConvert.DeserializeObject<Scenario>(json);
+                if (Scenarios.ContainsKey(scenario.Name))
+                {
+                    Scenario dump;
+                    Scenarios.TryRemove(scenario.Name, out dump);
+                }
                 Scenarios.TryAdd(scenario.Name, scenario);
                 Utilities.SaveJsonFile<Scenario>(scenario.Name, "Scenarios", scenario);
                 return scenario;
