@@ -211,7 +211,7 @@ namespace GDO.Modules.EyeTracking.Core
                         }
                     }
                     PositionData position = CalculateOverallPosition(MarkerData, EyeData);
-                    LocationData location = CalculateOverallLocation(MarkerData);
+                    //LocationData location = CalculateOverallLocation(MarkerData);
                     if (position != null)
                     {
                         TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
@@ -219,7 +219,7 @@ namespace GDO.Modules.EyeTracking.Core
                         TrackData trackData = new TrackData();
                         trackData.setPosition(Id, position);
                         trackData.TimeStamp = secondsSinceEpoch;
-                        trackData.setLocation(location);
+                        //trackData.setLocation(location);
                         //if (TrackQueue.Count < TrackQueueSize)
                         //{
                         //    TrackQueue.Enqueue(trackData);
