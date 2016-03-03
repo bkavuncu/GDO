@@ -440,6 +440,7 @@ $("#loadScenario").unbind().click(function () {
         $("#removeButton").show();
         $("#upButton").show();
         $("#downButton").show();
+        $("#saveElementButton").show();
     }
 });
 
@@ -457,6 +458,7 @@ $("#unloadScenario").unbind().click(function () {
         $("#removeButton").hide();
         $("#upButton").hide();
         $("#downButton").hide();
+        $("#saveElementButton").hide();
     }
 });
 
@@ -550,4 +552,8 @@ $("#downButton").unbind().click(function () {
     if (gdo.management.scenarios.currentScenario != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement >= 0) {
         gdo.management.scenarios.moveElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement], true);
     }
+});
+
+$("#saveElementButton").unbind().click(function () {
+    gdo.management.scenarios.saveUnsavedElements();
 });
