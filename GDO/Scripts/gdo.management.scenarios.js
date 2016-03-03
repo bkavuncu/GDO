@@ -189,11 +189,14 @@ gdo.management.scenarios.executeElement = function (element) {
             try {
                 if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement <= gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length) {
                     gdo.consoleOut(".Scenario", 2, "Executing: " + element.Mod + "." + element.Func + "(" + element.Params + ");");
+                    var res;
                     if (element.Mod == "") {
-                        eval(element.Func + "(" + element.Params + ");");
+                        res = eval(element.Func + "(" + element.Params + ");");
+                        
                     } else {
-                        eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
+                        res = eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
                     }
+                    gdo.consoleOut(".Scenario", 2, "Result: " + res);
                     if (gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id + 1] != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id + 1].Wait == -1) {
                         gdo.management.scenarios.isPlaying = false;
                     }
@@ -218,6 +221,7 @@ gdo.management.scenarios.executeElement = function (element) {
                 gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement++;
                 gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Status = gdo.management.scenarios.ELEMENT_STATUS.FAILED;
                 gdo.management.scenarios.isPlaying = false;
+                gdo.consoleOut(".Scenario", 5, "Encountered an error executing last command");
                 gdo.management.scenarios.updateScenarioCanvas();
             }
         }

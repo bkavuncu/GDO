@@ -49,7 +49,7 @@ gdo.management.console.drawConsoleInput = function () {
         .unbind()
         .click(function () {
             gdo.consoleOut(".MANAGEMENT", 1, "Executing: " + document.getElementById('console_input').value);
-            eval(document.getElementById('console_input').value);
+            gdo.consoleOut(".MANAGEMENT", 1, "Result: " + eval(document.getElementById('console_input').value));
         });
     $("#console_input").autocomplete({
         position: {
