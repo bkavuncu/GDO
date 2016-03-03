@@ -132,6 +132,31 @@ gdo.management.scenarios.saveElement = function (element) {
     gdo.management.scenarios.updateScenarioCanvas();
 }
 
+gdo.management.scenarios.moveElement = function (element, direction) {
+    if (gdo.management.scenarios.currentScenario != null) {
+        gdo.management.scenarios.saveUnsavedElements();
+        gdo.management.scenarios.saveEdits();
+        var id = element.Id;
+        if (direction && gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id + 1] != null) {
+            var temp = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id + 1];
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id + 1] = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id];
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id] = temp;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id].Id-- ;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id + 1].Id++;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement++;
+        } else if (gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id - 1] != null) {
+            var temp = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id - 1];
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id - 1] = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id];
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id] = temp;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id].Id++;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[id - 1].Id--;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement--;
+        }
+        gdo.management.scenarios.updateScenarioCanvas();
+    }
+
+}
+
 gdo.management.scenarios.removeElement = function (element) {
     //gdo.management.scenarios.saveUnsavedElements();
     if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement != -1) {
@@ -413,6 +438,8 @@ $("#loadScenario").unbind().click(function () {
         $("#addButton").show();
         $("#editButton").show();
         $("#removeButton").show();
+        $("#upButton").show();
+        $("#downButton").show();
     }
 });
 
@@ -428,6 +455,8 @@ $("#unloadScenario").unbind().click(function () {
         $("#addButton").hide();
         $("#editButton").hide();
         $("#removeButton").hide();
+        $("#upButton").hide();
+        $("#downButton").hide();
     }
 });
 
@@ -508,5 +537,17 @@ $("#editButton").unbind().click(function () {
 $("#removeButton").unbind().click(function () {
     if (gdo.management.scenarios.currentScenario != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement >= 0) {
         gdo.management.scenarios.removeElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement]);
+    }
+});
+
+$("#upButton").unbind().click(function () {
+    if (gdo.management.scenarios.currentScenario != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement >= 0) {
+        gdo.management.scenarios.moveElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement], false);
+    }
+});
+
+$("#downButton").unbind().click(function () {
+    if (gdo.management.scenarios.currentScenario != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement >= 0) {
+        gdo.management.scenarios.moveElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement], true);
     }
 });
