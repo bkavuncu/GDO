@@ -79,6 +79,9 @@ gdo.management.scenarios.saveEdit = function (element) {
         try {
             eval("" + element.Mod + "."+element.Func);
             gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Params = eval("[getParamNames(eval('' + element.Mod + '.' + element.Func))]");
+            if (gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Params == '') {
+                gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Params = [];
+            }
             gdo.management.scenarios.updateScenarioCanvas();
         } catch (e) {
         }
@@ -161,8 +164,12 @@ gdo.management.scenarios.executeElement = function (element) {
             try {
                 if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement <= gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length) {
                     gdo.consoleOut(".Scenario", 2, "Executing: " + element.Mod + "." + element.Func + "(" + element.Params + ");");
-                    eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
-                    if (element.Wait == -1) {
+                    if (element.Mod == "") {
+                        eval(element.Func + "(" + element.Params + ");");
+                    } else {
+                        eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
+                    }
+                    if (gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id + 1] != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id + 1].Wait == -1) {
                         gdo.management.scenarios.isPlaying = false;
                     }
                     
@@ -325,6 +332,9 @@ gdo.management.scenarios.loadScenario = function (name) {
     $("#scenario_panel").addClass("panel-primary").removeClass("panel-default");
     $("#loadButton").hide();
     $("#unloadButton").show();
+    $("#deleteButton").show();
+    $("#resetButton").show();
+    $("#saveButton").show();
     for (var index in gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements) {
         if (!gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.hasOwnProperty((index))) {
             continue;
@@ -348,6 +358,9 @@ gdo.management.scenarios.unloadScenario = function () {
     $("#scenario_panel").addClass("panel-default").removeClass("panel-primary");
     $("#loadButton").show();
     $("#unloadButton").hide();
+    $("#deleteButton").hide();
+    $("#resetButton").hide();
+    $("#saveButton").hide();
     gdo.management.scenarios.currentScenario = null;
     gdo.management.scenarios.clearBody();
 }
@@ -410,8 +423,10 @@ $("#unloadScenario").unbind().click(function () {
         gdo.management.scenarios.unloadScenario();
         gdo.management.scenarios.displayScenariosToLoad("");
         $("#playButton").hide();
+        $("#nextButton").hide();
         $("#pauseButton").hide();
         $("#addButton").hide();
+        $("#editButton").hide();
         $("#removeButton").hide();
     }
 });
