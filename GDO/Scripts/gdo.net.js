@@ -183,12 +183,11 @@ $(function() {
         }
     }
     $.connection.caveHub.client.receiveScenarioUpdate = function (status, name, serializedScenario) {
-        gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")" + serializedScenario);
+        gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")" );
         if (gdo.net.isNodeInitialized()) {
             var scenario = null;
             if (status) {
                 scenario = JSON.parse(serializedScenario);
-                sec = scenario;
             }
             gdo.net.processScenario(scenario, name, status);
             gdo.updateSelf();

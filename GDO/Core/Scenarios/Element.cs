@@ -8,7 +8,7 @@ namespace GDO.Core.Scenarios
         public string Mod { get; set; }
         public string Func { get; set; }
         public List<string> Params { get; set; }
-        public int DefaultWait { get; set; }
+        public double DefaultWait { get; set; }
         public bool IsLoop = false;
 
         public Element(int index, string function, int timeout)

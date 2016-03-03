@@ -53,6 +53,14 @@ gdo.management.scenarios.addElement = function () {
     gdo.management.scenarios.updateScenarioCanvas();
 }
 
+gdo.management.scenarios.editElement = function (element) {
+    gdo.management.scenarios.saveEdits();
+    gdo.management.scenarios.saveUnsavedElements();
+    gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Status = gdo.management.scenarios.ELEMENT_STATUS.NEW;
+    gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = -1;
+    gdo.management.scenarios.updateScenarioCanvas();
+}
+
 gdo.management.scenarios.saveEdit = function (element) {
     if (typeof $("#scenario_element_" + element.Id + "_mod_input").val() != "undefined") {
         gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Mod = $("#scenario_element_" + element.Id + "_mod_input").val();
@@ -65,7 +73,7 @@ gdo.management.scenarios.saveEdit = function (element) {
     }
     if (typeof $("#scenario_element_" + element.Id + "_wait_input").val() != "undefined") {
         gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].DefaultWait = $("#scenario_element_" + element.Id + "_wait_input").val();
-        gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Wait = $("#scenario_element_" + element.Id + "_wait_input").val();
+        gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Wait = parseFloat($("#scenario_element_" + element.Id + "_wait_input").val()).toFixed(1);
     }
     if (element.Mod != '' && element.Func != '' && element.Params == '') {
         try {
@@ -121,8 +129,21 @@ gdo.management.scenarios.saveElement = function (element) {
     gdo.management.scenarios.updateScenarioCanvas();
 }
 
-gdo.management.scenarios.removeElement = function () {
-
+gdo.management.scenarios.removeElement = function (element) {
+    //gdo.management.scenarios.saveUnsavedElements();
+    if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement != -1) {
+        gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.splice(element.Id, 1);
+        var length = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length;
+        for (var i = parseInt(gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement); i < length; i++) {
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[i].Id = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[i].Id - 1;
+        }
+        if (gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length > 0) {
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = 0;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[0].Status = gdo.management.scenarios.ELEMENT_STATUS.CURRENT;
+        } else {
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = -1;
+        }
+    }
     gdo.management.scenarios.updateScenarioCanvas();
 }
 
@@ -133,20 +154,27 @@ gdo.management.scenarios.executeElement = function (element) {
                 gdo.management.scenarios.isPlaying = true;
             }
             if (gdo.management.scenarios.isPlaying) {
-                element.Wait--;
-                setTimeout(function () { gdo.management.scenarios.executeElement(element); }, 1000);
+                element.Wait = parseFloat(element.Wait - 0.1).toFixed(1);
+                setTimeout(function () { gdo.management.scenarios.executeElement(element); }, 100);
             }
         } else {
             try {
-                if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement < gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length) {
+                if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement <= gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length) {
+                    gdo.consoleOut(".Scenario", 2, "Executing: " + element.Mod + "." + element.Func + "(" + element.Params + ");");
                     eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
-                    gdo.management.scenarios.isPlaying = false;
+                    if (element.Wait == -1) {
+                        gdo.management.scenarios.isPlaying = false;
+                    }
+                    
                     gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id].Status = gdo.management.scenarios.ELEMENT_STATUS.SUCCESS;
                     if (element.Id + 1 >= gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length) {
                         gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = -1;
                     } else {
                         gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id + 1].Status = gdo.management.scenarios.ELEMENT_STATUS.CURRENT;
                         gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement++;
+                        if (gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement == gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length) {
+                            gdo.management.scenarios.isPlaying = false;
+                        }
                     }
                     if (gdo.management.scenarios.isPlaying) {
                         setTimeout(function () { gdo.management.scenarios.executeElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[element.Id + 1]); }, 100);
@@ -168,10 +196,10 @@ gdo.management.scenarios.executeElement = function (element) {
 gdo.management.scenarios.clearBody = function () {
     $("#scenario_area").empty();
     $("#scenario_area").append("<div id='scenario_labels' class='row' >" +
-        "<div class='col-lg-2' style='border: 1px solid #333;color:#FFF'><font color='white'>&nbsp;&nbsp;Index</font></div>" +
-        "<div class='col-lg-2' style='border: 1px solid #333;color:#FFF'><font color='white'>Module</font></div>" +
-        "<div class='col-lg-2' style='border: 1px solid #333;color:#FFF'><font color='white'>Function</font></div>" +
-        "<div class='col-lg-4' style='border: 1px solid #333;color:#FFF'><font color='white'>Parameters</font></div>" +
+        "<div class='col-lg-1' style='border: 1px solid #333;color:#FFF'><font color='white'>&nbsp;&nbsp;Index</font></div>" +
+        "<div class='col-lg-3' style='border: 1px solid #333;color:#FFF'><font color='white'>Module</font></div>" +
+        "<div class='col-lg-3' style='border: 1px solid #333;color:#FFF'><font color='white'>Function</font></div>" +
+        "<div class='col-lg-3' style='border: 1px solid #333;color:#FFF'><font color='white'>Parameters</font></div>" +
         "<div class='col-lg-1' style='border: 1px solid #333;color:#FFF'><font color='white'>Timeout</font></div>" +
         "<div class='col-lg-1' style='border: 1px solid #333;color:#FFF'><font color='white'>Status</font></div>" +
         "</div>");
@@ -211,10 +239,10 @@ gdo.management.scenarios.addElementToUI = function (element) {
     if (element.Status == gdo.management.scenarios.ELEMENT_STATUS.NEW) {
 
         $("#scenario_area").append("<div id='scenario_element_" + element.Id + "' class='row' elementId='" + element.Id + "' >" +
-        "<div id='scenario_element_" + element.Id + "_id' class='col-lg-2' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'>&nbsp;&nbsp;" + element.Id + "</div>" +
-        "<div id='scenario_element_" + element.Id + "_mod' class='col-lg-2 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_mod_input' value='"+element.Mod+"' spellcheck='false'/></input></div>" +
-        "<div id='scenario_element_" + element.Id + "_func' class='col-lg-2 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_func_input' value='" + element.Func + "' spellcheck='false' /></input></div>" +
-        "<div id='scenario_element_" + element.Id + "_params' class='col-lg-4 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_params_input' value='" + element.Params + "' spellcheck='false' /></input></div>" +
+        "<div id='scenario_element_" + element.Id + "_id' class='col-lg-1' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'>&nbsp;&nbsp;" + element.Id + "</div>" +
+        "<div id='scenario_element_" + element.Id + "_mod' class='col-lg-3 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_mod_input' value='"+element.Mod+"' spellcheck='false'/></input></div>" +
+        "<div id='scenario_element_" + element.Id + "_func' class='col-lg-3 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_func_input' value='" + element.Func + "' spellcheck='false' /></input></div>" +
+        "<div id='scenario_element_" + element.Id + "_params' class='col-lg-3 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_params_input' value='" + element.Params + "' spellcheck='false' /></input></div>" +
         "<div id='scenario_element_" + element.Id + "_wait' class='col-lg-1 input_field_div' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><input type='text' class='input_field' id='scenario_element_" + element.Id + "_wait_input' value='" + element.DefaultWait + "' spellcheck='false' /></input></div>" +
         "<div id='scenario_element_" + element.Id + "_status' class='col-lg-1' style='background:#2A2A2A;color:" + color + ";border: 1px solid #333;'><span class='fa " + icon + "'></span></div>" +
         "</div>");
@@ -245,10 +273,10 @@ gdo.management.scenarios.addElementToUI = function (element) {
         $("#scenario_element_" + element.Id + "_wait_input").off().on('change', gdo.management.scenarios.saveEdits);
     } else {
         $("#scenario_area").append("<div id='scenario_element_" + element.Id + "' class='row' elementId='" + element.Id + "' >" +
-        "<div id='scenario_element_" + element.Id + "_id' class='col-lg-2' style='color:" + color + ";border: 1px solid #333;'>&nbsp;&nbsp;" + element.Id + "</div>" +
-        "<div id='scenario_element_" + element.Id + "_mod' class='col-lg-2' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Mod + "</div>" +
-        "<div id='scenario_element_" + element.Id + "_func' class='col-lg-2' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Func + "</div>" +
-        "<div id='scenario_element_" + element.Id + "_params' class='col-lg-4' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Params + "</div>" +
+        "<div id='scenario_element_" + element.Id + "_id' class='col-lg-1' style='color:" + color + ";border: 1px solid #333;'>&nbsp;&nbsp;" + element.Id + "</div>" +
+        "<div id='scenario_element_" + element.Id + "_mod' class='col-lg-3' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Mod + "</div>" +
+        "<div id='scenario_element_" + element.Id + "_func' class='col-lg-3' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Func + "</div>" +
+        "<div id='scenario_element_" + element.Id + "_params' class='col-lg-3' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Params + "</div>" +
         "<div id='scenario_element_" + element.Id + "_wait' class='col-lg-1' style='color:" + color + ";border: 1px solid #333;'>&nbsp;" + element.Wait + "</div>" +
         "<div id='scenario_element_" + element.Id + "_status' class='col-lg-1' style='color:" + color + ";border: 1px solid #333;'><span class='fa " + icon + "'></span></div>" +
         "</div>");
@@ -305,8 +333,13 @@ gdo.management.scenarios.loadScenario = function (name) {
             gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[index].Wait = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[index].DefaultWait;
         }
     }
-    gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[0].Status = gdo.management.scenarios.ELEMENT_STATUS.CURRENT;
-    gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = 0;
+    if (gdo.management.scenarios.currentScenario > 0 && gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.length > 0) {
+        gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[0].Status = gdo.management.scenarios.ELEMENT_STATUS.CURRENT;
+        gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = 0;
+    } else {
+        gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = -1;
+    }
+
     gdo.management.scenarios.updateScenarioCanvas();
 }
 
@@ -347,8 +380,10 @@ $("#createNewScenario").unbind().click(function() {
     gdo.management.scenarios.loadScenario(gdo.management.scenarios.currentScenario);
     gdo.management.scenarios.displayScenariosToLoad("");
     $("#playButton").show();
+    $("#nextButton").show();
     $("#pauseButton").show();
     $("#addButton").show();
+    $("#editButton").show();
     $("#removeButton").show();
     gdo.consoleOut('.Scenario', 1, 'Created New Scenario:' + gdo.management.scenarios.currentScenario);
 });
@@ -360,8 +395,10 @@ $("#loadScenario").unbind().click(function () {
         gdo.management.scenarios.loadScenario(gdo.management.scenarios.currentScenario);
         gdo.management.scenarios.displayScenariosToLoad("");
         $("#playButton").show();
+        $("#nextButton").show();
         $("#pauseButton").show();
         $("#addButton").show();
+        $("#editButton").show();
         $("#removeButton").show();
     }
 });
@@ -382,6 +419,7 @@ $("#unloadScenario").unbind().click(function () {
 $("#resetScenario").unbind().click(function () {
     if (gdo.management.scenarios.currentScenario != null) {
         gdo.consoleOut('.Scenario', 1, 'Reseting Scenario: ' + gdo.management.scenarios.currentScenario);
+        gdo.management.scenarios.isPlaying = false;
         for (var index in gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements) {
             if (!gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements.hasOwnProperty((index))) {
                 continue;
@@ -390,8 +428,10 @@ $("#resetScenario").unbind().click(function () {
                 gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[index].Wait = gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[index].DefaultWait;
             }
         }
-        gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[0].Status = gdo.management.scenarios.ELEMENT_STATUS.CURRENT;
-        gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = 0;
+        if (gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[0] != null) {
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[0].Status = gdo.management.scenarios.ELEMENT_STATUS.CURRENT;
+            gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement = 0;
+        }
         gdo.management.scenarios.updateScenarioCanvas();
     }
 });
@@ -430,6 +470,12 @@ $("#playButton").unbind().click(function () {
     }
 });
 
+$("#nextButton").unbind().click(function () {
+    if (gdo.management.scenarios.currentScenario != null) {
+        gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement].Wait = -1;
+    }
+});
+
 $("#pauseButton").unbind().click(function () {
     gdo.management.scenarios.isPlaying = false;
 });
@@ -438,6 +484,14 @@ $("#addButton").unbind().click(function () {
     gdo.management.scenarios.addElement();
 });
 
+$("#editButton").unbind().click(function () {
+    if (gdo.management.scenarios.currentScenario != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement >= 0) {
+        gdo.management.scenarios.editElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement]);
+    }
+});
+
 $("#removeButton").unbind().click(function () {
-    gdo.management.scenarios.removeElement();
+    if (gdo.management.scenarios.currentScenario != null && gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement >= 0) {
+        gdo.management.scenarios.removeElement(gdo.net.scenario[gdo.management.scenarios.currentScenario].Elements[gdo.net.scenario[gdo.management.scenarios.currentScenario].CurrentElement]);
+    }
 });
