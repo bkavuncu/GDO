@@ -36,7 +36,7 @@ var up = false;
 var down = false;
 var xTrans = 0.0;
 var yTrans = 0.0;
-var zTrans = 0.0;
+var zTrans = -2.0;
 
 var eyeLoc;
 var xEye = 0.0;

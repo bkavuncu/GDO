@@ -84,206 +84,229 @@
         }
 
         float DE(vec3 pos) {
-        //
+            //
     
-        if (modFunction == 1) {
-            pos = modPoint(pos, 3.0);
+            if (modFunction == 1) {
+                pos = modPoint(pos, 3.0);
+            }
+            //float d = opTwist(p);
+            // float d = primitiveSphere(p, 0.5);
+            //return d;
+
+            const int Iterations = 5;
+            float Bailout = 4.0;
+            float Power = 8.0;
+
+            vec3 z = pos;
+            float dr = 1.0;
+            float r = 0.0;
+            for (int i = 0; i < Iterations ; i++) {
+            r = length(z);
+            if (r>Bailout) break;
+
+            // convert to polar coordinates
+            float theta = acos(z.z/r);
+            float phi = atan(z.y,z.x);
+            dr =  pow( r, Power-1.0)*Power*dr + 1.0;
+
+            // scale and rotate the point
+            float zr = pow( r,Power);
+            theta = theta*Power;
+            phi = phi*Power;
+
+            // convert back to cartesian coordinates
+            z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
+            z+=pos;
+            }
+            return 0.5*log(r)*r/dr;
         }
-        //float d = opTwist(p);
-        // float d = primitiveSphere(p, 0.5);
-        //return d;
 
-        const int Iterations = 5;
-        float Bailout = 4.0;
-        float Power = 8.0;
+        float shadow(vec3 ro, vec3 rd, float dist) {
+            // Shadow softness - lower is softer
+            float softness = 32.0;
+            // Shadow density - lower is denser
+            float density = 0.0;
 
-        vec3 z = pos;
-        float dr = 1.0;
-        float r = 0.0;
-        for (int i = 0; i < Iterations ; i++) {
-        r = length(z);
-        if (r>Bailout) break;
-
-        // convert to polar coordinates
-        float theta = acos(z.z/r);
-        float phi = atan(z.y,z.x);
-        dr =  pow( r, Power-1.0)*Power*dr + 1.0;
-
-        // scale and rotate the point
-        float zr = pow( r,Power);
-        theta = theta*Power;
-        phi = phi*Power;
-
-        // convert back to cartesian coordinates
-        z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
-        z+=pos;
-        }
-        return 0.5*log(r)*r/dr;
-        }
-
-        float shadow(vec3 ro, vec3 rd) {
-        // Shadow softness - lower is softer
-        float softness = 16.0;
-        // Shadow density - lower is denser
-        float density = 0.2;
-
-        float res = 1.0;
-        float t = 0.0;
-        for(int i = 0; i < 100; i++) {
-        float d = DE(ro + rd*t);
-        if( d < 0.0001 ) {
-        return density;
-        }
-        res = min( res, softness*d/t );
-        t +=d;
-        }
-        return density+(1.0-density)*res;
+            float res = 1.0;
+            float t = 0.0;
+            for(int i = 0; i < 100; i++) {
+            if (t > dist) break;
+            float d = DE(ro + rd*t);
+            if( d < 0.0001 ) {
+            return density;
+            }
+            res = min( res, softness*d/t );
+            t +=d;
+            }
+            return density+(1.0-density)*res;
         }
 
         vec4 march(vec3 ro, vec3 rd) {
 
-        // Sky color
-        vec4 color = vec4(0.0,0.0,0.0,1.0);
+            // Sky color
+            vec4 color = vec4(0.0,0.0,0.0,1.0);
 
-        // p - point of current ray
-        vec3 p = ro;
+            // p - point of current ray
+            vec3 p = ro;
 
-        // Lighting
-        vec3 lightLoc = vec3(6.0, 2.0, -4.0);
-        float lightIntensity = 25.0;
-        vec3 lightDirection;
-        float s = 0.0;
-        vec3 normal = vec3(0.0);
+            // Lighting
+            vec3 lightLoc = vec3(4.0, 2.0, -2.0);
+            float lightIntensity = 50.0;
+            vec3 lightDirection;
+            vec3 normal = vec3(0.0);
+            float ao = 1.0;
+            float attenuation = 1.0;
 
-        // t - total distance ray travelled
-        float t = 0.0;
-        const int maxSteps = 100;
-        for(int i = 0; i < maxSteps; ++i)  {
+            // Shading
+            vec4 ambientColour = vec4(0.0, 0.0, 0.0, 1.0);
+            vec4 diffuseColour = vec4(1.0, 1.0, 1.0, 1.0);
+            vec4 specularColour = vec4(1.0, 1.0, 1.0, 1.0);
 
-        // ray origin + ray direction * total distance
-        p = ro + rd * t;
+            // t - total distance ray travelled
+            float t = 0.0;
+            const int maxSteps = 100;
+            for(int i = 0; i < maxSteps; ++i)  {
 
-        // distance estimators
-        // Fractal
-        float d1 = DE(p);
-        // Floor
-        float d2 = p.y + 2.0;
-        float d = min(d1,d2);
+            // ray origin + ray direction * total distance
+            p = ro + rd * t;
 
-        if(d < 0.0001) {
-        if (d1 < d2) {
-        // Shading
-        vec4 ambientColour = vec4(1.0, 0.0, 1.0, 1.0);
-        vec4 diffuseColour = vec4(1.0, 1.0, 1.0, 1.0);
-        vec4 specularColour = vec4(1.0, 1.0, 1.0, 1.0);
+            // distance estimators
+            // Fractal
+            float d1 = DE(p);
+            // Floor
+            float d2 = abs(p.y + 2.0);
+            float d = min(d1,d2);
 
-        float attenuation = lightIntensity/(12.5*(distance(p,lightLoc)+s));
-        lightDirection = normalize(p-lightLoc);
+            if(d < 0.0001) {
+            if (d1 < d2) {
 
-        float shadingDetail = 0.0005;
-        vec3 xDir = vec3(shadingDetail,0.0,0.0);
-        vec3 yDir = vec3(0.0,shadingDetail,0.0);
-        vec3 zDir = vec3(0.0,0.0,shadingDetail);
-        normal = normalize(vec3(DE(p+xDir)-DE(p-xDir),
-        DE(p+yDir)-DE(p-yDir),
-        DE(p+zDir)-DE(p-zDir)));
+            ambientColour = vec4(1.0, 0.0, 1.0, 1.0);
+            diffuseColour = vec4(1.0, 0.0, 1.0, 1.0);
 
-        float ao = 1.0 - (float(i)/float(maxSteps));
+            attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
+            lightDirection = normalize(-p+lightLoc);
 
-        color = ambientColour + attenuation * diffuseColour * max(dot(normal, lightDirection), 0.0)
-        + attenuation * specularColour * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 20.0);
-        color.xyz *= ao;
+            float shadingDetail = 0.0002;
+            vec3 xDir = vec3(shadingDetail,0.0,0.0);
+            vec3 yDir = vec3(0.0,shadingDetail,0.0);
+            vec3 zDir = vec3(0.0,0.0,shadingDetail);
+            normal = normalize(vec3(DE(p+xDir)-DE(p-xDir),
+            DE(p+yDir)-DE(p-yDir),
+            DE(p+zDir)-DE(p-zDir)));
 
-        break;
+            ao = 1.0 - (float(i)/float(maxSteps));
 
-        } else {
 
-        // Floor colour
-        if (mod(p.x, 1.0) < 0.5 ) {
-        if (mod(p.z, 1.0) < 0.5 ) {
-        color = vec4(0.0,0.0,0.0,1.0);
-        } else {
-        color = vec4(1.0);
-        }
-        } else {
-        if (mod(p.z, 1.0) < 0.5 ) {
-        color = vec4(1.0);
-        } else {
-        color = vec4(0.0,0.0,0.0,1.0);
-        }
-        }
 
-        lightDirection = normalize(p-lightLoc);
+            break;
 
-        break;
-        }
-        }
+            } else {
 
-        // increase total distance by ray distance
-        t += d;
-        }
+            // Floor colour
+            if (mod(p.x, 1.0) < 0.5 ) {
+            if (mod(p.z, 1.0) < 0.5 ) {
+            diffuseColour = vec4(0.0,0.0,0.0,1.0);
+            ambientColour = vec4(0.0,0.0,0.0,1.0);
+            } else {
+            diffuseColour = vec4(1.0);
+            ambientColour = vec4(1.0);
+            }
+            } else {
+            if (mod(p.z, 1.0) < 0.5 ) {
+            diffuseColour = vec4(1.0);
+            ambientColour = vec4(1.0);
+            } else {
+            diffuseColour = vec4(0.0,0.0,0.0,1.0);
+            ambientColour = vec4(0.0,0.0,0.0,1.0);
+            }
+            }
 
-        // Shadow
-        color.xyz *= shadow(p+0.001*normal, -lightDirection);
+            normal = vec3(0.0, 1.0, 0.0);
+            lightDirection = normalize(-p+lightLoc);
 
-        // Fog
-        vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
-        color = mix(color, fogColor, 1.0 - exp(-t*0.01));
+            break;
+            }
+            }
 
-        return color;
+            // increase total distance by ray distance
+            t += d;
+            }
+
+            // Shadows
+            float s = shadow(p+0.0002*normal, lightDirection, distance(p, lightLoc));
+
+            // Shading
+            // Ambience
+            ambientColour.xyz *= 0.2;
+            color =   vec4(ambientColour.xyz + s * diffuseColour.xyz  * attenuation * max(dot(normal, lightDirection), 0.0)
+            + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0),1.0);
+
+            // Ambient occlusion
+            color.xyz *= ao;
+
+            // Fog
+            vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
+            color = mix(color, fogColor, 1.0 - exp(-t*0.2));
+
+            return color;
 
         }
 
         vec3 calcRayOrigin(float x, float y) {
-        // y rotation
-        float y2 = y*cos(yRot) - focal*sin(yRot);
-        float focal2 = y*sin(yRot) + focal*cos(yRot);
-        y = y2;
+            // y rotation
+            float y2 = y*cos(yRot) - focal*sin(yRot);
+            float focal2 = y*sin(yRot) + focal*cos(yRot);
+            y = y2;
 
-        // x rotation
-        float x2 = x*cos(xRot) - focal2*sin(xRot);
-        focal2 = x*sin(xRot) + focal2*cos(xRot);
-        x = x2;
+            // x rotation
+            float x2 = x*cos(xRot) - focal2*sin(xRot);
+            focal2 = x*sin(xRot) + focal2*cos(xRot);
+            x = x2;
 
-        // ro - ray origin
-        // calculate where ray passes through the screen
-        vec3 ro = vec3(x,y-eyeHeight, focal2);
+            // ro - ray origin
+            // calculate where ray passes through the screen
+            vec3 ro = vec3(x,y-eyeHeight, focal2);
 
-        return ro;
+            return ro;
         }
 
         void rayMarch() {
 
-        // Keep eye in the origin of the scene
-        vec3 eye = vec3(0, 0, 0);
+            // Keep eye in the origin of the scene
+            vec3 eye = vec3(0, 0, 0);
 
-        // Get x between -1.0 - 1.0
-        float x = gl_FragCoord.x * 2.0 / width - 1.0;
+            // Get x between -1.0 - 1.0
+            float x = gl_FragCoord.x * 2.0 / width - 1.0;
 
-        // Get y between -1.0 - 1.0
-        float y = gl_FragCoord.y * 2.0 / height - 1.0;
+            // Get y between -1.0 - 1.0
+            float y = gl_FragCoord.y * 2.0 / height - 1.0;
 
-        // Apply aspect ratio
-        float ratio = height/width;
-        y *= ratio;
+            // Apply aspect ratio
+            float ratio = height/width;
+            y *= ratio;
 
-        float xDiffAA = 0.5/width;
-        float yDiffAA = 0.5*ratio/height;
+            float xDiffAA = 0.5/width;
+            float yDiffAA = 0.5*ratio/height;
 
-        // Ray origin
-        vec3 ro = calcRayOrigin(x, y);
+            // Ray origin
+            vec3 ro = calcRayOrigin(x, y);
 
-        vec3 ro1 = calcRayOrigin(x+xDiffAA, y);
-        vec3 ro2 = calcRayOrigin(x-xDiffAA, y);
-        vec3 ro3 = calcRayOrigin(x, y+yDiffAA);
-        vec3 ro4 = calcRayOrigin(x+xDiffAA, y-yDiffAA);
+            // Set pixel colour
+            vec4 color = march(translation, normalize(ro));
+            gl_FragColor = color;
 
-        // Set pixel colour
-        vec4 color = march(translation-vec3(0.0,0.0,2.0), normalize(ro));
-        gl_FragColor = color;
-
-        // Anti alias
-        //gl_FragColor = mix( mix(march(translation, normalize(ro1)),march(translation, normalize(ro2)),0.5), mix(march(translation, normalize(ro3)),march(translation, normalize(ro4)),0.5), 0.5);
+            // Anti alias
+            /*
+            vec3 ro1 = calcRayOrigin(x+xDiffAA, y);
+            vec3 ro2 = calcRayOrigin(x-xDiffAA, y);
+            vec3 ro3 = calcRayOrigin(x, y+yDiffAA);
+            vec3 ro4 = calcRayOrigin(x+xDiffAA, y-yDiffAA);
+            vec4 c1 = march(translation, normalize(ro1));
+            vec4 c2 = march(translation, normalize(ro2));
+            vec4 c3 = march(translation, normalize(ro3));
+            vec4 c4 = march(translation, normalize(ro4));
+            gl_FragColor = (c1+c2+c3+c4)/4.0;
+            */
         }
 
         void main() {
