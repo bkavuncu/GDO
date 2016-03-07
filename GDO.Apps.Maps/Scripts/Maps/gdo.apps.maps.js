@@ -33,7 +33,7 @@ $(function () {
     }
 
     $.connection.mapsAppHub.client.receiveLayer = function (instanceId, layerId, serializedLayer, exists) {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId + " (Exists:"+ exists+")");
+        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId + " (Exists:" + exists + ")");
         if (exists) {
             if (gdo.net.instance[instanceId].layers[layerId] == null || typeof gdo.net.instance[instanceId].layers[layerId] == "undefined") {
                 gdo.net.app["Maps"].addLayer(instanceId, layerId, JSON.parse(serializedLayer));
@@ -146,7 +146,7 @@ gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
     }
 
     gdo.net.app["Maps"].setView(instanceId, deserializedMap.View);
-    
+
     //Register Change Handlers
     gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
         gdo.net.app["Maps"].changeEvent(instanceId);
@@ -208,7 +208,7 @@ gdo.net.app["Maps"].initClient = function (clientId) {
 
     //Request
 
-    gdo.net.app["Maps"].server.requestMap(instanceId); 
+    gdo.net.app["Maps"].server.requestMap(instanceId);
 }
 
 gdo.net.app["Maps"].initControl = function (instanceId) {
@@ -230,7 +230,6 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
     gdo.loadScript('source', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('style', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('view', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('ui.visualisation', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('ui.map', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('ui', 'maps', gdo.SCRIPT_TYPE.APP);
 
@@ -243,9 +242,11 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
 
     //Request Map
     gdo.net.app["Maps"].server.requestMap(instanceId);
+
+    gdo.net.app["Maps"].drawSearchInput(instanceId);
 }
 
-gdo.net.app["Maps"].initializeArrays = function(instanceId) {
+gdo.net.app["Maps"].initializeArrays = function (instanceId) {
     gdo.net.instance[instanceId].formats = [];
     gdo.net.instance[instanceId].styles = [];
     gdo.net.instance[instanceId].sources = [];
@@ -261,7 +262,7 @@ gdo.net.app["Maps"].switchToInstance = function (instanceId) {
     gdo.net.app["Maps"].server.requestMap(instanceId);
 }
 
-gdo.net.app["Maps"].resizeMap = function(instanceId) {
+gdo.net.app["Maps"].resizeMap = function (instanceId) {
     $("iframe").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
     $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
 }
@@ -286,11 +287,11 @@ gdo.net.app["Maps"].calculateClientParameters = function (instanceId) {
     gdo.net.instance[instanceId].offsetY = gdo.net.instance[instanceId].sectionOffsetY - gdo.net.instance[instanceId].nodeOffsetY;
 }
 
-gdo.net.app["Maps"].calculateControlParameters = function(instanceId) {
+gdo.net.app["Maps"].calculateControlParameters = function (instanceId) {
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.net.app["Maps"].selectedInstance].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.net.app["Maps"].selectedInstance].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
-    gdo.net.instance[instanceId].controlMaxWidth = 1490;
+    gdo.net.instance[instanceId].controlMaxWidth = 1070;
     gdo.net.instance[instanceId].controlMaxHeight = 700;
     gdo.net.instance[instanceId].controlRatio = gdo.net.instance[instanceId].controlMaxWidth / gdo.net.instance[instanceId].controlMaxHeight;
     gdo.net.instance[instanceId].controlWidth = 700;
@@ -323,4 +324,50 @@ gdo.net.app["Maps"].changeEvent = function (instanceId) {
 gdo.net.app["Maps"].updateCenter = function (instanceId) {
     gdo.consoleOut('.Maps', 4, gdo.net.instance[instanceId].map.getView().getCenter());
     gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+}
+
+gdo.net.app["Maps"].searchGeoCode = function (instanceId, address) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'address': address }, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            $("iframe").contents().find("#map_input_div").removeClass("has-error").addClass("has-success");
+            var centerCoordinate = ol.proj.transform([results[0].geometry.location.lng(), results[0].geometry.location.lat()], 'EPSG:4326', 'EPSG:3857');
+            var southWestCoordinate = ol.proj.transform([results[0].geometry.viewport.getSouthWest().lng(), results[0].geometry.viewport.getSouthWest().lat()], 'EPSG:4326', 'EPSG:3857');
+            var northEastCoordinate = ol.proj.transform([results[0].geometry.viewport.getNorthEast().lng(), results[0].geometry.viewport.getNorthEast().lat()], 'EPSG:4326', 'EPSG:3857');
+            var southWestFeature = new ol.Feature();
+            southWestFeature.setGeometry(southWestCoordinate ? new ol.geom.Point(southWestCoordinate) : null);
+            var northEastFeature = new ol.Feature();
+            northEastFeature.setGeometry(northEastCoordinate ? new ol.geom.Point(northEastCoordinate) : null);
+            var boundingBox = new ol.source.Vector({
+                features: [southWestFeature, northEastFeature]
+            });
+            var extent = boundingBox.getExtent();
+            map.getView().fit(extent, map.getSize());
+            map.getView().setCenter(centerCoordinate);
+            setTimeout(function () {
+                gdo.consoleOut(".Maps", 4, centerCoordinate);
+                gdo.net.app["Maps"].uploadMapPosition(instanceId);
+                gdo.net.app["Maps"].displayPositionMarker(instanceId, centerCoordinate);
+                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, centerCoordinate);
+            }, 70);
+
+        } else {
+            gdo.consoleOut(".Maps", 4, 'Geocode was not successful for the following reason: ' + status);
+            $("iframe").contents().find("#map_input_div").removeClass("has-success").addClass("has-error");
+        }
+    });
+}
+
+gdo.net.app["Maps"].displayPositionMarker = function (instanceId, coordinates) {
+    gdo.net.instance[instanceId].positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+}
+
+gdo.net.app["Maps"].clearPositionMarker = function (instanceId) {
+    gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, null);
+    gdo.net.app["Maps"].displayPositionMarker(instanceId, null);
+}
+
+gdo.net.app["Maps"].clearInput = function () {
+    $('iframe').contents().find('#map_input_div').removeClass('has-error').removeClass('has-success');
+    $("iframe").contents().find("#map_input").val('');
 }

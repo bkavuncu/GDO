@@ -41,7 +41,6 @@ namespace GDO.Apps.Maps
 
         public void Init()
         {
-
             SaveEmptyMap();
             Layers= new GenericDictionary<Layer>();
             Interactions = new GenericDictionary<Interaction>();

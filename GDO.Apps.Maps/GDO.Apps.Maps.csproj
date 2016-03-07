@@ -89,7 +89,7 @@
     <Content Include="Scripts\Maps\gdo.apps.maps.source.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.style.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.ui.map.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.ui.visualisation.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.ui.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.utilities.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.view.js" />
     <Content Include="Scripts\Maps\ol3cesium.js.map" />
@@ -102,7 +102,6 @@
     <Content Include="Scripts\Maps\exports.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.3d.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.ui.js" />
     <Content Include="Scripts\Maps\ol3cesium-debug.js" />
     <Content Include="Scripts\Maps\ol3cesium.js" />
     <Content Include="Scripts\Maps\ol3\ol-debug.js" />
