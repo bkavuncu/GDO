@@ -147,7 +147,7 @@
         gdo.consoleOut('.WebGL', 1, 'Node Height Offset = ' + nodeHeightOffset);
 
         var horizontalRotation = nodeWidthOffset * horizontalFov;
-        var verticalRotation = Math.atan2(nodeHeightOffset * physicalScreenHeight, physicalRadius);
+        var verticalRotation = Math.atan2((nodeHeightOffset*0.98) * physicalScreenHeight, physicalRadius);
 
         var viewportHeight = Math.cos(verticalRotation);
         gdo.consoleOut('.WebGL', 1, 'Viewport Height = ' + viewportHeight);
