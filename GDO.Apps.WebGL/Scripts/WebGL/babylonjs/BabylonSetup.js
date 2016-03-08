@@ -1,4 +1,4 @@
-﻿BabylonSetup = function (canvas, stats, gdo) {
+﻿BabylonSetup = function (canvas, gdo, stats) {
 
     this.canvas = canvas;
     this.stats = stats;
@@ -55,17 +55,20 @@
         engine.runRenderLoop(function () {
             scene.render();
 
-            // Update and render stats
-            window[windowIndex] = scene.getLastFrameDuration();
-            windowIndex = (windowIndex + 1) % window.length;
+            if (this.stats != undefined) {
 
-            var sum = window.reduce(function (a, b) { return a + b; });
-            var avg = sum / window.length;
+                // Update and render stats
+                window[windowIndex] = scene.getLastFrameDuration();
+                windowIndex = (windowIndex + 1) % window.length;
 
-            this.stats.innerHTML = "Total vertices: " + scene.getTotalVertices() + "<br>"
-                              + "Active Meshes: " + scene.getActiveMeshes().length + "<br>"
-                              + "Frame duration: " + avg.toFixed(2) + " ms<br>"
-                              + "FPS: " + (1000 / avg).toFixed(2);
+                var sum = window.reduce(function (a, b) { return a + b; });
+                var avg = sum / window.length;
+
+                this.stats.innerHTML = "Total vertices: " + scene.getTotalVertices() + "<br>"
+                                  + "Active Meshes: " + scene.getActiveMeshes().length + "<br>"
+                                  + "Frame duration: " + avg.toFixed(2) + " ms<br>"
+                                  + "FPS: " + (1000 / avg).toFixed(2);
+            }
         }.bind(this));
     }
 
@@ -75,7 +78,7 @@
 
         this.loadSceneModel(engine, scene);
 
-        var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 0, 0), scene);
+        var camera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
         camera.attachControl(this.canvas);
 
         camera.keysUp.push(87);    // W
@@ -85,7 +88,6 @@
 
         camera.speed /= 4;
         camera.position.y += 1.5;
-        camera.rotation.y = -1;
 
         camera.ellipsoid = new BABYLON.Vector3(1, 2, 1);
         camera.applyGravity = true;
@@ -113,7 +115,47 @@
 
         this.loadSceneModel(engine, scene);
 
-        var camera = new BABYLON.FreeCamera("FreeCamera", new BABYLON.Vector3(0, 0, 0), scene);
-        gdo.net.app["WebGL"].initBabylonjsClient(camera);
+        //
+        // Setup camera and rotation offset
+
+        var pixelHeight = gdo.net.node[gdo.clientId].height;
+        var pixelWidth = gdo.net.node[gdo.clientId].width;
+
+        var physicalTotalHeight = 2530;  // in mm
+        var physicalScreenHeight = physicalTotalHeight / 4;
+        var physicalScreenWidth = physicalScreenHeight * (pixelWidth / pixelHeight);
+        var physicalRadius = 3000;
+
+        var horizontalFov = Math.atan2(physicalScreenWidth, physicalRadius);
+
+        var sectionPixelHeight = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].height;
+        var sectionPixelWidth = gdo.net.section[gdo.net.node[gdo.clientId].sectionId].width;
+        var numScreensHigh = sectionPixelHeight / pixelHeight;
+        var numScreensWide = sectionPixelWidth / pixelWidth;
+
+        var camera = new BABYLON.TargetCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+        camera.position.y += 1.5;
+
+        camera.fovMode = BABYLON.Camera.FOVMODE_HORIZONTAL_FIXED;
+        camera.fov = horizontalFov;
+
+        gdo.consoleOut('.WebGL', 1, 'Horizontal FOV = ' + horizontalFov);
+
+        var nodeWidthOffset = gdo.net.node[gdo.clientId].sectionCol - ((numScreensWide - 1) / 2);
+        var nodeHeightOffset = gdo.net.node[gdo.clientId].sectionRow - ((numScreensHigh - 1) / 2);
+        gdo.consoleOut('.WebGL', 1, 'Node Width Offset = ' + nodeWidthOffset);
+        gdo.consoleOut('.WebGL', 1, 'Node Height Offset = ' + nodeHeightOffset);
+
+        var horizontalRotation = nodeWidthOffset * horizontalFov;
+        var verticalRotation = Math.atan2(nodeHeightOffset * physicalScreenHeight, physicalRadius);
+
+        var viewportHeight = Math.cos(verticalRotation);
+        gdo.consoleOut('.WebGL', 1, 'Viewport Height = ' + viewportHeight);
+
+        engine.setSize(canvas.width, canvas.height*viewportHeight);
+
+        var cameraViewOffset = new BABYLON.Vector3(verticalRotation, horizontalRotation, 0);
+
+        gdo.net.app["WebGL"].initBabylonjsClient(camera, cameraViewOffset);
     }
 }

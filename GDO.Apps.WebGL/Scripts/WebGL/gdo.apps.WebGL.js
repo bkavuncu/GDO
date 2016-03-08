@@ -1,6 +1,7 @@
 ﻿var threejsCameraParent;
-var babylonjsCamera;
 
+var babylonjsCamera;
+var babylonCameraRotationOffset;
 
 $(function () {
     gdo.consoleOut('.WebGL', 1, 'Loaded WebGL JS');
@@ -25,8 +26,21 @@ $(function () {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
 
-            babylonjsCamera.position.copyFromFloats(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
-            babylonjsCamera.rotation.copyFromFloats(newCamera.rotation[0], newCamera.rotation[1], newCamera.rotation[2]);
+            if (babylonjsCamera !== undefined) {
+                babylonjsCamera.position.copyFromFloats(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
+
+                //babylonjsCamera.upVector.copyFromFloats(Math.sin(newCamera.rotation[0]) * Math.cos(newCamera.rotation[1]),
+                //                                        Math.cos(newCamera.rotation[0]),
+                //                                        Math.sin(newCamera.rotation[0]) * Math.sin(newCamera.rotation[1]));
+
+                babylonjsCamera.rotation.x = babylonCameraRotationOffset.x;
+                babylonjsCamera.rotation.y = newCamera.rotation[1] + babylonCameraRotationOffset.y;
+                //babylonjsCamera.rotation.x = babylonCameraRotationOffset.x
+
+                //babylonjsCamera.rotation.y = newCamera.rotation[1] + babylonCameraRotationOffset.y;
+                //babylonjsCamera.rotation.x = newCamera.rotation[0] * Math.cos(babylonCameraRotationOffset.y) + babylonCameraRotationOffset.x;
+                //babylonjsCamera.rotation.z = newCamera.rotation[0] * Math.sin(babylonCameraRotationOffset.y);
+            }
         }
     }
 });
@@ -38,11 +52,13 @@ gdo.net.app["WebGL"].initThreejsClient = function (threejsCameraParentParam) {
     threejsCameraParent = threejsCameraParentParam;
 }
 
-gdo.net.app["WebGL"].initBabylonjsClient = function (babylonjsCameraParam) {
+gdo.net.app["WebGL"].initBabylonjsClient = function (babylonjsCameraParam, babylonCameraRotationOffsetParam) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Client at Node ' + gdo.clientId);
 
     babylonjsCamera = babylonjsCameraParam;
+    babylonCameraRotationOffset = babylonCameraRotationOffsetParam;
+    gdo.consoleOut('.WebGL', 1, 'Rotation Offset: ' + JSON.stringify(babylonCameraRotationOffset));
 }
 
 gdo.net.app["WebGL"].initControl = function () {
