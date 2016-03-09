@@ -24,6 +24,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
         }
 

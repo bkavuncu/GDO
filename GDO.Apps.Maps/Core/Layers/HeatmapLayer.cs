@@ -25,8 +25,8 @@ namespace GDO.Apps.Maps.Core.Layers
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
-
             AddtoEditables(() => Gradient);
             AddtoEditables(() => Radius);
             AddtoEditables(() => Blur);

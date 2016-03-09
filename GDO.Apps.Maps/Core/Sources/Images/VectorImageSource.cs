@@ -7,12 +7,12 @@ namespace GDO.Apps.Maps.Core.Sources.Images
 {
     public class VectorImageSource : CanvasImageSource
     {
-        public Sources.VectorSource VectorSource { get; set; }
+        public Sources.VectorSource Source { get; set; }
         public Style Style { get; set; }
         public double? Ratio { get; set; }
-        new public void Init(Sources.VectorSource vectorSource, Style style, double ratio)
+        new public void Init(Sources.VectorSource source, Style style, double ratio)
         {
-            VectorSource = vectorSource;
+            Source = source;
             Style = style;
             Ratio = ratio;
 
@@ -20,6 +20,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
             AddtoEditables(() => Style);
         }

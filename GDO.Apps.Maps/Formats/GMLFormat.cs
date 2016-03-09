@@ -34,6 +34,7 @@ namespace GDO.Apps.Maps.Formats
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
         }
 

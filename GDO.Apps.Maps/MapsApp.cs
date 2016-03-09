@@ -41,7 +41,6 @@ namespace GDO.Apps.Maps
 
         public void Init()
         {
-            SaveEmptyMap();
             Layers= new GenericDictionary<Layer>();
             Interactions = new GenericDictionary<Interaction>();
             Sources = new GenericDictionary<Source>();
@@ -105,16 +104,24 @@ namespace GDO.Apps.Maps
         //Layer
 
         public int AddLayer<T> (string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution) where T : Layer, new()
+            float opacity, bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating) where T : Layer, new()
         {
 
             try
             {
                 int layerId = Layers.GetAvailableSlot();
-                ZindexTable.AddLayer(layerId);
+                if (zIndex == -1)
+                {
+                    ZindexTable.AddLayer(layerId);
+                }
+                else
+                {
+                    ZindexTable.AddLayer(layerId, zIndex);
+                }
+
                 T layer = new T();
                 layer.Init(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity,
-                    visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
                 Layers.Add<T>(layerId, layer);
                 return layerId;
             }
@@ -126,12 +133,12 @@ namespace GDO.Apps.Maps
         }
 
         public bool ModifyLayer(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution)
+            float opacity, bool visible, int minResolution, int maxResolution, bool isAnimating)
         {
             try
             {
                 Layers.GetValue<Core.Layer>(id).Modify(id, name, type, brightness, contrast, saturation,
-                    hue, opacity, visible, minResolution, maxResolution);
+                    hue, opacity, visible, minResolution, maxResolution, isAnimating);
                 return true;
             }
             catch (Exception e)
@@ -142,12 +149,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddHeatmapLayer(string name, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float shadow, float weight, float blur)
+            float opacity, bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating, string[] gradient, float radius, float shadow, float weight, float blur)
         {
             try
             {
                 int layerId = AddLayer<HeatmapLayer>(name, (int)LayerTypes.Heatmap, sourceId, brightness, contrast, saturation,
-                        hue, opacity, visible, minResolution, maxResolution);
+                        hue, opacity, visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
                 Layers.GetValue<HeatmapLayer>(layerId).Init(gradient, radius, shadow, weight, blur);
                 return layerId;
             }
@@ -159,12 +166,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyHeatmapLayer(int layerId, string name, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float blur)
+            float opacity, bool visible, int minResolution, int maxResolution, bool isAnimating, string[] gradient, float radius, float blur)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Heatmap, brightness, contrast, saturation, hue, opacity,
-                        visible, minResolution, maxResolution);
+                        visible, minResolution, maxResolution, isAnimating);
                 Layers.GetValue<HeatmapLayer>(layerId).Modify(gradient, radius, blur);
             }
             catch (Exception e)
@@ -174,12 +181,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddImageLayer(string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, bool visible, int minResolution, int maxResolution)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating)
         {
             try
             {
                 int layerId = AddLayer<ImageLayer>(name, (int)LayerTypes.Image, sourceId, brightness, contrast,
-                    saturation, hue, opacity, visible, minResolution, maxResolution);
+                    saturation, hue, opacity, visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
                 Layers.GetValue<ImageLayer>(layerId).Init();
                 return layerId;
             }
@@ -191,12 +198,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyImageLayer(int layerId, string name, float brightness, float contrast, float saturation,
-            float hue, float opacity, bool visible, int minResolution, int maxResolution)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, bool isAnimating)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Image, brightness, contrast, saturation, hue, opacity,
-                    visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution, isAnimating);
                 Layers.GetValue<ImageLayer>(layerId).Modify();
             }
             catch (Exception e)
@@ -206,12 +213,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddTileLayer(string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, bool visible, int minResolution, int maxResolution, int preload)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating,  int preload)
         {
             try
             {
                 int layerId = AddLayer<TileLayer>(name, (int)LayerTypes.Tile, sourceId, brightness, contrast,
-                    saturation, hue, opacity, visible, minResolution, maxResolution);
+                    saturation, hue, opacity, visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
                 Layers.GetValue<TileLayer>(layerId).Init(preload);
                 return layerId;
             }
@@ -223,12 +230,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyTileLayer(int layerId, string name, float brightness, float contrast, float saturation,
-            float hue, float opacity, bool visible, int minResolution, int maxResolution, int preload)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, bool isAnimating, int preload)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Tile, brightness, contrast, saturation, hue, opacity,
-                    visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution, isAnimating);
                 Layers.GetValue<TileLayer>(layerId).Modify(preload);
             }
             catch (Exception e)
@@ -238,12 +245,12 @@ namespace GDO.Apps.Maps
         }
 
         public int AddVectorLayer(string name, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity,
-             bool visible, int minResolution, int maxResolution, int styleId, int renderBuffer, bool ModifyWhileAnimating, bool ModifyWhileInteracting)
+             bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating, int styleId, int renderBuffer, bool ModifyWhileAnimating, bool ModifyWhileInteracting)
         {
             try
             {
                 int layerId = AddLayer<VectorLayer>(name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation,
-                    hue, opacity, visible, minResolution, maxResolution);
+                    hue, opacity, visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
                 Layers.GetValue<VectorLayer>(layerId).Init(Styles.GetValue<Style>(styleId), renderBuffer, ModifyWhileAnimating, ModifyWhileInteracting);
                 return layerId;
             }
@@ -255,12 +262,12 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyVectorLayer(int layerId, string name, float brightness, float contrast, float saturation, float hue, float opacity,
-            bool visible, int minResolution, int maxResolution, int styleId)
+            bool visible, int minResolution, int maxResolution, bool isAnimating, int styleId)
         {
             try
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Vector, brightness, contrast, saturation, hue, opacity,
-                    visible, minResolution, maxResolution);
+                    visible, minResolution, maxResolution, isAnimating);
                 Layers.GetValue<VectorLayer>(layerId).Modify(Styles.GetValue<Style>(styleId));
             }
             catch (Exception e)
@@ -1197,15 +1204,15 @@ namespace GDO.Apps.Maps
 
         //Utilities
 
-        public void SaveEmptyMap()
+        public void SaveEmptyTemplate()
         {
             String basePath = HttpContext.Current.Server.MapPath("~/Configurations/Maps/");
             String filePath = basePath + "template.json";
-            string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(CreateEmptyMap(), JsonSettings);
+            string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(CreateEmptyTemplate(), JsonSettings);
             System.IO.File.WriteAllText(filePath, serializedMap);
         }
 
-        public Map CreateEmptyMap()
+        public Map CreateEmptyTemplate()
         {
             List<Format> formats = new List<Format>();
             List<Style> styles = new List<Style>();
@@ -1289,10 +1296,10 @@ namespace GDO.Apps.Maps
 
             
             styles.Add(fillStyle);
-            //styles.Add(iconStyle);
-            //styles.Add(regularShapeStyle);
+            styles.Add(iconStyle);
+            styles.Add(regularShapeStyle);
             styles.Add(strokeStyle);
-            //styles.Add(textStyle);
+            styles.Add(textStyle);
             styles.Add(circleStyle);
 
             //Add Sources to Template
@@ -1319,7 +1326,6 @@ namespace GDO.Apps.Maps
             clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
             clusterSource.Name = clusterSource.ClassName;
-            clusterSource.VectorSource = vectorSource;
             clusterSource.Format = esriJsonFormat;
             staticImageSource.Prepare();
             staticImageSource.Id = 2;
@@ -1329,7 +1335,6 @@ namespace GDO.Apps.Maps
             vectorImageSource.Id = 3;
             vectorImageSource.Type = (int)SourceTypes.ImageVector;
             vectorImageSource.Name = vectorImageSource.ClassName;
-            vectorImageSource.VectorSource = vectorSource;
             vectorImageSource.Style = fillStyle;
             imageTileSource.Prepare();
             imageTileSource.Id = 4;
@@ -1361,19 +1366,19 @@ namespace GDO.Apps.Maps
             vectorSource.Type = (int)SourceTypes.Vector;
             vectorSource.Format = geoJsonFormat;
             vectorSource.Name = vectorSource.ClassName;
-            vectorSource.Url = "/Configurations/Maps/Data/stations.json";
+            vectorSource.Url = "";
 
 
             sources.Add(vectorSource);
             sources.Add(BingMapsSource);
-            //sources.Add(clusterSource);
-            //sources.Add(staticImageSource);
-            //sources.Add(vectorImageSource);
-            //sources.Add(imageTileSource);
-            //sources.Add(xyzSource);
-            //sources.Add(stamenSource);
-            //sources.Add(jsonTileSource);
-            //sources.Add(vectorTileSource);
+            sources.Add(clusterSource);
+            sources.Add(staticImageSource);
+            sources.Add(vectorImageSource);
+            sources.Add(imageTileSource);
+            sources.Add(xyzSource);
+            sources.Add(stamenSource);
+            sources.Add(jsonTileSource);
+            sources.Add(vectorTileSource);
 
 
             //Add Layers to Template
@@ -1386,27 +1391,27 @@ namespace GDO.Apps.Maps
             heatmapLayer.Id = 0;
             heatmapLayer.Type = (int)LayerTypes.Heatmap;
             heatmapLayer.Name = heatmapLayer.ClassName;
-            heatmapLayer.Source = vectorSource;
+            //heatmapLayer.Source = vectorSource;
             imageLayer.Prepare();
             imageLayer.Id = 1;
             imageLayer.Type = (int)LayerTypes.Image;
             imageLayer.Name = imageLayer.ClassName;
-            imageLayer.Source = vectorSource;
+            //imageLayer.Source = vectorSource;
             tileLayer.Prepare();
             tileLayer.Id = 2;
             tileLayer.Type = (int)LayerTypes.Tile;
             tileLayer.Name = tileLayer.ClassName;
-            tileLayer.Source = BingMapsSource;
+            //tileLayer.Source = BingMapsSource;
             vectorLayer.Prepare();
             vectorLayer.Id = 3;
             vectorLayer.Type = (int)LayerTypes.Vector;
             vectorLayer.Name = vectorLayer.ClassName;
-            vectorLayer.Source = vectorSource;
-            vectorLayer.Style = circleStyle;
+            //vectorLayer.Source = vectorSource;
+            //vectorLayer.Style = circleStyle;
 
 
-            //layers.Add(heatmapLayer);
-            //layers.Add(imageLayer);
+            layers.Add(heatmapLayer);
+            layers.Add(imageLayer);
             layers.Add(tileLayer);
             layers.Add(vectorLayer);
 

@@ -142,7 +142,7 @@ gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLay
 }
 
 gdo.net.app["Maps"].updateZIndexTable = function (instanceId, deserializedZIndexTable) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updating ZIndexes: ' + layerId);
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updating ZIndexes');
     //TODO for each layer set z index
 }
 

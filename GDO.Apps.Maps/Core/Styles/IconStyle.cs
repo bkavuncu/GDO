@@ -47,6 +47,7 @@ namespace GDO.Apps.Maps.Core.Styles
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
         }
 

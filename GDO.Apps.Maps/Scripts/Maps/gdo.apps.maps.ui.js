@@ -4,13 +4,13 @@ gdo.net.app["Maps"].HeaderHeight = 61;
 gdo.net.app["Maps"].tableHeight = 500;
 gdo.net.app["Maps"].StatusHeight = 49;
 gdo.net.app["Maps"].selected = [];
-gdo.net.app["Maps"].selected["layer"] = null;
-gdo.net.app["Maps"].selected["source"] = null;
-gdo.net.app["Maps"].selected["style"] = null;
+gdo.net.app["Maps"].selected["layer"] = -1;
+gdo.net.app["Maps"].selected["source"] = -1;
+gdo.net.app["Maps"].selected["style"] = -1;
 
 
 gdo.net.app["Maps"].drawEmptyListTable = function (tab) {
-    $("iframe").contents().find("#" + tab + "")
+    $("iframe").contents().find("." + tab + "")
     .empty();
 }
 
@@ -33,19 +33,51 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
         if (arr.hasOwnProperty(i) && arr[i] != null && typeof arr[i] != "undefined") {
             gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing ' + tab + ' ' + i);
 
-            $("iframe").contents().find("#" + tab + "").append("<div id='" + tab + "_" + i + "' class='row' " + tab + "='" + i + "'></div>");
+            $("iframe").contents().find("." + tab + "").append("<div class='" + tab + "_" + i + " row' " + tab + "='" + i + "'></div>");
 
-            $("iframe").contents().find("#" + tab + "_" + i)
+            var color = "white";
+            var icon = "";
+
+            if (tab == "layer") {
+                if (arr[i].getVisible()) {
+                    icon = "fa-eye"
+                    color = "white";
+                } else {
+                    icon = "fa-eye-slash"
+                    color = "gray";
+                }
+                if (arr[i].canAnimate) {
+                    icon = "fa-play"
+                    color = "white";
+                }
+                if (arr[i].isAnimating) {
+                    icon = "fa-spinner"
+                    color = "#77B200";
+                }
+            }
+
+            if (gdo.net.app["Maps"].selected[tab] == i) {
+                color = "#4CBFF8";
+            }
+
+            $("iframe").contents().find("." + tab + "_" + i)
                 .css("align", "top")
                 .css("width", "100%")
-                .append("<div id='" + tab + "_" + i + "_content' class='table' " + tab + "='" + i + "'>" +
-                        "<div id='" + tab + "_" + i + "_id' class='col-md-2' " + tab + "='" + i + "'> &nbsp;&nbsp;" + arr[i].id + "</div>" +
-                        "<div id='" + tab + "_" + i + "_name' class='col-md-5' " + tab + "='" + i + "'> " + arr[i].name + "</div>" +
+                .append("<div class='" + tab + "_" + i + "_content table'  " + tab + "='" + i + "' style='color:" + color + "'>" +
+                        "<div class='" + tab + "_" + i + "_id col-md-2'  " + tab + "='" + i + "'> &nbsp;&nbsp;" + arr[i].id + "</div>" +
+                        "<div class='" + tab + "_" + i + "_name col-md-8'  " + tab + "='" + i + "'> " + arr[i].name + "</div>" +
+                        "<div class='" + tab + "_" + i + "_icon col-md-1'  " + tab + "='" + i + "'><i class='fa " + icon + "'></i></div>" +
                     "</div>");
+            $("iframe").contents().find("." + tab + "_" + i + "_content").unbind().click(function () {
+                gdo.net.app["Maps"].selected[tab] = $(this).attr(tab);
+                gdo.net.app["Maps"].drawListTable(instanceId, tab);
+            });
             j++;
         }
     }
-    gdo.net.app["Maps"].drawEmptyPropertyTable();
+    gdo.net.app["Maps"].drawPropertyTable(instanceId, tab, gdo.net.app["Maps"].selected[tab]);
+
+    //TODO draw property table
 }
 
 gdo.net.app["Maps"].drawEmptyPropertyTable = function (tab) {
@@ -58,43 +90,66 @@ gdo.net.app["Maps"].drawPropertyTable = function (instanceId, tab, id) {
     if (id > 0) {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property Table for ' + tab + ' ' + id);
 
-        gdo.net.app["Maps"].drawEmptyPropertyTable();
+        gdo.net.app["Maps"].drawEmptyPropertyTable(tab);
 
         //TODO change the name of the panel
+
+        var arr = [];
+
+        switch (tab) {
+            case "layer":
+                arr = gdo.net.instance[instanceId].layers;
+            default:
+        }
 
         if (id >= 0) {
             for (var key in arr[id].properties) {
                 if (arr[id].properties.hasOwnProperty(key) && key != "$type") {
-                    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property ' + key + ' for "+tab+" ' + id);
+                    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property ' + key + ' for ' + tab + ' ' + id);
 
 
-                    $("iframe").contents().find("#" + tab + "_properties").append("<div id='" + tab + "_" + id + "_property_" + key + "' class='row' " + tab + "='" + id + "' property='" + key + "'></div>");
+                    $("iframe").contents().find("#" + tab + "_properties").append("<div id='" + tab + "_" + id + "_property_" + key + "' class='row' " + tab + "='" + id + "' property='" + key + "' style='width: 98%;height: 100%;'></div>");
 
                     $("iframe").contents().find("#" + tab + "_" + id + "_property_").append(
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' ><b>" + key + "</b></div>" +
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' >" + arr[id].properties[key] + "</div>");
+                        "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                        "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray' >" + arr[id].properties[key] + "</div>");
 
 
 
                     if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Array]') {
                         $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' ><b>" + key + "</b></div>" +
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' >" + arr[id].properties[key] + "</div>");
+                        "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                        "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + arr[id].properties[key] + "</div>");
 
                     } else {
                         if (contains(arr[id].properties["Editables"].$values, key)) {
+                            if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Object]') {
+                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
+                                "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                                "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                                    "<input type='text' id='" + tab + "_" + id + "_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value=" + arr[id].properties[key].Id + "/></input></div>");
+                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key + "_value_input")
+                                    .attr("value", arr[id].properties[key].Id);
+                            } else {
+                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
+                                "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                                "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                                    "<input type='text' id='" + tab + "_" + id + "_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value=" + arr[id].properties[key] + "/></input></div>");
+                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key + "_value_input")
+                                    .attr("value", arr[id].properties[key]);
+                            }
 
-                            $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                                "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' ><b>" + key + "</b></div>" +
-                                "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' >" +
-                                    "<input type='text' id='" + tab + "_" + id + "_property_" + key + "_value_input'  style='width: 100%;height: 100%;' value=" + arr[id].properties[key] + "/></input></div>");
-                            $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key + "_value_input")
-                                .attr("onfocus", "this.value=''")
-                                .attr("value", arr[id].properties[key]);
                         } else {
-                            $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                            "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' ><b>" + key + "</b></div>" +
-                            "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' >" + arr[id].properties[key] + "</div>");
+                            if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Object]') {
+                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
+                                    "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                                    "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + arr[id].properties[key].Id + "</div>");
+
+                            } else {
+                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
+                                    "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                                    "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + arr[id].properties[key] + "</div>");
+                            }
                         }
                     }
                 }
@@ -112,7 +167,7 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
       .css("width", "60%")
       //.css("height", "40px")
       .empty()
-      .append("<input type='text'  class='form-control' id='map_input' value='Enter Location' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
+      .append("<input type='text'  class='form-control' id='map_input' value='&nbsp;Enter Location' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
     $("iframe").contents().find("#map_input")
         .css("width", "100%")
         .css("height", "40px")
@@ -163,4 +218,97 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
         .click(function () {
             gdo.net.app["Maps"].clearPositionMarker(instanceId);
         });
+}
+
+gdo.net.app["Maps"].registerButtons = function (instanceId) {
+    $("iframe").contents().find(".layer-play-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-pause-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-stop-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-up-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-down-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-visible-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-add-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-remove-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".layer-save-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".source-add-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".source-remove-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".source-save-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".style-add-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".style-remove-button")
+        .unbind()
+        .click(function () {
+
+        });
+
+    $("iframe").contents().find(".style-save-button")
+        .unbind()
+        .click(function () {
+
+        });
+
 }

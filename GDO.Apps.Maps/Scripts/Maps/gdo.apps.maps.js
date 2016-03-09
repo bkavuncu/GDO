@@ -10,21 +10,10 @@ var ds;
 $(function () {
     gdo.consoleOut('.Maps', 1, 'Loaded Maps JS');
 
-    /*$.connection.mapsAppHub.client.receive3DMode = function (instanceId, mode) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
-            gdo.net.app["Maps"].set3DMode(instanceId, mode);
-            gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Setting 3D Mode :' + mode);
-            gdo.net.app["Maps"].drawMapTable(instanceId);
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.net.app["Maps"].selectedInstance == instanceId) {
-            gdo.net.app["Maps"].set3DMode(instanceId, mode);
-            gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Setting 3D Mode :' + mode);
-            gdo.net.app["Maps"].drawMapTable(instanceId);
-        }
-    }*/
-
-    $.connection.mapsAppHub.client.receiveTemplate = function (serializedTemplate) {
+    $.connection.mapsAppHub.client.receiveTemplate = function (instanceId, serializedTemplate) {
         gdo.consoleOut('.Maps', 1, 'Received Template Table');
         //TODO
+        gdo.net.instance[instanceId].template = JSON.parse(serializedTemplate);
     }
 
     $.connection.mapsAppHub.client.receiveZIndexTable = function (instanceId, serializedZIndexTable) {
@@ -54,7 +43,7 @@ $(function () {
 
     $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Map');
-        gdo.net.app["Maps"].initMap(instanceId, JSON.parse(serializedMap));
+        gdo.net.app["Maps"].initLayers(instanceId, JSON.parse(serializedMap));
     }
 
     $.connection.mapsAppHub.client.receiveInteraction = function (instanceId) {
@@ -111,7 +100,7 @@ $(function () {
     }
 });
 
-gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
+gdo.net.app["Maps"].initMap = function (instanceId) {
 
     //Initialize View
     view = new ol.View({
@@ -130,6 +119,9 @@ gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
     });
     gdo.net.instance[instanceId].map = map;
 
+}
+
+gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     //Process deserialized Map
     var i;
     for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
@@ -175,9 +167,16 @@ gdo.net.app["Maps"].initMap = function (instanceId, deserializedMap) {
     // Initialized
     gdo.net.instance[instanceId].isInitialized = true;
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        gdo.net.app["Maps"].drawMapTable(gdo.net.app["Maps"].selectedInstance);
+        gdo.net.app["Maps"].drawMapTable(instanceId);
     }
     gdo.net.app["Maps"].requestView(instanceId);
+    gdo.net.app["Maps"].server.requestTemplate(instanceId);
+
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.app["Maps"].drawListTable(instanceId, "layer");
+        //gdo.net.app["Maps"].drawListTable(instanceId, "source");
+        //gdo.net.app["Maps"].drawListTable(instanceId, "style");
+    }
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
@@ -206,17 +205,14 @@ gdo.net.app["Maps"].initClient = function (clientId) {
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.app["Maps"].calculateClientParameters(instanceId);
 
-    //Request
+    gdo.net.app["Maps"].initMap(instanceId);
 
+    //Request
     gdo.net.app["Maps"].server.requestMap(instanceId);
 }
 
 gdo.net.app["Maps"].initControl = function (instanceId) {
     gdo.consoleOut('.Maps', 1, 'Initializing Maps Control at Instance ' + instanceId);
-
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        gdo.net.app["Maps"].selectedInstance = instanceId;
-    }
 
     //Initialize Arrays
     gdo.net.app["Maps"].initializeArrays(instanceId);
@@ -237,13 +233,20 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.app["Maps"].calculateControlParameters(instanceId);
 
+    gdo.net.app["Maps"].initMap(instanceId);
+
     //Resize Map
     gdo.net.app["Maps"].resizeMap(instanceId);
 
     //Request Map
     gdo.net.app["Maps"].server.requestMap(instanceId);
 
+    //Draw UI Elements
     gdo.net.app["Maps"].drawSearchInput(instanceId);
+    gdo.net.app["Maps"].registerButtons(instanceId);
+
+    //
+
 }
 
 gdo.net.app["Maps"].initializeArrays = function (instanceId) {
@@ -288,8 +291,8 @@ gdo.net.app["Maps"].calculateClientParameters = function (instanceId) {
 }
 
 gdo.net.app["Maps"].calculateControlParameters = function (instanceId) {
-    gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.net.app["Maps"].selectedInstance].sectionId].width;
-    gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.net.app["Maps"].selectedInstance].sectionId].height;
+    gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
+    gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
     gdo.net.instance[instanceId].controlMaxWidth = 1070;
     gdo.net.instance[instanceId].controlMaxHeight = 700;

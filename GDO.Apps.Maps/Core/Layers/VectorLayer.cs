@@ -23,6 +23,7 @@ namespace GDO.Apps.Maps.Core.Layers
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
             AddtoEditables(() => Style);
         }

@@ -11,18 +11,19 @@ namespace GDO.Apps.Maps.Core.Sources
         public int? Distance { get; set; }
         public double?[] Extent { get; set; }
         public Format Format { get; set; }
-        public VectorSource VectorSource { get; set; }
-        new public void Init(int distance, double?[] extent, Format format, VectorSource vectorSource)
+        public VectorSource Source { get; set; }
+        new public void Init(int distance, double?[] extent, Format format, VectorSource source)
         {
             Distance = distance;
             Extent = extent;
             Format = format;
-            VectorSource = vectorSource;
+            Source = source;
 
             Prepare();
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName = this.GetType().Name;
         }
 

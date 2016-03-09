@@ -23,6 +23,18 @@ namespace GDO.Apps.Maps.Core
             ZindexDictionary.Add(layerId, 0);
         }
 
+        public void AddLayer(int layerId, int zIndex)
+        {
+            foreach (KeyValuePair<int, int> index in ZindexDictionary)
+            {
+                if (ZindexDictionary[index.Key] >= zIndex)
+                {
+                    ZindexDictionary[index.Key] = zIndex++;
+                }
+            }
+            ZindexDictionary[layerId] = zIndex;
+        }
+
         public void RemoveLayer(int layerId)
         {
             int zIndex = ZindexDictionary[layerId];
@@ -46,7 +58,6 @@ namespace GDO.Apps.Maps.Core
                     ZindexDictionary[layerId] = zIndex - 1;
                     ZindexDictionary[index.Key] = zIndex;
                 }
-                ZindexDictionary.Remove(layerId);
             }
         }
 
@@ -60,7 +71,6 @@ namespace GDO.Apps.Maps.Core
                     ZindexDictionary[layerId] = zIndex + 1;
                     ZindexDictionary[index.Key] = zIndex;
                 }
-                ZindexDictionary.Remove(layerId);
             }
         }
     }

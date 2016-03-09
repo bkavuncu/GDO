@@ -24,18 +24,20 @@ namespace GDO.Apps.Maps.Core
         public float? Saturation { get; set; }
         public float? Hue { get; set; }
         public float? Opacity { get; set; }
-        //public int ZIndex { get; set; }
+        public int ZIndex { get; set; }
         public bool? Visible { get; set; }
-        public double?[] extent { get; set; }
+        public double?[] Extent { get; set; }
         public int? MinResolution { get; set; }
         public int? MaxResolution { get; set; }
+        public bool CanAnimate { get; set; }
+        public bool IsAnimating { get; set; }
 
         public Layer()
         {
             
         }
         public void Init(int id, string name, int type, Source source, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution)
+            float opacity, bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating)
         {
             Id = id;
             Name = name;
@@ -49,7 +51,9 @@ namespace GDO.Apps.Maps.Core
             Visible = visible;
             MinResolution = minResolution;
             MaxResolution = maxResolution;
-
+            CanAnimate = canAnimate;
+            IsAnimating = isAnimating;
+            ZIndex = zIndex;
             Prepare();
         }
     
@@ -71,7 +75,7 @@ namespace GDO.Apps.Maps.Core
         }
 
         public void Modify(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution)
+            float opacity, bool visible, int minResolution, int maxResolution, bool isAnimating)
         {
             Id = id;
             Name = name;
@@ -81,7 +85,7 @@ namespace GDO.Apps.Maps.Core
             Saturation = saturation;
             Hue = hue;
             Opacity = opacity;
-            //ZIndex = zIndex;
+            IsAnimating = isAnimating;
             Visible = visible;
             MinResolution = minResolution;
             MaxResolution = maxResolution;

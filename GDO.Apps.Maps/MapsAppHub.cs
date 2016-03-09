@@ -120,8 +120,8 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedTemplate = Newtonsoft.Json.JsonConvert.SerializeObject(maps.CreateEmptyMap());
-                Clients.Caller.receiveTemplate(serializedTemplate);
+                string serializedTemplate = Newtonsoft.Json.JsonConvert.SerializeObject(maps.CreateEmptyTemplate());
+                Clients.Caller.receiveTemplate(instanceId, serializedTemplate);
             }
             catch (Exception e)
             {
@@ -158,7 +158,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     string serializedView = maps.GetSerializedView();
-                    Clients.Caller.receiveview(instanceId, serializedView);
+                    //Clients.Caller.receiveView(instanceId, serializedView);
                 }
                 catch (Exception e)
                 {
@@ -177,7 +177,7 @@ namespace GDO.Apps.Maps
         //Layer
 
         public void AddHeatmapLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution, string[] gradient, float radius, float shadow, float weight, float blur)
+            float opacity, bool visible, int minResolution, int maxResolution, bool canAnimate, bool isAnimating, string[] gradient, float radius, float shadow, float weight, float blur)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -185,7 +185,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     int layerId = maps.AddHeatmapLayer(name, sourceId, brightness, contrast, saturation, hue,
-                        opacity, visible, minResolution, maxResolution, gradient, radius, shadow, weight, blur);
+                        opacity, visible, minResolution, maxResolution, canAnimate, isAnimating, gradient, radius, shadow, weight, blur);
                     ;
                     BroadcastLayer(instanceId, layerId);
                 }
@@ -216,7 +216,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddImageLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, bool visible, int minResolution, int maxResolution)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, bool canAnimate, bool isAnimating)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -224,7 +224,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     int layerId = maps.AddImageLayer(name, sourceId, brightness, contrast, saturation, hue, opacity,
-                        visible, minResolution, maxResolution);
+                        visible, minResolution, maxResolution, canAnimate, isAnimating);
                     BroadcastLayer(instanceId, layerId);
                 }
                 catch (Exception e)
@@ -254,7 +254,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddTileLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation,
-            float hue, float opacity, bool visible, int minResolution, int maxResolution, int preload)
+            float hue, float opacity, bool visible, int minResolution, int maxResolution, bool canAnimate, bool isAnimating, int preload)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -262,7 +262,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     int layerId = maps.AddTileLayer(name, sourceId, brightness, contrast, saturation, hue, opacity,
-                        visible, minResolution, maxResolution, preload);
+                        visible, minResolution, maxResolution, canAnimate, isAnimating, preload);
                     BroadcastLayer(instanceId, layerId);
                 }
                 catch (Exception e)
@@ -292,7 +292,7 @@ namespace GDO.Apps.Maps
         }
 
         public void AddVectorLayer(int instanceId, string name, int sourceId, float brightness, float contrast, float saturation, float hue, float opacity,
-            bool visible, int minResolution, int maxResolution, int styleId, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
+            bool visible, int minResolution, int maxResolution, bool canAnimate, bool isAnimating, int styleId, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -300,7 +300,7 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
                     int layerId = maps.AddVectorLayer(name, sourceId, brightness, contrast, saturation, hue, opacity,
-                        visible, minResolution, maxResolution, styleId, renderBuffer, updateWhileAnimating,
+                        visible, minResolution, maxResolution, canAnimate, isAnimating, styleId, renderBuffer, updateWhileAnimating,
                         updateWhileInteracting);
                     BroadcastLayer(instanceId, layerId);
                 }

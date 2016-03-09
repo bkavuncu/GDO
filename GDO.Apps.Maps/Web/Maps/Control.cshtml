@@ -80,20 +80,16 @@
         }
 
         .input_field_div {
-            margin: 0px;
-            padding: 0px;
         }
 
         .input_field {
             width: 100%;
             height: 40px;
-            border: 1px solid #333;
+            border: 1px solid #222;
             background: #333;
             color: #FFF;
-            padding: 0px;
             display: inline-block;
             position: relative;
-            text-align: center;
         }
 
         .map:-moz-full-screen {
@@ -177,9 +173,14 @@
                         <a href="#animation" data-toggle="tab"><i class="fa fa-play fa-fw "></i>&nbsp;&nbsp;Animation</a>
                     </li>
                     <li>
-                        <a href="#data" data-toggle="tab"><i class="glyphicon glyphicon-save "></i>&nbsp;&nbsp;Data Import</a>
+                        <a href="#data" data-toggle="tab"><i class="fa fa-arrow-circle-down fa-fw"></i>&nbsp;&nbsp;Data Import</a>
                     </li>
-
+                    <li>
+                        <a href="#configuration" data-toggle="tab"><i class="fa fa-cog fa-fw"></i>&nbsp;&nbsp;Configurations</a>
+                    </li>
+                    <li style="float: right;">
+                        <button type='button' class='btn btn-primary ' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Map</button>
+                    </li>
                 </ul>
 
                 <!-- Tab panes -->
@@ -192,11 +193,16 @@
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-align-justify fa-fw'></i>&nbsp;Layers</h6>
                                     </div>
-                                    <div class="panel-body" style="height: 70vh">
-
+                                    <div class="panel-body" style="margin: 0; padding: 0;font-size: 16px; width: 99.5%; height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div class="layer"></div>
                                     </div>
-                                    <div class="panel-footer" style="vertical-align: bottom;">
-                                        &nbsp;
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align: center">
+                                        <button type='button' class='btn btn-success layer-play-button' style=""><i class='fa  fa-play  '></i></button>
+                                        <button type='button' class='btn btn-warning layer-pause-button' style=""><i class='fa  fa-pause  '></i></button>
+                                        <button type='button' class='btn btn-danger layer-stop-button' style=""><i class='fa  fa-stop  '></i></button>
+                                        <button type='button' class='btn btn-primary layer-up-button' style=""><i class='fa  fa-arrow-up '></i></button>
+                                        <button type='button' class='btn btn-primary layer-down-button' style=""><i class='fa  fa-arrow-down '></i></button>
+                                        <button type='button' class='btn btn-info layer-visible-button' style=""><i class='fa  fa-eye  '></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -232,26 +238,32 @@
                             <div class="col-lg-3">
                                 <div id="layers_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-align-justify fa-fw'></i>&nbsp;Layers</h6>
+                                        <h6><i class='fa fa-align-justify fa-fw'></i>&nbsp;&nbsp;Layers</h6>
                                     </div>
-                                    <div class="panel-body" id="layer" style="margin: 0; padding: 0;font-size: 16px; width: 99.5%; height: 70vh; overflow: auto ; border: 1px solid #333;">
-                                        <div id="layer"></div>
+                                    <div class="panel-body" style="margin: 0; padding: 0;font-size: 16px; width: 99.5%; height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div class="layer"></div>
                                     </div>
-                                    <div class="panel-footer" style="vertical-align: bottom;">
-                                        &nbsp;
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align: center">
+                                        <button type='button' class='btn btn-success layer-add-button' style=""><i class='fa  fa-plus '></i></button>
+                                        <button type='button' class='btn btn-danger layer-remove-button' style=""><i class='fa  fa-minus '></i></button>
+                                        <button type='button' class='btn btn-primary layer-up-button' style=""><i class='fa  fa-arrow-up '></i></button>
+                                        <button type='button' class='btn btn-primary layer-down-button' style=""><i class='fa  fa-arrow-down '></i></button>
+                                        <button type='button' class='btn btn-info layer-visible-button' style=""><i class='fa  fa-eye  '></i></button>
+
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-9">
                                 <div id="layers_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;<font id="layer_label"></font></h6>
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="layer_label"></font></h6>
                                     </div>
-                                    <div id="layer_properties" class="panel-body" style="margin: 0; padding: 0;font-size: 16px; width: 99.7%;height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                    <div class="panel-body" style="margin: 0; padding: 0;font-size: 16px; width: 99.7%;height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div id="layer_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align:right">
 
-                                    </div>
-                                    <div class="panel-footer" style="vertical-align: bottom;">
-                                        &nbsp;
+                                        <button type='button' class='btn btn-primary layer-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Layer</button>
                                     </div>
                                 </div>
                             </div>
@@ -263,26 +275,27 @@
                             <div class="col-lg-3">
                                 <div id="sources_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-database fa-fw'></i>&nbsp;Sources</h6>
+                                        <h6><i class='fa fa-database fa-fw'></i>&nbsp;&nbsp;Sources</h6>
                                     </div>
-                                    <div class="panel-body" id="source" style="height: 70vh">
-
+                                    <div class="panel-body" id="source" style="margin: 0; padding: 0;font-size: 16px; width: 99.7%;height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div class="source"></div>
                                     </div>
-                                    <div class="panel-footer" style="vertical-align: bottom;">
-                                        &nbsp;
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align: center;">
+                                        <button type='button' class='btn btn-success source-add-button' style=""><i class='fa  fa-plus '></i></button>
+                                        <button type='button' class='btn btn-danger source-remove-button' style=""><i class='fa  fa-minus '></i></button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-9">
                                 <div id="sources_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;<font id="source_label">a</font></h6>
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="source_label">a</font></h6>
                                     </div>
-                                    <div id="source_properties" class="panel-body" style="height: 70vh">
-
+                                    <div class="panel-body" style="margin: 0; padding: 0;font-size: 16px; width: 99.7%;height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div id="source_properties"></div>
                                     </div>
-                                    <div class="panel-footer" style="vertical-align: bottom;">
-                                        &nbsp;
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align: right;">
+                                        <button type='button' class='btn btn-primary source-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Source</button>
                                     </div>
                                 </div>
                             </div>
@@ -290,13 +303,45 @@
                     </div>
                     <div class="tab-pane fade" id="styles">
                         <h4>Styles</h4>
-                        <p>TBD</p>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div id="sstyles_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-image fa-fw'></i>&nbsp;&nbsp;Styles</h6>
+                                    </div>
+                                    <div class="panel-body" id="source" style="margin: 0; padding: 0;font-size: 16px; width: 99.7%;height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div class="style"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align: center;">
+                                        <button type='button' class='btn btn-success style-add-button' style=""><i class='fa  fa-plus '></i></button>
+                                        <button type='button' class='btn btn-danger style-remove-button' style=""><i class='fa  fa-minus '></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div id="styles_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="style_label">a</font></h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0;font-size: 16px; width: 99.7%;height: 70vh; overflow: auto ; border: 1px solid #333;">
+                                        <div id="style_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom;text-align: right;">
+                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Style</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="data">
                         <h4>Data Import</h4>
                         <p>TBD</p>
                     </div>
                     <div class="tab-pane fade" id="animation">
+                        <h4>Animation</h4>
+                        <p>TBD</p>
+                    </div>
+                    <div class="tab-pane fade" id="configuration">
                         <h4>Animation</h4>
                         <p>TBD</p>
                     </div>

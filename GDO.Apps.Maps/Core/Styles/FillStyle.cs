@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps.Core.Styles
         }
         new public void Prepare()
         {
+            base.Prepare();
             AddtoEditables(() => Color);
             ClassName = this.GetType().Name;
         }
