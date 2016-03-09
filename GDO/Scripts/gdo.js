@@ -1,4 +1,4 @@
-﻿gdo.CLIENT_MODE = {
+gdo.CLIENT_MODE = {
     NODE: 1,
     CONTROL: 2
 };
@@ -52,7 +52,7 @@ gdo.initGDO = function (clientMode) {
                 setTimeout(function() { setInterval(gdo.net.uploadNodeInfo, gdo.updateInterval); }, Math.random() * gdo.updateInterval);
             } else if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 waitForResponse(initApp, gdo.net.isNodeInitialized, 50, 20, 'Node Failed to Initialize');
-                setTimeout(function() { gdo.populateFunctions("gdo", eval("gdo")); }, 700 );
+                setTimeout(function() { gdo.populateFunctions("gdo", eval("gdo"),0); }, 700 );
             }
 
             //set intervl and 
@@ -183,21 +183,23 @@ gdo.timeStamp = function() {
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }
 
-gdo.populateFunctions = function (root,object) {
-    for (var property in object) {
-        if (object.hasOwnProperty(property)) {
-            if (typeof object[property] == "object") {
-                gdo.populateFunctions(""+root+"."+property,object[property]);
-            }
-            else if (typeof object[property] == "function") {
-                if (!contains(gdo.functions.array.mods, root)) {
-                    gdo.functions.array.mods.push(root);
+gdo.populateFunctions = function (root, object, depth) {
+    if (depth < 14) {
+        for (var property in object) {
+            if (object.hasOwnProperty(property)) {
+                if (typeof object[property] == "object" && object != gdo.net.instance) {
+                    gdo.populateFunctions("" + root + "." + property, object[property], depth + 1);
                 }
-                if (gdo.functions.array.funcs[root] == null) {
-                    gdo.functions.array.funcs[root] = [];
+                else if (typeof object[property] == "function") {
+                    if (!contains(gdo.functions.array.mods, root)) {
+                        gdo.functions.array.mods.push(root);
+                    }
+                    if (gdo.functions.array.funcs[root] == null) {
+                        gdo.functions.array.funcs[root] = [];
+                    }
+                    gdo.functions.array.funcs[root].push(property);
+                    gdo.functions.list.push(root + "." + property + "(" + getParamNames(object[property]) + ")");
                 }
-                gdo.functions.array.funcs[root].push(property);
-                gdo.functions.list.push(root + "." + property + "(" + getParamNames(object[property]) + ")");
             }
         }
     }
