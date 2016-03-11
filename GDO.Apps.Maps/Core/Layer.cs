@@ -75,9 +75,9 @@ namespace GDO.Apps.Maps.Core
         {
             ClassName = this.GetType().Name;
 
-            AddtoEditables(() => Id);
+            //AddtoEditables(() => Id);
             AddtoEditables(() => Name);
-            AddtoEditables(() => Type);
+            //AddtoEditables(() => Type);
             AddtoEditables(() => Brightness);
             AddtoEditables(() => Contrast);
             AddtoEditables(() => Saturation);

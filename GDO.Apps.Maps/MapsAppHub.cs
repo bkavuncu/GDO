@@ -120,7 +120,7 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedTemplate = Newtonsoft.Json.JsonConvert.SerializeObject(maps.CreateEmptyTemplate());
+                string serializedTemplate = maps.GetSerializedTemplate();
                 Clients.Caller.receiveTemplate(instanceId, serializedTemplate);
             }
             catch (Exception e)

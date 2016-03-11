@@ -25,9 +25,17 @@
     XMLFeature: 22
 };
 
+gdo.net.app["Maps"].newFormat = function(instanceId, formatId, deserializedFormat) {
+    //TODO create a new format
+
+    // properties 
+}
 
 gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedFormat) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Format :' + deserializedFormat.Id);
+    if (gdo.net.app["Maps"].index["format"] <= deserializedFormat.Id) {
+        gdo.net.app["Maps"].index["format"] = deserializedFormat.Id;
+    }
     var format;
     var properties;
     var options = {};
@@ -102,11 +110,10 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
             break;
     }
     gdo.net.instance[instanceId].formats[formatId] = format;
-    format.id = deserializedFormat.Id;
-    format.name = deserializedFormat.Name;
-    format.type = deserializedFormat.Type;
     format.properties = deserializedFormat;
+    format.properties.isInitialized = true;
 }
+
 
 gdo.net.app["Maps"].updateFormat = function (instanceId, formatId, deserializedFormat) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updating Format :' + deserializedFormat.Id);

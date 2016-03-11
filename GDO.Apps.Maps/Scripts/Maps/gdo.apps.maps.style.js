@@ -13,6 +13,9 @@ var st;
 
 gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle) {
     st = deserializedStyle;
+    if (gdo.net.app["Maps"].index["style"] <= deserializedStyle.Id) {
+        gdo.net.app["Maps"].index["style"] = deserializedStyle.Id;
+    }
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Style :' + deserializedStyle.Id);
     var style;
     var properties;
@@ -112,10 +115,8 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
             break;
     }
     gdo.net.instance[instanceId].styles[styleId] = style;
-    style.id = deserializedStyle.Id;
-    style.name = deserializedStyle.Name;
-    style.type = deserializedStyle.Type;
     style.properties = deserializedStyle;
+    style.properties.isInitialized = true;
 }
 
 gdo.net.app["Maps"].updateStyle = function (instanceId, styleId, deserializedStyle) {

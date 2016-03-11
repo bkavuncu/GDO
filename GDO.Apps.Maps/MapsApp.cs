@@ -20,7 +20,7 @@ namespace GDO.Apps.Maps
 {
     public class MapsApp : IBaseAppInstance
     {
-        JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+        public JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
@@ -77,7 +77,11 @@ namespace GDO.Apps.Maps
             }
             View = Map.View;
         }
-
+        public string GetSerializedTemplate()
+        {
+            string serializedTemplate = Newtonsoft.Json.JsonConvert.SerializeObject(CreateEmptyTemplate(), JsonSettings);
+            return serializedTemplate;
+        }
 
         //Map
 
@@ -1203,7 +1207,7 @@ namespace GDO.Apps.Maps
             double[] topLeft = { 0, 0, 0, 0 };
             double[] bottomRight = { 0, 0, 0, 0 };
             double[] center = { 0, 0, 0, 0 };
-            Position position = new Position(topLeft, center, bottomRight, 77, 11);
+            Position position = new Position(topLeft, center, bottomRight, 0, 0);
             View view = new View(position, "EPSG:4326",0, 100, 100);
 
             //Add Formats to Template
@@ -1213,16 +1217,12 @@ namespace GDO.Apps.Maps
             KMLFormat kmlFormat = new KMLFormat();
 
             esriJsonFormat.Prepare();
-            esriJsonFormat.Id = 0;
             esriJsonFormat.Type = (int)FormatTypes.EsriJSON;
             geoJsonFormat.Prepare();
-            geoJsonFormat.Id = 1;
             geoJsonFormat.Type = (int)FormatTypes.GeoJSON;
             gmlFormat.Prepare();
-            gmlFormat.Id = 2;
             gmlFormat.Type = (int)FormatTypes.GML;
             kmlFormat.Prepare();
-            kmlFormat.Id = 3;
             kmlFormat.Type = (int)FormatTypes.KML;
 
             formats.Add(esriJsonFormat);
@@ -1239,35 +1239,17 @@ namespace GDO.Apps.Maps
             TextStyle textStyle = new TextStyle();
 
             fillStyle.Prepare();
-            fillStyle.Id = 1;
-            fillStyle.Color = "white";
             fillStyle.Type = (int)StyleTypes.Fill;
-            fillStyle.Name = fillStyle.ClassName;
             strokeStyle.Prepare();
-            strokeStyle.Id = 4;
-            strokeStyle.Color = "black";
-            strokeStyle.Width = 2;
             strokeStyle.Type = (int)StyleTypes.Stroke;
-            strokeStyle.Name = strokeStyle.ClassName;
             circleStyle.Prepare();
-            circleStyle.Id = 0;
             circleStyle.Type = (int)StyleTypes.Circle;
-            circleStyle.Name = circleStyle.ClassName;
-            circleStyle.Radius = 7;
-
             iconStyle.Prepare();
-            iconStyle.Id = 2;
             iconStyle.Type = (int)StyleTypes.Icon;
-            iconStyle.Name = iconStyle.ClassName;
             regularShapeStyle.Prepare();
-            regularShapeStyle.Id = 3;
             regularShapeStyle.Type = (int)StyleTypes.RegularShape;
-            regularShapeStyle.Name = regularShapeStyle.ClassName;
-
             textStyle.Prepare();
-            textStyle.Id = 5;
             textStyle.Type = (int)StyleTypes.Text;
-            textStyle.Name = textStyle.ClassName;
 
             
             styles.Add(fillStyle);
@@ -1290,54 +1272,25 @@ namespace GDO.Apps.Maps
             VectorSource vectorSource = new VectorSource();
 
             bingMapsSource.Prepare();
-            bingMapsSource.Id = 0;
             bingMapsSource.Type = (int)SourceTypes.BingMaps;
-            bingMapsSource.Name = bingMapsSource.ClassName;
-            bingMapsSource.MaxZoom = 19;
-            bingMapsSource.ImagerySet = "AerialWithLabels";
-            bingMapsSource.Key = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM";
-            bingMapsSource.Projection = "EPSG:4326";
             clusterSource.Prepare();
-            clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
-            clusterSource.Name = clusterSource.ClassName;
             staticImageSource.Prepare();
-            staticImageSource.Id = 2;
             staticImageSource.Type = (int)SourceTypes.ImageStatic;
-            staticImageSource.Name = staticImageSource.ClassName;
             vectorImageSource.Prepare();
-            vectorImageSource.Id = 3;
             vectorImageSource.Type = (int)SourceTypes.ImageVector;
-            vectorImageSource.Name = vectorImageSource.ClassName;
             imageTileSource.Prepare();
-            imageTileSource.Id = 4;
             imageTileSource.Type = (int)SourceTypes.TileImage;
-            imageTileSource.Name = imageTileSource.ClassName;
-            imageTileSource.TileGrid = new TileGrid(null,0,0,0,0,null);
             xyzSource.Prepare();
-            xyzSource.Id = 5;
             xyzSource.Type = (int)SourceTypes.XYZ;
-            xyzSource.Name = xyzSource.ClassName;
-            xyzSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
             stamenSource.Prepare();
-            stamenSource.Id = 6;
             stamenSource.Type = (int)SourceTypes.Stamen;
-            stamenSource.Name = stamenSource.ClassName;
-            stamenSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
             jsonTileSource.Prepare();
-            jsonTileSource.Id = 7;
             jsonTileSource.Type = (int)SourceTypes.TileJSON;
-            jsonTileSource.Name = jsonTileSource.ClassName;
             vectorTileSource.Prepare();
-            vectorTileSource.Id = 8;
             vectorTileSource.Type = (int)SourceTypes.TileVector;
-            vectorTileSource.Name = vectorTileSource.ClassName;
-            vectorTileSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
             vectorSource.Prepare();
-            vectorSource.Id = 9;
             vectorSource.Type = (int)SourceTypes.Vector;
-            vectorSource.Name = vectorSource.ClassName;
-            vectorSource.Url = "";
 
 
             sources.Add(vectorSource);
@@ -1359,26 +1312,13 @@ namespace GDO.Apps.Maps
             VectorLayer vectorLayer = new VectorLayer();
 
             heatmapLayer.Prepare();
-            heatmapLayer.Id = 0;
             heatmapLayer.Type = (int)LayerTypes.Heatmap;
-            heatmapLayer.Name = heatmapLayer.ClassName;
-            //heatmapLayer.Source = vectorSource;
             imageLayer.Prepare();
-            imageLayer.Id = 1;
             imageLayer.Type = (int)LayerTypes.Image;
-            imageLayer.Name = imageLayer.ClassName;
-            //imageLayer.Source = vectorSource;
             tileLayer.Prepare();
-            tileLayer.Id = 2;
             tileLayer.Type = (int)LayerTypes.Tile;
-            tileLayer.Name = tileLayer.ClassName;
-            //tileLayer.Source = BingMapsSource;
             vectorLayer.Prepare();
-            vectorLayer.Id = 3;
             vectorLayer.Type = (int)LayerTypes.Vector;
-            vectorLayer.Name = vectorLayer.ClassName;
-            //vectorLayer.Source = vectorSource;
-            //vectorLayer.Style = circleStyle;
 
 
             layers.Add(heatmapLayer);

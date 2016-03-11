@@ -38,9 +38,9 @@ namespace GDO.Apps.Maps.Core
         new public void Prepare()
         {
             ClassName = this.GetType().Name;
-            AddtoEditables(() => Id);
+            //AddtoEditables(() => Id);
             AddtoEditables(() => Name);
-            AddtoEditables(() => Type);
+            //AddtoEditables(() => Type);
         }
 
         public void Modify(int id, string name, int type)

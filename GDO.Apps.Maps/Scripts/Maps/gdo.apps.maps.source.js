@@ -34,6 +34,9 @@
 
 gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSource) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedSource.Id);
+    if (gdo.net.app["Maps"].index["source"] <= deserializedSource.Id) {
+        gdo.net.app["Maps"].index["source"] = deserializedSource.Id;
+    }
     var source;
     var properties;
     var options = {};
@@ -187,10 +190,8 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
                 gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Source Type: ' + deserializedSource.Type + ' for Source ' + deserializedSource.Id);
             break;
     }
-    source.id = deserializedSource.Id;
-    source.name = deserializedSource.Name;
-    source.type = deserializedSource.Type;
     source.properties = deserializedSource;
+    source.properties.isInitialized = true;
     gdo.net.instance[instanceId].sources[source.id] = source;
 }
 

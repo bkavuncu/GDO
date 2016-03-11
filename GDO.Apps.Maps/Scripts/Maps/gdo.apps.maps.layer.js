@@ -8,6 +8,9 @@
 
 gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Layer: ' + deserializedLayer.Id);
+    if (gdo.net.app["Maps"].index["layer"] <= deserializedLayer.Id) {
+        gdo.net.app["Maps"].index["layer"] = deserializedLayer.Id;
+    }
     var layer;
     var properties;
     var options = {};
@@ -91,11 +94,12 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + deserializedLayer.Type + ' for Layer '  + deserializedLayer.Id);
             break;
     }
-    layer.id = deserializedLayer.Id;
-    layer.name = deserializedLayer.Name;
-    layer.type = deserializedLayer.Type;
     layer.properties = deserializedLayer;
+    layer.properties.isInitialized = true;
     gdo.net.instance[instanceId].layers[layerId] = layer;
+}
+
+gdo.net.app["Maps"].addLayerToMap = function(instanceId, layerId) {
     gdo.net.instance[instanceId].map.addLayer(gdo.net.instance[instanceId].layers[layerId]);
 }
 

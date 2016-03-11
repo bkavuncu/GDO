@@ -7,6 +7,12 @@ var scene;
 var terrainProvider;
 var ds;
 
+gdo.net.app["Maps"].index = [];
+gdo.net.app["Maps"].index["layer"] = 0;
+gdo.net.app["Maps"].index["source"] = 0;
+gdo.net.app["Maps"].index["style"] = 0;
+gdo.net.app["Maps"].index["format"] = 0;
+
 $(function () {
     gdo.consoleOut('.Maps', 1, 'Loaded Maps JS');
 
@@ -114,7 +120,7 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
     //Initialize Map
     map = new ol.Map({
         controls: new Array(),
-        layers: gdo.net.instance[instanceId].layers,
+        layers: [],
         target: 'map',
         view: gdo.net.instance[instanceId].view
     });
