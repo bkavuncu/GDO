@@ -1278,7 +1278,7 @@ namespace GDO.Apps.Maps
             styles.Add(circleStyle);
 
             //Add Sources to Template
-            BingMapsSource BingMapsSource = new BingMapsSource();
+            BingMapsSource bingMapsSource = new BingMapsSource();
             ClusterSource clusterSource = new ClusterSource();
             StaticImageSource staticImageSource = new StaticImageSource();
             VectorImageSource vectorImageSource = new VectorImageSource();
@@ -1289,14 +1289,14 @@ namespace GDO.Apps.Maps
             VectorTileSource vectorTileSource = new VectorTileSource();
             VectorSource vectorSource = new VectorSource();
 
-            BingMapsSource.Prepare();
-            BingMapsSource.Id = 0;
-            BingMapsSource.Type = (int)SourceTypes.BingMaps;
-            BingMapsSource.Name = BingMapsSource.ClassName;
-            BingMapsSource.MaxZoom = 19;
-            BingMapsSource.ImagerySet = "AerialWithLabels";
-            BingMapsSource.Key = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM";
-            BingMapsSource.Projection = "EPSG:4326";
+            bingMapsSource.Prepare();
+            bingMapsSource.Id = 0;
+            bingMapsSource.Type = (int)SourceTypes.BingMaps;
+            bingMapsSource.Name = bingMapsSource.ClassName;
+            bingMapsSource.MaxZoom = 19;
+            bingMapsSource.ImagerySet = "AerialWithLabels";
+            bingMapsSource.Key = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM";
+            bingMapsSource.Projection = "EPSG:4326";
             clusterSource.Prepare();
             clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
@@ -1341,7 +1341,7 @@ namespace GDO.Apps.Maps
 
 
             sources.Add(vectorSource);
-            sources.Add(BingMapsSource);
+            sources.Add(bingMapsSource);
             sources.Add(clusterSource);
             sources.Add(staticImageSource);
             sources.Add(vectorImageSource);

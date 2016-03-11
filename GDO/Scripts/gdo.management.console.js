@@ -16,11 +16,10 @@ gdo.management.console.drawConsoleInput = function () {
         .css("width", "80%")
         .css("height", "40px")
         .empty()
-        .append("<input type='text' id='console_input' value='&nbsp;Enter Console Command' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
+        .append("<input type='text' class='form-control' id='console_input' value='&nbsp;Enter Console Command' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
     $("#console_input")
         .css("width", "100%")
         .css("height", "40px")
-        .css("border", "1px solid #333")
         .css("background", "#333")
         .css("color", "#FFF")
         .css("padding", "0px")

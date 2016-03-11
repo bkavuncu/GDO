@@ -219,6 +219,42 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
             gdo.net.app["Maps"].clearPositionMarker(instanceId);
         });
 }
+gdo.net.app["Maps"].extractTypes = function (instanceId) {
+    var className;
+    for (var index in gdo.net.instance[instanceId].template.Layers) {
+        if (!gdo.net.instance[instanceId].template.Layers.hasOwnProperty((index))) {
+            continue;
+        } else if (gdo.net.instance[instanceId].template.Layers[index] != null) {
+            className = gdo.net.instance[instanceId].template.Layers[index].ClassName;
+            $("iframe").contents().find("#layer_types").append("<option value='" + className + "'>" + className + "</option>");
+        }
+    }
+    for (var index in gdo.net.instance[instanceId].template.Sources) {
+        if (!gdo.net.instance[instanceId].template.Sources.hasOwnProperty((index))) {
+            continue;
+        } else if (gdo.net.instance[instanceId].template.Sources[index] != null) {
+            className = gdo.net.instance[instanceId].template.Sources[index].ClassName;
+            $("iframe").contents().find("#source_types").append("<option value='" + className + "'>" + className + "</option>");
+        }
+    }
+    for (var index in gdo.net.instance[instanceId].template.Styles) {
+        if (!gdo.net.instance[instanceId].template.Styles.hasOwnProperty((index))) {
+            continue;
+        } else if (gdo.net.instance[instanceId].template.Styles[index] != null) {
+            className = gdo.net.instance[instanceId].template.Styles[index].ClassName;
+            $("iframe").contents().find("#style_types").append("<option value='" + className + "'>" + className + "</option>");
+        }
+    }
+    for (var index in gdo.net.instance[instanceId].template.Formats) {
+        if (!gdo.net.instance[instanceId].template.Formats.hasOwnProperty((index))) {
+            continue;
+        } else if (gdo.net.instance[instanceId].template.Formats[index] != null) {
+            className = gdo.net.instance[instanceId].template.Formats[index].ClassName;
+            $("iframe").contents().find("#format_types").append("<option value='" + className + "'>" + className + "</option>");
+        }
+    }
+}
+
 
 gdo.net.app["Maps"].registerButtons = function (instanceId) {
     $("iframe").contents().find(".layer-play-button")

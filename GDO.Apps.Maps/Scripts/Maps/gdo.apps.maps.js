@@ -14,6 +14,7 @@ $(function () {
         gdo.consoleOut('.Maps', 1, 'Received Template Table');
         //TODO
         gdo.net.instance[instanceId].template = JSON.parse(serializedTemplate);
+        gdo.net.app["Maps"].extractTypes(instanceId);
     }
 
     $.connection.mapsAppHub.client.receiveZIndexTable = function (instanceId, serializedZIndexTable) {
