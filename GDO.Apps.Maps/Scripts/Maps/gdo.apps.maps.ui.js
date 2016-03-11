@@ -40,18 +40,18 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
 
             if (tab == "layer") {
                 if (arr[i].getVisible()) {
-                    icon = "fa-eye"
+                    icon = "fa-eye";
                     color = "white";
                 } else {
-                    icon = "fa-eye-slash"
+                    icon = "fa-eye-slash";
                     color = "gray";
                 }
                 if (arr[i].canAnimate) {
-                    icon = "fa-play"
+                    icon = "fa-play";
                     color = "white";
                 }
                 if (arr[i].isAnimating) {
-                    icon = "fa-spinner"
+                    icon = "fa-spinner";
                     color = "#77B200";
                 }
             }

@@ -8,18 +8,18 @@ namespace GDO.Apps.Maps.Core.Styles
 {
     public class CircleStyle : Styles.ImageStyle
     {
-        public FillStyle Fill { get; set; }
+        public int FillStyleId { get; set; }
         public int? Radius { get; set; }
         public bool? SnapToPixel { get; set; }
-        public StrokeStyle Stroke { get; set; }
+        public int StrokeStyleId { get; set; }
 
-        new public void Init(FillStyle fill, float opacity, bool rotateWithView, float rotation, float scale, int radius, bool snapToPixel, StrokeStyle stroke)
+        new public void Init(int fillStyleId, float opacity, bool rotateWithView, float rotation, float scale, int radius, bool snapToPixel, int strokeStyleId)
         {
             base.Init(opacity, rotateWithView, rotation, scale);
-            Fill = fill;
+            FillStyleId = fillStyleId;
             Radius = radius;
             SnapToPixel = snapToPixel;
-            Stroke = stroke;
+            StrokeStyleId = strokeStyleId;
 
             Prepare();
         }

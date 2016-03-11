@@ -15,11 +15,11 @@ namespace GDO.Apps.Maps.Core.Styles
         public string Content { get; set; }
         public string TextAlign { get; set; }
         public string TextBaseLine { get; set; }
-        public FillStyle Fill { get; set; }
-        public StrokeStyle Stroke { get; set; }
+        public int FillStyleId { get; set; }
+        public int StrokeStyleId { get; set; }
 
         new public void Init(string font, int offsetX, int offsetY, float scale, float rotation, string content,
-            string textAlign, string textBaseLine, FillStyle fill, StrokeStyle stroke)
+            string textAlign, string textBaseLine, int fillStyleId, int strokeStyleId)
         {
             Font = font;
             OffsetX = offsetX;
@@ -29,8 +29,8 @@ namespace GDO.Apps.Maps.Core.Styles
             Content = content;
             TextAlign = textAlign;
             TextBaseLine = textBaseLine;
-            Fill = fill;
-            Stroke = stroke;
+            FillStyleId = fillStyleId;
+            StrokeStyleId = strokeStyleId;
 
             Prepare();
         }
@@ -45,12 +45,12 @@ namespace GDO.Apps.Maps.Core.Styles
             AddtoEditables(() => Content);
             AddtoEditables(() => TextAlign);
             AddtoEditables(() => TextBaseLine);
-            AddtoEditables(() => Fill);
-            AddtoEditables(() => Stroke);
+            AddtoEditables(() => FillStyleId);
+            AddtoEditables(() => StrokeStyleId);
         }
 
         new public void Modify(string font, float scale, float rotation, string content,
-            string textAlign, string textBaseLine, FillStyle fill, StrokeStyle stroke)
+            string textAlign, string textBaseLine, int fillStyleId, int strokeStyleId)
         {
             Font = font;
             Scale = scale;
@@ -58,8 +58,8 @@ namespace GDO.Apps.Maps.Core.Styles
             Content = content;
             TextAlign = textAlign;
             TextBaseLine = textBaseLine;
-            Fill = fill;
-            Stroke = stroke;
+            FillStyleId = fillStyleId;
+            StrokeStyleId = strokeStyleId;
         }
     }
 }

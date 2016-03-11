@@ -7,14 +7,14 @@ namespace GDO.Apps.Maps.Core.Layers
 {
     public class VectorLayer : Layer
     {
-        public Style Style { get; set; }
+        public int StyleId { get; set; }
         public int? RenderBuffer { get; set; }
         public bool? UpdateWhileAnimating { get; set; }
         public bool? UpdateWhileInteracting { get; set; }
 
-        new public void Init(Style style, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
+        new public void Init(int styleId, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
         {
-            Style = style;
+            StyleId = styleId;
             RenderBuffer = renderBuffer;
             UpdateWhileAnimating = updateWhileAnimating;
             UpdateWhileInteracting = updateWhileInteracting;
@@ -25,13 +25,13 @@ namespace GDO.Apps.Maps.Core.Layers
         {
             base.Prepare();
             ClassName = this.GetType().Name;
-            AddtoEditables(() => Style);
+            AddtoEditables(() => StyleId);
         }
 
 
-        new public void Modify(Style style)
+        new public void Modify(int styleId)
         {
-            Style = style;
+            StyleId = styleId;
         }
     }
 }

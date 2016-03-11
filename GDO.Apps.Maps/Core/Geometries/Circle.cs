@@ -9,6 +9,6 @@ namespace GDO.Apps.Maps.Core.Geometries
     {
         public double [] Center { get; set; }
         public int Radius { get; set; }
-        public  Layout Layout { get; set; }
+        public string GeometryLayout { get; set; }
     }
 }

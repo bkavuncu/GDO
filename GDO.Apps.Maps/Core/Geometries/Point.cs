@@ -8,6 +8,6 @@ namespace GDO.Apps.Maps.Core.Geometries
     public class Point : Geometry
     {
         public double [] Coordinate { get; set; }
-        public Layout Layout { get; set; }
+        public string GeometryLayout { get; set; }
     }
 }

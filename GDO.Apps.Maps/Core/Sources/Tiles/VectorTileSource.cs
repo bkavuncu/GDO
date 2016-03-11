@@ -8,14 +8,14 @@ namespace GDO.Apps.Maps.Core.Sources.Tiles
     public class VectorTileSource : TileSource
     {
         public TileGrid TileGrid { get; set; }
-        public Format Format { get; set; }
+        public int FormatId { get; set; }
         public string Projection { get; set; }
         public string Url { get; set; }
 
-        new public void Init(TileGrid tileGrid, Format format, string projection, string url)
+        new public void Init(TileGrid tileGrid, int formatId, string projection, string url)
         {
             TileGrid = tileGrid;
-            Format = format;
+            FormatId = formatId;
             Projection = projection;
             Url = url;
 

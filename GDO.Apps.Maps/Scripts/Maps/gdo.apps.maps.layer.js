@@ -8,10 +8,6 @@
 
 gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Layer: ' + deserializedLayer.Id);
-    if (gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == null || typeof gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id] == "undefined") {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedLayer.Source.Id);
-        gdo.net.app["Maps"].addSource(instanceId, deserializedLayer.Source.Id, deserializedLayer.Source);
-    }
     var layer;
     var properties;
     var options = {};
@@ -31,7 +27,7 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
                 ["maxResolution",deserializedLayer.MaxResolution],
                 ["opacity",deserializedLayer.Opacity],
                 ["saturation",deserializedLayer.Saturation],
-                ["source",gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id]],
+                ["source",gdo.net.instance[instanceId].sources[deserializedLayer.SourceId]],
                 ["visible",deserializedLayer.Visible]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
@@ -44,7 +40,7 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
                 ["hue",deserializedLayer.Hue],
                 ["opacity",deserializedLayer.Opacity],
                 ["saturation",deserializedLayer.Saturation],
-                ["source",gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id]],
+                ["source",gdo.net.instance[instanceId].sources[deserializedLayer.SourceId]],
                 ["visible",deserializedLayer.Visible],
                 ["extent",deserializedLayer.Extent],
                 ["minResolution",deserializedLayer.MinResolution],
@@ -61,7 +57,7 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
                 ["opacity",deserializedLayer.Opacity],
                 ["preload",deserializedLayer.Preload],
                 ["saturation",deserializedLayer.Saturation],
-                ["source", gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id]],
+                ["source", gdo.net.instance[instanceId].sources[deserializedLayer.SourceId]],
                 ["visible",deserializedLayer.Visible],
                 ["extent",deserializedLayer.Extent],
                 ["minResolution",deserializedLayer.MinResolution],
@@ -71,23 +67,19 @@ gdo.net.app["Maps"].addLayer = function (instanceId, layerId, deserializedLayer)
             layer = new ol.layer.Tile(options);
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
-            if (gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id] == null || typeof gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id] == "undefined") {
-                gdo.net.app["Maps"].addStyle(instanceId, deserializedLayer.Style.Id, deserializedLayer.Style);
-                gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Added Style: ' + deserializedLayer.Style.Id);
-            }
             properties = [
                 ["brightness",deserializedLayer.Brightness],
                 ["contrast",deserializedLayer.Contrast],
                 ["hue", deserializedLayer.Hue],
-                ["features", gdo.net.instance[instanceId].formats[deserializedLayer.Source.Format.Id].readFeatures(gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id])],
+                ["features", gdo.net.instance[instanceId].formats[deserializedLayer.Source.FormatId].readFeatures(gdo.net.instance[instanceId].sources[deserializedLayer.SourceId])],
                 ["extent",deserializedLayer.Extent],
                 ["minResolution",deserializedLayer.MinResolution],
                 ["maxResolution",deserializedLayer.MaxResolution],
                 ["opacity",deserializedLayer.Opacity],
                 ["renderBuffer",deserializedLayer.RenderBuffer],
                 ["saturation",deserializedLayer.Saturation],
-                ["source",gdo.net.instance[instanceId].sources[deserializedLayer.Source.Id]],
-                ["style",gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id]],
+                ["source",gdo.net.instance[instanceId].sources[deserializedLayer.SourceId]],
+                ["style",gdo.net.instance[instanceId].styles[deserializedLayer.StyleId]],
                 ["updateWhileAnimating",deserializedLayer.UpdateWhileAnimating],
                 ["updateWhileInteracting",deserializedLayer.UpdateWhileInteracting],
                 ["visible",deserializedLayer.Visible]
@@ -133,7 +125,7 @@ gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLay
             layer.setPreload(deserializedLayer.Preload);
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
-            layer.setStyle(gdo.net.instance[instanceId].styles[deserializedLayer.Style.Id]);
+            layer.setStyle(gdo.net.instance[instanceId].styles[deserializedLayer.StyleId]);
             break;
         default:
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + deserializedLayer.Type + ' for Layer ' + deserializedLayer.Id);

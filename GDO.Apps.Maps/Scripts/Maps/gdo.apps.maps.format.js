@@ -90,8 +90,9 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
             break;
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.KML:
             properties = [
-                ["extractStyles", deserializedFormat.ExtractStyles],
-                ["defaultStyle", deserializedFormat.DefaultStyle]
+                ["extractStyles", deserializedFormat.ExtractStyles]
+                //TODO 
+                /*["defaultStyle", deserializedFormat.DefaultStyle]*/
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             format = new ol.format.KML(options);

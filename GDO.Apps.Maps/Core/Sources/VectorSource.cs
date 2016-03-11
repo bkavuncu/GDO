@@ -16,14 +16,14 @@ namespace GDO.Apps.Maps.Core.Sources
 
     public class VectorSource : Source
     {
-        public Format Format { get; set; }
+        public int FormatId { get; set; }
         public string Url { get; set; }
         public int? LoadingStrategy { get; set; }
         public bool? UseSpatialIndex { get; set; }
 
-        new public void Init(Format format, string url, int loadingStrategy, bool useSpatialIndex)
+        new public void Init(int formatId, string url, int loadingStrategy, bool useSpatialIndex)
         {
-            Format = format;
+            FormatId = formatId;
             Url = url;
             LoadingStrategy = loadingStrategy;
             UseSpatialIndex = useSpatialIndex;

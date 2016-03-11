@@ -54,8 +54,8 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
             properties = [
                 ["distance", deserializedSource.Distance],
                 ["extent", deserializedSource.Extent],
-                ["format", gdo.net.instance[instanceId].formats[deserializedSource.Format.Id]],
-                ["source", gdo.net.instance[instanceId].sources[deserializedSource.VectorSource.Id]]
+                ["format", gdo.net.instance[instanceId].formats[deserializedSource.FormatId]],
+                ["source", gdo.net.instance[instanceId].sources[deserializedSource.VectorSourceId]]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             source = new ol.source.Cluster(options);
@@ -73,8 +73,8 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
             properties = [
                 ["ratio", deserializedSource.Ratio],
-                ["source", gdo.net.instance[instanceId].sources[deserializedSource.VectorSource.Id]],
-                ["style", gdo.net.instance[instanceId].styles[deserializedSource.Style.Id]]
+                ["source", gdo.net.instance[instanceId].sources[deserializedSource.VectorSourceId]],
+                ["style", gdo.net.instance[instanceId].styles[deserializedSource.StyleId]]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             source = new ol.source.ImageVector(options);
@@ -165,7 +165,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
                 tileGrid = new ol.tilegrid.TileGrid(options);
             }
             properties = [
-                ["format", gdo.net.instance[instanceId].formats[deserializedSource.Format.Id]],
+                ["format", gdo.net.instance[instanceId].formats[deserializedSource.FormatId]],
                 ["projection", deserializedSource.Projection],
                 ["tileGrid", tileGrid],
                 ["url", deserializedSource.Url]
@@ -175,7 +175,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Vector:
             properties = [
-                ["format", gdo.net.instance[instanceId].formats[deserializedSource.Format.Id]],
+                ["format", gdo.net.instance[instanceId].formats[deserializedSource.FormatId]],
                 ["url", deserializedSource.Url],
                 ["strategy", deserializedSource.LoadingStrategy],
                 ["useSpatialIndex", deserializedSource.UseSpatialIndex]
@@ -205,7 +205,7 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
-            source.setStyle(gdo.net.instance[instanceId].styles[deserializedSource.Style.Id]);
+            source.setStyle(gdo.net.instance[instanceId].styles[deserializedSource.StyleId]);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
             break;

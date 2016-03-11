@@ -9,11 +9,11 @@ namespace GDO.Apps.Maps.Formats
     public class KMLFormat : Format
     {
         public bool ExtractStyles { get; set; }
-        public List<Style> DefaultStyle { get; set; }
+        public int[] DefaultStyleIds { get; set; }
 
-        new public void Init(List<Style> defaultStyle, bool extractStyles)
+        new public void Init(int[]defaultStyleIds, bool extractStyles)
         {
-            DefaultStyle = defaultStyle;
+            DefaultStyleIds = defaultStyleIds;
             ExtractStyles = extractStyles;
             Prepare();
         }

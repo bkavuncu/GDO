@@ -10,14 +10,14 @@ namespace GDO.Apps.Maps.Core.Sources
     {
         public int? Distance { get; set; }
         public double?[] Extent { get; set; }
-        public Format Format { get; set; }
-        public VectorSource Source { get; set; }
-        new public void Init(int distance, double?[] extent, Format format, VectorSource source)
+        public int FormatId { get; set; }
+        public int VectorSourceId { get; set; }
+        new public void Init(int distance, double?[] extent, int formatId, int vectorSourceId)
         {
             Distance = distance;
             Extent = extent;
-            Format = format;
-            Source = source;
+            FormatId = formatId;
+            VectorSourceId = vectorSourceId;
 
             Prepare();
         }

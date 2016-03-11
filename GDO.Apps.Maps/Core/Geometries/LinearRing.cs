@@ -8,6 +8,6 @@ namespace GDO.Apps.Maps.Core.Geometries
     public class LinearRing : Geometry
     {
         public double [][] Coordinates { get; set; }
-        public Layout Layout { get; set; }
+        public string GeometryLayout { get; set; }
     }
 }

@@ -120,7 +120,7 @@ namespace GDO.Apps.Maps
                 }
 
                 T layer = new T();
-                layer.Init(layerId, name, type, Sources.GetValue<Source>(sourceId), brightness, contrast, saturation, hue, opacity,
+                layer.Init(layerId, name, type, sourceId, brightness, contrast, saturation, hue, opacity,
                     visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
                 Layers.Add<T>(layerId, layer);
                 return layerId;
@@ -251,7 +251,7 @@ namespace GDO.Apps.Maps
             {
                 int layerId = AddLayer<VectorLayer>(name, (int)LayerTypes.Vector, sourceId, brightness, contrast, saturation,
                     hue, opacity, visible, minResolution, maxResolution, zIndex, canAnimate, isAnimating);
-                Layers.GetValue<VectorLayer>(layerId).Init(Styles.GetValue<Style>(styleId), renderBuffer, ModifyWhileAnimating, ModifyWhileInteracting);
+                Layers.GetValue<VectorLayer>(layerId).Init(styleId, renderBuffer, ModifyWhileAnimating, ModifyWhileInteracting);
                 return layerId;
             }
             catch (Exception e)
@@ -268,7 +268,7 @@ namespace GDO.Apps.Maps
             {
                 ModifyLayer(layerId, name, (int)LayerTypes.Vector, brightness, contrast, saturation, hue, opacity,
                     visible, minResolution, maxResolution, isAnimating);
-                Layers.GetValue<VectorLayer>(layerId).Modify(Styles.GetValue<Style>(styleId));
+                Layers.GetValue<VectorLayer>(layerId).Modify(styleId);
             }
             catch (Exception e)
             {
@@ -422,10 +422,9 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Format format = Formats.GetValue<Format>(formatId);
                 int sourceId = AddSource<ClusterSource>(name, (int)SourceTypes.Cluster);
                 Sources.GetValue<ClusterSource>(sourceId)
-                    .Init(distance, extent, format, Sources.GetValue<VectorSource>(vectorSourceId));
+                    .Init(distance, extent, formatId, vectorSourceId);
                 return sourceId;
             }
             catch (Exception e)
@@ -481,10 +480,8 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                VectorSource vectorSource = Sources.GetValue<VectorSource>(vectorSourceId);
-                Style style = Styles.GetValue<Style>(styleId);
                 int sourceId = AddSource<VectorImageSource>(name, (int)SourceTypes.ImageVector);
-                Sources.GetValue<VectorImageSource>(sourceId).Init(vectorSource, style, ratio);
+                Sources.GetValue<VectorImageSource>(sourceId).Init(vectorSourceId, styleId, ratio);
                 return sourceId;
             }
             catch (Exception e)
@@ -498,9 +495,8 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Style style = Styles.GetValue<Style>(styleId);
                 ModifySource(sourceId, name, (int)SourceTypes.ImageVector);
-                Sources.GetValue<VectorImageSource>(sourceId).Modify(style);
+                Sources.GetValue<VectorImageSource>(sourceId).Modify(styleId);
             }
             catch (Exception e)
             {
@@ -632,9 +628,8 @@ namespace GDO.Apps.Maps
             try
             {
                 TileGrid _tileGrid = new TileGrid(extent, minZoom, maxZoom, tileWidth, tileHeight, resolutions);
-                Format _format = Formats.GetValue<Format>(formatId);
                 int sourceId = AddSource<JSONTileSource>(name, (int)SourceTypes.TileVector);
-                Sources.GetValue<VectorTileSource>(sourceId).Init(_tileGrid, _format, projection, url);
+                Sources.GetValue<VectorTileSource>(sourceId).Init(_tileGrid, formatId, projection, url);
                 return sourceId;
             }
             catch (Exception e)
@@ -661,10 +656,9 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Format format = Formats.GetValue<Format>(formatId);
                 int sourceId = AddSource<VectorSource>(name, (int)SourceTypes.Vector);
                 Sources.GetValue<VectorSource>(sourceId)
-                    .Init(format, url, loadingStrategy, useSpatialIndex);
+                    .Init(formatId, url, loadingStrategy, useSpatialIndex);
                 return sourceId;
             }
             catch (Exception e)
@@ -774,16 +768,14 @@ namespace GDO.Apps.Maps
         }
 
 
-        public int AddCircleStyle(string name, int fillId, float opacity, bool rotateWithView,
-            float rotation, float scale, int radius, bool snapToPixel, int strokeId)
+        public int AddCircleStyle(string name, int fillStyleId, float opacity, bool rotateWithView,
+            float rotation, float scale, int radius, bool snapToPixel, int strokeStyleId)
         {
             try
             {
-                FillStyle fill = Styles.GetValue<FillStyle>(fillId);
-                StrokeStyle stroke = Styles.GetValue<StrokeStyle>(strokeId);
                 int styleId = AddStyle<CircleStyle>(name, (int)StyleTypes.Circle);
                 Styles.GetValue<CircleStyle>(styleId)
-                    .Init(fill, opacity, rotateWithView, rotation, scale, radius, snapToPixel, stroke);
+                    .Init(fillStyleId, opacity, rotateWithView, rotation, scale, radius, snapToPixel, strokeStyleId);
                 return styleId;
             }
             catch (Exception e)
@@ -900,18 +892,16 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public int AddRegularShapeStyle(string name, int fillId, float opacity, bool rotateWithView,
+        public int AddRegularShapeStyle(string name, int fillStyleId, float opacity, bool rotateWithView,
             float rotation, float scale,
-            int points, int radius, int radius1, int radius2, int angle, bool snapToPixel, int strokeId)
+            int points, int radius, int radius1, int radius2, int angle, bool snapToPixel, int strokeStyleId)
         {
             try
             {
-                FillStyle fill = Styles.GetValue<FillStyle>(fillId);
-                StrokeStyle stroke = Styles.GetValue<StrokeStyle>(strokeId);
                 int styleId = AddStyle<RegularShapeStyle>(name, (int)StyleTypes.RegularShape);
                 Styles.GetValue<RegularShapeStyle>(styleId)
-                    .Init(fill, opacity, rotateWithView, rotation, scale, points, radius,
-                        radius1, radius2, angle, snapToPixel, stroke);
+                    .Init(fillStyleId, opacity, rotateWithView, rotation, scale, points, radius,
+                        radius1, radius2, angle, snapToPixel, strokeStyleId);
                 return styleId;
             }
             catch (Exception e)
@@ -938,16 +928,14 @@ namespace GDO.Apps.Maps
         //TODO ol.style.Style
 
         public int AddTextStyle(string name, string font, int offsetX, int offsetY, float scale, float rotation,
-            string content, string textAlign, string textBaseLine, int fillId, int strokeId)
+            string content, string textAlign, string textBaseLine, int fillStyleId, int strokeStyleId)
         {
             try
             {
-                FillStyle fill = Styles.GetValue<FillStyle>(fillId);
-                StrokeStyle stroke = Styles.GetValue<StrokeStyle>(strokeId);
                 int styleId = AddStyle<TextStyle>(name, (int)StyleTypes.Text);
                 Styles.GetValue<TextStyle>(styleId)
                     .Init(font, offsetX, offsetY, scale, rotation, content, textAlign,
-                        textBaseLine, fill, stroke);
+                        textBaseLine, fillStyleId, strokeStyleId);
                 return styleId;
             }
             catch (Exception e)
@@ -958,15 +946,13 @@ namespace GDO.Apps.Maps
         }
 
         public void ModifyTextStyle(int styleId, string name, string font, float scale, float rotation,
-            string content, string textAlign, string textBaseLine, int fillId, int strokeId)
+            string content, string textAlign, string textBaseLine, int fillStyleId, int strokeStyleId)
         {
             try
             {
-                FillStyle fill = Styles.GetValue<FillStyle>(fillId);
-                StrokeStyle stroke = Styles.GetValue<StrokeStyle>(strokeId);
                 ModifyStyle(styleId, name, (int)StyleTypes.Text);
                 Styles.GetValue<TextStyle>(styleId)
-                    .Modify(font, scale, rotation, content, textAlign, textBaseLine, fill, stroke);
+                    .Modify(font, scale, rotation, content, textAlign, textBaseLine, fillStyleId, strokeStyleId);
             }
             catch (Exception e)
             {
@@ -1144,13 +1130,8 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                List<Style> defaultStyle = new List<Style>();
-                foreach (int styleId in styleIds)
-                {
-                    defaultStyle.Add(Styles.GetValue<Style>(styleId));
-                }
                 int formatId = AddFormat<KMLFormat>(name, (int)FormatTypes.KML);
-                Formats.GetValue<KMLFormat>(formatId).Init(defaultStyle, extractStyles);
+                Formats.GetValue<KMLFormat>(formatId).Init(styleIds, extractStyles);
                 return formatId;
             }
             catch (Exception e)
@@ -1273,8 +1254,6 @@ namespace GDO.Apps.Maps
             circleStyle.Type = (int)StyleTypes.Circle;
             circleStyle.Name = circleStyle.ClassName;
             circleStyle.Radius = 7;
-            circleStyle.Stroke = strokeStyle;
-            circleStyle.Fill = fillStyle;
 
             iconStyle.Prepare();
             iconStyle.Id = 2;
@@ -1284,15 +1263,11 @@ namespace GDO.Apps.Maps
             regularShapeStyle.Id = 3;
             regularShapeStyle.Type = (int)StyleTypes.RegularShape;
             regularShapeStyle.Name = regularShapeStyle.ClassName;
-            regularShapeStyle.Stroke = strokeStyle;
-            regularShapeStyle.Fill = fillStyle;
 
             textStyle.Prepare();
             textStyle.Id = 5;
             textStyle.Type = (int)StyleTypes.Text;
             textStyle.Name = textStyle.ClassName;
-            textStyle.Stroke = strokeStyle;
-            textStyle.Fill = fillStyle;
 
             
             styles.Add(fillStyle);
@@ -1326,7 +1301,6 @@ namespace GDO.Apps.Maps
             clusterSource.Id = 1;
             clusterSource.Type = (int)SourceTypes.Cluster;
             clusterSource.Name = clusterSource.ClassName;
-            clusterSource.Format = esriJsonFormat;
             staticImageSource.Prepare();
             staticImageSource.Id = 2;
             staticImageSource.Type = (int)SourceTypes.ImageStatic;
@@ -1335,7 +1309,6 @@ namespace GDO.Apps.Maps
             vectorImageSource.Id = 3;
             vectorImageSource.Type = (int)SourceTypes.ImageVector;
             vectorImageSource.Name = vectorImageSource.ClassName;
-            vectorImageSource.Style = fillStyle;
             imageTileSource.Prepare();
             imageTileSource.Id = 4;
             imageTileSource.Type = (int)SourceTypes.TileImage;
@@ -1359,12 +1332,10 @@ namespace GDO.Apps.Maps
             vectorTileSource.Id = 8;
             vectorTileSource.Type = (int)SourceTypes.TileVector;
             vectorTileSource.Name = vectorTileSource.ClassName;
-            vectorTileSource.Format = esriJsonFormat;
             vectorTileSource.TileGrid = new TileGrid(null, 0, 0, 0, 0, null);
             vectorSource.Prepare();
             vectorSource.Id = 9;
             vectorSource.Type = (int)SourceTypes.Vector;
-            vectorSource.Format = geoJsonFormat;
             vectorSource.Name = vectorSource.ClassName;
             vectorSource.Url = "";
 

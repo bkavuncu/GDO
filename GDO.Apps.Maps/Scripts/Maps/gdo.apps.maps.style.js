@@ -25,9 +25,9 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["rotation", deserializedStyle.Rotation],
                 ["scale", deserializedStyle.Scale],
                 ["snapToPixel", deserializedStyle.SnapToPixel],
-                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]],
+                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.FillStyleId]],
                 ["radius", deserializedStyle.Radius],
-                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]]
+                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.StrokeStyleId]]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             style = new ol.style.Circle(options);
@@ -60,13 +60,13 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
             properties = [
-                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]],
+                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.FillStyleId]],
                 ["points", deserializedStyle.Points],
                 ["radius", deserializedStyle.Radius],
                 ["radius1", deserializedStyle.Radius1],
                 ["radius2", deserializedStyle.Radius2],
                 ["angle", deserializedStyle.Angle],
-                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]],
+                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.StrokeStyleId]],
                 ["opacity", deserializedStyle.Opacity],
                 ["rotateWithView", deserializedStyle.RotateWithView],
                 ["rotation", deserializedStyle.Rotation],
@@ -101,8 +101,8 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
                 ["text", deserializedStyle.Content],
                 ["textAlign", deserializedStyle.TextAlign],
                 ["textBaseline", deserializedStyle.TextBaseLine],
-                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]],
-                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]]
+                ["fill", gdo.net.instance[instanceId].styles[deserializedStyle.FillStyleId]],
+                ["stroke", gdo.net.instance[instanceId].styles[deserializedStyle.StrokeStyleId]]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             style = new ol.style.Text(options);
@@ -158,8 +158,8 @@ gdo.net.app["Maps"].updateStyle = function (instanceId, styleId, deserializedSty
             style.setText(deserializedStyle.Content);
             style.setTextAlign(deserializedStyle.TextAlign);
             style.setTextBaseline(deserializedStyle.TextBaseLine);
-            style.setFill(gdo.net.instance[instanceId].styles[deserializedStyle.Fill.Id]);
-            style.setStroke(gdo.net.instance[instanceId].styles[deserializedStyle.Stroke.Id]);
+            style.setFill(gdo.net.instance[instanceId].styles[deserializedStyle.FillStyleId]);
+            style.setStroke(gdo.net.instance[instanceId].styles[deserializedStyle.StrokeStyleId]);
             break;
         default:
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Style Type:' + deserializedStyle.Type + ' for Style ' + deserializedStyle.Id);
@@ -180,8 +180,8 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
     if (isNew) {
         switch (type) {
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Circle:
-                gdo.net.app["Maps"].server.addCircleStyle(instanceId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
-                    properties.Rotation, properties.Scale, properties.Radius, properties.SnapToPixel, properties.StrokeId);
+                gdo.net.app["Maps"].server.addCircleStyle(instanceId, properties.Name, properties.FillStyleId, properties.Opacity, properties.RotateWithView,
+                    properties.Rotation, properties.Scale, properties.Radius, properties.SnapToPixel, properties.StrokeStyleId);
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
                 gdo.net.app["Maps"].server.addFillStyle(instanceId, properties.Name, properties.Color);
@@ -192,9 +192,9 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
                     properties.Rotation, properties.Width, properties.Height, properties.ImageWidth, properties.ImageHeight, properties.ImageSource);
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
-                gdo.net.app["Maps"].server.addRegularShapeStyle(instanceId, properties.Name, properties.FillId, properties.Opacity, properties.RotateWithView,
+                gdo.net.app["Maps"].server.addRegularShapeStyle(instanceId, properties.Name, properties.FillStyleId, properties.Opacity, properties.RotateWithView,
                     properties.Rotation, properties.Scale, properties.Points, properties.Radius, properties.Radius1, properties.Radius2, properties.Angle,
-                    properties.SnapToPixel, properties.StrokeId);
+                    properties.SnapToPixel, properties.StrokeStyleId);
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
                 gdo.net.app["Maps"].server.addStrokeStyle(instanceId, properties.Name, properties.Color, properties.LineCap, properties.LineJoin,
@@ -205,7 +205,7 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
                 gdo.net.app["Maps"].server.addTextStyle(instanceId, properties.Name, properties.Font, properties.OffsetX, properties.OffsetY,
-                    properties.Scale, properties.Rotation, properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillId, properties.StrokeId);
+                    properties.Scale, properties.Rotation, properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillStyleId, properties.StrokeStyleId);
                 break;
             default:
                 break;
@@ -233,7 +233,7 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
                 break;
             case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
                 gdo.net.app["Maps"].server.updateTextStyle(instanceId, styleId, properties.Name, properties.Font, properties.Scale, properties.Rotation,
-                    properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillId, properties.StrokeId);
+                    properties.Content, properties.TextAlign, properties.TextBaseLine, properties.FillStyleId, properties.StrokeStyleId);
                 break;
             default:
                 break;
