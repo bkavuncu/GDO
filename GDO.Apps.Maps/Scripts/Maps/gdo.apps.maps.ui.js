@@ -29,7 +29,10 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
             gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing ' + tab + ' ' + i);
 
             $("iframe").contents().find("." + tab + "").append("<div class='" + tab + "_" + i + " row' " + tab + "Id='" + i + "'></div>");
-            $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[i].properties.Name + " (" + arr[i].properties.Id + ")");
+            if (gdo.net.app["Maps"].selected[tab] > 0) {
+                $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[gdo.net.app["Maps"].selected[tab]].properties.Name + " (" + arr[gdo.net.app["Maps"].selected[tab]].properties.Id + ")");
+            }
+            
             var color = "white";
             var icon = "";
 
@@ -328,7 +331,8 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     $("iframe").contents().find(".layer-save-button")
         .unbind()
         .click(function () {
-
+            //TODO
+            //
         });
 
     $("iframe").contents().find("#source-create-button")
