@@ -1,4 +1,4 @@
-﻿gdo.CLIENT_MODE = {
+gdo.CLIENT_MODE = {
     NODE: 1,
     CONTROL: 2
 };
