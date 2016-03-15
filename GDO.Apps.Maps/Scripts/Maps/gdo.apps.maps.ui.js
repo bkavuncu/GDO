@@ -331,8 +331,10 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     $("iframe").contents().find(".layer-save-button")
         .unbind()
         .click(function () {
-            //TODO
-            //
+            if (gdo.net.app["Maps"].selected["layer"] > 0) {
+                gdo.net.app["Maps"].uploadLayer(instanceId, gdo.net.app["Maps"].selected["layer"], true);
+            }
+            
         });
 
     $("iframe").contents().find("#source-create-button")

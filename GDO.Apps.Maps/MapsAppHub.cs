@@ -393,10 +393,14 @@ namespace GDO.Apps.Maps
                 {
                     Clients.Group("" + instanceId)
                         .receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
+                    Clients.Caller
+                        .receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
                 }
                 else
                 {
                     Clients.Group("" + instanceId)
+                        .receiveLayer(instanceId, layerId, "", "", false);
+                    Clients.Caller
                         .receiveLayer(instanceId, layerId, "", "", false);
                 }
                 BroadcastZIndexTable(instanceId);

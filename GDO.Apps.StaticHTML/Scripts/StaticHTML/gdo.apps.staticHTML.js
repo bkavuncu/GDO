@@ -11,14 +11,14 @@
                 .css("width", gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + "px")
                 .css("height", gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows + "px");
             var scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
-            var offsetX = gdo.net.node[gdo.clientId].sectionCol * 50;
-            var offsetY = gdo.net.node[gdo.clientId].sectionRow * 50;
+            var offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols-1));
+            var offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows-1));
             var origin = offsetX + "% " + offsetY + "%";
             gdo.consoleOut('.StaticHTML', 1, "#" + origin + "#");
             $("iframe").contents().find("#html_frame")
                 .attr("src",url)
-                .css("width", gdo.net.section[gdo.net.instance[instanceId].sectionId].width  + "px")
-                .css("height", gdo.net.section[gdo.net.instance[instanceId].sectionId].height + "px")
+                .css("width", gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + "px")
+                .css("height", gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows + "px")
                 .css("zoom", 1)
                 .css("-moz-transform", scale)
                 .css("-moz-transform-origin", origin)
@@ -32,7 +32,7 @@
 
 gdo.net.app["StaticHTML"].initClient = function () {
     gdo.consoleOut('.StaticHTML', 1, 'Initializing StaticHTML App Client at Node ' + gdo.clientId);
-    gdo.net.app["StaticHTML"].server.requestURL(gdo.clientId);
+    gdo.net.app["StaticHTML"].server.requestURL(gdo.net.node[gdo.clientId].appInstanceId);
 }
 
 gdo.net.app["StaticHTML"].initControl = function (controlId) {
