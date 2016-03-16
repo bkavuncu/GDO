@@ -113,7 +113,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int layerId = Layers.GetAvailableSlot();
-                if (layer.ZIndex == -1)
+                /*if (layer.ZIndex == -1)
                 {
                     ZindexTable.AddLayer(layerId);
                 }
@@ -121,7 +121,8 @@ namespace GDO.Apps.Maps
                 {
                     ZindexTable.AddLayer(layerId, layer.ZIndex);
                 }
-
+                */
+                layer.Id = layerId;
                 Layers.Add<T>(layerId, (T)layer);
                 return layerId;
             }
@@ -169,7 +170,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                ZindexTable.RemoveLayer(layerId);
+                //ZindexTable.RemoveLayer(layerId);
                 Layers.Remove(layerId);
                 return true;
             }
@@ -235,6 +236,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int sourceId = Sources.GetAvailableSlot();
+                source.Id = sourceId;
                 Sources.Add<T>(sourceId, (T)source);
                 return sourceId;
             }
@@ -318,6 +320,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int styleId = Styles.GetAvailableSlot();
+                style.Id = styleId;
                 Styles.Add<T>(styleId, (T)style);
                 return styleId;
             }
@@ -376,6 +379,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int formatId = Formats.GetAvailableSlot();
+                format.Id = formatId;
                 Formats.Add<T>(formatId, (T)format);
                 return formatId;
             }

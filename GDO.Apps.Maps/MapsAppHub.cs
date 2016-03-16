@@ -254,11 +254,11 @@ namespace GDO.Apps.Maps
                     string serializedLayer = maps.GetSerializedLayer(layerId);
                     if (serializedLayer != null)
                     {
-                        Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
+                        Clients.Caller.receiveLayer(instanceId, layerId, serializedLayer, true);
                     }
                     else
                     {
-                        Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
+                        Clients.Caller.receiveLayer(instanceId, layerId, "", false);
                     }
                 }
                 catch (Exception e)
@@ -303,17 +303,13 @@ namespace GDO.Apps.Maps
                 string serializedLayer = maps.GetSerializedLayer(layerId);
                 if (serializedLayer != null)
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
-                    Clients.Caller
-                        .receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
+                    Clients.Group("" + instanceId).receiveLayer(instanceId, layerId, serializedLayer, true);
+                    Clients.Caller.receiveLayer(instanceId, layerId, serializedLayer, true);
                 }
                 else
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveLayer(instanceId, layerId, "", "", false);
-                    Clients.Caller
-                        .receiveLayer(instanceId, layerId, "", "", false);
+                    Clients.Group("" + instanceId).receiveLayer(instanceId, layerId, "", false);
+                    Clients.Caller.receiveLayer(instanceId, layerId, "", false);
                 }
                 BroadcastZIndexTable(instanceId);
             }
@@ -565,13 +561,11 @@ namespace GDO.Apps.Maps
                     string serializedSource = maps.GetSerializedSource(sourceId);
                     if (serializedSource != null)
                     {
-                        Clients.Caller.receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type,
-                            serializedSource, true);
+                        Clients.Caller.receiveSource(instanceId, sourceId, serializedSource, true);
                     }
                     else
                     {
-                        Clients.Caller.receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type,
-                            "", false);
+                        Clients.Caller.receiveSource(instanceId, sourceId, "", false);
                     }
                 }
                 catch (Exception e)
@@ -589,14 +583,13 @@ namespace GDO.Apps.Maps
                 string serializedSource = maps.GetSerializedSource(sourceId);
                 if (serializedSource != null)
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveSource(instanceId, sourceId, maps.Sources.GetValue<Source>(sourceId).Type,
-                            serializedSource, true);
+                    Clients.Group("" + instanceId).receiveSource(instanceId, sourceId, serializedSource, true);
+                    Clients.Caller.receiveSource(instanceId, sourceId, serializedSource, true);
                 }
                 else
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveSource(instanceId, sourceId, "", "", false);
+                    Clients.Group("" + instanceId).receiveSource(instanceId, sourceId, "",  false);
+                    Clients.Caller.receiveSource(instanceId, sourceId, "", false);
                 }
             }
             catch (Exception e)
@@ -772,13 +765,11 @@ namespace GDO.Apps.Maps
                     string serializedStyle = maps.GetSerializedStyle(styleId);
                     if (serializedStyle != null)
                     {
-                        Clients.Caller.receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type,
-                            serializedStyle, true);
+                        Clients.Caller.receiveStyle(instanceId, styleId, serializedStyle, true);
                     }
                     else
                     {
-                        Clients.Caller.receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, "",
-                            false);
+                        Clients.Caller.receiveStyle(instanceId, styleId, "", false);
                     }
                 }
                 catch (Exception e)
@@ -796,14 +787,13 @@ namespace GDO.Apps.Maps
                 string serializedStyle = maps.GetSerializedStyle(styleId);
                 if (serializedStyle != null)
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveStyle(instanceId, styleId, maps.Styles.GetValue<Style>(styleId).Type, serializedStyle,
-                            true);
+                    Clients.Group("" + instanceId).receiveStyle(instanceId, styleId, serializedStyle, true);
+                    Clients.Caller.receiveStyle(instanceId, styleId, serializedStyle, true);
                 }
                 else
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveStyle(instanceId, styleId, "", "", false);
+                    Clients.Group("" + instanceId).receiveStyle(instanceId, styleId, "", false);
+                    Clients.Caller.receiveStyle(instanceId, styleId, "", false);
                 }
             }
             catch (Exception e)
@@ -932,13 +922,11 @@ namespace GDO.Apps.Maps
                     string serializedFormat = maps.GetFormat(formatId);
                     if (serializedFormat != null)
                     {
-                        Clients.Caller.receiveFormat(instanceId, formatId, maps.Formats.GetValue<Format>(formatId).Type,
-                            serializedFormat, true);
+                        Clients.Caller.receiveFormat(instanceId, formatId,serializedFormat, true);
                     }
                     else
                     {
-                        Clients.Caller.receiveFormat(instanceId, formatId, maps.Formats.GetValue<Format>(formatId).Type, "",
-                            false);
+                        Clients.Caller.receiveFormat(instanceId, formatId, "", false);
                     }
                 }
                 catch (Exception e)
@@ -956,14 +944,13 @@ namespace GDO.Apps.Maps
                 string serializedFormat = maps.GetFormat(formatId);
                 if (serializedFormat != null)
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveFormat(instanceId, formatId, maps.Formats.GetValue<Format>(formatId).Type, serializedFormat,
-                            true);
+                    Clients.Group("" + instanceId).receiveFormat(instanceId, formatId,serializedFormat, true);
+                    Clients.Caller.receiveFormat(instanceId, formatId, serializedFormat, true);
                 }
                 else
                 {
-                    Clients.Group("" + instanceId)
-                        .receiveFormat(instanceId, formatId, "", "", false);
+                    Clients.Group("" + instanceId).receiveFormat(instanceId, formatId, "", false);
+                    Clients.Caller.receiveFormat(instanceId, formatId, "", false);
                 }
             }
             catch (Exception e)

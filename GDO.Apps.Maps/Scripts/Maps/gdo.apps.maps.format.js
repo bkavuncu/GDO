@@ -112,6 +112,7 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
     gdo.net.instance[instanceId].formats[formatId] = format;
     format.properties = deserializedFormat;
     format.properties.isInitialized = true;
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 
@@ -134,6 +135,7 @@ gdo.net.app["Maps"].updateFormat = function (instanceId, formatId, deserializedF
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Format Type:' + deserializedFormat.Type + ' for Format ' + deserializedFormat.Id);
             break;
     }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 
@@ -147,9 +149,9 @@ gdo.net.app["Maps"].uploadFormat = function (instanceId, formatId, isNew) {
     var format = gdo.net.instance[instanceId].format[formatId];
     var properties = format.properties;
     if (isNew) {
-        gdo.net.app["Maps"].server.addFormat(instanceId, properties.Type, properties);
+        gdo.net.app["Maps"].server.addFormat(instanceId, parseInt(properties.Type), JSON.stringify(properties));
     } else {
-        gdo.net.app["Maps"].server.updateFormat(instanceId, formatId, properties.Type, properties);
+        gdo.net.app["Maps"].server.updateFormat(instanceId, formatId, parseInt(properties.Type), JSON.stringify(properties));
     }
 }
 

@@ -117,6 +117,7 @@ gdo.net.app["Maps"].addStyle = function (instanceId, styleId, deserializedStyle)
     gdo.net.instance[instanceId].styles[styleId] = style;
     style.properties = deserializedStyle;
     style.properties.isInitialized = true;
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].updateStyle = function (instanceId, styleId, deserializedStyle) {
@@ -166,6 +167,7 @@ gdo.net.app["Maps"].updateStyle = function (instanceId, styleId, deserializedSty
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Style Type:' + deserializedStyle.Type + ' for Style ' + deserializedStyle.Id);
             break;
     }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].requestStyle = function (instanceId, styleId) {
@@ -178,9 +180,9 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
     var style = gdo.net.instance[instanceId].style[styleId];
     var properties = style.properties;;
     if (isNew) {
-        gdo.net.app["Maps"].server.addStyle(instanceId, properties.Type, properties);
+        gdo.net.app["Maps"].server.addStyle(instanceId, parseInt(properties.Type), JSON.stringify(properties));
     } else {
-        gdo.net.app["Maps"].server.updateStyle(instanceId, styleId, properties.Type, properties);
+        gdo.net.app["Maps"].server.updateStyle(instanceId, styleId, parseInt(properties.Type), JSON.stringify(properties));
     }
 }
 

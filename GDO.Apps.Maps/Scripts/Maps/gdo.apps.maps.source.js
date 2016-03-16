@@ -193,6 +193,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
     source.properties = deserializedSource;
     source.properties.isInitialized = true;
     gdo.net.instance[instanceId].sources[source.id] = source;
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedSource) {
@@ -226,6 +227,7 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Source Type: ' + deserializedSource.Type + ' for Source ' + deserializedSource.Id);
             break;
     }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].requestSource = function (instanceId, sourceId) {
@@ -238,9 +240,9 @@ gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
     var source = gdo.net.instance[instanceId].source[sourceId];
     var properties = source.properties;
     if (isNew) {
-        gdo.net.app["Maps"].server.addSource(instanceId, properties.Type, properties);
+        gdo.net.app["Maps"].server.addSource(instanceId, parseInt(properties.Type), JSON.stringify(properties));
     } else {
-        gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, properties.Type, properties);
+        gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, parseInt(properties.Type), JSON.stringify(properties));
     }
 }
 
