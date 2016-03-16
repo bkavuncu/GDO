@@ -158,4 +158,9 @@ gdo.net.app["Maps"].uploadFormat = function (instanceId, formatId, isNew) {
 gdo.net.app["Maps"].removeFormat = function(instanceId, formatId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing Format: ' + formatId);
     gdo.net.instance[instanceId].formats[formatId] = null;
+    if (gdo.net.app["Maps"].selected["format"] == formatId) {
+        gdo.net.app["Maps"].selected["format"] = -1;
+    }
+    gdo.net.app["Maps"].drawListTables(instanceId);
+
 }

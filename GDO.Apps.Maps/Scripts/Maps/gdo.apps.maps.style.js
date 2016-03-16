@@ -189,4 +189,8 @@ gdo.net.app["Maps"].uploadStyle = function (instanceId, styleId, isNew) {
 gdo.net.app["Maps"].removeStyle = function (instanceId, styleId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing Style: ' + styleId);
     gdo.net.instance[instanceId].styles[styleId] = null;
+    if (gdo.net.app["Maps"].selected["style"] == styleId) {
+        gdo.net.app["Maps"].selected["style"] = -1;
+    }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }

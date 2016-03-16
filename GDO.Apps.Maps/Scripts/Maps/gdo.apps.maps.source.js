@@ -249,4 +249,8 @@ gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
 gdo.net.app["Maps"].removeSource = function (instanceId, sourceId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing Source: ' + sourceId);
     gdo.net.instance[instanceId].sources[sourceId] = null;
+    if (gdo.net.app["Maps"].selected["source"] == sourceId) {
+        gdo.net.app["Maps"].selected["source"] = -1;
+    }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }

@@ -163,6 +163,10 @@ gdo.net.app["Maps"].removeLayer = function (instanceId, layerId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing Layer: ' + layerId);
     gdo.net.instance[instanceId].map.removeLayer(gdo.net.instance[instanceId].layers[layerId]);
     gdo.net.instance[instanceId].layers[layerId] = null;
+    if (gdo.net.app["Maps"].selected["layer"] == layerId) {
+        gdo.net.app["Maps"].selected["layer"] = -1;
+    }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].setLayerVisible = function (instanceId, layerId, visible) {

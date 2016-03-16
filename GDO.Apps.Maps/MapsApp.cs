@@ -149,7 +149,15 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedLayer(int layerId)
         {
-            Layer layer = Layers.GetValue<Layer>(layerId);
+            Layer layer = null;
+            try
+            {
+                layer = Layers.GetValue<Layer>(layerId);
+            }
+            catch (Exception e)
+            {
+                
+            }
             if (layer != null)
             {
                 string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId), JsonSettings);
