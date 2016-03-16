@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using GDO.Apps.Maps.Core;
 
-namespace GDO.Apps.Maps.Formats
+namespace GDO.Apps.Maps.Core.Formats
 {
     public class TopoJSONFormat : Format
     {

@@ -146,40 +146,10 @@ gdo.net.app["Maps"].uploadFormat = function (instanceId, formatId, isNew) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading Format: ' + formatId);
     var format = gdo.net.instance[instanceId].format[formatId];
     var properties = format.properties;
-    var type = gdo.net.instance[instanceId].format[formatId].type;
     if (isNew) {
-        switch (type) {
-            case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.EsriJSON:
-                gdo.net.app["Maps"].server.addEsriJSONFormat(instanceId, properties.Name, properties.GeometryName);
-                break;
-            case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GeoJSON:
-                gdo.net.app["Maps"].server.addGeoJSONFormat(instanceId, properties.Name, properties.GeometryName);
-                break;
-            case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML:
-                gdo.net.app["Maps"].server.addGMLFormat(instanceId, properties.Name, type, properties.FeatureNS, properties.FeatureType,
-                    properties.SrsName, properties.Surface, properties.Curve, properties.MultiCurve, properties.MultiSurface, properties.SchemaLocation);
-                break;
-            case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML2:
-                gdo.net.app["Maps"].server.addGMLFormat(instanceId, properties.Name, type, properties.FeatureNS, properties.FeatureType,
-                    properties.SrsName, properties.Surface, properties.Curve, properties.MultiCurve, properties.MultiSurface, properties.SchemaLocation);
-                break;
-            case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML3:
-                gdo.net.app["Maps"].server.addGMLFormat(instanceId, properties.Name, type, properties.FeatureNS, properties.FeatureType,
-                    properties.SrsName, properties.Surface, properties.Curve, properties.MultiCurve, properties.MultiSurface, properties.SchemaLocation);
-                break;
-            case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.KML:
-                var styleIds = [];
-                var arrayLength = properties.DefaultStyle.length;
-                for (var i = 0; i < arrayLength; i++) {
-                    styleIds.push(properties.DefaultStyle[i].Id);
-                }
-                gdo.net.app["Maps"].server.addKMLFormat(instanceId, properties.Name, properties.ExtractStyles, styleIds);
-                break;
-            default:
-                break;
-        }
+        gdo.net.app["Maps"].server.addFormat(instanceId, properties.Type, properties);
     } else {
-        // Not needed for now
+        gdo.net.app["Maps"].server.updateFormat(instanceId, formatId, properties.Type, properties);
     }
 }
 
