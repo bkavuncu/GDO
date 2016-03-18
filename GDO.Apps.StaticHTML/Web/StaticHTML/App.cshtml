@@ -16,17 +16,8 @@
             -o-user-select: none;
             user-select: none;
         }
-
-        .map:-moz-full-screen {
-            height: 100%;
-        }
-
-        .map:-webkit-full-screen {
-            height: 100%;
-        }
-
-        .map:-ms-fullscreen {
-            height: 100%;
+        body {
+            background: white;
         }
 
         .popup {
@@ -63,7 +54,9 @@
         #element::-webkit-scrollbar {
             display: none;
         }
-
+        ::-webkit-scrollbar { 
+            display: none; 
+        }
         body {
             overflow: hidden;
             margin: 0px;
@@ -83,9 +76,7 @@
                 });
             });
     </script>
-    <div id="wrapper" style="border: 0 none; display: block; width: 100%; height: 100vh; background:white">
-        <iframe id="html_frame" frameborder="0" style="border: 0 none; display: block; overflow:hidden;"></iframe>
-    </div>
+    <iframe id="html_frame" frameborder="0" style="border: 0 none; display: block; overflow:hidden;"></iframe>
 
 </body>
 </html>
