@@ -571,6 +571,7 @@
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight;
 
+
                     orderController.orders['createRect'] = function (id, image) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
@@ -598,11 +599,6 @@
                         var rectG = svg.select("#r" + id);
                         rectG.moveToFront();
                         rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
-                    };
-
-                    orderController.orders['frontRect'] = function (id) {
-                        var g = svg.select("#r" + id).node();
-                        g.parentElement.appendChild(g);
                     };
 
                     orderController.orders['resizeRect'] = function (id, x, y) {

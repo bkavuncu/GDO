@@ -69,6 +69,7 @@
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/d3.js"></script>
+    <script src="./Scripts/jszip.min.js"></script>
     <script>
         d3.selection.prototype.moveToFront = function () {
             return this.each(function () {
@@ -97,18 +98,23 @@
             var vars = query.split('&');
             for (var i = 0; i < vars.length; i++) {
                 var pair = vars[i].split('=');
-                if (pair[0] === variable) { return pair[1]; }
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
             }
             query = window.frames['control_frame_content'].location.search.substring(1);
             vars = query.split('&');
             for (var i = 0; i < vars.length; i++) {
                 var pair = vars[i].split('=');
-                if (pair[0] === variable) { return pair[1]; }
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
             }
             return (false);
         }
-        $(function () {
-            $(document).ready(function () {
+
+        $(function() {
+            $(document).ready(function() {
                 var gdo = parent.gdo,
                     server = gdo.net.app.DD3.server;
                 gdo.controlId = getUrlVar("controlId");
@@ -118,7 +124,7 @@
 
                 var test_bench = [];
 
-                var callback = function (message) {
+                var callback = function(message) {
                     gdo.consoleOut(".DD3", 4, "Callback Message: " + message);
                     confId = message.configurationId;
                     numClients = message.numClient;
@@ -126,15 +132,15 @@
                         test_bench[confId] && test_bench[confId]();
                         test_bench[confId] = null;
                         $("#wait").css("display", "none");
-                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
+                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) { // all of these are Shangai LinkLoad, and should share the control menu
                             $("#control_6").css("display", "");
-                        }else {
+                        } else {
                             $("#control_" + confId).css("display", "");
                         }
                     }
                 };
 
-                var order = function (name, args) {
+                var order = function(name, args) {
                     return JSON.stringify({ name: name, args: args });
                 };
 
@@ -146,12 +152,12 @@
 
                 instanceId = gdo.net.app["DD3"].initControl(callback);
 
-                test_bench[0] = function () {
+                test_bench[0] = function() {
                     var rect = false, circles = 0, dcircles = 0, polygon = false;
 
                     // == Basic Moves ==
 
-                    $('#createRect').click(function () {
+                    $('#createRect').click(function() {
                         if (!rect) {
                             server.sendOrder(instanceId, order("createRect", []), false);
                             $(".basic_moves .red").removeClass("red").addClass("green");
@@ -160,7 +166,7 @@
                         }
                     });
 
-                    $('#removeRect').click(function () {
+                    $('#removeRect').click(function() {
                         if (rect) {
                             server.sendOrder(instanceId, order("removeRect", []), false);
                             $(".basic_moves .green").removeClass("green").addClass("red");
@@ -169,19 +175,19 @@
                         }
                     });
 
-                    $('#translationX').click(function () {
+                    $('#translationX').click(function() {
                         rect && server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
                     });
 
-                    $('#translationY').click(function () {
+                    $('#translationY').click(function() {
                         rect && server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
                     });
 
-                    $('#rotation').click(function () {
+                    $('#rotation').click(function() {
                         rect && server.sendOrder(instanceId, order("startRotation", ['R']), false);
                     });
 
-                    $('#allMoves').click(function () {
+                    $('#allMoves').click(function() {
                         if (rect) {
                             server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
                             server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
@@ -191,7 +197,7 @@
 
                     // == Superposition ==
 
-                    $('#createCircles').click(function () {
+                    $('#createCircles').click(function() {
                         if (!circles) {
                             circles = 100;
                             server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
@@ -201,7 +207,7 @@
                         }
                     });
 
-                    $('#createDistributedCircles').click(function () {
+                    $('#createDistributedCircles').click(function() {
                         if (!dcircles) {
                             dcircles = 10;
                             server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
@@ -211,7 +217,7 @@
                         }
                     });
 
-                    $('#removeCircles').click(function () {
+                    $('#removeCircles').click(function() {
                         if (!!circles) {
                             server.sendOrder(instanceId, order("removeCircles", []), false);
                             $(".superposition.non_distributed .green").removeClass("green").addClass("red");
@@ -221,7 +227,7 @@
                         }
                     });
 
-                    $('#removeDistributedCircles').click(function () {
+                    $('#removeDistributedCircles').click(function() {
                         if (!!dcircles) {
                             server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
                             $(".superposition.distributed .green").removeClass("green").addClass("red");
@@ -231,31 +237,31 @@
                         }
                     });
 
-                    $("#nbAddCircles").click(function (e) { e.stopPropagation(); });
+                    $("#nbAddCircles").click(function(e) { e.stopPropagation(); });
 
-                    $('#addCircles').click(function () {
+                    $('#addCircles').click(function() {
                         var n = +$("#nbAddCircles").val();
                         circles && (server.sendOrder(instanceId, order("createCircles", [n]), false), $("#spanc").text(circles += n));
                     });
 
-                    $("#nbAddDistributedCircles").click(function (e) { e.stopPropagation(); });
+                    $("#nbAddDistributedCircles").click(function(e) { e.stopPropagation(); });
 
-                    $('#addDistributedCircles').click(function () {
+                    $('#addDistributedCircles').click(function() {
                         var n = +$("#nbAddDistributedCircles").val();
                         dcircles && (server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true), $("#spandc").text((dcircles += n) * numClients));
                     });
 
-                    $('#moveCircles').click(function () {
+                    $('#moveCircles').click(function() {
                         circles && server.sendOrder(instanceId, order("startMoveCircles", []), false);
                     });
 
-                    $('#moveDistributedCircles').click(function () {
+                    $('#moveDistributedCircles').click(function() {
                         dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
                     });
 
                     // == Group Transition ==
 
-                    $('#createPolygon').click(function () {
+                    $('#createPolygon').click(function() {
                         if (!polygon) {
                             server.sendOrder(instanceId, order("createPolygon", []), false);
                             $(".group .red").removeClass("red").addClass("green");
@@ -264,7 +270,7 @@
                         }
                     });
 
-                    $('#removePolygon').click(function () {
+                    $('#removePolygon').click(function() {
                         if (polygon) {
                             server.sendOrder(instanceId, order("removePolygon", []), false);
                             $(".group .green").removeClass("green").addClass("red");
@@ -273,41 +279,41 @@
                         }
                     });
 
-                    $('#movePolygon').click(function () {
+                    $('#movePolygon').click(function() {
                         polygon && server.sendOrder(instanceId, order("startMovePolygon", []), false);
                     });
 
                 };
 
-                test_bench[1] = function () {
+                test_bench[1] = function() {
                     var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
-                    
+
                     var table = $("#control_1 table");
-                    var send = function (value) {
+                    var send = function(value) {
                         server.sendOrder(instanceId, order("plot", [value]), true);
                     };
 
-                    dataIds.forEach(function (d) {
+                    dataIds.forEach(function(d) {
                         table.append('<tr><td>' + d + '</td></tr>');
                         table.find("tr:last td").addClass('green').click(send.bind(null, d));
                     });
                 };
 
-                test_bench[2] = function () {
-                    $("#changeValues").click(function () {
+                test_bench[2] = function() {
+                    $("#changeValues").click(function() {
                         var n = +$("#timeTr").val();
                         server.sendOrder(instanceId, order("changeValues", [n]), true);
                     });
                 };
 
-                test_bench[3] = function () {
+                test_bench[3] = function() {
                     var id = 0;
                     var previous;
                     var timeout = -1;
                     var sensibility = 100;
                     var pos = {};
                     var posC = {};
-                    var wr = 1400, hr = 650;
+                    var wr = 1400, hr = 600;
                     var selected = "";
                     d3.select("#control_3").selectAll("svg").remove();
                     var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
@@ -318,17 +324,151 @@
                         .attr("height", hr + "px")
                         .attr("stroke", "black")
                         .style("fill", "#EEE")
-                        .on("click", function () {
+                        .on("click", function() {
                             selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
                             selected = "";
                         });
 
                     var g = svg.append("g");
 
+                    $('#fileInput').on('change', function(event) {
+                        var files = event.target.files;
+
+                        for (var i = 0, f; f = files[i]; i++) {
+
+                            var zipReader = new FileReader();
+                            zipReader.onload = (function(zipLoadEvent) {
+                                return function(zipEvent) {
+                                    var zip = JSZip(zipEvent.target.result);
+                                    $.each(zip.files, function (index, file) {
+                                        
+                                        var inzip_extension = file.name.split('.').pop();
+                                        if (inzip_extension === 'png' || inzip_extension === 'jpg' || inzip_extension === 'gif') {
+                                            var blobed = URL.createObjectURL(new Blob([zip.file(file.name).asArrayBuffer()], { type: 'image/' + inzip_extension }));
+                                            id++;
+                                            server.sendOrder(instanceId, order("createRect", ['d' + id, blobed]), false);
+
+                                            var drag = d3.behavior.drag();
+                                            var dragC = d3.behavior.drag();
+
+                                            drag.on("drag", moveRect);
+                                            drag.on("dragstart", function() {
+                                                d3.select(this.parentElement).moveToFront();
+                                                var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                                                previous = Date.now();
+                                                pos.x = t[0] - d3.mouse(g.node())[0];
+                                                pos.y = t[1] - d3.mouse(g.node())[1];
+                                            });
+
+                                            dragC.on("drag", resizeRect);
+                                            dragC.on("dragstart", function() {
+                                                d3.select(this.parentElement).moveToFront();
+                                                var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                                                previous = Date.now();
+                                                posC.x = t[0] - d3.mouse(g.node())[0];
+                                                posC.y = t[1] - d3.mouse(g.node())[1];
+                                            });
+
+                                            //Custom offset that stays in bounds and tranlate image on x&y according to ID
+                                            var offx = 10 + ((id - 1) * (wr / 10)) % (wr - (2 * wr / 10));
+                                            var offy = 10 + ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
+                                            var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                                            var r = rg.append("rect").attr("x", 0)
+                                                .attr("y", 0)
+                                                .attr("width", 2 * wr / 10)
+                                                .attr("height", 2 * hr / 10)
+                                                .attr("stroke", "black")
+                                                .attr("fill", "#EEE")
+                                                .call(drag)
+                                                .on("click", function() {
+                                                    selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                                    selected = this.parentElement.id;
+                                                    d3.select(this).style("fill", "#FDD1FD");
+                                                    //this.parentElement.parentElement.appendChild(this.parentElement);
+                                                    //server.sendOrder(instanceId, order("frontRect", [selected]), false);
+                                                });
+
+                                            rg.append("circle").attr("cx", wr * 2 / 10)
+                                                .attr("cy", hr * 2 / 10)
+                                                .attr("r", 20)
+                                                .attr("stroke", "transparent")
+                                                .attr("fill", "rgba(252,231,31,0.5)")
+                                                .call(dragC);
+
+                                            server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                                            /* Add rect END*/
+                                        } //End if image
+                                    }); //End each zip file
+                                };
+                            })(f); // End loded zip
+
+                            var extension = f.name.split('.').pop();
+
+                            if (extension === 'png' || extension === 'jpg' || extension === 'gif') {
+                                /* Add rect */
+                                id++;
+                                server.sendOrder(instanceId, order("createRect", ['d' + id, URL.createObjectURL(f)]), false);
+                                var drag = d3.behavior.drag();
+                                var dragC = d3.behavior.drag();
+
+                                drag.on("drag", moveRect);
+                                drag.on("dragstart", function() {
+                                    d3.select(this.parentElement).moveToFront();
+                                    var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                                    previous = Date.now();
+                                    pos.x = t[0] - d3.mouse(g.node())[0];
+                                    pos.y = t[1] - d3.mouse(g.node())[1];
+                                });
+
+                                dragC.on("drag", resizeRect);
+                                dragC.on("dragstart", function() {
+                                    d3.select(this.parentElement).moveToFront();
+                                    var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                                    previous = Date.now();
+                                    posC.x = t[0] - d3.mouse(g.node())[0];
+                                    posC.y = t[1] - d3.mouse(g.node())[1];
+                                });
+
+                                //Custom offset that stays in bounds and tranlate image on x&y according to ID
+                                var offx = 10 + ((id - 1) * (wr / 10)) % (wr - (2 * wr / 10));
+                                var offy = 10 + ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
+                                var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                                var r = rg.append("rect").attr("x", 0)
+                                    .attr("y", 0)
+                                    .attr("width", 2 * wr / 10)
+                                    .attr("height", 2 * hr / 10)
+                                    .attr("stroke", "black")
+                                    .attr("fill", "#EEE")
+                                    .call(drag)
+                                    .on("click", function() {
+                                        selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                        selected = this.parentElement.id;
+                                        d3.select(this).style("fill", "#FDD1FD");
+                                        //this.parentElement.parentElement.appendChild(this.parentElement);
+                                        //server.sendOrder(instanceId, order("frontRect", [selected]), false);
+                                    });
+
+                                rg.append("circle").attr("cx", wr * 2 / 10)
+                                    .attr("cy", hr * 2 / 10)
+                                    .attr("r", 20)
+                                    .attr("stroke", "transparent")
+                                    .attr("fill", "rgba(252,231,31,0.5)")
+                                    .call(dragC);
+
+                                server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                                /* Add rect END*/
+                            } else if (extension === 'zip') {
+                                zipReader.readAsArrayBuffer(f);
+                            }
+
+                        } //End html input files loop
+                    }); //End handler onchange input
+                
+
                     $('#addUrl').click(function() {
-                        var urlval = $('#handmove_url').val();
+                        var urlval = $('#inputUrl').val();
                         if (urlval === "") {
-                            $('#handmove_url').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
+                            $('#inputUrl').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
                             return;
                         }
                         id++;
@@ -631,7 +771,11 @@
             </tr>
             <tr>
                 <td class="green" id="addUrl">Add Image Url</td>
-                <td class="" id="urlinput"><input id="handmove_url" type="url"/></td>
+                <td class="" id="urlinputtd"><input id="inputUrl" type="url"/></td>
+            </tr>
+            <tr>
+                <td class="green" id="addFiles">Add files (.zip, .png, jpg, .gif)</td>
+                <td class=""><input id="fileInput" type="file"/></td>
             </tr>
             <tr>
                 <td class="green" id="removeAllRect">Remove All</td>
