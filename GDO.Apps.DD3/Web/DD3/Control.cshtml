@@ -326,8 +326,12 @@
                     var g = svg.append("g");
 
                     $('#addUrl').click(function() {
-                        id++;
                         var urlval = $('#handmove_url').val();
+                        if (urlval === "") {
+                            $('#handmove_url').val('http://lorempixel.com/600/400/');
+                            return;
+                        }
+                        id++;
                         server.sendOrder(instanceId, order("createRect", ['d' + id, urlval]), false);
                         var drag = d3.behavior.drag();
                         var dragC = d3.behavior.drag();
