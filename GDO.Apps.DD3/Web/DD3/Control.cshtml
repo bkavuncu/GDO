@@ -307,7 +307,7 @@
                     var sensibility = 100;
                     var pos = {};
                     var posC = {};
-                    var wr = 1200, hr = 800;
+                    var wr = 1400, hr = 650;
                     var selected = "";
                     d3.select("#control_3").selectAll("svg").remove();
                     var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
@@ -328,7 +328,7 @@
                     $('#addUrl').click(function() {
                         var urlval = $('#handmove_url').val();
                         if (urlval === "") {
-                            $('#handmove_url').val('http://lorempixel.com/600/400/');
+                            $('#handmove_url').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
                             return;
                         }
                         id++;
@@ -356,7 +356,7 @@
 
                         //Custom offset that stays in bounds and tranlate image on x&y according to ID
                         var offx = 10 + ((id - 1) * (wr / 10)) % (wr - (2 * wr / 10));
-                        var offy = ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
+                        var offy = 10 + ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
                         var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
                         var r = rg.append("rect").attr("x", 0)
                             .attr("y", 0)
@@ -375,7 +375,7 @@
 
                         rg.append("circle").attr("cx", wr * 2 / 10)
                             .attr("cy", hr * 2 / 10)
-                            .attr("r", 10)
+                            .attr("r", 20)
                             .attr("stroke", "transparent")
                             .attr("fill", "rgba(252,231,31,0.5)")
                             .call(dragC);

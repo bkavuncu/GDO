@@ -574,8 +574,8 @@
                     orderController.orders['createRect'] = function (id, image) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
-                        var offx = 10 + ((id_int - 1) * (width / 10)) % (width - (4 * width / 10));
-                        var offy = ((height / 10) * (((id_int - 1) * (width / 10)) / (width - (4 * width / 10))) % (height - (4 * height / 10)));
+                        var offx = 10 + ((id_int - 1) * (width / 10)) % (width - (2 * width / 10));
+                        var offy = 10 + ((height / 10) * (((id_int - 1) * (width / 10)) / (width - (2 * width / 10))) % (height - (2 * height / 10)));
                         rectG.attr("transform", "translate(" + [offx, offy] + ")");
                         //*
                         rectG.append('rect')
@@ -608,9 +608,9 @@
                     orderController.orders['resizeRect'] = function (id, x, y) {
                         var img = svg.select("#r" + id).select("image");
                         var r = svg.select("#r" + id).select("rect");
-                        svg.select("#r" + id).moveToFront();
                         img.attr("width", x * width).attr("height", y * height);
                         r.attr("width", x * width).attr("height", y * height);
+                        svg.select("#r" + id).moveToFront();
                     };
 
                     orderController.orders['delRect'] = function (id) {
