@@ -382,7 +382,10 @@
                             posC.y = t[1] - d3.mouse(g.node())[1];
                         });
 
-                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [wr * 4 / 10, hr * 4 / 10] + ")");
+                        //Custom offset that stays in bounds and tranlate image on x&y according to ID
+                        var offx = 10 + ((id - 1) * (wr / 10)) % (wr - (2 * wr / 10));
+                        var offy = ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
+                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
                         var r = rg.append("rect").attr("x", 0)
                             .attr("y", 0)
                             .attr("width", 2 * wr / 10)
