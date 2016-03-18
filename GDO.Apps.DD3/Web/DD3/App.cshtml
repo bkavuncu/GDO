@@ -554,9 +554,12 @@
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight;
 
-                    orderController.orders['createRect'] = function (id) {
+                    orderController.orders['createRect'] = function (id, image) {
                         var rectG = svg.append('g').attr('id', "r" + id);
-                        rectG.attr("transform", "translate(" + [4 * width / 10, 4 * height / 10] + ")");
+                        var id_int = parseInt(id.substr(1, id.length));
+                        var offx = 10 + ((id_int - 1) * (width / 10)) % (width - (4 * width / 10));
+                        var offy = ((height / 10) * (((id_int - 1) * (width / 10)) / (width - (4 * width / 10))) % (height - (4 * height / 10)));
+                        rectG.attr("transform", "translate(" + [offx, offy] + ")");
                         //*
                         rectG.append('rect')
                             .attr("x", 0)
@@ -567,7 +570,7 @@
                             .attr("stroke", "black");
                         //*/
                         rectG.append("image")
-                            .attr("xlink:href", "illustration.png")
+                            .attr("xlink:href", image)
                             .attr("x", 0)
                             .attr("y", 0)
                             .attr("width", 2 * width / 10)
@@ -1039,7 +1042,6 @@
 
                     loadMap();
                 };
-
             });
         });
 
