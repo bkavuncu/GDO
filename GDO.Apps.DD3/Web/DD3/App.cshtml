@@ -67,6 +67,23 @@
     <script src="~/Web/DD3/Scripts/animationLines.js"></script>
 
     <script>
+        d3.selection.prototype.moveToFront = function () {
+            return this.each(function () {
+                this.parentNode.appendChild(this);
+            });
+        };
+
+        d3.selection.prototype.moveToBack = function () {
+            return this.each(function () {
+                var firstChild = this.parentNode.firstChild;
+                if (firstChild) {
+                    this.parentNode.insertBefore(this, firstChild);
+                }
+            });
+        };
+
+    </script>
+    <script>
         var dd3, loadMap, launchAnimation, map, anim;
 
         $(function () {
@@ -579,6 +596,7 @@
 
                     orderController.orders['moveRect'] = function (id, x, y) {
                         var rectG = svg.select("#r" + id);
+                        rectG.moveToFront();
                         rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
                     };
 
@@ -590,6 +608,7 @@
                     orderController.orders['resizeRect'] = function (id, x, y) {
                         var img = svg.select("#r" + id).select("image");
                         var r = svg.select("#r" + id).select("rect");
+                        svg.select("#r" + id).moveToFront();
                         img.attr("width", x * width).attr("height", y * height);
                         r.attr("width", x * width).attr("height", y * height);
                     };

@@ -70,6 +70,23 @@
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/d3.js"></script>
     <script>
+        d3.selection.prototype.moveToFront = function () {
+            return this.each(function () {
+                this.parentNode.appendChild(this);
+            });
+        };
+
+        d3.selection.prototype.moveToBack = function () {
+            return this.each(function () {
+                var firstChild = this.parentNode.firstChild;
+                if (firstChild) {
+                    this.parentNode.insertBefore(this, firstChild);
+                }
+            });
+        };
+
+    </script>
+    <script>
         function getUrlVar(variable) {
             /// <summary>
             /// Gets the URL variable.
@@ -309,55 +326,57 @@
                     var g = svg.append("g");
 
                     $('#addUrl').click(function() {
-                            id++;
-                            var urlval = $('#handmove_url').val();
-                            server.sendOrder(instanceId, order("createRect", ['d' + id, urlval]), false);
-                            var drag = d3.behavior.drag();
-                            var dragC = d3.behavior.drag();
+                        id++;
+                        var urlval = $('#handmove_url').val();
+                        server.sendOrder(instanceId, order("createRect", ['d' + id, urlval]), false);
+                        var drag = d3.behavior.drag();
+                        var dragC = d3.behavior.drag();
 
-                            drag.on("drag", moveRect);
-                            drag.on("dragstart", function () {
-                                var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
-                                previous = Date.now();
-                                pos.x = t[0] - d3.mouse(g.node())[0];
-                                pos.y = t[1] - d3.mouse(g.node())[1];
+                        drag.on("drag", moveRect);
+                        drag.on("dragstart", function () {
+                            d3.select(this.parentElement).moveToFront();
+                            var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            previous = Date.now();
+                            pos.x = t[0] - d3.mouse(g.node())[0];
+                            pos.y = t[1] - d3.mouse(g.node())[1];
+                        });
+
+                        dragC.on("drag", resizeRect);
+                        dragC.on("dragstart", function () {
+                            d3.select(this.parentElement).moveToFront();
+                            var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                            previous = Date.now();
+                            posC.x = t[0] - d3.mouse(g.node())[0];
+                            posC.y = t[1] - d3.mouse(g.node())[1];
+                        });
+
+                        //Custom offset that stays in bounds and tranlate image on x&y according to ID
+                        var offx = 10 + ((id - 1) * (wr / 10)) % (wr - (2 * wr / 10));
+                        var offy = ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
+                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                        var r = rg.append("rect").attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 2 * wr / 10)
+                            .attr("height", 2 * hr / 10)
+                            .attr("stroke", "black")
+                            .attr("fill", "#EEE")
+                            .call(drag)
+                            .on("click", function () {
+                                selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                selected = this.parentElement.id;
+                                d3.select(this).style("fill", "#FDD1FD");
+                                //this.parentElement.parentElement.appendChild(this.parentElement);
+                                //server.sendOrder(instanceId, order("frontRect", [selected]), false);
                             });
 
-                            dragC.on("drag", resizeRect);
-                            dragC.on("dragstart", function () {
-                                var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
-                                previous = Date.now();
-                                posC.x = t[0] - d3.mouse(g.node())[0];
-                                posC.y = t[1] - d3.mouse(g.node())[1];
-                            });
+                        rg.append("circle").attr("cx", wr * 2 / 10)
+                            .attr("cy", hr * 2 / 10)
+                            .attr("r", 10)
+                            .attr("stroke", "transparent")
+                            .attr("fill", "rgba(252,231,31,0.5)")
+                            .call(dragC);
 
-                            //Custom offset that stays in bounds and tranlate image on x&y according to ID
-                            var offx = 10 + ((id - 1) * (wr / 10)) % (wr - (2 * wr / 10));
-                            var offy = ((hr / 10) * (((id - 1) * (wr / 10)) / (wr - (2 * wr / 10))) % (hr - (2 * hr / 10)));
-                            var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
-                            var r = rg.append("rect").attr("x", 0)
-                                .attr("y", 0)
-                                .attr("width", 2 * wr / 10)
-                                .attr("height", 2 * hr / 10)
-                                .attr("stroke", "black")
-                                .attr("fill", "#EEE")
-                                .call(drag)
-                                .on("click", function () {
-                                    selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
-                                    selected = this.parentElement.id;
-                                    d3.select(this).style("fill", "#FDD1FD");
-                                    //this.parentElement.parentElement.appendChild(this.parentElement);
-                                    //server.sendOrder(instanceId, order("frontRect", [selected]), false);
-                                });
-
-                            rg.append("circle").attr("cx", wr * 2 / 10)
-                                .attr("cy", hr * 2 / 10)
-                                .attr("r", 10)
-                                .attr("stroke", "transparent")
-                                .attr("fill", "rgba(252,231,31,0.5)")
-                                .call(dragC);
-
-                            server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                        server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                     });
 
                     $("#addRect").click(function () {
@@ -368,6 +387,7 @@
 
                         drag.on("drag", moveRect);
                         drag.on("dragstart", function () {
+                            d3.select(this.parentElement).moveToFront();
                             var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
                             previous = Date.now();
                             pos.x = t[0] - d3.mouse(g.node())[0];
@@ -376,6 +396,7 @@
 
                         dragC.on("drag", resizeRect);
                         dragC.on("dragstart", function () {
+                            d3.select(this.parentElement).moveToFront();
                             var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
                             previous = Date.now();
                             posC.x = t[0] - d3.mouse(g.node())[0];
