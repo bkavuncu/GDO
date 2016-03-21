@@ -435,8 +435,6 @@
                                                 .attr("stroke", "transparent")
                                                 .attr("fill", "rgba(252,231,31,0.5)")
                                                 .call(dragC, this);
-
-                                            server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                                             /* Add rect END*/
                                         } //End if image
                                     }); //End each zip file
