@@ -575,15 +575,16 @@
                     orderController.orders['createRect'] = function (id, image) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
-                        var offx = 10 + ((id_int - 1) * (width / 10)) % (width - (2 * width / 10));
-                        var offy = 10 + ((height / 10) * (((id_int - 1) * (width / 10)) / (width - (2 * width / 10))) % (height - (2 * height / 10)));
+                        var col = (id_int - 1) % 5, row = Math.floor((id_int - 1) / 5);
+                        var offx = (((2 * width / 10) * col) % width) + col;
+                        var offy = (((2 * height / 10) * row) % height) + row;
                         rectG.attr("transform", "translate(" + [offx, offy] + ")");
                         //*
                         rectG.append('rect')
                             .attr("x", 0)
                             .attr("y", 0)
-                            .attr("width", 2 * width / 10)
-                            .attr("height", 2 * height / 10)
+                            .attr("width", (2 * width / 10) - 2)
+                            .attr("height", (2 * height / 10) - 2)
                             .attr("fill", "transparent")
                             .attr("stroke", "black");
                         //*/
@@ -591,8 +592,8 @@
                             .attr("xlink:href", image)
                             .attr("x", 0)
                             .attr("y", 0)
-                            .attr("width", 2 * width / 10)
-                            .attr("height", 2 * height / 10);
+                            .attr("width", (2 * width / 10) - 2)
+                            .attr("height", (2 * height / 10) - 2);
                     };
 
                     orderController.orders['moveRect'] = function (id, x, y) {
