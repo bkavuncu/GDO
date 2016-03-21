@@ -6,6 +6,17 @@ $(function () {
     gdo.management.apps.selectedConfiguration = null;
     gdo.management.apps.selectedAdvancedApp = null;
     gdo.management.apps.selectedAdvancedConfiguration = null;
+
+    $("#app_table_panel_body").enscroll({
+        showOnHover: false,
+        verticalTrackClass: 'track4',
+        verticalHandleClass: 'handle4'
+    }).css("width", "100%").css("height", "41vh").css("padding-right", "5px");
+    $("#app_table_configuration_panel_body").enscroll({
+        showOnHover: false,
+        verticalTrackClass: 'track4',
+        verticalHandleClass: 'handle4'
+    }).css("width", "100%").css("height", "41vh").css("padding-right", "5px");
 });
 
 gdo.management.apps.drawEmptyAppTable = function () {
