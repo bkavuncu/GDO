@@ -189,6 +189,11 @@ namespace GDO.Utility
             return key;
         }
 
+        public void Update<T>(int key, T value) where T : TU
+        {
+            _dict[key] = value;
+        }
+
         public void Remove(int key)
         {
             _dict.Remove(key);

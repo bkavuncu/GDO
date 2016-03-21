@@ -193,6 +193,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
     source.properties = deserializedSource;
     source.properties.isInitialized = true;
     gdo.net.instance[instanceId].sources[source.id] = source;
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedSource) {
@@ -226,6 +227,7 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Source Type: ' + deserializedSource.Type + ' for Source ' + deserializedSource.Id);
             break;
     }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].requestSource = function (instanceId, sourceId) {
@@ -237,90 +239,18 @@ gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading Source: ' + sourceId);
     var source = gdo.net.instance[instanceId].source[sourceId];
     var properties = source.properties;
-    var type = gdo.net.instance[instanceId].source[sourceId].type;
     if (isNew) {
-        switch (type) {
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
-                gdo.net.app["Maps"].server.addBingMapsSource(instanceId, properties.Name, properties.Culture, properties.Key, properties.ImagerySet,
-                    source.MaxZoom);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Cluster:
-                gdo.net.app["Maps"].server.addClusterSource(instanceId, properties.Name, properties.Distance, properties.Extent, properties.FormatId,
-                    properties.VectorSourceId);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
-                gdo.net.app["Maps"].server.addStaticImageSource(instanceId, properties.Name, properties.CrossOrigin, properties.Width, properties.Height,
-                    properties.Url, properties.Extent);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
-                gdo.net.app["Maps"].server.addVectorImageSource(instanceId, properties.Name, properties.VectorSourceId, properties.StyleId, properties.Ratio);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
-                gdo.net.app["Maps"].server.addImageTileSource(instanceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
-                    properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
-                gdo.net.app["Maps"].server.addImageTileSource(instanceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
-                    properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions, properties.Projection, properties.Url);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
-                gdo.net.app["Maps"].server.addImageTileSource(instanceId, properties.Name, properties.CrossOrigin, properties.Opaque, properties.Extent,
-                    properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions, properties.Projection, properties.Url,
-                    properties.Layer);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
-                gdo.net.app["Maps"].server.addJSONTileSource(instanceId, properties.Name, properties.Url, properties.CrossOrigin);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileVector:
-                gdo.net.app["Maps"].server.addVectorTileSource(instanceId, properties.Name, properties.Projection, properties.Url, properties.Extent,
-                    properties.FormatId, properties.MinZoom, properties.MaxZoom, properties.TileWidth, properties.TileHeight, properties.Resolutions);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Vector:
-                gdo.net.app["Maps"].server.addVectorSource(instanceId, properties.Name, properties.FormatId, properties.Url, properties.LoadingStrategy,
-                    properties.UseSpatialIndex);
-                break;
-            default:
-                break;
-        }
+        gdo.net.app["Maps"].server.addSource(instanceId, parseInt(properties.Type), JSON.stringify(properties));
     } else {
-        switch (type) {
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
-                gdo.net.app["Maps"].server.updateBingMapsSource(instanceId, sourceId, properties.Name);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Cluster:
-                gdo.net.app["Maps"].server.updateClusterSource(instanceId, sourceId, properties.Name);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
-                gdo.net.app["Maps"].server.updateStaticImageSource(instanceId, sourceId, properties.Name);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
-                gdo.net.app["Maps"].server.updateVectorImageSource(instanceId, sourceId, properties.Name,  properties.StyleId);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
-                gdo.net.app["Maps"].server.updateImageTileSource(instanceId, sourceId, properties.Name);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
-                gdo.net.app["Maps"].server.updateImageTileSource(instanceId, sourceId, properties.Name, properties.Url);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
-                gdo.net.app["Maps"].server.updateImageTileSource(instanceId, sourceId, properties.Name, properties.Url);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
-                gdo.net.app["Maps"].server.updateJSONTileSource(instanceId, sourceId, properties.Name);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileVector:
-                gdo.net.app["Maps"].server.updateVectorTileSource(instanceId, sourceId, properties.Name);
-                break;
-            case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Vector:
-                gdo.net.app["Maps"].server.updateVectorSource(instanceId, sourceId, properties.Name);
-                break;
-            default:
-                break;
-        }
+        gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, parseInt(properties.Type), JSON.stringify(properties));
     }
 }
 
 gdo.net.app["Maps"].removeSource = function (instanceId, sourceId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing Source: ' + sourceId);
     gdo.net.instance[instanceId].sources[sourceId] = null;
+    if (gdo.net.app["Maps"].selected["source"] == sourceId) {
+        gdo.net.app["Maps"].selected["source"] = -1;
+    }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }

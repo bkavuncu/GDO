@@ -398,17 +398,33 @@
                         <br>
                         <div class="form-group">
                             <label for="layer_types">Please select the type of your layer</label>
-                            <select class="form-control" id="layer_types" style="background: #333;color: #FFF;">
+                            <select class="form-control" id="layer_types" style="background: #333; color: #FFF;">
                             </select>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                        <button type="button" data-dismiss="modal" id="layer-create-button" class="btn btn-success btn-ok">Create</button>
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                        <button type="button" data-dismiss="modal" id="layer-next-button"  data-toggle='modal' data-target='#new-layer-input' class="btn btn-primary btn-ok">Next</button>
                     </div>
                 </div>
             </div>
         </div>
+            <div class="modal fade" id="new-layer-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Layer</font></h5>
+                        </div>
+                        <div class="modal-body">
+                            <div id="layer_create_properties"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="layer-create-button" class="btn btn-success btn-ok">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <div class="modal fade" id="new-source" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -459,31 +475,32 @@
                 </div>
             </div>
         </div>
-            <div class="modal fade" id="new-format" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Format</font></h5>
-                        </div>
-                        <div class="modal-body">
+        <div class="modal fade" id="new-format" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Format</font></h5>
+                    </div>
+                    <div class="modal-body">
 
-                            <div class="input_field_div form-group">
-                                <label for="format_name_input">Please enter a name for your format:</label>
-                                <input type='text' id='format_name_input' class="input_field form-control" style='background: #222; width: 100%; height: 28px;' maxlength='70'></input>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label for="format_types">Please select the type of your format:</label>
-                                <select class="form-control" id="format_types" style="background: #333;color: #FFF;"></select>
-                            </div>
+                        <div class="input_field_div form-group">
+                            <label for="format_name_input">Please enter a name for your format:</label>
+                            <input type='text' id='format_name_input' class="input_field form-control" style='background: #222; width: 100%; height: 28px;' maxlength='70'></input>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                            <button type="button" data-dismiss="modal" id="format-create-button" class="btn btn-success btn-ok">Create</button>
+                        <br>
+                        <div class="form-group">
+                            <label for="format_types">Please select the type of your format:</label>
+                            <select class="form-control" id="format_types" style="background: #333; color: #FFF;"></select>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="button" data-dismiss="modal" id="format-create-button" class="btn btn-success btn-ok">Create</button>
                     </div>
                 </div>
             </div>
+        </div>
+
             <script type="text/javascript" src="../../Scripts/Maps/ol3/ol.js"></script>
             <script src="../../Scripts/Maps/Cesium/Cesium.js"></script>
             <script src="../../Scripts/Maps/ol3cesium.js"></script>

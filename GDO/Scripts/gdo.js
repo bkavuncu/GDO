@@ -6,7 +6,8 @@ gdo.CLIENT_MODE = {
 gdo.SCRIPT_TYPE = {
     CORE: 1,
     MODULE: 2,
-    APP: 3
+    APP: 3,
+    EXTERNAL: 4
 };
 
 $(function () {
@@ -24,7 +25,7 @@ gdo.initGDO = function (clientMode) {
     gdo.consoleOut('', 1, 'Initializing GDO');
     gdo.loadScript('net', 'net', gdo.SCRIPT_TYPE.CORE);
     gdo.clientMode = clientMode;
-    gdo.updateInterval = 4900;
+    gdo.updateInterval = 7700;
     gdo.functions = {};
     gdo.functions.array = {};
     gdo.functions.array.mods = [];
@@ -158,6 +159,9 @@ gdo.loadScript = function (subscript, script, scriptType) {
             gdo.consoleOut('', 1, 'Loading app subscript ' + subscript + ' at of ' + script + ' ../scripts/' + script + '/gdo.app.' + script + '.' + subscript + '.js\'');
             $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/gdo.apps.' + script + '.' + subscript + '.js\'></script>');
         }
+    } else if (scriptType == gdo.SCRIPT_TYPE.EXTERNAL) {
+        gdo.consoleOut('', 1, 'Loading external app script ' + script + ' at ' + '../scripts/' + script + '/' + subscript + '.js\'');
+        $head.append('<script type=\'text/javascript\' src=\'../scripts/' + script + '/' + subscript + '.js\'></script>');
     } else {
         gdo.consoleOut('', 5, 'Failed Loading app script ' + script + ', subscript ' + subscript + ', scriptType ' + scriptType);
     }

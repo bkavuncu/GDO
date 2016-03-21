@@ -146,7 +146,7 @@ $(function() {
         if (gdo.net.isNodeInitialized()) {
             var node = JSON.parse(serializedNode);
             gdo.net.processNode(node);
-            gdo.updateSelf();
+            //gdo.updateSelf();
         }
     }
 
@@ -686,6 +686,9 @@ gdo.net.processNode = function (node)
     }
     if (gdo.management.isActive && gdo.management.nodes.isActive) {
         gdo.management.nodes.processNodeUpdate(node.Id);
+    }
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        gdo.maintenance.processNodeUpdate(node.Id);
     }
     //gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
 }

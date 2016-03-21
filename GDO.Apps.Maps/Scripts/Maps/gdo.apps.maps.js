@@ -127,9 +127,10 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
     gdo.net.instance[instanceId].map = map;
 
 }
-
+var dm;
 gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     //Process deserialized Map
+    dm = deserializedMap;
     var i;
     for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
         gdo.net.app["Maps"].addFormat(instanceId, deserializedMap.Formats.$values[i].Id, deserializedMap.Formats.$values[i]);
@@ -179,11 +180,7 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     gdo.net.app["Maps"].requestView(instanceId);
     gdo.net.app["Maps"].server.requestTemplate(instanceId);
 
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        gdo.net.app["Maps"].drawListTable(instanceId, "layer");
-        //gdo.net.app["Maps"].drawListTable(instanceId, "source");
-        //gdo.net.app["Maps"].drawListTable(instanceId, "style");
-    }
+    gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
