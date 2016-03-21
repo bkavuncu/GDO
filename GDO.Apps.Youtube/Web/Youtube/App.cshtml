@@ -1,8 +1,4 @@
-﻿@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html>
 <head>
@@ -37,7 +33,7 @@
             overflow: hidden;
         }
 
-        #html_frame {
+        #youtube_player {
             position: fixed;
             top: 0;
             left: 0;
@@ -60,7 +56,7 @@
         body {
             overflow: hidden;
             margin: 0px;
-            color: #FFF;
+            color: #000;
         }
     </style>
 </head>
@@ -72,11 +68,39 @@
             $(function () {
                 $(document).ready(function () {
                     var gdo = parent.gdo;
+                    //load youtube API
+                    var tag = document.createElement('script');
+                    tag.src = "https://www.youtube.com/iframe_api";
+                    var firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
                     gdo.net.app["Youtube"].initClient(gdo.clientId);
                 });
+
             });
+            var gdo;
+            //this function is called when the Youtube api is ready. It loads the iframe for the video
+            function onYouTubeIframeAPIReady() {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.Youtube', 1, 'onYouTubeIframeAPIReady called');
+                gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].youtubePlayer = new YT.Player('youtube_player', {
+                    height: gdo.net.section[gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].sectionId].height,
+                    width: gdo.net.section[gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].sectionId].width,
+                    videoId: '',
+                    playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'showinfo': 0, 'loop': 1 },
+                    events: {
+                        'onReady': function (event) { event.target.mute(); },
+                        'onStateChange': //hack! because loop:1 does not work
+                            function (e) {
+                                if (e.data === YT.PlayerState.ENDED) {
+                                    e.target.playVideo();
+                                }
+                            }
+                    }
+                });
+            }
+
     </script>
-    <iframe id="html_frame" frameborder="0" style="border: 0 none; display: block; overflow:hidden;"></iframe>
+    <div id="youtube_player"></div>
 
 </body>
 </html>

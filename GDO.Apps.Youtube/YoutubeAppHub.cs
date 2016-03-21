@@ -57,5 +57,83 @@ namespace GDO.Apps.Youtube
                 }
             }
         }
+
+        public void PlayVideo(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).playVideo(instanceId);
+                    Clients.Caller.playVideo(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);// TODO show how log4net can be used
+                }
+            }
+        }
+
+        public void PauseVideo(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).pauseVideo(instanceId);
+                    Clients.Caller.pauseVideo(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);// TODO show how log4net can be used
+                }
+            }
+        }
+        public void StopVideo(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).stopVideo(instanceId);
+                    Clients.Caller.stopVideo(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);// TODO show how log4net can be used
+                }
+            }
+        }
+
+        public void SeekTo(int instanceId, int seconds, bool allowSeekAhead)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).seekTo(instanceId, seconds, allowSeekAhead);
+                    Clients.Caller.seekTo(instanceId, seconds, allowSeekAhead);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);// TODO show how log4net can be used
+                }
+            }
+        }
+        public void SetPlaybackQuality(int instanceId, string quality)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).setPlaybackQuality(instanceId, quality);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);// TODO show how log4net can be used
+                }
+            }
+        }
+
     }
 }
