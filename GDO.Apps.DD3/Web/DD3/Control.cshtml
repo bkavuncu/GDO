@@ -455,7 +455,7 @@
                                     .attr("fill", "rgba(252,231,31,0.5)")
                                     .call(dragC);
 
-                                server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                                //server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                                 /* Add rect END*/
                             } else if (extension === 'zip') {
                                 zipReader.readAsArrayBuffer(f);
@@ -520,7 +520,7 @@
                             .attr("fill", "rgba(252,231,31,0.5)")
                             .call(dragC);
 
-                        server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                       // server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                     });
 
                     $("#addRect").click(function () {
@@ -573,7 +573,7 @@
                             .attr("fill", "rgba(252,231,31,0.5)")
                             .call(dragC);
 
-                        server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
+                       // server.sendOrder(instanceId, order("resizeRect", [r.node().parentElement.id, r.attr("width") / wr, r.attr("height") / hr]), false);
                     });
 
                     $("#sens").change(function () {
