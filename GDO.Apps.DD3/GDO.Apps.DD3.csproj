@@ -120,6 +120,7 @@
     <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
     <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
     <Content Include="packages.config" />
+    <Content Include="Web\DD3\Scripts\jszip.min.js" />
     <Content Include="Web\DD3\Scripts\animationLines.js" />
     <Content Include="Web\DD3\Scripts\animation.js" />
     <Content Include="Web\DD3\Scripts\lines.js" />
