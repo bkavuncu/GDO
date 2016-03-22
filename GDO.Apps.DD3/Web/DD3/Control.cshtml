@@ -397,7 +397,7 @@
                         id++;
                         server.sendOrder(instanceId, order("createRect", ['d' + id, url]), false);
 
-                        //Custom offset that stays in bounds and tranlate image on x&y according to ID
+                        //Custom offset that stays in bounds and translate image on x&y according to ID
                         var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
                         var offx = (((2 * wr / 10) * col) % wr) + col;
                         var offy = (((2 * hr / 10) * row) % hr) + row;
