@@ -1,4 +1,5 @@
 ﻿@using System.IO
+@using System.IO.Compression
 @using System.Web.Helpers
 @using GDO.Core
 @{
@@ -87,462 +88,532 @@
         };
 
     </script>
-    <script>
-        function getUrlVar(variable) {
-            /// <summary>
-            /// Gets the URL variable.
-            /// </summary>
-            /// <param name="variable">The variable.</param>
-            /// <returns></returns>
-            var query = window.location.search.substring(1);
-            var vars = query.split('&');
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split('=');
-                if (pair[0] === variable) {
-                    return pair[1];
-                }
+<script>
+    function getUrlVar(variable) {
+        /// <summary>
+        /// Gets the URL variable.
+        /// </summary>
+        /// <param name="variable">The variable.</param>
+        /// <returns></returns>
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) {
+                return pair[1];
             }
-            query = window.frames['control_frame_content'].location.search.substring(1);
-            vars = query.split('&');
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split('=');
-                if (pair[0] === variable) {
-                    return pair[1];
-                }
-            }
-            return (false);
         }
+        query = window.frames['control_frame_content'].location.search.substring(1);
+        vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return (false);
+    }
 
-        $(function() {
-            $(document).ready(function() {
-                var gdo = parent.gdo,
-                    server = gdo.net.app.DD3.server;
-                gdo.controlId = getUrlVar("controlId");
-                var instanceId,
-                    confId,
-                    numClients;
+    $(function() {
+        $(document).ready(function() {
+            var gdo = parent.gdo,
+                server = gdo.net.app.DD3.server;
+            gdo.controlId = getUrlVar("controlId");
+            var instanceId,
+                confId,
+                numClients;
 
-                var test_bench = [];
+            var test_bench = [];
 
-                var callback = function(message) {
-                    gdo.consoleOut(".DD3", 4, "Callback Message: " + message);
-                    confId = message.configurationId;
-                    numClients = message.numClient;
-                    if (message.state == 1) {
-                        test_bench[confId] && test_bench[confId]();
-                        test_bench[confId] = null;
-                        $("#wait").css("display", "none");
-                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) { // all of these are Shangai LinkLoad, and should share the control menu
-                            $("#control_6").css("display", "");
-                        } else {
-                            $("#control_" + confId).css("display", "");
-                        }
-                    }
-                };
-
-                var order = function(name, args) {
-                    return JSON.stringify({ name: name, args: args });
-                };
-
-                if (!gdo.net.app["DD3"].initControl) {
+            var callback = function(message) {
+                gdo.consoleOut(".DD3", 4, "Callback Message: " + message);
+                confId = message.configurationId;
+                numClients = message.numClient;
+                if (message.state == 1) {
+                    test_bench[confId] && test_bench[confId]();
+                    test_bench[confId] = null;
                     $("#wait").css("display", "none");
-                    $("#error").css("display", "");
-                    return;
+                    if (confId === 6 || confId === 7 || confId === 8 || confId === 9) { // all of these are Shangai LinkLoad, and should share the control menu
+                        $("#control_6").css("display", "");
+                    } else {
+                        $("#control_" + confId).css("display", "");
+                    }
                 }
+            };
 
-                instanceId = gdo.net.app["DD3"].initControl(callback);
+            var order = function(name, args) {
+                return JSON.stringify({ name: name, args: args });
+            };
 
-                test_bench[0] = function() {
-                    var rect = false, circles = 0, dcircles = 0, polygon = false;
+            if (!gdo.net.app["DD3"].initControl) {
+                $("#wait").css("display", "none");
+                $("#error").css("display", "");
+                return;
+            }
 
-                    // == Basic Moves ==
+            instanceId = gdo.net.app["DD3"].initControl(callback);
 
-                    $('#createRect').click(function() {
-                        if (!rect) {
-                            server.sendOrder(instanceId, order("createRect", []), false);
-                            $(".basic_moves .red").removeClass("red").addClass("green");
-                            $(this).removeClass("green").addClass("red");
-                            rect = true;
-                        }
-                    });
+            test_bench[0] = function() {
+                var rect = false, circles = 0, dcircles = 0, polygon = false;
 
-                    $('#removeRect').click(function() {
-                        if (rect) {
-                            server.sendOrder(instanceId, order("removeRect", []), false);
-                            $(".basic_moves .green").removeClass("green").addClass("red");
-                            $('#createRect').removeClass("red").addClass("green");
-                            rect = false;
-                        }
-                    });
+                // == Basic Moves ==
 
-                    $('#translationX').click(function() {
-                        rect && server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
-                    });
+                $('#createRect').click(function() {
+                    if (!rect) {
+                        server.sendOrder(instanceId, order("createRect", []), false);
+                        $(".basic_moves .red").removeClass("red").addClass("green");
+                        $(this).removeClass("green").addClass("red");
+                        rect = true;
+                    }
+                });
 
-                    $('#translationY').click(function() {
-                        rect && server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
-                    });
+                $('#removeRect').click(function() {
+                    if (rect) {
+                        server.sendOrder(instanceId, order("removeRect", []), false);
+                        $(".basic_moves .green").removeClass("green").addClass("red");
+                        $('#createRect').removeClass("red").addClass("green");
+                        rect = false;
+                    }
+                });
 
-                    $('#rotation').click(function() {
-                        rect && server.sendOrder(instanceId, order("startRotation", ['R']), false);
-                    });
+                $('#translationX').click(function() {
+                    rect && server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
+                });
 
-                    $('#allMoves').click(function() {
-                        if (rect) {
-                            server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
-                            server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
-                            server.sendOrder(instanceId, order("startRotation", ["R"]), false);
-                        }
-                    });
+                $('#translationY').click(function() {
+                    rect && server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
+                });
 
-                    // == Superposition ==
+                $('#rotation').click(function() {
+                    rect && server.sendOrder(instanceId, order("startRotation", ['R']), false);
+                });
 
-                    $('#createCircles').click(function() {
-                        if (!circles) {
-                            circles = 100;
-                            server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
-                            $(".superposition.non_distributed .red").removeClass("red").addClass("green");
-                            $(this).removeClass("green").addClass("red");
-                            $("#spanc").text(circles)
-                        }
-                    });
+                $('#allMoves').click(function() {
+                    if (rect) {
+                        server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
+                        server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
+                        server.sendOrder(instanceId, order("startRotation", ["R"]), false);
+                    }
+                });
 
-                    $('#createDistributedCircles').click(function() {
-                        if (!dcircles) {
-                            dcircles = 10;
-                            server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
-                            $(".superposition.distributed .red").removeClass("red").addClass("green");
-                            $(this).removeClass("green").addClass("red");
-                            $("#spandc").text(dcircles * numClients)
-                        }
-                    });
+                // == Superposition ==
 
-                    $('#removeCircles').click(function() {
-                        if (!!circles) {
-                            server.sendOrder(instanceId, order("removeCircles", []), false);
-                            $(".superposition.non_distributed .green").removeClass("green").addClass("red");
-                            $('#createCircles').removeClass("red").addClass("green");
-                            circles = 0;
-                            $("#spanc").text("");
-                        }
-                    });
+                $('#createCircles').click(function() {
+                    if (!circles) {
+                        circles = 100;
+                        server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
+                        $(".superposition.non_distributed .red").removeClass("red").addClass("green");
+                        $(this).removeClass("green").addClass("red");
+                        $("#spanc").text(circles)
+                    }
+                });
 
-                    $('#removeDistributedCircles').click(function() {
-                        if (!!dcircles) {
-                            server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
-                            $(".superposition.distributed .green").removeClass("green").addClass("red");
-                            $('#createDistributedCircles').removeClass("red").addClass("green");
-                            dcircles = 0;
-                            $("#spandc").text("");
-                        }
-                    });
+                $('#createDistributedCircles').click(function() {
+                    if (!dcircles) {
+                        dcircles = 10;
+                        server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
+                        $(".superposition.distributed .red").removeClass("red").addClass("green");
+                        $(this).removeClass("green").addClass("red");
+                        $("#spandc").text(dcircles * numClients)
+                    }
+                });
 
-                    $("#nbAddCircles").click(function(e) { e.stopPropagation(); });
+                $('#removeCircles').click(function() {
+                    if (!!circles) {
+                        server.sendOrder(instanceId, order("removeCircles", []), false);
+                        $(".superposition.non_distributed .green").removeClass("green").addClass("red");
+                        $('#createCircles').removeClass("red").addClass("green");
+                        circles = 0;
+                        $("#spanc").text("");
+                    }
+                });
 
-                    $('#addCircles').click(function() {
-                        var n = +$("#nbAddCircles").val();
-                        circles && (server.sendOrder(instanceId, order("createCircles", [n]), false), $("#spanc").text(circles += n));
-                    });
+                $('#removeDistributedCircles').click(function() {
+                    if (!!dcircles) {
+                        server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
+                        $(".superposition.distributed .green").removeClass("green").addClass("red");
+                        $('#createDistributedCircles').removeClass("red").addClass("green");
+                        dcircles = 0;
+                        $("#spandc").text("");
+                    }
+                });
 
-                    $("#nbAddDistributedCircles").click(function(e) { e.stopPropagation(); });
+                $("#nbAddCircles").click(function(e) { e.stopPropagation(); });
 
-                    $('#addDistributedCircles').click(function() {
-                        var n = +$("#nbAddDistributedCircles").val();
-                        dcircles && (server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true), $("#spandc").text((dcircles += n) * numClients));
-                    });
+                $('#addCircles').click(function() {
+                    var n = +$("#nbAddCircles").val();
+                    circles && (server.sendOrder(instanceId, order("createCircles", [n]), false), $("#spanc").text(circles += n));
+                });
 
-                    $('#moveCircles').click(function() {
-                        circles && server.sendOrder(instanceId, order("startMoveCircles", []), false);
-                    });
+                $("#nbAddDistributedCircles").click(function(e) { e.stopPropagation(); });
 
-                    $('#moveDistributedCircles').click(function() {
-                        dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
-                    });
+                $('#addDistributedCircles').click(function() {
+                    var n = +$("#nbAddDistributedCircles").val();
+                    dcircles && (server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true), $("#spandc").text((dcircles += n) * numClients));
+                });
 
-                    // == Group Transition ==
+                $('#moveCircles').click(function() {
+                    circles && server.sendOrder(instanceId, order("startMoveCircles", []), false);
+                });
 
-                    $('#createPolygon').click(function() {
-                        if (!polygon) {
-                            server.sendOrder(instanceId, order("createPolygon", []), false);
-                            $(".group .red").removeClass("red").addClass("green");
-                            $(this).removeClass("green").addClass("red");
-                            polygon = true;
-                        }
-                    });
+                $('#moveDistributedCircles').click(function() {
+                    dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
+                });
 
-                    $('#removePolygon').click(function() {
-                        if (polygon) {
-                            server.sendOrder(instanceId, order("removePolygon", []), false);
-                            $(".group .green").removeClass("green").addClass("red");
-                            $('#createPolygon').removeClass("red").addClass("green");
-                            polygon = false;
-                        }
-                    });
+                // == Group Transition ==
 
-                    $('#movePolygon').click(function() {
-                        polygon && server.sendOrder(instanceId, order("startMovePolygon", []), false);
-                    });
+                $('#createPolygon').click(function() {
+                    if (!polygon) {
+                        server.sendOrder(instanceId, order("createPolygon", []), false);
+                        $(".group .red").removeClass("red").addClass("green");
+                        $(this).removeClass("green").addClass("red");
+                        polygon = true;
+                    }
+                });
 
+                $('#removePolygon').click(function() {
+                    if (polygon) {
+                        server.sendOrder(instanceId, order("removePolygon", []), false);
+                        $(".group .green").removeClass("green").addClass("red");
+                        $('#createPolygon').removeClass("red").addClass("green");
+                        polygon = false;
+                    }
+                });
+
+                $('#movePolygon').click(function() {
+                    polygon && server.sendOrder(instanceId, order("startMovePolygon", []), false);
+                });
+
+            };
+
+            test_bench[1] = function() {
+                var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
+
+                var table = $("#control_1 table");
+                var send = function(value) {
+                    server.sendOrder(instanceId, order("plot", [value]), true);
                 };
 
-                test_bench[1] = function() {
-                    var dataIds = ["scatterplot33", "scatterplot100", "scatterplot500", "scatterplot1000", "scatterplot4000", "scatterplot20000"];
+                dataIds.forEach(function(d) {
+                    table.append('<tr><td>' + d + '</td></tr>');
+                    table.find("tr:last td").addClass('green').click(send.bind(null, d));
+                });
+            };
 
-                    var table = $("#control_1 table");
-                    var send = function(value) {
-                        server.sendOrder(instanceId, order("plot", [value]), true);
+            test_bench[2] = function() {
+                $("#changeValues").click(function() {
+                    var n = +$("#timeTr").val();
+                    server.sendOrder(instanceId, order("changeValues", [n]), true);
+                });
+            };
+
+            test_bench[3] = function() {
+                var id = 0;
+                var previous;
+                var timeout = -1;
+                var sensibility = 100;
+                var pos = {};
+                var posC = {};
+                var wr = 1400, hr = 600;
+                var selected = "";
+                d3.select("#control_3").selectAll("svg").remove();
+                var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
+
+                svg.append("rect").attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", wr + "px")
+                    .attr("height", hr + "px")
+                    .attr("stroke", "black")
+                    .style("fill", "#EEE")
+                    .on("click", function() {
+                        selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                        selected = "";
+                    });
+
+                var g = svg.append("g");
+
+                var moveRect = function() {
+                    var o = order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
+                        tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
+
+                    var move = function() {
+                        server.sendOrder(instanceId, o, false);
+                        previous = Date.now();
                     };
 
-                    dataIds.forEach(function(d) {
-                        table.append('<tr><td>' + d + '</td></tr>');
-                        table.find("tr:last td").addClass('green').click(send.bind(null, d));
-                    });
+                    d3.select(this.parentElement).attr("transform", "translate(" + tr + ")");
+                    clearTimeout(timeout);
+                    timeout = setTimeout(move, Math.max(0, sensibility - (Date.now() - previous)));
                 };
 
-                test_bench[2] = function() {
-                    $("#changeValues").click(function() {
-                        var n = +$("#timeTr").val();
-                        server.sendOrder(instanceId, order("changeValues", [n]), true);
-                    });
+                var resizeRect = function() {
+                    var x = Math.max(d3.mouse(this)[0], 0),
+                        y = Math.max(0, d3.mouse(this)[1]),
+                        o = order("resizeRect", [this.parentElement.id, x / wr, y / hr]);
+
+                    var resize = function() {
+                        server.sendOrder(instanceId, o, false);
+                        previous = Date.now();
+                    };
+
+                    d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
+                    d3.select(this).attr("cx", x).attr("cy", y);
+                    clearTimeout(timeout);
+                    timeout = setTimeout(resize, Math.max(0, sensibility - (Date.now() - previous)));
                 };
 
-                test_bench[3] = function() {
-                    var id = 0;
-                    var previous;
-                    var timeout = -1;
-                    var sensibility = 100;
-                    var pos = {};
-                    var posC = {};
-                    var wr = 1400, hr = 600;
-                    var selected = "";
-                    d3.select("#control_3").selectAll("svg").remove();
-                    var svg = d3.select("#control_3").append("svg").attr("width", wr + "px").attr("height", hr + "px");
 
-                    svg.append("rect").attr("x", 0)
+                var delRect = function() {
+                    server.sendOrder(instanceId, order("delRect", [this.id]), false);
+                    d3.select(this).remove();
+                };
+
+                var drag = d3.behavior.drag();
+                var dragC = d3.behavior.drag();
+                drag.on("drag", function() {
+                    moveRect.call(this);
+                });
+                drag.on("dragstart", function() {
+                    console.log('move');
+                    console.log(this);
+                    d3.select(this.parentElement).moveToFront();
+                    var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                    previous = Date.now();
+                    pos.x = t[0] - d3.mouse(g.node())[0];
+                    pos.y = t[1] - d3.mouse(g.node())[1];
+                });
+                dragC.on("drag", function() {
+                    resizeRect.call(this);
+                });
+                dragC.on("dragstart", function() {
+                    console.log('resize');
+                    console.log(this);
+                    d3.select(this.parentElement).moveToFront();
+                    var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
+                    previous = Date.now();
+                    posC.x = t[0] - d3.mouse(g.node())[0];
+                    posC.y = t[1] - d3.mouse(g.node())[1];
+                });
+
+                var createHostedRect = function(url) {
+                    id++;
+                    server.sendOrder(instanceId, order("createRect", ['d' + id, url]), false);
+
+                    //Custom offset that stays in bounds and translate image on x&y according to ID
+                    var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
+                    var offx = (((2 * wr / 10) * col) % wr) + col;
+                    var offy = (((2 * hr / 10) * row) % hr) + row;
+                    var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                    var r = rg.append("rect").attr("x", 0)
                         .attr("y", 0)
-                        .attr("width", wr + "px")
-                        .attr("height", hr + "px")
+                        .attr("width", (2 * wr / 10) - 2)
+                        .attr("height", (2 * hr / 10) - 2)
                         .attr("stroke", "black")
-                        .style("fill", "#EEE")
+                        .attr("fill", "#EEE")
+                        .call(drag, this)
                         .on("click", function() {
                             selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
-                            selected = "";
+                            selected = this.parentElement.id;
+                            d3.select(this).style("fill", "#FDD1FD");
                         });
 
-                    var g = svg.append("g");
+                    rg.append("circle").attr("cx", wr * 2 / 10)
+                        .attr("cy", hr * 2 / 10)
+                        .attr("r", 20)
+                        .attr("stroke", "transparent")
+                        .attr("fill", "rgba(252,231,31,0.5)")
+                        .call(dragC, this);
+                };
 
-                    var moveRect = function () {
-                        var o = order("moveRect", [this.parentElement.id, (d3.mouse(g.node())[0] + pos.x) / wr, (d3.mouse(g.node())[1] + pos.y) / hr]),
-                            tr = [d3.mouse(g.node())[0] + pos.x, d3.mouse(g.node())[1] + pos.y];
+                var createLocalRect = function(name, fileobj) {
+                    id++;
 
-                        var move = function () {
-                            server.sendOrder(instanceId, o, false);
-                            previous = Date.now();
-                        };
+                    //server.uploadFile(fileobj);
 
-                        d3.select(this.parentElement).attr("transform", "translate(" + tr + ")");
-                        clearTimeout(timeout);
-                        timeout = setTimeout(move, Math.max(0, sensibility - (Date.now() - previous)));
-                    };
+                    server.sendOrder(instanceId, order("createRect", ['d' + id, "\\Web\\Images\\images\\" + name]), false);
 
-                    var resizeRect = function () {
-                        var x = Math.max(d3.mouse(this)[0], 0), y = Math.max(0, d3.mouse(this)[1]),
-                            o = order("resizeRect", [this.parentElement.id, x / wr, y / hr]);
+                    //Custom offset that stays in bounds and translate image on x&y according to ID
+                    var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
+                    var offx = (((2 * wr / 10) * col) % wr) + col;
+                    var offy = (((2 * hr / 10) * row) % hr) + row;
+                    var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                    var r = rg.append("rect").attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", (2 * wr / 10) - 2)
+                        .attr("height", (2 * hr / 10) - 2)
+                        .attr("stroke", "black")
+                        .attr("fill", "#EEE")
+                        .call(drag, this)
+                        .on("click", function() {
+                            selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                            selected = this.parentElement.id;
+                            d3.select(this).style("fill", "#FDD1FD");
+                        });
 
-                        var resize = function () {
-                            server.sendOrder(instanceId, o, false);
-                            previous = Date.now();
-                        };
+                    rg.append("circle").attr("cx", wr * 2 / 10)
+                        .attr("cy", hr * 2 / 10)
+                        .attr("r", 20)
+                        .attr("stroke", "transparent")
+                        .attr("fill", "rgba(252,231,31,0.5)")
+                        .call(dragC, this);
+                };
 
-                        d3.select(this.parentElement).select('rect').attr("width", x).attr("height", y);
-                        d3.select(this).attr("cx", x).attr("cy", y);
-                        clearTimeout(timeout);
-                        timeout = setTimeout(resize, Math.max(0, sensibility - (Date.now() - previous)));
-                    };
+                $('#fileSelectButton').on('click', function (event) {
+                    event.preventDefault();
+                    var urlval = $('#fileSelect').val();
+                    createHostedRect(urlval);
+                }); //End handler onclick input
 
+                $('#addUrl').click(function() {
+                    var urlval = $('#inputUrl').val();
+                    if (urlval === "") {
+                        $('#inputUrl').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
+                        return;
+                    }
+                    createHostedRect(urlval);
+                });
 
-                    var delRect = function () {
-                        server.sendOrder(instanceId, order("delRect", [this.id]), false);
-                        d3.select(this).remove();
-                    };
+                $("#addRect").click(function() {
+                    createHostedRect('illustration.png');
+                });
 
-                    var drag = d3.behavior.drag();
-                    var dragC = d3.behavior.drag();
-                    drag.on("drag", function() {
-                        moveRect.call(this);
-                    });
-                    drag.on("dragstart", function () {
-                        console.log('move');
-                        console.log(this);
-                        d3.select(this.parentElement).moveToFront();
-                        var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
-                        previous = Date.now();
-                        pos.x = t[0] - d3.mouse(g.node())[0];
-                        pos.y = t[1] - d3.mouse(g.node())[1];
-                    });
-                    dragC.on("drag", function() {
-                        resizeRect.call(this);
-                    });
-                    dragC.on("dragstart", function () {
-                        console.log('resize');
-                        console.log(this);
-                        d3.select(this.parentElement).moveToFront();
-                        var t = d3.transform(d3.select(this.parentElement).attr("transform")).translate;
-                        previous = Date.now();
-                        posC.x = t[0] - d3.mouse(g.node())[0];
-                        posC.y = t[1] - d3.mouse(g.node())[1];
-                    });
-
-                    var createControlRect = function (url) {
-                        id++;
-                        server.sendOrder(instanceId, order("createRect", ['d' + id, url]), false);
-
-                        //Custom offset that stays in bounds and translate image on x&y according to ID
-                        var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
-                        var offx = (((2 * wr / 10) * col) % wr) + col;
-                        var offy = (((2 * hr / 10) * row) % hr) + row;
-                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
-                        var r = rg.append("rect").attr("x", 0)
-                            .attr("y", 0)
-                            .attr("width", (2 * wr / 10) - 2)
-                            .attr("height", (2 * hr / 10) - 2)
-                            .attr("stroke", "black")
-                            .attr("fill", "#EEE")
-                            .call(drag, this)
-                            .on("click", function () {
-                                selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
-                                selected = this.parentElement.id;
-                                d3.select(this).style("fill", "#FDD1FD");
-                            });
-
-                        rg.append("circle").attr("cx", wr * 2 / 10)
-                            .attr("cy", hr * 2 / 10)
-                            .attr("r", 20)
-                            .attr("stroke", "transparent")
-                            .attr("fill", "rgba(252,231,31,0.5)")
-                            .call(dragC, this);
-                    };
+                $("#sens").change(function() {
+                    sensibility = +this.value;
+                });
 
 
-                    $('#fileInput').on('change', function(event) {
-                        var files = event.target.files;
-
-                        for (var i = 0, f; f = files[i]; i++) {
-                            var zipReader = new FileReader();
-                            zipReader.onload = (function(zipLoadEvent) {
-                                return function(zipEvent) {
-                                    var zip = JSZip(zipEvent.target.result);
-                                    $.each(zip.files, function (index, file) {
-                                        var inzip_extension = file.name.split('.').pop();
-                                        if (inzip_extension === 'png' || inzip_extension === 'jpg' || inzip_extension === 'gif') {
-                                            var blobed = URL.createObjectURL(new Blob([zip.file(file.name).asArrayBuffer()], { type: 'image/' + inzip_extension }));
-                                            createControlRect(blobed);
-                                        } //End if image
-                                        else {
-                                            //Nothing
-                                        }
-                                    }); //End each zip file
-                                };
-                            })(f); // End loaded zip
-
-                            var extension = f.name.split('.').pop();
-
-                            if (extension === 'png' || extension === 'jpg' || extension === 'gif') {
-                                var img_url = URL.createObjectURL(f);
-                                createControlRect(img_url);
-                            } else if (extension === 'zip') {
-                                zipReader.readAsArrayBuffer(f);
-                            }
-
-                        } //End html input files loop
-                    }); //End handler onchange input
-                
-
-                    $('#addUrl').click(function() {
-                        var urlval = $('#inputUrl').val();
-                        if (urlval === "") {
-                            $('#inputUrl').val('https://upload.wikimedia.org/wikipedia/commons/6/65/Kochsim.gif');
-                            return;
-                        }
-                        createControlRect(urlval);
-                    });
-
-                    $("#addRect").click(function () {
-                        createControlRect('illustration.png');
-                    });
-
-                    $("#sens").change(function () {
-                        sensibility = +this.value;
-                    });
-
-
-                    $("#removeAllRect").click(function () {
-                        server.sendOrder(instanceId, order("delAllRect", []), true);
-                        d3.selectAll('g.r').remove();
-                        id = 0;
-                    });
-
+                $("#removeAllRect").click(function() {
                     server.sendOrder(instanceId, order("delAllRect", []), true);
-                };
+                    d3.selectAll('g.r').remove();
+                    id = 0;
+                });
 
-                test_bench[4] = function () {
-                    $('#launchEntryAnimationLondon').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
-                    });
+                server.sendOrder(instanceId, order("delAllRect", []), true);
+            };
 
-                    $('#launchExitAnimationLondon').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
-                    });
-                };
+            test_bench[4] = function() {
+                $('#launchEntryAnimationLondon').click(function() {
+                    server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                });
 
-                test_bench[5] = function () {
-                    $('#launchEntryAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [0]), true);
-                    });
+                $('#launchExitAnimationLondon').click(function() {
+                    server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                });
+            };
 
-                    /*
-                    $('#cleanupAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("cleanupAnimation", []), true);
-                    });
+            test_bench[5] = function() {
+                $('#launchEntryAnimationShanghai').click(function() {
+                    server.sendOrder(instanceId, order("launchAnimation", [0]), true);
+                });
 
-                    $('#pauseAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("pauseAnimation", []), true);
-                    });
+                /*
+                $('#cleanupAnimationShanghai').click(function () {
+                    server.sendOrder(instanceId, order("cleanupAnimation", []), true);
+                });
 
-                    $('#startAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("startAnimation", []), true);
-                    });
+                $('#pauseAnimationShanghai').click(function () {
+                    server.sendOrder(instanceId, order("pauseAnimation", []), true);
+                });
 
-                    $('#initAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("initAnimation", []), true);
-                    });
+                $('#startAnimationShanghai').click(function () {
+                    server.sendOrder(instanceId, order("startAnimation", []), true);
+                });
 
-                    $('#createAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("createAnimation", []), true);
-                    });
-                    //*/
+                $('#initAnimationShanghai').click(function () {
+                    server.sendOrder(instanceId, order("initAnimation", []), true);
+                });
 
-                    $('#launchExitAnimationShanghai').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [1]), true);
-                    });
-                };
+                $('#createAnimationShanghai').click(function () {
+                    server.sendOrder(instanceId, order("createAnimation", []), true);
+                });
+                //*/
 
-                test_bench[6] = test_bench[7] = test_bench[8] = test_bench[9] = function () {
-                    var cb = $('#outterCheckbox');
-                    var cb2 = $('#widthChangingCheckbox');
-                    var cb3 = $('#widthChangingLinkLoadCheckbox');
+                $('#launchExitAnimationShanghai').click(function() {
+                    server.sendOrder(instanceId, order("launchAnimation", [1]), true);
+                });
+            };
 
-                    $('#launchNormalAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
-                    });
+            test_bench[6] = test_bench[7] = test_bench[8] = test_bench[9] = function() {
+                var cb = $('#outterCheckbox');
+                var cb2 = $('#widthChangingCheckbox');
+                var cb3 = $('#widthChangingLinkLoadCheckbox');
 
-                    $('#launchDisruptedAnimationShanghaiLines').click(function () {
-                        server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
-                    });
-                };
-            });
+                $('#launchNormalAnimationShanghaiLines').click(function() {
+                    server.sendOrder(instanceId, order("launchAnimation", [0, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
+                });
+
+                $('#launchDisruptedAnimationShanghaiLines').click(function() {
+                    server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
+                });
+            };
         });
-    </script>
+    });
+</script>
+    @{
+        var path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/dd3/");
+        var filename = "";
+        var extension = "";
+        string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/dd3/Database.txt");
+        List<string> database = new List<string>();
+
+        //Constructing database
+        if (File.Exists(database_path))
+        {
+            database = File.ReadAllLines(database_path).ToList();
+        }
+
+        //Handles posted files if any
+        if (IsPost && Request.Files.Count > 0)
+        {
+            HttpPostedFileBase file = Request.Files[0];
+            if (file != null)
+            {
+                filename = Path.GetFileName(file.FileName);
+                extension = Path.GetExtension(file.FileName);
+
+
+                //foldername
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/dd3"));
+                if (extension == ".zip")
+                {
+                    file.SaveAs(path + filename);
+                    using (ZipArchive archive = ZipFile.OpenRead(path + filename))
+                    {
+                        //Analysing zipfile content
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            extension = Path.GetExtension(entry.FullName);
+                            //This entry is an image
+                            if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".gif")
+                            {
+                                //Extract to hosted directory, overwrites
+                                entry.ExtractToFile(path + entry.Name, true);
+                                //Add to database.txt
+                                database.Add(entry.Name);
+                            }
+                        }
+                    }
+                    //Do not keep the zip file
+                    File.Delete(path + filename);
+                }
+                //Is an image
+                else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".gif")
+                {
+                    //Put on disk
+                    file.SaveAs(path + filename);
+                    //Add to database.txt
+                    database.Add(filename);
+                }
+                else //Is not an Image
+                {
+                    //Nothing
+                }
+            }
+        }
+
+        //Writes back database
+        File.WriteAllLines(database_path, database);
+    }
 
     <div id="wait" style="">
         Please wait while app is initializing...
@@ -616,37 +687,52 @@
         </table>
     </div>
 
-    <div id="control_2" style="display:none">
-        <table class="table_control">
-            <tr>
-                <td class="green" id="changeValues">Change Values</td>
-            </tr>
-            <tr>
-                <td class="green">Transition Duration : <input id="timeTr" type="number" value="1000" style="width:60px" /></td>
-            </tr>
-        </table>            
-</div>
+    <div id="control_2" style="display: none">
+    <table class="table_control">
+        <tr>
+            <td class="green" id="changeValues">Change Values</td>
+        </tr>
+        <tr>
+            <td class="green">Transition Duration : <input id="timeTr" type="number" value="1000" style="width: 60px"/></td>
+        </tr>
+    </table>
+    </div>
+    <div id="control_3" style="display: none">
 
-    <div id="control_3" style="display:none">
-        <table class="table_control">
-            <tr>
-                <td class="green" id="addRect">Add Rectangle</td>
-            </tr>
-            <tr>
-                <td class="green" id="addUrl">Add Image Url</td>
-                <td class="" id="urlinputtd"><input id="inputUrl" type="url"/></td>
-            </tr>
-            <tr>
-                <td class="green" id="addFiles">Add files (.zip, .png, jpg, .gif)</td>
-                <td class=""><input id="fileInput" type="file"/></td>
-            </tr>
-            <tr>
-                <td class="green" id="removeAllRect">Remove All</td>
-            </tr>
-            <tr>
-                <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width:40px" /></td>
-            </tr>
-        </table> 
+        <form id="submit_file_form" action="" method="post" enctype="multipart/form-data">
+            <table class="table_control">
+                <tr>
+                    <td class="green" id="addRect">Add Rectangle</td>
+                </tr>
+                <tr>
+                    <td class="green" id="addUrl">Add Image Url</td>
+                    <td class="green" id="urlinputtd"><input id="inputUrl" type="url" /></td>
+                </tr>
+                <tr>
+
+                    <td class="green" id="addFiles">Upload files (.zip, .png, jpg, .gif)</td>
+                    <td class="green"><input id="fileInput" type="file" name="fileUpload"/></td>
+                    <td class="green"><input id="submit_file" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="Submit"/></td>
+
+                </tr>
+                <tr>
+                    <td class="green">Choose uploaded</td>
+                    <td class="green">
+                        <select class="input_field" id="fileSelect">
+                            @foreach (var s in database)
+                            { <option value="@path@s">@s</option>  }
+                        </select>
+                    </td>
+                    <td class="green"><button id="fileSelectButton" type="button">Choose</button></td>
+                </tr>
+                <tr>
+                    <td class="green" id="removeAllRect">Remove All</td>
+                </tr>
+                <tr>
+                    <td class="green">Sensibility (ms) <input id="sens" type="number" value="100" style="width: 40px" /></td>
+                </tr>
+            </table>
+        </form>
     </div>
 
     <div id="control_4" style="display:none">
