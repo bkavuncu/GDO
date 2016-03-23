@@ -146,7 +146,7 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.controlId = getUrlVar("controlId");
+                gdo.controlId = parseInt(getUrlVar("controlId"));
                 gdo.net.app["Maps"].initControl(gdo.controlId);
             });
         });

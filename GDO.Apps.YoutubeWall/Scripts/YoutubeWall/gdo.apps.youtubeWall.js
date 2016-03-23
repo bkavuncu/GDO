@@ -119,7 +119,7 @@ gdo.net.app["YoutubeWall"].initClient = function () {
 }
 
 gdo.net.app["YoutubeWall"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     $("iframe").contents().find("#get_next_videos").prop("disabled", true);
     gdo.consoleOut('.YoutubeWall', 1, 'Initializing YoutubeWall App Control at Instance ' + gdo.controlId);
     gdo.net.app["YoutubeWall"].server.requestSearchMode(gdo.controlId);

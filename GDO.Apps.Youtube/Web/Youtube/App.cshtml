@@ -89,12 +89,7 @@
                     playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'showinfo': 0, 'loop': 1 },
                     events: {
                         'onReady': function (event) { event.target.mute(); },
-                        'onStateChange': //hack! because loop:1 does not work
-                            function (e) {
-                                if (e.data === YT.PlayerState.ENDED) {
-                                    e.target.playVideo();
-                                }
-                            }
+                        'onStateChange': gdo.net.app["Youtube"].stateChange
                     }
                 });
             }

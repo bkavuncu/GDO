@@ -18,10 +18,13 @@ namespace GDO.Apps.Youtube
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
 
+        public int[,] BufferStatus { get; set; }
+
         public string URL { get; set; }
         public void Init()
         {
-            URL = (string)Configuration.Json.SelectToken("url");;
+            URL = (string)Configuration.Json.SelectToken("url");
+            BufferStatus = new int[Section.Cols,Section.Rows];
         }
 
         public void SetURL(string url)
@@ -32,6 +35,21 @@ namespace GDO.Apps.Youtube
         public string GetURL()
         {
             return URL;
+        }
+
+        public bool CheckBufferComplete()
+        {
+            for (int i = 0; i < Section.Cols; i++)
+            {
+                for (int j = 0; j < Section.Row; j++)
+                {
+                    if (BufferStatus[i, j] < 100)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

@@ -793,5 +793,20 @@ namespace GDO.Core
                 }
             }
         }
+
+        public void DisplayTime()
+        {
+            lock (Cave.ServerLock)
+            {
+               Clients.All.displayTime();
+            }
+        }
+        public void ExecuteFunction(string func, int section)
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.Group(""+section).executeFunction(func);
+            }
+        }
     }
 }

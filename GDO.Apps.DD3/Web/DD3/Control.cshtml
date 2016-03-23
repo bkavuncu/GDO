@@ -94,7 +94,7 @@
             $(document).ready(function () {
                 var gdo = parent.gdo,
                     server = gdo.net.app.DD3.server;
-                gdo.controlId = getUrlVar("controlId");
+                gdo.controlId = parseInt(getUrlVar("controlId"));
                 var instanceId,
                     confId,
                     numClients;

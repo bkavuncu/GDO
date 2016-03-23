@@ -34,7 +34,7 @@ namespace GDO.Apps.Youtube
                 {
                     ((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).SetURL(url);
                     Clients.Group("" + instanceId).receiveURL(instanceId, url);
-                    Clients.Caller.receiveURL(instanceId, url);
+                    //Clients.Caller.receiveURL(instanceId, url);
                 }
                 catch (Exception e)
                 {
@@ -58,14 +58,14 @@ namespace GDO.Apps.Youtube
             }
         }
 
-        public void PlayVideo(int instanceId)
+        public void PlayVideo(int instanceId, double time)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Group("" + instanceId).playVideo(instanceId);
-                    Clients.Caller.playVideo(instanceId);
+                    Clients.Group("" + instanceId).playVideo(instanceId, time);
+                    //Clients.Caller.playVideo(instanceId);
                 }
                 catch (Exception e)
                 {
@@ -81,7 +81,7 @@ namespace GDO.Apps.Youtube
                 try
                 {
                     Clients.Group("" + instanceId).pauseVideo(instanceId);
-                    Clients.Caller.pauseVideo(instanceId);
+                    //Clients.Caller.pauseVideo(instanceId);
                 }
                 catch (Exception e)
                 {
@@ -96,7 +96,7 @@ namespace GDO.Apps.Youtube
                 try
                 {
                     Clients.Group("" + instanceId).stopVideo(instanceId);
-                    Clients.Caller.stopVideo(instanceId);
+                    //Clients.Caller.stopVideo(instanceId);
                 }
                 catch (Exception e)
                 {
@@ -105,14 +105,14 @@ namespace GDO.Apps.Youtube
             }
         }
 
-        public void SeekTo(int instanceId, int seconds, bool allowSeekAhead)
+        public void SeekTo(int instanceId, double seconds, bool allowSeekAhead,double time)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Group("" + instanceId).seekTo(instanceId, seconds, allowSeekAhead);
-                    Clients.Caller.seekTo(instanceId, seconds, allowSeekAhead);
+                    Clients.Group("" + instanceId).seekTo(instanceId, seconds, allowSeekAhead, time);
+                    //Clients.Caller.seekTo(instanceId, seconds, allowSeekAhead);
                 }
                 catch (Exception e)
                 {
@@ -127,6 +127,26 @@ namespace GDO.Apps.Youtube
                 try
                 {
                     Clients.Group("" + instanceId).setPlaybackQuality(instanceId, quality);
+                    //Clients.Caller.setPlaybackQuality(instanceId, quality);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);// TODO show how log4net can be used
+                }
+            }
+        }
+
+        public void RegisterBufferStatus(int instanceId, int status, int col, int row)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).BufferStatus[col, row] = status;
+                    if (((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).CheckBufferComplete())
+                    {
+                        Clients.Group("" + instanceId).bufferComplete(instanceId);
+                    }
                 }
                 catch (Exception e)
                 {
