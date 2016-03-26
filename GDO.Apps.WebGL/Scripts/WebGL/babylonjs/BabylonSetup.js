@@ -136,25 +136,18 @@
         var camera = new BABYLON.TargetCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
         camera.position.y += 1.5;
 
+        camera.viewport.height = numScreensHigh;
+        camera.viewport.y = gdo.net.node[gdo.clientId].sectionRow - numScreensHigh + 1;
+
         camera.fovMode = BABYLON.Camera.FOVMODE_HORIZONTAL_FIXED;
         camera.fov = horizontalFov;
 
         gdo.consoleOut('.WebGL', 1, 'Horizontal FOV = ' + horizontalFov);
 
         var nodeWidthOffset = gdo.net.node[gdo.clientId].sectionCol - ((numScreensWide - 1) / 2);
-        var nodeHeightOffset = gdo.net.node[gdo.clientId].sectionRow - ((numScreensHigh - 1) / 2);
         gdo.consoleOut('.WebGL', 1, 'Node Width Offset = ' + nodeWidthOffset);
-        gdo.consoleOut('.WebGL', 1, 'Node Height Offset = ' + nodeHeightOffset);
-
         var horizontalRotation = nodeWidthOffset * horizontalFov;
-        var verticalRotation = Math.atan2((nodeHeightOffset*0.98) * physicalScreenHeight, physicalRadius);
-
-        var viewportHeight = Math.cos(verticalRotation);
-        gdo.consoleOut('.WebGL', 1, 'Viewport Height = ' + viewportHeight);
-
-        engine.setSize(canvas.width, canvas.height*viewportHeight);
-
-        var cameraViewOffset = new BABYLON.Vector3(verticalRotation, horizontalRotation, 0);
+        var cameraViewOffset = new BABYLON.Vector3(0, horizontalRotation, 0);
 
         gdo.net.app["WebGL"].initBabylonjsClient(camera, cameraViewOffset);
     }

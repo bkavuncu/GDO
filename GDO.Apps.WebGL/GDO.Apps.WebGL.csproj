@@ -143,8 +143,7 @@
     <Content Include="Data\WebGL\scenes\noChairsNegativeZforward.obj" />
     <Content Include="Data\WebGL\scenes\noChairsZforward.mtl" />
     <Content Include="Data\WebGL\scenes\noChairsZforward.obj" />
-    <Content Include="Data\WebGL\scenes\officedesignfbx.mtl" />
-    <Content Include="Data\WebGL\scenes\officeDesignFBX.obj" />
+    <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
