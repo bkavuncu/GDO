@@ -74,13 +74,13 @@ namespace GDO.Apps.Youtube
             }
         }
 
-        public void PauseVideo(int instanceId)
+        public void PauseVideo(int instanceId, double time)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Group("" + instanceId).pauseVideo(instanceId);
+                    Clients.Group("" + instanceId).pauseVideo(instanceId, time);
                     //Clients.Caller.pauseVideo(instanceId);
                 }
                 catch (Exception e)
@@ -143,9 +143,10 @@ namespace GDO.Apps.Youtube
                 try
                 {
                     ((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).BufferStatus[col, row] = status;
-                    if (((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).CheckBufferComplete())
+                    if (((YoutubeApp) Cave.Apps["Youtube"].Instances[instanceId]).CheckBufferComplete() && !((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).VideoReady)
                     {
                         Clients.Group("" + instanceId).bufferComplete(instanceId);
+                        ((YoutubeApp)Cave.Apps["Youtube"].Instances[instanceId]).VideoReady = true;
                     }
                 }
                 catch (Exception e)

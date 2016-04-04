@@ -5,9 +5,10 @@ $(function () {
     gdo.consoleOut('.Youtube', 1, 'Loaded Youtube JS');
 
     $.connection.youtubeAppHub.client.receiveURL = function (instanceId, url) {
-
+        $("iframe").contents().find("#youtube_player").hide();
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Youtube', 1, 'Instance - ' + instanceId + ": Received URL : " + url);
+            $("iframe").contents().find("#control_buttons").hide();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Youtube', 1, 'Instance - ' + instanceId + ": Received URL : " + url);
             $("iframe").contents().find("#wrapper")
@@ -87,13 +88,13 @@ $(function () {
         if (seconds == 0) {
             seconds = 0.01;
         }
-        //gdo.net.setTimeout(function() { gdo.net.instance[instanceId].youtubePlayer.seekTo(seconds, allowSeekAhead); }, time
-        gdo.net.instance[instanceId].youtubePlayer.seekTo(seconds, allowSeekAhead);
+        gdo.net.setTimeout(function () { gdo.net.instance[instanceId].youtubePlayer.seekTo(seconds, allowSeekAhead); }, time);
+        //gdo.net.instance[instanceId].youtubePlayer.seekTo(seconds, allowSeekAhead);
     }
 
-    $.connection.youtubeAppHub.client.pauseVideo = function (instanceId) {
+    $.connection.youtubeAppHub.client.pauseVideo = function (instanceId, time) {
         gdo.consoleOut('.Youtube', 4, "Pause Command Received");
-        gdo.net.instance[instanceId].youtubePlayer.pauseVideo();
+        gdo.net.setTimeout(gdo.net.app["Youtube"].pauseVideo, time);
     }
 
     $.connection.youtubeAppHub.client.stopVideo = function (instanceId) {
@@ -105,13 +106,21 @@ $(function () {
         gdo.consoleOut('.Youtube', 1, "Setting Playback Quality to " + quality);
         gdo.net.instance[instanceId].youtubePlayer.setPlaybackQuality(quality);
     }
+
+    $.connection.youtubeAppHub.client.bufferComplete = function (instanceId) {
+        gdo.net.instance[instanceId].youtubePlayer.stopVideo();
+        $("iframe").contents().find("#youtube_player").show();
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            $("iframe").contents().find("#control_buttons").show();
+        }
+    }
 });
 
 
 gdo.net.app["Youtube"].initClient = function () {
     gdo.consoleOut('.Youtube', 1, 'Initializing Youtube App Client at Node ' + gdo.clientId);
     setTimeout(function () { gdo.net.app["Youtube"].server.requestURL(gdo.net.node[gdo.clientId].appInstanceId); }, 700);
-    gdo.net.app["Youtube"].updateBufferStatus(gdo.clientId);
+    gdo.net.app["Youtube"].updateBufferStatus(gdo.net.node[gdo.clientId].appInstanceId);
 }
 
 gdo.net.app["Youtube"].initControl = function (controlId) {
@@ -130,13 +139,13 @@ gdo.net.app["Youtube"].initControl = function (controlId) {
     });
     $("iframe").contents().find("#playButton").unbind().click(function () {
         gdo.consoleOut('.Youtube', 0, "Sending Play Command");
-        gdo.net.app["Youtube"].server.seekTo(gdo.controlId, gdo.net.instance[gdo.controlId].youtubePlayer.getCurrentTime(), true, gdo.net.time.getTime() + 350);
-        gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 350);
+        //gdo.net.app["Youtube"].server.seekTo(gdo.controlId, gdo.net.instance[gdo.controlId].youtubePlayer.getCurrentTime(), true, gdo.net.time.getTime() + 350);
+        gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 700);
     });
 
     $("iframe").contents().find("#pauseButton").unbind().click(function () {
         gdo.consoleOut('.Youtube', 4, "Sending Pause Command");
-        gdo.net.app["Youtube"].server.pauseVideo(gdo.controlId);
+        gdo.net.app["Youtube"].server.pauseVideo(gdo.controlId, gdo.net.time.getTime() + 350);
     });
 
     $("iframe").contents().find("#stopButton").unbind().click(function () {
@@ -173,29 +182,34 @@ gdo.net.app["Youtube"].updateBufferStatus = function (instanceId) {
     setTimeout(function () {
         try {
             if (gdo.net.instance[instanceId].youtubePlayer != null && gdo.net.instance[instanceId].youtubePlayer.getDuration() > 0) {
-                var bufferPercentage = gdo.net.app["Youtube"].bufferSeconds / gdo.net.instance[instanceId].youtubePlayer.getDuration();
-                var loadPercentage = gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal();
-                gdo.net.app["Youtube"].server.registerBufferStatus(instanceId, parseInt((loadPercentage / bufferPercentage) * 100), gdo.net.node[gdo.clientId].sectionCol, gdo.net.node[gdo.clientId].sectionRow);
+                //var bufferPercentage = gdo.net.app["Youtube"].bufferSeconds / gdo.net.instance[instanceId].youtubePlayer.getDuration();
+                var loadPercentage = (gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() * 100) / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal();
+                gdo.net.app["Youtube"].server.registerBufferStatus(instanceId, parseInt(loadPercentage), gdo.net.node[gdo.clientId].sectionCol, gdo.net.node[gdo.clientId].sectionRow);
             }
         } catch (err) {
 
         }
         gdo.net.app["Youtube"].updateBufferStatus(instanceId);
-    }, 100);
+    }, 700);
 }
 
 gdo.net.app["Youtube"].updateTitle = function (instanceId) {
     setTimeout(function () {
         try {
             if (gdo.net.instance[instanceId].youtubePlayer != null && gdo.net.instance[instanceId].youtubePlayer.getDuration() > 0) {
-                $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getCurrentTime()) + "/" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getDuration()) + " s</h6>");
+                if ($("iframe").contents().find("#youtube_player").is(":visible")) {
+                    $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getCurrentTime()) + "/" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getDuration()) + " seconds</h6>");
+                } else {
+                    $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;Buffering "+parseInt((gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() * 100) / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal())+"%</h6>");
+                }
                 $("iframe").contents().find("#youtube_title").empty().append("<h6><i class='fa  fa-youtube  fa-fw'></i>&nbsp;" + gdo.net.instance[instanceId].youtubePlayer.getVideoData().title + "</h6>");
+               
             }
         } catch (err) {
             
         }
         gdo.net.app["Youtube"].updateTitle(instanceId);
-    }, 100);
+    }, 700);
 }
 
 gdo.net.app["Youtube"].stateChange = function (event) {

@@ -185,17 +185,18 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <div class="col-lg-11" id="youtube_title"><h6><i class='fa  fa-youtube  fa-fw'></i>&nbsp;</h6></div>
-                            <div class="col-lg-1" id="youtube_duration"><h6></h6></div>
+                            <div class="col-lg-10" id="youtube_title"><h6><i class='fa  fa-youtube  fa-fw'></i>&nbsp;</h6></div>
+                            <div class="col-lg-2" id="youtube_duration" style="text-align: right;"><h6></h6></div>
                         </div>
                     </div>
                     <div class="panel-body">
                         <div id="wrapper" style="border: 0 none; display: block; width: 100%; height: 61vh; background: black">
-                            <div id="youtube_player"></div>
+                            <div id="youtube_player" style="display:none"></div>
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <div style="text-align: center">
+                        &nbsp;
+                        <div id="control_buttons"style="text-align: center; display:none">
                             <button id="fastBackwardButton" type='button' class='btn btn-primary btn-circle btn-lg'><i class='fa  fa-fast-backward   '></i></button>
                             <button id="backwardButton" type='button' class='btn btn-primary btn-circle btn-lg'><i class='fa  fa-step-backward    '></i></button>
                             <button id="playButton" type='button' class='btn btn-success btn-circle btn-lg'><i class='fa  fa-play  '></i></button>

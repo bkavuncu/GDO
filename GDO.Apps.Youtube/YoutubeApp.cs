@@ -19,16 +19,19 @@ namespace GDO.Apps.Youtube
         public IAdvancedAppInstance ParentApp { get; set; }
 
         public int[,] BufferStatus { get; set; }
+        public bool VideoReady { get; set; }
 
         public string URL { get; set; }
         public void Init()
         {
             URL = (string)Configuration.Json.SelectToken("url");
             BufferStatus = new int[Section.Cols,Section.Rows];
+            VideoReady = false;
         }
 
         public void SetURL(string url)
         {
+            VideoReady = false;
             URL = url;
         }
 
@@ -41,7 +44,7 @@ namespace GDO.Apps.Youtube
         {
             for (int i = 0; i < Section.Cols; i++)
             {
-                for (int j = 0; j < Section.Row; j++)
+                for (int j = 0; j < Section.Rows; j++)
                 {
                     if (BufferStatus[i, j] < 100)
                     {
