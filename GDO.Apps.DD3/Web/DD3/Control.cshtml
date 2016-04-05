@@ -550,6 +550,7 @@
 </script>
     @{
         var path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/images/dd3/");
+        var web_path = "\\Web\\Images\\images\\dd3\\";
         var filename = "";
         var extension = "";
         string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/dd3/Database.txt");
@@ -719,7 +720,7 @@
                     <td class="green">
                         <select class="input_field" id="fileSelect">
                             @foreach (var s in database)
-                            { <option value="@path@s">@s</option>  }
+                            { <option value="@web_path@s">@s</option>  }
                         </select>
                     </td>
                     <td class="green"><button id="fileSelectButton" type="button">Choose</button></td>
