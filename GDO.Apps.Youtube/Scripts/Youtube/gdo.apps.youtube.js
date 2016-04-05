@@ -79,7 +79,7 @@ $(function () {
             //gdo.net.app["Youtube"].server.seekTo(instanceId, gdo.net.instance[instanceId].youtubePlayer.getCurrentTime(), true);
         //    gdo.net.instance[instanceId].youtubePlayer.playVideo();
         //} else {
-        gdo.net.setTimeout(gdo.net.app["Youtube"].playVideo, time);
+        gdo.net.setTimeout(function () { gdo.net.instance[instanceId].youtubePlayer.playVideo(); }, time);
         //}
     }
 
@@ -94,7 +94,7 @@ $(function () {
 
     $.connection.youtubeAppHub.client.pauseVideo = function (instanceId, time) {
         gdo.consoleOut('.Youtube', 4, "Pause Command Received");
-        gdo.net.setTimeout(gdo.net.app["Youtube"].pauseVideo, time);
+        gdo.net.setTimeout(function () {  gdo.net.instance[instanceId].youtubePlayer.pauseVideo(); }, time);
     }
 
     $.connection.youtubeAppHub.client.stopVideo = function (instanceId) {
@@ -140,7 +140,11 @@ gdo.net.app["Youtube"].initControl = function (controlId) {
     $("iframe").contents().find("#playButton").unbind().click(function () {
         gdo.consoleOut('.Youtube', 0, "Sending Play Command");
         //gdo.net.app["Youtube"].server.seekTo(gdo.controlId, gdo.net.instance[gdo.controlId].youtubePlayer.getCurrentTime(), true, gdo.net.time.getTime() + 350);
-        gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 700);
+        //gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 700);
+        var amount = gdo.net.instance[gdo.controlId].youtubePlayer.getCurrentTime() + gdo.net.instance[gdo.controlId].youtubePlayer.getDuration() / 100;
+        //gdo.consoleOut('.Youtube', 0, "Sending Forward Command with " + amount);
+        gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 350);
+        setTimeout(function () {gdo.net.app["Youtube"].server.seekTo(gdo.controlId, amount, true, gdo.net.time.getTime() + 350);}, 700);
     });
 
     $("iframe").contents().find("#pauseButton").unbind().click(function () {
