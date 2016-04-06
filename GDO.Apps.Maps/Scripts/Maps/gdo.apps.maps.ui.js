@@ -435,8 +435,7 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                 gdo.net.app["Maps"].uploadLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]], false);
             }
         });
-
-    $("iframe").contents().find("#source-create-button")
+    $("iframe").contents().find("#source-next-button")
         .unbind()
         .click(function () {
             var name = $("iframe").contents().find("#source_name_input").val();
@@ -449,28 +448,73 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                     } else if (gdo.net.instance[instanceId].template.Sources.$values[index] != null) {
                         if (gdo.net.instance[instanceId].template.Sources.$values[index].ClassName == className) {
                             source.properties = clone(gdo.net.instance[instanceId].template.Sources.$values[index]);
-                            gdo.net.app["Maps"].index["source"]++;
-                            source.properties.Id = gdo.net.app["Maps"].index["source"];
                             source.properties.Name = name;
                         }
                     }
                 }
-                gdo.net.instance[instanceId].sources[source.properties.Id] = source;
-                gdo.net.app["Maps"].selected["source"] = source.properties.Id;
-                gdo.net.app["Maps"].drawListTable(instanceId, "source");
+                gdo.net.app["Maps"].temp["source"] = source;
+                gdo.net.app["Maps"].drawCreateTable(instanceId, "source", source);
+            }
+        });
+    $("iframe").contents().find("#source-create-button")
+        .unbind()
+        .click(function () {
+            for (var key in gdo.net.app["Maps"].temp["source"].properties) {
+                if (!gdo.net.app["Maps"].temp["source"].properties.hasOwnProperty((key))) {
+                    continue;
+                } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "Editables" && key != "$type") {
+                    if ($("iframe").contents().find("#source_create_property_" + key + "_value_input").val() == '') {
+                        gdo.net.app["Maps"].temp["source"].properties[key] = null;
+                    } else {
+                        gdo.net.app["Maps"].temp["source"].properties[key] = eval($("iframe").contents().find("#source_create_property_" + key + "_value_input").val().replace(/'/g, "\\'"));
+                    }
+                }
+            }
+            gdo.net.app["Maps"].uploadSource(instanceId, gdo.net.app["Maps"].temp["source"], true);
+        });
+
+    $("iframe").contents().find("#source-remove-button")
+        .unbind()
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["source"] >= 0) {
+                gdo.net.app["Maps"].server.removesource(instanceId, gdo.net.app["Maps"].selected["source"]);
+                gdo.net.app["Maps"].selected["source"] = -1;
             }
         });
 
-    $("iframe").contents().find(".source-remove-button")
+    $("iframe").contents().find(".2-save-button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.app["Maps"].selected["layer"] >= 0) {
+            for (var key in gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties) {
+                if (!gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.hasOwnProperty((key))) {
+                    continue;
+                } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "Editables" && key != "$type") {
+                    if ($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").val() == '') {
+                        gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties[key] = null;
+                    } else if ($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").length > 0) {
+                        gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties[key] = eval($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").val().replace(/'/g, "\\'"));
+                    }
+                }
+            }
+            gdo.net.app["Maps"].uploadLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]], false);
+        }
+    });
+    $("iframe").contents().find("#source-save-button")
         .unbind()
         .click(function () {
-
-        });
-
-    $("iframe").contents().find(".source-save-button")
-        .unbind()
-        .click(function () {
-
+            for (var key in gdo.net.instance[gdo.controlId].sources[gdo.net.app["Maps"].selected["source"]].properties) {
+                if (!gdo.net.instance[gdo.controlId].sources[gdo.net.app["Maps"].selected["source"]].properties.hasOwnProperty((key))) {
+                    continue;
+                } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "Editables" && key != "$type") {
+                    if ($("iframe").contents().find("#source_property_" + key + "_value_input").val() == '') {
+                        gdo.net.instance[gdo.controlId].sources[gdo.net.app["Maps"].selected["source"]].properties[key] = null;
+                    } else {
+                        gdo.net.instance[gdo.controlId].sources[gdo.net.app["Maps"].selected["source"]].properties[key] = eval($("iframe").contents().find("#source_property_" + key + "_value_input").val().replace(/'/g, "\\'"));
+                    }
+                }
+            }
+            gdo.net.app["Maps"].uploadSource(instanceId, gdo.net.app["Maps"].selected["source"], false);
         });
 
     $("iframe").contents().find("#style-create-button")

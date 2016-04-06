@@ -181,8 +181,15 @@
                     <li>
                         <a href="#configuration" data-toggle="tab"><i class="fa fa-cog fa-fw"></i>&nbsp;&nbsp;Configurations</a>
                     </li>
+
                     <li style="float: right;">
-                        <button type='button' class='btn btn-primary ' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Map</button>
+                        <button type='button' id="save-map" class='btn btn-success ' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Map</button>
+                    </li>
+                    <li style="float: right;">
+                        &nbsp;
+                    </li>
+                    <li style="float: right;">
+                        <button type='button' id="load-map" class='btn btn-primary ' style=""><i class='fa  fa-upload  '></i>&nbsp;&nbsp;Load Map</button>
                     </li>
                 </ul>
 
@@ -212,7 +219,13 @@
                             <div class="col-lg-9">
                                 <div id="map_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa  fa-map-marker fa-fw'></i>&nbsp;Map</h6>
+                                        <div class="row">
+                                            <div class="col-lg-7"><h6><i class='fa  fa-map-marker fa-fw'></i>&nbsp;Map</h6></div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary view-load-button' style=""><i class='fa  fa-upload  '></i>&nbsp;&nbsp;Load View</button>
+                                                <button type='button' class='btn btn-success view-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save View</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="panel-body" style="height: 70vh">
                                         <div class="container-fluid">
@@ -445,11 +458,27 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                        <button type="button" data-dismiss="modal" id="source-create-button" class="btn btn-success btn-ok">Create</button>
+                        <button type="button" data-dismiss="modal" id="source-next-button" data-toggle='modal' data-target='#new-source-input' class="btn btn-primary btn-ok">Next</button>
                     </div>
                 </div>
             </div>
         </div>
+            <div class="modal fade" id="new-source-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Source</font></h5>
+                        </div>
+                        <div class="modal-body">
+                            <div id="source_create_properties"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="source-create-button" class="btn btn-success btn-ok">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <div class="modal fade" id="new-style" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

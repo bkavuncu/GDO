@@ -13,8 +13,11 @@ namespace GDO.Apps.Maps.Core
         public int Height { get; set; }
         public string Projection { get; set; }
 
-        public View(Position position,string projection, float rotation, int width, int height)
+        public View(int id, string name, int type, Position position,string projection, float rotation, int width, int height)
         {
+            Id = id;
+            Name = name;
+            Type = type;
             Position = position;
             Rotation = rotation;
             Width = width;

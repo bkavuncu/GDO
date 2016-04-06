@@ -9,16 +9,18 @@ namespace GDO.Apps.Maps.Core
 {
     public class Map
     {
-        public View View { get; set; }
+        public int CurrentView { get; set; }
+        public View[] Views { get; set; }
         public Format[] Formats { get; set; }
         public Style[] Styles { get; set; }
         public Source[] Sources { get; set; }
         public Layer[] Layers { get; set; }
 
 
-        public Map(View view, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
+        public Map(int currentView, View[] views, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
         {
-            View = view;
+            CurrentView = currentView;
+            Views = views;
             Formats = formats;
             Styles = styles;
             Sources = sources;

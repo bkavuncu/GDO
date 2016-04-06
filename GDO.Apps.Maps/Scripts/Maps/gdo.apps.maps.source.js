@@ -192,7 +192,7 @@ gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSour
     }
     source.properties = deserializedSource;
     source.properties.isInitialized = true;
-    gdo.net.instance[instanceId].sources[source.id] = source;
+    gdo.net.instance[instanceId].sources[sourceId] = source;
     gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
@@ -207,15 +207,15 @@ gdo.net.app["Maps"].updateSource = function (instanceId, sourceId, deserializedS
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
-            source.setStyle(gdo.net.instance[instanceId].styles[deserializedSource.StyleId]);
+            gdo.net.app["Maps"].setExceptNull(source,"setStyle",gdo.net.instance[instanceId].styles[deserializedSource.StyleId]);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
-            source.setUrl(deserializedSource.Url);
+            gdo.net.app["Maps"].setExceptNull(source,"setUrl",deserializedSource.Url);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
-            source.setUrl(deserializedSource.Url);
+            gdo.net.app["Maps"].setExceptNull(source,"setUrl",deserializedSource.Url);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
             break;
@@ -235,14 +235,13 @@ gdo.net.app["Maps"].requestSource = function (instanceId, sourceId) {
     gdo.net.app["Maps"].server.requestSource(instanceId, sourceId);
 }
 
-gdo.net.app["Maps"].uploadSource = function (instanceId, sourceId, isNew) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading Source: ' + sourceId);
-    var source = gdo.net.instance[instanceId].source[sourceId];
+gdo.net.app["Maps"].uploadSource = function (instanceId, source, isNew) {
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading Source: ' + source.properties.Id);
     var properties = source.properties;
     if (isNew) {
-        gdo.net.app["Maps"].server.addSource(instanceId, parseInt(properties.Type), JSON.stringify(properties));
+        gdo.net.app["Maps"].server.addSource(instanceId, parseInt(properties.Type), JSON.stringify(clone(properties)));
     } else {
-        gdo.net.app["Maps"].server.updateSource(instanceId, sourceId, parseInt(properties.Type), JSON.stringify(properties));
+        gdo.net.app["Maps"].server.updateSource(instanceId, source.properties.Id, parseInt(properties.Type), JSON.stringify(properties));
     }
 }
 

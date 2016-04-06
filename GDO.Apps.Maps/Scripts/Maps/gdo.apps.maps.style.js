@@ -125,43 +125,43 @@ gdo.net.app["Maps"].updateStyle = function (instanceId, styleId, deserializedSty
     var style = gdo.net.instance[instanceId].styles[styleId];
     switch (deserializedStyle.Type) {
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Circle:
-            style.setOpacity(deserializedStyle.Opacity);
-            style.setRotation(deserializedStyle.Rotation);
-            style.setScale(deserializedStyle.Scale);
+            gdo.net.app["Maps"].setExceptNull(style,"setOpacity",deserializedStyle.Opacity);
+            gdo.net.app["Maps"].setExceptNull(style,"setRotation",deserializedStyle.Rotation);
+            gdo.net.app["Maps"].setExceptNull(style,"setScale",deserializedStyle.Scale);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Fill:
-            style.setColor(deserializedStyle.Color);
+            gdo.net.app["Maps"].setExceptNull(style,"setColor",deserializedStyle.Color);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Icon:
-            style.setOpacity(deserializedStyle.Opacity);
-            style.setRotation(deserializedStyle.Rotation);
-            style.setScale(deserializedStyle.Scale);
+            gdo.net.app["Maps"].setExceptNull(style,"setOpacity",deserializedStyle.Opacity);
+            gdo.net.app["Maps"].setExceptNull(style,"setRotation",deserializedStyle.Rotation);
+            gdo.net.app["Maps"].setExceptNull(style,"setScale",deserializedStyle.Scale);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.RegularShape:
-            style.setOpacity(deserializedStyle.Opacity);
-            style.setRotation(deserializedStyle.Rotation);
-            style.setScale(deserializedStyle.Scale);
+            gdo.net.app["Maps"].setExceptNull(style,"setOpacity",deserializedStyle.Opacity);
+            gdo.net.app["Maps"].setExceptNull(style,"setRotation",deserializedStyle.Rotation);
+            gdo.net.app["Maps"].setExceptNull(style,"setScale",deserializedStyle.Scale);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Stroke:
-            style.setColor(deserializedStyle.Color);
-            style.setLineCap(deserializedStyle.LineCap);
-            style.setLineDash(deserializedStyle.LineDash);
-            style.setLineJoin(deserializedStyle.LineJoin);
-            style.setMiterLimit(deserializedStyle.MiterLimit);
-            style.setWidth(deserializedStyle.Width);
+            gdo.net.app["Maps"].setExceptNull(style,"setColor",deserializedStyle.Color);
+            gdo.net.app["Maps"].setExceptNull(style,"setLineCap",deserializedStyle.LineCap);
+            gdo.net.app["Maps"].setExceptNull(style,"setLineDash",deserializedStyle.LineDash);
+            gdo.net.app["Maps"].setExceptNull(style,"setLineJoin",deserializedStyle.LineJoin);
+            gdo.net.app["Maps"].setExceptNull(style,"setMiterLimit",deserializedStyle.MiterLimit);
+            gdo.net.app["Maps"].setExceptNull(style,"setWidth",deserializedStyle.Width);
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Style:
             // TODO
             break;
         case gdo.net.app["Maps"].STYLE_TYPES_ENUM.Text:
-            style.setFont(deserializedStyle.Font);
-            style.setScale(deserializedStyle.Scale);
-            style.setRotation(deserializedStyle.Rotation);
-            style.setText(deserializedStyle.Content);
-            style.setTextAlign(deserializedStyle.TextAlign);
-            style.setTextBaseline(deserializedStyle.TextBaseLine);
-            style.setFill(gdo.net.instance[instanceId].styles[deserializedStyle.FillStyleId]);
-            style.setStroke(gdo.net.instance[instanceId].styles[deserializedStyle.StrokeStyleId]);
+            gdo.net.app["Maps"].setExceptNull(style,"setFont",deserializedStyle.Font);
+            gdo.net.app["Maps"].setExceptNull(style,"setScale",deserializedStyle.Scale);
+            gdo.net.app["Maps"].setExceptNull(style,"setRotation",deserializedStyle.Rotation);
+            gdo.net.app["Maps"].setExceptNull(style,"setText",deserializedStyle.Content);
+            gdo.net.app["Maps"].setExceptNull(style,"setTextAlign",deserializedStyle.TextAlign);
+            gdo.net.app["Maps"].setExceptNull(style,"setTextBaseline",deserializedStyle.TextBaseLine);
+            gdo.net.app["Maps"].setExceptNull(style,"setFill",gdo.net.instance[instanceId].styles[deserializedStyle.FillStyleId]);
+            gdo.net.app["Maps"].setExceptNull(style, "setStroke", gdo.net.instance[instanceId].styles[deserializedStyle.StrokeStyleId]);
             break;
         default:
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Style Type:' + deserializedStyle.Type + ' for Style ' + deserializedStyle.Id);

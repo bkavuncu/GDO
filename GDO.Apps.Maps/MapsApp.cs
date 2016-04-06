@@ -29,7 +29,8 @@ namespace GDO.Apps.Maps
         public AppConfiguration Configuration { get; set; }
 
         public Map Map;
-        public View View { get; set; }
+        public int CurrentView { get; set; }
+        public GenericDictionary<View> Views { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
         public GenericDictionary<Interaction> Interactions { get; set; }
         public GenericDictionary<Source> Sources { get; set; }
@@ -41,13 +42,15 @@ namespace GDO.Apps.Maps
 
         public void Init()
         {
-            Layers= new GenericDictionary<Layer>();
+            Views = new GenericDictionary<View>();
+            Layers = new GenericDictionary<Layer>();
             Interactions = new GenericDictionary<Interaction>();
             Sources = new GenericDictionary<Source>();
             Controls = new GenericDictionary<Control>();
             Styles = new GenericDictionary<Style>();
             Formats = new GenericDictionary<Format>();
             ZindexTable = new ZindexTable();
+            Views.Init();
             Layers.Init();
             Interactions.Init();
             Sources.Init();
@@ -75,7 +78,12 @@ namespace GDO.Apps.Maps
                 Layers.Add(layer.Id, layer);
                 //TODO update zindex
             }
-            View = Map.View;
+            foreach (View view in Map.Views)
+            {
+                Views.Add(view.Id,view);
+                //TODO update zindex
+            }
+            CurrentView = Map.CurrentView;
         }
         public string GetSerializedTemplate()
         {
@@ -87,7 +95,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(View, Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(CurrentView, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }

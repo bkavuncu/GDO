@@ -31,3 +31,9 @@ gdo.net.app["Maps"].optionChecker = function (properties) {
     }
     return check;
 }
+
+gdo.net.app["Maps"].setExceptNull = function (obj, func, value) {
+    if (value != null) {
+        eval(""+obj+".func("+value+");");
+    }
+}
