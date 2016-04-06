@@ -68,7 +68,15 @@ $(function () {
         $("iframe").contents().find("#youtube_overlay").css("display", "block");
         setTimeout(function () {
             //gdo.net.app["Youtube"].server.stopVideo(instanceId);
-            gdo.net.app["Youtube"].server.setPlaybackQuality(instanceId, "highres");
+            gdo.net.instance[instanceId].youtubePlayer.setPlaybackQuality(instanceId, "highres");
+            var rates = gdo.net.instance[instanceId].youtubePlayer.getAvailablePlaybackRates();
+            var rate = 1;
+            for (var i = 0, len = rates.length; i < len; i++) {
+                if (rates[i] > rate) {
+                    rate = rates[i];
+                }
+            }
+            gdo.net.instance[instanceId].youtubePlayer.setPlaybackRate(rate);
             gdo.consoleOut('.Youtube', 0, 'Loaded URL:' + url + " with title " + gdo.net.instance[instanceId].youtubePlayer.getVideoData().title);
         }, 500);
 
@@ -109,6 +117,7 @@ $(function () {
 
     $.connection.youtubeAppHub.client.bufferComplete = function (instanceId) {
         gdo.net.instance[instanceId].youtubePlayer.stopVideo();
+        gdo.net.instance[instanceId].youtubePlayer.setPlaybackRate(1);
         $("iframe").contents().find("#youtube_player").show();
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#control_buttons").show();
