@@ -176,7 +176,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Configurations\Maps\Data\" />
     <Folder Include="Core\Controls\" />
     <Folder Include="Web\Maps\Images\" />
   </ItemGroup>

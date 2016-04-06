@@ -198,12 +198,68 @@ namespace GDO.Apps.Maps
         }
 
         //View
+        public int AddView(View view)
+        {
 
-        public bool UpdateView(Position position, string projection, float rotation, int width, int height)
+            try
+            {
+                int viewId = Views.GetAvailableSlot();
+                view.Id = viewId;
+                Views.Add(viewId, view);
+                return viewId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
+        }
+
+        public void UpdateView(int viewId, View view)
         {
             try
             {
-                View = new View(position, projection, rotation, width, height);
+                Views.Update(viewId, view);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+
+        public string GetSerializedView(int viewId)
+        {
+            View view = Views.GetValue<View>(viewId);
+            if (view != null)
+            {
+                string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(viewId), JsonSettings);
+                return serializedView;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveView(int viewId)
+        {
+            try
+            {
+                Views.Remove(viewId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+        public bool UseView(int viewId)
+        {
+            try
+            {
+                CurrentView = viewId;
                 return true;
             }
             catch (Exception e)
@@ -213,9 +269,27 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetSerializedView()
+        public bool UpdateCurrentView(Position position, string projection, float rotation, int width, int height)
         {
-            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(View, JsonSettings);
+            try
+            {
+                Views.GetValue<View>(CurrentView).Position = position;
+                Views.GetValue<View>(CurrentView).Projection = projection;
+                //Views.GetValue<View>(CurrentView).Rotation = rotation;
+                Views.GetValue<View>(CurrentView).Width = width;
+                Views.GetValue<View>(CurrentView).Height = height;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public string GetSerializedCurrentView()
+        {
+            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(CurrentView), JsonSettings);
             return serializedView;
         }
 
@@ -463,12 +537,15 @@ namespace GDO.Apps.Maps
             List<Style> styles = new List<Style>();
             List<Source> sources = new List<Source>();
             List<Layer> layers = new List<Layer>();
+            List<View> views = new List<View>();
 
             double[] topLeft = { 0, 0, 0, 0 };
             double[] bottomRight = { 0, 0, 0, 0 };
             double[] center = { 0, 0, 0, 0 };
             Position position = new Position(topLeft, center, bottomRight, 0, 0);
             View view = new View(position, "EPSG:4326",0, 100, 100);
+
+            views.Add(view);
 
             //Add Formats to Template
             EsriJSONFormat esriJsonFormat = new EsriJSONFormat();
@@ -586,7 +663,7 @@ namespace GDO.Apps.Maps
             layers.Add(tileLayer);
             layers.Add(vectorLayer);
 
-            Map map = new Map(view, formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            Map map = new Map(0, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;
         }
 
