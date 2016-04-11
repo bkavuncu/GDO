@@ -20,7 +20,7 @@ namespace GDO.Utility
 
         public Boundary CalculateBoundary(double centerX, double centerY, double pixelToUnitRatio)
         {
-            double topLeftX = centerX - ((SectionWidth*pixelToUnitRatio)/2);
+            double topLeftX = centerX - ((SectionWidth * pixelToUnitRatio)/2);
             double topLeftY = centerY + ((SectionHeight * pixelToUnitRatio) / 2);
             double bottomRightX = centerX + ((SectionWidth * pixelToUnitRatio) / 2);
             double bottomRightY = centerY - ((SectionHeight * pixelToUnitRatio) / 2);
@@ -36,7 +36,6 @@ namespace GDO.Utility
             public double BottomRightX { get; set; }
             public double BottomRightY { get; set; }
             public double Resolution { get; set; }
-
 
             public Boundary(double topLeftX, double topLeftY, double centerX, double centerY, double bottomRightX, double bottomRightY, double resolution)
             {
