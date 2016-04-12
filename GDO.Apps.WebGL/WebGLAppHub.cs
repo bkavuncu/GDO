@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using GDO.Core;
+using GDO.Core.Apps;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json.Linq;
 
@@ -47,6 +48,21 @@ namespace GDO.Apps.WebGL
                 {
                     ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).BabylonjsCamera = camera;
                     Clients.Group("" + instanceId).receiveBabylonjsCameraPosition(instanceId, camera);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void CollectStats(int instanceId, bool collectStats)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).collectStats(instanceId, collectStats);
                 }
                 catch (Exception e)
                 {
