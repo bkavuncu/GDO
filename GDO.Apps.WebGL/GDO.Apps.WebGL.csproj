@@ -124,6 +124,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\WebGL\scenes\city\Maps\ang1.jpg" />
+    <Content Include="Data\WebGL\scenes\city\Maps\cty1.jpg" />
+    <Content Include="Data\WebGL\scenes\city\Maps\cty2x.jpg" />
     <Content Include="Data\WebGL\textures\skybox_nx.jpg" />
     <Content Include="Data\WebGL\textures\skybox_ny.jpg" />
     <Content Include="Data\WebGL\textures\skybox_nz.jpg" />
@@ -137,6 +140,8 @@
     <Content Include="Scripts\babylon.js" />
     <Content Include="Scripts\babylon.objFileLoader.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Data\WebGL\scenes\city\The_City.mtl" />
+    <Content Include="Data\WebGL\scenes\city\The_City.obj" />
     <None Include="Data\WebGL\shaders\skydome.frag" />
     <Content Include="Configurations\WebGL\Babylon.json" />
     <Content Include="Data\WebGL\scenes\noChairsNegativeZforward.mtl" />

@@ -31,17 +31,11 @@ $(function () {
             if (babylonjsCamera !== undefined) {
                 babylonjsCamera.position.copyFromFloats(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
 
-                //babylonjsCamera.upVector.copyFromFloats(Math.sin(newCamera.rotation[0]) * Math.cos(newCamera.rotation[1]),
-                //                                        Math.cos(newCamera.rotation[0]),
-                //                                        Math.sin(newCamera.rotation[0]) * Math.sin(newCamera.rotation[1]));
-
-                babylonjsCamera.rotation.x = babylonCameraRotationOffset.x;
                 babylonjsCamera.rotation.y = newCamera.rotation[1] + babylonCameraRotationOffset.y;
-                //babylonjsCamera.rotation.x = babylonCameraRotationOffset.x
-
-                //babylonjsCamera.rotation.y = newCamera.rotation[1] + babylonCameraRotationOffset.y;
-                //babylonjsCamera.rotation.x = newCamera.rotation[0] * Math.cos(babylonCameraRotationOffset.y) + babylonCameraRotationOffset.x;
-                //babylonjsCamera.rotation.z = newCamera.rotation[0] * Math.sin(babylonCameraRotationOffset.y);
+                babylonjsCamera.rotation.x = newCamera.rotation[0];// * Math.cos(newCamera.rotation[1]);
+                //babylonjsCamera.upVector.copyFromFloats(0,
+                //                                        Math.cos(newCamera.rotation[0]),
+                //                                        Math.sin(newCamera.rotation[0]) * Math.sin(nbabylonCameraRotationOffset.y));
             }
         }
     }

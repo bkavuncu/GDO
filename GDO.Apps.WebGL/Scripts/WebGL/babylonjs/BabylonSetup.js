@@ -28,25 +28,45 @@
         return scene;
     }
 
-    this.loadSceneModel = function (engine, scene) {
+    this.loadSceneModel = function (engine, scene, numDuplicates) {
         var loader = new BABYLON.AssetsManager(scene);
 
-        var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", "noChairsZforward.obj");
+        var count = 0;
+
+        var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", "noChairsZforward2.obj");
         building.onSuccess = function (t) {
             t.loadedMeshes.forEach(function (m) {
 
-                if (m.material !== undefined && m.material.id != "glass") {
+                if (m.material !== undefined && m.material.id == "floor") {
                     m.checkCollisions = true;
                 }
+
+                m.position.x += 100 * count;
 
                 // Flip x-axis to fix blender export
                 m.scaling.x = -1;
                 m.bakeCurrentTransformIntoVertices();
             });
+
+            count++;
         }
 
-        loader.onFinish = function () { this.loadSceneModelFinished(engine, scene); }.bind(this);
-        loader.load();
+        var done = false;
+
+        loader.onFinish = function () {
+            if (!done) {
+                this.loadSceneModelFinished(engine, scene);
+                done = true;
+            }
+        }.bind(this);
+
+        if (numDuplicates == undefined) {
+            numDuplicates = 0;
+        }
+
+        for (var i = 0; i < numDuplicates; i++) {
+            loader.load();
+        }
     }
 
     this.loadSceneModelFinished = function (engine, scene) {
@@ -114,7 +134,7 @@
         var engine = new BABYLON.Engine(this.canvas, true);
         var scene = this.createScene(engine);
 
-        this.loadSceneModel(engine, scene);
+        this.loadSceneModel(engine, scene, 3);
 
         var camera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
         camera.attachControl(this.canvas);
@@ -127,7 +147,7 @@
         camera.speed /= 4;
         camera.position.y += 1.5;
 
-        camera.ellipsoid = new BABYLON.Vector3(1, 2, 1);
+        camera.ellipsoid = new BABYLON.Vector3(0.8, 1.9, 0.8);
         camera.applyGravity = true;
         camera.checkCollisions = true;
 
@@ -153,7 +173,7 @@
         var engine = new BABYLON.Engine(this.canvas, true);
         var scene = this.createScene(engine);
 
-        this.loadSceneModel(engine, scene);
+        this.loadSceneModel(engine, scene, 3);
 
         //
         // Setup camera and rotation offset
