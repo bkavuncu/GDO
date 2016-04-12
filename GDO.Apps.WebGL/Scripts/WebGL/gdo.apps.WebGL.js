@@ -3,6 +3,8 @@
 var babylonjsCamera;
 var babylonCameraRotationOffset;
 
+var toggleStats;
+
 $(function () {
     gdo.consoleOut('.WebGL', 1, 'Loaded WebGL JS');
 
@@ -43,6 +45,10 @@ $(function () {
             }
         }
     }
+
+    $.connection.webGLAppHub.client.collectStats = function (instanceId, collectStats) {
+        toggleStats(collectStats);
+    };
 });
 
 gdo.net.app["WebGL"].initThreejsClient = function (threejsCameraParentParam) {
@@ -64,6 +70,10 @@ gdo.net.app["WebGL"].initBabylonjsClient = function (babylonjsCameraParam, babyl
 gdo.net.app["WebGL"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Control at Instance ' + gdo.controlId);
+}
+
+gdo.net.app["WebGL"].setToggleStatsFunction = function (toggleStatsParam) {
+    toggleStats = toggleStatsParam;
 }
 
 gdo.net.app["WebGL"].terminateClient = function () {

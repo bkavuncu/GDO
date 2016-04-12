@@ -1,8 +1,9 @@
-﻿BabylonSetup = function (canvas, gdo, stats) {
+﻿BabylonSetup = function (canvas, gdo) {
 
     this.canvas = canvas;
-    this.stats = stats;
     this.gdo = gdo;
+
+    this.showStats = false;
 
     this.createScene = function (engine) {
 
@@ -49,30 +50,67 @@
     }
 
     this.loadSceneModelFinished = function (engine, scene) {
-        var windowIndex = 0;
-        var window = new Array(20);
+
+        var frameIndex = 0;
+        var frameSampleSize = 60;
+
+        var maxDuration = 0;
+        var minDuration = 1000;
+        var durationSum = 0;
 
         engine.runRenderLoop(function () {
             scene.render();
 
-            if (this.stats != undefined) {
+            if (this.showStats) {
 
                 // Update and render stats
-                window[windowIndex] = scene.getLastFrameDuration();
-                windowIndex = (windowIndex + 1) % window.length;
+                var duration = scene.getLastFrameDuration();
+                maxDuration = Math.max(duration, maxDuration);
+                minDuration = Math.min(duration, minDuration);
+                durationSum += duration;
 
-                var sum = window.reduce(function (a, b) { return a + b; });
-                var avg = sum / window.length;
+                frameIndex++;
+                
+                if (frameIndex >= frameSampleSize) {
 
-                this.stats.innerHTML = "Total vertices: " + scene.getTotalVertices() + "<br>"
-                                  + "Active Meshes: " + scene.getActiveMeshes().length + "<br>"
-                                  + "Frame duration: " + avg.toFixed(2) + " ms<br>"
-                                  + "FPS: " + (1000 / avg).toFixed(2);
+                    var avg = durationSum / frameSampleSize;
+
+                    $('#stats').html( "Total vertices: " + scene.getTotalVertices() + "<br>"
+                                    + "Active Meshes: " + scene.getActiveMeshes().length + "<br>"
+                                    + "Max Frame duration: " + maxDuration.toFixed(2) + " ms<br>"
+                                    + "Average Frame duration: " + avg.toFixed(2) + " ms<br>"
+                                    + "Min Frame duration: " + minDuration.toFixed(2) + " ms<br>"
+                                    + "FPS: " + (1000 / avg).toFixed(2));
+
+                    frameIndex = 0;
+                    minDuration = 1000;
+                    maxDuration = 0;
+                    durationSum = 0;
+                }
             }
         }.bind(this));
     }
 
-    this.setupControl = function() {
+    this.collectStats = function (collectStats) {
+        this.showStats = collectStats;
+
+        if (this.showStats) {
+            $('#stats').show();
+            $('#stats_toggle').text("Hide Stats");
+        } else {
+            $('#stats').hide();
+            $('#stats_toggle').text("Show Stats");
+        }
+    }
+
+    this.setupControl = function () {
+
+        $('#stats_toggle').click(function () {
+            var shouldShow = !this.showStats;
+            this.collectStats(shouldShow)
+            this.gdo.net.app["WebGL"].server.collectStats(this.gdo.controlId, shouldShow);
+        }.bind(this));
+
         var engine = new BABYLON.Engine(this.canvas, true);
         var scene = this.createScene(engine);
 
@@ -107,6 +145,8 @@
         }
 
         setInterval(sendCameraPositionToClients.bind(this), 1000 / 60);
+        
+        this.setupShared(engine);
     }
 
     this.setupApp = function() {
@@ -150,5 +190,15 @@
         var cameraViewOffset = new BABYLON.Vector3(0, horizontalRotation, 0);
 
         gdo.net.app["WebGL"].initBabylonjsClient(camera, cameraViewOffset);
+
+        this.setupShared(engine);
+    }
+
+    this.setupShared = function (engine) {
+        window.addEventListener('resize', function () {
+            engine.resize();
+        })
+
+        gdo.net.app["WebGL"].setToggleStatsFunction(this.collectStats.bind(this));
     }
 }
