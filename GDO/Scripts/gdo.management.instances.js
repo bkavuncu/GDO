@@ -1,8 +1,10 @@
-﻿$(function () {
-    
+﻿gdo.management.instances = {};
+
+$(function () {
+    gdo.management.instances.isActive = true;
 });
 
-gdo.management.loadInstanceControlFrame = function (appName, instanceId, configName) {
+gdo.management.instances.loadInstanceControlFrame = function (appName, instanceId, configName) {
     gdo.consoleOut(".MANAGEMENT", 3, "Loading Control Frame " + appName + " with Instance Id " + instanceId);
     $("#instance_label").empty().append("<h3><b>" + appName + "</b> - " + configName + " (" + instanceId + ")</h3>");
     $("#nav_instances").addClass("in");

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using GDO.Apps.TimeV.Domain;
 using GDO.Core;
+using GDO.Core.Apps;
 using MongoDB.Bson;
 using MongoDB.Driver;
 

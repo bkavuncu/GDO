@@ -68,7 +68,7 @@ gdo.net.app["Presentation"].initClient = function () {
 
 gdo.net.app["Presentation"].initControl = function () {
     gdo.consoleOut('.Presentation', 1, 'Initializing Presentation App Control at Node ' + gdo.controlId);
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     $("iframe").contents().find("#ppt_thumbnail").attr("src", "");
     $("iframe").contents().find("#previous_page").prop('disabled', true).addClass("disabled");
     $("iframe").contents().find("#next_page").prop('disabled', true).addClass("disabled");

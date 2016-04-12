@@ -84,7 +84,7 @@ gdo.net.app["Temperatures"].initClient = function () {
 }
 
 gdo.net.app["Temperatures"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.consoleOut('.Temperatures', 1, 'Initializing Temperatures App Control at Instance ' + gdo.controlId);    
 }
 

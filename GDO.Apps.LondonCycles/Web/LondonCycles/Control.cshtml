@@ -50,10 +50,6 @@
             height: 100%;
         }
 
-        .map:full-screen {
-            height: 100%;
-        }
-
         .ol-rotate {
             top: 3em;
         }
@@ -97,7 +93,7 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.controlId = getUrlVar("controlId");
+                gdo.controlId = parseInt(getUrlVar("controlId"));
                 gdo.net.app["LondonCycles"].initControl(gdo.controlId);
             });
         });

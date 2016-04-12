@@ -1,4 +1,5 @@
 ﻿@using System.IO
+@using System.Web
 @using System.Web.Helpers
 @using GDO.Core
 @{
@@ -123,10 +124,7 @@
 
                 if (input.length) {
                     input.val(log);
-                } else {
-                    //if (log) alert(log);
                 }
-
             });
         });
         $(function () {
@@ -442,7 +440,20 @@
                                                 <div style="background-color:transparent"><h6>Digits:</h6></div>
                                             </td>
                                             <td>
-                                                <div class="input_field_div"><input type="text" class="input_field" id="image_digit"></div>
+                                                <div class="input_field_div">
+                                                    <select class="input_field" id="image_digit">
+                                                        @{
+                                                            string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
+                                                            string[] database = {};
+                                                            if (File.Exists(database_path))
+                                                            {
+                                                                database = File.ReadAllLines(database_path);
+                                                            }
+                                                        }
+                                                            @foreach (var s in database)
+                                                            {  <option value="@s.Split('|')[1]">@s.Split('|')[0]</option>  }
+                                                    </select>
+                                                </div>
                                             </td>
                                             <td>
                                                 <button type='button' id="image_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>

@@ -116,7 +116,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\tranSMART\jquery.cookie.js" />
     <Content Include="Scripts\tranSMART\gdo.apps.tranSMART.js" />
     <Content Include="Scripts\tranSMART\tree.jquery.js" />

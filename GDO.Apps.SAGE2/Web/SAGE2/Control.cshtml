@@ -44,7 +44,7 @@
             var gdo = parent.gdo;
             window.onload = function() {
                 setTimeout(function() {
-                    gdo.controlId = getUrlVar("controlId");
+                    gdo.controlId = parseInt(getUrlVar("controlId"));
                     gdo.consoleOut(".SAGE2", 1, "Connecting to Sage Control Panel at " + gdo.net.app["SAGE2"].config[gdo.net.instance[gdo.controlId].configName].controlIp);
                     window.location = gdo.net.app["SAGE2"].config[gdo.net.instance[gdo.controlId].configName].controlIp;
                 }, 700);

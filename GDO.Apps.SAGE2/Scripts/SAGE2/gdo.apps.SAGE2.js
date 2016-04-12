@@ -7,7 +7,7 @@ gdo.net.app["SAGE2"].initClient = function () {
 }
 
 gdo.net.app["SAGE2"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
 }
 
 gdo.net.app["SAGE2"].terminateClient = function () {

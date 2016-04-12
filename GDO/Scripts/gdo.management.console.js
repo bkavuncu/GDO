@@ -1,4 +1,10 @@
-﻿gdo.management.drawConsoleInput = function () {
+﻿gdo.management.console = {};
+
+$(function () {
+    gdo.management.console.isActive = true;
+});
+
+gdo.management.console.drawConsoleInput = function () {
     $("#console_area").enscroll({
         showOnHover: false,
         verticalTrackClass: 'track4',
@@ -10,11 +16,10 @@
         .css("width", "80%")
         .css("height", "40px")
         .empty()
-        .append("<input type='text' id='console_input' value='Enter Console Command' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
+        .append("<input type='text' class='form-control' id='console_input' value='&nbsp;Enter Console Command' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
     $("#console_input")
         .css("width", "100%")
         .css("height", "40px")
-        .css("border", "1px solid #333")
         .css("background", "#333")
         .css("color", "#FFF")
         .css("padding", "0px")
@@ -23,11 +28,11 @@
         .attr("text-align", "center")
         .attr("onfocus", "this.value=''")
         .css({ fontSize: gdo.management.button_font_size * 0.7 });
-    $("#console_input").keyup(function (event) {
-        if (event.keyCode == 13) {
-            $("#console_submit").click();
-        }
-    });
+    //$("#console_input").keyup(function (event) {
+    //    if (event.keyCode == 13) {
+    //        $("#console_submit").click();
+    //    }
+    //});
     $("#console_submit_div")
         .css("margin", "0px")
         .css("padding", "0px")
@@ -43,6 +48,14 @@
         .unbind()
         .click(function () {
             gdo.consoleOut(".MANAGEMENT", 1, "Executing: " + document.getElementById('console_input').value);
-            eval(document.getElementById('console_input').value);
+            gdo.consoleOut(".MANAGEMENT", 1, "Result: " + eval(document.getElementById('console_input').value));
         });
+    $("#console_input").autocomplete({
+        position: {
+            my: "left bottom",
+            at: "left top"
+        },
+        source: gdo.functions.list
+    });
+
 }

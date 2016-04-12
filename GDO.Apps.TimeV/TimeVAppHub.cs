@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Threading;
 using GDO.Apps.TimeV.Domain;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using Microsoft.AspNet.SignalR;
 using MongoDB.Bson;
 using MongoDB.Driver;

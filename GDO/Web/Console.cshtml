@@ -1,8 +1,9 @@
-﻿@using System.Threading.Tasks
+﻿@using System.Collections.Generic
+@using System.Threading.Tasks
 @using GDO.Core
-@{
-    Layout = null;
-}
+@using GDO.Core.Apps
+@using GDO.Core.Modules
+
 
 <!DOCTYPE html>
 
@@ -27,14 +28,24 @@
     <!-- Custom Fonts -->
     <link href="../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="../CSS/gdo.management.css" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <link href="../CSS/jquery-ui.min.css" rel="stylesheet">
+
 
     <style>
+        .ui-autocomplete {
+            background: #222;
+            color: #AAA;
+            border-radius: 0px;
+            height: 78.5vh;
+            overflow-y: scroll;
+            overflow-x: hidden ;
+        }
+        .ui-autocomplete.source:hover {
+            background: #454545;
+            color: #FFF;
+        }
+
+         
     </style>
     <script>
         var gdo = {};
@@ -180,8 +191,8 @@
             <div id="console_area" style="font-size:12px;width:102%; height: 77vh; border:1px solid #333;background-color: #222; color: #FFF"></div>
             <div id="console_area_space"><br></div>
             <div style="width: 99.5%;">
-                <div class="col-lg-8" id="console_input_div"></div>
-                <!-- /.col-lg-12 -->
+                <div class="col-lg-8 form-group" id="console_input_div"></div>
+                <datalist id="functions"></datalist>
                 <div class="col-lg-4" id="console_submit_div"></div>
             </div>
         </div>
@@ -194,6 +205,7 @@
     <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../Scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
@@ -225,7 +237,7 @@
         }
         initApp = function () {
             gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.management.drawConsoleInput();
+            gdo.management.console.drawConsoleInput();
             gdo.updateSelf();
         }
     </script>

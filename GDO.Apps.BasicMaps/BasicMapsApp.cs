@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.BasicMaps
 {

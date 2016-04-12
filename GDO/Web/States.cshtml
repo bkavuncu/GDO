@@ -1,5 +1,8 @@
-﻿@using System.Threading.Tasks
+﻿@using System.Collections.Generic
+@using System.Threading.Tasks
 @using GDO.Core
+@using GDO.Core.Apps
+@using GDO.Core.Modules
 @{
     Layout = null;
 }
@@ -27,12 +30,8 @@
     <!-- Custom Fonts -->
     <link href="../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="../CSS/gdo.management.css" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <link href="../CSS/jquery-ui.min.css" rel="stylesheet">
+
 
     <style>
         td {
@@ -76,6 +75,7 @@
     <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../Scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
@@ -83,7 +83,7 @@
     <script>
         gdo.updateDisplayCanvas = function () {
                 gdo.management.updateMaintenanceButton();
-                gdo.management.drawStateTable();
+                gdo.management.states.drawStateTable();
             }
             $(function () {
                 @{
@@ -109,8 +109,8 @@
             }
             initApp = function () {
                 gdo.consoleOut('', 1, 'GDO Initialized');
-                gdo.management.drawStateTable();
-                gdo.management.drawStateInputTable();
+                gdo.management.states.drawStateTable();
+                gdo.management.states.drawStateInputTable();
                 gdo.updateSelf();
             }
     </script>
@@ -246,7 +246,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                Clear Cave
+                                <h5><i align="center" class='fa  fa-times  fa-fw'></i>&nbsp;<font color="white">Clear Cave</font></h5>
                             </div>
                             <div class="modal-body">
                                 Are you sure you want to close all apps and sections?

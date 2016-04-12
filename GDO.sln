@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4A27F694-1D9A-420A-A3A6-62521EAA047E}"
 EndProject
@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Images", "GDO.Apps
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD4152F1-C1E9-4528-92F7-44112DF11A57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.SmartCity", "GDO.Apps.SmartCity\GDO.Apps.SmartCity.csproj", "{03582490-FE29-4CBB-AFF5-98A51EC07E59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Maps", "GDO.Apps.Maps\GDO.Apps.Maps.csproj", "{03582490-FE29-4CBB-AFF5-98A51EC07E59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Youtube", "GDO.Apps.Youtube\GDO.Apps.Youtube.csproj", "{FFB1A839-7735-493F-A8F2-A43FF06D149E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.YoutubeWall", "GDO.Apps.YoutubeWall\GDO.Apps.YoutubeWall.csproj", "{FFB1A839-7735-493F-A8F2-A43FF06D149E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Presentation", "GDO.Apps.Presentation\GDO.Apps.Presentation.csproj", "{B9637E74-6A97-4C7B-9320-7168FC6CC931}"
 EndProject
@@ -44,6 +44,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.LondonCycles", "GDO.Apps.LondonCycles\GDO.Apps.LondonCycles.csproj", "{6233F7A3-4E1E-4566-ADB7-41C313508BFC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Modules.EyeTracking", "GDO.Modules.EyeTracking\GDO.Modules.EyeTracking.csproj", "{74CC3CD2-3404-4478-B074-F30CDD34F052}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Leeds", "GDO.Apps.Leeds\GDO.Apps.Leeds.csproj", "{CA9584C6-6400-4EEF-BA2C-30E619F90D13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.StaticHTML", "GDO.Apps.StaticHTML\GDO.Apps.StaticHTML.csproj", "{FC347276-F0E6-4FB9-8A71-C81BA6A14D95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Youtube", "GDO.Apps.Youtube\GDO.Apps.Youtube.csproj", "{2043ACC9-0FBF-4041-AAA5-803DD1651820}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.City", "GDO.Apps.City\GDO.Apps.City.csproj", "{38B42F4F-045A-4A62-AA46-063EA1BF7A9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Cortical", "GDO.Apps.Cortical\GDO.Apps.Cortical.csproj", "{193D0D08-0D61-4511-94AC-34AB78FB3793}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,6 +141,26 @@ Global
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA9584C6-6400-4EEF-BA2C-30E619F90D13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC347276-F0E6-4FB9-8A71-C81BA6A14D95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC347276-F0E6-4FB9-8A71-C81BA6A14D95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC347276-F0E6-4FB9-8A71-C81BA6A14D95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC347276-F0E6-4FB9-8A71-C81BA6A14D95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2043ACC9-0FBF-4041-AAA5-803DD1651820}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2043ACC9-0FBF-4041-AAA5-803DD1651820}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2043ACC9-0FBF-4041-AAA5-803DD1651820}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2043ACC9-0FBF-4041-AAA5-803DD1651820}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B42F4F-045A-4A62-AA46-063EA1BF7A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B42F4F-045A-4A62-AA46-063EA1BF7A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B42F4F-045A-4A62-AA46-063EA1BF7A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B42F4F-045A-4A62-AA46-063EA1BF7A9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
