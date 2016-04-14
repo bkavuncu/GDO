@@ -144,8 +144,6 @@
     <Content Include="Data\WebGL\scenes\city\The_City.obj" />
     <None Include="Data\WebGL\shaders\skydome.frag" />
     <Content Include="Configurations\WebGL\Babylon.json" />
-    <Content Include="Data\WebGL\scenes\noChairsNegativeZforward.mtl" />
-    <Content Include="Data\WebGL\scenes\noChairsNegativeZforward.obj" />
     <Content Include="Data\WebGL\scenes\noChairsZforward.mtl" />
     <Content Include="Data\WebGL\scenes\noChairsZforward.obj" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />

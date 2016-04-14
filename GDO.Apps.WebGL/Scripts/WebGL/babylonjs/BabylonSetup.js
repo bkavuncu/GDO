@@ -29,12 +29,14 @@
     }
 
     this.loadSceneModel = function (engine, scene, numDuplicates) {
-        var loader = new BABYLON.AssetsManager(scene);
+
+        if (numDuplicates == undefined) {
+            numDuplicates = 0;
+        }
 
         var count = 0;
 
-        var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", "noChairsZforward2.obj");
-        building.onSuccess = function (t) {
+        var onBuildingLoad = function (t) {
             t.loadedMeshes.forEach(function (m) {
 
                 if (m.material !== undefined && m.material.id == "floor") {
@@ -49,27 +51,28 @@
             });
 
             count++;
-        }
+        };
 
-        var done = false;
-
-        loader.onFinish = function () {
-            if (!done) {
-                this.loadSceneModelFinished(engine, scene);
-                done = true;
-            }
-        }.bind(this);
-
-        if (numDuplicates == undefined) {
-            numDuplicates = 0;
-        }
+        var loader = new BABYLON.AssetsManager(scene);
 
         for (var i = 0; i < numDuplicates; i++) {
-            loader.load();
+            var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", "noChairsZforward2.obj");
+            building.onSuccess = onBuildingLoad;
         }
+
+        loader.onFinish = function () {
+            this.loadSceneModelFinished(engine, scene);
+        }.bind(this);
+
+        loader.load();
     }
 
     this.loadSceneModelFinished = function (engine, scene) {
+
+        var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
+        gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId+ ": Scene Loading finished");
+
+        var octree = scene.createOrUpdateSelectionOctree();
 
         var frameIndex = 0;
         var frameSampleSize = 60;
@@ -106,6 +109,19 @@
                     minDuration = 1000;
                     maxDuration = 0;
                     durationSum = 0;
+
+                    /*
+                    TODO: Experimenting with frustums and octrees
+
+                    var frustumPlanes = BABYLON.Frustum.GetPlanes(scene.getTransformMatrix());
+                    var index;
+                    var meshes = octree.select(frustumPlanes);
+                    console.log(meshes.length);
+                    for (index = 0; index < meshes.length; ++index) {
+                        scene.removeMesh(meshes[index]);
+                    }
+                    console.log(JSON.stringify(frustumPlanes));
+                    */
                 }
             }
         }.bind(this));
@@ -220,5 +236,7 @@
         })
 
         gdo.net.app["WebGL"].setToggleStatsFunction(this.collectStats.bind(this));
+
+        this.collectStats(false);
     }
 }
