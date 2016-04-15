@@ -4,6 +4,7 @@
     this.gdo = gdo;
 
     this.showStats = false;
+    this.noclip = false;
 
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = createScene(this.engine);
@@ -105,6 +106,11 @@
 
     this.setupControl = function () {
 
+        var camera = this.camera;
+
+        camera.applyGravity = !this.noclip;
+        camera.checkCollisions = !this.noclip;
+
         $('#stats_toggle').click(function () {
             var shouldShow = !this.showStats;
             this.collectStats(shouldShow);
@@ -112,7 +118,18 @@
             this.gdo.net.app["WebGL"].server.collectStats(instanceId, shouldShow);
         }.bind(this));
 
-        var camera = this.camera;
+        $('#noclip_toggle').click(function () {
+            this.noclip = !this.noclip;
+            camera.applyGravity = !this.noclip;
+            camera.checkCollisions = !this.noclip;
+
+            if (this.noclip) {
+                $('#noclip_toggle').text("Disable noclip");
+            } else {
+                $('#noclip_toggle').text("Enable noclip");
+            }
+        }.bind(this));
+
         camera.attachControl(this.canvas);
 
         camera.keysUp.push(87);    // W
@@ -191,7 +208,7 @@
     this.setupShared = function () {
         window.addEventListener('resize', function () {
             this.engine.resize();
-        })
+        }.bind(this));
 
         this.collectStats(false);
 
