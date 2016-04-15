@@ -1,41 +1,25 @@
-﻿var threejsCameraParent;
-
-var babylonjsCamera;
-var babylonCameraRotationOffset;
+﻿var camera;
+var cameraRotationOffset;
 
 var toggleStats;
 
 $(function () {
     gdo.consoleOut('.WebGL', 1, 'Loaded WebGL JS');
 
-    $.connection.webGLAppHub.client.receiveThreejsCameraPosition = function (instanceId, newCamera) {
+    $.connection.webGLAppHub.client.receiveCameraPosition = function (instanceId, newCamera) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + JSON.stringify(newCamera));
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
 
-            threejsCameraParent.position.set(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
-            threejsCameraParent.quaternion.set(newCamera.quaternion[0], newCamera.quaternion[1], newCamera.quaternion[2], newCamera.quaternion[3]);
-            threejsCameraParent.updateMatrix();
+            if (camera !== undefined) {
+                camera.position.copyFromFloats(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
 
-            //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera parent: " + JSON.stringify(cameraParent));
-        }
-    }
-
-    $.connection.webGLAppHub.client.receiveBabylonjsCameraPosition = function (instanceId, newCamera) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + JSON.stringify(newCamera));
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            //gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": New camera: " + JSON.stringify(newCamera));
-
-            if (babylonjsCamera !== undefined) {
-                babylonjsCamera.position.copyFromFloats(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
-
-                babylonjsCamera.rotation.y = newCamera.rotation[1] + babylonCameraRotationOffset.y;
-                babylonjsCamera.rotation.x = newCamera.rotation[0];// * Math.cos(newCamera.rotation[1]);
-                //babylonjsCamera.upVector.copyFromFloats(0,
+                camera.rotation.y = newCamera.rotation[1] + cameraRotationOffset.y;
+                camera.rotation.x = newCamera.rotation[0];// * Math.cos(newCamera.rotation[1]);
+                //camera.upVector.copyFromFloats(0,
                 //                                        Math.cos(newCamera.rotation[0]),
-                //                                        Math.sin(newCamera.rotation[0]) * Math.sin(nbabylonCameraRotationOffset.y));
+                //                                        Math.sin(newCamera.rotation[0]) * Math.sin(ncameraRotationOffset.y));
             }
         }
     }
@@ -45,20 +29,13 @@ $(function () {
     };
 });
 
-gdo.net.app["WebGL"].initThreejsClient = function (threejsCameraParentParam) {
+gdo.net.app["WebGL"].initClient = function (cameraParam, cameraRotationOffsetParam) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Client at Node ' + gdo.clientId);
 
-    threejsCameraParent = threejsCameraParentParam;
-}
-
-gdo.net.app["WebGL"].initBabylonjsClient = function (babylonjsCameraParam, babylonCameraRotationOffsetParam) {
-    var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-    gdo.consoleOut('.WebGL', 1, 'Initializing WebGL App Client at Node ' + gdo.clientId);
-
-    babylonjsCamera = babylonjsCameraParam;
-    babylonCameraRotationOffset = babylonCameraRotationOffsetParam;
-    gdo.consoleOut('.WebGL', 1, 'Rotation Offset: ' + JSON.stringify(babylonCameraRotationOffset));
+    camera = cameraParam;
+    cameraRotationOffset = cameraRotationOffsetParam;
+    gdo.consoleOut('.WebGL', 1, 'Rotation Offset: ' + JSON.stringify(cameraRotationOffset));
 }
 
 gdo.net.app["WebGL"].initControl = function () {

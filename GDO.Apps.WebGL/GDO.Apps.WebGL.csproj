@@ -142,10 +142,8 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Data\WebGL\scenes\city\The_City.mtl" />
     <Content Include="Data\WebGL\scenes\city\The_City.obj" />
-    <None Include="Data\WebGL\shaders\skydome.frag" />
-    <Content Include="Configurations\WebGL\Babylon.json" />
-    <Content Include="Data\WebGL\scenes\noChairsZforward.mtl" />
-    <Content Include="Data\WebGL\scenes\noChairsZforward.obj" />
+    <Content Include="Data\WebGL\scenes\dsi.mtl" />
+    <Content Include="Data\WebGL\scenes\dsi.obj" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -157,14 +155,7 @@
   <ItemGroup>
     <Content Include="Configurations\WebGL\Default.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\three.min.js" />
-    <Content Include="Scripts\WebGL\babylonjs\BabylonSetup.js" />
-    <Content Include="Scripts\WebGL\threejs\PointerLockControls.js" />
-    <None Include="Data\WebGL\shaders\skydome.vert" />
-    <Content Include="Scripts\WebGL\threejs\ThreeSetup.js" />
-    <Content Include="Scripts\WebGL\threejs\ViewportTestWorld.js" />
-    <Content Include="Scripts\WebGL\threejs\UFOWorld.js" />
-    <Content Include="Scripts\WebGL\threejs\TestWorld.js" />
+    <Content Include="Scripts\WebGL\BabylonSetup.js" />
     <Content Include="Scripts\WebGL\gdo.apps.WebGL.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

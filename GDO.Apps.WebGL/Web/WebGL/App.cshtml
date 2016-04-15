@@ -14,50 +14,15 @@
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/three.min.js"></script>
     <script type="text/javascript" src="../../Scripts/babylon.js"></script>
     <script type="text/javascript" src="../../Scripts/babylon.objFileLoader.js"></script>
 
-    <script type="text/javascript" src="../../Scripts/WebGL/threejs/ThreeSetup.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/threejs/TestWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/threejs/ViewportTestWorld.js"></script>
-    <script type="text/javascript" src="../../Scripts/WebGL/threejs/UFOWorld.js"></script>
-
-    <script type="text/javascript" src="../../Scripts/WebGL/babylonjs/BabylonSetup.js"></script>
-
-    <script type="x-shader/x-vertex" id="vertexShader">
-        varying vec3 vWorldPosition;
-
-        void main() {
-            vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
-            vWorldPosition = worldPosition.xyz;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-        }
-    </script>
-
-    <script type="x-shader/x-fragment" id="fragmentShader">
-        uniform vec3 topColor;
-        uniform vec3 bottomColor;
-        uniform float offset;
-        uniform float exponent;
-
-        varying vec3 vWorldPosition;
-
-        void main() {
-            float h = normalize( vWorldPosition + offset ).y;
-            h = max(0.0, h);
-            gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( h, exponent ), 0.0 ) ), 1.0 );
-        }
-    </script>
+    <script type="text/javascript" src="../../Scripts/WebGL/BabylonSetup.js"></script>
 
     <script>
         $(function () {
             var gdo = parent.gdo;
             $(document).ready(function () {
-                /*
-                var threeSetup = new ThreeSetup(document.getElementById('wrapper'), gdo);
-                threeSetup.setupApp();
-                */
                 var babylonSetup = new BabylonSetup(document.getElementById('renderCanvas'), gdo);
                 babylonSetup.setupApp();
             });

@@ -55,7 +55,7 @@ Loop, %Rows%
 		run "chrome.exe" --app=%Fullurl%
 		Sleep 200
 		WinActivate, %Title%%Node%
-        Sleep 500
+        Sleep 1000
 		
 		WinGet Style, Style, A
 		CordX := ((Col*Width)+TopLeftX)

@@ -24,30 +24,14 @@ namespace GDO.Apps.WebGL
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void SetThreejsCameraPosition(int instanceId, ThreejsCamera camera)
+        public void SetCameraPosition(int instanceId, Camera camera)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).ThreejsCamera = camera;
-                    Clients.Group("" + instanceId).receiveThreejsCameraPosition(instanceId, camera);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void SetBabylonjsCameraPosition(int instanceId, BabylonjsCamera camera)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).BabylonjsCamera = camera;
-                    Clients.Group("" + instanceId).receiveBabylonjsCameraPosition(instanceId, camera);
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera = camera;
+                    Clients.Group("" + instanceId).receiveCameraPosition(instanceId, camera);
                 }
                 catch (Exception e)
                 {

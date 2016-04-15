@@ -18,35 +18,20 @@ namespace GDO.Apps.WebGL
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
 
-        public ThreejsCamera ThreejsCamera { get; set; }
-        public BabylonjsCamera BabylonjsCamera { get; set; }
-
-
+        public Camera Camera { get; set; }
+        
         public void Init()
         {
-            this.ThreejsCamera = new ThreejsCamera();
-            this.BabylonjsCamera = new BabylonjsCamera();
+            this.Camera = new Camera();
         }
     }
 
-    public class ThreejsCamera
-    {
-        public float[] position { get; set; }
-        public float[] quaternion { get; set; }
-
-        public ThreejsCamera()
-        {
-            this.position = new float[3];
-            this.quaternion = new float[4];
-        }
-    }
-
-    public class BabylonjsCamera
+    public class Camera
     {
         public float[] position { get; set; }
         public float[] rotation { get; set; }
 
-        public BabylonjsCamera()
+        public Camera()
         {
             this.position = new float[3];
             this.rotation = new float[3];
