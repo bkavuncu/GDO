@@ -118,6 +118,10 @@
             this.gdo.net.app["WebGL"].server.collectStats(instanceId, shouldShow);
         }.bind(this));
 
+        $('#reset_position').click(function () {
+            camera.position.copyFromFloats(0, 0, 0);
+        });
+
         $('#noclip_toggle').click(function () {
             this.noclip = !this.noclip;
             camera.applyGravity = !this.noclip;
