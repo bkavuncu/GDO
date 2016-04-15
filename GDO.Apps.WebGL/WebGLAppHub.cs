@@ -23,6 +23,22 @@ namespace GDO.Apps.WebGL
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
+        
+        public void RequestCameraPosition(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Camera camera = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera;
+                    Clients.Caller.receiveCameraPosition(instanceId, camera);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         public void SetCameraPosition(int instanceId, Camera camera)
         {
