@@ -12,6 +12,8 @@
 
     this.cameraViewOffset = new BABYLON.Vector3(0, 0, 0);
 
+    this.isControlNode = false;
+
     this.modelLoadFinished = function () {
 
         var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
@@ -51,7 +53,8 @@
                                     + "Max Frame duration: " + maxDuration.toFixed(2) + " ms<br>"
                                     + "Average Frame duration: " + avg.toFixed(2) + " ms<br>"
                                     + "Min Frame duration: " + minDuration.toFixed(2) + " ms<br>"
-                                    + "FPS: " + (1000 / avg).toFixed(2));
+                                    + "FPS: " + (1000 / avg).toFixed(2) + "<br>"
+                                    + "Camera speed: " + this.camera.speed);
 
                     frameIndex = 0;
                     minDuration = 1000;
@@ -75,6 +78,20 @@
 
                 }
             }
+
+            if( this.isControlNode && this.receivedFirstCameraUpdate ) {
+
+                var position = this.camera.position;
+                var rotation = this.camera.rotation;
+
+                var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
+                this.gdo.net.app["WebGL"].server.setCameraPosition(instanceId,
+                    {
+                        position: [position.x, position.y, position.z],
+                        rotation: [rotation.x, rotation.y, rotation.z]
+                    });
+            }
+
         }.bind(this));
     }
 
@@ -105,6 +122,8 @@
     }
 
     this.setupControl = function () {
+
+        this.isControlNode = true;
 
         var camera = this.camera;
 
@@ -141,7 +160,14 @@
         camera.keysLeft.push(65);  // A
         camera.keysRight.push(68); // D
 
-        camera.speed /= 4;
+        $(document).keypress(function (event) {
+            if (event.which == 46) {  // > key
+                this.camera.speed *= 2;
+            }
+            else if (event.which == 44) {  // < key
+                this.camera.speed /= 2;
+            }
+        }.bind(this));
 
         camera.ellipsoid = new BABYLON.Vector3(0.8, 1.9, 0.8);
         camera.applyGravity = true;
@@ -149,23 +175,6 @@
 
         this.gdo.net.app["WebGL"].initControl(this);
 
-        function sendCameraPositionToClients() {
-            var position = camera.position;
-            var rotation = camera.rotation;
-            
-            if (this.receivedFirstCameraUpdate) {
-                var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
-                this.gdo.net.app["WebGL"].server.setCameraPosition(instanceId,
-                    {
-                        position: [position.x, position.y, position.z],
-                        rotation: [rotation.x, rotation.y, rotation.z]
-                    });
-            }
-        }
-
-        //TODO: Do this better
-        setInterval(sendCameraPositionToClients.bind(this), 1000 / 60);
-        
         this.setupShared();
     }
 
@@ -218,6 +227,10 @@
 
         var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
         this.gdo.net.app["WebGL"].server.requestCameraPosition(instanceId);
-        loadModelIntoScene(this.engine, this.scene, this.modelLoadFinished.bind(this));
+        loadModelIntoScene("ImperialWestLandscapeWithBuilding2Sided", this.engine, this.scene, this.modelLoadFinished.bind(this));
+
+        this.camera.minZ = 0.1;
+        //this.camera.maxZ = 1000000;
+        gdo.consoleOut('.WebGL', 1, 'Set camera render distance - Min: ' + this.camera.minZ + " Max: " + this.camera.maxZ);
     }
 }

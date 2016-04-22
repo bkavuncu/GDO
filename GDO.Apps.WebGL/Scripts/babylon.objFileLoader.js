@@ -334,6 +334,7 @@ var BABYLON;
             var unwrapData = function () {
                 //Every array has the same length
                 for (var l = 0; l < wrappedPositionForBabylon.length; l++) {
+
                     //Push the x, y, z values of each element in the unwrapped array
                     unwrappedPositionsForBabylon.push(wrappedPositionForBabylon[l].x, wrappedPositionForBabylon[l].y, wrappedPositionForBabylon[l].z);
                     unwrappedNormalsForBabylon.push(wrappedNormalsForBabylon[l].x, wrappedNormalsForBabylon[l].y, wrappedNormalsForBabylon[l].z);
@@ -486,6 +487,13 @@ var BABYLON;
                     unwrappedUVForBabylon = [];
                 }
             };
+
+            var startMeshNumber = 11195;
+            var endMeshNumber = 11245;
+
+            var numMeshesSeen = 0;
+            var timeLastMeshSeen = Date.now();
+
             //Main function
             //Split the file into lines
             var lines = data.split('\n');
@@ -495,6 +503,41 @@ var BABYLON;
                 var result;
                 //Comment or newLine
                 if (line.length === 0 || line.charAt(0) === '#') {
+                    continue;
+                }
+                else if (numMeshesSeen < startMeshNumber || numMeshesSeen > endMeshNumber) {
+                    if (this.mtllib.test(line)) {
+                        //Get the name of mtl file
+                        fileToLoad = line.substring(7).trim();
+                    }
+                    else if (this.group.test(line) || this.obj.test(line)) {
+                        numMeshesSeen++;
+                        console.log("Before/after count " + numMeshesSeen);
+                    }
+                    else if (numMeshesSeen > endMeshNumber) {
+                        continue;
+                    }
+                    else if ((result = this.vertexPattern.exec(line)) !== null) {
+                        //Create a Vector3 with the position x, y, z
+                        //Value of result:
+                        // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+                        //Add the Vector in the list of positions
+                        positions.push(new BABYLON.Vector3(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3])));
+                    }
+                    else if ((result = this.normalPattern.exec(line)) !== null) {
+                        //Create a Vector3 with the normals x, y, z
+                        //Value of result
+                        // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
+                        //Add the Vector in the list of normals
+                        normals.push(new BABYLON.Vector3(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3])));
+                    }
+                    else if ((result = this.uvPattern.exec(line)) !== null) {
+                        //Create a Vector2 with the normals u, v
+                        //Value of result
+                        // ["vt 0.1 0.2 0.3", "0.1", "0.2"]
+                        //Add the Vector in the list of uvs
+                        uvs.push(new BABYLON.Vector2(parseFloat(result[1]), parseFloat(result[2])));
+                    }
                     continue;
                 }
                 else if ((result = this.vertexPattern.exec(line)) !== null) {
@@ -547,9 +590,21 @@ var BABYLON;
                     1);
                 }
                 else if (this.group.test(line) || this.obj.test(line)) {
+                    numMeshesSeen++;
+                    
+                    var time = Date.now();
+                    var duration = time - timeLastMeshSeen;
+                    timeLastMeshSeen = time;
+
+                    if (duration > 200 && numMeshesSeen != startMeshNumber + 1 && endMeshNumber > numMeshesSeen) {
+                        endMeshNumber = numMeshesSeen;
+                    }
+
+                    console.log("Processing " + numMeshesSeen + " Duration: " + duration);
+
                     //Create a new mesh corresponding to the name of the group.
                     //Definition of the mesh
-                    var objMesh = 
+                    var objMesh =
                     //Set the name of the current obj mesh
                     {
                         name: line.substring(2).trim(),
@@ -575,7 +630,7 @@ var BABYLON;
                         //Set the data for the previous mesh
                         addPreviousObjMesh();
                         //Create a new mesh
-                        var objMesh = 
+                        var objMesh =
                         //Set the name of the current obj mesh
                         {
                             name: objMeshName + "_mm" + increment.toString(),
@@ -607,6 +662,10 @@ var BABYLON;
                     console.log("Unhandled expression at line : " + line);
                 }
             }
+
+            console.log("Total number of meshes: " + numMeshesSeen);
+            console.log("Number of meshed loaded: " + (endMeshNumber - startMeshNumber));
+
             //At the end of the file, add the last mesh into the meshesFromObj array
             if (hasMeshes) {
                 //Set the data for the last mesh

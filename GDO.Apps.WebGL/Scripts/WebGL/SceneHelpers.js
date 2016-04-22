@@ -21,7 +21,7 @@
     return scene;
 }
 
-function loadModelIntoScene(engine, scene, loadFinishedCallback, numDuplicates) {
+function loadModelIntoScene(modelName, engine, scene, loadFinishedCallback, numDuplicates) {
 
     if (numDuplicates == undefined) {
         numDuplicates = 1;
@@ -30,21 +30,25 @@ function loadModelIntoScene(engine, scene, loadFinishedCallback, numDuplicates) 
     var count = 0;
 
     var onBuildingLoad = function (t) {
+
         t.loadedMeshes.forEach(function (m) {
 
             if (m.material !== undefined && m.material.id == "floor") {
                 m.checkCollisions = true;
             }
 
-            m.position.x += 100 * count;
-            m.position.y -= 1.5;
+            //m.position.x += 100 * count;
+            //m.position.y -= 1.5;
 
             // Flip x-axis to fix blender export
-            m.scaling.x = -1;
-            m.bakeCurrentTransformIntoVertices();
+            //m.scaling.x = -1;
+            //m.bakeCurrentTransformIntoVertices();
 
-            //m.showBoundingBox = true;
+            m.showBoundingBox = true;
             //m.getBoundingInfo().update(new BABYLON.Matrix());
+            //if (m.material !== undefined) {
+            //    m.material.backFaceCulling = false;
+            //}
         });
 
         count++;
@@ -53,7 +57,7 @@ function loadModelIntoScene(engine, scene, loadFinishedCallback, numDuplicates) 
     var loader = new BABYLON.AssetsManager(scene);
 
     for (var i = 0; i < numDuplicates; i++) {
-        var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", "dsi.obj");
+        var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", modelName + ".obj");
         building.onSuccess = onBuildingLoad;
     }
 
