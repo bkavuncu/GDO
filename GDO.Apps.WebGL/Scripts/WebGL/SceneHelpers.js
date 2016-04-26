@@ -23,6 +23,9 @@
 
 function loadModelIntoScene(modelName, position, engine, scene, loadFinishedCallback, numDuplicates) {
 
+    //var FILE_SERVER = "http://146.169.46.148/scenes/";
+    var FILE_SERVER = "http://localhost/scenes/";
+
     if (numDuplicates == undefined) {
         numDuplicates = 1;
     }
@@ -61,7 +64,7 @@ function loadModelIntoScene(modelName, position, engine, scene, loadFinishedCall
     var loader = new BABYLON.AssetsManager(scene);
 
     for (var i = 0; i < numDuplicates; i++) {
-        var building = loader.addMeshTask("building", "", "../../Data/WebGL/scenes/", modelName + ".obj");
+        var building = loader.addMeshTask("building", "", FILE_SERVER, modelName + ".obj");
         building.onSuccess = onBuildingLoad;
     }
 
