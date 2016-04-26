@@ -149,8 +149,6 @@
     <Content Include="Data\WebGL\scenes\dsi.obj" />
     <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding.mtl" />
     <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding.obj" />
-    <Content Include="Data\WebGL\scenes\fbxblenderexport.mtl" />
-    <Content Include="Data\WebGL\scenes\fbxblenderexport.obj" />
     <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding2Sided.mtl" />
     <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding2Sided.obj" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />

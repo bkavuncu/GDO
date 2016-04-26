@@ -488,7 +488,7 @@ var BABYLON;
                 }
             };
 
-            var startMeshNumber = 11195;
+            var startMeshNumber = 0;
             var endMeshNumber = 11245;
 
             var numMeshesSeen = 0;

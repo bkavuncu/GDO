@@ -5,7 +5,7 @@ $(function () {
 
     $.connection.webGLAppHub.client.receiveCameraPosition = function (instanceId, newCamera) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + JSON.stringify(newCamera));
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + newCamera);
         }            
         
         if (babylonSetup !== undefined) {
@@ -39,4 +39,22 @@ gdo.net.app["WebGL"].terminateClient = function () {
 
 gdo.net.app["WebGL"].ternminateControl = function () {
     gdo.consoleOut('.WebGL', 1, 'Terminating WebGL App Control at Instance ' + gdo.controlId);
+}
+
+
+gdo.net.app["WebGL"].sendMesh = function (nodeId, mesh) {
+    gdo.consoleOut('.WebGL', 1, 'Sending mesh to connectionId ' + nodeId);
+
+    var objectToSend = {};
+    objectToSend.appName = "WebGL";
+    objectToSend.command = "receiveMesh";
+    objectToSend.data = BABYLON.SceneSerializer.SerializeMesh(mesh);
+
+    var conn = gdo.net.peer.connections[gdo.net.node[nodeId].peerId][0];
+    conn.send(objectToSend);
+}
+
+gdo.net.app["WebGL"].receiveMesh = function (data) {
+    gdo.consoleOut('.WebGL', 1, 'Adding new mesh');
+    babylonSetup.addMeshToScene(data);
 }

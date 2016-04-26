@@ -14,12 +14,21 @@
 
     this.isControlNode = false;
 
+    this.rotateGDO = true;
+    this.GDORotationOffset = 0;
+
+    this.importer = new IMPORTER(this.scene, this.gdo);
+
+    this.addMeshToScene = function (data) {
+        //this.importer.addMeshesToImport(data);
+    }
+
     this.modelLoadFinished = function () {
 
         var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
         gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Scene Loading finished");
 
-        //var octree = this.scene.createOrUpdateSelectionOctree();
+        this.scene.createOrUpdateSelectionOctree();
 
         var frameIndex = 0;
         var frameSampleSize = 60;
@@ -28,12 +37,34 @@
         var minDuration = 1000;
         var durationSum = 0;
 
+        var numSentAtATime = 10;
+        var numSent = 0;
+
+        if (!this.isControlNode) {
+            //this.importer.addMeshesToSend(this.scene.meshes);
+        }
+
         var activeMeshes = this.scene.getActiveMeshes();
+
+        var clampPointRotationOffset = 0;
 
         this.engine.runRenderLoop(function () {
             this.scene.render();
 
+            if (this.isControlNode) {
+                if (this.rotateGDO) {
+                    clampPointRotationOffset = this.GDORotationOffset + this.camera.rotation.y;
+                }
+                else {
+                    this.GDORotationOffset = clampPointRotationOffset - this.camera.rotation.y;
+                }
+            }
+
             if (this.showStats) {
+
+                if (!this.isControlNode) {
+                    //this.importer.doWork();
+                }
 
                 // Update and render stats
                 var duration = this.scene.getLastFrameDuration();
@@ -61,7 +92,6 @@
                     maxDuration = 0;
                     durationSum = 0;
 
-
                     //TODO: Experimenting with frustums and octrees
 
                     /*
@@ -79,16 +109,22 @@
                 }
             }
 
-            if( this.isControlNode && this.receivedFirstCameraUpdate ) {
+            if (this.isControlNode && this.receivedFirstCameraUpdate) {
 
                 var position = this.camera.position;
                 var rotation = this.camera.rotation;
+
+                this.camera.upVector.copyFromFloats(Math.sin(rotation.x) * Math.sin(rotation.y),
+                                                    Math.cos(rotation.x),
+                                                    Math.sin(rotation.x) * Math.cos(rotation.y));
 
                 var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
                 this.gdo.net.app["WebGL"].server.setCameraPosition(instanceId,
                     {
                         position: [position.x, position.y, position.z],
-                        rotation: [rotation.x, rotation.y, rotation.z]
+                        upVector: [this.camera.upVector.x, this.camera.upVector.y, this.camera.upVector.z],
+                        GDORotation: rotation.y,
+                        GDORotationOffset: this.GDORotationOffset
                     });
             }
 
@@ -112,13 +148,21 @@
     this.updateCameraPosition = function (newCamera) {
         this.receivedFirstCameraUpdate = true;
 
-        this.camera.position.copyFromFloats(newCamera.position[0], newCamera.position[1], newCamera.position[2]);
+        BABYLON.Vector3.FromArrayToRef(newCamera.position, 0, this.camera.position);
 
-        this.camera.rotation.y = newCamera.rotation[1] + this.cameraViewOffset.y;
-        this.camera.rotation.x = newCamera.rotation[0];// * Math.cos(newCamera.rotation[1]);
-        //this.camera.upVector.copyFromFloats(0,
-        //                                        Math.cos(newCamera.rotation[0]),
-        //                                        Math.sin(newCamera.rotation[0]) * Math.sin(this.cameraViewOffset.y));
+        if (this.isControlNode) {
+            this.camera.rotation.y = newCamera.GDORotation;
+            this.GDORotationOffset = newCamera.GDORotationOffset;
+            return;
+        }
+        
+        this.camera._referencePoint.copyFromFloats(Math.cos(newCamera.GDORotation),
+                                                   0,
+                                                   -Math.sin(newCamera.GDORotation));
+
+        BABYLON.Vector3.FromArrayToRef(newCamera.upVector, 0, this.camera.upVector);
+
+        this.camera.rotation.y = this.cameraViewOffset.y + newCamera.GDORotationOffset - (Math.PI / 2);
     }
 
     this.setupControl = function () {
@@ -153,6 +197,16 @@
             }
         }.bind(this));
 
+        $('#toggle_rotation_type').click(function () {
+            this.rotateGDO = !this.rotateGDO;
+
+            if (this.rotateGDO) {
+                $('#toggle_rotation_type').text("Rotate Front");
+            } else {
+                $('#toggle_rotation_type').text("Rotate GDO");
+            }
+        }.bind(this));
+
         camera.attachControl(this.canvas);
 
         camera.keysUp.push(87);    // W
@@ -160,11 +214,11 @@
         camera.keysLeft.push(65);  // A
         camera.keysRight.push(68); // D
 
-        $(document).keypress(function (event) {
-            if (event.which == 46) {  // > key
+        $(window).keypress(function (event) {
+            if (event.which == 46) {            // >
                 this.camera.speed *= 2;
             }
-            else if (event.which == 44) {  // < key
+            else if (event.which == 44) {       // < 
                 this.camera.speed /= 2;
             }
         }.bind(this));
@@ -227,7 +281,10 @@
 
         var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
         this.gdo.net.app["WebGL"].server.requestCameraPosition(instanceId);
-        loadModelIntoScene("ImperialWestLandscapeWithBuilding2Sided", this.engine, this.scene, this.modelLoadFinished.bind(this));
+        //loadModelIntoScene("dsi", new BABYLON.Vector3((this.gdo.clientId-1)*100, 0, 0), this.engine, this.scene, this.modelLoadFinished.bind(this));
+
+        loadModelIntoScene("dsi", new BABYLON.Vector3(0, 0, 0), this.engine, this.scene, this.modelLoadFinished.bind(this));
+
 
         this.camera.minZ = 0.1;
         //this.camera.maxZ = 1000000;

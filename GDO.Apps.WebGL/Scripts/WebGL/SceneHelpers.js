@@ -21,11 +21,13 @@
     return scene;
 }
 
-function loadModelIntoScene(modelName, engine, scene, loadFinishedCallback, numDuplicates) {
+function loadModelIntoScene(modelName, position, engine, scene, loadFinishedCallback, numDuplicates) {
 
     if (numDuplicates == undefined) {
         numDuplicates = 1;
     }
+
+    console.log(position);
 
     var count = 0;
 
@@ -36,6 +38,8 @@ function loadModelIntoScene(modelName, engine, scene, loadFinishedCallback, numD
             if (m.material !== undefined && m.material.id == "floor") {
                 m.checkCollisions = true;
             }
+
+            m.position.addInPlace(position);
 
             //m.position.x += 100 * count;
             //m.position.y -= 1.5;
@@ -66,4 +70,81 @@ function loadModelIntoScene(modelName, engine, scene, loadFinishedCallback, numD
     };
 
     loader.load();
+}
+
+var IMPORTER = function (scene, gdo) {
+    this.scene = scene;
+    this.gdo = gdo;
+
+    this.meshesToSend = [];
+    this.meshesToImport = [];
+
+    BABYLON.SceneLoader._loggingLevel = BABYLON.SceneLoader.DETAILED_LOGGING;
+
+    this.addMeshesToSend = function (meshes) {
+        for (var i = 0; i < meshes.length; i++) {
+            this.meshesToSend.push(meshes[i]);
+        }
+    }
+
+    this.addMeshesToImport = function (meshes) {
+        for (var i = 0; i < meshes.length; i++) {
+            this.meshesToImport.push(meshes[i]);
+        }
+    }
+
+    this.numToSend = 10;
+
+    var count = 0;
+
+    this.doWork = function () {
+        count++;
+
+        if (count > 10 && this.meshesToSend.length > 0) {
+            count = 0;
+
+            
+
+            var objectToSend = {};
+            objectToSend.appName = "WebGL";
+            objectToSend.command = "receiveMesh";
+            objectToSend.data = [];
+
+            for (var num = 0; num < this.numToSend; num++) {
+                var mesh = this.meshesToSend.pop();
+
+                if (mesh != undefined && mesh.name != "skyBox") {
+                    objectToSend.data.push(BABYLON.SceneSerializer.SerializeMesh(mesh));
+                }
+            }
+
+            var connectedNodes = this.gdo.net.node[this.gdo.clientId].connectedNodeList;
+            for (var i = 0; i < connectedNodes.length; i++) {
+
+                //this.gdo.net.app["WebGL"].sendMesh(connectedNodes[i], this.scene.meshes[0]);
+
+                var nodeId = connectedNodes[i];
+                var conn = gdo.net.peer.connections[gdo.net.node[nodeId].peerId][0];
+                // Doesn't work without being stringified for some reason
+                conn.send(JSON.stringify(objectToSend));
+            }
+        }
+
+        var data = this.meshesToImport.pop();
+        if (data == undefined) return;
+
+        var dataToLoad = "data:" + JSON.stringify(data);
+        dataToLoad = dataToLoad.substring(0, dataToLoad.length - 1);
+        dataToLoad += ", \"extension\": \".babylon?\"}";
+
+        BABYLON.SceneLoader.ImportMesh("", "", dataToLoad, this.scene,
+            function (meshes) {
+                console.log("IMPORTER SUCESS");
+            },
+            function () { },
+            function (scene, error) {
+                console.log("IMPORTER ERROR: " + error)
+            });
+    }
+
 }

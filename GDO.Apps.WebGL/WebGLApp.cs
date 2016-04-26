@@ -29,12 +29,16 @@ namespace GDO.Apps.WebGL
     public class Camera
     {
         public float[] position { get; set; }
-        public float[] rotation { get; set; }
+        public float[] upVector { get; set; }
+        public float GDORotation;
+        public float GDORotationOffset;
 
         public Camera()
         {
-            this.position = new float[3];
-            this.rotation = new float[3];
+            this.position = new float[] {0,0,0};
+            this.upVector = new float[] {0,1,0};
+            this.GDORotation = 0;
+            this.GDORotationOffset = 0;
         }
     }
 }
