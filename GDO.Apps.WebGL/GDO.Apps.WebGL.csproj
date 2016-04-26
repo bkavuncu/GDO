@@ -124,12 +124,6 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\WebGL\scenes\city\Maps\ang1.jpg" />
-    <Content Include="Data\WebGL\scenes\city\Maps\cty1.jpg" />
-    <Content Include="Data\WebGL\scenes\city\Maps\cty2x.jpg" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding\concrete.jpg" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding\marble.jpg" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding\_38.jpg" />
     <Content Include="Data\WebGL\textures\skybox_nx.jpg" />
     <Content Include="Data\WebGL\textures\skybox_ny.jpg" />
     <Content Include="Data\WebGL\textures\skybox_nz.jpg" />
@@ -143,14 +137,6 @@
     <Content Include="Scripts\babylon.js" />
     <Content Include="Scripts\babylon.objFileLoader.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Data\WebGL\scenes\city\The_City.mtl" />
-    <Content Include="Data\WebGL\scenes\city\The_City.obj" />
-    <Content Include="Data\WebGL\scenes\dsi.mtl" />
-    <Content Include="Data\WebGL\scenes\dsi.obj" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding.mtl" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding.obj" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding2Sided.mtl" />
-    <Content Include="Data\WebGL\scenes\ImperialWestLandscapeWithBuilding2Sided.obj" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
