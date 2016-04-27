@@ -57,7 +57,6 @@ $(function() {
             // do nothing
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.YoutubeWall', 1, 'Update video url ');
-            //$("iframe").contents().find("#ytplayer").attr("src", videoUrl);  //old code
 
             //load new video and mute it
             var player = gdo.net.node[gdo.clientId].player;
@@ -88,13 +87,8 @@ $(function() {
                 '</tr>');
         }
     }
-    $.connection.youtubeWallAppHub.client.toggleMute = function (screen) {
-        if (screen == gdo.clientId) {
-            var player = gdo.net.node[gdo.clientId].player;
-            player.isMuted() ? player.unMute() : player.mute();
-        }
-    }
-    $.connection.youtubeWallAppHub.client.updateSearchMode = function(search_mode) {
+
+    $.connection.youtubeWallAppHub.client.updateSearchMode = function (search_mode) {
         gdo.net.app["YoutubeWall"].searchMode = search_mode;
         $("iframe").contents().find("#search_mode").val(search_mode);
         if (search_mode == 1) {
@@ -107,23 +101,56 @@ $(function() {
             $("iframe").contents().find("#search_mode").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Keywords Mode");
         }
     }
+
+    /* mute and unmute functions */
+    $.connection.youtubeWallAppHub.client.muteAll = function() {
+        gdo.net.node[gdo.clientId].player.mute();
+    }
+    $.connection.youtubeWallAppHub.client.unmuteAll = function () {
+        gdo.net.node[gdo.clientId].player.unMute();
+    }
+    $.connection.youtubeWallAppHub.client.mute = function (screens) {
+        for(var i=0; i<screens.length; ++i){
+            if (screens[i] == gdo.clientId) {
+                gdo.net.node[gdo.clientId].player.mute();
+                return;
+            }
+        }
+    }
+    $.connection.youtubeWallAppHub.client.unmute = function (screens) {
+        for(var i=0; i<screens.lenght; ++i){
+            if (screens[i] == gdo.clientId) {
+                gdo.net.node[gdo.clientId].player.unMute();
+                return;
+            }
+        }
+    }
+    $.connection.youtubeWallAppHub.client.toggleMute = function (screens) {
+        for (var i = 0; i < screens.length; ++i) {
+            if (screens[i] == gdo.clientId) {
+                var player = gdo.net.node[gdo.clientId].player;
+                player.isMuted() ? player.unMute() : player.mute();
+                return;
+            }
+        }
+    }
+
 });
 
-gdo.net.app["YoutubeWall"].searchMode = 0;
+gdo.net.app["YoutubeWall"].searchMode = 0;  //by Channel
 
 gdo.net.app["YoutubeWall"].initClient = function () {
     gdo.consoleOut('.YoutubeWall', 1, 'Initializing YoutubeWall App Client at Node ' + gdo.clientId);
-    gdo.net.app["YoutubeWall"].server.requestVideoUrls(gdo.net.node[gdo.clientId].appInstanceId,
-                                                   gdo.net.node[gdo.clientId].sectionCol,
-                                                   gdo.net.node[gdo.clientId].sectionRow);
 }
 
 gdo.net.app["YoutubeWall"].initControl = function () {
     gdo.controlId = parseInt(getUrlVar("controlId"));
     $("iframe").contents().find("#get_next_videos").prop("disabled", true);
     gdo.consoleOut('.YoutubeWall', 1, 'Initializing YoutubeWall App Control at Instance ' + gdo.controlId);
-    gdo.net.app["YoutubeWall"].server.requestSearchMode(gdo.controlId);
-    gdo.net.app["YoutubeWall"].server.requestVideoName(gdo.controlId);
+    gdo.net.app["YoutubeWall"].server.setSearchMode(gdo.controlId, gdo.net.app["YoutubeWall"].searchMode);
+    gdo.net.app["YoutubeWall"].server.setChannelName(gdo.controlId, gdo.net.app["YoutubeWall"].config[gdo.net.instance[gdo.controlId].configName].channel);
+    //gdo.net.app["YoutubeWall"].server.requestSearchMode(gdo.controlId);
+    //gdo.net.app["YoutubeWall"].server.requestVideoName(gdo.controlId);
 }
 
 gdo.net.app["YoutubeWall"].terminateClient = function () {

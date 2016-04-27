@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
@@ -26,7 +27,7 @@ namespace GDO.Apps.YoutubeWall
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void UpdateKeywords(int instanceId, string newKeywords)
+        public void SetKeywords(int instanceId, string newKeywords)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -136,7 +137,7 @@ namespace GDO.Apps.YoutubeWall
             }
         }
 
-        public void UpdateChannelName(int instanceId, string newChannelName)
+        public void SetChannelName(int instanceId, string newChannelName)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -157,6 +158,7 @@ namespace GDO.Apps.YoutubeWall
                         return;
                     }
                     yf.Keywords = channelJson.items[0].snippet.title;
+                    //Clients.Caller.setKeywords(yf.Keywords);  //put the channel name in the interface
                     yf.ChannelId = channelJson.items[0].id.channelId;
 
                     // get playlist id
@@ -280,10 +282,10 @@ namespace GDO.Apps.YoutubeWall
                 {
                     Clients.Caller.setMessage("Requesting latest video information!");
                     YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
-                    if (yf.Keywords != "")
+                    /*if (yf.Keywords != "")
                     {
                         Clients.Caller.setKeywords(yf.Keywords);
-                    }
+                    } */
                     if (!yf.VideoReady || yf.CurrentVideoName == null || yf.NextVideoName == null)
                     {
                         Clients.Caller.setMessage("Video Not Ready!");
@@ -333,25 +335,6 @@ namespace GDO.Apps.YoutubeWall
             }
         }
 
-        public void RequestSearchMode(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.setMessage("Requesting search mode...");
-                    YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
-                    Clients.Caller.updateSearchMode(yf.SearchMode);
-                    Clients.Caller.setMessage("Got current search mode Success!");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    Clients.Caller.setMessage(e.GetType().ToString());
-                }
-            }
-        }
-
         public void SetSearchMode(int instanceId, int sm)
         {
             lock (Cave.AppLocks[instanceId])
@@ -385,15 +368,15 @@ namespace GDO.Apps.YoutubeWall
             }
         }
 
-        public void ToggleMute(int instanceId, int node)
+        public void MuteAll(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.setMessage("Requesting toggle mute node " + node + "...");
-                    Clients.Group("" + instanceId).toggleMute(node);
-                    Clients.Caller.setMessage("Node " + node + ": muted/unmuted!");
+                    Clients.Caller.setMessage("Requesting all nodes to mute...");
+                    Clients.Group("" + instanceId).MuteAll();
+                    Clients.Caller.setMessage("All nodes muted!");
                 }
                 catch (Exception e)
                 {
@@ -402,5 +385,85 @@ namespace GDO.Apps.YoutubeWall
                 }
             }
         }
+        public void UnMuteAll(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting all nodes to unmute...");
+                    Clients.Group("" + instanceId).UnmuteAll();
+                    Clients.Caller.setMessage("All nodes unmuted!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void Mute(int instanceId, int[] nodes)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    String nodesString = nodes.Aggregate("", (current, i) => current + (i + ","));
+                    nodesString = nodesString.Remove(nodesString.Length - 1);
+                    Clients.Caller.setMessage("Requesting nodes [" + nodesString + "] to mute...");
+                    Clients.Group("" + instanceId).Mute(nodes);
+                    Clients.Caller.setMessage("Nodes [" + nodesString + "] muted!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void UnMute(int instanceId, int[] nodes)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    String nodesString = nodes.Aggregate("", (current, i) => current + (i + ","));
+                    nodesString = nodesString.Remove(nodesString.Length - 1);
+                    Clients.Caller.setMessage("Requesting nodes [" + nodesString + "] to unmute...");
+                    Clients.Group("" + instanceId).UnMute(nodes);
+                    Clients.Caller.setMessage("Nodes [" + nodesString + "] unmuted!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void ToggleMute(int instanceId, int[] nodes)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    String nodesString = nodes.Aggregate("", (current, i) => current + (i + ","));
+                    nodesString = nodesString.Remove(nodesString.Length - 1);
+                    Clients.Caller.setMessage("Requesting toggle mute nodes [" + nodesString + "]...");
+                    Clients.Group("" + instanceId).toggleMute(nodes);
+                    Clients.Caller.setMessage("Nodes [" + nodesString + "]: muted/unmuted!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void PlayAll() { }
+        public void PauseAll() { }
+        public void Play() { }
+        public void Pause() { }
+        public void Next() { }
     }
 }
