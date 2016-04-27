@@ -109,20 +109,29 @@ $(function() {
     $.connection.youtubeWallAppHub.client.unmuteAll = function () {
         gdo.net.node[gdo.clientId].player.unMute();
     }
-    $.connection.youtubeWallAppHub.client.mute = function (screen) {
-        if (screen == gdo.clientId) {
-            gdo.net.node[gdo.clientId].player.mute();
+    $.connection.youtubeWallAppHub.client.mute = function (screens) {
+        for(var i=0; i<screens.length; ++i){
+            if (screens[i] == gdo.clientId) {
+                gdo.net.node[gdo.clientId].player.mute();
+                return;
+            }
         }
     }
-    $.connection.youtubeWallAppHub.client.unmute = function (screen) {
-        if (screen == gdo.clientId) {
-            gdo.net.node[gdo.clientId].player.unMute();
+    $.connection.youtubeWallAppHub.client.unmute = function (screens) {
+        for(var i=0; i<screens.lenght; ++i){
+            if (screens[i] == gdo.clientId) {
+                gdo.net.node[gdo.clientId].player.unMute();
+                return;
+            }
         }
     }
-    $.connection.youtubeWallAppHub.client.toggleMute = function (screen) {
-        if (screen == gdo.clientId) {
-            var player = gdo.net.node[gdo.clientId].player;
-            player.isMuted() ? player.unMute() : player.mute();
+    $.connection.youtubeWallAppHub.client.toggleMute = function (screens) {
+        for (var i = 0; i < screens.length; ++i) {
+            if (screens[i] == gdo.clientId) {
+                var player = gdo.net.node[gdo.clientId].player;
+                player.isMuted() ? player.unMute() : player.mute();
+                return;
+            }
         }
     }
 
