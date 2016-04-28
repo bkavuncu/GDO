@@ -67,6 +67,67 @@ function loadModelIntoScene(config, scene, loadFinishedCallback) {
     });
 }
 
+function SendMaterialsToAllOtherNodes(gdo, scene, onFinishCallback) {
+
+    var dataToSend = {};
+    dataToSend.appName = "WebGL";
+    dataToSend.command = "receiveMaterials";
+    dataToSend.data = [];
+
+    scene.materials.forEach(function (mat) {
+        dataToSend.data.push(mat.serialize());
+    });
+
+    var stringifiedData = JSON.stringify(dataToSend);
+
+    var sectionId = gdo.net.node[gdo.clientId].sectionId;
+    var nodeMap = gdo.net.section[sectionId].nodeMap;
+
+    var nodesToSendTo = [];
+
+    for (var i = 0; i < nodeMap.length; i++) {
+        nodesToSendTo = nodesToSendTo.concat(nodeMap[i]);
+    }
+
+    var timeout = 100;
+    var recursing = false;
+
+    function sendToNextNode() {
+        if (nodesToSendTo.length == 0) {
+            if (recursing) {
+                if (timeout < 1500) {
+                    timeout *= 2;
+                }
+                setTimeout(sendToNextNode, timeout);
+            } else {
+                onFinishCallback();
+            }
+            return;
+        }
+
+        var nodeId = nodesToSendTo.pop();
+        var node = gdo.net.node[nodeId];
+
+        if (nodeId == gdo.clientId) {
+            sendToNextNode();
+        }
+        else if (node.connectedToPeer) {
+            var conn = gdo.net.peer.connections[node.peerId][0];
+            conn.send(stringifiedData);
+            timeout = 100;
+            setTimeout(sendToNextNode, timeout);
+        }
+        else {
+            recursing = true;
+            sendToNextNode();
+            recursing = false;
+            nodesToSendTo.push(nodeId);
+        }
+    }
+
+    sendToNextNode();
+}
+
 var IMPORTER = function (scene, gdo) {
     this.scene = scene;
     this.gdo = gdo;

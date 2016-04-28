@@ -23,13 +23,28 @@
         //this.importer.addMeshesToImport(data);
     }
 
+
+    this.addMaterialsToScene = function (data) {
+        data.forEach(function (mat) {
+            if (this.scene.getMaterialByName(mat.name) != undefined) {
+                return;
+            }
+
+            this.gdo.consoleOut('.WebGL', 1, "Adding new material " + mat.name);
+            BABYLON.Material.Parse(mat, this.scene, "");
+        }.bind(this));
+    }
+
     this.modelLoadFinished = function () {
 
-        gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Scene Loading finished");
+        this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Scene Loading finished");
 
         this.scene.createOrUpdateSelectionOctree();
 
-        this.engine.hideLoadingUI();
+        SendMaterialsToAllOtherNodes(this.gdo, this.scene, function () {
+            this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Sending Materials finished");
+            this.engine.hideLoadingUI();
+        }.bind(this));
 
         var frameIndex = 0;
         var frameSampleSize = 60;

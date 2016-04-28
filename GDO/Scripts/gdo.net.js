@@ -529,12 +529,15 @@ gdo.net.receiveData = function (data) {
 
     var appName = dataObj.appName;
     var command = dataObj.command;
-    var data = dataObj.data;
 
-    // TODO: Fix this as it's not very safe
-    var fn = gdo.net.app[appName][command];
-    if (typeof fn === 'function') {
-        fn(data);
+    if (appName != undefined && command != undefined) {
+        var data = dataObj.data;
+
+        // TODO: Fix this as it's not very safe
+        var fn = gdo.net.app[appName][command];
+        if (typeof fn === 'function') {
+            fn(data);
+        }
     }
 
     //var type = dataObj.type;
