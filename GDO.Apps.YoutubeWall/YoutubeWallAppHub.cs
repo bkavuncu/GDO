@@ -460,10 +460,79 @@ namespace GDO.Apps.YoutubeWall
             }
         }
 
-        public void PlayAll() { }
-        public void PauseAll() { }
-        public void Play() { }
-        public void Pause() { }
-        public void Next() { }
+        public void PlayAll(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting all nodes to play...");
+                    Clients.Group("" + instanceId).PlayAll();
+                    Clients.Caller.setMessage("All nodes playing!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void PauseAll(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting all nodes to pause...");
+                    Clients.Group("" + instanceId).PauseAll();
+                    Clients.Caller.setMessage("All nodes paused!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void Play(int instanceId, int[] nodes)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    String nodesString = nodes.Aggregate("", (current, i) => current + (i + ","));
+                    nodesString = nodesString.Remove(nodesString.Length - 1);
+                    Clients.Caller.setMessage("Requesting nodes [" + nodesString + "] to play...");
+                    Clients.Group("" + instanceId).Play(nodes);
+                    Clients.Caller.setMessage("Nodes [" + nodesString + "] playing!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+        public void Pause(int instanceId, int[] nodes)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    String nodesString = nodes.Aggregate("", (current, i) => current + (i + ","));
+                    nodesString = nodesString.Remove(nodesString.Length - 1);
+                    Clients.Caller.setMessage("Requesting nodes [" + nodesString + "] to pause...");
+                    Clients.Group("" + instanceId).Pause(nodes);
+                    Clients.Caller.setMessage("Nodes [" + nodesString + "] paused!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void Next(int instanceId, int[] nodes) { }
     }
 }

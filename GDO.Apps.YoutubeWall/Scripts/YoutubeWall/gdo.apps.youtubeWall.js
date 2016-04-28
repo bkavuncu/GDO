@@ -135,6 +135,29 @@ $(function() {
         }
     }
 
+    /* Playing and pausing*/
+    $.connection.youtubeWallAppHub.client.pauseAll = function () {
+        gdo.net.node[gdo.clientId].player.pauseVideo();
+    }
+    $.connection.youtubeWallAppHub.client.pause = function (screens) {
+        for (var i = 0; i < screens.length; ++i) {
+            if (screens[i] == gdo.clientId) {
+                gdo.net.node[gdo.clientId].player.pauseVideo();
+                return;
+            }
+        }
+    }
+    $.connection.youtubeWallAppHub.client.playAll = function () {
+        gdo.net.node[gdo.clientId].player.playVideo();
+    }
+    $.connection.youtubeWallAppHub.client.play = function (screens) {
+        for (var i = 0; i < screens.length; ++i) {
+            if (screens[i] == gdo.clientId) {
+                gdo.net.node[gdo.clientId].player.playVideo();
+                return;
+            }
+        }
+    }
 });
 
 gdo.net.app["YoutubeWall"].searchMode = 0;  //by Channel
