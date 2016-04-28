@@ -5,7 +5,7 @@ $(function () {
 
     $.connection.webGLAppHub.client.receiveCameraPosition = function (instanceId, newCamera) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received CameraPos : " + newCamera);
+            gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received New Camera Position : " + JSON.stringify(newCamera));
         }            
         
         if (babylonSetup !== undefined) {

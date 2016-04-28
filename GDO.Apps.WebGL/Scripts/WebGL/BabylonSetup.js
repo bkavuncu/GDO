@@ -25,10 +25,11 @@
 
     this.modelLoadFinished = function () {
 
-        var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
-        gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Scene Loading finished");
+        gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Scene Loading finished");
 
         this.scene.createOrUpdateSelectionOctree();
+
+        this.engine.hideLoadingUI();
 
         var frameIndex = 0;
         var frameSampleSize = 60;
@@ -118,8 +119,7 @@
                                                     Math.cos(rotation.x),
                                                     Math.sin(rotation.x) * Math.cos(rotation.y));
 
-                var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
-                this.gdo.net.app["WebGL"].server.setCameraPosition(instanceId,
+                this.gdo.net.app["WebGL"].server.setCameraPosition(this.instanceId,
                     {
                         position: [position.x, position.y, position.z],
                         upVector: [this.camera.upVector.x, this.camera.upVector.y, this.camera.upVector.z],
@@ -168,6 +168,9 @@
     this.setupControl = function () {
 
         this.isControlNode = true;
+        this.gdo.net.app["WebGL"].initControl(this);
+        this.instanceId = this.gdo.controlId;
+        this.setupShared();
 
         var camera = this.camera;
 
@@ -177,8 +180,7 @@
         $('#stats_toggle').click(function () {
             var shouldShow = !this.showStats;
             this.collectStats(shouldShow);
-            var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
-            this.gdo.net.app["WebGL"].server.collectStats(instanceId, shouldShow);
+            this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, shouldShow);
         }.bind(this));
 
         $('#reset_position').click(function () {
@@ -226,13 +228,13 @@
         camera.ellipsoid = new BABYLON.Vector3(0.8, 1.9, 0.8);
         camera.applyGravity = true;
         camera.checkCollisions = true;
-
-        this.gdo.net.app["WebGL"].initControl(this);
-
-        this.setupShared();
     }
 
-    this.setupApp = function() {
+    this.setupApp = function () {
+
+        gdo.net.app["WebGL"].initClient(this);
+        this.instanceId = instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
+        this.setupShared();
 
         //
         // Setup camera and rotation offset
@@ -267,24 +269,23 @@
         var horizontalRotation = nodeWidthOffset * horizontalFov;
 
         this.cameraViewOffset.y = horizontalRotation;
-
-        gdo.net.app["WebGL"].initClient(this);
-        this.setupShared();
     }
 
     this.setupShared = function () {
+
+        this.engine.displayLoadingUI();
+
         window.addEventListener('resize', function () {
             this.engine.resize();
         }.bind(this));
 
         this.collectStats(false);
 
-        var instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
-        this.gdo.net.app["WebGL"].server.requestCameraPosition(instanceId);
-        //loadModelIntoScene("dsi", new BABYLON.Vector3((this.gdo.clientId-1)*100, 0, 0), this.engine, this.scene, this.modelLoadFinished.bind(this));
+        this.gdo.net.app["WebGL"].server.requestCameraPosition(this.instanceId);
 
-        loadModelIntoScene("dsi", new BABYLON.Vector3(0, 0, 0), this.engine, this.scene, this.modelLoadFinished.bind(this));
-
+        var configName = this.gdo.net.instance[this.instanceId].configName;
+        var config = this.gdo.net.app["WebGL"].config[configName];
+        loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
         this.camera.minZ = 0.1;
         //this.camera.maxZ = 1000000;

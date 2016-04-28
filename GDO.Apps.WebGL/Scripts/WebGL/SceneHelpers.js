@@ -21,54 +21,50 @@
     return scene;
 }
 
-function loadModelIntoScene(modelName, position, engine, scene, loadFinishedCallback, numDuplicates) {
+function loadModelIntoScene(config, scene, loadFinishedCallback) {
 
-    var FILE_SERVER = "http://146.169.46.148/scenes/";
-    //var FILE_SERVER = "http://localhost/scenes/";
+    var numDuplicates = config.numDuplicates;
 
     if (numDuplicates == undefined) {
         numDuplicates = 1;
     }
 
-    console.log(position);
+    BABYLON.SceneLoader.ImportMesh("", config.serverAddress, config.fileName, scene, function (meshes) {
 
-    var count = 0;
+        var startPosition = BABYLON.Vector3.FromArray(config.startPosition);
 
-    var onBuildingLoad = function (t) {
+        var minX = Number.MAX_VALUE;
+        var maxX = Number.MIN_VALUE;
 
-        t.loadedMeshes.forEach(function (m) {
+        meshes.forEach(function (m) {
+            var boundingInfo = m.getBoundingInfo();
+            minX = Math.min(minX, boundingInfo.minimum.x);
+            maxX = Math.max(maxX, boundingInfo.maximum.x);
 
-            if (m.material !== undefined && m.material.id == "floor") {
+            if (m.material != undefined && m.material.name == "floor") {
                 m.checkCollisions = true;
             }
 
-            m.position.addInPlace(position);
-
-            //m.position.x += 100 * count;
-            //m.position.y -= 1.5;
-
-            // Flip x-axis to fix blender export
+            m.position.subtractInPlace(startPosition);
             m.scaling.x = -1;
             m.bakeCurrentTransformIntoVertices();
 
             m.showBoundingBox = true;
         });
 
-        count++;
-    };
+        if (numDuplicates > 1) {
+            var width = (maxX - minX) * 1.05;
 
-    var loader = new BABYLON.AssetsManager(scene);
+            meshes.forEach(function (m) {
+                for (var i = 1; i < numDuplicates; i++) {
+                    var newMesh = m.clone(m.name + "-" + i);
+                    newMesh.position.x += width * i;
+                }
+            });
+        }
 
-    for (var i = 0; i < numDuplicates; i++) {
-        var building = loader.addMeshTask("building-" + i, "", FILE_SERVER, modelName + ".obj");
-        building.onSuccess = onBuildingLoad;
-    }
-
-    loader.onFinish = function () {
         loadFinishedCallback();
-    };
-
-    loader.load();
+    });
 }
 
 var IMPORTER = function (scene, gdo) {
