@@ -8,6 +8,8 @@ function init() {
     // Set up canvas
     canvas = document.getElementById('glscreen');
     gl = canvas.getContext('experimental-webgl');
+    //canvas.width = 960;
+    //canvas.height = 540;
     canvas.width = 1920;
     canvas.height = 1080;
 
@@ -58,13 +60,13 @@ function init() {
 
     // Setup rotations
     xRotLoc = gl.getUniformLocation(program, "xRot");
-    gl.uniform1f(xRotLoc, xRot);
+    gl.uniform1f(xRotLoc, params.xRot);
     yRotLoc = gl.getUniformLocation(program, "yRot");
-    gl.uniform1f(yRotLoc, yRot);
+    gl.uniform1f(yRotLoc, params.yRot);
 
     // Setup focal
-    focalLoc = gl.getUniformLocation(program, "focal");
-    gl.uniform1f(focalLoc, focal);
+    var focalLoc = gl.getUniformLocation(program, "focal");
+    gl.uniform1f(focalLoc, 1 / Math.tan((315 / 32) * (Math.PI / 180)));
 
     // Setup translation
     transLoc = gl.getUniformLocation(program, "translation");
@@ -72,7 +74,7 @@ function init() {
 
     // Setup eye
     eyeLoc = gl.getUniformLocation(program, "eyeHeight");
-    gl.uniform1f(eyeLoc, -rotationParams.yHeight);
+    gl.uniform1f(eyeLoc, -params.yHeight);
 
     // Set page size
     widthloc = gl.getUniformLocation(program, "width");
@@ -80,8 +82,14 @@ function init() {
     heightloc = gl.getUniformLocation(program, "height");
     gl.uniform1f(heightloc, canvas.height);
 
+    // Set max steps
+    maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
+    gl.uniform1i(maxStepsLoc, 100);
+
+    // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");
-    gl.uniform1i(modLoc, 0);
+    gl.uniform1i(modLoc, params.modToggle);
+
     // Render the scene
     render();
 
@@ -92,9 +100,8 @@ function render() {
     // Ensure continuous rendering
     window.requestAnimationFrame(render, canvas);
 
-    // Perform camera movements
-    cameraMovements();
-    gl.uniform1i(modLoc, rotationParams.modToggle);
+    // Apply params
+    applyParams();
 
     // Set position data of vertex shader
     positionLocation = gl.getAttribLocation(program, "a_position");

@@ -55,14 +55,31 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void RequestParameters(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.Mod);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void LeftButton(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).leftButton(instanceId);
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.IncXRot();
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -77,8 +94,9 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).rightButton(instanceId);
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.DecXRot();
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -93,8 +111,9 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).upButton(instanceId);
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.IncYRot();
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -109,8 +128,9 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).downButton(instanceId);
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.DecYRot();
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -125,8 +145,9 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    //((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).modToggle(instanceId);
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.ToggleMod();
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.Mod);
                 }
                 catch (Exception e)
                 {

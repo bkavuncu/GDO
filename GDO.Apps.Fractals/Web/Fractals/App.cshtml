@@ -14,13 +14,13 @@
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/Fractals/gdo.apps.Fractals.webgl.js"></script>
-    <script src="../../Scripts/Fractals/gdo.apps.Fractals.cameraControl.js"></script>
+    <script src="../../Scripts/Fractals/gdo.apps.Fractals.params.js"></script>
     <script>
         $(function () {          
             $(document).ready(function () {
-                rotationParams = new rotationParams(0.0, 0.0, 0.0, 0.0);
+                params = new params(0.0, 0.0, 0.0, 0.0);
                 var gdo = parent.gdo;
-                gdo.net.app["Fractals"].initClient(rotationParams);
+                gdo.net.app["Fractals"].initClient(params);
             });
         });
     </script>
@@ -49,6 +49,8 @@
         uniform float focal;
         uniform vec3 translation;
         uniform float eyeHeight;
+
+        uniform int maxSteps;
     
         uniform int modFunction;
 
@@ -164,8 +166,9 @@
 
             // t - total distance ray travelled
             float t = 0.0;
-            const int maxSteps = 100;
-            for(int i = 0; i < maxSteps; ++i)  {
+
+            for(int i = 0; i < 1/0; ++i)  {
+            if (i >= maxSteps) break;
 
             // ray origin + ray direction * total distance
             p = ro + rd * t;
@@ -177,7 +180,7 @@
             float d2 = abs(p.y + 2.0);
             float d = min(d1,d2);
 
-            if(d < 0.0001) {
+            if(d < 0.001) {
             if (d1 < d2) {
 
             ambientColour = vec4(1.0, 0.0, 1.0, 1.0);
@@ -186,7 +189,7 @@
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
             lightDirection = normalize(-p+lightLoc);
 
-            float shadingDetail = 0.0002;
+            float shadingDetail = 0.001;
             vec3 xDir = vec3(shadingDetail,0.0,0.0);
             vec3 yDir = vec3(0.0,shadingDetail,0.0);
             vec3 zDir = vec3(0.0,0.0,shadingDetail);

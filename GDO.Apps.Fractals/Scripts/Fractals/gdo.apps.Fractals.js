@@ -1,4 +1,4 @@
-﻿var rot;
+﻿var parameters;
 
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
@@ -6,76 +6,45 @@ $(function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name + " testing --------");
-            rot.xRot += 0.01;
+            gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
         }
     }
 
-    $.connection.fractalsAppHub.client.leftButton = function (instanceId) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+            gdo.consoleOut('.Fractals', 1, 'Updating parameters');
+
+            // Set rotation
+            var x = ((gdo.clientId - 1) % 16) - 7.5;
+            var angle = (315 / 16) * (Math.PI / 180);
+            parameters.xRot = -angle * x + xRot;
+            parameters.yRot = yRot;
+            parameters.modToggle = mod;
             
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            
-            rot.xRot += 0.01;
         }
     }
 
-    $.connection.fractalsAppHub.client.rightButton = function (instanceId) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            rot.xRot -= 0.01;
-        }
-    }
-
-    $.connection.fractalsAppHub.client.upButton = function (instanceId) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            rot.yRot -= 0.01;
-        }
-    }
-
-    $.connection.fractalsAppHub.client.downButton = function (instanceId) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            rot.yRot += 0.01;
-        }
-    }
-
-    $.connection.fractalsAppHub.client.modToggle = function (instanceId) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            if (rot.modToggle == 0) {
-                rot.modToggle = 1;
-            } else {
-                rot.modToggle = 0;
-            }
-        }
-    }
 });
 
-gdo.net.app["Fractals"].initClient = function (rotationParams) {
+gdo.net.app["Fractals"].initClient = function (params) {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Client at Node ' + gdo.clientId);
 
     // Set horizontal rotation
     var x = ((gdo.clientId - 1) % 16) - 7.5;
     var angle = (315 / 16) * (Math.PI / 180);
-    rotationParams.xRot = -angle * x;
+    params.xRot = -angle * x;
 
     // Set vertical height
     var y = Math.floor((gdo.clientId - 1) / 16) - 1.5;
     var ratio = (1080 / 1920);
-    rotationParams.yHeight = 2.0 * ratio * y;
-    gdo.consoleOut('.Fractals', 1, 'Eye height = ' + rotationParams.yHeight);
+    params.yHeight = 2.0 * ratio * y;
+    gdo.consoleOut('.Fractals', 1, 'Eye height = ' + params.yHeight);
 
-    rot = rotationParams;
+    parameters = params;
+
 }
 
 gdo.net.app["Fractals"].initControl = function () {
@@ -83,11 +52,15 @@ gdo.net.app["Fractals"].initControl = function () {
     gdo.net.app["Fractals"].server.requestName(gdo.controlId);
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Control at Instance ' + gdo.controlId);
 
+
+
     $("iframe").contents().find("#hello_submit")
     .unbind()
     .click(function () {
-        gdo.consoleOut('.Fractals', 1, 'Sending Name to Clients :' + $("iframe").contents().find('#hello_input').val());
-        gdo.net.app["Fractals"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
+        //gdo.consoleOut('.Fractals', 1, 'Sending Name to Clients :' + $("iframe").contents().find('#hello_input').val());
+        //gdo.net.app["Fractals"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
+        gdo.consoleOut('.Fractals', 1, 'Requesting parameters');
+        gdo.net.app["Fractals"].server.requestParameters(gdo.controlId);
     });
 
     $("iframe").contents().find("#left_button")

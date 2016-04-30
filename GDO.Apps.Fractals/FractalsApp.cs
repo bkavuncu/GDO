@@ -17,9 +17,16 @@ namespace GDO.Apps.Fractals
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
 
+        public float XRot;
+        public float YRot;
+        public int Mod;
+
         public string Name { get; set; }
         public void Init()
         {
+            XRot = 0.0f;
+            YRot = 0.0f;
+            Mod = 0;
         }
 
         public void SetName(string name)
@@ -31,5 +38,30 @@ namespace GDO.Apps.Fractals
         {
             return Name;
         }
+
+        public void IncXRot()
+        {
+            XRot += 0.01f;
+        }
+        public void DecXRot()
+        {
+            XRot -= 0.01f;
+        }
+
+        public void IncYRot()
+        {
+            YRot -= 0.01f;
+        }
+        public void DecYRot()
+        {
+            YRot += 0.01f;
+        }
+
+        public void ToggleMod()
+        {
+            Mod *= -1;
+            Mod++;
+        }
+
     }
 }
