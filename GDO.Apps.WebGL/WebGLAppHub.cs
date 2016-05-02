@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Collections.Generic;
 using GDO.Core;
 using GDO.Core.Apps;
 using Microsoft.AspNet.SignalR;
@@ -56,12 +57,43 @@ namespace GDO.Apps.WebGL
             }
         }
 
+        public void RequestNewPerformanceData(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.receiveNewPerformanceData(instanceId, ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).PerformanceData);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AddNewPerformanceData(int instanceId, int nodeId, PerformanceData data)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).AddNewPerformanceData(nodeId, data);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void CollectStats(int instanceId, bool collectStats)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).CollectPerformanceData = collectStats;
                     Clients.Group("" + instanceId).collectStats(instanceId, collectStats);
                 }
                 catch (Exception e)

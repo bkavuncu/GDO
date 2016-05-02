@@ -15,6 +15,10 @@ $(function () {
         }
     }
 
+    $.connection.webGLAppHub.client.receiveNewPerformanceData = function (instanceId, data) {
+        gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Data: " + data);
+    }
+
     $.connection.webGLAppHub.client.collectStats = function (instanceId, collectStats) {
         babylonSetup.collectStats(collectStats);
     };

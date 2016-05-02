@@ -37,7 +37,6 @@
         }.bind(this));
     }
 
-
     this.addMaterialsToScene = function (data) {
         data.forEach(function (mat) {
             if (this.scene.getMaterialByName(mat.name) != undefined) {

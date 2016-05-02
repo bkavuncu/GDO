@@ -19,11 +19,42 @@ namespace GDO.Apps.WebGL
         public IAdvancedAppInstance ParentApp { get; set; }
 
         public Camera Camera { get; set; }
-        
+
+        public bool CollectPerformanceData { get; set; }
+        public Dictionary<int, List<PerformanceData>> PerformanceData { get; set; }
+
         public void Init()
         {
             this.Camera = new Camera();
         }
+
+        public void AddNewPerformanceData(int nodeId, PerformanceData data)
+        {
+            if (!CollectPerformanceData) return;
+
+            List<PerformanceData> dataList = PerformanceData[nodeId];
+
+            if (dataList == null)
+            {
+                dataList = new List<PerformanceData>();
+                PerformanceData[nodeId] = dataList;
+            }
+
+            dataList.Add(data);
+        }
+    }
+
+    public class PerformanceData
+    {
+        public float timeStamp;
+
+        public int totalVertices;
+        public int activeMeshes;
+        public int totalMeshes;
+        public float maxFrameDuration;
+        public float averageFrameDuration;
+        public float minFrameDuration;
+        public float FPS;
     }
 
     public class Camera
