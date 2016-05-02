@@ -110,19 +110,23 @@ function SendMaterialsToAllOtherNodes(gdo, scene, onFinishCallback) {
 
         if (nodeId == gdo.clientId) {
             sendToNextNode();
+            return;
         }
-        else if (node.connectedToPeer) {
+
+        if (node.connectedToPeer) {
             var conn = gdo.net.peer.connections[node.peerId][0];
-            conn.send(stringifiedData);
-            timeout = 100;
-            setTimeout(sendToNextNode, timeout);
+            if (conn.open) {
+                conn.send(stringifiedData);
+                timeout = 100;
+                setTimeout(sendToNextNode, timeout);
+                return;
+            }
         }
-        else {
-            recursing = true;
-            sendToNextNode();
-            recursing = false;
-            nodesToSendTo.push(nodeId);
-        }
+
+        recursing = true;
+        sendToNextNode();
+        recursing = false;
+        nodesToSendTo.push(nodeId);
     }
 
     sendToNextNode();
@@ -149,7 +153,7 @@ var IMPORTER = function (scene, gdo) {
         }
     }
 
-    this.numToSend = 10;
+    this.numToSend = 1;
 
     var count = 0;
 
@@ -158,8 +162,6 @@ var IMPORTER = function (scene, gdo) {
 
         if (count > 10 && this.meshesToSend.length > 0) {
             count = 0;
-
-            
 
             var objectToSend = {};
             objectToSend.appName = "WebGL";
@@ -170,19 +172,28 @@ var IMPORTER = function (scene, gdo) {
                 var mesh = this.meshesToSend.pop();
 
                 if (mesh != undefined && mesh.name != "skyBox") {
-                    objectToSend.data.push(BABYLON.SceneSerializer.SerializeMesh(mesh));
+
+                    var data = {};
+                    data.name = mesh.name;
+                    data.materialName = mesh.material.name;
+                    data.position = mesh.position;
+                    data.rotation = mesh.rotation;
+                    data.serializedGeometry = mesh.geometry.serializeVerticeData();
+
+                    objectToSend.data.push(data);
                 }
             }
 
+            console.log("Sending data");
+            console.log(objectToSend);
+
+            var stringifiedDataToSend = JSON.stringify(objectToSend);
+
             var connectedNodes = this.gdo.net.node[this.gdo.clientId].connectedNodeList;
             for (var i = 0; i < connectedNodes.length; i++) {
-
-                //this.gdo.net.app["WebGL"].sendMesh(connectedNodes[i], this.scene.meshes[0]);
-
                 var nodeId = connectedNodes[i];
                 var conn = gdo.net.peer.connections[gdo.net.node[nodeId].peerId][0];
-                // Doesn't work without being stringified for some reason
-                conn.send(JSON.stringify(objectToSend));
+                conn.send(stringifiedDataToSend);
             }
         }
 
