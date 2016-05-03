@@ -48,16 +48,7 @@
         }.bind(this));
     }
 
-    this.performanceData = {};
-
-    this.addPerformanceData = function (nodeId, dataArray) {
-        if (this.performanceData[nodeId] == undefined) {
-            this.performanceData[nodeId] = [];
-        }
-        this.performanceData[nodeId] = this.performanceData[nodeId].concat(dataArray);
-    }
-
-    this.writePerformanceDataToFile = function () {
+    this.writePerformanceDataToFile = function (performanceData) {
         this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Saving performance data to file");
 
         var firstLine = true;
@@ -65,11 +56,11 @@
 
         var stringArray = [];
 
-        for (var key in this.performanceData) {
+        for (var key in performanceData) {
             // skip loop if the property is from prototype
-            if (!this.performanceData.hasOwnProperty(key)) continue;
+            if (!performanceData.hasOwnProperty(key)) continue;
 
-            var dataArray = this.performanceData[key];
+            var dataArray = performanceData[key];
             dataArray.forEach(function (data) {
                 var dataString = key + "";
                 for (var prop in data) {
@@ -143,55 +134,43 @@
                 }
             }
 
-            if (this.showStats) {
+            if (this.showStats && !this.isControlNode) {
+                //this.importer.doWork();
 
-                if (this.isControlNode) {
-                    frameIndex++;
+                // Update and render stats
+                var duration = this.scene.getLastFrameDuration();
+                maxDuration = Math.max(duration, maxDuration);
+                minDuration = Math.min(duration, minDuration);
+                durationSum += duration;
 
-                    if (frameIndex >= frameSampleSize) {
+                frameIndex++;
 
-                        this.gdo.net.app["WebGL"].server.requestNewPerformanceData(this.instanceId);
-                        frameIndex = 0;
-                    }
-                }
-                else {
-                    //this.importer.doWork();
+                if (frameIndex >= frameSampleSize) {
 
-                    // Update and render stats
-                    var duration = this.scene.getLastFrameDuration();
-                    maxDuration = Math.max(duration, maxDuration);
-                    minDuration = Math.min(duration, minDuration);
-                    durationSum += duration;
+                    var data = {};
+                    data.timeStamp = this.gdo.net.time.getTime();
+                    data.totalVertices = this.scene.getTotalVertices();
+                    data.activeMeshes = activeMeshes.length;
+                    data.totalMeshes = this.scene.meshes.length;
+                    data.maxFrameDuration = maxDuration;
+                    data.averageFrameDuration = durationSum / frameSampleSize;
+                    data.minFrameDuration = minDuration;
+                    data.FPS = 1000 / data.averageFrameDuration;
 
-                    frameIndex++;
+                    this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
 
-                    if (frameIndex >= frameSampleSize) {
+                    $('#stats').html("Total vertices: " +           data.totalVertices + "<br>"
+                                    + "Active Meshes: " +           data.activeMeshes + "<br>"
+                                    + "Total Meshes: " +            data.totalMeshes + "<br>"
+                                    + "Max Frame duration: " +      data.maxFrameDuration.toFixed(2) + " ms<br>"
+                                    + "Average Frame duration: " +  data.averageFrameDuration.toFixed(2) + " ms<br>"
+                                    + "Min Frame duration: " +      data.minFrameDuration.toFixed(2) + " ms<br>"
+                                    + "FPS: " +                     data.FPS.toFixed(2));
 
-                        var data = {};
-                        data.timeStamp = this.gdo.net.time.getTime();
-                        data.totalVertices = this.scene.getTotalVertices();
-                        data.activeMeshes = activeMeshes.length;
-                        data.totalMeshes = this.scene.meshes.length;
-                        data.maxFrameDuration = maxDuration;
-                        data.averageFrameDuration = durationSum / frameSampleSize;
-                        data.minFrameDuration = minDuration;
-                        data.FPS = 1000 / data.averageFrameDuration;
-
-                        this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
-
-                        $('#stats').html("Total vertices: " +           data.totalVertices + "<br>"
-                                        + "Active Meshes: " +           data.activeMeshes + "<br>"
-                                        + "Total Meshes: " +            data.totalMeshes + "<br>"
-                                        + "Max Frame duration: " +      data.maxFrameDuration.toFixed(2) + " ms<br>"
-                                        + "Average Frame duration: " +  data.averageFrameDuration.toFixed(2) + " ms<br>"
-                                        + "Min Frame duration: " +      data.minFrameDuration.toFixed(2) + " ms<br>"
-                                        + "FPS: " +                     data.FPS.toFixed(2));
-
-                        frameIndex = 0;
-                        minDuration = 1000;
-                        maxDuration = 0;
-                        durationSum = 0;
-                    }
+                    frameIndex = 0;
+                    minDuration = 1000;
+                    maxDuration = 0;
+                    durationSum = 0;
                 }
             }
 
@@ -267,7 +246,7 @@
             this.collectStats(shouldShow);
             this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, shouldShow);
             if (!shouldShow) {
-                this.writePerformanceDataToFile();
+                this.gdo.net.app["WebGL"].server.requestNewPerformanceData(this.instanceId);
             }
         }.bind(this));
 

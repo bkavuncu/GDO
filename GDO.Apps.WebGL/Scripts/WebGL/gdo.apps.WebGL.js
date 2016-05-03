@@ -17,13 +17,7 @@ $(function () {
 
     $.connection.webGLAppHub.client.receiveNewPerformanceData = function (instanceId, data) {
         gdo.consoleOut('.WebGL', 1, 'Instance - ' + instanceId + ": Received new performance data");
-
-        for (var nodeId in data) {
-            // skip loop if the property is from prototype
-            if (!data.hasOwnProperty(nodeId)) continue;
-
-            babylonSetup.addPerformanceData(nodeId, data[nodeId]);
-        }
+        babylonSetup.writePerformanceDataToFile(data);
     }
 
     $.connection.webGLAppHub.client.collectStats = function (instanceId, collectStats) {
