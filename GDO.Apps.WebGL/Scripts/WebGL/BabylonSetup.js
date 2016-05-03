@@ -246,7 +246,7 @@
             this.collectStats(shouldShow);
             this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, shouldShow);
             if (!shouldShow) {
-                this.gdo.net.app["WebGL"].server.requestNewPerformanceData(this.instanceId);
+                this.gdo.net.app["WebGL"].server.requestPerformanceData(this.instanceId);
             }
         }.bind(this));
 

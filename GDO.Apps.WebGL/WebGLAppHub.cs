@@ -57,7 +57,7 @@ namespace GDO.Apps.WebGL
             }
         }
 
-        public void RequestNewPerformanceData(int instanceId)
+        public void RequestPerformanceData(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -65,8 +65,6 @@ namespace GDO.Apps.WebGL
                 {
                     Dictionary<int, List<PerformanceData>> data = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).PerformanceData;
                     Clients.Caller.receiveNewPerformanceData(instanceId, data);
-                    // TODO: Is this safe?
-                    data.Clear();
                 }
                 catch (Exception e)
                 {

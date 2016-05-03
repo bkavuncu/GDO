@@ -20,7 +20,15 @@ namespace GDO.Apps.WebGL
 
         public Camera Camera { get; set; }
 
-        public bool CollectPerformanceData { get; set; }
+        private bool collectPerformnaceData = false;
+        public bool CollectPerformanceData
+        {
+            get { return collectPerformnaceData; }
+            set {
+                if (value) PerformanceData.Clear();
+                collectPerformnaceData = value;
+            }
+        }
         public Dictionary<int, List<PerformanceData>> PerformanceData { get; set; }
 
         public void Init()
