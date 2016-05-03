@@ -10,7 +10,7 @@ $(function () {
         }
     }
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -22,9 +22,13 @@ $(function () {
             var angle = (315 / 16) * (Math.PI / 180);
             parameters.xRot = -angle * x + xRot;
             parameters.yRot = yRot;
+
             parameters.xTrans = xTrans;
             parameters.yTrans = yTrans;
             parameters.zTrans = zTrans;
+
+            parameters.maxSteps = maxSteps;
+
             parameters.modToggle = mod;
             
         }
@@ -95,8 +99,8 @@ gdo.net.app["Fractals"].initControl = function () {
     });
 
     $("iframe").contents().find("#left_strafe_button")
-.unbind()
-.click(function () {
+    .unbind()
+    .click(function () {
     gdo.consoleOut('.Fractals', 1, 'Left strafe button clicked');
     gdo.net.app["Fractals"].server.leftStrafeButton(gdo.controlId);
 });
@@ -121,6 +125,17 @@ gdo.net.app["Fractals"].initControl = function () {
         gdo.consoleOut('.Fractals', 1, 'Back button clicked');
         gdo.net.app["Fractals"].server.backButton(gdo.controlId);
     });
+
+    $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
+
+    $("iframe").contents().find("#max_steps_range").unbind().click(function () {
+        val = $("iframe").contents().find("#max_steps_range").val();
+        gdo.consoleOut('.Fractals', 1, 'Max steps range ' + val);
+        $("iframe").contents().find("#max_steps_number").empty().append(val);
+        gdo.net.app["Fractals"].server.maxSteps(gdo.controlId, val);
+    });
+
+
 
     $("iframe").contents().find("#mod_toggle")
     .unbind()

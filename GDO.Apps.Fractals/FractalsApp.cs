@@ -23,6 +23,8 @@ namespace GDO.Apps.Fractals
         public float YTrans;
         public float ZTrans;
 
+        public int MaxSteps;
+
         public int Mod;
 
         public string Name { get; set; }
@@ -34,6 +36,8 @@ namespace GDO.Apps.Fractals
             YTrans = 0.0f;
             ZTrans = -2.0f;
             Mod = 0;
+            MaxSteps = 100;
+
         }
 
         public void SetName(string name)
