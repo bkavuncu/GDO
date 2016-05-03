@@ -197,7 +197,20 @@
             DE(p+yDir)-DE(p-yDir),
             DE(p+zDir)-DE(p-zDir)));
 
-            ao = 1.0 - (float(i)/float(maxSteps));
+            // Ambient Occlusion
+            float aoFactor = 0.0;
+            float delta = 0.001;
+            float aoTotal = 0.0;
+            for (int j = 1; j < 6; j++) {
+            vec3 aoPos = p + normal * delta * float(j);
+            float surfaceDist = distance(aoPos, p);
+            float nearestDist = DE(aoPos);
+            float expDist = 1.0/pow(2.0, float(i));
+            aoTotal += expDist * (nearestDist - surfaceDist);
+            aoFactor += surfaceDist * expDist;
+            }
+
+            ao = 1.0 - ((1.0/aoFactor) * aoTotal);
 
 
 
@@ -245,7 +258,7 @@
             + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0),1.0);
 
             // Ambient occlusion
-            //color.xyz *= ao;
+            color.xyz *= ao;
 
             // Fog
             vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);

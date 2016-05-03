@@ -128,7 +128,7 @@ gdo.net.app["Fractals"].initControl = function () {
 
     $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
 
-    $("iframe").contents().find("#max_steps_range").unbind().click(function () {
+    $("iframe").contents().find("#max_steps_range").on("input", function () {
         val = $("iframe").contents().find("#max_steps_range").val();
         gdo.consoleOut('.Fractals', 1, 'Max steps range ' + val);
         $("iframe").contents().find("#max_steps_number").empty().append(val);
