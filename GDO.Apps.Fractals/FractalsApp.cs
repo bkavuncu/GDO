@@ -19,6 +19,10 @@ namespace GDO.Apps.Fractals
 
         public float XRot;
         public float YRot;
+        public float XTrans;
+        public float YTrans;
+        public float ZTrans;
+
         public int Mod;
 
         public string Name { get; set; }
@@ -26,6 +30,9 @@ namespace GDO.Apps.Fractals
         {
             XRot = 0.0f;
             YRot = 0.0f;
+            XTrans = 0.0f;
+            YTrans = 0.0f;
+            ZTrans = -2.0f;
             Mod = 0;
         }
 
@@ -55,6 +62,24 @@ namespace GDO.Apps.Fractals
         public void DecYRot()
         {
             YRot += 0.01f;
+        }
+
+        public void StrafeLeft()
+        {
+            XTrans -= 0.05f;
+        }
+        public void StrafeRight()
+        {
+            XTrans += 0.05f;
+        }
+
+        public void MoveForward()
+        {
+            ZTrans += 0.05f;
+        }
+        public void MoveBackward()
+        {
+            ZTrans -= 0.05f;
         }
 
         public void ToggleMod()
