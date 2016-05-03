@@ -139,8 +139,9 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Configurations\WebGL\Imperial West - local.json" />
     <Content Include="Configurations\WebGL\WPB - remote.json" />
-    <Content Include="Configurations\WebGL\WPB - 10 duplicates.json" />
+    <Content Include="Configurations\WebGL\WPB - 9 duplicates.json" />
     <Content Include="Configurations\WebGL\Imperial West - remote.json" />
+    <Content Include="Configurations\WebGL\WPB - 16 duplicates.json" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

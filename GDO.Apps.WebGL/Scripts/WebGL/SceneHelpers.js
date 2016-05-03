@@ -35,11 +35,15 @@ function loadModelIntoScene(config, scene, loadFinishedCallback) {
 
         var minX = Number.MAX_VALUE;
         var maxX = Number.MIN_VALUE;
+        var minZ = Number.MAX_VALUE;
+        var maxZ = Number.MIN_VALUE;
 
         meshes.forEach(function (m) {
             var boundingInfo = m.getBoundingInfo();
             minX = Math.min(minX, boundingInfo.minimum.x);
             maxX = Math.max(maxX, boundingInfo.maximum.x);
+            minZ = Math.min(minZ, boundingInfo.minimum.z);
+            maxZ = Math.max(maxZ, boundingInfo.maximum.z);
 
             if (m.material != undefined && m.material.name == "floor") {
                 m.checkCollisions = true;
@@ -53,12 +57,25 @@ function loadModelIntoScene(config, scene, loadFinishedCallback) {
         });
 
         if (numDuplicates > 1) {
-            var width = (maxX - minX) * 1.05;
+            var sceneWidth = (maxX - minX) * 1.05;
+            var sceneDepth = (maxZ - minZ) * 1.05;
+
+            var numWide = Math.floor(Math.sqrt(numDuplicates));
 
             meshes.forEach(function (m) {
-                for (var i = 1; i < numDuplicates; i++) {
+                for (var i = 0; i < numDuplicates; i++) {
+
+                    var x = i % numWide;
+                    x -= Math.floor(numWide / 2);
+                    
+                    var z = Math.floor(i / numWide);
+                    z -= Math.floor((numWide -1) / 2);
+
+                    if (x == 0 && z == 0) continue;
+
                     var newMesh = m.clone(m.name + "-" + i);
-                    newMesh.position.x += width * i;
+                    newMesh.position.x += sceneWidth * x;
+                    newMesh.position.z += sceneDepth * z;
                 }
             });
         }
