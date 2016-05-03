@@ -26,18 +26,19 @@ namespace GDO.Apps.WebGL
         public void Init()
         {
             this.Camera = new Camera();
+            this.PerformanceData = new Dictionary<int, List<PerformanceData>>();
         }
 
         public void AddNewPerformanceData(int nodeId, PerformanceData data)
         {
             if (!CollectPerformanceData) return;
 
-            List<PerformanceData> dataList = PerformanceData[nodeId];
+            List<PerformanceData> dataList;
 
-            if (dataList == null)
+            if (!PerformanceData.TryGetValue(nodeId, out dataList))
             {
                 dataList = new List<PerformanceData>();
-                PerformanceData[nodeId] = dataList;
+                PerformanceData.Add(nodeId, dataList);
             }
 
             dataList.Add(data);
@@ -46,7 +47,7 @@ namespace GDO.Apps.WebGL
 
     public class PerformanceData
     {
-        public float timeStamp;
+        public long timeStamp;
 
         public int totalVertices;
         public int activeMeshes;

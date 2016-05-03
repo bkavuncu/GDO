@@ -63,7 +63,10 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    Clients.Caller.receiveNewPerformanceData(instanceId, ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).PerformanceData);
+                    Dictionary<int, List<PerformanceData>> data = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).PerformanceData;
+                    Clients.Caller.receiveNewPerformanceData(instanceId, data);
+                    // TODO: Is this safe?
+                    data.Clear();
                 }
                 catch (Exception e)
                 {
