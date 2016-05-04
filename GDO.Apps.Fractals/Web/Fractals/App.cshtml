@@ -176,7 +176,7 @@
 
             // distance estimators
             // Fractal
-            float d1 = DE(p);
+            float d1 = abs(DE(p));
             // Floor
             float d2 = abs(p.y + 2.0);
             float d = min(d1,d2);
@@ -206,13 +206,13 @@
             for (int j = 1; j < 6; j++) {
             vec3 aoPos = p + normal * delta * float(j);
             float surfaceDist = distance(aoPos, p);
-            float nearestDist = DE(aoPos);
+            float nearestDist = abs(DE(aoPos));
             float expDist = 1.0/pow(2.0, float(i));
-            aoTotal += expDist * (nearestDist - surfaceDist);
-            aoFactor += surfaceDist * expDist;
+            aoTotal += expDist * abs(surfaceDist - nearestDist);
+            aoFactor += expDist * max(surfaceDist, abs(surfaceDist - nearestDist));
             }
 
-            ao = 1.0 - ((1.0/aoFactor) * aoTotal);
+            ao = 1.0 - (aoTotal / aoFactor);
 
 
 
@@ -260,7 +260,6 @@
             + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0),1.0);
 
             // Ambient occlusion
-            ao=clamp(ao,0.0,1.0);
             color.xyz *= ao;
 
             // Fog

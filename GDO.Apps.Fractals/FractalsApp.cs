@@ -68,22 +68,32 @@ namespace GDO.Apps.Fractals
             YRot += 0.01f;
         }
 
+        private const double sensitivity = 0.05;
+
         public void StrafeLeft()
         {
-            XTrans -= 0.05f;
+            ZTrans += (float) (sensitivity * Math.Cos(XRot + Math.PI / 2));
+            XTrans -= (float) (sensitivity * Math.Sin(XRot + Math.PI / 2));
         }
         public void StrafeRight()
         {
-            XTrans += 0.05f;
+            ZTrans -= (float) (sensitivity * Math.Cos(XRot + Math.PI / 2));
+            XTrans += (float) (sensitivity * Math.Sin(XRot + Math.PI / 2));
         }
 
         public void MoveForward()
         {
-            ZTrans += 0.05f;
+            ZTrans += (float) (sensitivity * Math.Cos(XRot));
+            XTrans -= (float) (sensitivity * Math.Sin(XRot));
+
+            YTrans -= (float) (sensitivity * Math.Sin(YRot));
         }
         public void MoveBackward()
         {
-            ZTrans -= 0.05f;
+            ZTrans -= (float)(sensitivity * Math.Cos(XRot));
+            XTrans += (float)(sensitivity * Math.Sin(XRot));
+
+            YTrans += (float)(sensitivity * Math.Sin(YRot));
         }
 
         public void ToggleMod()
