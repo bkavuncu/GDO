@@ -134,7 +134,7 @@
                 }
             }
 
-            if (this.showStats && !this.isControlNode) {
+            if (this.showStats) {
                 //this.importer.doWork();
 
                 // Update and render stats
@@ -157,7 +157,11 @@
                     data.minFrameDuration = minDuration;
                     data.FPS = 1000 / data.averageFrameDuration;
 
-                    this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
+                    if (!this.isControlNode) {
+                        this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
+                    }
+
+                    var position = this.camera.position;
 
                     $('#stats').html("Total vertices: " +           data.totalVertices + "<br>"
                                     + "Active Meshes: " +           data.activeMeshes + "<br>"
@@ -165,7 +169,10 @@
                                     + "Max Frame duration: " +      data.maxFrameDuration.toFixed(2) + " ms<br>"
                                     + "Average Frame duration: " +  data.averageFrameDuration.toFixed(2) + " ms<br>"
                                     + "Min Frame duration: " +      data.minFrameDuration.toFixed(2) + " ms<br>"
-                                    + "FPS: " +                     data.FPS.toFixed(2));
+                                    + "FPS: " +                     data.FPS.toFixed(2) + "<br>"
+                                    + "{ x: " + position.x.toFixed(2) +
+                                      ", y: " + position.y.toFixed(2) +
+                                      ", z: " + position.z.toFixed(2) + " }");
 
                     frameIndex = 0;
                     minDuration = 1000;

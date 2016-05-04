@@ -39,21 +39,23 @@ function loadModelIntoScene(config, scene, loadFinishedCallback) {
         var maxZ = Number.MIN_VALUE;
 
         meshes.forEach(function (m) {
-            var boundingInfo = m.getBoundingInfo();
-            minX = Math.min(minX, boundingInfo.minimum.x);
-            maxX = Math.max(maxX, boundingInfo.maximum.x);
-            minZ = Math.min(minZ, boundingInfo.minimum.z);
-            maxZ = Math.max(maxZ, boundingInfo.maximum.z);
-
-            if (m.material != undefined && m.material.name == "floor") {
-                m.checkCollisions = true;
-            }
 
             m.position.subtractInPlace(startPosition);
             m.scaling.x = -1;
             m.bakeCurrentTransformIntoVertices();
 
-            m.showBoundingBox = true;
+            //m.showBoundingBox = true;
+
+            var boundingInfo = m.getBoundingInfo();
+
+            minX = Math.min(minX, boundingInfo.minimum.x);
+            maxX = Math.max(maxX, boundingInfo.maximum.x);
+            minZ = Math.min(minZ, boundingInfo.minimum.z);
+            maxZ = Math.max(maxZ, boundingInfo.maximum.z);
+
+            if (m.name.indexOf("Box") != -1) {
+                m.checkCollisions = true;
+            }
         });
 
         if (numDuplicates > 1) {

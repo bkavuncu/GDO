@@ -1,3 +1,4 @@
+
 var BABYLON;
 (function (BABYLON) {
     /**
@@ -86,26 +87,26 @@ var BABYLON;
                     else if (key === "map_ka") {
                         // ambient texture map with a loaded image
                         //We must first get the folder of the image
-                        material.ambientTexture = new BABYLON.Texture(rootUrl + value, scene);
+                        material.ambientTexture = MTLFileLoader._getTexture(rootUrl, value, scene);
                     }
                     else if (key === "map_kd") {
                         // Diffuse texture map with a loaded image
-                        material.diffuseTexture = new BABYLON.Texture(rootUrl + value, scene);
+                        material.diffuseTexture = MTLFileLoader._getTexture(rootUrl, value, scene);
                     }
                     else if (key === "map_ks") {
                         // Specular texture map with a loaded image
                         //We must first get the folder of the image
-                        material.specularTexture = new BABYLON.Texture(rootUrl + value, scene);
+                        material.specularTexture = MTLFileLoader._getTexture(rootUrl, value, scene);
                     }
                     else if (key === "map_ns") {
                     }
                     else if (key === "map_bump") {
                         //The bump texture
-                        material.bumpTexture = new BABYLON.Texture(rootUrl + value, scene);
+                        material.bumpTexture = MTLFileLoader._getTexture(rootUrl, value, scene);
                     }
                     else if (key === "map_d") {
                         // The dissolve of the material
-                        material.opacityTexture = new BABYLON.Texture(rootUrl + value, scene);
+                        material.opacityTexture = MTLFileLoader._getTexture(rootUrl, value, scene);
                     }
                     else if (key === "illum") {
                         //Illumination
@@ -139,8 +140,38 @@ var BABYLON;
                 this.materials.push(material);
             };
         }
+        /**
+         * Gets the texture for the material.
+         *
+         * If the material is imported from input file,
+         * We sanitize the url to ensure it takes the textre from aside the material.
+         *
+         * @param rootUrl The root url to load from
+         * @param value The value stored in the mtl
+         * @return The Texture
+         */
+        MTLFileLoader._getTexture = function (rootUrl, value, scene) {
+            var url = rootUrl;
+            // Load from input file.
+            if (rootUrl === "file:") {
+                var lastDelimiter = value.lastIndexOf("\\");
+                if (lastDelimiter === -1) {
+                    lastDelimiter = value.lastIndexOf("/");
+                }
+                if (lastDelimiter > -1) {
+                    url += value.substr(lastDelimiter + 1);
+                }
+                else {
+                    url += value;
+                }
+            }
+            else {
+                url += value;
+            }
+            return new BABYLON.Texture(url, scene);
+        };
         return MTLFileLoader;
-    })();
+    }());
     BABYLON.MTLFileLoader = MTLFileLoader;
     var OBJFileLoader = (function () {
         function OBJFileLoader() {
@@ -156,13 +187,13 @@ var BABYLON;
             // vt float float
             this.uvPattern = /vt( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
             // f vertex vertex vertex ...
-            this.facePattern1 = /f\s(([\d]{1,}[\s]?){3,})+/;
+            this.facePattern1 = /f\s+(([\d]{1,}[\s]?){3,})+/;
             // f vertex/uvs vertex/uvs vertex/uvs ...
-            this.facePattern2 = /f\s((([\d]{1,}\/[\d]{1,}[\s]?){3,})+)/;
+            this.facePattern2 = /f\s+((([\d]{1,}\/[\d]{1,}[\s]?){3,})+)/;
             // f vertex/uvs/normal vertex/uvs/normal vertex/uvs/normal ...
-            this.facePattern3 = /f\s((([\d]{1,}\/[\d]{1,}\/[\d]{1,}[\s]?){3,})+)/;
+            this.facePattern3 = /f\s+((([\d]{1,}\/[\d]{1,}\/[\d]{1,}[\s]?){3,})+)/;
             // f vertex//normal vertex//normal vertex//normal ...
-            this.facePattern4 = /f\s((([\d]{1,}\/\/[\d]{1,}[\s]?){3,})+)/;
+            this.facePattern4 = /f\s+((([\d]{1,}\/\/[\d]{1,}[\s]?){3,})+)/;
         }
         /**
          * Calls synchronously the MTL file attached to this obj.
@@ -176,26 +207,10 @@ var BABYLON;
          * @private
          */
         OBJFileLoader.prototype._loadMTL = function (url, rootUrl, onSuccess) {
-            //XMLHTTP object to load the file
-            var request = new XMLHttpRequest();
             //The complete path to the mtl file
             var pathOfFile = BABYLON.Tools.BaseUrl + rootUrl + url;
-            //Get the file synchronously
-            request.open('GET', pathOfFile, false);
-            //Check the server status
-            request.onreadystatechange = function () {
-                if (request.readyState === 4) {
-                    if (request.status === 200 || BABYLON.Tools.ValidateXHRData(request, 1)) {
-                        //Data are loaded
-                        onSuccess(request.responseText);
-                    }
-                    else {
-                        //File not found
-                        console.warn("Error status: " + request.status + " - Unable to load " + pathOfFile);
-                    }
-                }
-            };
-            request.send(null);
+            // Loads through the babylon tools to allow fileInput search.
+            BABYLON.Tools.LoadFile(pathOfFile, onSuccess, null, null, false, function () { console.warn("Error - Unable to load " + pathOfFile); }, true /* synchronous call */);
         };
         OBJFileLoader.prototype.importMesh = function (meshesNames, scene, data, rootUrl, meshes, particleSystems, skeletons) {
             //get the meshes from OBJ file
@@ -334,12 +349,18 @@ var BABYLON;
             var unwrapData = function () {
                 //Every array has the same length
                 for (var l = 0; l < wrappedPositionForBabylon.length; l++) {
-
                     //Push the x, y, z values of each element in the unwrapped array
                     unwrappedPositionsForBabylon.push(wrappedPositionForBabylon[l].x, wrappedPositionForBabylon[l].y, wrappedPositionForBabylon[l].z);
                     unwrappedNormalsForBabylon.push(wrappedNormalsForBabylon[l].x, wrappedNormalsForBabylon[l].y, wrappedNormalsForBabylon[l].z);
                     unwrappedUVForBabylon.push(wrappedUvsForBabylon[l].x, wrappedUvsForBabylon[l].y); //z is an optional value not supported by BABYLON
                 }
+				// Reset arrays for the next new meshes
+                wrappedPositionForBabylon = [];
+                wrappedNormalsForBabylon = [];
+                wrappedUvsForBabylon = [];
+                tuplePosNorm = [];
+                curPositionInIndices = 0;
+                
             };
             /**
              * Create triangles from polygons by recursion
@@ -484,16 +505,9 @@ var BABYLON;
                     indicesForBabylon = [];
                     unwrappedPositionsForBabylon = [];
                     unwrappedNormalsForBabylon = [];
-                    unwrappedUVForBabylon = [];
+                    unwrappedUVForBabylon = [];  
                 }
             };
-
-            var startMeshNumber = 0;
-            var endMeshNumber = 11245;
-
-            var numMeshesSeen = 0;
-            var timeLastMeshSeen = Date.now();
-
             //Main function
             //Split the file into lines
             var lines = data.split('\n');
@@ -503,41 +517,6 @@ var BABYLON;
                 var result;
                 //Comment or newLine
                 if (line.length === 0 || line.charAt(0) === '#') {
-                    continue;
-                }
-                else if (numMeshesSeen < startMeshNumber || numMeshesSeen > endMeshNumber) {
-                    if (this.mtllib.test(line)) {
-                        //Get the name of mtl file
-                        fileToLoad = line.substring(7).trim();
-                    }
-                    else if (this.group.test(line) || this.obj.test(line)) {
-                        numMeshesSeen++;
-                        console.log("Before/after count " + numMeshesSeen);
-                    }
-                    else if (numMeshesSeen > endMeshNumber) {
-                        continue;
-                    }
-                    else if ((result = this.vertexPattern.exec(line)) !== null) {
-                        //Create a Vector3 with the position x, y, z
-                        //Value of result:
-                        // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-                        //Add the Vector in the list of positions
-                        positions.push(new BABYLON.Vector3(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3])));
-                    }
-                    else if ((result = this.normalPattern.exec(line)) !== null) {
-                        //Create a Vector3 with the normals x, y, z
-                        //Value of result
-                        // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
-                        //Add the Vector in the list of normals
-                        normals.push(new BABYLON.Vector3(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3])));
-                    }
-                    else if ((result = this.uvPattern.exec(line)) !== null) {
-                        //Create a Vector2 with the normals u, v
-                        //Value of result
-                        // ["vt 0.1 0.2 0.3", "0.1", "0.2"]
-                        //Add the Vector in the list of uvs
-                        uvs.push(new BABYLON.Vector2(parseFloat(result[1]), parseFloat(result[2])));
-                    }
                     continue;
                 }
                 else if ((result = this.vertexPattern.exec(line)) !== null) {
@@ -590,21 +569,9 @@ var BABYLON;
                     1);
                 }
                 else if (this.group.test(line) || this.obj.test(line)) {
-                    numMeshesSeen++;
-                    
-                    var time = Date.now();
-                    var duration = time - timeLastMeshSeen;
-                    timeLastMeshSeen = time;
-
-                    if (duration > 200 && numMeshesSeen != startMeshNumber + 1 && endMeshNumber > numMeshesSeen) {
-                        endMeshNumber = numMeshesSeen;
-                    }
-
-                    console.log("Processing " + numMeshesSeen + " Duration: " + duration);
-
                     //Create a new mesh corresponding to the name of the group.
                     //Definition of the mesh
-                    var objMesh =
+                    var objMesh = 
                     //Set the name of the current obj mesh
                     {
                         name: line.substring(2).trim(),
@@ -630,7 +597,7 @@ var BABYLON;
                         //Set the data for the previous mesh
                         addPreviousObjMesh();
                         //Create a new mesh
-                        var objMesh =
+                        var objMesh = 
                         //Set the name of the current obj mesh
                         {
                             name: objMeshName + "_mm" + increment.toString(),
@@ -662,10 +629,6 @@ var BABYLON;
                     console.log("Unhandled expression at line : " + line);
                 }
             }
-
-            console.log("Total number of meshes: " + numMeshesSeen);
-            console.log("Number of meshed loaded: " + (endMeshNumber - startMeshNumber));
-
             //At the end of the file, add the last mesh into the meshesFromObj array
             if (hasMeshes) {
                 //Set the data for the last mesh
@@ -697,7 +660,6 @@ var BABYLON;
                 });
             }
             //Create a BABYLON.Mesh list
-            var vertexData = new BABYLON.VertexData(); //The container for the values
             var babylonMeshesArray = []; //The mesh for babylon
             var materialToUse = [];
             //Set data for each mesh
@@ -724,6 +686,8 @@ var BABYLON;
                 //This is indispensable for the importMesh function
                 materialToUse.push(meshesFromObj[j].materialName);
                 //Set the data for the babylonMesh
+                
+                var vertexData = new BABYLON.VertexData(); //The container for the values
                 vertexData.positions = handledMesh.positions;
                 vertexData.normals = handledMesh.normals;
                 vertexData.uvs = handledMesh.uvs;
@@ -772,7 +736,7 @@ var BABYLON;
         };
         OBJFileLoader.OPTIMIZE_WITH_UV = false;
         return OBJFileLoader;
-    })();
+    }());
     BABYLON.OBJFileLoader = OBJFileLoader;
     //Add this loader into the register plugin
     BABYLON.SceneLoader.RegisterPlugin(new OBJFileLoader());
