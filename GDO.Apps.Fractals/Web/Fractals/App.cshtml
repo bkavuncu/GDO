@@ -125,7 +125,7 @@
 
         float shadow(vec3 ro, vec3 rd, float dist) {
             // Shadow softness - lower is softer
-            float softness = 32.0;
+            float softness = 128.0;
             // Shadow density - lower is denser
             float density = 0.0;
 
@@ -134,11 +134,12 @@
             for(int i = 0; i < 100; i++) {
             if (t > dist) break;
             float d = DE(ro + rd*t);
-            if( d < 0.0001 ) {
+            if( d < 0.001 ) {
             return density;
             }
             res = min( res, softness*d/t );
             t +=d;
+            if (i >= 100-1) return 0.0;
             }
             return density+(1.0-density)*res;
         }
@@ -185,6 +186,7 @@
 
             ambientColour = vec4(1.0, 0.0, 1.0, 1.0);
             diffuseColour = vec4(1.0, 0.0, 1.0, 1.0);
+            specularColour = vec4(1.0, 0.0, 1.0, 1.0);
 
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
             lightDirection = normalize(-p+lightLoc);
@@ -249,7 +251,7 @@
             }
 
             // Shadows
-            float s = shadow(p+0.0002*normal, lightDirection, distance(p, lightLoc));
+            float s = shadow(p+0.002*normal, lightDirection, distance(p, lightLoc));
 
             // Shading
             // Ambience
@@ -258,6 +260,7 @@
             + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0),1.0);
 
             // Ambient occlusion
+            ao=clamp(ao,0.0,1.0);
             color.xyz *= ao;
 
             // Fog

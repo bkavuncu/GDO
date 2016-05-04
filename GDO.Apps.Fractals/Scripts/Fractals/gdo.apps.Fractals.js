@@ -130,9 +130,16 @@ gdo.net.app["Fractals"].initControl = function () {
 
     $("iframe").contents().find("#max_steps_range").on("input", function () {
         val = $("iframe").contents().find("#max_steps_range").val();
-        gdo.consoleOut('.Fractals', 1, 'Max steps range ' + val);
         $("iframe").contents().find("#max_steps_number").empty().append(val);
         gdo.net.app["Fractals"].server.maxSteps(gdo.controlId, val);
+    });
+
+    $("iframe").contents().find("#detail_number").empty().append(Math.round(Math.pow(10,$("iframe").contents().find("#detail_range").val())*100000)/100000);
+
+    $("iframe").contents().find("#detail_range").on("input", function () {
+        val = Math.pow(10,$("iframe").contents().find("#detail_range").val());
+        $("iframe").contents().find("#detail_number").empty().append(Math.round(val * 100000) / 100000);
+        //gdo.net.app["Fractals"].server.maxSteps(gdo.controlId, val);
     });
 
 
