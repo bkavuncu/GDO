@@ -4,20 +4,6 @@
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(180, 250, 50), scene);
     light.intensity = 0.7;
 
-    // Skybox
-    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.disableLighting = true;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../../Data/WebGL/textures/skybox", scene);
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 2000.0, scene);
-    skybox.material = skyboxMaterial;
-    skybox.infiniteDistance = true;
-    skybox.renderingGroupId = 0;
-
     return scene;
 }
 

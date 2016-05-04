@@ -362,8 +362,31 @@
         //config.startPosition[0] -= gdo.net.node[gdo.clientId].sectionCol * 100;
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
-        this.camera.minZ = 0.1;
-        //this.camera.maxZ = 1000000;
+        if (config.minZ != undefined) {
+            this.camera.minZ = config.minZ;
+        } else {
+            this.camera.minZ = 0.1;
+        }
+
+        if (this.isControlNode && config.maxZControl != undefined) {
+            this.camera.maxZ = config.maxZControl;
+        }
+
+        // Skybox
+        var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.disableLighting = true;
+        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../../Data/WebGL/textures/skybox", this.scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+
+        var skybox = BABYLON.Mesh.CreateBox("skyBox", this.camera.maxZ - 0.1, this.scene);
+        skybox.material = skyboxMaterial;
+        skybox.infiniteDistance = true;
+        skybox.renderingGroupId = 0;
+        skybox.alwaysSelectAsActiveMesh = true;
+
         gdo.consoleOut('.WebGL', 1, 'Set camera render distance - Min: ' + this.camera.minZ + " Max: " + this.camera.maxZ);
     }
 }
