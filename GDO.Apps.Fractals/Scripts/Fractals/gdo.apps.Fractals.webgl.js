@@ -70,7 +70,7 @@ function init() {
 
     // Setup translation
     transLoc = gl.getUniformLocation(program, "translation");
-    gl.uniform3f(transLoc, xTrans, yTrans, zTrans);
+    gl.uniform3f(transLoc, params.xTrans, params.yTrans, params.zTrans);
 
     // Setup eye
     eyeLoc = gl.getUniformLocation(program, "eyeHeight");
@@ -89,6 +89,10 @@ function init() {
     // Set detail
     detailLoc = gl.getUniformLocation(program, "detail");
     gl.uniform1f(detailLoc, Math.pow(10.0, params.detail));
+
+    // Set detail
+    ambienceLoc = gl.getUniformLocation(program, "ambience");
+    gl.uniform1f(ambienceLoc, params.ambience);
 
     // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");

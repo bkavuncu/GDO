@@ -1,5 +1,5 @@
 ﻿
-function params(xRot, yRot, yHeight, xTrans, yTrans, zTrans, maxSteps, detail, modToggle) {
+function params(xRot, yRot, yHeight, xTrans, yTrans, zTrans, maxSteps, detail, ambience, modToggle) {
     this.xRot = xRot;
     this.yRot = yRot;
     this.yHeight = yHeight;
@@ -9,6 +9,7 @@ function params(xRot, yRot, yHeight, xTrans, yTrans, zTrans, maxSteps, detail, m
     this.zTrans = zTrans;
     this.maxSteps = maxSteps;
     this.detail = detail;
+    this.ambience = ambience;
 }
 var params;
 
@@ -16,16 +17,14 @@ var modLoc;
 
 var xRotLoc;
 var yRotLoc;
-
 var transLoc;
-var xTrans = 0.0;
-var yTrans = 0.0;
-var zTrans = -2.0;
 
 var eyeLoc;
 
 var maxStepsLoc;
 var detailLoc;
+
+var ambienceLoc;
 
 function applyParams() {
 
@@ -36,4 +35,5 @@ function applyParams() {
     gl.uniform1i(modLoc, params.modToggle);
     gl.uniform1i(maxStepsLoc, params.maxSteps);
     gl.uniform1f(detailLoc, Math.pow(10.0, params.detail));
+    gl.uniform1f(ambienceLoc, params.ambience);
 }

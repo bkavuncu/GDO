@@ -18,7 +18,7 @@
     <script>
         $(function () {          
             $(document).ready(function () {
-                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.0);
+                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.5, 0.0);
                 var gdo = parent.gdo;
                 gdo.net.app["Fractals"].initClient(params);
             });
@@ -52,6 +52,8 @@
 
         uniform int maxSteps;
         uniform float detail;
+
+        uniform float ambience;
     
         uniform int modFunction;
 
@@ -96,7 +98,7 @@
             // float d = primitiveSphere(p, 0.5);
             //return d;
 
-            const int Iterations = 5;
+            const int Iterations = 16;
             float Bailout = 4.0;
             float Power = 8.0;
 
@@ -187,9 +189,9 @@
 
             ambientColour = vec4(1.0, 0.0, 1.0, 1.0);
             diffuseColour = vec4(1.0, 0.0, 1.0, 1.0);
-            specularColour = vec4(1.0, 0.0, 1.0, 1.0);
 
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
+            attenuation = clamp(attenuation, 0.0, 1.0);
             lightDirection = normalize(-p+lightLoc);
 
             float shadingDetail = detail/2.0;
@@ -202,7 +204,7 @@
 
             // Ambient Occlusion
             float aoFactor = 0.0;
-            float delta = 0.001;
+            float delta = detail;
             float aoTotal = 0.0;
             for (int j = 1; j < 6; j++) {
             vec3 aoPos = p + normal * delta * float(j);
@@ -214,8 +216,6 @@
             }
 
             ao = 1.0 - (aoTotal / aoFactor);
-
-
 
             break;
 
@@ -256,7 +256,7 @@
 
             // Shading
             // Ambience
-            ambientColour.xyz *= 0.2;
+            ambientColour.xyz *= ambience;
             color =   vec4(ambientColour.xyz + s * diffuseColour.xyz  * attenuation * max(dot(normal, lightDirection), 0.0)
             + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0),1.0);
 
@@ -265,7 +265,7 @@
 
             // Fog
             vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
-            color = mix(color, fogColor, 1.0 - exp(-t*0.2));
+            color = mix(color, fogColor, 1.0 - exp(-t*0.1));
 
             return color;
 

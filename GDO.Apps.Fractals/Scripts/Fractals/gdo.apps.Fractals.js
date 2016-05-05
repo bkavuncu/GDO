@@ -10,7 +10,7 @@ $(function () {
         }
     }
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -29,6 +29,8 @@ $(function () {
 
             parameters.maxSteps = maxSteps;
             parameters.detail = detail;
+
+            parameters.ambience = ambience;
 
             parameters.modToggle = mod;
             
@@ -143,7 +145,13 @@ gdo.net.app["Fractals"].initControl = function () {
         gdo.net.app["Fractals"].server.detail(gdo.controlId, val);
     });
 
+    $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());
 
+    $("iframe").contents().find("#ambience_range").on("input", function () {
+        val = $("iframe").contents().find("#ambience_range").val();
+        $("iframe").contents().find("#ambience_number").empty().append(val);
+        gdo.net.app["Fractals"].server.ambience(gdo.controlId, val);
+    });
 
     $("iframe").contents().find("#mod_toggle")
     .unbind()

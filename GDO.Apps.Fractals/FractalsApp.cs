@@ -26,6 +26,8 @@ namespace GDO.Apps.Fractals
         public int MaxSteps;
         public float Detail;
 
+        public float Ambience;
+
         public int Mod;
 
         public string Name { get; set; }
@@ -39,6 +41,7 @@ namespace GDO.Apps.Fractals
             Mod = 0;
             MaxSteps = 100;
             Detail = -3.0f;
+            Ambience = 0.5f;
         }
 
         public void SetName(string name)
