@@ -86,6 +86,10 @@ function init() {
     maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
     gl.uniform1i(maxStepsLoc, params.maxSteps);
 
+    // Set detail
+    detailLoc = gl.getUniformLocation(program, "detail");
+    gl.uniform1f(detailLoc, Math.pow(10.0, params.detail));
+
     // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");
     gl.uniform1i(modLoc, params.modToggle);

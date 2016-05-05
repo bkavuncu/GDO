@@ -24,6 +24,7 @@ namespace GDO.Apps.Fractals
         public float ZTrans;
 
         public int MaxSteps;
+        public float Detail;
 
         public int Mod;
 
@@ -37,7 +38,7 @@ namespace GDO.Apps.Fractals
             ZTrans = -2.0f;
             Mod = 0;
             MaxSteps = 100;
-
+            Detail = -3.0f;
         }
 
         public void SetName(string name)
