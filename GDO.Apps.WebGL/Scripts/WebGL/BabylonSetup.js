@@ -4,7 +4,7 @@
     this.gdo = gdo;
 
     this.showStats = false;
-    this.noclip = false;
+    this.noclip = true;
 
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = createScene(this.engine);
@@ -123,6 +123,7 @@
         var clampPointRotationOffset = 0;
 
         this.engine.runRenderLoop(function () {
+            this.engine.beginFrame();
             this.scene.render();
 
             if (this.isControlNode) {
@@ -138,7 +139,7 @@
                 //this.importer.doWork();
 
                 // Update and render stats
-                var duration = this.scene.getLastFrameDuration();
+                var duration = this.engine.getDeltaTime();
                 maxDuration = Math.max(duration, maxDuration);
                 minDuration = Math.min(duration, minDuration);
                 durationSum += duration;
@@ -155,7 +156,7 @@
                     data.maxFrameDuration = maxDuration;
                     data.averageFrameDuration = durationSum / frameSampleSize;
                     data.minFrameDuration = minDuration;
-                    data.FPS = 1000 / data.averageFrameDuration;
+                    data.FPS = this.engine.getFps();
 
                     if (!this.isControlNode) {
                         this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
@@ -198,6 +199,8 @@
                         GDORotationOffset: this.GDORotationOffset
                     });
             }
+
+            this.engine.endFrame();
 
         }.bind(this));
     }
@@ -247,41 +250,7 @@
 
         camera.applyGravity = !this.noclip;
         camera.checkCollisions = !this.noclip;
-
-        $('#stats_toggle').click(function () {
-            var shouldShow = !this.showStats;
-            this.collectStats(shouldShow);
-            this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, shouldShow);
-            if (!shouldShow) {
-                this.gdo.net.app["WebGL"].server.requestPerformanceData(this.instanceId);
-            }
-        }.bind(this));
-
-        $('#reset_position').click(function () {
-            camera.position.copyFromFloats(0, 0, 0);
-        });
-
-        $('#noclip_toggle').click(function () {
-            this.noclip = !this.noclip;
-            camera.applyGravity = !this.noclip;
-            camera.checkCollisions = !this.noclip;
-
-            if (this.noclip) {
-                $('#noclip_toggle').text("Disable noclip");
-            } else {
-                $('#noclip_toggle').text("Enable noclip");
-            }
-        }.bind(this));
-
-        $('#toggle_rotation_type').click(function () {
-            this.rotateGDO = !this.rotateGDO;
-
-            if (this.rotateGDO) {
-                $('#toggle_rotation_type').text("Rotate Front");
-            } else {
-                $('#toggle_rotation_type').text("Rotate GDO");
-            }
-        }.bind(this));
+        camera.ellipsoid = new BABYLON.Vector3(0.8, 1.9, 0.8);
 
         camera.attachControl(this.canvas);
 
@@ -296,12 +265,89 @@
             }
             else if (event.which == 44) {       // < 
                 this.camera.speed /= 2;
+            } else if (event.which == 123) {    // b
+                if( this.scene.meshes.length > 0) {
+                    var value = !this.scene.meshes[0].showBoundingBox;
+                    this.scene.meshes.forEach(function (m) {
+                        m.showBoundingBox = value;
+                    });
+                }
             }
+            console.log(event.which);
         }.bind(this));
 
-        camera.ellipsoid = new BABYLON.Vector3(0.8, 1.9, 0.8);
-        camera.applyGravity = true;
-        camera.checkCollisions = true;
+        var configName = this.gdo.net.instance[this.instanceId].configName;
+        var config = this.gdo.net.app["WebGL"].config[configName];
+
+        if (config.flyby != undefined) {
+            $('#stats_toggle').hide();
+            $('#noclip_toggle').hide();
+            $('#toggle_rotation_type').hide();
+
+            var waypoints = [];
+            config.flyby.forEach(function (vectorArray) {
+                waypoints.push(BABYLON.Vector3.FromArray(vectorArray));
+            });
+
+            var flybyController = new FlybyController(this.engine, this.camera, this.canvas, waypoints, config.flybySpeed,
+                function () {
+                    this.gdo.net.app["WebGL"].server.requestPerformanceData(this.instanceId);
+            }.bind(this));
+
+            $('#reset_position').text("Start Flyby");
+            var flybyActive = false;
+
+            $('#reset_position').click(function () {
+                flybyActive = !flybyActive;
+                
+                if (flybyActive) {
+                    this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, true);
+
+                    flybyController.reset();
+                    flybyController.start();
+                    $('#reset_position').text("Stop Flyby");
+                } else {
+                    $('#reset_position').text("Start Flyby");
+                    flybyController.stop();  
+                }
+            }.bind(this));
+        }
+        else {
+            $('#stats_toggle').click(function () {
+                var shouldShow = !this.showStats;
+                this.collectStats(shouldShow);
+                this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, shouldShow);
+                if (!shouldShow) {
+                    this.gdo.net.app["WebGL"].server.requestPerformanceData(this.instanceId);
+                }
+            }.bind(this));
+
+            $('#reset_position').click(function () {
+                camera.position.copyFromFloats(0, 0, 0);
+            });
+
+            $('#noclip_toggle').click(function () {
+                this.noclip = !this.noclip;
+                camera.applyGravity = !this.noclip;
+                camera.checkCollisions = !this.noclip;
+
+                if (this.noclip) {
+                    $('#noclip_toggle').text("Disable noclip");
+                } else {
+                    $('#noclip_toggle').text("Enable noclip");
+                }
+            }.bind(this));
+
+            $('#toggle_rotation_type').click(function () {
+                this.rotateGDO = !this.rotateGDO;
+
+                if (this.rotateGDO) {
+                    $('#toggle_rotation_type').text("Rotate Front");
+                } else {
+                    $('#toggle_rotation_type').text("Rotate GDO");
+                }
+            }.bind(this));
+        }
     }
 
     this.setupApp = function () {
@@ -359,7 +405,6 @@
 
         var configName = this.gdo.net.instance[this.instanceId].configName;
         var config = this.gdo.net.app["WebGL"].config[configName];
-        //config.startPosition[0] -= gdo.net.node[gdo.clientId].sectionCol * 100;
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
         if (config.minZ != undefined) {

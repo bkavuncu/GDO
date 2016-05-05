@@ -1,0 +1,11 @@
+﻿{
+  "serverAddress": "http://146.169.46.148/scenes/",
+  "fileName": "dsi.obj",
+  "startPosition": [ 0, 1.5, -50 ],
+  "flyby": [
+    [ 50, 0, 50 ],
+    [ 0, 0, 100 ],
+    [ 0, 0, 0 ]
+  ],
+  "flybySpeed":  5
+}

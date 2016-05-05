@@ -142,6 +142,7 @@
     <Content Include="Configurations\WebGL\WPB - 9 duplicates.json" />
     <Content Include="Configurations\WebGL\Imperial West - remote.json" />
     <Content Include="Configurations\WebGL\WPB - 16 duplicates.json" />
+    <Content Include="Configurations\WebGL\WPB - flyby.json" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -159,6 +160,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Scripts\WebGL\FlybyController.js" />
     <Content Include="Scripts\WebGL\SceneHelpers.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

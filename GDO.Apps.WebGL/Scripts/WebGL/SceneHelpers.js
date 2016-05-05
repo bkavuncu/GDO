@@ -30,8 +30,6 @@ function loadModelIntoScene(config, scene, loadFinishedCallback) {
             m.scaling.x = -1;
             m.bakeCurrentTransformIntoVertices();
 
-            //m.showBoundingBox = true;
-
             var boundingInfo = m.getBoundingInfo();
 
             minX = Math.min(minX, boundingInfo.minimum.x);
