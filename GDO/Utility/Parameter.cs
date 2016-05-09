@@ -14,8 +14,23 @@ namespace GDO.Utility
         Number = 3,
         Slider = 4,
         Color = 5,
-        Dropdown = 6,
-        DataList = 7
+        Datalist = 6, //If Array use Array, if not use link
+        Array = 7
+    }
+
+    public enum ParameterTypes
+    {
+        Boolean = 0,
+        Integer = 1,
+        Float = 2,
+        Double = 3,
+        String = 4,
+        Link = 5,
+        BooleanArray = 10,
+        IntegerArray = 11,
+        FloatArray = 12,
+        DoubleArray = 13,
+        StringArray = 14
     }
 
     public enum Priorities
@@ -30,8 +45,14 @@ namespace GDO.Utility
         public string Name { get; set; }
         public string Description { get; set; }
         public int Priority { get; set; }
+        public int ParameterType { get; set; }
         public int VisualisationType { get; set; }
         public bool IsEditable { get; set; }
+    }
+    public class BooleanParameter : Parameter
+    {
+        public bool? Value { get; set; }
+        public new int ParameterType = 0;
     }
 
     public class IntegerParameter : Parameter
@@ -39,6 +60,7 @@ namespace GDO.Utility
         public int? Value { get; set; }
         public int? MinValue { get; set; }
         public int? MaxValue { get; set; }
+        public new int ParameterType = 1;
     }
 
     public class FloatParameter : Parameter
@@ -46,6 +68,7 @@ namespace GDO.Utility
         public float? Value { get; set; }
         public float? MinValue { get; set; }
         public float? MaxValue { get; set; }
+        public new int ParameterType = 2;
     }
 
     public class DoubleParameter : Parameter
@@ -53,21 +76,53 @@ namespace GDO.Utility
         public double? Value { get; set; }
         public double? MinValue { get; set; }
         public double? MaxValue { get; set; }
+        public new int ParameterType = 3;
     }
-
     public class StringParameter : Parameter
     {
         public string Value { get; set; }
+        public new int ParameterType = 4;
     }
 
-    public class BooleanParameter : Parameter
+    public class LinkParameter : Parameter
     {
-        public bool Value { get; set; }
+        public int? Value { get; set; }
+        public string LinkedParameter { get; set; }
     }
 
-    public class ArrayParameter : Parameter
+    public class BooleanArrayParameter : Parameter
+    {
+        public bool[] Values { get; set; }
+        public int Length { get; set; }
+        public new int ParameterType = 10;
+    }
+
+    public class IntegerArrayParameter : Parameter
+    {
+        public int[] Values { get; set; }
+        public int Length { get; set; }
+        public new int ParameterType = 11;
+    }
+
+    public class FloatArrayParameter : Parameter
+    {
+        public float[] Values { get; set; }
+        public int Length { get; set; }
+        public new int ParameterType = 12;
+    }
+
+    public class DoubleArrayParameter : Parameter
+    {
+        public double[] Values { get; set; }
+        public int Length { get; set; }
+        public new int ParameterType = 13;
+    }
+
+    public class StringArrayParameter : Parameter
     {
         public string[] Values { get; set; }
+        public int Length { get; set; }
+        public new int ParameterType = 14;
     }
 
     //How to use:
