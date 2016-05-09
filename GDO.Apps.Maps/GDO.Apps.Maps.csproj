@@ -114,22 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Base.cs" />
-    <Compile Include="Core\Control.cs" />
     <Compile Include="Core\Feature.cs" />
     <Compile Include="Core\Format.cs" />
-    <Compile Include="Core\Geometries\LinearRing.cs" />
-    <Compile Include="Core\Geometries\LineString.cs" />
-    <Compile Include="Core\Geometries\MultiLineString.cs" />
-    <Compile Include="Core\Geometries\MultiPoint.cs" />
-    <Compile Include="Core\Geometries\MultiPolygon.cs" />
-    <Compile Include="Core\Geometries\Point.cs" />
-    <Compile Include="Core\Geometries\Polygon.cs" />
-    <Compile Include="Core\Geometry.cs" />
-    <Compile Include="Core\Geometries\Circle.cs" />
     <Compile Include="Core\Image.cs" />
-    <Compile Include="Core\Interaction.cs" />
-    <Compile Include="Core\Interactions\DrawInteraction.cs" />
-    <Compile Include="Core\Interactions\SelectInteraction.cs" />
     <Compile Include="Core\Layer.cs" />
     <Compile Include="Core\Layers\HeatmapLayer.cs" />
     <Compile Include="Core\Layers\ImageLayer.cs" />
@@ -176,7 +163,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Controls\" />
     <Folder Include="Web\Maps\Images\" />
   </ItemGroup>
   <ItemGroup>

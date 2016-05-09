@@ -9,7 +9,7 @@ namespace GDO.Utility
 {
     public enum VisualisationTypes
     {
-        Boolean = 1, //Basic on/ off button
+        Boolean = 1, //Basic on/off button
         String = 2, //String input
         Number = 3, //Number input
         Slider = 4, //Slider with Min-Max
@@ -22,10 +22,14 @@ namespace GDO.Utility
     {
         Boolean = 0,
         Integer = 1,
-        Float = 2,
-        Double = 3,
-        String = 4,
-        Link = 5,
+        NullableInteger = 2,
+        IntegerRange = 3,
+        Float = 4,
+        FloatRange = 5,
+        Double = 6,
+        DoubleRange = 7,
+        String = 8,
+        Link = 9,
         BooleanArray = 10,
         IntegerArray = 11,
         FloatArray = 12,
@@ -48,6 +52,7 @@ namespace GDO.Utility
         public int ParameterType { get; set; }
         public int VisualisationType { get; set; }
         public bool IsEditable { get; set; }
+        public bool IsVisible { get; set; }
     }
     public class BooleanParameter : Parameter
     {
@@ -57,37 +62,63 @@ namespace GDO.Utility
 
     public class IntegerParameter : Parameter
     {
+        public int Value { get; set; }
+        public new int ParameterType = 1;
+    }
+
+    public class NullableIntegerParameter : Parameter
+    {
+        public int? Value { get; set; }
+        public new int ParameterType = 2;
+    }
+
+    public class IntegerRangeParameter : Parameter
+    {
         public int? Value { get; set; }
         public int? MinValue { get; set; }
         public int? MaxValue { get; set; }
-        public new int ParameterType = 1;
+        public new int ParameterType = 3;
     }
 
     public class FloatParameter : Parameter
     {
         public float? Value { get; set; }
+        public new int ParameterType = 4;
+    }
+
+    public class FloatRangeParameter : Parameter
+    {
+        public float? Value { get; set; }
         public float? MinValue { get; set; }
         public float? MaxValue { get; set; }
-        public new int ParameterType = 2;
+        public new int ParameterType = 5;
     }
 
     public class DoubleParameter : Parameter
     {
         public double? Value { get; set; }
+        public new int ParameterType = 6;
+    }
+
+    public class DoubleRangeParameter : Parameter
+    {
+        public double? Value { get; set; }
         public double? MinValue { get; set; }
         public double? MaxValue { get; set; }
-        public new int ParameterType = 3;
+        public new int ParameterType = 7;
     }
+
     public class StringParameter : Parameter
     {
         public string Value { get; set; }
-        public new int ParameterType = 4;
+        public new int ParameterType = 8;
     }
 
     public class LinkParameter : Parameter
     {
         public int? Value { get; set; }
         public string LinkedParameter { get; set; }
+        public new int ParameterType = 9;
     }
 
     public class BooleanArrayParameter : Parameter
@@ -127,7 +158,7 @@ namespace GDO.Utility
 
     //How to use:
     /*
-            Test = new IntegerParameter
+            Test = new IntegerRangeParameter
             {
                 Name = "Test",
                 Description = "Test is a Test",

@@ -8,7 +8,6 @@ using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using GDO.Apps.Maps.Core;
-using GDO.Apps.Maps.Core.Geometries;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
