@@ -143,6 +143,7 @@
     <Content Include="Configurations\WebGL\Imperial West - remote.json" />
     <Content Include="Configurations\WebGL\WPB - 16 duplicates.json" />
     <Content Include="Configurations\WebGL\WPB - flyby.json" />
+    <Content Include="Configurations\WebGL\Imperial West - flyby.json" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

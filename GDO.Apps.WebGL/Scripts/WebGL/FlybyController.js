@@ -25,10 +25,12 @@
             this.timer -= this.engine.getDeltaTime();
             return;
         }
+        
+        var distanceToMove = this.engine.getDeltaTime() * this.speed;
 
         var targetPosition = this.waypoints[this.nextWaypoint];
 
-        if(BABYLON.Vector3.DistanceSquared(targetPosition, this.camera.position) < 1) {
+        if(BABYLON.Vector3.DistanceSquared(targetPosition, this.camera.position) < distanceToMove*distanceToMove) {
             this.nextWaypoint++;
             this.updateLoop();
             return;
@@ -37,7 +39,7 @@
         var moveAmount = targetPosition.subtract(this.camera.position);
         moveAmount.normalize();
 
-        moveAmount.scaleInPlace(this.engine.getDeltaTime() * this.speed);
+        moveAmount.scaleInPlace(distanceToMove);
 
         this.camera.position.addInPlace(moveAmount);
     }.bind(this)
