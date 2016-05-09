@@ -11,11 +11,18 @@
 
     this.speed = speed;
 
+    this.timer = 2000;
+
     this.updateLoop = function () {
 
         if (this.nextWaypoint == this.waypoints.length) {
             this.stop();
             this.onFinish();
+            return;
+        }
+
+        if (this.timer > 0) {
+            this.timer -= this.engine.getDeltaTime();
             return;
         }
 
@@ -33,20 +40,22 @@
         moveAmount.scaleInPlace(this.engine.getDeltaTime() * this.speed);
 
         this.camera.position.addInPlace(moveAmount);
-    }
+    }.bind(this)
 
     this.start = function () {
         this.camera.detachControl(this.controlCanvas);
-        this.engine.runRenderLoop(this.updateLoop.bind(this));
+        this.engine.runRenderLoop(this.updateLoop);
     }
 
     this.stop = function () {
         this.camera.attachControl(this.controlCanvas);
-        this.engine.stopRenderLoop(this.updateLoop.bind(this));
+        this.engine.stopRenderLoop(this.updateLoop);
     }
 
     this.reset = function () {
         this.nextWaypoint = 0;
-        this.camera.position.copyFromFloats(0,0,0);
+        this.timer = 2000;
+        this.camera.position.copyFromFloats(0, 0, 0);
+        this.camera.rotation.copyFromFloats(0, 0, 0);
     }
 }

@@ -8,7 +8,7 @@
 
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = createScene(this.engine);
-    this.camera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(0, 0, 0), this.scene);
+    this.camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), this.scene);
 
     this.cameraViewOffset = new BABYLON.Vector3(0, 0, 0);
 
@@ -123,7 +123,6 @@
         var clampPointRotationOffset = 0;
 
         this.engine.runRenderLoop(function () {
-            this.engine.beginFrame();
             this.scene.render();
 
             if (this.isControlNode) {
@@ -199,9 +198,6 @@
                         GDORotationOffset: this.GDORotationOffset
                     });
             }
-
-            this.engine.endFrame();
-
         }.bind(this));
     }
 
@@ -265,7 +261,8 @@
             }
             else if (event.which == 44) {       // < 
                 this.camera.speed /= 2;
-            } else if (event.which == 123) {    // b
+            }
+            else if (event.which == 98) {       // b
                 if( this.scene.meshes.length > 0) {
                     var value = !this.scene.meshes[0].showBoundingBox;
                     this.scene.meshes.forEach(function (m) {
@@ -273,7 +270,6 @@
                     });
                 }
             }
-            console.log(event.which);
         }.bind(this));
 
         var configName = this.gdo.net.instance[this.instanceId].configName;
@@ -292,6 +288,8 @@
             var flybyController = new FlybyController(this.engine, this.camera, this.canvas, waypoints, config.flybySpeed,
                 function () {
                     this.gdo.net.app["WebGL"].server.requestPerformanceData(this.instanceId);
+                    $('#reset_position').text("Start Flyby");
+                    this.collectStats(false);
             }.bind(this));
 
             $('#reset_position').text("Start Flyby");
@@ -302,6 +300,7 @@
                 
                 if (flybyActive) {
                     this.gdo.net.app["WebGL"].server.collectStats(this.instanceId, true);
+                    this.collectStats(true);
 
                     flybyController.reset();
                     flybyController.start();
