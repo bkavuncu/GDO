@@ -109,10 +109,10 @@
         this.engine.hideLoadingUI();
 
         var frameIndex = 0;
-        var frameSampleSize = 60;
+        var frameSampleSize = 10;
 
         var maxDuration = 0;
-        var minDuration = 1000;
+        var minDuration = Number.MAX_VALUE;
         var durationSum = 0;
 
         var numSentAtATime = 10;
