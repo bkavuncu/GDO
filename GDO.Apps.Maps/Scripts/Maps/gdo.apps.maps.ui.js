@@ -27,7 +27,7 @@ gdo.net.app["Maps"].drawListTables = function (instanceId) {
 gdo.net.app["Maps"].drawEmptyListTable = function (tab) {
     $("iframe").contents().find("." + tab + "")
     .empty();
-    $("iframe").contents().find("#" + tab + "_label").empty()
+    $("iframe").contents().find("#" + tab + "_label").empty();
 }
 
 gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
