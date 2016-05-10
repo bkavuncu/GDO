@@ -43,7 +43,7 @@ namespace GDO.Apps.Maps.Core
 
         public Layer()
         {
-            //TODO in here
+
         }
         public void Init(int id, string name, int type, int sourceId, float opacity, bool visible, int minResolution, int maxResolution, int zIndex)
         {

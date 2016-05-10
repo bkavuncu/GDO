@@ -6,8 +6,10 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class View : Base, ICloneable
+    public class View : ICloneable
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
         public Position Position { get; set; }
         public float Rotation { get; set; }
         public int Width { get; set; }
