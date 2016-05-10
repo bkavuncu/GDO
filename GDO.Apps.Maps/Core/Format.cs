@@ -41,13 +41,14 @@ namespace GDO.Apps.Maps.Core
         }
         public void Init(int id, string name, int type)
         {
+            Prepare();
             Id.Value = id;
             Name.Value = name;
             Type.Value = type;
-            Prepare();
         }
         new public void Prepare()
         {
+            base.Prepare();
             ClassName.Value = this.GetType().Name;
         }
 

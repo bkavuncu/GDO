@@ -67,7 +67,7 @@ namespace GDO.Apps.Maps.Core
             SourceId = new LinkParameter
             {
                 Name = "Source Id",
-                Description = "Id of the Source",
+                Description = "Id of the Source for the Layer",
                 Priority = (int)GDO.Utility.Priorities.High,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
@@ -119,7 +119,7 @@ namespace GDO.Apps.Maps.Core
 
             MinResolution = new NullableIntegerParameter
             {
-                Name = "MinResolution",
+                Name = "Minimum Resolution",
                 Description = "Minimum resolution the layer will be rendered",
                 Priority = (int)GDO.Utility.Priorities.Low,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
@@ -129,7 +129,7 @@ namespace GDO.Apps.Maps.Core
 
             MaxResolution = new NullableIntegerParameter
             {
-                Name = "MaxResolution",
+                Name = "Maximum Resolution",
                 Description = "Maximum resolution the layer will be rendered",
                 Priority = (int)GDO.Utility.Priorities.Low,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,

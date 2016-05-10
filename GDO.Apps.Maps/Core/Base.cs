@@ -57,7 +57,7 @@ namespace GDO.Apps.Maps.Core
 
             ClassName = new StringParameter
             {
-                Name = "ClassName",
+                Name = "Class Name",
                 Description = "Name of the Class",
                 Priority = (int)GDO.Utility.Priorities.Normal,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
