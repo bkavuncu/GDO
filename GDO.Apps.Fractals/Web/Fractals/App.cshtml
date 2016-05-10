@@ -258,7 +258,7 @@
             // Ambience
             ambientColour.xyz *= ambience;
             color =   vec4(ambientColour.xyz + s * diffuseColour.xyz  * attenuation * max(dot(normal, lightDirection), 0.0)
-            + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0),1.0);
+            + s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0)/3.0,1.0);
 
             // Ambient occlusion
             color.xyz *= ao;

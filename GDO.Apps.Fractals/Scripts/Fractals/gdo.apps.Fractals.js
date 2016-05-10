@@ -158,7 +158,7 @@ gdo.net.app["Fractals"].initControl = function () {
     .click(function () {
     gdo.consoleOut('.Fractals', 1, 'Toggled inifinite objects');
     gdo.net.app["Fractals"].server.modToggle(gdo.controlId);
-});
+    });
 }
 
 gdo.net.app["Fractals"].terminateClient = function () {

@@ -124,6 +124,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\Fractals\joystick-icon-background.png" />
+    <Content Include="Data\Fractals\joystick-icon.png" />
     <Content Include="packages.config" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.params.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.webgl.js" />
@@ -154,9 +156,7 @@
     <Compile Include="FractalsApp.cs" />
     <Compile Include="FractalsAppHub.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Fractals\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>
