@@ -51,7 +51,7 @@ namespace GDO.Apps.Maps.Core
                 Description = "Name of the Parameter",
                 Priority = (int)GDO.Utility.Priorities.Normal,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
-                IsEditable = false,
+                IsEditable = true,
                 IsVisible = true
             };
 

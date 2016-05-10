@@ -41,26 +41,21 @@ namespace GDO.Apps.Maps.Core
         }
         public void Init(int id, string name, int type)
         {
-            Id = id;
-            Name = name;
-            Type = type;
-
+            Id.Value = id;
+            Name.Value = name;
+            Type.Value = type;
             Prepare();
         }
         new public void Prepare()
         {
-            ClassName = this.GetType().Name;
-
-            //AddtoEditables(() => Id);
-            AddtoEditables(() => Name);
-            //AddtoEditables(() => Type);
+            ClassName.Value = this.GetType().Name;
         }
 
         public void Modify(int id, string name, int type)
         {
-            Id = id;
-            Name = name;
-            Type = type;
+            Id.Value = id;
+            Name.Value = name;
+            Type.Value = type;
         }
     }
 }
