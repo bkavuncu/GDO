@@ -88,9 +88,19 @@
         this.performanceData = {};
     }
 
+    this.render = function (newCamera, onFinish) {
+        this.updateCameraPosition(newCamera);
+        this.scene.render();
+        onFinish();
+    }
+
     this.modelLoadFinished = function () {
 
         this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Scene Loading finished");
+
+        if (this.isControlNode) {
+            this.gdo.net.app["WebGL"].server.forceNewFrame(this.instanceId);
+        }
 
         this.scene.createOrUpdateSelectionOctree();
         
@@ -123,9 +133,10 @@
         var clampPointRotationOffset = 0;
 
         this.engine.runRenderLoop(function () {
-            this.scene.render();
 
             if (this.isControlNode) {
+                this.scene.render();
+
                 if (this.rotateGDO) {
                     clampPointRotationOffset = this.GDORotationOffset + this.camera.rotation.y;
                 }

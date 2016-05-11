@@ -31,6 +31,8 @@ namespace GDO.Apps.WebGL
         }
         public Dictionary<int, List<PerformanceData>> PerformanceData { get; set; }
 
+        private int numNodesRendered;
+
         public void Init()
         {
             this.Camera = new Camera();
@@ -50,6 +52,19 @@ namespace GDO.Apps.WebGL
             }
 
             dataList.Add(data);
+        }
+
+        public bool NotifyFrameFinished(int nodeId)
+        {
+            numNodesRendered++;
+
+            if(numNodesRendered == Section.NumNodes)
+            {
+                numNodesRendered = 0;
+                return true;
+            }
+
+            return false;
         }
     }
 

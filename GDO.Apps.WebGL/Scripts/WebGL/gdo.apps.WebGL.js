@@ -23,6 +23,12 @@ $(function () {
     $.connection.webGLAppHub.client.collectStats = function (instanceId, collectStats) {
         babylonSetup.collectStats(collectStats);
     };
+
+    $.connection.webGLAppHub.client.renderFrame = function (instanceId, newCamera) {
+        babylonSetup.render(newCamera, function () {
+            gdo.net.app["WebGL"].server.notifyFrameFinished(instanceId, gdo.clientId);
+        });
+    };
 });
 
 gdo.net.app["WebGL"].initClient = function (babylonSetupParam) {
