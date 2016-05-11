@@ -90,9 +90,13 @@ function init() {
     detailLoc = gl.getUniformLocation(program, "minDetail");
     gl.uniform1f(detailLoc, Math.pow(10.0, params.detail));
 
-    // Set detail
+    // Set ambience
     ambienceLoc = gl.getUniformLocation(program, "ambience");
     gl.uniform1f(ambienceLoc, params.ambience);
+
+    // Set ambience
+    var iterationsLoc = gl.getUniformLocation(program, "iterations");
+    gl.uniform1f(iterationsLoc, 6);
 
     // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");
