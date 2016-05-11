@@ -176,7 +176,6 @@
 
                     var health = (data.FPS - 20) / 25;
                     health = Math.max(0, Math.min(1, health));
-                    console.log(health);
 
                     var r = 214 - health * 40;
                     var g = 243 * health;
