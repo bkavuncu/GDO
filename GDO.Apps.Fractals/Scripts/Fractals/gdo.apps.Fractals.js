@@ -10,7 +10,7 @@ $(function () {
         }
     }
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -30,10 +30,11 @@ $(function () {
             parameters.maxSteps = maxSteps;
             parameters.detail = detail;
 
+            parameters.iterations = iterations;
+
             parameters.ambience = ambience;
 
             parameters.modToggle = mod;
-            
         }
     }
 
@@ -143,6 +144,14 @@ gdo.net.app["Fractals"].initControl = function () {
         val = $("iframe").contents().find("#detail_range").val();
         $("iframe").contents().find("#detail_number").empty().append(Math.round(Math.pow(10, val) * 100000) / 100000);
         gdo.net.app["Fractals"].server.detail(gdo.controlId, val);
+    });
+
+    $("iframe").contents().find("#iterations_number").empty().append($("iframe").contents().find("#iterations_range").val());
+
+    $("iframe").contents().find("#iterations_range").on("input", function () {
+        val = $("iframe").contents().find("#iterations_range").val();
+        $("iframe").contents().find("#iterations_range").empty().append(val);
+        gdo.net.app["Fractals"].server.iterations(gdo.controlId, val);
     });
 
     $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());

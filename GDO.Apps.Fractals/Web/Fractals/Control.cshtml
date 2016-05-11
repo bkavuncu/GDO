@@ -231,7 +231,7 @@
                                         <h6>Look:</h6>
                                     </div>
                                 </td>
-                                <td>
+                                <td style="padding:25px">
                                     <div style="background-image:url('../../Data/Fractals/joystick-icon-background.png'); background-size: 100%; position:relative; width:120px; height:120px">
                                         <div id="test" style="background-image:url('../../Data/Fractals/joystick-icon.png'); background-size: 100%; position:absolute;  width:80px; height:80px; left:50%; margin-left:-40px; top:50%; margin-top:-40px"/>
                                     </div>
@@ -312,7 +312,7 @@
             <div class="col-lg-6">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Fractal Parameters</h6>
+                        <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Render Parameters</h6>
                     </div>
                     <div class="panel-body">
                         <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
@@ -355,6 +355,34 @@
             <div class="col-lg-6">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
+                        <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Fractal Parameters</h6>
+                    </div>
+                    <div class="panel-body">
+                        <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                            <tr>
+                                <td>
+                                    <div style="background-color: transparent">
+                                        <h6>Iterations:</h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="range" id="iterations_range" name="points" value="100" min="1" max="100" style="width:250px">
+                                </td>
+                                <td>
+                                    <div style="background-color: transparent">
+                                        <h7 id="iterations_number">16</h7>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
                         <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Lighting</h6>
                     </div>
                     <div class="panel-body">
@@ -366,7 +394,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <input type="range" id="ambience_range" name="points" value="0.5" min="0" max="1" step="0.025">
+                                    <input type="range" id="ambience_range" name="points" value="0.5" min="0" max="1" step="0.025" style="width:250px">
                                 </td>
                                 <td>
                                     <div style="background-color: transparent">

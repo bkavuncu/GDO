@@ -94,9 +94,9 @@ function init() {
     ambienceLoc = gl.getUniformLocation(program, "ambience");
     gl.uniform1f(ambienceLoc, params.ambience);
 
-    // Set ambience
-    var iterationsLoc = gl.getUniformLocation(program, "iterations");
-    gl.uniform1f(iterationsLoc, 6);
+    // Set fractal iteration
+    iterationsLoc = gl.getUniformLocation(program, "iterations");
+    gl.uniform1i(iterationsLoc, params.iterations);
 
     // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");
