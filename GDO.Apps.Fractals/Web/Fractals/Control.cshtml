@@ -92,7 +92,7 @@
         }
     </style>
 </head>
-<body unselectable="on" class="unselectable">
+<body id="control_body" unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
@@ -129,98 +129,7 @@
 
                     <script>
 
-                        $(function () {
-                            document.getElementById("test").addEventListener("mousedown", down);
-                            document.getElementById("test").addEventListener("touchdown", down);
-                            size = parseInt(document.getElementById("test").style.width);
-                        });
-
-                        var size;
-
-                        var orig_x;
-                        var orig_x_point;
-
-                        var orig_y;
-                        var orig_y_point;
-
-                        function down(event) {
-                            var ele = document.getElementById("test");
-
-                            $("#test").stop();
-
-                            var clientX;
-                            var clientY;
-
-                            if (event instanceof TouchEvent) {
-                                clientX = event.touches[0].clientX;
-                                clientY = event.touches[0].clientY;
-                            } else {
-                                clientX = event.clientX;
-                                clientY = event.clientY;
-                            }
-
-                            orig_x = parseInt(ele.style.left) / 100 * parseInt(ele.parentElement.style.width);
-                            orig_x_point = clientX;
-
-                            orig_y = parseInt(ele.style.top) / 100 * parseInt(ele.parentElement.style.width);
-                            orig_y_point = clientY;
-
-                            document.getElementById("test").removeEventListener("mousedown", down);
-                            document.getElementById("test").removeEventListener("touchstart", down);
-
-                            document.addEventListener("mousemove", move);
-                            document.addEventListener("mouseup", up);
-                            document.addEventListener("touchmove", move);
-                            document.addEventListener("touchend", up);
-
-                            event.preventDefault();
-                        };
-
-                        function move(event) {
-
-                            var clientX;
-                            var clientY;
-
-                            if (event instanceof TouchEvent) {
-                                clientX = event.touches[0].clientX;
-                                clientY = event.touches[0].clientY;
-                            } else {
-                                clientX = event.clientX;
-                                clientY = event.clientY;
-                            }
-
-                            var x = clientX - orig_x_point;
-                            var y = clientY - orig_y_point;
-
-                            var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-
-                            if (magnitude > size / 2) {
-                                var theta = Math.atan2(x, y);
-                                x = size * Math.sin(theta) / 2;
-                                y = size * Math.cos(theta) / 2;
-                            }
-
-                            var left = orig_x + x;
-                            var top = orig_y + y;
-
-                            document.getElementById("test").style.left = left + "px";
-                            document.getElementById("test").style.top = top + "px";
-                            event.preventDefault();
-                        };
-
-                        function up(event) {
-                            document.removeEventListener("mousemove", move);
-                            document.removeEventListener("mouseup", up);
-                            document.removeEventListener("touchmove", move);
-                            document.removeEventListener("touchend", up);
-
-                            $("#test").animate({ left: "50%", top: "50%" }, 200);
-
-                            document.getElementById("test").addEventListener("mousedown", down);
-                            document.getElementById("test").addEventListener("touchstart", down);
-
-                            event.preventDefault();
-                        };
+                        
                     </script>
 
                     <div class="panel-body">
@@ -366,7 +275,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <input type="range" id="iterations_range" name="points" value="100" min="1" max="100" style="width:250px">
+                                    <input type="range" id="iterations_range" name="points" value="16" min="1" max="100" style="width:250px">
                                 </td>
                                 <td>
                                     <div style="background-color: transparent">

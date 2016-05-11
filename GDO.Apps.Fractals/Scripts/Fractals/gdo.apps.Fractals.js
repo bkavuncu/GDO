@@ -130,6 +130,108 @@ gdo.net.app["Fractals"].initControl = function () {
         gdo.net.app["Fractals"].server.backButton(gdo.controlId);
     });
 
+
+    $(function () {
+        $("iframe").contents().find("#test").on("mousedown", down);
+        $("iframe").contents().find("#test").on("touchstart", down);
+        size = parseInt($("iframe").contents().find("#test").css("width"));
+    });
+
+    var size;
+
+    var orig_x;
+    var orig_x_point;
+
+    var orig_y;
+    var orig_y_point;
+
+    function down(event) {
+        var ele = $("iframe").contents().find("#test");
+        gdo.consoleOut('.Fractals', 1, 'down');
+        $("iframe").contents().find("#test").stop();
+
+        var clientX;
+        var clientY;
+
+        if (event.type == "touchstart") {
+            clientX = event.originalEvent.touches[0].clientX;
+            clientY = event.originalEvent.touches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+
+        orig_x = parseInt(ele.css("left")) / 100 * parseInt(ele.parent().css("width"));
+        orig_x_point = clientX;
+        gdo.consoleOut('.Fractals', 1, clientX);
+        gdo.consoleOut('.Fractals', 1, orig_x_point);
+        orig_y = parseInt(ele.css("top")) / 100 * parseInt(ele.parent().css("width"));
+        orig_y_point = clientY;
+
+        $("iframe").contents().find("#test").off("mousedown", down);
+        $("iframe").contents().find("#test").off("touchstart", down);
+
+        $("iframe").contents().find("#control_body").on("mousemove", move);
+        $("iframe").contents().find("#control_body").on("mouseup", up);
+        $("iframe").contents().find("#control_body").on("touchmove", move);
+        $("iframe").contents().find("#control_body").on("touchend", up);
+
+        event.preventDefault();
+    };
+
+    function move(event) {
+        gdo.consoleOut('.Fractals', 1, 'move');
+        var clientX;
+        var clientY;
+
+        if (event.type == "touchmove") {
+            clientX = event.originalEvent.touches[0].clientX;
+            clientY = event.originalEvent.touches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+
+        var x = clientX - orig_x_point;
+        var y = clientY - orig_y_point;
+        gdo.consoleOut('.Fractals', 1, x);
+        gdo.consoleOut('.Fractals', 1, clientX);
+        gdo.consoleOut('.Fractals', 1, orig_x_point);
+        var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+
+        if (magnitude > size / 2) {
+            var theta = Math.atan2(x, y);
+            x = size * Math.sin(theta) / 2;
+            y = size * Math.cos(theta) / 2;
+        }
+
+        var left = orig_x + x;
+        var top = orig_y + y;
+        
+        $("iframe").contents().find("#test").css("left", left);
+        $("iframe").contents().find("#test").css("top", top + "px");
+        event.preventDefault();
+    };
+
+    function up(event) {
+        gdo.consoleOut('.Fractals', 1, 'up');
+        $("iframe").contents().find("#control_body").off("mousemove", move);
+        $("iframe").contents().find("#control_body").off("mouseup", up);
+        $("iframe").contents().find("#control_body").off("touchmove", move);
+        $("iframe").contents().find("#control_body").off("touchend", up);
+
+        $("iframe").contents().find("#test").animate({ left: "50%", top: "50%" }, 200);
+        
+        $("iframe").contents().find("#test").on("mousedown", down);
+        $("iframe").contents().find("#test").on("touchstart", down);
+
+        event.preventDefault();
+    };
+
+
+
+
+
     $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
 
     $("iframe").contents().find("#max_steps_range").on("input", function () {
