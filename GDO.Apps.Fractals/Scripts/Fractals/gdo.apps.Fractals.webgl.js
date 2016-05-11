@@ -87,7 +87,7 @@ function init() {
     gl.uniform1i(maxStepsLoc, params.maxSteps);
 
     // Set detail
-    detailLoc = gl.getUniformLocation(program, "detail");
+    detailLoc = gl.getUniformLocation(program, "minDetail");
     gl.uniform1f(detailLoc, Math.pow(10.0, params.detail));
 
     // Set detail
