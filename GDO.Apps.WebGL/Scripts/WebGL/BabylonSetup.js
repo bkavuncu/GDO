@@ -174,6 +174,25 @@
                                       ", y: " + position.y.toFixed(2) +
                                       ", z: " + position.z.toFixed(2) + " }");
 
+                    var health = (data.FPS - 20) / 25;
+                    health = Math.max(0, Math.min(1, health));
+                    console.log(health);
+
+                    var r = 214 - health * 40;
+                    var g = 243 * health;
+                    var b = 73 * health;
+
+                    $('#stats').css("background-color", "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")"); 
+
+                    var textLumimance = 0;
+
+                    var luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;          
+                    if (luminance < 127) {
+                        textLumimance = 255;
+                    }
+
+                    $('#stats').css("color", "rgb(" + textLumimance + "," + textLumimance + "," + textLumimance + ")");
+
                     frameIndex = 0;
                     minDuration = 1000;
                     maxDuration = 0;
