@@ -132,12 +132,14 @@ namespace GDO.Utility
     {
         public int[] Values { get; set; }
         public int Length { get; set; }
+        public int Value { get; set; }
         public new int ParameterType = 11;
     }
 
     public class FloatArrayParameter : Parameter
     {
         public float[] Values { get; set; }
+        public float Value { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 12;
     }
@@ -145,6 +147,7 @@ namespace GDO.Utility
     public class DoubleArrayParameter : Parameter
     {
         public double[] Values { get; set; }
+        public double Value { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 13;
     }
@@ -152,6 +155,7 @@ namespace GDO.Utility
     public class StringArrayParameter : Parameter
     {
         public string[] Values { get; set; }
+        public string Value { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 14;
     }
