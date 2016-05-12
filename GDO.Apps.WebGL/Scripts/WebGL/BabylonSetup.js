@@ -273,6 +273,8 @@
         camera.keysLeft.push(65);  // A
         camera.keysRight.push(68); // D
 
+        camera.speed /= 4;
+
         $(window).keypress(function (event) {
             if (event.which == 46) {            // >
                 this.camera.speed *= 2;

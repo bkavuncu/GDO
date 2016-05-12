@@ -144,6 +144,7 @@
     <Content Include="Configurations\WebGL\WPB - flyby.json" />
     <Content Include="Configurations\WebGL\Imperial West - flyby.json" />
     <Content Include="Configurations\WebGL\WPB - 25 duplicates.json" />
+    <Content Include="Configurations\WebGL\WPB - 9 duplicates.json" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
