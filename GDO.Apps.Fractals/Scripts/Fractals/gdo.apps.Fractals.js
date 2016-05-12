@@ -10,7 +10,7 @@ $(function () {
         }
     }
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, power, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -31,6 +31,7 @@ $(function () {
             parameters.detail = detail;
 
             parameters.iterations = iterations;
+            parameters.power = power;
 
             parameters.ambience = ambience;
 
@@ -147,7 +148,7 @@ gdo.net.app["Fractals"].initControl = function () {
 
     function down(event) {
         var ele = $("iframe").contents().find("#test");
-        gdo.consoleOut('.Fractals', 1, 'down');
+
         $("iframe").contents().find("#test").stop();
 
         var clientX;
@@ -163,8 +164,7 @@ gdo.net.app["Fractals"].initControl = function () {
 
         orig_x = parseInt(ele.css("left")) / 100 * parseInt(ele.parent().css("width"));
         orig_x_point = clientX;
-        gdo.consoleOut('.Fractals', 1, clientX);
-        gdo.consoleOut('.Fractals', 1, orig_x_point);
+
         orig_y = parseInt(ele.css("top")) / 100 * parseInt(ele.parent().css("width"));
         orig_y_point = clientY;
 
@@ -180,7 +180,6 @@ gdo.net.app["Fractals"].initControl = function () {
     };
 
     function move(event) {
-        gdo.consoleOut('.Fractals', 1, 'move');
         var clientX;
         var clientY;
 
@@ -194,9 +193,7 @@ gdo.net.app["Fractals"].initControl = function () {
 
         var x = clientX - orig_x_point;
         var y = clientY - orig_y_point;
-        gdo.consoleOut('.Fractals', 1, x);
-        gdo.consoleOut('.Fractals', 1, clientX);
-        gdo.consoleOut('.Fractals', 1, orig_x_point);
+
         var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
 
         if (magnitude > size / 2) {
@@ -214,7 +211,6 @@ gdo.net.app["Fractals"].initControl = function () {
     };
 
     function up(event) {
-        gdo.consoleOut('.Fractals', 1, 'up');
         $("iframe").contents().find("#control_body").off("mousemove", move);
         $("iframe").contents().find("#control_body").off("mouseup", up);
         $("iframe").contents().find("#control_body").off("touchmove", move);
@@ -252,8 +248,16 @@ gdo.net.app["Fractals"].initControl = function () {
 
     $("iframe").contents().find("#iterations_range").on("input", function () {
         val = $("iframe").contents().find("#iterations_range").val();
-        $("iframe").contents().find("#iterations_range").empty().append(val);
+        $("iframe").contents().find("#iterations_number").empty().append(val);
         gdo.net.app["Fractals"].server.iterations(gdo.controlId, val);
+    });
+
+    $("iframe").contents().find("#power_number").empty().append($("iframe").contents().find("#power_range").val());
+
+    $("iframe").contents().find("#power_range").on("input", function () {
+        val = $("iframe").contents().find("#power_range").val();
+        $("iframe").contents().find("#power_number").empty().append(val);
+        gdo.net.app["Fractals"].server.power(gdo.controlId, val);
     });
 
     $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());

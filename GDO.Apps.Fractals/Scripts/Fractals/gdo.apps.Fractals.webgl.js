@@ -98,6 +98,10 @@ function init() {
     iterationsLoc = gl.getUniformLocation(program, "iterations");
     gl.uniform1i(iterationsLoc, params.iterations);
 
+    // Set fractal power
+    powerLoc = gl.getUniformLocation(program, "power");
+    gl.uniform1f(powerLoc, params.power);
+
     // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");
     gl.uniform1i(modLoc, params.modToggle);

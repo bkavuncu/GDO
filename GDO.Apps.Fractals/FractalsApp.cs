@@ -27,6 +27,7 @@ namespace GDO.Apps.Fractals
         public float Detail;
 
         public int Iterations;
+        public float Power;
 
         public float Ambience;
 
@@ -45,6 +46,7 @@ namespace GDO.Apps.Fractals
             Detail = -3.0f;
             Ambience = 0.5f;
             Iterations = 16;
+            Power = 8.0f;
         }
 
         public void SetName(string name)
