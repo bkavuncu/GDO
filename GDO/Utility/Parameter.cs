@@ -63,12 +63,14 @@ namespace GDO.Utility
     public class IntegerParameter : Parameter
     {
         public int Value { get; set; }
+        public int? Increment { get; set; }
         public new int ParameterType = 1;
     }
 
     public class NullableIntegerParameter : Parameter
     {
         public int? Value { get; set; }
+        public int? Increment { get; set; }
         public new int ParameterType = 2;
     }
 
@@ -77,12 +79,14 @@ namespace GDO.Utility
         public int? Value { get; set; }
         public int? MinValue { get; set; }
         public int? MaxValue { get; set; }
+        public int? Increment { get; set; }
         public new int ParameterType = 3;
     }
 
     public class FloatParameter : Parameter
     {
         public float? Value { get; set; }
+        public float? Increment { get; set; }
         public new int ParameterType = 4;
     }
 
@@ -91,12 +95,14 @@ namespace GDO.Utility
         public float? Value { get; set; }
         public float? MinValue { get; set; }
         public float? MaxValue { get; set; }
+        public float? Increment { get; set; }
         public new int ParameterType = 5;
     }
 
     public class DoubleParameter : Parameter
     {
         public double? Value { get; set; }
+        public double? Increment { get; set; }
         public new int ParameterType = 6;
     }
 
@@ -105,6 +111,7 @@ namespace GDO.Utility
         public double? Value { get; set; }
         public double? MinValue { get; set; }
         public double? MaxValue { get; set; }
+        public double? Increment { get; set; }
         public new int ParameterType = 7;
     }
 
