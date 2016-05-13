@@ -24,52 +24,21 @@ namespace GDO.Apps.Fractals
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
-        public void SetName(int instanceId, string name)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).receiveName(instanceId, name);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestName(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Caller.receiveName(instanceId, ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]).GetName());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestParameters(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.Mod);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
+        //public void RequestParameters(int instanceId)
+        //{
+        //    lock (Cave.AppLocks[instanceId])
+        //    {
+        //        try
+        //        {
+        //            FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+        //            Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.Mod);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Console.WriteLine(e);
+        //        }
+        //    }
+        //}
 
         public void LeftButton(int instanceId)
         {
@@ -199,6 +168,54 @@ namespace GDO.Apps.Fractals
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.MoveBackward();
                     Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.Mod);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void JoystickInit(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.JoystickInit(this, instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void JoystickSendParams(int instanceId, float XRot, float YRot)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    Clients.Group("" + instanceId).updateParams(instanceId, XRot, YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.Mod);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void JoystickReceiveParams(int instanceId, float angle, float magnitude)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.JoystickUpdateParams(angle, magnitude);
                 }
                 catch (Exception e)
                 {

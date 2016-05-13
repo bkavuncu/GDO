@@ -5,6 +5,7 @@ using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace GDO.Apps.Fractals
 {
@@ -23,6 +24,13 @@ namespace GDO.Apps.Fractals
         public float YTrans;
         public float ZTrans;
 
+        private Object Lock;
+        private float DeltaXRot;
+        private float DeltaYRot;
+        private float Angle;
+        private float Magnitude;
+        private bool JoystickUpdate;
+
         public int MaxSteps;
         public float Detail;
 
@@ -33,7 +41,6 @@ namespace GDO.Apps.Fractals
 
         public int Mod;
 
-        public string Name { get; set; }
         public void Init()
         {
             XRot = 0.0f;
@@ -47,16 +54,13 @@ namespace GDO.Apps.Fractals
             Ambience = 0.5f;
             Iterations = 16;
             Power = 8.0f;
-        }
 
-        public void SetName(string name)
-        {
-            Name = name;
-        }
-
-        public string GetName()
-        {
-            return Name;
+            Lock = new object();
+            Angle = 0.0f;
+            Magnitude = 0.0f;
+            JoystickUpdate = false;
+            DeltaXRot = 0.0f;
+            DeltaYRot = 0.0f;
         }
 
         public void IncXRot()
@@ -77,32 +81,72 @@ namespace GDO.Apps.Fractals
             YRot += 0.01f;
         }
 
-        private const double sensitivity = 0.05;
+        private const double Sensitivity = 0.005;
 
         public void StrafeLeft()
         {
-            ZTrans += (float) (sensitivity * Math.Cos(XRot + Math.PI / 2));
-            XTrans -= (float) (sensitivity * Math.Sin(XRot + Math.PI / 2));
+            ZTrans += (float) (Sensitivity * Math.Cos(XRot + Math.PI / 2));
+            XTrans -= (float) (Sensitivity * Math.Sin(XRot + Math.PI / 2));
         }
         public void StrafeRight()
         {
-            ZTrans -= (float) (sensitivity * Math.Cos(XRot + Math.PI / 2));
-            XTrans += (float) (sensitivity * Math.Sin(XRot + Math.PI / 2));
+            ZTrans -= (float) (Sensitivity * Math.Cos(XRot + Math.PI / 2));
+            XTrans += (float) (Sensitivity * Math.Sin(XRot + Math.PI / 2));
         }
 
         public void MoveForward()
         {
-            ZTrans += (float) (sensitivity * Math.Cos(XRot));
-            XTrans -= (float) (sensitivity * Math.Sin(XRot));
+            ZTrans += (float) (Sensitivity * Math.Cos(XRot));
+            XTrans -= (float) (Sensitivity * Math.Sin(XRot));
 
-            YTrans -= (float) (sensitivity * Math.Sin(YRot));
+            YTrans -= (float) (Sensitivity * Math.Sin(YRot));
         }
         public void MoveBackward()
         {
-            ZTrans -= (float)(sensitivity * Math.Cos(XRot));
-            XTrans += (float)(sensitivity * Math.Sin(XRot));
+            ZTrans -= (float)(Sensitivity * Math.Cos(XRot));
+            XTrans += (float)(Sensitivity * Math.Sin(XRot));
 
-            YTrans += (float)(sensitivity * Math.Sin(YRot));
+            YTrans += (float)(Sensitivity * Math.Sin(YRot));
+        }
+
+        public void JoystickInit(FractalsAppHub appHub, int instanceId)
+        {
+            new Thread(() => JoystickThread(appHub, instanceId)).Start();
+        }
+
+        public void JoystickThread(FractalsAppHub appHub, int instanceId)
+        {
+            while (true)
+            {
+                lock(Lock)
+                {
+                    if (JoystickUpdate)
+                    {
+                        DeltaXRot = (float) (Sensitivity * Magnitude * Math.Sin(Angle));
+                        DeltaYRot = (float) (Sensitivity * Magnitude * Math.Cos(Angle));
+
+
+                        JoystickUpdate = false;
+                    }
+
+                    XRot -= DeltaXRot;
+                    YRot += DeltaYRot;
+
+                    appHub.JoystickSendParams(instanceId, XRot, YRot);
+                }
+
+                Thread.Sleep(30);
+            }
+        }
+
+        public void JoystickUpdateParams(float angle, float magnitude)
+        {
+            lock (Lock)
+            {
+                this.Angle = angle;
+                this.Magnitude = magnitude;
+                this.JoystickUpdate = true;
+            }
         }
 
         public void ToggleMod()

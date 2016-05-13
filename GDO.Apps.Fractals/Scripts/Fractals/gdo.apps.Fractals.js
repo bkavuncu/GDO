@@ -61,19 +61,8 @@ gdo.net.app["Fractals"].initClient = function (params) {
 
 gdo.net.app["Fractals"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
-    gdo.net.app["Fractals"].server.requestName(gdo.controlId);
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Control at Instance ' + gdo.controlId);
 
-
-
-    $("iframe").contents().find("#hello_submit")
-    .unbind()
-    .click(function () {
-        //gdo.consoleOut('.Fractals', 1, 'Sending Name to Clients :' + $("iframe").contents().find('#hello_input').val());
-        //gdo.net.app["Fractals"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
-        gdo.consoleOut('.Fractals', 1, 'Requesting parameters');
-        gdo.net.app["Fractals"].server.requestParameters(gdo.controlId);
-    });
 
     $("iframe").contents().find("#left_button")
     .unbind()
@@ -132,13 +121,12 @@ gdo.net.app["Fractals"].initControl = function () {
     });
 
 
-    $(function () {
-        $("iframe").contents().find("#test").on("mousedown", down);
-        $("iframe").contents().find("#test").on("touchstart", down);
-        size = parseInt($("iframe").contents().find("#test").css("width"));
-    });
+    gdo.net.app["Fractals"].server.joystickInit(gdo.controlId);
 
-    var size;
+    $("iframe").contents().find("#test").on("mousedown", down);
+    $("iframe").contents().find("#test").on("touchstart", down);
+
+    var size = parseInt($("iframe").contents().find("#test").css("width"));
 
     var orig_x;
     var orig_x_point;
@@ -161,11 +149,11 @@ gdo.net.app["Fractals"].initControl = function () {
             clientX = event.clientX;
             clientY = event.clientY;
         }
-
-        orig_x = parseInt(ele.css("left")) / 100 * parseInt(ele.parent().css("width"));
+        gdo.consoleOut('.Fractals', 1, ele.css("left"));
+        orig_x = parseInt(ele.css("left"));
         orig_x_point = clientX;
 
-        orig_y = parseInt(ele.css("top")) / 100 * parseInt(ele.parent().css("width"));
+        orig_y = parseInt(ele.css("top"));
         orig_y_point = clientY;
 
         $("iframe").contents().find("#test").off("mousedown", down);
@@ -195,18 +183,23 @@ gdo.net.app["Fractals"].initControl = function () {
         var y = clientY - orig_y_point;
 
         var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+        var theta = Math.atan2(x, y);
 
         if (magnitude > size / 2) {
-            var theta = Math.atan2(x, y);
+            magnitude = 1;
             x = size * Math.sin(theta) / 2;
             y = size * Math.cos(theta) / 2;
+        } else {
+            magnitude /= (size / 2.0);
         }
 
         var left = orig_x + x;
         var top = orig_y + y;
-        
-        $("iframe").contents().find("#test").css("left", left);
+
+        gdo.net.app["Fractals"].server.joystickReceiveParams(gdo.controlId, theta, magnitude);
+        $("iframe").contents().find("#test").css("left", left + "px");
         $("iframe").contents().find("#test").css("top", top + "px");
+
         event.preventDefault();
     };
 
@@ -216,6 +209,7 @@ gdo.net.app["Fractals"].initControl = function () {
         $("iframe").contents().find("#control_body").off("touchmove", move);
         $("iframe").contents().find("#control_body").off("touchend", up);
 
+        gdo.net.app["Fractals"].server.joystickReceiveParams(gdo.controlId, 0, 0);
         $("iframe").contents().find("#test").animate({ left: "50%", top: "50%" }, 200);
         
         $("iframe").contents().find("#test").on("mousedown", down);
