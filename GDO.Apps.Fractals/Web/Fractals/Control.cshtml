@@ -99,6 +99,7 @@
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Scripts/Fractals/gdo.apps.Fractals.joystick.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -130,74 +131,18 @@
                                 </td>
                                 <td style="padding:25px">
                                     <div style="background-image:url('../../Data/Fractals/joystick-icon-background.png'); background-size: 100%; position:relative; width:120px; height:120px">
-                                        <div id="test" style="background-image:url('../../Data/Fractals/joystick-icon.png'); background-size: 100%; position:absolute;  width:80px; height:80px; left:50%; margin-left:-40px; top:50%; margin-top:-40px"/>
+                                        <div id="look_joystick" style="background-image:url('../../Data/Fractals/joystick-icon.png'); background-size: 100%; position:absolute;  width:80px; height:80px; left:50%; margin-left:-40px; top:50%; margin-top:-40px"/>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="background-color: transparent"><h6>Left:</h6>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button id="left_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
                                 </td>
                                 <td>
                                     <div style="background-color: transparent">
-                                        <h6>Right:</h6>
+                                        <h6>Move:</h6>
                                     </div>
                                 </td>
-                                <td>
-                                    <button id="right_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                                </td>
-                                <td style="padding-left:25px">
-                                    <div style="background-color: transparent">
-                                        <h6>Move Forward:</h6>
+                                <td style="padding:25px">
+                                    <div style="background-image:url('../../Data/Fractals/joystick-icon-background.png'); background-size: 100%; position:relative; width:120px; height:120px">
+                                        <div id="move_joystick" style="background-image:url('../../Data/Fractals/joystick-icon.png'); background-size: 100%; position:absolute;  width:80px; height:80px; left:50%; margin-left:-40px; top:50%; margin-top:-40px" />
                                     </div>
-                                </td>
-                                <td>
-                                    <button id="forward_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                                </td>
-                                <td>
-                                    <div style="background-color: transparent">
-                                        <h6>Move Backward:</h6>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button id="back_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="background-color: transparent"><h6>Up:</h6>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button id="up_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                                </td>
-                                <td>
-                                    <div style="background-color: transparent">
-                                        <h6>Down:</h6>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button id="down_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                                </td>
-                                <td style="padding-left:25px">
-                                    <div style="background-color: transparent">
-                                        <h6>Strafe Left:</h6>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button id="left_strafe_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                                </td>
-                                <td>
-                                    <div style="background-color: transparent">
-                                        <h6>Strafe Right:</h6>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button id="right_strafe_button" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
                                 </td>
                             </tr>
                         </table>

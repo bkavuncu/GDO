@@ -25,11 +25,19 @@ namespace GDO.Apps.Fractals
         public float ZTrans;
 
         private Object Lock;
-        private float DeltaXRot;
-        private float DeltaYRot;
-        private float Angle;
-        private float Magnitude;
-        private bool JoystickUpdate;
+
+        private float RotAngle;
+        private float RotMagnitude;
+        private bool RotJoystickUpdate;
+        private float RotDeltaX;
+        private float RotDeltaY;
+
+        private float MoveAngle;
+        private float MoveMagnitude;
+        private bool MoveJoystickUpdate;
+        private float MoveDeltaX;
+        private float MoveDeltaY;
+        private float MoveDeltaZ;
 
         public int MaxSteps;
         public float Detail;
@@ -56,62 +64,31 @@ namespace GDO.Apps.Fractals
             Power = 8.0f;
 
             Lock = new object();
-            Angle = 0.0f;
-            Magnitude = 0.0f;
-            JoystickUpdate = false;
-            DeltaXRot = 0.0f;
-            DeltaYRot = 0.0f;
+
+            RotAngle = 0.0f;
+            RotMagnitude = 0.0f;
+            RotJoystickUpdate = false;
+            RotDeltaX = 0.0f;
+            RotDeltaY = 0.0f;
+
+            MoveAngle = 0.0f;
+            MoveMagnitude = 0.0f;
+            MoveJoystickUpdate = false;
+            MoveDeltaX = 0.0f;
+            MoveDeltaY = 0.0f;
+            MoveDeltaZ = 0.0f;
         }
 
-        public void IncXRot()
-        {
-            XRot += 0.01f;
-        }
-        public void DecXRot()
-        {
-            XRot -= 0.01f;
-        }
+        private const double Sensitivity = 0.0025;
 
-        public void IncYRot()
-        {
-            YRot -= 0.01f;
-        }
-        public void DecYRot()
-        {
-            YRot += 0.01f;
-        }
-
-        private const double Sensitivity = 0.005;
-
-        public void StrafeLeft()
-        {
-            ZTrans += (float) (Sensitivity * Math.Cos(XRot + Math.PI / 2));
-            XTrans -= (float) (Sensitivity * Math.Sin(XRot + Math.PI / 2));
-        }
-        public void StrafeRight()
-        {
-            ZTrans -= (float) (Sensitivity * Math.Cos(XRot + Math.PI / 2));
-            XTrans += (float) (Sensitivity * Math.Sin(XRot + Math.PI / 2));
-        }
-
-        public void MoveForward()
-        {
-            ZTrans += (float) (Sensitivity * Math.Cos(XRot));
-            XTrans -= (float) (Sensitivity * Math.Sin(XRot));
-
-            YTrans -= (float) (Sensitivity * Math.Sin(YRot));
-        }
-        public void MoveBackward()
-        {
-            ZTrans -= (float)(Sensitivity * Math.Cos(XRot));
-            XTrans += (float)(Sensitivity * Math.Sin(XRot));
-
-            YTrans += (float)(Sensitivity * Math.Sin(YRot));
-        }
-
+        private bool Started = false;
         public void JoystickInit(FractalsAppHub appHub, int instanceId)
         {
-            new Thread(() => JoystickThread(appHub, instanceId)).Start();
+            if (!Started)
+            {
+                new Thread(() => JoystickThread(appHub, instanceId)).Start();
+                Started = true;
+            }
         }
 
         public void JoystickThread(FractalsAppHub appHub, int instanceId)
@@ -120,32 +97,57 @@ namespace GDO.Apps.Fractals
             {
                 lock(Lock)
                 {
-                    if (JoystickUpdate)
+                    if (RotJoystickUpdate)
                     {
-                        DeltaXRot = (float) (Sensitivity * Magnitude * Math.Sin(Angle));
-                        DeltaYRot = (float) (Sensitivity * Magnitude * Math.Cos(Angle));
+                        RotDeltaX = (float) (Sensitivity * RotMagnitude * Math.Sin(RotAngle));
+                        RotDeltaY = (float) (Sensitivity * RotMagnitude * Math.Cos(RotAngle));
 
-
-                        JoystickUpdate = false;
+                        RotJoystickUpdate = false;
                     }
 
-                    XRot -= DeltaXRot;
-                    YRot += DeltaYRot;
+                    if (MoveJoystickUpdate)
+                    {
+                        float Forward = -(float)(Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
+                        float Strafe  = (float)(Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
 
-                    appHub.JoystickSendParams(instanceId, XRot, YRot);
+                        MoveDeltaX = (float) ((-Forward * Math.Sin(XRot) * Math.Cos(YRot)) + (Strafe * Math.Cos(XRot) * Math.Cos(YRot)));
+                        MoveDeltaY = (float) (-Forward * Math.Sin(YRot));
+                        MoveDeltaZ = (float) ((Forward * Math.Cos(XRot) * Math.Cos(YRot)) + (Strafe * Math.Sin(XRot) * Math.Cos(YRot)));
+
+                        MoveJoystickUpdate = false;
+                    }
+
+                    XRot -= RotDeltaX;
+                    YRot += RotDeltaY;
+
+                    XTrans += MoveDeltaX;
+                    YTrans += MoveDeltaY;
+                    ZTrans += MoveDeltaZ;
+
+                    appHub.JoystickSendParams(instanceId, XRot, YRot, XTrans, YTrans, ZTrans);
                 }
 
-                Thread.Sleep(30);
+                Thread.Sleep(15);
             }
         }
 
-        public void JoystickUpdateParams(float angle, float magnitude)
+        public void JoystickUpdateParamsRot(float angle, float magnitude)
         {
             lock (Lock)
             {
-                this.Angle = angle;
-                this.Magnitude = magnitude;
-                this.JoystickUpdate = true;
+                this.RotAngle = angle;
+                this.RotMagnitude = magnitude;
+                this.RotJoystickUpdate = true;
+            }
+        }
+
+        public void JoystickUpdateParamsMove(float angle, float magnitude)
+        {
+            lock (Lock)
+            {
+                this.MoveAngle = angle;
+                this.MoveMagnitude = magnitude;
+                this.MoveJoystickUpdate = true;
             }
         }
 

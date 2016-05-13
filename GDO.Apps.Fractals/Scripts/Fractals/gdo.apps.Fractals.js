@@ -2,20 +2,11 @@
 
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
-    $.connection.fractalsAppHub.client.receiveName = function (instanceId, name) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.Fractals', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
-        }
-    }
 
     $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, power, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-            gdo.consoleOut('.Fractals', 1, 'Updating parameters');
 
             // Set rotation
             var x = ((gdo.clientId - 1) % 16) - 7.5;
@@ -64,163 +55,108 @@ gdo.net.app["Fractals"].initControl = function () {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Control at Instance ' + gdo.controlId);
 
 
-    $("iframe").contents().find("#left_button")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.Fractals', 1, 'Left button clicked');
-        gdo.net.app["Fractals"].server.leftButton(gdo.controlId);
-    });
-
-    $("iframe").contents().find("#right_button")
-    .unbind()
-    .click(function () {
-    gdo.consoleOut('.Fractals', 1, 'Right button clicked');
-    gdo.net.app["Fractals"].server.rightButton(gdo.controlId);
-    });
-
-    $("iframe").contents().find("#up_button")
-    .unbind()
-    .click(function () {
-    gdo.consoleOut('.Fractals', 1, 'Up button clicked');
-    gdo.net.app["Fractals"].server.upButton(gdo.controlId);
-    });
-
-    $("iframe").contents().find("#down_button")
-    .unbind()
-    .click(function () {
-    gdo.consoleOut('.Fractals', 1, 'Down button clicked');
-    gdo.net.app["Fractals"].server.downButton(gdo.controlId);
-    });
-
-    $("iframe").contents().find("#left_strafe_button")
-    .unbind()
-    .click(function () {
-    gdo.consoleOut('.Fractals', 1, 'Left strafe button clicked');
-    gdo.net.app["Fractals"].server.leftStrafeButton(gdo.controlId);
-});
-
-    $("iframe").contents().find("#right_strafe_button")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.Fractals', 1, 'Right strafe button clicked');
-        gdo.net.app["Fractals"].server.rightStrafeButton(gdo.controlId);
-    });
-
-    $("iframe").contents().find("#forward_button")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.Fractals', 1, 'Forward button clicked');
-        gdo.net.app["Fractals"].server.forwardButton(gdo.controlId);
-    });
-
-    $("iframe").contents().find("#back_button")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.Fractals', 1, 'Back button clicked');
-        gdo.net.app["Fractals"].server.backButton(gdo.controlId);
-    });
-
-
     gdo.net.app["Fractals"].server.joystickInit(gdo.controlId);
+    initJoystick("#look_joystick", gdo.net.app["Fractals"].server.joystickReceiveParamsRot);
+    initJoystick("#move_joystick", gdo.net.app["Fractals"].server.joystickReceiveParamsMove);
 
-    $("iframe").contents().find("#test").on("mousedown", down);
-    $("iframe").contents().find("#test").on("touchstart", down);
+    function initJoystick(id, receiveParams) {
 
-    var size = parseInt($("iframe").contents().find("#test").css("width"));
+        $("iframe").contents().find(id).on("mousedown", down);
+        $("iframe").contents().find(id).on("touchstart", down);
 
-    var orig_x;
-    var orig_x_point;
+        var size = parseInt($("iframe").contents().find(id).css("width"));
 
-    var orig_y;
-    var orig_y_point;
+        var orig_x;
+        var orig_x_point;
 
-    function down(event) {
-        var ele = $("iframe").contents().find("#test");
+        var orig_y;
+        var orig_y_point;
 
-        $("iframe").contents().find("#test").stop();
+        function down(event) {
+            var ele = $("iframe").contents().find(id);
 
-        var clientX;
-        var clientY;
+            $("iframe").contents().find(id).stop();
 
-        if (event.type == "touchstart") {
-            clientX = event.originalEvent.touches[0].clientX;
-            clientY = event.originalEvent.touches[0].clientY;
-        } else {
-            clientX = event.clientX;
-            clientY = event.clientY;
-        }
-        gdo.consoleOut('.Fractals', 1, ele.css("left"));
-        orig_x = parseInt(ele.css("left"));
-        orig_x_point = clientX;
+            var clientX;
+            var clientY;
 
-        orig_y = parseInt(ele.css("top"));
-        orig_y_point = clientY;
+            if (event.type == "touchstart") {
+                clientX = event.originalEvent.touches[0].clientX;
+                clientY = event.originalEvent.touches[0].clientY;
+            } else {
+                clientX = event.clientX;
+                clientY = event.clientY;
+            }
+            gdo.consoleOut('.Fractals', 1, ele.css("left"));
+            orig_x = parseInt(ele.css("left"));
+            orig_x_point = clientX;
 
-        $("iframe").contents().find("#test").off("mousedown", down);
-        $("iframe").contents().find("#test").off("touchstart", down);
+            orig_y = parseInt(ele.css("top"));
+            orig_y_point = clientY;
 
-        $("iframe").contents().find("#control_body").on("mousemove", move);
-        $("iframe").contents().find("#control_body").on("mouseup", up);
-        $("iframe").contents().find("#control_body").on("touchmove", move);
-        $("iframe").contents().find("#control_body").on("touchend", up);
+            $("iframe").contents().find(id).off("mousedown", down);
+            $("iframe").contents().find(id).off("touchstart", down);
 
-        event.preventDefault();
+            $("iframe").contents().find("#control_body").on("mousemove", move);
+            $("iframe").contents().find("#control_body").on("mouseup", up);
+            $("iframe").contents().find("#control_body").on("touchmove", move);
+            $("iframe").contents().find("#control_body").on("touchend", up);
+
+            event.preventDefault();
+        };
+
+        function move(event) {
+            var clientX;
+            var clientY;
+
+            if (event.type == "touchmove") {
+                clientX = event.originalEvent.touches[0].clientX;
+                clientY = event.originalEvent.touches[0].clientY;
+            } else {
+                clientX = event.clientX;
+                clientY = event.clientY;
+            }
+
+            var x = clientX - orig_x_point;
+            var y = clientY - orig_y_point;
+
+            var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+            var theta = Math.atan2(x, y);
+
+            if (magnitude > size / 2) {
+                magnitude = 1;
+                x = size * Math.sin(theta) / 2;
+                y = size * Math.cos(theta) / 2;
+            } else {
+                magnitude /= (size / 2.0);
+            }
+
+            var left = orig_x + x;
+            var top = orig_y + y;
+
+            receiveParams(gdo.controlId, theta, magnitude);
+            $("iframe").contents().find(id).css("left", left + "px");
+            $("iframe").contents().find(id).css("top", top + "px");
+
+            event.preventDefault();
+        };
+
+        function up(event) {
+            $("iframe").contents().find("#control_body").off("mousemove", move);
+            $("iframe").contents().find("#control_body").off("mouseup", up);
+            $("iframe").contents().find("#control_body").off("touchmove", move);
+            $("iframe").contents().find("#control_body").off("touchend", up);
+
+            receiveParams(gdo.controlId, 0, 0);
+            $("iframe").contents().find(id).animate({ left: "50%", top: "50%" }, 200);
+
+            $("iframe").contents().find(id).on("mousedown", down);
+            $("iframe").contents().find(id).on("touchstart", down);
+
+            event.preventDefault();
+        };
+
     };
-
-    function move(event) {
-        var clientX;
-        var clientY;
-
-        if (event.type == "touchmove") {
-            clientX = event.originalEvent.touches[0].clientX;
-            clientY = event.originalEvent.touches[0].clientY;
-        } else {
-            clientX = event.clientX;
-            clientY = event.clientY;
-        }
-
-        var x = clientX - orig_x_point;
-        var y = clientY - orig_y_point;
-
-        var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
-        var theta = Math.atan2(x, y);
-
-        if (magnitude > size / 2) {
-            magnitude = 1;
-            x = size * Math.sin(theta) / 2;
-            y = size * Math.cos(theta) / 2;
-        } else {
-            magnitude /= (size / 2.0);
-        }
-
-        var left = orig_x + x;
-        var top = orig_y + y;
-
-        gdo.net.app["Fractals"].server.joystickReceiveParams(gdo.controlId, theta, magnitude);
-        $("iframe").contents().find("#test").css("left", left + "px");
-        $("iframe").contents().find("#test").css("top", top + "px");
-
-        event.preventDefault();
-    };
-
-    function up(event) {
-        $("iframe").contents().find("#control_body").off("mousemove", move);
-        $("iframe").contents().find("#control_body").off("mouseup", up);
-        $("iframe").contents().find("#control_body").off("touchmove", move);
-        $("iframe").contents().find("#control_body").off("touchend", up);
-
-        gdo.net.app["Fractals"].server.joystickReceiveParams(gdo.controlId, 0, 0);
-        $("iframe").contents().find("#test").animate({ left: "50%", top: "50%" }, 200);
-        
-        $("iframe").contents().find("#test").on("mousedown", down);
-        $("iframe").contents().find("#test").on("touchstart", down);
-
-        event.preventDefault();
-    };
-
-
-
-
 
     $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
 
