@@ -88,6 +88,22 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void HeightSliderReceiveParamsMove(int instanceId, float val)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.HeightSliderUpdateParamsMove(val);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void MaxSteps(int instanceId, int maxSteps)
         {
             lock (Cave.AppLocks[instanceId])

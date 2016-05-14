@@ -58,6 +58,7 @@ gdo.net.app["Fractals"].initControl = function () {
     gdo.net.app["Fractals"].server.joystickInit(gdo.controlId);
     initJoystick("#look_joystick", gdo.net.app["Fractals"].server.joystickReceiveParamsRot);
     initJoystick("#move_joystick", gdo.net.app["Fractals"].server.joystickReceiveParamsMove);
+    initHeightSlider("#move_height_range", gdo.net.app["Fractals"].server.heightSliderReceiveParamsMove);
 
     function initJoystick(id, receiveParams) {
 
@@ -158,6 +159,21 @@ gdo.net.app["Fractals"].initControl = function () {
 
     };
 
+    function initHeightSlider(id, receiveParams) {
+        $("iframe").contents().find(id).on("input", input);
+        $("iframe").contents().find(id).on("change", change);
+
+        function input(event) {
+            receiveParams(gdo.controlId, $("iframe").contents().find(id).val());
+        }
+
+        function change(event) {
+            receiveParams(gdo.controlId, 0);
+            $("iframe").contents().find(id).animate({value: "0.0"}, 200);
+        }
+
+    };
+
     $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
 
     $("iframe").contents().find("#max_steps_range").on("input", function () {
@@ -204,6 +220,8 @@ gdo.net.app["Fractals"].initControl = function () {
     gdo.consoleOut('.Fractals', 1, 'Toggled inifinite objects');
     gdo.net.app["Fractals"].server.modToggle(gdo.controlId);
     });
+
+
 }
 
 gdo.net.app["Fractals"].terminateClient = function () {

@@ -34,6 +34,7 @@ namespace GDO.Apps.Fractals
 
         private float MoveAngle;
         private float MoveMagnitude;
+        private float MoveHeightVal;
         private bool MoveJoystickUpdate;
         private float MoveDeltaX;
         private float MoveDeltaY;
@@ -73,11 +74,12 @@ namespace GDO.Apps.Fractals
 
             MoveAngle = 0.0f;
             MoveMagnitude = 0.0f;
+            MoveHeightVal = 0.0f;
             MoveJoystickUpdate = false;
             MoveDeltaX = 0.0f;
             MoveDeltaY = 0.0f;
-            MoveDeltaZ = 0.0f;
-        }
+            MoveDeltaZ = 0.0f;      
+    }
 
         private const double Sensitivity = 0.0025;
 
@@ -121,7 +123,7 @@ namespace GDO.Apps.Fractals
                     YRot += RotDeltaY;
 
                     XTrans += MoveDeltaX;
-                    YTrans += MoveDeltaY;
+                    YTrans += MoveDeltaY + MoveHeightVal * (float) Sensitivity;
                     ZTrans += MoveDeltaZ;
 
                     appHub.JoystickSendParams(instanceId, XRot, YRot, XTrans, YTrans, ZTrans);
@@ -148,6 +150,14 @@ namespace GDO.Apps.Fractals
                 this.MoveAngle = angle;
                 this.MoveMagnitude = magnitude;
                 this.MoveJoystickUpdate = true;
+            }
+        }
+
+        public void HeightSliderUpdateParamsMove(float val)
+        {
+            lock (Lock)
+            {
+                MoveHeightVal = val;
             }
         }
 
