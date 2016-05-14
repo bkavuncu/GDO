@@ -206,6 +206,32 @@ gdo.net.app["Fractals"].initControl = function () {
         gdo.net.app["Fractals"].server.power(gdo.controlId, val);
     });
 
+    $("iframe").contents().find("#red_colour_number").empty().append($("iframe").contents().find("#red_colour_range").val());
+    $("iframe").contents().find("#green_colour_number").empty().append($("iframe").contents().find("#green_colour_range").val());
+    $("iframe").contents().find("#blue_colour_number").empty().append($("iframe").contents().find("#blue_colour_range").val());
+
+    $("iframe").contents().find("#red_colour_range").on("input", function () {
+        red = $("iframe").contents().find("#red_colour_range").val();
+        green = $("iframe").contents().find("#green_colour_range").val();
+        blue = $("iframe").contents().find("#blue_colour_range").val();
+        $("iframe").contents().find("#red_colour_number").empty().append(red);
+        $("iframe").contents().find("#colour_box").css("background-color","rgb("+red+","+blue+","+green+")");
+    });
+    $("iframe").contents().find("#green_colour_range").on("input", function () {
+        red = $("iframe").contents().find("#red_colour_range").val();
+        green = $("iframe").contents().find("#green_colour_range").val();
+        blue = $("iframe").contents().find("#blue_colour_range").val();
+        $("iframe").contents().find("#green_colour_number").empty().append(green);
+        $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + blue + "," + green + ")");
+    });
+    $("iframe").contents().find("#blue_colour_range").on("input", function () {
+        red = $("iframe").contents().find("#red_colour_range").val();
+        green = $("iframe").contents().find("#green_colour_range").val();
+        blue = $("iframe").contents().find("#blue_colour_range").val();
+        $("iframe").contents().find("#blue_colour_number").empty().append(blue);
+        $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
+    });
+
     $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());
 
     $("iframe").contents().find("#ambience_range").on("input", function () {

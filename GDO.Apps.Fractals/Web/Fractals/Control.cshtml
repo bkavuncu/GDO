@@ -99,7 +99,6 @@
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script src="../../Scripts/Fractals/gdo.apps.Fractals.joystick.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -162,7 +161,7 @@
                     <div class="panel-body">
                         <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
                             <tr>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h6>Max Steps:</h6>
                                     </div>
@@ -170,14 +169,14 @@
                                 <td>
                                     <input type="range" id="max_steps_range" name="points" value="100" min="0" max="300" style="width:250px">
                                 </td>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h7 id="max_steps_number">100</h7>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h6>Min. Detail:</h6>
                                     </div>
@@ -185,7 +184,7 @@
                                 <td>
                                     <input type="range" id="detail_range" name="points" value="-3" min="-5" max="0" step="0.01" style="width:250px">
                                 </td>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h7 id="detail_number">0.001</h7>
                                     </div>
@@ -205,7 +204,7 @@
                     <div class="panel-body">
                         <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
                             <tr>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h6>Iterations:</h6>
                                     </div>
@@ -213,14 +212,14 @@
                                 <td>
                                     <input type="range" id="iterations_range" name="points" value="16" min="1" max="100" style="width:250px">
                                 </td>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h7 id="iterations_number">16</h7>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h6>Power:</h6>
                                     </div>
@@ -228,10 +227,56 @@
                                 <td>
                                     <input type="range" id="power_range" name="points" value="8" min="1" max="25" step="0.05" style="width:250px">
                                 </td>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h7 id="power_number">8</h7>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 20px"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="range" id="red_colour_range" name="points" value="255" min="0" max="255" style="width:250px">
+                                </td>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <h7>R:</h7>
+                                </td>
+                                <td style="padding-right:10px;">
+                                    <h7 id="red_colour_number">255</h7>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <h6>Colour:</h6>
+                                </td>
+                                <td>
+                                    <input type="range" id="green_colour_range" name="points" value="0" min="0" max="255" style="width:250px">
+                                </td>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <h7>G:</h7>
+                                </td>
+                                <td style="padding-right:10px; width:25px;">
+                                    <h7 id="green_colour_number">0</h7>
+                                </td>
+                                <td>
+                                    <div id="colour_box" style="background-color:red; width:50px; height:50px; border-style: solid; border-color: white; border-width: 2px; border-radius: 5px;">
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="range" id="blue_colour_range" name="points" value="0" min="0" max="255" style="width:250px">
+                                </td>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <h7>B:</h7>
+                                </td>
+                                <td style="padding-right:10px;">
+                                    <h7 id="blue_colour_number">0</h7>
                                 </td>
                             </tr>
                         </table>
@@ -248,7 +293,7 @@
                     <div class="panel-body">
                         <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
                             <tr>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h6>Ambience:</h6>
                                     </div>
@@ -256,7 +301,7 @@
                                 <td>
                                     <input type="range" id="ambience_range" name="points" value="0.5" min="0" max="1" step="0.025" style="width:250px">
                                 </td>
-                                <td>
+                                <td style="padding-left:10px; padding-right:10px;">
                                     <div style="background-color: transparent">
                                         <h7 id="ambience_number">0.5</h7>
                                     </div>
