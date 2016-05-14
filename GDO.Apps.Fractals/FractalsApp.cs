@@ -45,6 +45,9 @@ namespace GDO.Apps.Fractals
 
         public int Iterations;
         public float Power;
+        public float R;
+        public float G;
+        public float B;
 
         public float Ambience;
 
@@ -78,7 +81,11 @@ namespace GDO.Apps.Fractals
             MoveJoystickUpdate = false;
             MoveDeltaX = 0.0f;
             MoveDeltaY = 0.0f;
-            MoveDeltaZ = 0.0f;      
+            MoveDeltaZ = 0.0f;
+
+            R = 1.0f;
+            G = 0.0f;
+            B = 0.0f;   
     }
 
         private const double Sensitivity = 0.0025;

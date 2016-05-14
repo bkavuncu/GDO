@@ -3,7 +3,7 @@
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, power, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, power, red, green, blue, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -23,6 +23,9 @@ $(function () {
 
             parameters.iterations = iterations;
             parameters.power = power;
+            parameters.red = red;
+            parameters.green = green;
+            parameters.blue = blue;
 
             parameters.ambience = ambience;
 
@@ -215,14 +218,16 @@ gdo.net.app["Fractals"].initControl = function () {
         green = $("iframe").contents().find("#green_colour_range").val();
         blue = $("iframe").contents().find("#blue_colour_range").val();
         $("iframe").contents().find("#red_colour_number").empty().append(red);
-        $("iframe").contents().find("#colour_box").css("background-color","rgb("+red+","+blue+","+green+")");
+        $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
+        gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
     });
     $("iframe").contents().find("#green_colour_range").on("input", function () {
         red = $("iframe").contents().find("#red_colour_range").val();
         green = $("iframe").contents().find("#green_colour_range").val();
         blue = $("iframe").contents().find("#blue_colour_range").val();
         $("iframe").contents().find("#green_colour_number").empty().append(green);
-        $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + blue + "," + green + ")");
+        $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
+        gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
     });
     $("iframe").contents().find("#blue_colour_range").on("input", function () {
         red = $("iframe").contents().find("#red_colour_range").val();
@@ -230,6 +235,7 @@ gdo.net.app["Fractals"].initControl = function () {
         blue = $("iframe").contents().find("#blue_colour_range").val();
         $("iframe").contents().find("#blue_colour_number").empty().append(blue);
         $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
+        gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
     });
 
     $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());

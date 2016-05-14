@@ -102,6 +102,10 @@ function init() {
     powerLoc = gl.getUniformLocation(program, "power");
     gl.uniform1f(powerLoc, params.power);
 
+    // Set fractal colour
+    colourLoc = gl.getUniformLocation(program, "colour");
+    gl.uniform4f(colourLoc, params.red, params.green, params.blue, 1.0);
+
     // Set mod function
     modLoc = gl.getUniformLocation(program, "modFunction");
     gl.uniform1i(modLoc, params.modToggle);

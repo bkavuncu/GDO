@@ -18,7 +18,7 @@
     <script>
         $(function () {          
             $(document).ready(function () {
-                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.5, 16, 8.0, 0.0);
+                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.5, 16, 8.0, 1.0, 0.0, 0.0, 0.0);
                 var gdo = parent.gdo;
                 gdo.net.app["Fractals"].initClient(params);
             });
@@ -57,6 +57,7 @@
 
         uniform int iterations;
         uniform float power;
+        uniform vec4 colour;
 
         uniform int modFunction;
 
@@ -205,8 +206,8 @@
             if(d < detail) {
             if (d1 < d2) {
 
-            ambientColour = vec4(1.0, 0.0, 1.0, 1.0);
-            diffuseColour = vec4(1.0, 0.0, 1.0, 1.0);
+            ambientColour = colour;
+            diffuseColour = colour;
 
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
             attenuation = clamp(attenuation, 0.0, 1.0);
