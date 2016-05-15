@@ -47,7 +47,7 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    Clients.Group("" + instanceId).updateParams(instanceId, XRot, YRot, XTrans, YTrans, ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, XRot, YRot, XTrans, YTrans, ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -88,6 +88,22 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void JoystickTerminate(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.JoystickTerminate();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void HeightSliderReceiveParamsMove(int instanceId, float val)
         {
             lock (Cave.AppLocks[instanceId])
@@ -112,7 +128,7 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.MaxSteps = maxSteps;
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -129,7 +145,7 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Detail = detail;
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -146,7 +162,7 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Iterations = iterations;
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -163,7 +179,7 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Power = power;
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -182,7 +198,7 @@ namespace GDO.Apps.Fractals
                     FA.R = r/255.0f;
                     FA.G = g/255.0f;
                     FA.B = b/255.0f;
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -199,7 +215,24 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Ambience = ambience;
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void LightIntensity(int instanceId, float li)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.LightIntensity = li;
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {
@@ -216,7 +249,7 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.ToggleMod();
-                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
+                    Clients.Group("" + instanceId).updateParams(instanceId, FA.XRot, FA.YRot, FA.XTrans, FA.YTrans, FA.ZTrans, FA.MaxSteps, FA.Detail, FA.Ambience, FA.LightIntensity, FA.Iterations, FA.Power, FA.R, FA.G, FA.B, FA.Mod);
                 }
                 catch (Exception e)
                 {

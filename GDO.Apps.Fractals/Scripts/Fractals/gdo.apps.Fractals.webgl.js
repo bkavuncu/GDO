@@ -8,10 +8,10 @@ function init() {
     // Set up canvas
     canvas = document.getElementById('glscreen');
     gl = canvas.getContext('experimental-webgl');
-    canvas.width = 960;
-    canvas.height = 540;
-    //canvas.width = 1920;
-    //canvas.height = 1080;
+    //canvas.width = 960;
+    //canvas.height = 540;
+    canvas.width = 1920;
+    canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -93,6 +93,11 @@ function init() {
     // Set ambience
     ambienceLoc = gl.getUniformLocation(program, "ambience");
     gl.uniform1f(ambienceLoc, params.ambience);
+
+    // Set light intensity
+    lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
+    gl.uniform1f(lightIntensityLoc, params.lightIntensity);
+
 
     // Set fractal iteration
     iterationsLoc = gl.getUniformLocation(program, "iterations");

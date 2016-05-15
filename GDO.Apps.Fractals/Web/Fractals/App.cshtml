@@ -18,7 +18,7 @@
     <script>
         $(function () {          
             $(document).ready(function () {
-                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.5, 16, 8.0, 1.0, 0.0, 0.0, 0.0);
+                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.5, 50, 16, 8.0, 1.0, 0.0, 0.0, 0.0);
                 var gdo = parent.gdo;
                 gdo.net.app["Fractals"].initClient(params);
             });
@@ -54,6 +54,7 @@
         uniform float minDetail;
 
         uniform float ambience;
+        uniform float lightIntensity;
 
         uniform int iterations;
         uniform float power;
@@ -170,7 +171,7 @@
 
             // Lighting
             vec3 lightLoc = vec3(4.0, 2.0, -2.0);
-            float lightIntensity = 50.0;
+            //float lightIntensity = 50.0;
             vec3 lightDirection;
             vec3 normal = vec3(0.0);
             float ao = 1.0;
@@ -185,6 +186,8 @@
             float t = 0.0;
 
             float detail = minDetail;
+
+            float minDistToLight = 1.0/0.0;
 
             for(int i = 0; i < 1/0; ++i)  {
             if (i >= maxSteps) break;
@@ -201,7 +204,11 @@
             float d1 = abs(DE(p));
             // Floor
             float d2 = abs(p.y + 2.0);
+            float d3 = length(p-lightLoc);
             float d = min(d1,d2);
+            d = min(d, d3);
+
+            minDistToLight = min(minDistToLight, d3);
 
             if(d < detail) {
             if (d1 < d2) {
@@ -210,7 +217,7 @@
             diffuseColour = colour;
 
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
-            attenuation = clamp(attenuation, 0.0, 1.0);
+            //attenuation = clamp(attenuation, 0.0, 1.0);
             lightDirection = normalize(-p+lightLoc);
 
             float shadingDetail = detail/2.0;
@@ -259,6 +266,9 @@
             }
             }
 
+
+            attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
+            attenuation = clamp(attenuation, 0.0, 1.0);
             normal = vec3(0.0, 1.0, 0.0);
             lightDirection = normalize(-p+lightLoc);
 
@@ -282,9 +292,14 @@
             // Ambient occlusion
             color.xyz *= ao;
 
+
             // Fog
             vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
             color = mix(color, fogColor, 1.0 - exp(-t*0.1));
+
+            if (minDistToLight < 0.2) {
+                color = mix(color, vec4(1.0), 1.0-minDistToLight/0.2);
+            }
 
             return color;
 

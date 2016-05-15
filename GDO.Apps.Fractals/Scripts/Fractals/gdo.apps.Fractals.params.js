@@ -1,5 +1,5 @@
 ﻿
-function params(xRot, yRot, yHeight, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, power, red, green, blue, modToggle) {
+function params(xRot, yRot, yHeight, xTrans, yTrans, zTrans, maxSteps, detail, ambience, lightIntensity, iterations, power, red, green, blue, modToggle) {
     this.xRot = xRot;
     this.yRot = yRot;
     this.yHeight = yHeight;
@@ -10,6 +10,7 @@ function params(xRot, yRot, yHeight, xTrans, yTrans, zTrans, maxSteps, detail, a
     this.maxSteps = maxSteps;
     this.detail = detail;
     this.ambience = ambience;
+    this.lightIntensity = lightIntensity;
     this.iterations = iterations;
     this.power = power;
     this.red = red;
@@ -34,6 +35,7 @@ var powerLoc;
 var colourLoc;
 
 var ambienceLoc;
+var lightIntensityLoc;
 
 function applyParams() {
 
@@ -47,5 +49,6 @@ function applyParams() {
     gl.uniform1f(powerLoc, params.power);
     gl.uniform4f(colourLoc, params.red, params.green, params.blue, 1.0);
     gl.uniform1f(ambienceLoc, params.ambience);
+    gl.uniform1f(lightIntensityLoc, params.lightIntensity);
     gl.uniform1i(modLoc, params.modToggle);
 }

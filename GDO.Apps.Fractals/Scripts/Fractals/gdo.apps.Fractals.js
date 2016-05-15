@@ -3,7 +3,7 @@
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, iterations, power, red, green, blue, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, lightIntensity, iterations, power, red, green, blue, mod) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -28,6 +28,7 @@ $(function () {
             parameters.blue = blue;
 
             parameters.ambience = ambience;
+            parameters.lightIntensity = lightIntensity;
 
             parameters.modToggle = mod;
         }
@@ -246,6 +247,14 @@ gdo.net.app["Fractals"].initControl = function () {
         gdo.net.app["Fractals"].server.ambience(gdo.controlId, val);
     });
 
+    $("iframe").contents().find("#light_intensity_number").empty().append($("iframe").contents().find("#light_intensity_range").val());
+
+    $("iframe").contents().find("#light_intensity_range").on("input", function () {
+        val = $("iframe").contents().find("#light_intensity_range").val();
+        $("iframe").contents().find("#light_intensity_number").empty().append(val);
+        gdo.net.app["Fractals"].server.lightIntensity(gdo.controlId, val);
+    });
+
     $("iframe").contents().find("#mod_toggle")
     .unbind()
     .click(function () {
@@ -262,4 +271,5 @@ gdo.net.app["Fractals"].terminateClient = function () {
 
 gdo.net.app["Fractals"].ternminateControl = function () {
     gdo.consoleOut('.Fractals', 1, 'Terminating Fractals App Control at Instance ' + gdo.controlId);
+    gdo.net.app["Fractals"].server.joystickTerminate(gdo.controlId);
 }

@@ -307,6 +307,51 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <div style="background-color: transparent">
+                                        <h6>Light Intensity:</h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="range" id="light_intensity_range" name="points" value="50" min="0" max="200" step="1" style="width:250px">
+                                </td>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <div style="background-color: transparent">
+                                        <h7 id="light_intensity_number">50</h7>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <div style="background-color: transparent">
+                                        <h6>Light Size:</h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="range" id="light_size_range" name="points" value="0.5" min="0" max="1" step="0.025" style="width:250px">
+                                </td>
+                                <td style="padding-left:10px; padding-right:10px;">
+                                    <div style="background-color: transparent">
+                                        <h7 id="light_size_number">0.5</h7>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left:10px;">
+                                    <div style="background-color: transparent">
+                                        <h6>Light Location:</h6>
+                                    </div>
+                                </td>
+                                <td style="padding-left:25px; padding-top:25px; padding-bottom:25px;">
+                                    <div style="background-image:url('../../Data/Fractals/joystick-icon-background.png'); background-size: 100%; position:relative; width:120px; height:120px">
+                                        <div id="light_joystick" style="background-image:url('../../Data/Fractals/joystick-icon.png'); background-size: 100%; position:absolute;  width:80px; height:80px; left:50%; margin-left:-40px; top:50%; margin-top:-40px" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="range" id="light_height_range" name="points" value="0" min="-1" max="1" step="0.01" style="-webkit-appearance: slider-vertical; width:60px">
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>

@@ -25,6 +25,7 @@ namespace GDO.Apps.Fractals
         public float ZTrans;
 
         private Object Lock;
+        private bool JoystickRunning;
 
         private float RotAngle;
         private float RotMagnitude;
@@ -50,6 +51,7 @@ namespace GDO.Apps.Fractals
         public float B;
 
         public float Ambience;
+        public float LightIntensity;
 
         public int Mod;
 
@@ -64,10 +66,12 @@ namespace GDO.Apps.Fractals
             MaxSteps = 100;
             Detail = -3.0f;
             Ambience = 0.5f;
+            LightIntensity = 50.0f;
             Iterations = 16;
             Power = 8.0f;
 
             Lock = new object();
+            JoystickRunning = false;
 
             RotAngle = 0.0f;
             RotMagnitude = 0.0f;
@@ -95,6 +99,7 @@ namespace GDO.Apps.Fractals
         {
             if (!Started)
             {
+                JoystickRunning = true;
                 new Thread(() => JoystickThread(appHub, instanceId)).Start();
                 Started = true;
             }
@@ -102,7 +107,7 @@ namespace GDO.Apps.Fractals
 
         public void JoystickThread(FractalsAppHub appHub, int instanceId)
         {
-            while (true)
+            while (JoystickRunning)
             {
                 lock(Lock)
                 {
@@ -116,8 +121,8 @@ namespace GDO.Apps.Fractals
 
                     if (MoveJoystickUpdate)
                     {
-                        float Forward = -(float)(Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
-                        float Strafe  = (float)(Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
+                        float Forward = -(float)(5*Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
+                        float Strafe  = (float)(5*Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
 
                         MoveDeltaX = (float) ((-Forward * Math.Sin(XRot) * Math.Cos(YRot)) + (Strafe * Math.Cos(XRot) * Math.Cos(YRot)));
                         MoveDeltaY = (float) (-Forward * Math.Sin(YRot));
@@ -130,7 +135,7 @@ namespace GDO.Apps.Fractals
                     YRot += RotDeltaY;
 
                     XTrans += MoveDeltaX;
-                    YTrans += MoveDeltaY + MoveHeightVal * (float) Sensitivity;
+                    YTrans += MoveDeltaY + MoveHeightVal * (float) Sensitivity * 5;
                     ZTrans += MoveDeltaZ;
 
                     appHub.JoystickSendParams(instanceId, XRot, YRot, XTrans, YTrans, ZTrans);
@@ -158,6 +163,12 @@ namespace GDO.Apps.Fractals
                 this.MoveMagnitude = magnitude;
                 this.MoveJoystickUpdate = true;
             }
+        }
+
+        public void JoystickTerminate()
+        {
+            Started = false;
+            JoystickRunning = false;
         }
 
         public void HeightSliderUpdateParamsMove(float val)
