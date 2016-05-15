@@ -96,7 +96,7 @@ gdo.net.app["Fractals"].initControl = function () {
                 clientX = event.clientX;
                 clientY = event.clientY;
             }
-            gdo.consoleOut('.Fractals', 1, ele.css("left"));
+            
             orig_x = parseInt(ele.css("left"));
             orig_x_point = clientX;
 
@@ -119,8 +119,12 @@ gdo.net.app["Fractals"].initControl = function () {
             var clientY;
 
             if (event.type == "touchmove") {
-                clientX = event.originalEvent.touches[0].clientX;
-                clientY = event.originalEvent.touches[0].clientY;
+                for (var i = 0; i < event.originalEvent.touches.length; i++) {
+                    if (event.originalEvent.touches[i].target.id == id.substring(1)) {
+                        clientX = event.originalEvent.touches[i].clientX;
+                        clientY = event.originalEvent.touches[i].clientY;
+                    }
+                }
             } else {
                 clientX = event.clientX;
                 clientY = event.clientY;
