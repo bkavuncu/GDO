@@ -220,7 +220,7 @@
             diffuseColour = colour;
 
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
-            //attenuation = clamp(attenuation, 0.0, 1.0);
+            attenuation = clamp(attenuation, 0.0, 1.0);
             lightDirection = normalize(-p+lightLoc);
 
             float shadingDetail = detail/2.0;
@@ -271,7 +271,7 @@
 
 
             attenuation = lightIntensity/(pow((distance(p,lightLoc)), 2.0));
-            //attenuation = clamp(attenuation, 0.0, 1.0);
+            attenuation = clamp(attenuation, 0.0, 1.0);
             normal = vec3(0.0, 1.0, 0.0);
             lightDirection = normalize(-p+lightLoc);
 
