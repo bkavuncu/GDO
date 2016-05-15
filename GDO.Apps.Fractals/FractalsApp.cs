@@ -52,6 +52,19 @@ namespace GDO.Apps.Fractals
 
         public float Ambience;
         public float LightIntensity;
+        public float LightSize;
+
+        private float LightAngle;
+        private float LightMagnitude;
+        private float LightHeightVal;
+        private bool LightJoystickUpdate;
+
+        private float LightXDelta;
+        private float LightZDelta;
+
+        public float LightX;
+        public float LightY;
+        public float LightZ;
 
         public int Mod;
 
@@ -67,6 +80,7 @@ namespace GDO.Apps.Fractals
             Detail = -3.0f;
             Ambience = 0.5f;
             LightIntensity = 50.0f;
+            LightSize = 0.25f;
             Iterations = 16;
             Power = 8.0f;
 
@@ -86,6 +100,18 @@ namespace GDO.Apps.Fractals
             MoveDeltaX = 0.0f;
             MoveDeltaY = 0.0f;
             MoveDeltaZ = 0.0f;
+
+            LightAngle = 0.0f;
+            LightMagnitude = 0.0f;
+            LightHeightVal = 0.0f;
+            LightJoystickUpdate = false;
+
+            LightXDelta = 0.0f;
+            LightZDelta = 0.0f;
+
+            LightX = 4.0f;
+            LightY = 2.0f;
+            LightZ = -2.0f;
 
             R = 1.0f;
             G = 0.0f;
@@ -109,7 +135,7 @@ namespace GDO.Apps.Fractals
         {
             while (JoystickRunning)
             {
-                lock(Lock)
+                //lock(Lock)
                 {
                     if (RotJoystickUpdate)
                     {
@@ -121,8 +147,8 @@ namespace GDO.Apps.Fractals
 
                     if (MoveJoystickUpdate)
                     {
-                        float Forward = -(float)(5*Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
-                        float Strafe  = (float)(5*Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
+                        float Forward = -(float)(5 * Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
+                        float Strafe  = (float)(5 * Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
 
                         MoveDeltaX = (float) ((-Forward * Math.Sin(XRot) * Math.Cos(YRot)) + (Strafe * Math.Cos(XRot) * Math.Cos(YRot)));
                         MoveDeltaY = (float) (-Forward * Math.Sin(YRot));
@@ -131,14 +157,24 @@ namespace GDO.Apps.Fractals
                         MoveJoystickUpdate = false;
                     }
 
+                    if (LightJoystickUpdate)
+                    {
+                        LightZDelta = -(float)(5 * Sensitivity * LightMagnitude * Math.Cos(LightAngle));
+                        LightXDelta = (float)(5 * Sensitivity * LightMagnitude * Math.Sin(LightAngle));
+                    }
+
                     XRot -= RotDeltaX;
                     YRot += RotDeltaY;
 
                     XTrans += MoveDeltaX;
-                    YTrans += MoveDeltaY + MoveHeightVal * (float) Sensitivity * 5;
+                    YTrans += MoveDeltaY + MoveHeightVal * 5 * (float) Sensitivity;
                     ZTrans += MoveDeltaZ;
 
-                    appHub.JoystickSendParams(instanceId, XRot, YRot, XTrans, YTrans, ZTrans);
+                    LightX += LightXDelta;
+                    LightY += LightHeightVal * 5 * (float)Sensitivity;
+                    LightZ += LightZDelta;
+
+                    appHub.JoystickSendParams(instanceId);
                 }
 
                 Thread.Sleep(15);
@@ -147,7 +183,7 @@ namespace GDO.Apps.Fractals
 
         public void JoystickUpdateParamsRot(float angle, float magnitude)
         {
-            lock (Lock)
+            //lock (Lock)
             {
                 this.RotAngle = angle;
                 this.RotMagnitude = magnitude;
@@ -157,11 +193,21 @@ namespace GDO.Apps.Fractals
 
         public void JoystickUpdateParamsMove(float angle, float magnitude)
         {
-            lock (Lock)
+            //lock (Lock)
             {
                 this.MoveAngle = angle;
                 this.MoveMagnitude = magnitude;
                 this.MoveJoystickUpdate = true;
+            }
+        }
+
+        public void JoystickUpdateParamsLight(float angle, float magnitude)
+        {
+            //lock (Lock)
+            {
+                this.LightAngle = angle;
+                this.LightMagnitude = magnitude;
+                this.LightJoystickUpdate = true;
             }
         }
 
@@ -173,9 +219,17 @@ namespace GDO.Apps.Fractals
 
         public void HeightSliderUpdateParamsMove(float val)
         {
-            lock (Lock)
+            //lock (Lock)
             {
                 MoveHeightVal = val;
+            }
+        }
+
+        public void HeightSliderUpdateParamsLight(float val)
+        {
+            //lock (Lock)
+            {
+                LightHeightVal = val;
             }
         }
 

@@ -98,6 +98,13 @@ function init() {
     lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
     gl.uniform1f(lightIntensityLoc, params.lightIntensity);
 
+    // Set light size
+    lightSizeLoc = gl.getUniformLocation(program, "lightSize");
+    gl.uniform1f(lightSizeLoc, params.lightSize);
+
+    // Set light size
+    lightLocLoc = gl.getUniformLocation(program, "lightLoc");
+    gl.uniform3f(lightLocLoc, params.lightX, params.lightY, params.lightZ);
 
     // Set fractal iteration
     iterationsLoc = gl.getUniformLocation(program, "iterations");
