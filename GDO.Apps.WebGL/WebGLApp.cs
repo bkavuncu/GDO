@@ -79,6 +79,8 @@ namespace GDO.Apps.WebGL
         public float averageFrameDuration;
         public float minFrameDuration;
         public float FPS;
+
+        public Camera camera;
     }
 
     public class Camera
