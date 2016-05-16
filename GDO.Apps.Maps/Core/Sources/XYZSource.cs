@@ -6,16 +6,16 @@ using GDO.Apps.Maps.Core.Sources.Tiles;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class StamenSource : XYZSource
+    public class XYZSource : ImageTileSource
     {
-        public string Layer { get; set; }
-        new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque, string projection, string url, string layer)
+        public string Projection { get; set; }
+        public string Url { get; set; }
+
+        new public void Init(string crossOrigin, bool opaque, string projection, string url)
         {
-            Layer = layer;
             CrossOrigin = crossOrigin;
             Opaque = opaque;
             Projection = projection;
-            TileGrid = tileGrid;
             Url = url;
 
             Prepare();

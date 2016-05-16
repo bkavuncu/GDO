@@ -2,35 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using GDO.Apps.Maps.Core.Sources.Tiles;
 
-namespace GDO.Apps.Maps.Core.Sources
+namespace GDO.Apps.Maps.Core.Sources.Tiles
 {
-    public class XYZSource : ImageTileSource
+    public class ImageTileSource : Source
     {
+        public string CrossOrigin { get; set; }
+        public bool? Opaque { get; set; }
         public string Projection { get; set; }
-        public string Url { get; set; }
 
-        new public void Init(string crossOrigin, TileGrid tileGrid, bool opaque, string projection, string url)
+        new public void Init(string crossOrigin, bool opaque, string projection)
         {
             CrossOrigin = crossOrigin;
-            TileGrid = tileGrid;
             Opaque = opaque;
             Projection = projection;
-            Url = url;
 
             Prepare();
         }
+
         new public void Prepare()
         {
             base.Prepare();
             ClassName = this.GetType().Name;
-            AddtoEditables(() => Url);
         }
 
-        new public void Modify(string url)
+        new public void Modify()
         {
-            Url = url;
         }
     }
 }

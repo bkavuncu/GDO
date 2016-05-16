@@ -74,7 +74,7 @@ namespace GDO.Apps.Maps
             }
             foreach (View view in Map.Views)
             {
-                Views.Add(view.Id.Value, view);
+                Views.Add(view.Id, view);
                 //TODO update zindex
             }
             CurrentView = Map.CurrentView;
@@ -198,7 +198,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int viewId = Views.GetAvailableSlot();
-                view.Id.Value = viewId;
+                view.Id = viewId;
                 Views.Add(viewId, view);
                 return viewId;
             }

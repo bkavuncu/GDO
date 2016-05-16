@@ -9,13 +9,14 @@ namespace GDO.Utility
 {
     public enum VisualisationTypes
     {
-        Boolean = 1, //Basic on/off button
-        String = 2, //String input
-        Number = 3, //Number input
-        Slider = 4, //Slider with Min-Max
-        Color = 5, //Color Picker
-        Datalist = 6, //If Array use Array, if not use link
-        Array = 7 //Input with multiple cols for the array size
+        Boolean = 0, //Basic on/off button
+        String = 1, //String input
+        Number = 2, //Number input
+        Slider = 3, //Slider with Min-Max
+        Color = 4, //Color Picker
+        Datalist = 5, //If Array use Array, if not use link
+        Array = 6, //Input with multiple cols for the array size
+        TextArea = 7 //String appears as a text area input
     }
 
     public enum ParameterTypes

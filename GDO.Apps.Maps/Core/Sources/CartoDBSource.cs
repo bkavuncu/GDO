@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class TileSource : Source
+    public class CartoDBSource : XYZSource
     {
     }
 }

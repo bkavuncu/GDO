@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core.Sources.Images
 {
-    public class StaticImageSource : ImageSource
+    public class StaticImageSource : Source
     {
         public string CrossOrigin { get; set; }
         public int? Width { get; set; }
