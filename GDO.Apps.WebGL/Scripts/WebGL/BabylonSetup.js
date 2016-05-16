@@ -58,7 +58,7 @@
                         firstLineString += ", " + prop;
                     }
 
-                    dataString += ", " + data[prop];
+                    dataString += ", " + JSON.stringify(data[prop]);
                 }
                 if (firstLine) {
                     stringArray.push(firstLineString + "\n\n");
