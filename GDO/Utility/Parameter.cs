@@ -40,9 +40,8 @@ namespace GDO.Utility
 
     public enum Priorities
     {
-        High = 3,
-        Normal = 2,
-        Low = 1,    
+        Required = 0,
+        Optional = 1  
     }
 
     public class Parameter
@@ -58,12 +57,14 @@ namespace GDO.Utility
     public class BooleanParameter : Parameter
     {
         public bool? Value { get; set; }
+        public bool? Default { get; set; }
         public new int ParameterType = 0;
     }
 
     public class IntegerParameter : Parameter
     {
         public int Value { get; set; }
+        public int Default { get; set; }
         public int? Increment { get; set; }
         public new int ParameterType = 1;
     }
@@ -71,6 +72,7 @@ namespace GDO.Utility
     public class NullableIntegerParameter : Parameter
     {
         public int? Value { get; set; }
+        public int? Default { get; set; }
         public int? Increment { get; set; }
         public new int ParameterType = 2;
     }
@@ -78,6 +80,7 @@ namespace GDO.Utility
     public class IntegerRangeParameter : Parameter
     {
         public int? Value { get; set; }
+        public int? Default { get; set; }
         public int? MinValue { get; set; }
         public int? MaxValue { get; set; }
         public int? Increment { get; set; }
@@ -87,6 +90,7 @@ namespace GDO.Utility
     public class FloatParameter : Parameter
     {
         public float? Value { get; set; }
+        public float? Default { get; set; }
         public float? Increment { get; set; }
         public new int ParameterType = 4;
     }
@@ -94,6 +98,7 @@ namespace GDO.Utility
     public class FloatRangeParameter : Parameter
     {
         public float? Value { get; set; }
+        public float? Default { get; set; }
         public float? MinValue { get; set; }
         public float? MaxValue { get; set; }
         public float? Increment { get; set; }
@@ -103,6 +108,7 @@ namespace GDO.Utility
     public class DoubleParameter : Parameter
     {
         public double? Value { get; set; }
+        public double? Default { get; set; }
         public double? Increment { get; set; }
         public new int ParameterType = 6;
     }
@@ -110,6 +116,7 @@ namespace GDO.Utility
     public class DoubleRangeParameter : Parameter
     {
         public double? Value { get; set; }
+        public double? Default { get; set; }
         public double? MinValue { get; set; }
         public double? MaxValue { get; set; }
         public double? Increment { get; set; }
@@ -119,12 +126,14 @@ namespace GDO.Utility
     public class StringParameter : Parameter
     {
         public string Value { get; set; }
+        public string Default { get; set; }
         public new int ParameterType = 8;
     }
 
     public class LinkParameter : Parameter
     {
         public int? Value { get; set; }
+        public int? Default { get; set; }
         public string LinkedParameter { get; set; }
         public new int ParameterType = 9;
     }
@@ -132,6 +141,8 @@ namespace GDO.Utility
     public class BooleanArrayParameter : Parameter
     {
         public bool[] Values { get; set; }
+        public bool? Value { get; set; }
+        public bool? Default { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 10;
     }
@@ -140,14 +151,16 @@ namespace GDO.Utility
     {
         public int[] Values { get; set; }
         public int Length { get; set; }
-        public int Value { get; set; }
+        public int? Value { get; set; }
+        public int? Default { get; set; }
         public new int ParameterType = 11;
     }
 
     public class FloatArrayParameter : Parameter
     {
         public float[] Values { get; set; }
-        public float Value { get; set; }
+        public float? Value { get; set; }
+        public float? Default { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 12;
     }
@@ -155,7 +168,8 @@ namespace GDO.Utility
     public class DoubleArrayParameter : Parameter
     {
         public double[] Values { get; set; }
-        public double Value { get; set; }
+        public double? Value { get; set; }
+        public double? Default { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 13;
     }
@@ -164,22 +178,23 @@ namespace GDO.Utility
     {
         public string[] Values { get; set; }
         public string Value { get; set; }
+        public string Default { get; set; }
         public int Length { get; set; }
         public new int ParameterType = 14;
     }
 
     //How to use:
     /*
-            Test = new IntegerRangeParameter
+            TextAlign = new StringArrayParameter
             {
-                Name = "Test",
-                Description = "Test is a Test",
-                Priority = (int)GDO.Utility.Priorities.Low,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
+                Name = "Text Align",
+                Description = "Text Align",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
-                Value = 5,
-                MinValue = 0,
-                MaxValue = 10
+                IsVisible = true,
+                Values = new string[5]{"left","right","center","end","start"},
+                Value = "start"
             };
     */
 }

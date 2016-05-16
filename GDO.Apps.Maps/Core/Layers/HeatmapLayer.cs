@@ -14,14 +14,8 @@ namespace GDO.Apps.Maps.Core.Layers
         public FloatRangeParameter Weight { get; set; }
         public FloatRangeParameter Blur { get; set; }
 
-        new public void Init(string[] gradient, float radius, float shadow, float weight, float blur)
+        new public void Init()
         {
-            Gradient.Values = gradient;
-            Radius.Value = radius;
-            Shadow.Value = shadow;
-            Weight.Value = weight;
-            Blur.Value = blur;
-
             Prepare();
         }
         new public void Prepare()
@@ -33,7 +27,7 @@ namespace GDO.Apps.Maps.Core.Layers
             {
                 Name = "Gradient",
                 Description = "Custom Gradient",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = true,
                 IsVisible = true,
@@ -44,7 +38,7 @@ namespace GDO.Apps.Maps.Core.Layers
             {
                 Name = "Radius",
                 Description = "Radius of features",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
@@ -57,7 +51,7 @@ namespace GDO.Apps.Maps.Core.Layers
             {
                 Name = "Shadow",
                 Description = "Shadow size of features",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = false,
                 IsVisible = true,
@@ -70,7 +64,7 @@ namespace GDO.Apps.Maps.Core.Layers
             {
                 Name = "Weight",
                 Description = "Weight of features",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = false,
                 IsVisible = true,
@@ -83,7 +77,7 @@ namespace GDO.Apps.Maps.Core.Layers
             {
                 Name = "Blur",
                 Description = "Blur size of features",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,

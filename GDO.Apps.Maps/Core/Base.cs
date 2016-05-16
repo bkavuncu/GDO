@@ -24,56 +24,49 @@ namespace GDO.Apps.Maps.Core
         [JsonProperty(Order = -2)]
         public IntegerParameter Type { get; set; }
 
-        //[JsonProperty(Order = -2)]
-        //public List<string> Editables { get; set; } = new List<string>();
-
-        /*public void AddtoEditables<T>(Expression<Func<T>> expr)
-        {
-            var body = ((MemberExpression)expr.Body);
-            Editables.Add(body.Member.Name);
-        }*/
-
-        public void Prepare()
+        public Base(int id, string name, int type)
         {
             Id = new IntegerParameter
             {
                 Name = "Id",
                 Description = "Id",
-                Priority = (int) GDO.Utility.Priorities.Normal,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.Number,
+                Priority = (int)GDO.Utility.Priorities.Required,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Value = id,
             };
 
             Name = new StringParameter
             {
                 Name = "Name",
                 Description = "Name of the Parameter",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Required,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = true,
-                IsVisible = true
+                IsVisible = true,
+                Value = name,
             };
 
             ClassName = new StringParameter
             {
                 Name = "Class Name",
                 Description = "Name of the Class",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Required,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
             };
 
             Type = new IntegerParameter
             {
                 Name = "Type",
                 Description = "Type",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Priority = (int) GDO.Utility.Priorities.Required,
+                VisualisationType = (int) GDO.Utility.VisualisationTypes.Number,
                 IsEditable = false,
-                IsVisible = false
+                IsVisible = false,
+                Value = type,
             };
         }
-    }
 }

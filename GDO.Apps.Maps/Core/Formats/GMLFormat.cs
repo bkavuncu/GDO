@@ -17,95 +17,78 @@ namespace GDO.Apps.Maps.Core.Formats
         public BooleanParameter MultiSurface { get; set; }
         public StringParameter SchemaLocation { get; set; }
 
-        new public void Init(int gmlVersion, string srsName, bool surface,
-            bool curve, bool multiCurve, bool multiSurface, string schemaLocation)
+        public GMLFormat(int id, string name, int type) : base(id, name, type)
         {
-            Prepare();
-            GMLVersion.Value = gmlVersion;
-            SrsName.Value = srsName;
-            Surface.Value = surface;
-            Curve.Value = curve;
-            MultiCurve.Value = multiCurve;
-            MultiSurface.Value = multiSurface;
-            SchemaLocation.Value = schemaLocation;
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
+
             GMLVersion = new IntegerArrayParameter
             {
                 Name = "GML Version",
                 Description = "GML Version",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
-                Values = new int[3] {1,2,3},
+                Values = new int[3] { 1, 2, 3 },
                 IsEditable = false,
                 IsVisible = true
             };
             SrsName = new StringParameter
             {
                 Name = "SrsName",
-                Description = "SrsName",
-                Priority = (int) GDO.Utility.Priorities.Low,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.String,
+                Description = "SrsName to use when writing geometries",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true
             };
             Surface = new BooleanParameter
             {
                 Name = "Surface",
-                Description = "gml.Surface instead of gml.Polygon",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Write gml:Surface instead of gml:Polygon elements. This also affects the elements in multi-part geometries.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Value = false,
+                Default = false,
                 IsEditable = false,
                 IsVisible = true
             };
             Curve = new BooleanParameter
             {
                 Name = "Curve",
-                Description = "gml.Curve instead of gml.LineString",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Write gml:Curve instead of gml:LineString elements. This also affects the elements in multi-part geometries.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Value = false,
+                Default = false,
                 IsEditable = false,
                 IsVisible = true
             };
             MultiCurve = new BooleanParameter
             {
                 Name = "MultiCurve",
-                Description = "gml.MultiCurve instead of gml.MultiLineString",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Write gml:MultiCurve instead of gml:MultiLineString. Since the latter is deprecated in GML 3.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Value = false,
+                Default = false,
                 IsEditable = false,
                 IsVisible = true
             };
             MultiSurface = new BooleanParameter
             {
                 Name = "MultiSurface",
-                Description = "gml.MultiSurface instead of gml.Polygon",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Write gml:multiSurface instead of gml:MultiPolygon. Since the latter is deprecated in GML 3.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Value = false,
+                Default = false,
                 IsEditable = false,
                 IsVisible = true
             };
             SchemaLocation = new StringParameter
             {
                 Name = "Schema Location",
-                Description = "Optional Schema Location",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Optional schemaLocation to use when writing out the GML, this will override the default provided.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true
             };
-
-        }
-
-        new public void Modify()
-        {
         }
     }
 }

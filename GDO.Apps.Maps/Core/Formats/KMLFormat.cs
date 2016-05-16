@@ -10,26 +10,31 @@ namespace GDO.Apps.Maps.Core.Formats
     public class KMLFormat : Format
     {
         public BooleanParameter ExtractStyles { get; set; }
+        public BooleanParameter ShowPointNames { get; set; }
         public IntegerArrayParameter DefaultStyleIds { get; set; }
 
-        new public void Init(int[]defaultStyleIds, bool extractStyles)
+        public KMLFormat(int id, string name, int type) : base(id, name, type)
         {
-            DefaultStyleIds.Values = defaultStyleIds;
-            ExtractStyles.Value = extractStyles;
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
 
             ExtractStyles = new BooleanParameter
             {
                 Name = "Extract Styles",
-                Description = "Extract Styles from KML",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Extract styles from the KML",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Value = true,
+                Default = true,
+                IsEditable = false,
+                IsVisible = true
+            };
+
+            ShowPointNames = new BooleanParameter
+            {
+                Name = "Show Point Names",
+                Description = "Show names as labels for placemarks which contain points.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
+                Default = true,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -37,16 +42,12 @@ namespace GDO.Apps.Maps.Core.Formats
             DefaultStyleIds = new IntegerArrayParameter
             {
                 Name = "Default Styles",
-                Description = "Style Ids",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Default style. The default default style is the same as Google Earth.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,
                 IsVisible = true
             };
-        }
-
-        new public void Modify()
-        {
         }
     }
 }

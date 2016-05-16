@@ -10,10 +10,9 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public NullableIntegerParameter Preload { get; set; }
 
-        new public void Init(int preload)
+        new public void Init()
         {
             Prepare();
-            Preload.Value = preload;
         }
         new public void Prepare()
         {
@@ -24,7 +23,7 @@ namespace GDO.Apps.Maps.Core.Layers
             {
                 Name = "Preload",
                 Description = "Preloads tiles from low to high resolution up to the defined level",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
                 IsEditable = true,
                 IsVisible = true,

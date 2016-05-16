@@ -10,29 +10,20 @@ namespace GDO.Apps.Maps.Core.Formats
     public class EsriJSONFormat : Format
     {
         public StringParameter GeometryName { get; set; }
-        new public void Init(string geometryName)
+
+        public EsriJSONFormat(int id, string name, int type) : base(id, name, type)
         {
-            GeometryName.Value = geometryName;
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
 
             GeometryName = new StringParameter
             {
                 Name = "Geometry Name",
-                Description = "Geometry Name to use for Feature",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "Geometry name to use when creating features.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true
             };
-        }
-
-        new public void Modify()
-        {
         }
     }
 }
