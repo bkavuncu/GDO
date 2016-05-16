@@ -17,24 +17,10 @@
     this.rotateGDO = true;
     this.GDORotationOffset = 0;
 
-    this.importer = new IMPORTER(this.scene, this.gdo);
+    this.meshCopier = new MESHCOPIER(this.scene, this.gdo);
 
     this.addMeshToScene = function (data) {
-        //this.importer.addMeshesToImport(data);
-        console.log(data);
-
-        data.forEach(function (geo) {
-            var mesh = new BABYLON.Mesh(geo.name, this.scene);
-            mesh.position.copyFrom(geo.position);
-            mesh.rotation.copyFrom(geo.rotation);
-
-            var material = this.scene.getMaterialByName(geo.materialName);
-            mesh.setMaterialByID(material.id);
-
-            var geometry = BABYLON.Geometry.Parse(geo.serializedGeometry, this.scene, "");
-            BABYLON.Geometry.ImportGeometry(geometry, mesh);
-
-        }.bind(this));
+        this.meshCopier.addMeshesToImport(data);
     }
 
     this.addMaterialsToScene = function (data) {
@@ -99,13 +85,15 @@
             SendMaterialsToAllOtherNodes(this.gdo, this.scene, function () {
                 this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Sending Materials finished");
                 this.engine.hideLoadingUI();
-                this.importer.addMeshesToSend(this.scene.meshes);
+                this.meshCopier.addMeshesToSend(this.scene.meshes);
            }.bind(this));
         } else {
             this.engine.hideLoadingUI();
         }
         */
 
+
+        this.meshCopier.addMeshesToSend(this.scene.meshes);
         this.engine.hideLoadingUI();
 
         var frameIndex = 0;
@@ -135,7 +123,9 @@
             }
 
             if (this.showStats) {
-                //this.importer.doWork();
+                if(!this.isControlNode){
+                    this.meshCopier.doWork();
+                }
 
                 // Update and render stats
                 var duration = this.engine.getDeltaTime();
@@ -424,6 +414,9 @@
 
         var configName = this.gdo.net.instance[this.instanceId].configName;
         var config = this.gdo.net.app["WebGL"].config[configName];
+        if (!this.isControlNode) {
+            config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
+        }
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
         if (config.minZ != undefined) {
