@@ -79,8 +79,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\Maps\London.json" />
-    <Content Include="Configurations\Maps\Shangai.json" />
+    <Content Include="Configurations\Maps\Default.json" />
     <None Include="packages.config" />
     <Content Include="Scripts\Maps\gdo.apps.maps.control.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.format.js" />
@@ -177,7 +176,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Configurations\Maps\Data\" />
     <Folder Include="Core\Controls\" />
     <Folder Include="Web\Maps\Images\" />
   </ItemGroup>

@@ -15,7 +15,7 @@ gdo.net.app["HelloWorld"].initClient = function () {
 }
 
 gdo.net.app["HelloWorld"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.app["HelloWorld"].server.requestName(gdo.controlId);
     gdo.consoleOut('.HelloWorld', 1, 'Initializing HelloWorld App Control at Instance ' + gdo.controlId);
 

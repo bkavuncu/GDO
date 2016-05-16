@@ -131,8 +131,107 @@ namespace GDO.Apps.Maps
         }
 
         //View
+        public void AddView(int instanceId, string serializedView)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int viewId = -1;
+                    viewId = maps.AddView(JsonConvert.DeserializeObject<View>(serializedView));
+                    BroadcastView(instanceId, viewId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
-        public void UpdateView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
+        public void UpdateView(int instanceId, int viewId, string serializedView)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.UpdateView(viewId, JsonConvert.DeserializeObject<View>(serializedView));
+                    BroadcastView(instanceId, viewId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void RequestView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedView = maps.GetSerializedView(viewId);
+                    if (serializedView != null)
+                    {
+                        Clients.Caller.receiveView(instanceId, viewId, serializedView, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveView(instanceId, viewId, "", false);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void BroadcastView(int instanceId, int viewId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedView = maps.GetSerializedView(viewId);
+                if (serializedView != null)
+                {
+                    Clients.Group("" + instanceId).receiveView(instanceId, viewId, serializedView, true);
+                    Clients.Caller.receiveView(instanceId, viewId, serializedView, true);
+                }
+                else
+                {
+                    Clients.Group("" + instanceId).receiveView(instanceId, viewId, "", false);
+                    Clients.Caller.receiveSource(instanceId, viewId, "", false);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void RemoveView(int instanceId, int viewId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveView(viewId);
+                    BroadcastView(instanceId, viewId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateCurrentView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
             int zoom, string projection, float rotation, int width, int height)
         {
             lock (Cave.AppLocks[instanceId])
@@ -141,8 +240,8 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
-                    maps.UpdateView(position, projection, rotation, width, height);
-                    BroadcastView(instanceId);
+                    maps.UpdateCurrentView(position, projection, rotation, width, height);
+                    BroadcastCurrentView(instanceId);
                 }
                 catch (Exception e)
                 {
@@ -151,15 +250,15 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void RequestView(int instanceId)
+        public void RequestCurrentView(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedView = maps.GetSerializedView();
-                    //Clients.Caller.receiveView(instanceId, serializedView);
+                    string serializedView = maps.GetSerializedCurrentView();
+                    Clients.Caller.receiveView(instanceId, serializedView);
                 }
                 catch (Exception e)
                 {
@@ -168,11 +267,18 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void BroadcastView(int instanceId)
+        public void BroadcastCurrentView(int instanceId)
         {
             MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-            string serializedView = maps.GetSerializedView();
-            Clients.Group("" + instanceId).receiveView(instanceId,serializedView);
+            string serializedView = maps.GetSerializedCurrentView();
+            Clients.Group("" + instanceId).receiveCurrentView(instanceId,serializedView);
+        }
+
+        public void SetCurrentView(int instanceId, int viewId)
+        {
+            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            maps.UseView(viewId);
+            BroadcastCurrentView(instanceId);
         }
 
         //Layer

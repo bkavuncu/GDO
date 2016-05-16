@@ -45,7 +45,7 @@ $(function () {
 
     $.connection.mapsAppHub.client.receiveView = function (instanceId, serializedView) {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received View');
-        gdo.net.app["Maps"].updateView(instanceId, JSON.parse(serializedView));
+        gdo.net.app["Maps"].updateCurrentView(instanceId, JSON.parse(serializedView));
     }
 
     $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
@@ -127,7 +127,7 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
     gdo.net.instance[instanceId].map = map;
 
 }
-var dm;
+
 gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     //Process deserialized Map
     dm = deserializedMap;
@@ -145,7 +145,7 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
         gdo.net.app["Maps"].addLayer(instanceId, deserializedMap.Layers.$values[i].Id, deserializedMap.Layers.$values[i]);
     }
 
-    gdo.net.app["Maps"].setView(instanceId, deserializedMap.View);
+    gdo.net.app["Maps"].setView(instanceId, deserializedMap.Views.$values[deserializedMap.CurrentView]);
 
     //Register Change Handlers
     gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
@@ -177,7 +177,7 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.app["Maps"].drawMapTable(instanceId);
     }
-    gdo.net.app["Maps"].requestView(instanceId);
+    gdo.net.app["Maps"].requestCurrentView(instanceId);
     gdo.net.app["Maps"].server.requestTemplate(instanceId);
 
     gdo.net.app["Maps"].drawListTables(instanceId);
@@ -323,7 +323,7 @@ gdo.net.app["Maps"].changeEvent = function (instanceId) {
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         if (gdo.net.instance[instanceId].isInitialized) {
             //gdo.net.app["Maps"].updateCenter(instanceId);
-            gdo.net.app["Maps"].uploadView(instanceId);
+            gdo.net.app["Maps"].uploadCurrentView(instanceId);
         }
     }
 }

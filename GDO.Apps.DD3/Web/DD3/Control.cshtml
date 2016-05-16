@@ -110,27 +110,41 @@
                 return pair[1];
             }
         }
-        return (false);
+		return false;
     }
 
-    $(function() {
-        $(document).ready(function() {
-            var gdo = parent.gdo,
-                server = gdo.net.app.DD3.server;
-            gdo.controlId = getUrlVar("controlId");
-            var instanceId,
-                confId,
-                numClients;
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo,
+                    server = gdo.net.app.DD3.server;
+                gdo.controlId = parseInt(getUrlVar("controlId"));
+                var instanceId,
+                    confId,
+                    numClients;
 
-            var test_bench = [];
+                var test_bench = [];
 
-            var callback = function(message) {
-                gdo.consoleOut(".DD3", 4, "Callback Message: " + message);
-                confId = message.configurationId;
-                numClients = message.numClient;
-                if (message.state == 1) {
-                    test_bench[confId] && test_bench[confId]();
-                    test_bench[confId] = null;
+                var callback = function (message) {
+                    gdo.consoleOut(".DD3", 4, "Callback Message: " + message);
+                    confId = message.configurationId;
+                    numClients = message.numClient;
+                    if (message.state == 1) {
+                        test_bench[confId] && test_bench[confId]();
+                        test_bench[confId] = null;
+                        $("#wait").css("display", "none");
+                        if (confId === 6 || confId === 7 || confId === 8 || confId === 9) {  // all of these are Shangai LinkLoad, and should share the control menu
+                            $("#control_6").css("display", "");
+                        }else {
+                            $("#control_" + confId).css("display", "");
+                        }
+                    }
+                };
+
+                var order = function (name, args) {
+                    return JSON.stringify({ name: name, args: args });
+                };
+
+                if (!gdo.net.app["DD3"].initControl) {
                     $("#wait").css("display", "none");
                     if (confId === 6 || confId === 7 || confId === 8 || confId === 9) { // all of these are Shangai LinkLoad, and should share the control menu
                         $("#control_6").css("display", "");

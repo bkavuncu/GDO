@@ -24,6 +24,7 @@
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="../../Scripts/Leeds/ol.css" type="text/css">
     <title></title>
+    @* ReSharper disable once CssNotResolved *@
     <style>
         body {
             background: #181818;
@@ -97,7 +98,7 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.controlId = getUrlVar("controlId");
+                gdo.controlId = parseInt(getUrlVar("controlId"));
                 gdo.net.app["Leeds"].initControl(gdo.controlId);
             });
         });

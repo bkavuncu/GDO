@@ -110,27 +110,27 @@ gdo.net.app["Maps"].addLayerToMap = function(instanceId, layerId) {
 gdo.net.app["Maps"].updateLayer = function (instanceId, layerId, deserializedLayer) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updating Layer: ' + deserializedLayer.Id);
     var layer = gdo.net.instance[instanceId].layers[layerId];
-    layer.setBrightness(deserializedLayer.Brightness);
-    layer.setContrast(deserializedLayer.Contrast);
-    layer.setSaturation(deserializedLayer.Saturation);
-    layer.setHue(deserializedLayer.Hue);
-    layer.setOpacity(deserializedLayer.Opacity);
-    layer.setVisible(deserializedLayer.Visible);
-    layer.setMinResolution(deserializedLayer.MinResolution);
-    layer.setMaxResolution(deserializedLayer.MaxResolution);
+    gdo.net.app["Maps"].setExceptNull(layer,"setBrightness",deserializedLayer.Brightness);
+    gdo.net.app["Maps"].setExceptNull(layer,"setContrast",deserializedLayer.Contrast);
+    gdo.net.app["Maps"].setExceptNull(layer,"setSaturation",deserializedLayer.Saturation);
+    gdo.net.app["Maps"].setExceptNull(layer,"setHue",deserializedLayer.Hue);
+    gdo.net.app["Maps"].setExceptNull(layer,"setOpacity",deserializedLayer.Opacity);
+    gdo.net.app["Maps"].setExceptNull(layer,"setVisible",deserializedLayer.Visible);
+    gdo.net.app["Maps"].setExceptNull(layer,"setMinResolution",deserializedLayer.MinResolution);
+    gdo.net.app["Maps"].setExceptNull(layer,"setMaxResolution",deserializedLayer.MaxResolution);
     switch (deserializedLayer.Type) {
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Heatmap:
-            layer.setGradient(deserializedLayer.Gradient);
-            layer.setRadius(deserializedLayer.Radius);
-            layer.setBlur(deserializedLayer.Blur);
+            gdo.net.app["Maps"].setExceptNull(layer,"setGradient",deserializedLayer.Gradient);
+            gdo.net.app["Maps"].setExceptNull(layer,"setRadius",deserializedLayer.Radius);
+            gdo.net.app["Maps"].setExceptNull(layer,"setBlur",deserializedLayer.Blur);
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Image:
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Tile:
-            layer.setPreload(deserializedLayer.Preload);
+            gdo.net.app["Maps"].setExceptNull(layer,"setPreload",deserializedLayer.Preload);
             break;
         case gdo.net.app["Maps"].LAYER_TYPES_ENUM.Vector:
-            layer.setStyle(gdo.net.instance[instanceId].styles[deserializedLayer.StyleId]);
+            gdo.net.app["Maps"].setExceptNull(layer,"setStyle", gdo.net.instance[instanceId].styles[deserializedLayer.StyleId]);
             break;
         default:
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Layer Type: ' + deserializedLayer.Type + ' for Layer ' + deserializedLayer.Id);

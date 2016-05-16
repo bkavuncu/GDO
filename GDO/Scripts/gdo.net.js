@@ -201,6 +201,14 @@ $(function() {
     }
 
     $.connection.caveHub.connection.stateChanged(gdo.net.connectionStateChanged);
+
+    $.connection.caveHub.client.displayTime = function() {
+        gdo.consoleOut('.NET', 1, 'Time :' + gdo.net.time.getTime());
+    }
+    $.connection.caveHub.client.executeFunction = function (func) {
+        gdo.consoleOut('.NET', 1, 'Executing :' + func);
+        eval(func);
+    }
 });
 
 
@@ -889,7 +897,7 @@ gdo.net.setTimeout = function(func, start) {
     /// <param name="func">The function.</param>
     /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
     /// <returns></returns>
-    setTimeout(func, gdo.net.time - start);
+    setTimeout(func, start - gdo.net.time.getTime());
 }
 
 gdo.net.setInterval = function (statement, start, current, interval, conditionFunc) {

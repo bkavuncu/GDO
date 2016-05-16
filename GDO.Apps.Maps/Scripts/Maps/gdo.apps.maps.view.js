@@ -18,7 +18,7 @@ gdo.net.app["Maps"].setView = function (instanceId, deserializedView) {
     var options = gdo.net.app["Maps"].optionConstructor(properties);
     gdo.net.instance[instanceId].map.setView(new ol.View(options));
     gdo.net.instance[instanceId].view = gdo.net.instance[instanceId].map.getView();
-    gdo.net.app["Maps"].uploadView(instanceId);
+    gdo.net.app["Maps"].uploadCurrentView(instanceId);
 }
 
 gdo.net.app["Maps"].updateView = function (instanceId, deserializedView) {
@@ -44,19 +44,19 @@ gdo.net.app["Maps"].updateView = function (instanceId, deserializedView) {
     start: +new Date()
 });*/
 
-gdo.net.app["Maps"].requestView = function (instanceId) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Requesting view');
-    gdo.net.app["Maps"].server.requestView(instanceId);
+gdo.net.app["Maps"].requestCurrentView = function (instanceId) {
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Requesting current view');
+    gdo.net.app["Maps"].server.requestCurrentView(instanceId);
 }
 
-gdo.net.app["Maps"].uploadView = function(instanceId) {
+gdo.net.app["Maps"].uploadCurrentView = function(instanceId) {
     var center = gdo.net.instance[instanceId].map.getView().getCenter();
     var topLeft = gdo.net.instance[instanceId].map.getCoordinateFromPixel([0, 0]);
     var bottomRight = gdo.net.instance[instanceId].map.getCoordinateFromPixel(gdo.net.instance[instanceId].map.getSize());
     var size = gdo.net.instance[instanceId].map.getSize();
     var width = size[0];
     var height = size[1];
-    gdo.net.app["Maps"].server.updateView(
+    gdo.net.app["Maps"].server.updateCurrentView(
         instanceId,
         topLeft,
         center,

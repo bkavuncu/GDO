@@ -996,6 +996,7 @@
     <Compile Include="Core\States\AppState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utility\BoundaryCalculation.cs" />
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
