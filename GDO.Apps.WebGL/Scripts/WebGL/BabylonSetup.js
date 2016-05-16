@@ -276,12 +276,7 @@
                 this.camera.speed /= 2;
             }
             else if (event.which == 98) {       // b
-                if( this.scene.meshes.length > 0) {
-                    var value = !this.scene.meshes[0].showBoundingBox;
-                    this.scene.meshes.forEach(function (m) {
-                        m.showBoundingBox = value;
-                    });
-                }
+                this.scene.forceShowBoundingBoxes = !this.scene.forceShowBoundingBoxes;
             }
         }.bind(this));
 
