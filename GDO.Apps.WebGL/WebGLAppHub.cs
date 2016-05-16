@@ -24,7 +24,23 @@ namespace GDO.Apps.WebGL
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
-        
+
+        public void SetCameraPosition(int instanceId, Camera camera)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera = camera;
+                    //Clients.Group("" + instanceId).receiveCameraPosition(instanceId, camera);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void RequestCameraPosition(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -41,14 +57,14 @@ namespace GDO.Apps.WebGL
             }
         }
 
-        public void SetCameraPosition(int instanceId, Camera camera)
+        public void CollectStats(int instanceId, bool collectStats)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera = camera;
-                    //Clients.Group("" + instanceId).receiveCameraPosition(instanceId, camera);
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).CollectPerformanceData = collectStats;
+                    Clients.Group("" + instanceId).collectStats(instanceId, collectStats);
                 }
                 catch (Exception e)
                 {
@@ -88,48 +104,17 @@ namespace GDO.Apps.WebGL
             }
         }
 
-        public void ForceNewFrame(int instanceId)
+        public void NotifyReadyForNextFrame(int instanceId, int nodeId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Group("" + instanceId).renderFrame(instanceId, ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void NotifyFrameFinished(int instanceId, int nodeId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    bool allRendered = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).NotifyFrameFinished(nodeId);
+                    bool allRendered = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).NotifyReadyForNextFrame(nodeId);
                     if( allRendered )
                     {
                         Clients.Group("" + instanceId).renderFrame(instanceId, ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera);
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void CollectStats(int instanceId, bool collectStats)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).CollectPerformanceData = collectStats;
-                    Clients.Group("" + instanceId).collectStats(instanceId, collectStats);
                 }
                 catch (Exception e)
                 {

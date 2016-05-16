@@ -11,6 +11,7 @@
     this.camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), this.scene);
 
     this.cameraViewOffset = new BABYLON.Vector3(0, 0, 0);
+    this.receivedFirstCameraUpdate = false;
 
     this.isControlNode = false;
 
@@ -88,35 +89,7 @@
         this.performanceData = {};
     }
 
-    this.render = function (newCamera, onFinish) {
-        this.updateCameraPosition(newCamera);
-        this.scene.render();
-        onFinish();
-    }
-
-    this.modelLoadFinished = function () {
-
-        this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Scene Loading finished");
-
-        if (this.isControlNode) {
-            this.gdo.net.app["WebGL"].server.forceNewFrame(this.instanceId);
-        }
-
-        this.scene.createOrUpdateSelectionOctree();
-        
-        /*
-        if (!this.isControlNode) {
-            SendMaterialsToAllOtherNodes(this.gdo, this.scene, function () {
-                this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Sending Materials finished");
-                this.engine.hideLoadingUI();
-                this.importer.addMeshesToSend(this.scene.meshes);
-           }.bind(this));
-        } else {
-            this.engine.hideLoadingUI();
-        }
-        */
-
-        this.engine.hideLoadingUI();
+    this.updateAndRenderStats = (function () {
 
         var frameIndex = 0;
         var frameSampleSize = 10;
@@ -130,11 +103,80 @@
 
         var activeMeshes = this.scene.getActiveMeshes();
 
-        var clampPointRotationOffset = 0;
+        return function () {
+            // Update and render stats
+            var duration = this.engine.getDeltaTime();
+            maxDuration = Math.max(duration, maxDuration);
+            minDuration = Math.min(duration, minDuration);
+            durationSum += duration;
 
-        this.engine.runRenderLoop(function () {
+            frameIndex++;
 
-            if (this.isControlNode) {
+            if (frameIndex >= frameSampleSize) {
+
+                var data = {};
+                data.timeStamp = this.gdo.net.time.getTime();
+                data.totalVertices = this.scene.getTotalVertices();
+                data.activeMeshes = activeMeshes.length;
+                data.totalMeshes = this.scene.meshes.length;
+                data.maxFrameDuration = maxDuration;
+                data.averageFrameDuration = durationSum / frameSampleSize;
+                data.minFrameDuration = minDuration;
+                data.FPS = this.engine.getFps();
+
+                if (!this.isControlNode) {
+                    this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
+                }
+
+                var position = this.camera.position;
+
+                $('#stats').html("Total vertices: " + data.totalVertices + "<br>"
+                                + "Active Meshes: " + data.activeMeshes + "<br>"
+                                + "Total Meshes: " + data.totalMeshes + "<br>"
+                                + "Max Frame duration: " + data.maxFrameDuration.toFixed(2) + " ms<br>"
+                                + "Average Frame duration: " + data.averageFrameDuration.toFixed(2) + " ms<br>"
+                                + "Min Frame duration: " + data.minFrameDuration.toFixed(2) + " ms<br>"
+                                + "FPS: " + data.FPS.toFixed(2) + "<br>"
+                                + "{ x: " + position.x.toFixed(2) +
+                                    ", y: " + position.y.toFixed(2) +
+                                    ", z: " + position.z.toFixed(2) + " }");
+
+                frameIndex = 0;
+                minDuration = 1000;
+                maxDuration = 0;
+                durationSum = 0;
+            }
+        }.bind(this);
+    }).bind(this)();
+
+    this.updateAndRender = function (newCamera) {
+        this.engine.endFrame();
+        this.engine.beginFrame();
+
+        this.updateCameraPosition(newCamera);
+        this.scene.render();
+
+        if (this.showStats) {
+            this.updateAndRenderStats();
+        }
+    }
+
+    this.modelLoadFinished = function () {
+
+        this.gdo.consoleOut('.WebGL', 1, 'Instance - ' + this.instanceId + ": Scene Loading finished");
+
+        this.scene.createOrUpdateSelectionOctree();
+
+        this.engine.hideLoadingUI();
+
+        if (this.isControlNode) {
+
+            this.gdo.net.app["WebGL"].server.requestCameraPosition(this.instanceId);
+
+            var clampPointRotationOffset = 0;
+
+            this.engine.runRenderLoop(function () {
+
                 this.scene.render();
 
                 if (this.rotateGDO) {
@@ -143,73 +185,35 @@
                 else {
                     this.GDORotationOffset = clampPointRotationOffset - this.camera.rotation.y;
                 }
-            }
 
-            if (this.showStats) {
-                //this.importer.doWork();
+                if (this.showStats) {
+                    //this.importer.doWork();
+                    this.updateAndRenderStats();
+                }
 
-                // Update and render stats
-                var duration = this.engine.getDeltaTime();
-                maxDuration = Math.max(duration, maxDuration);
-                minDuration = Math.min(duration, minDuration);
-                durationSum += duration;
-
-                frameIndex++;
-
-                if (frameIndex >= frameSampleSize) {
-
-                    var data = {};
-                    data.timeStamp = this.gdo.net.time.getTime();
-                    data.totalVertices = this.scene.getTotalVertices();
-                    data.activeMeshes = activeMeshes.length;
-                    data.totalMeshes = this.scene.meshes.length;
-                    data.maxFrameDuration = maxDuration;
-                    data.averageFrameDuration = durationSum / frameSampleSize;
-                    data.minFrameDuration = minDuration;
-                    data.FPS = this.engine.getFps();
-
-                    if (!this.isControlNode) {
-                        this.gdo.net.app["WebGL"].server.addNewPerformanceData(this.instanceId, this.gdo.clientId, data);
-                    }
+                if (this.receivedFirstCameraUpdate) {
 
                     var position = this.camera.position;
+                    var rotation = this.camera.rotation;
 
-                    $('#stats').html("Total vertices: " +           data.totalVertices + "<br>"
-                                    + "Active Meshes: " +           data.activeMeshes + "<br>"
-                                    + "Total Meshes: " +            data.totalMeshes + "<br>"
-                                    + "Max Frame duration: " +      data.maxFrameDuration.toFixed(2) + " ms<br>"
-                                    + "Average Frame duration: " +  data.averageFrameDuration.toFixed(2) + " ms<br>"
-                                    + "Min Frame duration: " +      data.minFrameDuration.toFixed(2) + " ms<br>"
-                                    + "FPS: " +                     data.FPS.toFixed(2) + "<br>"
-                                    + "{ x: " + position.x.toFixed(2) +
-                                      ", y: " + position.y.toFixed(2) +
-                                      ", z: " + position.z.toFixed(2) + " }");
+                    this.camera.upVector.copyFromFloats(Math.sin(rotation.x) * Math.sin(rotation.y),
+                                                        Math.cos(rotation.x),
+                                                        Math.sin(rotation.x) * Math.cos(rotation.y));
 
-                    frameIndex = 0;
-                    minDuration = 1000;
-                    maxDuration = 0;
-                    durationSum = 0;
+                    this.gdo.net.app["WebGL"].server.setCameraPosition(this.instanceId,
+                        {
+                            position: [position.x, position.y, position.z],
+                            upVector: [this.camera.upVector.x, this.camera.upVector.y, this.camera.upVector.z],
+                            GDORotation: rotation.y,
+                            GDORotationOffset: this.GDORotationOffset
+                        });
                 }
-            }
-
-            if (this.isControlNode && this.receivedFirstCameraUpdate) {
-
-                var position = this.camera.position;
-                var rotation = this.camera.rotation;
-
-                this.camera.upVector.copyFromFloats(Math.sin(rotation.x) * Math.sin(rotation.y),
-                                                    Math.cos(rotation.x),
-                                                    Math.sin(rotation.x) * Math.cos(rotation.y));
-
-                this.gdo.net.app["WebGL"].server.setCameraPosition(this.instanceId,
-                    {
-                        position: [position.x, position.y, position.z],
-                        upVector: [this.camera.upVector.x, this.camera.upVector.y, this.camera.upVector.z],
-                        GDORotation: rotation.y,
-                        GDORotationOffset: this.GDORotationOffset
-                    });
-            }
-        }.bind(this));
+            }.bind(this));
+        }
+        else {
+            this.engine.beginFrame();
+            this.gdo.net.app["WebGL"].server.notifyReadyForNextFrame(this.instanceId, this.gdo.clientId);
+        }
     }
 
     this.collectStats = function (collectStats) {
@@ -223,8 +227,6 @@
             $('#stats_toggle').text("Show Stats");
         }
     }
-
-    this.receivedFirstCameraUpdate = false;
 
     this.updateCameraPosition = function (newCamera) {
         this.receivedFirstCameraUpdate = true;
@@ -410,8 +412,6 @@
         }.bind(this));
 
         this.collectStats(false);
-
-        this.gdo.net.app["WebGL"].server.requestCameraPosition(this.instanceId);
 
         var configName = this.gdo.net.instance[this.instanceId].configName;
         var config = this.gdo.net.app["WebGL"].config[configName];

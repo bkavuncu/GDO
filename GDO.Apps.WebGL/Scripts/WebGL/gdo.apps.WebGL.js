@@ -25,9 +25,8 @@ $(function () {
     };
 
     $.connection.webGLAppHub.client.renderFrame = function (instanceId, newCamera) {
-        babylonSetup.render(newCamera, function () {
-            gdo.net.app["WebGL"].server.notifyFrameFinished(instanceId, gdo.clientId);
-        });
+        babylonSetup.updateAndRender(newCamera);
+        gdo.net.app["WebGL"].server.notifyReadyForNextFrame(instanceId, gdo.clientId);
     };
 });
 

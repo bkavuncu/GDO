@@ -54,7 +54,7 @@ namespace GDO.Apps.WebGL
             dataList.Add(data);
         }
 
-        public bool NotifyFrameFinished(int nodeId)
+        public bool NotifyReadyForNextFrame(int nodeId)
         {
             numNodesRendered++;
 
