@@ -7,18 +7,9 @@ namespace GDO.Apps.Maps.Core.Layers
 {
     public class ImageLayer : Layer
     {
-        new public void Init()
+        public ImageLayer(int id, string name, int type, int sourceId) : base(id, name, type, sourceId)
         {
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
-        }
-        new public void Modify()
-        { 
-
         }
     }
 }

@@ -13,24 +13,15 @@ namespace GDO.Apps.Maps.Core.Layers
         public BooleanParameter UpdateWhileAnimating { get; set; }
         public BooleanParameter UpdateWhileInteracting { get; set; }
 
-        new public void Init(int styleId, int renderBuffer, bool updateWhileAnimating, bool updateWhileInteracting)
+        public VectorLayer(int id, string name, int type, int sourceId) : base(id, name, type, sourceId)
         {
-            Prepare();
-            StyleId.Value = styleId;
-            RenderBuffer.Value = renderBuffer;
-            UpdateWhileAnimating.Value = updateWhileAnimating;
-            UpdateWhileInteracting.Value = updateWhileInteracting;
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
 
             StyleId = new LinkParameter
             {
                 Name = "Style Id",
                 Description = "Id of the Style for the Layer",
-                Priority = (int)GDO.Utility.Priorities.High,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
@@ -40,8 +31,8 @@ namespace GDO.Apps.Maps.Core.Layers
             RenderBuffer = new NullableIntegerParameter()
             {
                 Name = "Render Buffer",
-                Description = "Size of the buffer around viewport to be rendered",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "The buffer around the viewport extent used by the renderer when getting features from the vector source for the rendering or hit-detection. Recommended value: the size of the largest symbol, line width or label. Default is 100 pixels.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
                 IsEditable = false,
                 IsVisible = true,
@@ -50,31 +41,24 @@ namespace GDO.Apps.Maps.Core.Layers
             UpdateWhileAnimating = new BooleanParameter
             {
                 Name = "Update while Animating",
-                Description = "Update while Animating",
-                Priority = (int) GDO.Utility.Priorities.Low,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.Boolean,
+                Description = "When set to true, feature batches will be recreated during animations. This means that no vectors will be shown clipped, but the setting will have a performance impact for large amounts of vector data. When set to false, batches will be recreated when no animation is active.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true,
-                Value = false
+                Default = false
             };
 
             UpdateWhileInteracting = new BooleanParameter
             {
                 Name = "Update while Interacting",
-                Description = "Update while Interacting",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "When set to true, feature batches will be recreated during interactions.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true,
-                Value = false
+                Default = false
             };
-
-        }
-
-
-        new public void Modify(int styleId)
-        {
-            StyleId.Value = styleId;
         }
     }
 }

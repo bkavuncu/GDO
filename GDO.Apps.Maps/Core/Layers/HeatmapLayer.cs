@@ -14,13 +14,8 @@ namespace GDO.Apps.Maps.Core.Layers
         public FloatRangeParameter Weight { get; set; }
         public FloatRangeParameter Blur { get; set; }
 
-        new public void Init()
+        public HeatmapLayer(int id, string name, int type, int sourceId) : base(id, name, type, sourceId)
         {
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
 
             Gradient = new StringArrayParameter
@@ -44,7 +39,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 100,
-                Value = 8
+                Default = 8
             };
 
             Shadow = new FloatRangeParameter
@@ -57,7 +52,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1000,
-                Value = 250
+                Default = 250
             };
 
             Weight = new FloatRangeParameter
@@ -70,7 +65,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1,
-                Value = (float?)0.5
+                Default = (float?)0.5
             };
 
             Blur = new FloatRangeParameter
@@ -83,15 +78,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 100,
-                Value = 15
+                Default = 15
             };
-        }
-
-        new public void Modify(string[] gradient, float radius,  float blur)
-        {
-            Gradient.Values = gradient;
-            Radius.Value = radius;
-            Blur.Value = blur;
         }
     }
 }

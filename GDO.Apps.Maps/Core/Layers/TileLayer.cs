@@ -10,30 +10,20 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public NullableIntegerParameter Preload { get; set; }
 
-        new public void Init()
+        public TileLayer(int id, string name, int type, int sourceId) : base(id, name, type, sourceId)
         {
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
 
             Preload = new NullableIntegerParameter
             {
                 Name = "Preload",
-                Description = "Preloads tiles from low to high resolution up to the defined level",
+                Description = "Preload. Load low-resolution tiles up to preload levels. By default preload is 0, which means no preloading.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
                 IsEditable = true,
                 IsVisible = true,
-                Value = 0
+                Default = 0
             };
-        }
-
-        new public void Modify(int preload)
-        {
-            Preload.Value = preload;
         }
     }
 }
