@@ -174,7 +174,7 @@ namespace GDO.Apps.Fractals
                     LightY += LightHeightVal * 5 * (float)Sensitivity;
                     LightZ += LightZDelta;
 
-                    appHub.JoystickSendParams(instanceId);
+                    appHub.SendParams(instanceId);
                 }
 
                 Thread.Sleep(15);

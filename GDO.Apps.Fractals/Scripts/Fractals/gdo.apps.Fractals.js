@@ -3,39 +3,46 @@
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, lightIntensity, lightSize, lightX, lightY, lightZ, iterations, power, red, green, blue, mod) {
+    //$.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, lightIntensity, lightSize, lightX, lightY, lightZ, iterations, power, red, green, blue, mod) {
+    $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
+            var json = JSON.parse(params);
+
             // Set rotation
             var x = ((gdo.clientId - 1) % 16) - 7.5;
             var angle = (315 / 16) * (Math.PI / 180);
-            parameters.xRot = -angle * x + xRot;
-            parameters.yRot = yRot;
+            parameters.xRot = -angle * x + json.XRot;
+            parameters.yRot = json.YRot;
 
-            parameters.xTrans = xTrans;
-            parameters.yTrans = yTrans;
-            parameters.zTrans = zTrans;
+            parameters.xTrans = json.XTrans;
+            parameters.yTrans = json.YTrans;
+            parameters.zTrans = json.ZTrans;
 
-            parameters.maxSteps = maxSteps;
-            parameters.detail = detail;
+            parameters.maxSteps = json.MaxSteps;
+            parameters.detail = json.Detail;
 
-            parameters.iterations = iterations;
-            parameters.power = power;
-            parameters.red = red;
-            parameters.green = green;
-            parameters.blue = blue;
+            parameters.iterations = json.Iterations;
+            parameters.power = json.Power;
+            parameters.red = json.R;
+            parameters.green = json.G;
+            parameters.blue = json.B;
 
-            parameters.ambience = ambience;
-            parameters.lightIntensity = lightIntensity;
-            parameters.lightSize = lightSize;
-            parameters.lightX = lightX;
-            parameters.lightY = lightY;
-            parameters.lightZ = lightZ;
+            parameters.ambience = json.Ambience;
+            parameters.lightIntensity = json.LightIntensity;
+            parameters.lightSize = json.LightSize;
+            parameters.lightX = json.LightX;
+            parameters.lightY = json.LightY;
+            parameters.lightZ = json.LightZ;
 
-            parameters.modToggle = mod;
+            parameters.modToggle = json.Mod;
         }
+    }
+
+    $.connection.fractalsAppHub.client.test = function (json) {
+        gdo.consoleOut('.Fractals', 1, JSON.parse(json).XRot);
     }
 
 });
