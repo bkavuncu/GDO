@@ -33,6 +33,24 @@ namespace GDO.Apps.WebGL
 
         private int numNodesRendered;
 
+        private bool frameSyncActive = false;
+        private bool onLastSyncedFrame = false;
+
+        public bool FrameSyncActive {
+            get { return frameSyncActive; }
+            set {
+                if(value)
+                {
+                    frameSyncActive = true;
+                    onLastSyncedFrame = false;
+                    numNodesRendered = 0;
+                } else
+                {
+                    onLastSyncedFrame = true;
+                }
+            }
+        }
+
         public void Init()
         {
             this.Camera = new Camera();
@@ -61,6 +79,11 @@ namespace GDO.Apps.WebGL
             if(numNodesRendered == Section.NumNodes)
             {
                 numNodesRendered = 0;
+                if(onLastSyncedFrame)
+                {
+                    frameSyncActive = false;
+                    onLastSyncedFrame = false;
+                }
                 return true;
             }
 

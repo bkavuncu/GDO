@@ -4,7 +4,6 @@
     this.gdo = gdo;
 
     this.showStats = false;
-    this.noclip = true;
 
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = createScene(this.engine);
@@ -154,7 +153,6 @@
         }.bind(this);
     }).bind(this)();
 
-
     this.updateAndRender = function (newCamera) {
         this.engine.endFrame();
         this.engine.beginFrame();
@@ -267,8 +265,8 @@
 
         var camera = this.camera;
 
-        camera.applyGravity = !this.noclip;
-        camera.checkCollisions = !this.noclip;
+        camera.applyGravity = false;
+        camera.checkCollisions = false;
         camera.ellipsoid = new BABYLON.Vector3(0.8, 1.9, 0.8);
 
         camera.attachControl(this.canvas);
@@ -289,6 +287,18 @@
             }
             else if (event.which == 98) {       // b
                 this.scene.forceShowBoundingBoxes = !this.scene.forceShowBoundingBoxes;
+            }
+        }.bind(this));
+
+        var frameSyncActive = false;
+        $('#toggle_frame_sync').click(function () {
+            frameSyncActive = !frameSyncActive;
+            this.gdo.net.app["WebGL"].server.setFrameSync(this.instanceId, frameSyncActive);
+
+            if (frameSyncActive) {
+                $('#toggle_frame_sync').text("Disable Frame Sync");
+            } else {
+                $('#toggle_frame_sync').text("Enable Frame Sync");
             }
         }.bind(this));
 
@@ -345,12 +355,13 @@
                 camera.position.copyFromFloats(0, 0, 0);
             });
 
+            var noclipActive = false;
             $('#noclip_toggle').click(function () {
-                this.noclip = !this.noclip;
-                camera.applyGravity = !this.noclip;
-                camera.checkCollisions = !this.noclip;
+                noclipActive = !noclipActive;
+                camera.applyGravity = !noclipActive;
+                camera.checkCollisions = !noclipActive;
 
-                if (this.noclip) {
+                if (noclipActive) {
                     $('#noclip_toggle').text("Disable noclip");
                 } else {
                     $('#noclip_toggle').text("Enable noclip");
@@ -423,7 +434,7 @@
         var configName = this.gdo.net.instance[this.instanceId].configName;
         var config = this.gdo.net.app["WebGL"].config[configName];
         if (!this.isControlNode) {
-            config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
+            //config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
         }
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 

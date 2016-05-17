@@ -110,11 +110,35 @@ namespace GDO.Apps.WebGL
             {
                 try
                 {
-                    bool allRendered = ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).NotifyReadyForNextFrame(nodeId);
-                    if( allRendered )
+                    WebGLApp app = (WebGLApp)Cave.Apps["WebGL"].Instances[instanceId];
+
+                    if (app.FrameSyncActive)
                     {
-                        Clients.Group("" + instanceId).renderFrame(instanceId, ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).Camera);
+                        bool allRendered = app.NotifyReadyForNextFrame(nodeId);
+                        if (allRendered)
+                        {
+                            Clients.Group("" + instanceId).renderFrame(instanceId, app.Camera);
+                        }
                     }
+                    else
+                    {
+                        Clients.Caller.renderFrame(instanceId, app.Camera);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void SetFrameSync(int instanceId, bool frameSyncActive)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((WebGLApp)Cave.Apps["WebGL"].Instances[instanceId]).FrameSyncActive = frameSyncActive;
                 }
                 catch (Exception e)
                 {
