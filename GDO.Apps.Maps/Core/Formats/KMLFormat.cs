@@ -16,6 +16,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public KMLFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.KML;
 
             ExtractStyles = new BooleanParameter
             {

@@ -18,6 +18,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public StrokeStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Stroke;
 
             Color = new StringParameter
             {

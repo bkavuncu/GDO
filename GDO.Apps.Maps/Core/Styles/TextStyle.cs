@@ -22,6 +22,8 @@ namespace GDO.Apps.Maps.Core.Styles
         public TextStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Text;
+
             Font = new StringParameter
             {
                 Name = "Font",

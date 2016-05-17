@@ -19,6 +19,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public VectorSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.Vector;
 
             Format = new LinkParameter
             {

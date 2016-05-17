@@ -7,14 +7,15 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class Zoomify : ImageTileSource
+    public class ZoomifySource : ImageTileSource
     {
         public IntegerArrayParameter Size { get; set; }
         public StringArrayParameter TierSizeCalculation { get; set; }
 
-        public Zoomify()
+        public ZoomifySource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.Zoomify;
 
             Size = new IntegerArrayParameter
             {

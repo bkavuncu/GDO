@@ -16,6 +16,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public CartoDBSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.CartoDB;
 
             Config = new StringParameter
             {

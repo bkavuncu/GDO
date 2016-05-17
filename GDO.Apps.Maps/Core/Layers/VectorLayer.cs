@@ -16,6 +16,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public VectorLayer()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)LayerTypes.Vector;
 
             Style = new LinkParameter
             {

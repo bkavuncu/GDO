@@ -18,6 +18,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public Style()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Style;
 
             FillStyle = new LinkParameter
             {

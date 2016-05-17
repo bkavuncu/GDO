@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public CanvasImageSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.ImageCanvas;
 
             Ratio = new FloatRangeParameter
             {

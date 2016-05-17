@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         public StaticImageSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.ImageStatic;
 
             CrossOrigin = new StringParameter
             {

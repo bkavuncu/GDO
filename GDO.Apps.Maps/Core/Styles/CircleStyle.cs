@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public CircleStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Circle;
 
             FillStyle = new LinkParameter
             {

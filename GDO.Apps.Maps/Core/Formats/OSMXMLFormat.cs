@@ -11,6 +11,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public OSMXMLFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.OSMXML;
         }
     }
 }

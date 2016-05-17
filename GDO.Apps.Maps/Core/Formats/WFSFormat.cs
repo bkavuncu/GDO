@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public WFSFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.WFS;
 
             GMLVersion = new IntegerArrayParameter
             {

@@ -18,6 +18,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public BingMapsSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.BingMaps;
 
             Culture = new StringParameter
             {

@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public HeatmapLayer()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)LayerTypes.Heatmap;
 
             Gradient = new StringArrayParameter
             {

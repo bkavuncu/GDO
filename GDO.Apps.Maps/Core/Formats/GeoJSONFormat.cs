@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public GeoJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.GeoJSON;
 
             GeometryName = new StringParameter
             {

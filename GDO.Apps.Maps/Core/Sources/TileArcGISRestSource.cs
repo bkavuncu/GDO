@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public TileArcGISRestSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.TileArcGISRest;
 
             Params = new StringParameter
             {

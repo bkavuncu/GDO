@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public FillStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Fill;
 
             Color = new StringParameter
             {

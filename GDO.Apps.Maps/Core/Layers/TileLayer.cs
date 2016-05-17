@@ -13,6 +13,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public TileLayer()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)LayerTypes.Tile;
 
             Preload = new NullableIntegerParameter
             {

@@ -20,6 +20,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public GMLFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.GML;
 
             GMLVersion = new IntegerArrayParameter
             {

@@ -7,16 +7,17 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class TileWMS : ImageTileSource
+    public class TileWMSSource : ImageTileSource
     {
         public StringParameter Params { get; set; }
         public NullableIntegerParameter Gutter { get; set; }
         public BooleanParameter Hidpi { get; set; }
         public StringArrayParameter ServerType { get; set; }
 
-        public TileWMS()
+        public TileWMSSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.TileWMS;
 
             Params = new StringParameter
             {

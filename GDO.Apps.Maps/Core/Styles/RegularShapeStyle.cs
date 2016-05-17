@@ -20,6 +20,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public RegularShapeStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.RegularShape;
 
             FillStyle = new LinkParameter
             {

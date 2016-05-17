@@ -13,6 +13,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public MapQuestSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.MapQuest;
 
             Layer = new StringArrayParameter
             {

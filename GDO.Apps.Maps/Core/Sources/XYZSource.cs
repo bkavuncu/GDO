@@ -11,6 +11,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public XYZSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.XYZ;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public TopoJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.TopoJSON;
 
             DefaultDataProjection = new StringParameter
             {

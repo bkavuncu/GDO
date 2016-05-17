@@ -27,6 +27,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public ImageTileSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.TileImage;
 
             CacheSize = new NullableIntegerParameter
             {

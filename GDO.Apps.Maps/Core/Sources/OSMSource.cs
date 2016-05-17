@@ -10,6 +10,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public OSMSource()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)SourceTypes.OSM;
         }
     }
 }

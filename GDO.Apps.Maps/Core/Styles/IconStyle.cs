@@ -22,6 +22,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public IconStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Icon;
 
             CrossOrigin = new StringParameter
             {

@@ -30,8 +30,8 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Id",
                 Description = "Id",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
+                Priority = (int) GDO.Utility.Priorities.Required,
+                VisualisationType = (int) GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true,
             };
@@ -40,8 +40,8 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Name",
                 Description = "Name of the Parameter",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
+                Priority = (int) GDO.Utility.Priorities.Required,
+                VisualisationType = (int) GDO.Utility.VisualisationTypes.String,
                 IsEditable = true,
                 IsVisible = true,
             };
@@ -50,8 +50,8 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Class Name",
                 Description = "Name of the Class",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
+                Priority = (int) GDO.Utility.Priorities.Required,
+                VisualisationType = (int) GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
             };
@@ -66,4 +66,5 @@ namespace GDO.Apps.Maps.Core
                 IsVisible = false,
             };
         }
+    }
 }

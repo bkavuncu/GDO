@@ -16,6 +16,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public ImageStyle()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Image;
 
             Opacity = new FloatRangeParameter
             {

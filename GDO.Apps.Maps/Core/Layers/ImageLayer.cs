@@ -10,6 +10,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public ImageLayer()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)LayerTypes.Image;
         }
     }
 }

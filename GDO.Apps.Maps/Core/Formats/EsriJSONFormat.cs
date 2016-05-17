@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public EsriJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.EsriJSON;
 
             GeometryName = new StringParameter
             {
