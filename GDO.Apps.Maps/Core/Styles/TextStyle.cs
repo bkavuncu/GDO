@@ -9,151 +9,121 @@ namespace GDO.Apps.Maps.Core.Styles
     public class TextStyle : Core.Style
     {
         public StringParameter Font { get; set; }
-        public IntegerParameter OffsetX { get; set; }
-        public IntegerParameter OffsetY { get; set; }
+        public NullableIntegerParameter OffsetX { get; set; }
+        public NullableIntegerParameter OffsetY { get; set; }
         public FloatParameter Scale { get; set; }
         public FloatParameter Rotation { get; set; }
         public StringParameter Content { get; set; }
         public StringArrayParameter TextAlign { get; set; }
         public StringArrayParameter TextBaseLine { get; set; }
-        public LinkParameter FillStyleId { get; set; }
-        public LinkParameter StrokeStyleId { get; set; }
+        public LinkParameter FillStyle { get; set; }
+        public LinkParameter StrokeStyle { get; set; }
 
-        new public void Init(string font, int offsetX, int offsetY, float scale, float rotation, string content,
-            string textAlign, string textBaseLine, int fillStyleId, int strokeStyleId)
+        public TextStyle()
         {
-            Prepare();
-            Font.Value = font;
-            OffsetX.Value = offsetX;
-            OffsetY.Value = offsetY;
-            Scale.Value = scale;
-            Rotation.Value = rotation;
-            Content.Value = content;
-            TextAlign.Value = textAlign;
-            TextBaseLine.Value = textBaseLine;
-            FillStyleId.Value = fillStyleId;
-            StrokeStyleId.Value = strokeStyleId;
-        }
-
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
             Font = new StringParameter
             {
                 Name = "Font",
-                Description = "Font",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Description = "Font style as CSS 'font' value",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = true,
                 IsVisible = true,
-                Value = "10px sans-serif"
+                DefaultValue = "10px sans-serif"
             };
-            OffsetX = new IntegerParameter
+            OffsetX = new NullableIntegerParameter
             {
                 Name = "Offset X",
-                Description = "Offset X",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Description = "Horizontal text offset in pixels. A positive will shift the text right.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
-                Value = 0,
+                DefaultValue = 0,
             };
-            OffsetY = new IntegerParameter
+            OffsetY = new NullableIntegerParameter
             {
                 Name = "Offset Y",
-                Description = "Offset Y",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Description = "Vertical text offset in pixels. A positive will shift the text down.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
-                Value = 0,
+                DefaultValue = 0,
             };
             Scale = new FloatParameter
             {
                 Name = "Scale",
                 Description = "Scale",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Float,
                 IsEditable = true,
                 IsVisible = true,
-                Value = 1,
+                DefaultValue = 1,
             };
             Rotation = new FloatParameter
             {
                 Name = "Rotation",
-                Description = "Rotation",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Description = "Rotation in radians",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Float,
                 IsEditable = true,
                 IsVisible = true,
-                Value = 0,
+                DefaultValue = 0,
             };
             Content = new StringParameter
             {
                 Name = "Content",
-                Description = "Content",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Description = "Text Content",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = true,
                 IsVisible = true,
-                Value = ""
+                DefaultValue = ""
             };
             TextAlign = new StringArrayParameter
             {
                 Name = "Text Align",
-                Description = "Text Align",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Description = "Text Alignment",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                Values = new string[5]{"left","right","center","end","start"},
-                Value = "start"
+                DefaultValues = new string[5] { "left", "right", "center", "end", "start" },
+                DefaultValue = "start"
             };
             TextBaseLine = new StringArrayParameter
             {
                 Name = "Text Baseline",
                 Description = "Text Baseline",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                Values = new string[6] { "bottom", "top", "middle", "alphabetic", "hanging", "ideographic" },
-                Value = "alphabetic"
+                DefaultValues = new string[6] { "bottom", "top", "middle", "alphabetic", "hanging", "ideographic" },
+                DefaultValue = "alphabetic"
             };
-            FillStyleId = new LinkParameter
+            FillStyle = new LinkParameter
             {
                 Name = "Fill Style",
                 Description = "Select Fill Style",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "FillStyle"
             };
-            StrokeStyleId = new LinkParameter
+            StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
                 Description = "Select Stroke Style",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "StrokeStyle"
             };
-        }
-
-        new public void Modify(string font, float scale, float rotation, string content,
-            string textAlign, string textBaseLine, int fillStyleId, int strokeStyleId)
-        {
-            Font.Value = font;
-            Scale.Value = scale;
-            Rotation.Value = rotation;
-            Content.Value = content;
-            TextAlign.Value = textAlign;
-            TextBaseLine.Value = textBaseLine;
-            FillStyleId.Value = fillStyleId;
-            StrokeStyleId.Value = strokeStyleId;
         }
     }
 }

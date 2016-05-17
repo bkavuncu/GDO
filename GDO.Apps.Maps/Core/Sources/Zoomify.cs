@@ -19,7 +19,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Size = new IntegerArrayParameter
             {
                 Name = "Size",
-                Description = "Size of the image.",
+                Description = "Size of the image (Width,Height).",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,

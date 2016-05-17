@@ -7,13 +7,6 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Styles
 {
-    enum OriginTypes
-    {
-        BottomLeft = 1,
-        BottomRight = 2,
-        TopLeft = 3,
-        TopRight = 4
-    }
     public class IconStyle : Styles.ImageStyle
     {
         public StringParameter CrossOrigin { get; set; }
@@ -22,145 +15,110 @@ namespace GDO.Apps.Maps.Core.Styles
         public FloatArrayParameter Offset { get; set; }
         public StringArrayParameter OffsetOrigin { get; set; }
         public BooleanParameter SnapToPixel { get; set; }
-        public NullableIntegerParameter Width { get; set; }
-        public NullableIntegerParameter Height { get; set; }
-        public NullableIntegerParameter ImageWidth { get; set; }
-        public NullableIntegerParameter ImageHeight { get; set; }
+        public IntegerArrayParameter Size { get; set; }
+        public IntegerArrayParameter ImageSize { get; set; }
         public StringParameter ImageSource { get; set; }
 
-        new public void Init(string crossOrigin, float[] anchor, string anchorOrigin, float[] offset, string offsetOrigin, float opacity, float scale, bool snapToPixel,
-            float rotation, int width, int height, int imageWidth, int imageHeight, string imageSource)
+        public IconStyle()
         {
-            Prepare();
-            base.Init(opacity, rotation, scale);
-            CrossOrigin.Value = crossOrigin;
-            Anchor.Values = anchor;
-            AnchorOrigin.Value = anchorOrigin;
-            Offset.Values = offset;
-            OffsetOrigin.Value = offsetOrigin;
-            SnapToPixel.Value = snapToPixel;
-            Width.Value = width;
-            Height.Value = height;
-            ImageWidth.Value = imageWidth;
-            ImageHeight.Value = imageHeight;
-            ImageSource.Value = imageSource;
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
             ClassName.Value = this.GetType().Name;
 
             CrossOrigin = new StringParameter
             {
                 Name = "Crossorigin",
-                Description = "Required for WebGL render",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Description = "The crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you are using the WebGL renderer or if you want to access pixel data with the Canvas renderer. ",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true
             };
+
             Anchor = new FloatArrayParameter
             {
                 Name = "Anchor",
                 Description = "Anchor",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,
                 IsVisible = true,
-                Values = new float[2] {(float)0.5, (float)0.5 }
+                DefaultValues = new float[2] { (float)0.5, (float)0.5 }
             };
+
             AnchorOrigin = new StringArrayParameter
             {
                 Name = "Anchor Origin",
-                Description = "Select Anchor Origin",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Description = "Origin of the anchor",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
-                Values = new string[4] { "bottom - left", "bottom - right", "top - left", "top - right" },
-                Value = "top - left"
+                DefaultValues = new string[4] { "bottom - left", "bottom - right", "top - left", "top - right" },
+                DefaultValue = "top - left"
             };
+
             Offset = new FloatArrayParameter
             {
                 Name = "Offset",
                 Description = "Offset",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,
                 IsVisible = true,
-                Values = new float[2] { (float)0, (float)0 }
+                DefaultValues = new float[2] { (float)0, (float)0 }
             };
+
             OffsetOrigin = new StringArrayParameter
             {
                 Name = "Offset Origin",
-                Description = "Select Offset Origin",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Description = "Origin of the offset",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
-                Values = new string[4] { "bottom - left", "bottom - right", "top - left", "top - right" },
-                Value = "top - left"
+                DefaultValues = new string[4] { "bottom - left", "bottom - right", "top - left", "top - right" },
+                DefaultValue = "top - left"
             };
+
             SnapToPixel = new BooleanParameter
             {
-                Name = "SnapToPixel",
-                Description = "Rendering Style",
-                Priority = (int)GDO.Utility.Priorities.Low,
+                Name = "Snap To Pixel",
+                Description = "If true integral numbers of pixels are used as the X and Y pixel coordinate when drawing the icon in the output canvas. If false fractional numbers may be used. Using true allows for sharp rendering (no blur), while using false allows for accurate rendering. Note that accuracy is important if the icon's position is animated. Without it, the icon may jitter noticeably. Default value is true.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Value = true,
+                DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
             };
-            Width = new NullableIntegerParameter
+
+            Size = new IntegerArrayParameter
             {
-                Name = "Width",
-                Description = "Width",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Name = "Size",
+                Description = "Icon size in pixel. Can be used together with offset to define the sub-rectangle to use from the origin (sprite) icon image.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,
                 IsVisible = true
             };
-            Height = new NullableIntegerParameter
+
+            ImageSize = new IntegerArrayParameter
             {
-                Name = "Height",
-                Description = "Height",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                Name = "ImageSize",
+                Description = "Image size in pixels. Only required if img is set and src is not, and for SVG images in Internet Explorer 11. The provided imgSize needs to match the actual size of the image.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,
                 IsVisible = true
             };
-            ImageWidth = new NullableIntegerParameter
-            {
-                Name = "Image Height",
-                Description = "Image Height",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
-                IsEditable = false,
-                IsVisible = true
-            };
-            ImageHeight = new NullableIntegerParameter
-            {
-                Name = "Image Height",
-                Description = "Image Height",
-                Priority = (int)GDO.Utility.Priorities.Normal,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
-                IsEditable = false,
-                IsVisible = true
-            };
+
             ImageSource = new StringParameter
             {
                 Name = "Image Source",
-                Description = "Image Source",
-                Priority = (int)GDO.Utility.Priorities.Normal,
+                Description = "Image Source URI",
+                Priority = (int)GDO.Utility.Priorities.Required,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true
             };
-        }
-
-        new public void Modify(float opacity, float rotation, float scale)
-        {
-            base.Modify(opacity, rotation, scale);
         }
     }
 }
