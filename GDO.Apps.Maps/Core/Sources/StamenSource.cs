@@ -2,33 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using GDO.Apps.Maps.Core.Sources.Tiles;
+using GDO.Apps.Maps.Core.Sources;
+using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
     public class StamenSource : XYZSource
     {
-        public string Layer { get; set; }
-        new public void Init(string crossOrigin, bool opaque, string projection, string url, string layer)
-        {
-            Layer = layer;
-            CrossOrigin = crossOrigin;
-            Opaque = opaque;
-            Projection = projection;
-            Url = url;
+        public StringArrayParameter Layer { get; set; }
 
-            Prepare();
-        }
-        new public void Prepare()
+        public StamenSource()
         {
-            base.Prepare();
-            ClassName = this.GetType().Name;
-            AddtoEditables(() => Url);
-        }
+            ClassName.Value = this.GetType().Name;
 
-        new public void Modify(string url)
-        {
-            Url = url;
+            Layer = new StringArrayParameter
+            {
+                Name = "Layer",
+                Description = "Layer",
+                Priority = (int)GDO.Utility.Priorities.Required,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
+                IsEditable = false,
+                IsVisible = true,
+                DefaultValues = new string[3] { "toner", "terrain", "watercolor" },
+            };
         }
     }
 }

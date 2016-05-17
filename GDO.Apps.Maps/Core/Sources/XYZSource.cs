@@ -2,34 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using GDO.Apps.Maps.Core.Sources.Tiles;
+using GDO.Apps.Maps.Core.Sources;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
     public class XYZSource : ImageTileSource
     {
-        public string Projection { get; set; }
-        public string Url { get; set; }
-
-        new public void Init(string crossOrigin, bool opaque, string projection, string url)
+        public XYZSource()
         {
-            CrossOrigin = crossOrigin;
-            Opaque = opaque;
-            Projection = projection;
-            Url = url;
-
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
-            ClassName = this.GetType().Name;
-            AddtoEditables(() => Url);
-        }
-
-        new public void Modify(string url)
-        {
-            Url = url;
+            ClassName.Value = this.GetType().Name;
         }
     }
 }

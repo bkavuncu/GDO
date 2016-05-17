@@ -8,7 +8,7 @@ namespace GDO.Apps.Maps.Core.Formats
 {
     public class OSMXMLFormat : Format
     {
-        public OSMXMLFormat(int id, string name, int type) : base(id, name, type)
+        public OSMXMLFormat()
         {
             ClassName.Value = this.GetType().Name;
         }

@@ -11,7 +11,7 @@ namespace GDO.Apps.Maps.Core.Formats
     {
         public StringParameter DefaultDataProjection { get; set; }
 
-        public TopoJSONFormat(int id, string name, int type, string defaultDataProjection) : base(id, name, type)
+        public TopoJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
 
@@ -23,8 +23,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
-                Default = "EPSG:4326",
-                Value = defaultDataProjection
+                DefaultValue = "EPSG:4326",
             };
         }
     }

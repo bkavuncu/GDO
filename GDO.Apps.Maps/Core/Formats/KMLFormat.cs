@@ -13,7 +13,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public BooleanParameter ShowPointNames { get; set; }
         public IntegerArrayParameter DefaultStyleIds { get; set; }
 
-        public KMLFormat(int id, string name, int type) : base(id, name, type)
+        public KMLFormat()
         {
             ClassName.Value = this.GetType().Name;
 
@@ -23,7 +23,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "Extract styles from the KML",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Default = true,
+                DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -34,7 +34,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "Show names as labels for placemarks which contain points.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Default = true,
+                DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
             };

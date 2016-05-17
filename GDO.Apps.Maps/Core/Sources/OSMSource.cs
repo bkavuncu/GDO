@@ -7,5 +7,9 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class OSMSource : XYZSource
     {
+        public OSMSource()
+        {
+            ClassName.Value = this.GetType().Name;
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public IntegerArrayParameter GMLVersion { get; set; }
         public StringParameter SchemaLocation { get; set; }
 
-        public WFSFormat(int id, string name, int type) : base(id, name, type)
+        public WFSFormat()
         {
             ClassName.Value = this.GetType().Name;
 
@@ -22,7 +22,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "GML Version",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
-                Values = new int[3] { 1, 2, 3 },
+                DefaultValues = new int[3] { 1, 2, 3 },
                 IsEditable = false,
                 IsVisible = true
             };

@@ -41,7 +41,7 @@ namespace GDO.Apps.Maps.Core
     };
     public class Source : Base
     {
-        public Source(int id, string name, int type) : base(id, name, type)
+        public Source()
         {
             ClassName.Value = this.GetType().Name;
         }

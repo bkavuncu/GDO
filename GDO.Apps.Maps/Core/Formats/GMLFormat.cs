@@ -17,7 +17,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public BooleanParameter MultiSurface { get; set; }
         public StringParameter SchemaLocation { get; set; }
 
-        public GMLFormat(int id, string name, int type) : base(id, name, type)
+        public GMLFormat()
         {
             ClassName.Value = this.GetType().Name;
 
@@ -27,7 +27,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "GML Version",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
-                Values = new int[3] { 1, 2, 3 },
+                DefaultValues = new int[3] { 1, 2, 3 },
                 IsEditable = false,
                 IsVisible = true
             };
@@ -46,7 +46,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "Write gml:Surface instead of gml:Polygon elements. This also affects the elements in multi-part geometries.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Default = false,
+                DefaultValue = false,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -56,7 +56,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "Write gml:Curve instead of gml:LineString elements. This also affects the elements in multi-part geometries.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Default = false,
+                DefaultValue = false,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -66,7 +66,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "Write gml:MultiCurve instead of gml:MultiLineString. Since the latter is deprecated in GML 3.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Default = false,
+                DefaultValue = false,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -76,7 +76,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Description = "Write gml:multiSurface instead of gml:MultiPolygon. Since the latter is deprecated in GML 3.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
-                Default = false,
+                DefaultValue = false,
                 IsEditable = false,
                 IsVisible = true
             };

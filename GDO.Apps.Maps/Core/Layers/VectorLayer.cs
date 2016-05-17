@@ -8,19 +8,19 @@ namespace GDO.Apps.Maps.Core.Layers
 {
     public class VectorLayer : Layer
     {
-        public LinkParameter StyleId { get; set; }
+        public LinkParameter Style { get; set; }
         public NullableIntegerParameter RenderBuffer { get; set; }
         public BooleanParameter UpdateWhileAnimating { get; set; }
         public BooleanParameter UpdateWhileInteracting { get; set; }
 
-        public VectorLayer(int id, string name, int type, int sourceId) : base(id, name, type, sourceId)
+        public VectorLayer()
         {
             ClassName.Value = this.GetType().Name;
 
-            StyleId = new LinkParameter
+            Style = new LinkParameter
             {
-                Name = "Style Id",
-                Description = "Id of the Style for the Layer",
+                Name = "Style",
+                Description = "Layer style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
@@ -33,7 +33,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 Name = "Render Buffer",
                 Description = "The buffer around the viewport extent used by the renderer when getting features from the vector source for the rendering or hit-detection. Recommended value: the size of the largest symbol, line width or label. Default is 100 pixels.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true,
             };
@@ -46,7 +46,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true,
-                Default = false
+                DefaultValue = false
             };
 
             UpdateWhileInteracting = new BooleanParameter
@@ -57,7 +57,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true,
-                Default = false
+                DefaultValue = false
             };
         }
     }

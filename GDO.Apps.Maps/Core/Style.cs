@@ -22,7 +22,7 @@ namespace GDO.Apps.Maps.Core
 
     public class Style : Base
     {
-        public Style (int id, string name, int type) : base (id, name, type)
+        public Style () : base ()
         {
             ClassName.Value = this.GetType().Name;
         }

@@ -129,7 +129,6 @@
     <Compile Include="Core\Sources\StaticImageSource.cs" />
     <Compile Include="Core\Sources\TileArcGISRestSource.cs" />
     <Compile Include="Core\Sources\TileWMS.cs" />
-    <Compile Include="Core\Sources\VectorImageSource.cs" />
     <Compile Include="Core\Sources\StamenSource.cs" />
     <Compile Include="Core\Sources\ImageTileSource.cs" />
     <Compile Include="Core\Sources\VectorSource.cs" />

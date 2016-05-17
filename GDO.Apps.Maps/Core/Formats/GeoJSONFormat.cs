@@ -12,7 +12,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public StringParameter GeometryName { get; set; }
         public StringParameter DefaultDataProjection { get; set; }
 
-        public GeoJSONFormat(int id, string name, int type) : base(id, name, type)
+        public GeoJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
 
@@ -34,7 +34,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
-                Default = "EPSG:4326"
+                DefaultValue = "EPSG:4326"
             };
         }
     }

@@ -34,7 +34,7 @@ namespace GDO.Apps.Maps.Core
     };
     public class Format : Base
     {
-        public Format(int id, string name, int type) : base (id, name, type)
+        public Format() : base ()
         {
             ClassName.Value = this.GetType().Name;
         }

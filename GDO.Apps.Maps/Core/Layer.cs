@@ -21,7 +21,7 @@ namespace GDO.Apps.Maps.Core
     public class Layer : Base
     {
         [JsonProperty(Order = -1)]
-        public LinkParameter SourceId { get; set; }
+        public LinkParameter Source { get; set; }
 
         [JsonProperty(Order = -1)]
         public FloatRangeParameter Opacity { get; set; }
@@ -41,20 +41,19 @@ namespace GDO.Apps.Maps.Core
         [JsonProperty(Order = -1)]
         public NullableIntegerParameter MaxResolution { get; set; }
 
-        public Layer(int id, string name, int type, int sourceId) : base (id, name, type)
+        public Layer() : base ()
         {
             ClassName.Value = this.GetType().Name;
 
-            SourceId = new LinkParameter
+            Source = new LinkParameter
             {
-                Name = "Source Id",
-                Description = "Id of the source for this layer",
+                Name = "Source",
+                Description = "The source for this layer",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "Source",
-                Value = sourceId
             };
 
             Opacity = new FloatRangeParameter
@@ -67,7 +66,7 @@ namespace GDO.Apps.Maps.Core
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1,
-                Default = 1
+                DefaultValue = 1
             };
 
             ZIndex = new IntegerParameter
@@ -75,10 +74,10 @@ namespace GDO.Apps.Maps.Core
                 Name = "ZIndex",
                 Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = false,
-                Default = 0
+                DefaultValue = 0
             };
 
             Visible = new BooleanParameter
@@ -89,7 +88,7 @@ namespace GDO.Apps.Maps.Core
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = true,
                 IsVisible = false,
-                Default = true
+                DefaultValue = true
             };
 
             Extent = new DoubleArrayParameter
@@ -107,7 +106,7 @@ namespace GDO.Apps.Maps.Core
                 Name = "Minimum Resolution",
                 Description = "The minimum resolution (inclusive) at which this layer will be visible.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
             };
@@ -117,7 +116,7 @@ namespace GDO.Apps.Maps.Core
                 Name = "Maximum Resolution",
                 Description = "The maximum resolution (exclusive) below which this layer will be visible.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Number,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
             };
