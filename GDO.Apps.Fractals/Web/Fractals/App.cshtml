@@ -13,14 +13,13 @@
     <canvas id="glscreen"></canvas>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/Fractals/gdo.apps.Fractals.webgl.js"></script>
-    <script src="../../Scripts/Fractals/gdo.apps.Fractals.params.js"></script>
+   
+    
     <script>
         $(function () {          
             $(document).ready(function () {
-                params = new params(0.0, 0.0, 0.0, 0.0, 0.0, -2.0, 100, -3.0, 0.5, 50, 0.25, 4.0, 2.0, -2.0, 16, 8.0, 1.0, 0.0, 0.0, 0.0);
                 var gdo = parent.gdo;
-                gdo.net.app["Fractals"].initClient(params);
+                gdo.net.app["Fractals"].initClient();
             });
         });
     </script>

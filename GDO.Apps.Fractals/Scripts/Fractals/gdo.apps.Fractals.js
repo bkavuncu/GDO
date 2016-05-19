@@ -1,68 +1,71 @@
-﻿var parameters;
+﻿
+
 
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
-    //$.connection.fractalsAppHub.client.updateParams = function (instanceId, xRot, yRot, xTrans, yTrans, zTrans, maxSteps, detail, ambience, lightIntensity, lightSize, lightX, lightY, lightZ, iterations, power, red, green, blue, mod) {
-    $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
-            var json = JSON.parse(params);
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-            // Set rotation
-            var x = ((gdo.clientId - 1) % 16) - 7.5;
-            var angle = (315 / 16) * (Math.PI / 180);
-            parameters.xRot = -angle * x + json.XRot;
-            parameters.yRot = json.YRot;
+                var json = JSON.parse(params);
 
-            parameters.xTrans = json.XTrans;
-            parameters.yTrans = json.YTrans;
-            parameters.zTrans = json.ZTrans;
+                // Set rotation
+                var x = ((gdo.clientId - 1) % 16) - 7.5;
+                var angle = (315 / 16) * (Math.PI / 180);
+                parameters.xRot = -angle * x + json.XRot;
+                parameters.yRot = json.YRot;
 
-            parameters.maxSteps = json.MaxSteps;
-            parameters.detail = json.Detail;
+                parameters.xTrans = json.XTrans;
+                parameters.yTrans = json.YTrans;
+                parameters.zTrans = json.ZTrans;
 
-            parameters.iterations = json.Iterations;
-            parameters.power = json.Power;
-            parameters.red = json.R;
-            parameters.green = json.G;
-            parameters.blue = json.B;
+                parameters.maxSteps = json.MaxSteps;
+                parameters.detail = json.Detail;
 
-            parameters.ambience = json.Ambience;
-            parameters.lightIntensity = json.LightIntensity;
-            parameters.lightSize = json.LightSize;
-            parameters.lightX = json.LightX;
-            parameters.lightY = json.LightY;
-            parameters.lightZ = json.LightZ;
+                parameters.iterations = json.Iterations;
+                parameters.power = json.Power;
+                parameters.red = json.R;
+                parameters.green = json.G;
+                parameters.blue = json.B;
 
-            parameters.modToggle = json.Mod;
-        }
-    }
+                parameters.ambience = json.Ambience;
+                parameters.lightIntensity = json.LightIntensity;
+                parameters.lightSize = json.LightSize;
+                parameters.lightX = json.LightX;
+                parameters.lightY = json.LightY;
+                parameters.lightZ = json.LightZ;
 
-    $.connection.fractalsAppHub.client.test = function (json) {
-        gdo.consoleOut('.Fractals', 1, JSON.parse(json).XRot);
-    }
+                parameters.modToggle = json.Mod;
+            
+            }
+        };
 
 });
 
-gdo.net.app["Fractals"].initClient = function (params) {
+gdo.net.app["Fractals"].initClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Client at Node ' + gdo.clientId);
+
+    gdo.loadScript('params', 'Fractals', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('webgl', 'Fractals', gdo.SCRIPT_TYPE.APP);
+    
+    parameters = new params();
+    locations = new locs();
 
     // Set horizontal rotation
     var x = ((gdo.clientId - 1) % 16) - 7.5;
     var angle = (315 / 16) * (Math.PI / 180);
-    params.xRot = -angle * x;
+    parameters.xRot = -angle * x;
 
     // Set vertical height
     var y = Math.floor((gdo.clientId - 1) / 16) - 1.5;
     var ratio = (1080 / 1920);
-    params.yHeight = 2.0 * ratio * y;
-    gdo.consoleOut('.Fractals', 1, 'Eye height = ' + params.yHeight);
+    parameters.yHeight = 2.0 * ratio * y;
+    gdo.consoleOut('.Fractals', 1, 'Eye height = ' + parameters.yHeight);
 
-    parameters = params;
-
+    initWebgl();
 }
 
 gdo.net.app["Fractals"].initControl = function () {

@@ -1,17 +1,15 @@
 ﻿var gl;
 var canvas;
 
-window.onload = init;
-
-function init() {
+function initWebgl() {
 
     // Set up canvas
-    canvas = document.getElementById('glscreen');
+    canvas = $("iframe").contents().find("#glscreen")[0];
     gl = canvas.getContext('experimental-webgl');
-    //canvas.width = 960;
-    //canvas.height = 540;
-    canvas.width = 1920;
-    canvas.height = 1080;
+    canvas.width = 960;
+    canvas.height = 540;
+    //canvas.width = 1920;
+    //canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -38,14 +36,14 @@ function init() {
     var fragmentShader;
 
     // Compile vertex shader
-    shaderScript = document.getElementById("2d-vertex-shader");
+    shaderScript = $("iframe").contents().find("#2d-vertex-shader")[0];
     shaderSource = shaderScript.text;
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, shaderSource);
     gl.compileShader(vertexShader);
 
     // Compile fragment shader
-    shaderScript = document.getElementById("2d-fragment-shader");
+    shaderScript = $("iframe").contents().find("#2d-fragment-shader")[0];
     shaderSource = shaderScript.text;
     fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, shaderSource);
@@ -59,68 +57,68 @@ function init() {
     gl.useProgram(program);
 
     // Setup rotations
-    xRotLoc = gl.getUniformLocation(program, "xRot");
-    gl.uniform1f(xRotLoc, params.xRot);
-    yRotLoc = gl.getUniformLocation(program, "yRot");
-    gl.uniform1f(yRotLoc, params.yRot);
+    locations.xRotLoc = gl.getUniformLocation(program, "xRot");
+    gl.uniform1f(locations.xRotLoc, parameters.xRot);
+    locations.yRotLoc = gl.getUniformLocation(program, "yRot");
+    gl.uniform1f(locations.yRotLoc, parameters.yRot);
 
     // Setup focal
     var focalLoc = gl.getUniformLocation(program, "focal");
     gl.uniform1f(focalLoc, 1 / Math.tan((315 / 32) * (Math.PI / 180)));
 
     // Setup translation
-    transLoc = gl.getUniformLocation(program, "translation");
-    gl.uniform3f(transLoc, params.xTrans, params.yTrans, params.zTrans);
+    locations.transLoc = gl.getUniformLocation(program, "translation");
+    gl.uniform3f(locations.transLoc, parameters.xTrans, parameters.yTrans, parameters.zTrans);
 
     // Setup eye
-    eyeLoc = gl.getUniformLocation(program, "eyeHeight");
-    gl.uniform1f(eyeLoc, -params.yHeight);
+    locations.eyeLoc = gl.getUniformLocation(program, "eyeHeight");
+    gl.uniform1f(locations.eyeLoc, -parameters.yHeight);
 
     // Set page size
-    widthloc = gl.getUniformLocation(program, "width");
-    gl.uniform1f(widthloc, canvas.width);
-    heightloc = gl.getUniformLocation(program, "height");
-    gl.uniform1f(heightloc, canvas.height);
+    locations.widthloc = gl.getUniformLocation(program, "width");
+    gl.uniform1f(locations.widthloc, canvas.width);
+    locations.heightloc = gl.getUniformLocation(program, "height");
+    gl.uniform1f(locations.heightloc, canvas.height);
 
     // Set max steps
-    maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
-    gl.uniform1i(maxStepsLoc, params.maxSteps);
+    locations.maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
+    gl.uniform1i(locations.maxStepsLoc, parameters.maxSteps);
 
     // Set detail
-    detailLoc = gl.getUniformLocation(program, "minDetail");
-    gl.uniform1f(detailLoc, Math.pow(10.0, params.detail));
+    locations.detailLoc = gl.getUniformLocation(program, "minDetail");
+    gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
 
     // Set ambience
-    ambienceLoc = gl.getUniformLocation(program, "ambience");
-    gl.uniform1f(ambienceLoc, params.ambience);
+    locations.ambienceLoc = gl.getUniformLocation(program, "ambience");
+    gl.uniform1f(locations.ambienceLoc, parameters.ambience);
 
     // Set light intensity
-    lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
-    gl.uniform1f(lightIntensityLoc, params.lightIntensity);
+    locations.lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
+    gl.uniform1f(locations.lightIntensityLoc, parameters.lightIntensity);
 
     // Set light size
-    lightSizeLoc = gl.getUniformLocation(program, "lightSize");
-    gl.uniform1f(lightSizeLoc, params.lightSize);
+    locations.lightSizeLoc = gl.getUniformLocation(program, "lightSize");
+    gl.uniform1f(locations.lightSizeLoc, parameters.lightSize);
 
-    // Set light size
-    lightLocLoc = gl.getUniformLocation(program, "lightLoc");
-    gl.uniform3f(lightLocLoc, params.lightX, params.lightY, params.lightZ);
+    // Set light location
+    locations.lightLocLoc = gl.getUniformLocation(program, "lightLoc");
+    gl.uniform3f(locations.lightLocLoc, parameters.lightX, parameters.lightY, parameters.lightZ);
 
     // Set fractal iteration
-    iterationsLoc = gl.getUniformLocation(program, "iterations");
-    gl.uniform1i(iterationsLoc, params.iterations);
+    locations.iterationsLoc = gl.getUniformLocation(program, "iterations");
+    gl.uniform1i(locations.iterationsLoc, parameters.iterations);
 
     // Set fractal power
-    powerLoc = gl.getUniformLocation(program, "power");
-    gl.uniform1f(powerLoc, params.power);
+    locations.powerLoc = gl.getUniformLocation(program, "power");
+    gl.uniform1f(locations.powerLoc, parameters.power);
 
     // Set fractal colour
-    colourLoc = gl.getUniformLocation(program, "colour");
-    gl.uniform4f(colourLoc, params.red, params.green, params.blue, 1.0);
+    locations.colourLoc = gl.getUniformLocation(program, "colour");
+    gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
 
     // Set mod function
-    modLoc = gl.getUniformLocation(program, "modFunction");
-    gl.uniform1i(modLoc, params.modToggle);
+    locations.modLoc = gl.getUniformLocation(program, "modFunction");
+    gl.uniform1i(locations.modLoc, parameters.modToggle);
 
     // Render the scene
     render();
