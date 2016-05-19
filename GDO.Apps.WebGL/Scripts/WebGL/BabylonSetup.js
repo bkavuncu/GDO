@@ -16,6 +16,7 @@
 
     this.rotateGDO = true;
     this.GDORotationOffset = 0;
+    this.virticalRotationLocked = false;
 
     this.meshCopier = new MESHCOPIER(this.scene, this.gdo);
 
@@ -184,6 +185,11 @@
 
             this.engine.runRenderLoop(function () {
 
+                if (this.virticalRotationLocked) {
+                    this.camera.rotation.x = 0;
+                    this.camera.cameraRotation.x = 0;
+                }
+
                 this.scene.render();
 
                 if (this.rotateGDO) {
@@ -254,6 +260,9 @@
         BABYLON.Vector3.FromArrayToRef(newCamera.upVector, 0, this.camera.upVector);
 
         this.camera.rotation.y = this.cameraViewOffset.y + newCamera.GDORotationOffset - (Math.PI / 2);
+
+        // Needed to force camera update when only horizontal rotation is used (GDORotation)
+        this.camera.getViewMatrix(true);
     }
 
     this.setupControl = function () {
@@ -287,6 +296,9 @@
             }
             else if (event.which == 98) {       // b
                 this.scene.forceShowBoundingBoxes = !this.scene.forceShowBoundingBoxes;
+            } 
+            else if (event.which == 108) {      // l
+                this.virticalRotationLocked = !this.virticalRotationLocked;
             }
         }.bind(this));
 
@@ -434,8 +446,17 @@
         var configName = this.gdo.net.instance[this.instanceId].configName;
         var config = this.gdo.net.app["WebGL"].config[configName];
         if (!this.isControlNode) {
+            var column = this.gdo.net.node[this.gdo.clientId].sectionCol;
+
+            if (column == 0) {
+                //BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 10000;
+            } else {
+                //BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 10000;
+            }
             //config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
         }
+        BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 2;
+        //BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 2;
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
         if (config.minZ != undefined) {

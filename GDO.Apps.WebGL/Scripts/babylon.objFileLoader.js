@@ -1,3 +1,6 @@
+var BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 0;
+var BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = Number.MAX_SAFE_INTEGER;
+
 
 var BABYLON;
 (function (BABYLON) {
@@ -513,8 +516,6 @@ var BABYLON;
             var lines = data.split('\n');
 
             var numMeshesSeen = 0;
-            var timeLastMeshSeen = Date.now();
-            var finished = false;
 
             //Look at each line
             for (var i = 0; i < lines.length; i++) {
@@ -524,59 +525,73 @@ var BABYLON;
                 if (line.length === 0 || line.charAt(0) === '#') {
                     continue;
                 }
-                else if (!finished && (result = this.vertexPattern.exec(line)) !== null) {
+                else if (this.mtllib.test(line)) {
+                    //Get the name of mtl file
+                    fileToLoad = line.substring(7).trim();
+                }
+                else if(numMeshesSeen >= BABYLON_OBJLOADER_STARTING_MESH_NUMBER +
+                                         BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD) {
+                    continue;
+                }
+                else if ((result = this.vertexPattern.exec(line)) !== null) {
                     //Create a Vector3 with the position x, y, z
                     //Value of result:
                     // ["v 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
                     //Add the Vector in the list of positions
                     positions.push(new BABYLON.Vector3(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3])));
                 }
-                else if (!finished && (result = this.normalPattern.exec(line)) !== null) {
+                else if ((result = this.normalPattern.exec(line)) !== null) {
                     //Create a Vector3 with the normals x, y, z
                     //Value of result
                     // ["vn 1.0 2.0 3.0", "1.0", "2.0", "3.0"]
                     //Add the Vector in the list of normals
                     normals.push(new BABYLON.Vector3(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3])));
                 }
-                else if (!finished && (result = this.uvPattern.exec(line)) !== null) {
+                else if ((result = this.uvPattern.exec(line)) !== null) {
                     //Create a Vector2 with the normals u, v
                     //Value of result
                     // ["vt 0.1 0.2 0.3", "0.1", "0.2"]
                     //Add the Vector in the list of uvs
                     uvs.push(new BABYLON.Vector2(parseFloat(result[1]), parseFloat(result[2])));
                 }
-                else if (!finished && (result = this.facePattern3.exec(line)) !== null) {
+                else if (numMeshesSeen < BABYLON_OBJLOADER_STARTING_MESH_NUMBER) {
+                    if (this.group.test(line) || this.obj.test(line)) {
+                        numMeshesSeen++;
+                    }
+                    continue;
+                }
+                else if ((result = this.facePattern3.exec(line)) !== null) {
                     //Value of result:
                     //["f 1/1/1 2/2/2 3/3/3", "1/1/1 2/2/2 3/3/3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern3(result[1].trim().split(" "), // ["1/1/1", "2/2/2", "3/3/3"]
                     1);
                 }
-                else if (!finished && (result = this.facePattern4.exec(line)) !== null) {
+                else if ((result = this.facePattern4.exec(line)) !== null) {
                     //Value of result:
                     //["f 1//1 2//2 3//3", "1//1 2//2 3//3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern4(result[1].trim().split(" "), // ["1//1", "2//2", "3//3"]
                     1);
                 }
-                else if (!finished && (result = this.facePattern2.exec(line)) !== null) {
+                else if ((result = this.facePattern2.exec(line)) !== null) {
                     //Value of result:
                     //["f 1/1 2/2 3/3", "1/1 2/2 3/3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern2(result[1].trim().split(" "), // ["1/1", "2/2", "3/3"]
                     1);
                 }
-                else if (!finished && (result = this.facePattern1.exec(line)) !== null) {
+                else if ((result = this.facePattern1.exec(line)) !== null) {
                     //Value of result
                     //["f 1 2 3", "1 2 3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern1(result[1].trim().split(" "), // ["1", "2", "3"]
                     1);
                 }
-                else if (!finished && (this.group.test(line) || this.obj.test(line))) {
+                else if (this.group.test(line) || this.obj.test(line)) {
                     //Create a new mesh corresponding to the name of the group.
                     //Definition of the mesh
-                    var objMesh = 
+                    var objMesh =
                     //Set the name of the current obj mesh
                     {
                         name: line.substring(2).trim(),
@@ -594,19 +609,8 @@ var BABYLON;
                     isFirstMaterial = true;
                     increment = 1;
 
-                    //console.log("Loaded mesh number: " + numMeshesSeen);
-
+                    console.log("Loaded mesh: " + numMeshesSeen);
                     numMeshesSeen++;
-
-                    var time = Date.now();
-                    var duration = time - timeLastMeshSeen;
-                    timeLastMeshSeen = time;
-
-                    //console.log("Time to load: " + duration);
-
-                    if (numMeshesSeen > 11000) {
-                        finished = true;
-                    }
                 }
                 else if (this.usemtl.test(line)) {
                     //Get the name of the material
@@ -616,7 +620,7 @@ var BABYLON;
                         //Set the data for the previous mesh
                         addPreviousObjMesh();
                         //Create a new mesh
-                        var objMesh = 
+                        var objMesh =
                         //Set the name of the current obj mesh
                         {
                             name: objMeshName + "_mm" + increment.toString(),
@@ -637,11 +641,7 @@ var BABYLON;
                         isFirstMaterial = false;
                     }
                 }
-                else if (this.mtllib.test(line)) {
-                    //Get the name of mtl file
-                    fileToLoad = line.substring(7).trim();
-                }
-                else if (finished || this.smooth.test(line)) {
+                else if (this.smooth.test(line)) {
                 }
                 else {
                     //If there is another possibility
