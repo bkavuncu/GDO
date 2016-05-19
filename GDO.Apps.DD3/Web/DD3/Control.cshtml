@@ -479,6 +479,13 @@
                     createHostedRect(urlval);
                 }); //End handler onclick input
 
+                $('#allFileSelectButton').on('click', function (event) {
+                    event.preventDefault();
+                    $('#fileSelect > option').each(function() {
+                        createHostedRect(this.value);
+                    });
+                }); //End handler onclick input
+
                 $('#addUrl').click(function() {
                     var urlval = $('#inputUrl').val();
                     if (urlval === "") {
@@ -740,6 +747,7 @@
                         </select>
                     </td>
                     <td class="green"><button id="fileSelectButton" type="button">Choose</button></td>
+                    <td class="green"><button id="allFileSelectButton" type="button">All</button></td>
                 </tr>
                 <tr>
                     <td class="green" id="removeAllRect">Remove All</td>
