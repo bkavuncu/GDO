@@ -17,6 +17,7 @@
     this.rotateGDO = true;
     this.GDORotationOffset = 0;
     this.virticalRotationLocked = false;
+    this.horizontalRotationLocked = false;
 
     this.meshCopier = new MESHCOPIER(this.scene, this.gdo);
 
@@ -154,18 +155,42 @@
         }.bind(this);
     }).bind(this)();
 
-    this.updateAndRender = function (newCamera) {
-        this.engine.endFrame();
-        this.engine.beginFrame();
 
-        this.updateCameraPosition(newCamera);
-        this.scene.render();
+    this.updateAndRender = (function () {
 
-        if (this.showStats) {
-            //this.meshCopier.doWork();
-            this.updateAndRenderStats(newCamera);
-        }
-    }
+        var frameStartTime = Date.now();
+
+        return function (newCamera, nextFrameCallback) {
+            this.engine.endFrame();
+            this.engine.beginFrame();
+
+            this.updateCameraPosition(newCamera);
+            this.scene.render();
+
+            if (this.showStats) {
+                //this.meshCopier.doWork();
+                this.updateAndRenderStats(newCamera);
+            }
+
+            function startFrame() {
+                frameStartTime = Date.now();
+                nextFrameCallback();
+            }
+
+            if (nextFrameCallback != undefined) {
+
+                var duration = Date.now() - frameStartTime;
+                // 16 is target duration for ~60 FPS
+                var waitTime = 16 - duration;
+
+                if (waitTime > 0) {
+                    setTimeout(startFrame, waitTime);
+                } else {
+                    startFrame();
+                }
+            }
+        }.bind(this);
+    }).bind(this)();
 
     this.modelLoadFinished = function () {
 
@@ -186,8 +211,11 @@
             this.engine.runRenderLoop(function () {
 
                 if (this.virticalRotationLocked) {
-                    this.camera.rotation.x = 0;
                     this.camera.cameraRotation.x = 0;
+                }
+
+                if (this.horizontalRotationLocked) {
+                    this.camera.cameraRotation.y = 0;
                 }
 
                 this.scene.render();
@@ -297,8 +325,11 @@
             else if (event.which == 98) {       // b
                 this.scene.forceShowBoundingBoxes = !this.scene.forceShowBoundingBoxes;
             } 
-            else if (event.which == 108) {      // l
+            else if (event.which == 118) {      // v
                 this.virticalRotationLocked = !this.virticalRotationLocked;
+            }
+            else if (event.whcih = 108) {       // h
+                this.horizontalRotationLocked = !this.horizontalRotationLocked;
             }
         }.bind(this));
 
@@ -455,7 +486,7 @@
             }
             //config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
         }
-        BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 2;
+        //BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 2;
         //BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 2;
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
