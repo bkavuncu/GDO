@@ -30,9 +30,9 @@ namespace GDO.Apps.Fractals
         {
             try
             {
-                FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                Clients.Group("" + instanceId).updateParams(instanceId, Json);
+                //FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                //string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                //Clients.Group("" + instanceId).updateParams(instanceId, Json);
             }
             catch (Exception e)
             {
@@ -300,6 +300,46 @@ namespace GDO.Apps.Fractals
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.ToggleMod();
                     SendParams(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void AckFrameRendered(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.Acks++;
+                    if (FA.Acks >= FA.Nodes)
+                    {
+                        string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                        FA.Acks = 0;
+                        FA.CurrentFrame = FA.CurrentFrame * -1 + 1;
+                        Clients.Group("" + instanceId).renderNextFrame(instanceId, Json);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void CountNodes(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    //FA.Nodes++;
                 }
                 catch (Exception e)
                 {

@@ -1,5 +1,6 @@
 ﻿var parameters;
-var locations;
+var locations1;
+var locations2;
 
 function params() {
     this.xRot = 0;
@@ -41,7 +42,7 @@ function locs() {
     this.modLoc;
 }
 
-function applyParams() {
+function applyParams(locations, gl) {
 
     gl.uniform1f(locations.yRotLoc, parameters.yRot);
     gl.uniform1f(locations.xRotLoc, parameters.xRot);

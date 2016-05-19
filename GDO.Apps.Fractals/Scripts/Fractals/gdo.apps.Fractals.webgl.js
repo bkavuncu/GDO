@@ -1,15 +1,23 @@
-﻿var gl;
-var canvas;
+﻿var gl1;
+var program1;
+var canvas1;
 
-function initWebgl() {
+var gl2;
+var program2;
+var canvas2;
+
+function initWebgl(id, locations) {
+
+    var gl;
+    var program;
 
     // Set up canvas
-    canvas = $("iframe").contents().find("#glscreen")[0];
+    var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
-    canvas.width = 960;
-    canvas.height = 540;
-    //canvas.width = 1920;
-    //canvas.height = 1080;
+    //canvas.width = 960;
+    //canvas.height = 540;
+    canvas.width = 1920;
+    canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -121,17 +129,20 @@ function initWebgl() {
     gl.uniform1i(locations.modLoc, parameters.modToggle);
 
     // Render the scene
-    render();
+    //render(locations, gl, program);
 
+    return { gl: gl, program: program, canvas: canvas };
 }
 
-function render() {
+function render(locations, gl, program) {
 
     // Ensure continuous rendering
-    window.requestAnimationFrame(render, canvas);
+    window.requestAnimationFrame(function () {
+        gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId);
+    });
 
     // Apply params
-    applyParams();
+    applyParams(locations, gl);
 
     // Set position data of vertex shader
     positionLocation = gl.getAttribLocation(program, "a_position");
@@ -140,5 +151,22 @@ function render() {
 
     // Draw quad
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+
+}
+
+function renderOnce(locations, gl, program) {
+
+    // Apply params
+    applyParams(locations, gl);
+
+    // Set position data of vertex shader
+    positionLocation = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // Draw quad
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
 
 }

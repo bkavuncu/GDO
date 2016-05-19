@@ -68,6 +68,10 @@ namespace GDO.Apps.Fractals
 
         public int Mod;
 
+        public int Nodes;
+        public int Acks;
+        public int CurrentFrame;
+
         public void Init()
         {
             XRot = 0.0f;
@@ -115,7 +119,11 @@ namespace GDO.Apps.Fractals
 
             R = 1.0f;
             G = 0.0f;
-            B = 0.0f;   
+            B = 0.0f;
+
+            Nodes = 64;
+            Acks = 0;
+            CurrentFrame = 0;
     }
 
         private const double Sensitivity = 0.0025;
@@ -238,6 +246,5 @@ namespace GDO.Apps.Fractals
             Mod *= -1;
             Mod++;
         }
-
     }
 }
