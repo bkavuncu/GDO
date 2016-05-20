@@ -509,7 +509,7 @@
         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../../Data/WebGL/textures/skybox", this.scene);
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
 
-        var skybox = BABYLON.Mesh.CreateBox("skyBox", this.camera.maxZ - 0.1, this.scene);
+        var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, this.scene);
         skybox.material = skyboxMaterial;
         skybox.infiniteDistance = true;
         skybox.renderingGroupId = 0;
