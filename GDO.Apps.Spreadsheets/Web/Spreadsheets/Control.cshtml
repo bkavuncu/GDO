@@ -5,9 +5,7 @@
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -78,14 +76,21 @@
             background-color: #2a9fd6 !important;
         }
 
+        .btn-group .btn-danger{
+            background-color: #ff0000 !important;
+        }
+
         .btn:hover, .btn:focus{
             background-color: #333 !important;
-            font-weight: bold !important;
         }
 
         .input_field_div {
             margin: 0px;
             padding: 0px;
+        }
+
+        label {
+            font-weight: normal !important;
         }
 
         .input_field {
@@ -149,7 +154,7 @@
                             </td>
                             <td>
                                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="sheet" name="files" type="file" accept=".xls,.xlsx" /></span>
+                                    <span class="btn btn-file btn-default"><span>Choose file</span><input id="sheet" name="files" type="file" accept=".xls,.xlsx,.xlsm" /></span>
                                     <span class="fileinput-filename"></span><span id="filename-sheet" class="fileinput-new">No file chosen</span>
                                 </div>
                             </td>
@@ -198,12 +203,64 @@
                             <td>
                                 <div class="btn-group" role="group" aria-label="...">
                                     <button id="view_model" type="button" class="btn">View Model</button>
-                                    <button id="scenario_analysis" type="button" class="btn">Scenario Analysis</button>
+                                    <button id="unfold_model" type="button" class="btn">Unfold Model</button>
+                                    <button id="analysis" type="button" class="btn">Analysis</button>
                                     <button id="link_outputs" type="button" class="btn">Link Outputs</button>
+                                    <button id="genetic_algorithm" type="button" class="btn">Genetic Algorithm</button>
                                 </div>
                             </td>
                             <td>
-                                <button id="clear_model" type="button" class="btn btn-danger">Clear Model</button>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button id="clear_model" type="button" class="btn btn-danger">Clear Model</button>
+                                    <button id="clear_server" type="button" class="btn btn-danger">Clear Server</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="results">
+                                    <div id="view_model_result">
+                                        <link rel="stylesheet" type="text/css" media="screen" href="../../Web/Spreadsheets/ui.jqgrid-bootstrap.css"/>
+                                        <link rel="stylesheet" type="text/css" media="screen" href="../../Web/Spreadsheets/ui.jqgrid.css"/>
+                                        <link rel="stylesheet" type="text/css" media="screen" href="../../Web/Spreadsheets/bootstrap-switch.min.css" />
+                                        <p id="view_model_message"></p>
+                                        <table id="view_model_grid"></table>
+                                        <div id="view_model_pager"></div>
+                                    </div>
+                                    <div id="unfold_model_result">
+                                        <h6 id="unfold_model_message"></h6>
+                                        <form role="form" id="packing_detail_form">
+                                            <div class="form-inline">
+                                                <h6>Packing Type Heuristic</h6>
+                                                <select class="form-control" name="packHeuristic">
+                                                    <option value="0">Best Short Side Fit</option>
+                                                    <option value="1">Best Long Side Fit</option>
+                                                    <option value="2">Best Area Fit</option>
+                                                    <option value="3">Bottom Left Contact Rule</option>
+                                                    <option value="4">Contact Point Minimising Rule</option>
+                                                </select>
+                                            </div>
+                                            <br/>
+                                            <button id="submit_packing_data" type="button" class="btn btn-success">Start Unfolding With Heuristic</button>
+                                        </form>
+                                        <div id="trace_precedent_section"></div>
+                                    </div>
+                                    <div id="analysis_result"></div>
+                                    <div id="link_result"></div>
+                                    <div id="genetic_algorithm_result">
+                                        <form role="form" id="output_definition_form">
+                                        </form>
+                                        <button id="submit_genetic_algorithm" type="button" class="btn btn-success">Run Genetic Algorithm</button>
+                                        <div id="gaSheetManipulation"></div>
+                                        <div id="original_outputs"></div>
+                                        <div id="genetic_algorithm_message"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="unfoldingMap"></div>
                             </td>
                         </tr>
                     </table>

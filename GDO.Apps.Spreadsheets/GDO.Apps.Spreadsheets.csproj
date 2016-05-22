@@ -128,9 +128,19 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheeets.clearServer.js" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.bootstrap-switch.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.clearModel.js" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.linkOutputs.js" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.runAnalysis.js" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.setupGeneticAlgorithm.js" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.unfoldModel.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.viewModel.js" />
+    <Content Include="Web\Spreadsheets\bootstrap-switch.min.css" />
+    <Content Include="Web\Spreadsheets\ui.jqgrid-bootstrap.css" />
+    <Content Include="Web\Spreadsheets\ui.jqgrid.css" />
     <None Include="Properties\PublishProfiles\Web Deploy.pubxml" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.registerInstance.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
