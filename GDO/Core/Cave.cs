@@ -36,8 +36,7 @@ namespace GDO.Core
         public static int NodeWidth { get; set; }
         public static int NodeHeight { get; set; }
         public static int DefaultP2PMode { get; set; }
-        public static bool InitializedSync { get; set; }
-        public static System.Timers.Timer SyncTimer { get; set; }
+        public static int ConsoleInstanceId { get; set; }
         public static ConcurrentDictionary<string, App> Apps { get; set; }
         public static ConcurrentDictionary<string, IModule> Modules { get; set; }
         public static ConcurrentDictionary<int, IAppInstance> Instances { get; set; }
@@ -80,8 +79,7 @@ namespace GDO.Core
             NodeWidth = int.Parse(ConfigurationManager.AppSettings["nodeWidth"]);
             NodeHeight = int.Parse(ConfigurationManager.AppSettings["nodeheight"]);
             DefaultP2PMode = int.Parse(ConfigurationManager.AppSettings["p2pmode"]);
-            InitializedSync = false;
-
+            ConsoleInstanceId = -1;
             /*Assembly asm = Assembly.GetExecutingAssembly();
 
             foreach (Type type in asm.GetTypes())

@@ -47,25 +47,6 @@ namespace GDO.Core
 
         }
 
-        private void InitializeSynchronization()
-        {
-            if (!Cave.InitializedSync)
-            {
-                Cave.InitializedSync = true;
-                Cave.SyncTimer = new System.Timers.Timer(70);
-                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
-                Cave.SyncTimer.Start();
-            }
-        }
-
-
-        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
-        {
-            DateTime now = DateTime.Now;
-            Clients.All.receiveHeartbeat((long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds);
-        }
-
-
         /// <summary>
         /// Deploys the node.
         /// </summary>
@@ -687,7 +668,7 @@ namespace GDO.Core
 
         public void Initialize()
         {
-            InitializeSynchronization();
+
         }
 
         public void SaveCaveState(string name)
@@ -807,6 +788,20 @@ namespace GDO.Core
             {
                 Clients.Group(""+section).executeFunction(func);
             }
+        }
+
+        public void UpdateConsoleInstance(int instanceId)
+        {
+            lock (Cave.ServerLock)
+            {
+                Cave.ConsoleInstanceId = instanceId;
+                Clients.All.receiveConsoleInstanceId(instanceId);
+            }
+        }
+
+        public void RequestConsoleInstance()
+        {
+            Clients.Caller.receiveConsoleInstanceId(Cave.ConsoleInstanceId);
         }
     }
 }

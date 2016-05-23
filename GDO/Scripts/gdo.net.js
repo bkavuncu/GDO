@@ -60,6 +60,19 @@ $(function() {
             gdo.initBaseFrame();
         }
     }
+    $.connection.caveHub.client.receiveConsoleInstanceId = function (consoleInstanceId) {
+        gdo.net.consoleInstanceId = consoleInstanceId;
+        gdo.consoleOut('.NET', 1, 'Console Instance Id:' + consoleInstanceId);
+        gdo.updateDisplayCanvas();
+        if (gdo.net.consoleMode == true) {
+            if (consoleInstanceId >= 0 && gdo.net.instance[gdo.net.consoleInstanceId].exists) {
+                gdo.management.instances.loadInstanceControlFrame(gdo.net.instance[consoleInstanceId].appName, consoleInstanceId, gdo.net.instance[consoleInstanceId].configName);
+            } else {
+                $("iframe").contents().find("body").html('');
+                $("#instance_label").empty().append("<h3><b> Waiting for Control</b></h3>");
+            }
+        }
+    }
     $.connection.caveHub.client.reloadNodeIFrame = function () {
         gdo.consoleOut('.NET', 1, 'Reload Node IFrame');
         gdo.reloadNodeIFrame();
@@ -261,6 +274,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     gdo.consoleOut('.NET', 2, 'Initializing Net');
     gdo.net.maintenanceMode = true;
     gdo.net.blankMode = false;
+    gdo.net.consoleMode = false;
     gdo.net.initializeArrays(100);
     gdo.net.initHub();
     gdo.net.clientMode = clientMode;

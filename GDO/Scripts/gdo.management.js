@@ -9,7 +9,7 @@ $(function () {
     gdo.management.info_height = 35;
     gdo.management.table_width = 100;
     gdo.management.button_height = 61;
-    gdo.management.button_cols = 9;
+    gdo.management.button_cols = 9.5;
     gdo.management.header_cols = 11;
     gdo.management.cell_padding = 4;
     gdo.management.isRectangle = true;
@@ -67,18 +67,18 @@ $(function () {
 gdo.management.updateMaintenanceButton = function () {
     if (gdo.net.maintenanceMode) {
         $("#maintenanceButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-danger")
             .addClass("btn-success")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance ON");
+            //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance ON");
     } else {
         $("#maintenanceButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-success")
             .addClass("btn-danger")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance OFF");
+            //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance OFF");
     }
     $("#maintenanceButton")
         .unbind()
@@ -93,18 +93,18 @@ gdo.management.updateMaintenanceButton = function () {
         });
     if (gdo.net.blankMode) {
         $("#blankButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-danger")
             .addClass("btn-success")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Blank ON");
+            //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank ON");
     } else {
         $("#blankButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-success")
             .addClass("btn-danger")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Blank OFF");
+            //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank OFF");
     }
     $("#blankButton")
         .unbind()
