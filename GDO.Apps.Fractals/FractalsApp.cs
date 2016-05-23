@@ -75,6 +75,8 @@ namespace GDO.Apps.Fractals
         public int CurrentFrame;
         public int[] NodesOnline;
 
+        public bool Sync;
+
         public void Init()
         {
             XRot = 0.0f;
@@ -130,6 +132,8 @@ namespace GDO.Apps.Fractals
             SwapFrameAcks = 0;
             CurrentFrame = 0;
             NodesOnline = new int[64];
+
+            Sync = true;
     }
 
         private const double Sensitivity = 0.0025;

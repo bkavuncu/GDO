@@ -4,6 +4,22 @@
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
+        $.connection.fractalsAppHub.client.calcClockDiff = function (startTime, serverTime) {
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                var d = new Date();
+                var n = d.getTime();
+
+                var ping = (n - startTime) / 2;
+                clockDiff = (startTime + ping) - serverTime;
+                gdo.consoleOut('.Fractals', 1, startTime);
+                gdo.consoleOut('.Fractals', 1, serverTime);
+                gdo.consoleOut('.Fractals', 1, n);
+                gdo.consoleOut('.Fractals', 1, 'Clock diff - ' + clockDiff);
+            }
+        }
+
 
         $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -39,19 +55,33 @@ $(function () {
                 parameters.lightZ = json.LightZ;
 
                 parameters.modToggle = json.Mod;
+
+                sync = json.Sync;
             }
         };
 
         $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame) {
+
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
                 if (currentFrame == 0) {
-                    render(locations1, gl1, program1);
+                    renderSync(locations1, gl1, program1);
                 } else {
-                    render(locations2, gl2, program2);
+                    renderSync(locations2, gl2, program2);
                 }
+
+            }
+        };
+
+        $.connection.fractalsAppHub.client.renderNextFrameNoSync = function () {
+
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+                render(locations1, gl1, program1);
 
             }
         };
@@ -95,6 +125,7 @@ $(function () {
                 var n = d.getTime();
 
                 var timeout = timeToRender - n;
+                timeout -= clockDiff;
 
 
                 if (json.CurrentFrame == 0) {
@@ -151,10 +182,15 @@ gdo.net.app["Fractals"].initClient = function () {
     parameters.yHeight = 2.0 * ratio * y;
     gdo.consoleOut('.Fractals', 1, 'Eye height = ' + parameters.yHeight);
 
+    sync = true;
+
     gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 
     var webgl1 = initWebgl("#glscreen1", locations1, "#2d-fragment-shader");
     var webgl2 = initWebgl("#glscreen2", locations2, "#2d-fragment-shader");
+
+    clockDiff = 0;
+    //gdo.net.app["Fractals"].server.calcClockDiff(new Date().getTime());
 
     gl1 = webgl1.gl;
     gl2 = webgl2.gl;

@@ -31,9 +31,13 @@ namespace GDO.Apps.Fractals
         {
             try
             {
-                //FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                //string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                //Clients.Group("" + instanceId).updateParams(instanceId, Json);
+                FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                if (!FA.Sync)
+                {
+                    string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                    Clients.Group("" + instanceId).updateParams(instanceId, Json);
+                }
+
             }
             catch (Exception e)
             {
@@ -299,9 +303,28 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    //FA.ToggleMod();
+                    FA.ToggleMod();
                     SendParams(instanceId);
                     
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void SyncToggle(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.Sync = !FA.Sync;
+                    string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                    Clients.Group("" + instanceId).updateParams(instanceId, Json);
+
                 }
                 catch (Exception e)
                 {
@@ -385,7 +408,13 @@ namespace GDO.Apps.Fractals
                     } else
                     {
                         // Refreshed page, render relevant frame
-                        Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame);
+                        if (FA.Sync)
+                        {
+                            Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame);
+                        } else
+                        {
+                            Clients.Caller.renderNextFrameNoSync();
+                        }
                     }
                 }
                 catch (Exception e)
@@ -413,6 +442,18 @@ namespace GDO.Apps.Fractals
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        public void CalcClockDiff(double startTime)
+        {
+                try
+                {
+                    Clients.Caller.calcClockDiff(startTime, DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
+            }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
         }
 
     }
