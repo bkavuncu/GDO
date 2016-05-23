@@ -69,8 +69,11 @@ namespace GDO.Apps.Fractals
         public int Mod;
 
         public int Nodes;
+        public int NewNodes;
         public int Acks;
+        public int SwapFrameAcks;
         public int CurrentFrame;
+        public int[] NodesOnline;
 
         public void Init()
         {
@@ -121,9 +124,12 @@ namespace GDO.Apps.Fractals
             G = 0.0f;
             B = 0.0f;
 
-            Nodes = 64;
+            Nodes = 0;
+            NewNodes = 0;
             Acks = 0;
+            SwapFrameAcks = 0;
             CurrentFrame = 0;
+            NodesOnline = new int[64];
     }
 
         private const double Sensitivity = 0.0025;

@@ -42,7 +42,21 @@ $(function () {
             }
         };
 
-        $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, params) {
+        $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame) {
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+                if (currentFrame == 0) {
+                    render(locations1, gl1, program1);
+                } else {
+                    render(locations2, gl2, program2);
+                }
+
+            }
+        };
+
+        $.connection.fractalsAppHub.client.swapFrame = function (instanceId, params, timeToRender) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -77,15 +91,39 @@ $(function () {
 
                 parameters.modToggle = json.Mod;
 
-                if (json.CurrentFrame == 1) {
-                    canvas1.style.zIndex = 2;
-                    canvas2.style.zIndex = 1;
-                    render(locations2, gl2, program2);
-                } else {
-                    canvas1.style.zIndex = 1;
-                    canvas2.style.zIndex = 2;
-                    render(locations1, gl1, program1);
+                var d = new Date();
+                var n = d.getTime();
+
+                var timeout = timeToRender - n;
+
+
+                if (json.CurrentFrame == 0) {
+                    if (timeout > 0) {
+                        setTimeout(function () {
+                            canvas1.style.zIndex = 0;
+                            canvas2.style.zIndex = 5;
+                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                        }, timeout);
+                    } else {
+                        canvas1.style.zIndex = 0;
+                        canvas2.style.zIndex = 5;
+                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                    }
+
+                } else if (json.CurrentFrame == 1) {
+                    if (timeout > 0) {
+                        setTimeout(function () {
+                            canvas1.style.zIndex = 5;
+                            canvas2.style.zIndex = 0;
+                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                        }, timeout);
+                    } else {
+                        canvas1.style.zIndex = 5;
+                        canvas2.style.zIndex = 0;
+                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                    }
                 }
+                
 
             }
         };
@@ -113,10 +151,10 @@ gdo.net.app["Fractals"].initClient = function () {
     parameters.yHeight = 2.0 * ratio * y;
     gdo.consoleOut('.Fractals', 1, 'Eye height = ' + parameters.yHeight);
 
-    gdo.net.app["Fractals"].server.countNodes(gdo.net.node[gdo.clientId].appInstanceId);
+    gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 
-    var webgl1 = initWebgl("#glscreen1", locations1);
-    var webgl2 = initWebgl("#glscreen2", locations2);
+    var webgl1 = initWebgl("#glscreen1", locations1, "#2d-fragment-shader");
+    var webgl2 = initWebgl("#glscreen2", locations2, "#2d-fragment-shader");
 
     gl1 = webgl1.gl;
     gl2 = webgl2.gl;
@@ -125,11 +163,8 @@ gdo.net.app["Fractals"].initClient = function () {
     canvas1 = webgl1.canvas;
     canvas2 = webgl2.canvas;
 
-    canvas1.style.zIndex = 1;
-    canvas2.style.zIndex = 2;
-    
-    renderOnce(locations2, gl2, program2);
-    render(locations1, gl1, program1);
+    canvas1.style.zIndex = 0;
+    canvas2.style.zIndex = 5;
 
 }
 
@@ -142,6 +177,7 @@ gdo.net.app["Fractals"].initControl = function () {
 
 gdo.net.app["Fractals"].terminateClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Terminating Fractals App Client at Node ' + clientId);
+    gdo.net.app["Fractals"].server.decNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 }
 
 gdo.net.app["Fractals"].ternminateControl = function () {

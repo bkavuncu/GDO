@@ -6,7 +6,7 @@ var gl2;
 var program2;
 var canvas2;
 
-function initWebgl(id, locations) {
+function initWebgl(id, locations, shader) {
 
     var gl;
     var program;
@@ -14,10 +14,11 @@ function initWebgl(id, locations) {
     // Set up canvas
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
-    //canvas.width = 960;
-    //canvas.height = 540;
-    canvas.width = 1920;
-    canvas.height = 1080;
+    //canvas.width = 480;
+    canvas.width = 960;
+    canvas.height = 540;
+    //canvas.width = 1920;
+    //canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -51,7 +52,7 @@ function initWebgl(id, locations) {
     gl.compileShader(vertexShader);
 
     // Compile fragment shader
-    shaderScript = $("iframe").contents().find("#2d-fragment-shader")[0];
+    shaderScript = $("iframe").contents().find(shader)[0];
     shaderSource = shaderScript.text;
     fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, shaderSource);
@@ -140,22 +141,6 @@ function render(locations, gl, program) {
     window.requestAnimationFrame(function () {
         gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId);
     });
-
-    // Apply params
-    applyParams(locations, gl);
-
-    // Set position data of vertex shader
-    positionLocation = gl.getAttribLocation(program, "a_position");
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-    // Draw quad
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-
-}
-
-function renderOnce(locations, gl, program) {
 
     // Apply params
     applyParams(locations, gl);
