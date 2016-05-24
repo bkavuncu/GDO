@@ -7,7 +7,6 @@ using GDO.Apps.Maps.Core;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
-using GDO.Apps.Maps.Core.Sources.Tiles;
 using GDO.Apps.Maps.Core.Styles;
 using GDO.Apps.Maps.Core.Formats;
 using GDO.Core;
@@ -32,9 +31,7 @@ namespace GDO.Apps.Maps
         public int CurrentView { get; set; }
         public GenericDictionary<View> Views { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
-        public GenericDictionary<Interaction> Interactions { get; set; }
         public GenericDictionary<Source> Sources { get; set; }
-        public GenericDictionary<Control> Controls { get; set; }
         public GenericDictionary<Style> Styles { get; set; }
         public GenericDictionary<Format> Formats { get; set; }
         public ZindexTable ZindexTable { get; set; }
@@ -44,17 +41,13 @@ namespace GDO.Apps.Maps
         {
             Views = new GenericDictionary<View>();
             Layers = new GenericDictionary<Layer>();
-            Interactions = new GenericDictionary<Interaction>();
             Sources = new GenericDictionary<Source>();
-            Controls = new GenericDictionary<Control>();
             Styles = new GenericDictionary<Style>();
             Formats = new GenericDictionary<Format>();
             ZindexTable = new ZindexTable();
             Views.Init();
             Layers.Init();
-            Interactions.Init();
             Sources.Init();
-            Controls.Init();
             Styles.Init();
             Formats.Init();
             ZindexTable.Init();
@@ -63,24 +56,24 @@ namespace GDO.Apps.Maps
 
             foreach (Format format in Map.Formats)
             {
-                Formats.Add(format.Id,format);
+                Formats.Add(format.Id.Value,format);
             }
             foreach (Style style in Map.Styles)
             {
-                Styles.Add(style.Id, style);
+                Styles.Add(style.Id.Value, style);
             }
             foreach (Source source in Map.Sources)
             {
-                Sources.Add(source.Id, source);
+                Sources.Add(source.Id.Value, source);
             }
             foreach (Layer layer in Map.Layers)
             {
-                Layers.Add(layer.Id, layer);
+                Layers.Add(layer.Id.Value, layer);
                 //TODO update zindex
             }
             foreach (View view in Map.Views)
             {
-                Views.Add(view.Id,view);
+                Views.Add(view.Id, view);
                 //TODO update zindex
             }
             CurrentView = Map.CurrentView;
@@ -130,7 +123,7 @@ namespace GDO.Apps.Maps
                     ZindexTable.AddLayer(layerId, layer.ZIndex);
                 }
                 */
-                layer.Id = layerId;
+                layer.Id.Value = layerId;
                 Layers.Add<T>(layerId, (T)layer);
                 return layerId;
             }
@@ -326,7 +319,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int sourceId = Sources.GetAvailableSlot();
-                source.Id = sourceId;
+                source.Id.Value = sourceId;
                 Sources.Add<T>(sourceId, (T)source);
                 return sourceId;
             }
@@ -410,7 +403,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int styleId = Styles.GetAvailableSlot();
-                style.Id = styleId;
+                style.Id.Value = styleId;
                 Styles.Add<T>(styleId, (T)style);
                 return styleId;
             }
@@ -469,7 +462,7 @@ namespace GDO.Apps.Maps
             try
             {
                 int formatId = Formats.GetAvailableSlot();
-                format.Id = formatId;
+                format.Id.Value = formatId;
                 Formats.Add<T>(formatId, (T)format);
                 return formatId;
             }
@@ -553,14 +546,6 @@ namespace GDO.Apps.Maps
             GMLFormat gmlFormat = new GMLFormat();
             KMLFormat kmlFormat = new KMLFormat();
 
-            esriJsonFormat.Prepare();
-            esriJsonFormat.Type = (int)FormatTypes.EsriJSON;
-            geoJsonFormat.Prepare();
-            geoJsonFormat.Type = (int)FormatTypes.GeoJSON;
-            gmlFormat.Prepare();
-            gmlFormat.Type = (int)FormatTypes.GML;
-            kmlFormat.Prepare();
-            kmlFormat.Type = (int)FormatTypes.KML;
 
             formats.Add(esriJsonFormat);
             formats.Add(geoJsonFormat);
@@ -575,18 +560,6 @@ namespace GDO.Apps.Maps
             StrokeStyle strokeStyle = new StrokeStyle();
             TextStyle textStyle = new TextStyle();
 
-            fillStyle.Prepare();
-            fillStyle.Type = (int)StyleTypes.Fill;
-            strokeStyle.Prepare();
-            strokeStyle.Type = (int)StyleTypes.Stroke;
-            circleStyle.Prepare();
-            circleStyle.Type = (int)StyleTypes.Circle;
-            iconStyle.Prepare();
-            iconStyle.Type = (int)StyleTypes.Icon;
-            regularShapeStyle.Prepare();
-            regularShapeStyle.Type = (int)StyleTypes.RegularShape;
-            textStyle.Prepare();
-            textStyle.Type = (int)StyleTypes.Text;
 
             
             styles.Add(fillStyle);
@@ -598,48 +571,21 @@ namespace GDO.Apps.Maps
 
             //Add Sources to Template
             BingMapsSource bingMapsSource = new BingMapsSource();
-            ClusterSource clusterSource = new ClusterSource();
             StaticImageSource staticImageSource = new StaticImageSource();
-            VectorImageSource vectorImageSource = new VectorImageSource();
             ImageTileSource imageTileSource = new ImageTileSource();
             XYZSource xyzSource = new XYZSource();
             StamenSource stamenSource = new StamenSource();
-            JSONTileSource jsonTileSource = new JSONTileSource();
-            VectorTileSource vectorTileSource = new VectorTileSource();
+
             VectorSource vectorSource = new VectorSource();
 
-            bingMapsSource.Prepare();
-            bingMapsSource.Type = (int)SourceTypes.BingMaps;
-            clusterSource.Prepare();
-            clusterSource.Type = (int)SourceTypes.Cluster;
-            staticImageSource.Prepare();
-            staticImageSource.Type = (int)SourceTypes.ImageStatic;
-            vectorImageSource.Prepare();
-            vectorImageSource.Type = (int)SourceTypes.ImageVector;
-            imageTileSource.Prepare();
-            imageTileSource.Type = (int)SourceTypes.TileImage;
-            xyzSource.Prepare();
-            xyzSource.Type = (int)SourceTypes.XYZ;
-            stamenSource.Prepare();
-            stamenSource.Type = (int)SourceTypes.Stamen;
-            jsonTileSource.Prepare();
-            jsonTileSource.Type = (int)SourceTypes.TileJSON;
-            vectorTileSource.Prepare();
-            vectorTileSource.Type = (int)SourceTypes.TileVector;
-            vectorSource.Prepare();
-            vectorSource.Type = (int)SourceTypes.Vector;
 
 
             sources.Add(vectorSource);
             sources.Add(bingMapsSource);
-            sources.Add(clusterSource);
             sources.Add(staticImageSource);
-            sources.Add(vectorImageSource);
             sources.Add(imageTileSource);
             sources.Add(xyzSource);
             sources.Add(stamenSource);
-            sources.Add(jsonTileSource);
-            sources.Add(vectorTileSource);
 
 
             //Add Layers to Template
@@ -647,15 +593,6 @@ namespace GDO.Apps.Maps
             ImageLayer imageLayer = new ImageLayer();
             TileLayer tileLayer = new TileLayer();
             VectorLayer vectorLayer = new VectorLayer();
-
-            heatmapLayer.Prepare();
-            heatmapLayer.Type = (int)LayerTypes.Heatmap;
-            imageLayer.Prepare();
-            imageLayer.Type = (int)LayerTypes.Image;
-            tileLayer.Prepare();
-            tileLayer.Type = (int)LayerTypes.Tile;
-            vectorLayer.Prepare();
-            vectorLayer.Type = (int)LayerTypes.Vector;
 
 
             layers.Add(heatmapLayer);

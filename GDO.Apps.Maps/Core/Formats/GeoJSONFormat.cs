@@ -3,26 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using GDO.Apps.Maps.Core;
+using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Formats
 {
     public class GeoJSONFormat : Format
     {
-        public string GeometryName { get; set; }
+        public StringParameter GeometryName { get; set; }
+        public StringParameter DefaultDataProjection { get; set; }
 
-        new public void Init(string geometryName)
+        public GeoJSONFormat()
         {
-            GeometryName = geometryName;
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
-            ClassName = this.GetType().Name;
-        }
+            ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.GeoJSON;
 
-        new public void Modify()
-        {
+            GeometryName = new StringParameter
+            {
+                Name = "Geometry Name",
+                Description = "Geometry name to use when creating features.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
+                IsEditable = false,
+                IsVisible = true
+            };
+
+            DefaultDataProjection = new StringParameter
+            {
+                Name = "Default Data Projection",
+                Description = "Default data projection",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
+                IsEditable = false,
+                IsVisible = true,
+                DefaultValue = "EPSG:4326"
+            };
         }
     }
 }

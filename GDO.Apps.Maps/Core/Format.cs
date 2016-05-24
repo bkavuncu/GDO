@@ -34,33 +34,9 @@ namespace GDO.Apps.Maps.Core
     };
     public class Format : Base
     {
-
-        public Format()
+        public Format() : base ()
         {
-
-        }
-        public void Init(int id, string name, int type)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            ClassName = this.GetType().Name;
-
-            //AddtoEditables(() => Id);
-            AddtoEditables(() => Name);
-            //AddtoEditables(() => Type);
-        }
-
-        public void Modify(int id, string name, int type)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
+            ClassName.Value = this.GetType().Name;
         }
     }
 }
