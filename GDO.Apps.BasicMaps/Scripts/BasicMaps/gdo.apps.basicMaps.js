@@ -81,38 +81,31 @@ $(function () {
             gdo.net.instance[instanceId].map.getView().setZoom(zoom);
             gdo.net.instance[instanceId].map.updateSize();
             gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
-                gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                //gdo.net.app["BasicMaps"].changeEvent(instanceId);
                 gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
                 setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
                 setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
                 setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
-                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
+                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
             });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
-                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
-                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.getView().on('change:rotation', function () {
+                //gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+                //gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                gdo.net.instance[instanceId].map.getView().setRotation(0);
+            });
+            gdo.net.instance[instanceId].map.on('change:size', function () {
                 gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
             });
-            gdo.net.instance[instanceId].map.on('change:size', function () {
-                gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
-                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
-                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
-            });
             gdo.net.instance[instanceId].map.on('change:view', function () {
+                gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
-                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
-                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.on('change:target', function () {
                 gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
@@ -180,6 +173,7 @@ gdo.net.app["BasicMaps"].clearInput = function () {
 gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoom) {
     gdo.net.instance[instanceId].view = new ol.View({
         center: [parseFloat(center[0]), parseFloat(center[1])],
+        constrainRotation: 0,
         enableRotation: false,
         resolution: parseFloat(resolution),
         zoom: parseInt(zoom)
@@ -688,7 +682,15 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         controls: gdo.net.instance[instanceId].controls,
         layers: gdo.net.instance[instanceId].layers,
         target: 'map',
-        view: gdo.net.instance[instanceId].view
+        view: gdo.net.instance[instanceId].view,
+        interactions: ol.interaction.defaults({
+            pinchRotate: false,
+            zoomDuration: 0
+        }).extend([
+               new ol.interaction.MouseWheelZoom({ duration: 0 }),
+               new ol.interaction.PinchZoom({ duration: 0 }),
+               new ol.interaction.DragZoom({ duration: 0 })
+        ])
     });
 
     gdo.net.instance[instanceId].positionFeature = new ol.Feature();
