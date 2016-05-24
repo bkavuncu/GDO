@@ -89,6 +89,7 @@ $(function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
                 setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
                 gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 70);
             });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
