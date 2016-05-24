@@ -944,6 +944,9 @@
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
+    <Content Include="Scenarios\matrixBIG.json" />
+    <Content Include="Scenarios\matrixSMALL.json" />
+    <Content Include="Scenarios\matrixVERYSMALL.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\heatmap.js" />
     <Content Include="Scripts\heatmap.min.js" />
@@ -1012,7 +1015,7 @@
   <ItemGroup>
     <Folder Include="Configurations\" />
     <Folder Include="Data\" />
-    <Folder Include="Scenarios\" />
+	<Folder Include="Scenarios\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

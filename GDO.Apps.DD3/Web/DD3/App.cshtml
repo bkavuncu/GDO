@@ -10,7 +10,7 @@
     <title></title>
     <style>
         body {
-            background: #EEE;
+            background: grey;
             color: #FFF;
             font-family: helvetica;
             font-size: 70%;
@@ -66,6 +66,23 @@
     <script src="~/Web/DD3/Scripts/animation.js"></script>
     <script src="~/Web/DD3/Scripts/animationLines.js"></script>
 
+    <script>
+        d3.selection.prototype.moveToFront = function () {
+            return this.each(function () {
+                this.parentNode.appendChild(this);
+            });
+        };
+
+        d3.selection.prototype.moveToBack = function () {
+            return this.each(function () {
+                var firstChild = this.parentNode.firstChild;
+                if (firstChild) {
+                    this.parentNode.insertBefore(this, firstChild);
+                }
+            });
+        };
+
+    </script>
     <script>
         var dd3, loadMap, launchAnimation, map, anim;
 
@@ -554,34 +571,37 @@
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight;
 
-                    orderController.orders['createRect'] = function (id) {
+
+                    orderController.orders['createRect'] = function (id, image) {
                         var rectG = svg.append('g').attr('id', "r" + id);
-                        rectG.attr("transform", "translate(" + [4 * width / 10, 4 * height / 10] + ")");
+                        var id_int = parseInt(id.substr(1, id.length));
+                        var col = (id_int - 1) % 5, row = Math.floor((id_int - 1) / 5);
+                        var offx = (((2 * width / 10) * col) % width) + col;
+                        var offy = (((2 * height / 10) * row) % height) + row;
+                        rectG.attr("transform", "translate(" + [offx, offy] + ")");
                         //*
-                        rectG.append('rect')
-                            .attr("x", 0)
+                        var inner_rect = rectG.append('rect');
+                        var w = (2 * width / 10) - 2, h = (2 * height / 10) - 2;
+                        inner_rect.attr("x", 0)
                             .attr("y", 0)
-                            .attr("width", 2 * width / 10)
-                            .attr("height", 2 * height / 10)
-                            .attr("fill", "transparent")
-                            .attr("stroke", "black");
-                        //*/
+                            .attr("width", w)
+                            .attr("height", h)
+                            .attr("fill", "transparent");
+                            //.attr("stroke", "black");
+                        //
                         rectG.append("image")
-                            .attr("xlink:href", "illustration.png")
+                            .attr("xlink:href", image)
                             .attr("x", 0)
                             .attr("y", 0)
-                            .attr("width", 2 * width / 10)
-                            .attr("height", 2 * width / 10);
+                            .attr("preserveAspectRatio", "none")
+                            .attr("width", inner_rect.attr("width"))
+                            .attr("height", inner_rect.attr("height"));
                     };
 
                     orderController.orders['moveRect'] = function (id, x, y) {
                         var rectG = svg.select("#r" + id);
+                        rectG.moveToFront();
                         rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
-                    };
-
-                    orderController.orders['frontRect'] = function (id) {
-                        var g = svg.select("#r" + id).node();
-                        g.parentElement.appendChild(g);
                     };
 
                     orderController.orders['resizeRect'] = function (id, x, y) {
@@ -589,6 +609,7 @@
                         var r = svg.select("#r" + id).select("rect");
                         img.attr("width", x * width).attr("height", y * height);
                         r.attr("width", x * width).attr("height", y * height);
+                        svg.select("#r" + id).moveToFront();
                     };
 
                     orderController.orders['delRect'] = function (id) {
@@ -1039,7 +1060,6 @@
 
                     loadMap();
                 };
-
             });
         });
 
