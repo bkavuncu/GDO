@@ -123,26 +123,26 @@
                     <div class="modal-header">
                         <h5><i align="center" class='fa  fa-gear   fa-fw'></i>&nbsp;<font color="white">Enter Pin</font></h5>
                     </div>
-                    <div class="modal-body" style="height:35vh">
+                    <div class="modal-body" style="height:49vh">
                         <div id="keypad">
                             <table id="keypad_table" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 3px; margin: 2px; width: 100%; background:transparent">
                                 <tr style="pointer-events: none;">
-                                    <td >
+                                    <td style="width:16%">
                                         <button type="button" id="password_1" class="btn btn-default btn-lg btn-block">-</button>
                                     </td>
-                                    <td>
+                                    <td style="width:16%">
                                         <button type="button" id="password_2" class="btn btn-default btn-lg btn-block">-</button>
                                     </td>
-                                    <td>
+                                    <td style="width:16%">
                                         <button type="button" id="password_3" class="btn btn-default btn-lg btn-block">-</button>
                                     </td>
-                                    <td>
+                                    <td style="width:16%">
                                         <button type="button" id="password_4" class="btn btn-default btn-lg btn-block">-</button>
                                     </td>
-                                    <td>
+                                    <td style="width:16%">
                                         <button type="button" id="password_5" class="btn btn-default btn-lg btn-block">-</button>
                                     </td>
-                                    <td>
+                                    <td style="width:16%">
                                         <button type="button" id="password_6" class="btn btn-default btn-lg btn-block">-</button>
                                     </td>
                                 </tr>
@@ -151,40 +151,40 @@
                                 </tr>
                                 <tr >
                                     <td colspan="2">
-                                        <button type="button" id="keypad_1" class="btn btn-primary btn-lg btn-block">1</button>
+                                        <button type="button" id="keypad_1" key="1" class="btn btn-primary btn-lg btn-block">1</button>
                                     </td>
                                     <td colspan="2" >
-                                        <button type="button" id="keypad_2" class="btn btn-primary btn-lg btn-block">2</button>
+                                        <button type="button" id="keypad_2" key="2" class="btn btn-primary btn-lg btn-block">2</button>
                                     </td>
                                     <td colspan="2" >
-                                        <button type="button" id="keypad_3" class="btn btn-primary btn-lg btn-block">3</button>
+                                        <button type="button" id="keypad_3" key="3" class="btn btn-primary btn-lg btn-block">3</button>
                                     </td>
                                 </tr>
                                 <tr >
                                     <td colspan="2" >
-                                        <button type="button" id="keypad_4" class="btn btn-primary btn-lg btn-block">4</button>
+                                        <button type="button" id="keypad_4" key="4" class="btn btn-primary btn-lg btn-block">4</button>
                                     </td>
                                     <td colspan="2" >
-                                        <button type="button" id="keypad_5" class="btn btn-primary btn-lg btn-block">5</button>
+                                        <button type="button" id="keypad_5" key="5" class="btn btn-primary btn-lg btn-block">5</button>
                                     </td>
                                     <td colspan="2">
-                                        <button type="button" id="keypad_6" class="btn btn-primary btn-lg btn-block">6</button>
+                                        <button type="button" id="keypad_6" key="6" class="btn btn-primary btn-lg btn-block">6</button>
                                     </td>
                                 </tr>
                                 <tr >
                                     <td colspan="2">
-                                        <button type="button" id="keypad_7" class="btn btn-primary btn-lg btn-block">7</button>
+                                        <button type="button" id="keypad_7" key="7" class="btn btn-primary btn-lg btn-block">7</button>
                                     </td>
                                     <td colspan="2" >
-                                        <button type="button" id="keypad_8" class="btn btn-primary btn-lg btn-block">8</button>
+                                        <button type="button" id="keypad_8" key="8" class="btn btn-primary btn-lg btn-block">8</button>
                                     </td>
                                     <td colspan="2" >
-                                        <button type="button" id="keypad_9" class="btn btn-primary btn-lg btn-block">9</button>
+                                        <button type="button" id="keypad_9" key="9" class="btn btn-primary btn-lg btn-block">9</button>
                                     </td>
                                 </tr>
                                 <tr >
                                     <td colspan="2">
-                                        <button type="button" id="keypad_0" class="btn btn-primary btn-lg btn-block">0</button>
+                                        <button type="button" id="keypad_0" key="0" class="btn btn-primary btn-lg btn-block">0</button>
                                     </td>
                                     <td colspan="4" >
                                         <button type="button" id="keypad_e" class="btn btn-success btn-lg btn-block">Enter</button>
@@ -251,6 +251,7 @@
                 gdo.loadScript('instances', 'management', gdo.SCRIPT_TYPE.CORE);
                 gdo.loadScript('sections', 'management', gdo.SCRIPT_TYPE.CORE);
                 gdo.loadScript("nodes", "management", gdo.SCRIPT_TYPE.CORE);
+                gdo.loadScript("console", "management", gdo.SCRIPT_TYPE.CORE);
                 $(document).ready(function () {
                     gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);

@@ -109,7 +109,7 @@
                     }
                 }
                 gdo.loadScript("nodes","management", gdo.SCRIPT_TYPE.CORE);
-                gdo.loadScript("console","management", gdo.SCRIPT_TYPE.CORE);
+                gdo.loadScript("terminal","management", gdo.SCRIPT_TYPE.CORE);
                 $( document ).ready(function() {
                     gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
@@ -126,7 +126,7 @@
                     gdo.management.nodes.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
                 }
                 gdo.management.nodes.drawNodeTable(gdo.nodeId);
-                gdo.management.console.drawConsoleInput();
+                gdo.management.terminal.drawTerminalInput();
                 gdo.updateSelf();
             }
     </script>
@@ -254,8 +254,8 @@
             <br>
             <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height:35vh;border-collapse: separate; border-spacing: 3px;" ></table>
             <div id="node_table_space"><br></div>
-            <div id="console_area" style="font-size:13px;width: 100.5%; height: 38vh; overflow: auto;border:1px solid #333;background-color: #222; color: #FFF"></div>
-            <div id="console_area_space"><br></div>
+            <div id="terminal_area" style="font-size:13px;width: 100.5%; height: 38vh; overflow: auto;border:1px solid #333;background-color: #222; color: #FFF"></div>
+            <div id="terminal_area_space"><br></div>
             <div style="width: 99.5%;">
                 <div class="col-lg-8 form-group" id="console_input_div"></div>
                 <datalist id="functions"></datalist>

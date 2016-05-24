@@ -97,7 +97,7 @@
                     }
                 }
                 gdo.loadScript("nodes","management", gdo.SCRIPT_TYPE.CORE);
-                gdo.loadScript("console","management", gdo.SCRIPT_TYPE.CORE);
+                gdo.loadScript("terminal","management", gdo.SCRIPT_TYPE.CORE);
                 $( document ).ready(function() {
                     gdo.clientId = 1;
                     gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
@@ -114,7 +114,7 @@
                     gdo.management.nodes.drawEmptyNodeTable(gdo.net.cols, gdo.net.rows);
                 }
                 gdo.management.nodes.drawNodeTable(gdo.nodeId);
-                gdo.management.console.drawConsoleInput();
+                gdo.management.terminal.drawTerminalInput();
                 $('#welcome_modal').modal('toggle');
                 gdo.updateSelf();
             }
@@ -130,7 +130,7 @@
                         <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance</font></button>
                     </td>
                     <td>
-                        <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console</font></button></a>
+                        <a href="~/Web/Console.cshtml"><button type="button" id="terminalButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console</font></button></a>
                     </td>
                     <td>
                         <div style="width:14px"></div>
@@ -243,13 +243,13 @@
             <table id="node_table" unselectable="on" class="unselectable" style="width: 99.5%; height: 35vh; border-collapse: separate; border-spacing: 3px;"></table>
             <div id="node_table_space"><br>
             </div>
-            <div id="console_area" style="font-size: 13px; width: 100.5%; height: 38vh; overflow: auto;border: 1px solid #333; background-color: #222; color: #FFF"></div>
-            <div id="console_area_space"><br>
+            <div id="terminal_area" style="font-size: 13px; width: 100.5%; height: 38vh; overflow: auto;border: 1px solid #333; background-color: #222; color: #FFF"></div>
+            <div id="terminal_area_space"><br>
             </div>
             <div style="width: 99.5%;">
-                <div class="col-lg-8" id="console_input_div"></div>
+                <div class="col-lg-8" id="terminal_input_div"></div>
                 <!-- /.col-lg-12 -->
-                <div class="col-lg-4" id="console_submit_div"></div>
+                <div class="col-lg-4" id="terminal_submit_div"></div>
             </div>
         </div>
         <div class="modal fade" id="welcome_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

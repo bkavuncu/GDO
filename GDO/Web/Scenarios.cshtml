@@ -120,7 +120,7 @@
                         @:gdo.loadScript("@moduleEntry.Value.Name", "@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                                 }
                 }
-            gdo.loadScript("console", "management", gdo.SCRIPT_TYPE.CORE);
+            gdo.loadScript("terminal", "management", gdo.SCRIPT_TYPE.CORE);
             gdo.loadScript('scenarios', 'management', gdo.SCRIPT_TYPE.CORE);
             $(document).ready(function () {
                 gdo.clientId = 1;
@@ -134,7 +134,7 @@
         }
         initApp = function () {
             gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.management.console.drawConsoleInput();
+            gdo.management.terminal.drawTerminalInput();
             gdo.updateSelf();
             gdo.management.scenarios.displayScenariosToLoad("");
         }
@@ -251,7 +251,7 @@
                 <h6><span class="glyphicon glyphicon-console"></span>&nbsp;&nbsp;Console</h6>
             </div>
             <div class="panel-body">
-                <div id="console_area" style="font-size: 13px; width: 100.5%; height: 17vh; overflow: auto; border: 0px solid #333; background-color: #222; color: #FFF"></div>
+                <div id="terminal_area" style="font-size: 13px; width: 100.5%; height: 17vh; overflow: auto; border: 0px solid #333; background-color: #222; color: #FFF"></div>
             </div>
             <div class="panel-footer">
                 <div class="row">

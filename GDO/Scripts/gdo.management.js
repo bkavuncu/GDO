@@ -153,3 +153,4 @@ gdo.management.updateModulesMenu = function () {
     }
     // $("#side-menu").metisMenu();
 }
+

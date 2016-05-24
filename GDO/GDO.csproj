@@ -621,10 +621,11 @@
     <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\enscroll-0.6.1.min.js" />
+    <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.modules.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
-    <Content Include="Scripts\gdo.management.console.js" />
+    <Content Include="Scripts\gdo.management.terminal.js" />
     <Content Include="Scripts\gdo.management.scenarios.js" />
     <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
@@ -1015,7 +1016,6 @@
   <ItemGroup>
     <Folder Include="Configurations\" />
     <Folder Include="Data\" />
-	<Folder Include="Scenarios\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
