@@ -15,8 +15,8 @@ $(function () {
     $.connection.basicMapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["BasicMaps"].updateCenter(instanceId);
-            //gdo.net.instance[instanceId].map.render();
-            //gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+            gdo.net.instance[instanceId].map.render();
+            gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
         }
     }
 
@@ -82,29 +82,37 @@ $(function () {
             gdo.net.instance[instanceId].map.updateSize();
             gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
                 gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
+                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
                 gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
-                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
+                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.getView().on('change:rotation', function () {
                 gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
             });
             gdo.net.instance[instanceId].map.on('change:size', function () {
-                gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
+                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.on('change:view', function () {
-                gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
+                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
             });
             gdo.net.instance[instanceId].map.on('change:target', function () {
                 gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
