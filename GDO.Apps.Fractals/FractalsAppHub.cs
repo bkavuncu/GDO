@@ -295,6 +295,22 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void SyncTime(int instanceId, int val)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.SyncTime = val;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
 
         public void ModToggle(int instanceId)
         {
@@ -351,7 +367,7 @@ namespace GDO.Apps.Fractals
                         string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
                         TimeSpan span = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
                         
-                        Clients.Group("" + instanceId).swapFrame(instanceId, Json, span.TotalMilliseconds+100);
+                        Clients.Group("" + instanceId).swapFrame(instanceId, Json, span.TotalMilliseconds+FA.SyncTime);
                     }
 
                 }

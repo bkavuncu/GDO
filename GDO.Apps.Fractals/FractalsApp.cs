@@ -68,6 +68,8 @@ namespace GDO.Apps.Fractals
 
         public int Mod;
 
+        public int SyncTime;
+
         public int Nodes;
         public int NewNodes;
         public int Acks;
@@ -134,6 +136,8 @@ namespace GDO.Apps.Fractals
             NodesOnline = new int[64];
 
             Sync = true;
+
+            SyncTime = 100;
     }
 
         private const double Sensitivity = 0.0025;

@@ -105,6 +105,14 @@ $("iframe").contents().find("#sync_toggle")
         gdo.net.app["Fractals"].server.syncToggle(gdo.controlId);
     });
 
+$("iframe").contents().find("#sync_time_number").empty().append($("iframe").contents().find("#sync_time_range").val());
+
+$("iframe").contents().find("#sync_time_range").on("input", function () {
+    val = $("iframe").contents().find("#sync_time_range").val();
+    $("iframe").contents().find("#sync_time_number").empty().append(val);
+    gdo.net.app["Fractals"].server.syncTime(gdo.controlId, val);
+});
+
 function initJoystick(id, receiveParams) {
 
     $("iframe").contents().find(id).on("mousedown", down);
