@@ -449,9 +449,6 @@
 
         var camera = this.camera;
 
-        camera.viewport.height = numScreensHigh;
-        camera.viewport.y = gdo.net.node[gdo.clientId].sectionRow - numScreensHigh + 1;
-
         camera.fovMode = BABYLON.Camera.FOVMODE_HORIZONTAL_FIXED;
         camera.fov = horizontalFov;
 
@@ -462,6 +459,46 @@
         var horizontalRotation = nodeWidthOffset * horizontalFov;
 
         this.cameraViewOffset.y = horizontalRotation;
+
+        // Hijack the Matrix Perspective function to add a virtical offset
+        // This functionality should really be properly added to the Babylon library 
+        // but I don't have time for that right now
+        //
+        // See here for original typscript code that is duplicated
+        // https://github.com/BabylonJS/Babylon.js/blob/master/src/Math/babylon.math.ts
+
+        var yoffset = (gdo.net.node[gdo.clientId].sectionRow - numScreensHigh + 1);
+
+        BABYLON.Matrix.PerspectiveFovLHToRef = function (fov, aspect, znear, zfar, result, isVerticalFovFixed) {
+            var tan = 1.0 / (Math.tan(fov * 0.5));
+
+            if (isVerticalFovFixed) {
+                result.m[0] = tan / aspect;
+            }
+            else {
+                result.m[0] = tan;
+            }
+
+            result.m[1] = result.m[2] = result.m[3] = 0.0;
+
+            if (isVerticalFovFixed) {
+                result.m[5] = tan;
+            }
+            else {
+                result.m[5] = tan * aspect;
+            }
+
+            result.m[4] = result.m[6] = result.m[7] = 0.0;
+
+            result.m[8] = 0;
+            result.m[9] = 2 * yoffset;
+
+            result.m[10] = -zfar / (znear - zfar);
+            result.m[11] = 1.0;
+            result.m[12] = result.m[13] = result.m[15] = 0.0;
+            result.m[14] = (znear * zfar) / (znear - zfar);
+            result.m[15] = 0.0;
+        }
     }
 
     this.setupShared = function () {
@@ -480,14 +517,15 @@
             var column = this.gdo.net.node[this.gdo.clientId].sectionCol;
 
             if (column == 0) {
-                //BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 10000;
+                //BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 11000;
             } else {
-                //BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 10000;
+                //BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 11000;
             }
             //config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
         }
-        //BABYLON_OBJLOADER_STARTING_MESH_NUMBER = 2;
-        //BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 2;
+
+        BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 10000;
+
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 
         if (config.minZ != undefined) {

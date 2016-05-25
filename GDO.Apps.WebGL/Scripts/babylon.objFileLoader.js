@@ -516,6 +516,7 @@ var BABYLON;
             var lines = data.split('\n');
 
             var numMeshesSeen = 0;
+            var savingMeshes = BABYLON_OBJLOADER_STARTING_MESH_NUMBER == 0;
 
             //Look at each line
             for (var i = 0; i < lines.length; i++) {
@@ -528,10 +529,6 @@ var BABYLON;
                 else if (this.mtllib.test(line)) {
                     //Get the name of mtl file
                     fileToLoad = line.substring(7).trim();
-                }
-                else if(numMeshesSeen >= BABYLON_OBJLOADER_STARTING_MESH_NUMBER +
-                                         BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD) {
-                    continue;
                 }
                 else if ((result = this.vertexPattern.exec(line)) !== null) {
                     //Create a Vector3 with the position x, y, z
@@ -554,34 +551,28 @@ var BABYLON;
                     //Add the Vector in the list of uvs
                     uvs.push(new BABYLON.Vector2(parseFloat(result[1]), parseFloat(result[2])));
                 }
-                else if (numMeshesSeen < BABYLON_OBJLOADER_STARTING_MESH_NUMBER) {
-                    if (this.group.test(line) || this.obj.test(line)) {
-                        numMeshesSeen++;
-                    }
-                    continue;
-                }
-                else if ((result = this.facePattern3.exec(line)) !== null) {
+                else if (savingMeshes && (result = this.facePattern3.exec(line)) !== null) {
                     //Value of result:
                     //["f 1/1/1 2/2/2 3/3/3", "1/1/1 2/2/2 3/3/3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern3(result[1].trim().split(" "), // ["1/1/1", "2/2/2", "3/3/3"]
                     1);
                 }
-                else if ((result = this.facePattern4.exec(line)) !== null) {
+                else if (savingMeshes && (result = this.facePattern4.exec(line)) !== null) {
                     //Value of result:
                     //["f 1//1 2//2 3//3", "1//1 2//2 3//3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern4(result[1].trim().split(" "), // ["1//1", "2//2", "3//3"]
                     1);
                 }
-                else if ((result = this.facePattern2.exec(line)) !== null) {
+                else if (savingMeshes && (result = this.facePattern2.exec(line)) !== null) {
                     //Value of result:
                     //["f 1/1 2/2 3/3", "1/1 2/2 3/3"...]
                     //Set the data for this face
                     setDataForCurrentFaceWithPattern2(result[1].trim().split(" "), // ["1/1", "2/2", "3/3"]
                     1);
                 }
-                else if ((result = this.facePattern1.exec(line)) !== null) {
+                else if (savingMeshes && (result = this.facePattern1.exec(line)) !== null) {
                     //Value of result
                     //["f 1 2 3", "1 2 3"...]
                     //Set the data for this face
@@ -601,7 +592,13 @@ var BABYLON;
                         uvs: undefined,
                         materialName: ""
                     };
-                    addPreviousObjMesh();
+
+                    if (savingMeshes) {
+                        addPreviousObjMesh();
+                    } else {
+                        meshesFromObj.pop();
+                    }
+
                     //Push the last mesh created with only the name
                     meshesFromObj.push(objMesh);
                     //Set this variable to indicate that now meshesFromObj has objects defined inside
@@ -609,8 +606,11 @@ var BABYLON;
                     isFirstMaterial = true;
                     increment = 1;
 
-                    console.log("Loaded mesh: " + numMeshesSeen);
+                    console.log("Seen mesh: " + numMeshesSeen);
                     numMeshesSeen++;
+
+                    savingMeshes = numMeshesSeen > BABYLON_OBJLOADER_STARTING_MESH_NUMBER &&
+                                   numMeshesSeen <= BABYLON_OBJLOADER_STARTING_MESH_NUMBER + BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD;
                 }
                 else if (this.usemtl.test(line)) {
                     //Get the name of the material
@@ -618,7 +618,12 @@ var BABYLON;
                     //If this new material is in the same mesh
                     if (!isFirstMaterial) {
                         //Set the data for the previous mesh
-                        addPreviousObjMesh();
+                        if (savingMeshes) {
+                            addPreviousObjMesh();
+                        } else {
+                            meshesFromObj.pop();
+                        }
+
                         //Create a new mesh
                         var objMesh =
                         //Set the name of the current obj mesh
@@ -633,6 +638,12 @@ var BABYLON;
                         increment++;
                         //If meshes are already defined
                         meshesFromObj.push(objMesh);
+
+                        console.log("Seen mesh: " + numMeshesSeen);
+                        numMeshesSeen++;
+
+                        savingMeshes = numMeshesSeen > BABYLON_OBJLOADER_STARTING_MESH_NUMBER &&
+                                       numMeshesSeen <= BABYLON_OBJLOADER_STARTING_MESH_NUMBER + BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD;
                     }
                     //Set the material name if the previous line define a mesh
                     if (hasMeshes && isFirstMaterial) {
@@ -641,7 +652,7 @@ var BABYLON;
                         isFirstMaterial = false;
                     }
                 }
-                else if (this.smooth.test(line)) {
+                else if (!savingMeshes || this.smooth.test(line)) {
                 }
                 else {
                     //If there is another possibility
