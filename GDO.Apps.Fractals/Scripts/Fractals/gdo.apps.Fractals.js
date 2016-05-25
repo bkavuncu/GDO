@@ -12,18 +12,21 @@ $(function () {
                 var n = d.getTime();
 
                 var ping = (n - startTime) / 2;
-                clockDiff = (startTime + ping) - serverTime;
-                gdo.consoleOut('.Fractals', 1, startTime);
-                gdo.consoleOut('.Fractals', 1, serverTime);
-                gdo.consoleOut('.Fractals', 1, n);
-                gdo.consoleOut('.Fractals', 1, 'Clock diff - ' + clockDiff);
+                clockDiffTotal += (startTime + ping) - serverTime;
+                measurements++;
+                //gdo.consoleOut('.Fractals', 1, startTime);
+               // gdo.consoleOut('.Fractals', 1, serverTime);
+                //gdo.consoleOut('.Fractals', 1, n);
+                //gdo.consoleOut('.Fractals', 1, 'Clock diff - ' + clockDiffTotal / measurements + " measurements - " + measurements);
+
+                //calcClockDiff();
+                setTimeout(calcClockDiff, 100);
             }
         }
 
 
         $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
                 var json = JSON.parse(params);
@@ -57,6 +60,8 @@ $(function () {
                 parameters.modToggle = json.Mod;
 
                 sync = json.Sync;
+
+
             }
         };
 
@@ -125,7 +130,7 @@ $(function () {
                 var n = d.getTime();
 
                 var timeout = timeToRender - n;
-                timeout -= clockDiff;
+                timeout -= clockDiffTotal/measurements;
 
 
                 if (json.CurrentFrame == 0) {
@@ -187,8 +192,7 @@ gdo.net.app["Fractals"].initClient = function () {
     var webgl1 = initWebgl("#glscreen1", locations1, "#2d-fragment-shader");
     var webgl2 = initWebgl("#glscreen2", locations2, "#2d-fragment-shader");
 
-    clockDiff = 0;
-    //gdo.net.app["Fractals"].server.calcClockDiff(new Date().getTime());
+    startCalcClockDiff();
 
     gl1 = webgl1.gl;
     gl2 = webgl2.gl;

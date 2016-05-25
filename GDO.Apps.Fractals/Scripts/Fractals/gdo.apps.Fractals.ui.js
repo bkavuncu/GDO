@@ -101,7 +101,6 @@ $("iframe").contents().find("#mod_toggle")
 $("iframe").contents().find("#sync_toggle")
     .unbind()
     .click(function () {
-        gdo.consoleOut('.Fractals', 1, 'Toggled inifinite objects');
         gdo.net.app["Fractals"].server.syncToggle(gdo.controlId);
     });
 

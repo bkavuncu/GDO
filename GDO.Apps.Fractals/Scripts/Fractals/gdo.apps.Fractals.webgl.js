@@ -6,7 +6,8 @@ var gl2;
 var program2;
 var canvas2;
 
-var clockDiff;
+var clockDiffTotal;
+var measurements;
 
 var sync;
 
@@ -19,10 +20,10 @@ function initWebgl(id, locations, shader) {
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
-    canvas.width = 960;
-    canvas.height = 540;
-    //canvas.width = 1920;
-    //canvas.height = 1080;
+    //canvas.width = 960;
+    //canvas.height = 540;
+    canvas.width = 1920;
+    canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -202,3 +203,14 @@ function render(locations, gl, program) {
         }
     }
 }
+
+function startCalcClockDiff() {
+    clockDiffTotal = 0;
+    measurements = 0;
+    calcClockDiff();  
+}
+
+function calcClockDiff() {
+    gdo.net.app["Fractals"].server.calcClockDiff(new Date().getTime());
+}
+
