@@ -7,7 +7,7 @@
 
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = createScene(this.engine);
-    this.camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), this.scene);
+    this.camera = undefined;
 
     this.cameraViewOffset = new BABYLON.Vector3(0, 0, 0);
     this.receivedFirstCameraUpdate = false;
@@ -295,6 +295,8 @@
 
     this.setupControl = function () {
 
+        this.camera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(0, 0, 0), this.scene);
+
         this.isControlNode = true;
         this.gdo.net.app["WebGL"].initControl(this);
         this.instanceId = this.gdo.controlId;
@@ -396,6 +398,7 @@
 
             $('#reset_position').click(function () {
                 camera.position.copyFromFloats(0, 0, 0);
+                camera.rotation.copyFromFloats(0, 0, 0);
             });
 
             var noclipActive = false;
@@ -424,6 +427,8 @@
     }
 
     this.setupApp = function () {
+
+        this.camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 0), this.scene);
 
         gdo.net.app["WebGL"].initClient(this);
         this.instanceId = instanceId = this.gdo.net.node[this.gdo.clientId].appInstanceId;
@@ -467,7 +472,7 @@
         // See here for original typscript code that is duplicated
         // https://github.com/BabylonJS/Babylon.js/blob/master/src/Math/babylon.math.ts
 
-        var yoffset = (gdo.net.node[gdo.clientId].sectionRow - numScreensHigh + 1);
+        var yoffset = gdo.net.node[gdo.clientId].sectionRow - ((numScreensHigh - 1)/2);
 
         BABYLON.Matrix.PerspectiveFovLHToRef = function (fov, aspect, znear, zfar, result, isVerticalFovFixed) {
             var tan = 1.0 / (Math.tan(fov * 0.5));
