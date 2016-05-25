@@ -138,55 +138,67 @@ function initWebgl(id, locations, shader) {
 
     return { gl: gl, program: program, canvas: canvas };
 }
-
+rendering = false;
 function renderSync(locations, gl, program) {
+    
+    if (!rendering) {
+        rendering = true;
 
-    if (sync) {
+        if (sync) {
 
-        // Ensure continuous rendering
-        window.requestAnimationFrame(function () {
-            gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId);
-        });
+            // Ensure continuous rendering
+            window.requestAnimationFrame(function () {
+                rendering = false;
+                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId);
+            });
 
-        // Apply params
-        applyParams(locations, gl);
+            // Apply params
+            applyParams(locations, gl);
 
-        // Set position data of vertex shader
-        positionLocation = gl.getAttribLocation(program, "a_position");
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+            // Set position data of vertex shader
+            positionLocation = gl.getAttribLocation(program, "a_position");
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        // Draw quad
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+            // Draw quad
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    } else {
-        canvas1.style.zIndex = 5;
-        canvas2.style.zIndex = 0;
-        render(locations1, gl1, program1);
+        } else {
+            rendering = false;
+            canvas1.style.zIndex = 5;
+            canvas2.style.zIndex = 0;
+            render(locations1, gl1, program1);
+        }
     }
 }
 
 function render(locations, gl, program) {
 
-    if (!sync) {
+    if (!rendering) {
+        rendering = true;
 
-        // Ensure continuous rendering
-        window.requestAnimationFrame(function () {
-            render(locations, gl, program);
-        });
+        if (!sync) {
 
-        // Apply params
-        applyParams(locations, gl);
+            // Ensure continuous rendering
+            window.requestAnimationFrame(function () {
+                rendering = false;
+                render(locations, gl, program);
+            });
 
-        // Set position data of vertex shader
-        positionLocation = gl.getAttribLocation(program, "a_position");
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+            // Apply params
+            applyParams(locations, gl);
 
-        // Draw quad
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+            // Set position data of vertex shader
+            positionLocation = gl.getAttribLocation(program, "a_position");
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-    } else {
-        renderSync(locations2, gl2, program2);
+            // Draw quad
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        } else {
+            rendering = false;
+            renderSync(locations2, gl2, program2);
+        }
     }
 }

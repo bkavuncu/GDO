@@ -184,8 +184,6 @@ gdo.net.app["Fractals"].initClient = function () {
 
     sync = true;
 
-    gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
-
     var webgl1 = initWebgl("#glscreen1", locations1, "#2d-fragment-shader");
     var webgl2 = initWebgl("#glscreen2", locations2, "#2d-fragment-shader");
 
@@ -202,6 +200,7 @@ gdo.net.app["Fractals"].initClient = function () {
     canvas1.style.zIndex = 0;
     canvas2.style.zIndex = 5;
 
+    gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 }
 
 gdo.net.app["Fractals"].initControl = function () {

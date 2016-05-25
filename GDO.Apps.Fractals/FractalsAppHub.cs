@@ -407,6 +407,7 @@ namespace GDO.Apps.Fractals
 
         public void IncNodes(int instanceId, int clientId)
         {
+            if (instanceId == -1) return;
             lock (Cave.AppLocks[instanceId])
             {
                 try
