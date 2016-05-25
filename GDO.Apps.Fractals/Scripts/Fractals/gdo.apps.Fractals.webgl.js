@@ -203,7 +203,7 @@ function render(locations, gl, program) {
         }
     }
 }
-
+syncClockDiff = true;
 function startCalcClockDiff() {
     clockDiffTotal = 0;
     measurements = 0;
@@ -211,6 +211,8 @@ function startCalcClockDiff() {
 }
 
 function calcClockDiff() {
-    gdo.net.app["Fractals"].server.calcClockDiff(new Date().getTime());
+    if (syncClockDiff) {
+        gdo.net.app["Fractals"].server.calcClockDiff(new Date().getTime());
+    }
 }
 

@@ -349,6 +349,22 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void SyncClockDiff(int instanceId, bool val)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).syncClockDiff(instanceId, val);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void AckFrameRendered(int instanceId)
         {
             if (instanceId == -1) return;

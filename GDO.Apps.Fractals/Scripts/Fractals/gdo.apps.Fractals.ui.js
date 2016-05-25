@@ -112,6 +112,11 @@ $("iframe").contents().find("#sync_time_range").on("input", function () {
     gdo.net.app["Fractals"].server.syncTime(gdo.controlId, val);
 });
 
+$("iframe").contents().find("#sync_clock_diff").on("click", function () {
+    val = this.checked;
+    gdo.net.app["Fractals"].server.syncClockDiff(gdo.controlId, val);
+});
+
 function initJoystick(id, receiveParams) {
 
     $("iframe").contents().find(id).on("mousedown", down);

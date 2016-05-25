@@ -24,6 +24,19 @@ $(function () {
             }
         }
 
+        $.connection.fractalsAppHub.client.syncClockDiff = function (instanceId, val) {
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                if (val) {
+                    syncClockDiff = true;
+                    setTimeout(startCalcClockDiff, 100);
+                } else {
+                    syncClockDiff = false;
+                }
+            }
+        }
+
 
         $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
