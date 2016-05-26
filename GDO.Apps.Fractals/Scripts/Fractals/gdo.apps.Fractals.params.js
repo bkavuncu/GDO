@@ -8,7 +8,7 @@ function params() {
     this.yHeight = 0;
     this.xTrans = 0;
     this.yTrans = 0;
-    this.zTrans = -2;
+    this.zTrans = -12;//-2;
     this.maxSteps = 100;
     this.detail = -3;
     this.ambience = 0.5;
@@ -16,8 +16,8 @@ function params() {
     this.lightSize = 0.25;
     this.lightX = 4;
     this.lightY = 2;
-    this.lightZ = -2;
-    this.iterations = 16;
+    this.lightZ = -12;//-2;
+    this.iterations = 5;//16;
     this.power = 8;
     this.red = 1;
     this.green = 0;

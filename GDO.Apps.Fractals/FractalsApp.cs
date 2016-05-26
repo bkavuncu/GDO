@@ -86,14 +86,14 @@ namespace GDO.Apps.Fractals
             YRot = 0.0f;
             XTrans = 0.0f;
             YTrans = 0.0f;
-            ZTrans = -2.0f;
+            ZTrans = -12.0f;// -2.0f;
             Mod = 0;
             MaxSteps = 100;
             Detail = -3.0f;
             Ambience = 0.5f;
             LightIntensity = 50.0f;
             LightSize = 0.25f;
-            Iterations = 16;
+            Iterations = 5;// 16;
             Power = 8.0f;
 
             Lock = new object();
@@ -123,7 +123,7 @@ namespace GDO.Apps.Fractals
 
             LightX = 4.0f;
             LightY = 2.0f;
-            LightZ = -2.0f;
+            LightZ = -12.0f;//-2.0f;
 
             R = 1.0f;
             G = 0.0f;
