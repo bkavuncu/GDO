@@ -808,6 +808,14 @@ namespace GDO.Core
             }
         }
 
+        public void ExecuteDelayedFunction(string func, int section, int start)
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.Group("" + section).executeDelayedFunction(func,start);
+            }
+        }
+
         public void UpdateConsoleInstance(int instanceId)
         {
             lock (Cave.ServerLock)
