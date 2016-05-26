@@ -127,7 +127,12 @@ namespace GDO.Apps.Graph
                     // 3. loop through array; for every two consecutive points, find the partition it belongs to, and add to it
 
                     // calculate line equation y = mx + c
-                    var m = (endPos.Y - startPos.Y)/(endPos.X - startPos.X);
+                    var m = (endPos.Y - startPos.Y) / (endPos.X - startPos.X);
+                    if (Double.IsInfinity(m))  //TODO: this is a dirty hack to prevent infinity slopes, the intersections should be calculated in another way...
+                    {
+                        m = (endPos.Y - startPos.Y)/(endPos.X + 0.0001F - startPos.X);
+                    }
+
                     var c = startPos.Y - m * startPos.X;
 
                     // get intersection points
