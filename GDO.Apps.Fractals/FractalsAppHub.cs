@@ -5,7 +5,6 @@ using GDO.Core;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using System.Threading;
-
 namespace GDO.Apps.Fractals
 {
     [Export(typeof(IAppHub))]
@@ -175,7 +174,7 @@ namespace GDO.Apps.Fractals
                 }
             }
         }
-
+        
         public void Power(int instanceId, float power)
         {
             lock (Cave.AppLocks[instanceId])
@@ -340,22 +339,7 @@ namespace GDO.Apps.Fractals
                     FA.Sync = !FA.Sync;
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
                     Clients.Group("" + instanceId).updateParams(instanceId, Json);
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void SyncClockDiff(int instanceId, bool val)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Clients.Group("" + instanceId).syncClockDiff(instanceId, val);
+                    Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
 
                 }
                 catch (Exception e)
@@ -381,9 +365,8 @@ namespace GDO.Apps.Fractals
                         FA.CurrentFrame = (FA.CurrentFrame + 1) % 2;
                         
                         string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                        TimeSpan span = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-                        
-                        Clients.Group("" + instanceId).swapFrame(instanceId, Json, span.TotalMilliseconds+FA.SyncTime);
+
+                        Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds +FA.SyncTime);
                     }
 
                 }
@@ -475,18 +458,6 @@ namespace GDO.Apps.Fractals
                     Console.WriteLine(e);
                 }
             }
-        }
-
-        public void CalcClockDiff(double startTime)
-        {
-                try
-                {
-                    Clients.Caller.calcClockDiff(startTime, DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds);
-            }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
         }
 
     }

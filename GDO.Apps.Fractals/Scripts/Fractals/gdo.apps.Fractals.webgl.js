@@ -6,9 +6,6 @@ var gl2;
 var program2;
 var canvas2;
 
-var clockDiffTotal;
-var measurements;
-
 var sync;
 
 function initWebgl(id, locations, shader) {
@@ -20,10 +17,10 @@ function initWebgl(id, locations, shader) {
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
-    //canvas.width = 960;
-    //canvas.height = 540;
-    canvas.width = 1920;
-    canvas.height = 1080;
+    canvas.width = 960;
+    canvas.height = 540;
+    //canvas.width = 1920;
+    //canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -170,19 +167,21 @@ function renderSync(locations, gl, program) {
             canvas2.style.zIndex = 0;
             render(locations1, gl1, program1);
         }
+    } else {
+        gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
     }
 }
-
+rendering2 = false;
 function render(locations, gl, program) {
 
-    if (!rendering) {
-        rendering = true;
+    if (!rendering2) {
+        rendering2 = true;
 
         if (!sync) {
 
             // Ensure continuous rendering
             window.requestAnimationFrame(function () {
-                rendering = false;
+                rendering2 = false;
                 render(locations, gl, program);
             });
 
@@ -198,21 +197,10 @@ function render(locations, gl, program) {
             gl.drawArrays(gl.TRIANGLES, 0, 6);
 
         } else {
-            rendering = false;
+            rendering2 = false;
             renderSync(locations2, gl2, program2);
         }
+    } else {
+        gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
     }
 }
-syncClockDiff = true;
-function startCalcClockDiff() {
-    clockDiffTotal = 0;
-    measurements = 0;
-    calcClockDiff();  
-}
-
-function calcClockDiff() {
-    if (syncClockDiff) {
-        gdo.net.app["Fractals"].server.calcClockDiff(new Date().getTime());
-    }
-}
-

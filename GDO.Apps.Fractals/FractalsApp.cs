@@ -81,6 +81,7 @@ namespace GDO.Apps.Fractals
 
         public void Init()
         {
+            //Section.NumNodes;////////////////////////////////
             XRot = 0.0f;
             YRot = 0.0f;
             XTrans = 0.0f;

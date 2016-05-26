@@ -4,40 +4,6 @@
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
-        $.connection.fractalsAppHub.client.calcClockDiff = function (startTime, serverTime) {
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                var d = new Date();
-                var n = d.getTime();
-
-                var ping = (n - startTime) / 2;
-                clockDiffTotal += (startTime + ping) - serverTime;
-                measurements++;
-                //gdo.consoleOut('.Fractals', 1, startTime);
-               // gdo.consoleOut('.Fractals', 1, serverTime);
-                //gdo.consoleOut('.Fractals', 1, n);
-                //gdo.consoleOut('.Fractals', 1, 'Clock diff - ' + clockDiffTotal / measurements + " measurements - " + measurements);
-
-                //calcClockDiff();
-                setTimeout(calcClockDiff, 100);
-            }
-        }
-
-        $.connection.fractalsAppHub.client.syncClockDiff = function (instanceId, val) {
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                if (val) {
-                    syncClockDiff = true;
-                    setTimeout(startCalcClockDiff, 100);
-                } else {
-                    syncClockDiff = false;
-                }
-            }
-        }
-
-
         $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -108,7 +74,8 @@ $(function () {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
+                //gdo.consoleOut('.Fractals', 1, 'server t - ' + timeToRender);
+               // gdo.consoleOut('.Fractals', 1, 'gdo t - ' + gdo.net.time.getTime());
                 var json = JSON.parse(params);
 
                 // Set rotation
@@ -139,12 +106,10 @@ $(function () {
 
                 parameters.modToggle = json.Mod;
 
-                var d = new Date();
-                var n = d.getTime();
+                var n = gdo.net.time.getTime()
 
                 var timeout = timeToRender - n;
-                timeout -= clockDiffTotal/measurements;
-
+                //gdo.consoleOut('.Fractals', 1, 'timeout t - ' + timeout);
 
                 if (json.CurrentFrame == 0) {
                     if (timeout > 0) {
@@ -204,8 +169,6 @@ gdo.net.app["Fractals"].initClient = function () {
 
     var webgl1 = initWebgl("#glscreen1", locations1, "#2d-fragment-shader");
     var webgl2 = initWebgl("#glscreen2", locations2, "#2d-fragment-shader");
-
-    startCalcClockDiff();
 
     gl1 = webgl1.gl;
     gl2 = webgl2.gl;
