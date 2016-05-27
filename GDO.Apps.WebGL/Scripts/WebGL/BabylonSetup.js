@@ -90,7 +90,7 @@
     this.updateAndRenderStats = (function () {
 
         var frameIndex = 0;
-        var frameSampleSize = 10;
+        var frameSampleSize = 20;
 
         var maxDuration = 0;
         var minDuration = Number.MAX_VALUE;
@@ -552,7 +552,9 @@
             //config.startPosition[0] += this.gdo.net.node[this.gdo.clientId].sectionCol * 100;
         }
 
-        BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = 10000;
+        if (config.numMeshesToLoad != undefined) {
+            BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD = config.numMeshesToLoad;
+        }
 
         loadModelIntoScene(config, this.scene, this.modelLoadFinished.bind(this));
 

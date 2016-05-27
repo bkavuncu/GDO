@@ -530,6 +530,9 @@ var BABYLON;
                     //Get the name of mtl file
                     fileToLoad = line.substring(7).trim();
                 }
+                else if (numMeshesSeen > BABYLON_OBJLOADER_STARTING_MESH_NUMBER + BABYLON_OBJLOADER_NUM_MESHES_TO_LOAD) {
+                    continue;
+                }
                 else if ((result = this.vertexPattern.exec(line)) !== null) {
                     //Create a Vector3 with the position x, y, z
                     //Value of result:

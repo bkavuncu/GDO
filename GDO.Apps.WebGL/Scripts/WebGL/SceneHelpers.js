@@ -27,8 +27,11 @@ function loadModelIntoScene(config, scene, loadFinishedCallback) {
 
         meshes.forEach(function (m) {
 
-            m.position.subtractInPlace(startPosition);
             m.scaling.x = -1;
+            if (config.scale != undefined) {
+                m.scaling.scaleInPlace(config.scale);
+            }
+            m.position.subtractInPlace(startPosition);
             m.bakeCurrentTransformIntoVertices();
 
             var boundingInfo = m.getBoundingInfo();
