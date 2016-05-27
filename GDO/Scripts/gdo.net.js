@@ -29,6 +29,7 @@ gdo.net.NEIGHBOUR_ENUM = {
 };
 
 gdo.net.time = new Date();
+//gdo.net.time = {};
 gdo.net.connectionState = 0;
 
 $(function() {
@@ -221,6 +222,9 @@ $(function() {
     $.connection.caveHub.client.executeFunction = function (func) {
         gdo.consoleOut('.NET', 1, 'Executing :' + func);
         eval(func);
+    }
+    $.connection.caveHub.client.executeDelayedFunction = function (func,start) {
+        gdo.net.setTimeout(func, start);
     }
 });
 
@@ -933,3 +937,7 @@ gdo.net.setInterval = function (statement, start, current, interval, conditionFu
         }, start - current);
     }
 }
+
+/*gdo.net.time.getTime = function() {
+    return new Date().getTime();
+}*/

@@ -668,7 +668,25 @@ namespace GDO.Core
 
         public void Initialize()
         {
+            InitializeSynchronization();
+        }
 
+        private void InitializeSynchronization()
+        {
+            if (!Cave.InitializedSync)
+            {
+                Cave.InitializedSync = true;
+                Cave.SyncTimer = new System.Timers.Timer(70);
+                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
+                Cave.SyncTimer.Start();
+            }
+        }
+
+
+        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
+        {
+            DateTime now = DateTime.Now;
+            Clients.All.receiveHeartbeat((long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds);
         }
 
         public void SaveCaveState(string name)
@@ -787,6 +805,14 @@ namespace GDO.Core
             lock (Cave.ServerLock)
             {
                 Clients.Group(""+section).executeFunction(func);
+            }
+        }
+
+        public void ExecuteDelayedFunction(string func, int section, int start)
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.Group("" + section).executeDelayedFunction(func,start);
             }
         }
 
