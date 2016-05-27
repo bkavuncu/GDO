@@ -22,12 +22,14 @@ $(function () {
 
                 parameters.maxSteps = json.MaxSteps;
                 parameters.detail = json.Detail;
+                parameters.fog = json.Fog;
 
                 parameters.iterations = json.Iterations;
                 parameters.power = json.Power;
                 parameters.red = json.R;
                 parameters.green = json.G;
                 parameters.blue = json.B;
+                parameters.scale = json.Scale;
 
                 parameters.ambience = json.Ambience;
                 parameters.lightIntensity = json.LightIntensity;
@@ -90,13 +92,16 @@ $(function () {
 
                 parameters.maxSteps = json.MaxSteps;
                 parameters.detail = json.Detail;
+                parameters.fog = json.Fog;
 
                 parameters.iterations = json.Iterations;
                 parameters.power = json.Power;
                 parameters.red = json.R;
                 parameters.green = json.G;
                 parameters.blue = json.B;
-
+                parameters.scale = json.Scale;
+                gdo.consoleOut('.Fractals', 1, 'fog - ' + parameters.fog);
+                gdo.consoleOut('.Fractals', 1, 'scale - ' + parameters.scale);
                 parameters.ambience = json.Ambience;
                 parameters.lightIntensity = json.LightIntensity;
                 parameters.lightSize = json.LightSize;

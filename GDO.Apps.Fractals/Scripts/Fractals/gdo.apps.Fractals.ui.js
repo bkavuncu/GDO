@@ -19,6 +19,14 @@ $("iframe").contents().find("#detail_range").on("input", function () {
     gdo.net.app["Fractals"].server.detail(gdo.controlId, val);
 });
 
+$("iframe").contents().find("#fog_number").empty().append($("iframe").contents().find("#fog_range").val());
+
+$("iframe").contents().find("#fog_range").on("input", function () {
+    val = $("iframe").contents().find("#fog_range").val();
+    $("iframe").contents().find("#fog_number").empty().append(val);
+    gdo.net.app["Fractals"].server.fog(gdo.controlId, val);
+});
+
 $("iframe").contents().find("#iterations_number").empty().append($("iframe").contents().find("#iterations_range").val());
 
 $("iframe").contents().find("#iterations_range").on("input", function () {
@@ -62,6 +70,14 @@ $("iframe").contents().find("#blue_colour_range").on("input", function () {
     $("iframe").contents().find("#blue_colour_number").empty().append(blue);
     $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
     gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
+});
+
+$("iframe").contents().find("#scale_number").empty().append($("iframe").contents().find("#scale_range").val());
+
+$("iframe").contents().find("#scale_range").on("input", function () {
+    val = $("iframe").contents().find("#scale_range").val();
+    $("iframe").contents().find("#scale_number").empty().append(val);
+    gdo.net.app["Fractals"].server.scale(gdo.controlId, val);
 });
 
 $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());

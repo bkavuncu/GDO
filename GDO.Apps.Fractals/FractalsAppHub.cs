@@ -158,6 +158,23 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void Fog(int instanceId, float fog)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.Fog = fog;
+                    SendParams(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void Iterations(int instanceId, int iterations)
         {
             lock (Cave.AppLocks[instanceId])
@@ -183,6 +200,23 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Power = power;
+                    SendParams(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void Scale(int instanceId, float scale)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.Scale = scale;
                     SendParams(instanceId);
                 }
                 catch (Exception e)

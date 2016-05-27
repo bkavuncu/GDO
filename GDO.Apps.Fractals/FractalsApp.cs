@@ -43,12 +43,14 @@ namespace GDO.Apps.Fractals
 
         public int MaxSteps;
         public float Detail;
+        public float Fog;
 
         public int Iterations;
         public float Power;
         public float R;
         public float G;
         public float B;
+        public float Scale;
 
         public float Ambience;
         public float LightIntensity;
@@ -90,11 +92,13 @@ namespace GDO.Apps.Fractals
             Mod = 0;
             MaxSteps = 100;
             Detail = -3.0f;
+            Fog = 0.1f;
             Ambience = 0.5f;
             LightIntensity = 50.0f;
             LightSize = 0.25f;
             Iterations = 5;// 16;
             Power = 8.0f;
+            Scale = 2.0f;
 
             Lock = new object();
             JoystickRunning = false;

@@ -99,6 +99,10 @@ function initWebgl(id, locations, shader) {
     locations.detailLoc = gl.getUniformLocation(program, "minDetail");
     gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
 
+    // Set fog
+    locations.fogLoc = gl.getUniformLocation(program, "fog");
+    gl.uniform1f(locations.fogLoc, parameters.fog);
+
     // Set ambience
     locations.ambienceLoc = gl.getUniformLocation(program, "ambience");
     gl.uniform1f(locations.ambienceLoc, parameters.ambience);
@@ -126,6 +130,10 @@ function initWebgl(id, locations, shader) {
     // Set fractal colour
     locations.colourLoc = gl.getUniformLocation(program, "colour");
     gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
+
+    // Set scale
+    locations.scaleLoc = gl.getUniformLocation(program, "scale");
+    gl.uniform1f(locations.scaleLoc, parameters.scale);
 
     // Set mod function
     locations.modLoc = gl.getUniformLocation(program, "modFunction");
