@@ -126,6 +126,7 @@
   <ItemGroup>
     <Content Include="Data\StaticHTML\sample.html" />
     <Content Include="packages.config" />
+    <Content Include="Configurations\StaticHTML\Matrix.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

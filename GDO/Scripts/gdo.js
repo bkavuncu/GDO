@@ -68,59 +68,59 @@ gdo.initGDO = function (clientMode) {
 
 gdo.consoleOut = function (module, type, msg) {
     /// <summary>
-    /// JS Console Output.
+    /// JS Terminal Output.
     /// </summary>
     /// <param name="module">The module.</param>
     /// <param name="type">The type.</param>
     /// <param name="msg">The MSG.</param>
     /// <returns></returns>
     var moduleBrowser = module;
-    var moduleConsole = module;
+    var moduleTerminal = module;
     if (module.length < 14) {
         for (var i = module.length; i < 14; i++) {
             moduleBrowser = moduleBrowser + "&nbsp;";
-            moduleConsole = moduleConsole + " ";
+            moduleTerminal = moduleTerminal + " ";
         }
     }
-    if ($("#console_area").text().length > 1000000) {
-        $("#console_area").empty();
+    if ($("#terminal_area").text().length > 1000000) {
+        $("#terminal_area").empty();
     }
     if (type == 0) {
-        if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#77B200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+        if ($("#terminal_area").length > 0) {
+            $("#terminal_area").append('<div style="color:#77B200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- SUCCESS&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#terminal_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleTerminal + ': ' + msg);
     } if (type == 1) {
-        if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#4CBFF8; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+        if ($("#terminal_area").length > 0) {
+            $("#terminal_area").append('<div style="color:#4CBFF8; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- IMPORTANT&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#terminal_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleTerminal + ': ' + msg);
     } if (type == 2) {
-        if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#FFF; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+        if ($("#terminal_area").length > 0) {
+            $("#terminal_area").append('<div style="color:#FFF; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- INFO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#terminal_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleTerminal + ': ' + msg);
     } if (type == 3) {
-        if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:gray; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+        if ($("#terminal_area").length > 0) {
+            $("#terminal_area").append('<div style="color:gray; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- MSG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#terminal_area")[0].scrollHeight);
         }
-        console.log(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.log(gdo.timeStamp() + ' - GDO' + moduleTerminal + ': ' + msg);
     } else if (type == 4) {
-        if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#FF9900; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+        if ($("#terminal_area").length > 0) {
+            $("#terminal_area").append('<div style="color:#FF9900; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- WARN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#terminal_area")[0].scrollHeight);
         }
-        console.warn(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.warn(gdo.timeStamp() + ' - GDO' + moduleTerminal + ': ' + msg);
     } else if (type == 5) {
-        if ($("#console_area").length > 0) {
-            $("#console_area").append('<div style="color:#FF2200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#console_area")[0].scrollHeight);
+        if ($("#terminal_area").length > 0) {
+            $("#terminal_area").append('<div style="color:#FF2200; font-size:10; font-family: monospace;">' + gdo.timeStamp() + ' - GDO' + moduleBrowser + '- ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ' + msg + "&#10;</div>").scrollTop($("#terminal_area")[0].scrollHeight);
         }
-        console.error(gdo.timeStamp() + ' - GDO' + moduleConsole + ': ' + msg);
+        console.error(gdo.timeStamp() + ' - GDO' + moduleTerminal + ': ' + msg);
     }
 }
 
 gdo.checkpoint = function(number) {
-    if ($("#console_area").length > 0) {
-        $("#console_area").append('<div style="color:#cc00cc; font-size:10; font-family: monospace;">CHECKPOINT: '+number+'&#10;</div>').scrollTop($("#console_area")[0].scrollHeight);
+    if ($("#terminal_area").length > 0) {
+        $("#terminal_area").append('<div style="color:#cc00cc; font-size:10; font-family: monospace;">CHECKPOINT: '+number+'&#10;</div>').scrollTop($("#terminal_area")[0].scrollHeight);
     }
     console.error("CHECKPOINT: " + number);
 }
