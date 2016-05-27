@@ -497,27 +497,25 @@
         var xoffset = 0;
         var yoffset = gdo.net.node[gdo.clientId].sectionRow - ((numScreensHigh - 1)/2);
 
-        BABYLON.Matrix.PerspectiveFovLHToRef = function (fov, aspect, znear, zfar, result, isVerticalFovFixed) {
-            var tan = 1.0 / (Math.tan(fov * 0.5));
+        BABYLON.Matrix.PerspectiveFovLHToRef = function (fov, aspect, znear, zfar, result, fovMode) {
+            var isVerticalFovFixed = fovMode === BABYLON.Camera.FOVMODE_VERTICAL_FIXED;
 
+            var tan = 1.0 / (Math.tan(fov * 0.5));
             if (isVerticalFovFixed) {
                 result.m[0] = tan / aspect;
             }
             else {
                 result.m[0] = tan;
             }
-
             result.m[1] = result.m[2] = result.m[3] = 0.0;
-
             if (isVerticalFovFixed) {
                 result.m[5] = tan;
             }
             else {
                 result.m[5] = tan * aspect;
             }
-
             result.m[4] = result.m[6] = result.m[7] = 0.0;
-
+            
             result.m[8] = 2 * xoffset;
             result.m[9] = 2 * yoffset;
 
@@ -525,7 +523,6 @@
             result.m[11] = 1.0;
             result.m[12] = result.m[13] = result.m[15] = 0.0;
             result.m[14] = (znear * zfar) / (znear - zfar);
-            result.m[15] = 0.0;
         }
     }
 
