@@ -8,11 +8,9 @@ using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using GDO.Apps.Maps.Core;
-using GDO.Apps.Maps.Core.Geometries;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
-using GDO.Apps.Maps.Core.Sources.Tiles;
 using GDO.Apps.Maps.Core.Styles;
 using GDO.Apps.Maps.Core.Formats;
 using GDO.Core;
@@ -584,23 +582,41 @@ namespace GDO.Apps.Maps
                         case (int)SourceTypes.BingMaps:
                             sourceId = maps.AddSource<BingMapsSource>(JsonConvert.DeserializeObject<Source>(serializedSource));
                             break;
-                        case (int)SourceTypes.Cluster:
-                            sourceId = maps.AddSource<ClusterSource>(JsonConvert.DeserializeObject<ClusterSource>(serializedSource));
+                        case (int)SourceTypes.ImageCanvas:
+                            sourceId = maps.AddSource<CanvasImageSource>(JsonConvert.DeserializeObject<CanvasImageSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Image:
-                            sourceId = maps.AddSource<ImageSource>(JsonConvert.DeserializeObject<ImageSource>(serializedSource));
+                        case (int)SourceTypes.CartoDB:
+                            sourceId = maps.AddSource<CartoDBSource>(JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.TileImage:
+                            sourceId = maps.AddSource<ImageTileSource>(JsonConvert.DeserializeObject<ImageTileSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.MapQuest:
+                            sourceId = maps.AddSource<MapQuestSource>(JsonConvert.DeserializeObject<MapQuestSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.OSM:
+                            sourceId = maps.AddSource<OSMSource>(JsonConvert.DeserializeObject<OSMSource>(serializedSource));
                             break;
                         case (int)SourceTypes.Stamen:
                             sourceId = maps.AddSource<StamenSource>(JsonConvert.DeserializeObject<StamenSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Tile:
-                            sourceId = maps.AddSource<TileSource>(JsonConvert.DeserializeObject<TileSource>(serializedSource));
+                        case (int)SourceTypes.ImageStatic:
+                            sourceId = maps.AddSource<StaticImageSource>(JsonConvert.DeserializeObject<StaticImageSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.TileArcGISRest:
+                            sourceId = maps.AddSource<TileArcGISRestSource>(JsonConvert.DeserializeObject<TileArcGISRestSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.TileWMS:
+                            sourceId = maps.AddSource<TileWMSSource>(JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
                         case (int)SourceTypes.Vector:
                             sourceId = maps.AddSource<VectorSource>(JsonConvert.DeserializeObject<VectorSource>(serializedSource));
                             break;
                         case (int)SourceTypes.XYZ:
                             sourceId = maps.AddSource<XYZSource>(JsonConvert.DeserializeObject<XYZSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.Zoomify:
+                            sourceId = maps.AddSource<ZoomifySource>(JsonConvert.DeserializeObject<ZoomifySource>(serializedSource));
                             break;
                         default:
                             break;
@@ -626,23 +642,41 @@ namespace GDO.Apps.Maps
                         case (int)SourceTypes.BingMaps:
                             maps.UpdateSource<BingMapsSource>(sourceId, JsonConvert.DeserializeObject<BingMapsSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Cluster:
-                            maps.UpdateSource<ClusterSource>(sourceId, JsonConvert.DeserializeObject<ClusterSource>(serializedSource));
+                        case (int)SourceTypes.ImageCanvas:
+                            maps.UpdateSource<CanvasImageSource>(sourceId, JsonConvert.DeserializeObject<CanvasImageSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Image:
-                            maps.UpdateSource<ImageSource>(sourceId, JsonConvert.DeserializeObject<ImageSource>(serializedSource));
+                        case (int)SourceTypes.CartoDB:
+                            maps.UpdateSource<CartoDBSource>(sourceId, JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.TileImage:
+                            maps.UpdateSource<ImageTileSource>(sourceId, JsonConvert.DeserializeObject<ImageTileSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.MapQuest:
+                            maps.UpdateSource<MapQuestSource>(sourceId, JsonConvert.DeserializeObject<MapQuestSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.OSM:
+                            maps.UpdateSource<OSMSource>(sourceId, JsonConvert.DeserializeObject<OSMSource>(serializedSource));
                             break;
                         case (int)SourceTypes.Stamen:
                             maps.UpdateSource<StamenSource>(sourceId, JsonConvert.DeserializeObject<StamenSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Tile:
-                            maps.UpdateSource<TileSource>(sourceId, JsonConvert.DeserializeObject<TileSource>(serializedSource));
+                        case (int)SourceTypes.ImageStatic:
+                            maps.UpdateSource<StaticImageSource>(sourceId, JsonConvert.DeserializeObject<StaticImageSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.TileArcGISRest:
+                            maps.UpdateSource<TileArcGISRestSource>(sourceId, JsonConvert.DeserializeObject<TileArcGISRestSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.TileWMS:
+                            maps.UpdateSource<TileWMSSource>(sourceId, JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
                         case (int)SourceTypes.Vector:
                             maps.UpdateSource<VectorSource>(sourceId, JsonConvert.DeserializeObject<VectorSource>(serializedSource));
                             break;
                         case (int)SourceTypes.XYZ:
                             maps.UpdateSource<XYZSource>(sourceId, JsonConvert.DeserializeObject<XYZSource>(serializedSource));
+                            break;
+                        case (int)SourceTypes.Zoomify:
+                            maps.UpdateSource<ZoomifySource>(sourceId, JsonConvert.DeserializeObject<ZoomifySource>(serializedSource));
                             break;
                         default:
                             break;

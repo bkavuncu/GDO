@@ -55,8 +55,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.City", "GDO.Apps.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Cortical", "GDO.Apps.Cortical\GDO.Apps.Cortical.csproj", "{193D0D08-0D61-4511-94AC-34AB78FB3793}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.SharingEconomy", "GDO.Apps.SharingEconomy\GDO.Apps.SharingEconomy.csproj", "{888F26FB-9942-4573-B345-817021EA30EA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,10 +161,6 @@ Global
 		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{193D0D08-0D61-4511-94AC-34AB78FB3793}.Release|Any CPU.Build.0 = Release|Any CPU
-		{888F26FB-9942-4573-B345-817021EA30EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{888F26FB-9942-4573-B345-817021EA30EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{888F26FB-9942-4573-B345-817021EA30EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{888F26FB-9942-4573-B345-817021EA30EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

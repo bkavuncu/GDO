@@ -7,5 +7,9 @@ namespace GDO.Apps.Maps.Core
 {
     public class Image : Base
     {
+        public Image()
+        {
+            ClassName.Value = this.GetType().Name;
+        }
     }
 }
