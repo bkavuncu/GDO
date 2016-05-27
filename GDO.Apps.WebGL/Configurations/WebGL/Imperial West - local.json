@@ -1,7 +1,6 @@
 ﻿{
   "serverAddress": "http://localhost/scenes/",
   "fileName": "ImperialWestLandscapeWithBuilding2Sided.obj",
-  "maxZControl": 0.4,
   "minZ":  0.05,
   "startPosition": [ 8.80, 0.50, -23.47 ]
 }

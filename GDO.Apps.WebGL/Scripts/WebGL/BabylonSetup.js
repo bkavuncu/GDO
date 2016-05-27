@@ -55,11 +55,22 @@
                     // skip loop if the property is from prototype
                     if (!data.hasOwnProperty(prop)) continue;
 
+                    if (prop == "camera") {
+                        if (firstLine) {
+                            firstLineString += ", cameraX, cameraY, cameraZ";
+                        }
+
+                        var position = data[prop].position;
+                        dataString += ", " + position[0] + ", " + position[1] + ", " + position[2];
+
+                        continue;
+                    }
+
                     if (firstLine) {
                         firstLineString += ", " + prop;
                     }
 
-                    dataString += ", " + JSON.stringify(data[prop]);
+                    dataString += ", " + data[prop];
                 }
                 if (firstLine) {
                     stringArray.push(firstLineString + "\n\n");
@@ -317,6 +328,8 @@
 
         camera.speed /= 4;
 
+        var meshesVisable = true;
+
         $(window).keypress(function (event) {
             if (event.which == 46) {            // >
                 this.camera.speed *= 2;
@@ -330,9 +343,18 @@
             else if (event.which == 118) {      // v
                 this.virticalRotationLocked = !this.virticalRotationLocked;
             }
-            else if (event.whcih = 108) {       // h
+            else if (event.which == 108) {       // h
                 this.horizontalRotationLocked = !this.horizontalRotationLocked;
             }
+            else if (event.which == 122) {       // z
+                meshesVisable = !meshesVisable;
+                this.scene.meshes.forEach(function (m) {
+                    if (m.name != "skyBox") {
+                        m.isVisible = meshesVisable;
+                    }
+                });
+            }
+            console.log(event.which);
         }.bind(this));
 
         var frameSyncActive = false;
@@ -472,6 +494,7 @@
         // See here for original typscript code that is duplicated
         // https://github.com/BabylonJS/Babylon.js/blob/master/src/Math/babylon.math.ts
 
+        var xoffset = 0;
         var yoffset = gdo.net.node[gdo.clientId].sectionRow - ((numScreensHigh - 1)/2);
 
         BABYLON.Matrix.PerspectiveFovLHToRef = function (fov, aspect, znear, zfar, result, isVerticalFovFixed) {
@@ -495,7 +518,7 @@
 
             result.m[4] = result.m[6] = result.m[7] = 0.0;
 
-            result.m[8] = 0;
+            result.m[8] = 2 * xoffset;
             result.m[9] = 2 * yoffset;
 
             result.m[10] = -zfar / (znear - zfar);
@@ -539,24 +562,16 @@
             this.camera.minZ = 0.1;
         }
 
-        if (this.isControlNode && config.maxZControl != undefined) {
-            this.camera.maxZ = config.maxZControl;
-        }
-
         // Skybox
+        var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000.0, this.scene);
         var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
         skyboxMaterial.backFaceCulling = false;
-        skyboxMaterial.disableLighting = true;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../../Data/WebGL/textures/clouds", this.scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../../Data/WebGL/textures/skybox", this.scene);
-        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-
-        var skybox = BABYLON.Mesh.CreateBox("skyBox", 10000, this.scene);
+        skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;
-        skybox.infiniteDistance = true;
-        skybox.renderingGroupId = 0;
-        skybox.alwaysSelectAsActiveMesh = true;
 
         gdo.consoleOut('.WebGL', 1, 'Set camera render distance - Min: ' + this.camera.minZ + " Max: " + this.camera.maxZ);
     }

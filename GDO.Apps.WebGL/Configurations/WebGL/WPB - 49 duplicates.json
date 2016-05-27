@@ -1,7 +1,6 @@
 ﻿{
   "serverAddress": "http://146.169.46.148/scenes/",
   "fileName": "dsi.obj",
-  "startPosition": [ -8, 1.5, -930 ],
-  "numDuplicates": 49,
-  "maxZControl": 0.5
+  "startPosition": [ -29, 1.5, 47 ],
+  "numDuplicates": 49
 }

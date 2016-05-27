@@ -124,6 +124,12 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\WebGL\textures\clouds_nx.jpg" />
+    <Content Include="Data\WebGL\textures\clouds_ny.jpg" />
+    <Content Include="Data\WebGL\textures\clouds_nz.jpg" />
+    <Content Include="Data\WebGL\textures\clouds_px.jpg" />
+    <Content Include="Data\WebGL\textures\clouds_py.jpg" />
+    <Content Include="Data\WebGL\textures\clouds_pz.jpg" />
     <Content Include="Data\WebGL\textures\skybox_nx.jpg" />
     <Content Include="Data\WebGL\textures\skybox_ny.jpg" />
     <Content Include="Data\WebGL\textures\skybox_nz.jpg" />
@@ -147,6 +153,7 @@
     <Content Include="Configurations\WebGL\WPB - 36 duplicates.json" />
     <Content Include="Configurations\WebGL\WPB - 49 duplicates.json" />
     <Content Include="Configurations\WebGL\WPB - flyby large.json" />
+    <Content Include="Configurations\WebGL\WPB - 9 duplicates.json" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

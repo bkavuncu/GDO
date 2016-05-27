@@ -1,8 +1,9 @@
 ﻿function createScene (engine) {
 
     var scene = new BABYLON.Scene(engine);
-    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(180, 250, 50), scene);
-    light.intensity = 0.7;
+
+    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(60, 250, -50), scene);
+    light.intensity = 0.8;
 
     return scene;
 }
