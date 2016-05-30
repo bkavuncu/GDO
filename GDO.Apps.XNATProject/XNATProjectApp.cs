@@ -18,6 +18,7 @@ namespace GDO.Apps.XNATProject
 
         public string Name { get; set; }
 
+        // changed init to uppercase
         public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
