@@ -391,16 +391,21 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Acks++;
-                    
-                    if (FA.Acks >= FA.Nodes)
+                    if (FA.rendering)
                     {
                         
-                        FA.CurrentFrame = (FA.CurrentFrame + 1) % 2;
-                        
-                        string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                        FA.Acks++;
 
-                        Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds +FA.SyncTime);
+                        if (FA.Acks >= FA.Nodes)
+                        {
+                            FA.rendering = false;
+                            FA.swapping = true;
+                            FA.CurrentFrame = (FA.CurrentFrame + 1) % 2;
+
+                            string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+
+                            Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + FA.SyncTime);
+                        }
                     }
 
                 }
@@ -419,17 +424,22 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.SwapFrameAcks++;
-
-                    if (FA.SwapFrameAcks >= FA.Nodes)
+                    if (FA.swapping)
                     {
-                        FA.Acks = 0;
-                        FA.SwapFrameAcks = 0;
-                        FA.Nodes += FA.NewNodes;
-                        FA.NewNodes = 0;
-                        Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
-                    }
+                        
+                        FA.SwapFrameAcks++;
 
+                        if (FA.SwapFrameAcks >= FA.Nodes)
+                        {
+                            FA.swapping = false;
+                            FA.rendering = true;
+                            FA.Acks = 0;
+                            FA.SwapFrameAcks = 0;
+                            FA.Nodes += FA.NewNodes;
+                            FA.NewNodes = 0;
+                            Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -450,20 +460,28 @@ namespace GDO.Apps.Fractals
                         if (FA.NewNodes == 0 && FA.Nodes == 0)
                         {
                             // Start synch cycle
+                            FA.Nodes = 1;
                             Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame);
                         }
-                        // Add new nodes after current cycle
-                        FA.NewNodes++;
+                        else
+                        {
+                            // Add new nodes after current cycle
+                            FA.NewNodes++;
+                        }
                         FA.NodesOnline[clientId] = 1;
                     } else
                     {
+                        FA.rendering = true;
+                        FA.swapping = false;
+                        FA.Acks = 0;
+                        FA.SwapFrameAcks = 0;
                         // Refreshed page, render relevant frame
                         if (FA.Sync)
                         {
-                            Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame);
+                            Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
                         } else
                         {
-                            Clients.Caller.renderNextFrameNoSync();
+                            Clients.Group("" + instanceId).renderNextFrameNoSync();
                         }
                     }
                 }

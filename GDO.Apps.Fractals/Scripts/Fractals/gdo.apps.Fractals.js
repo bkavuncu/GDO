@@ -100,8 +100,7 @@ $(function () {
                 parameters.green = json.G;
                 parameters.blue = json.B;
                 parameters.scale = json.Scale;
-                gdo.consoleOut('.Fractals', 1, 'fog - ' + parameters.fog);
-                gdo.consoleOut('.Fractals', 1, 'scale - ' + parameters.scale);
+
                 parameters.ambience = json.Ambience;
                 parameters.lightIntensity = json.LightIntensity;
                 parameters.lightSize = json.LightSize;
@@ -121,11 +120,16 @@ $(function () {
                         setTimeout(function () {
                             canvas1.style.zIndex = 0;
                             canvas2.style.zIndex = 5;
+                            
+                            $("iframe").contents().find("#screen1_marker").hide();
+                            $("iframe").contents().find("#screen2_marker").show();
                             gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
                         }, timeout);
                     } else {
                         canvas1.style.zIndex = 0;
                         canvas2.style.zIndex = 5;
+                        $("iframe").contents().find("#screen1_marker").hide();
+                        $("iframe").contents().find("#screen2_marker").show();
                         gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
                     }
 
@@ -134,11 +138,15 @@ $(function () {
                         setTimeout(function () {
                             canvas1.style.zIndex = 5;
                             canvas2.style.zIndex = 0;
+                            $("iframe").contents().find("#screen1_marker").show();
+                            $("iframe").contents().find("#screen2_marker").hide();
                             gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
                         }, timeout);
                     } else {
                         canvas1.style.zIndex = 5;
                         canvas2.style.zIndex = 0;
+                        $("iframe").contents().find("#screen1_marker").show();
+                        $("iframe").contents().find("#screen2_marker").hide();
                         gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
                     }
                 }

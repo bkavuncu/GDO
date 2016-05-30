@@ -81,8 +81,13 @@ namespace GDO.Apps.Fractals
 
         public bool Sync;
 
+        public bool rendering;
+        public bool swapping;
+
         public void Init()
         {
+            rendering = true;
+            swapping = false;
             //Section.NumNodes;////////////////////////////////
             XRot = 0.0f;
             YRot = 0.0f;

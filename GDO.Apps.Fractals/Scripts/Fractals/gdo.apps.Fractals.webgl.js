@@ -67,6 +67,15 @@ function initWebgl(id, locations, shader) {
     gl.linkProgram(program);
     gl.useProgram(program);
 
+    // Transparent background
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // Turn on alpha
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.enable(gl.BLEND);
+    gl.disable(gl.DEPTH_TEST);
+
     // Setup rotations
     locations.xRotLoc = gl.getUniformLocation(program, "xRot");
     gl.uniform1f(locations.xRotLoc, parameters.xRot);

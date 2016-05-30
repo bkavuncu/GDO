@@ -12,8 +12,14 @@
 <body unselectable="on" class="unselectable" style="margin:0">
     <canvas id="glscreen1" style="position:absolute"></canvas>
     <canvas id="glscreen2" style="position:absolute"></canvas>
-    <canvas id="glscreen3" style="position:absolute"></canvas>
-    <canvas id="glscreen4" style="position:absolute"></canvas>
+    <div style="position:absolute; z-index:10">
+        <div id="screen1_marker" style="background-color:red; width:25px; height:25px;">
+
+        </div>
+        <div id="screen2_marker" style="background-color:blue; width:25px; height:25px;">
+
+        </div>
+    </div>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script>
@@ -392,6 +398,7 @@
 
         // Set pixel colour
         vec4 color = march(translation, normalize(ro));
+        color.a = 0.95;
         gl_FragColor = color;
 
         // Anti alias
