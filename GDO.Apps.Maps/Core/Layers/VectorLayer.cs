@@ -25,7 +25,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "styles"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Style"
             };
 
             RenderBuffer = new NullableIntegerParameter()

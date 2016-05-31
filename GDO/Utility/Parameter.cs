@@ -137,6 +137,7 @@ namespace GDO.Utility
         public int? Value { get; set; }
         public int? DefaultValue { get; set; }
         public string LinkedParameter { get; set; }
+        public string ObjectType { get; set; }
         public new int InputType = (int)InputTypes.Link;
         public new int ParameterType = (int)ParameterTypes.Object;
     }

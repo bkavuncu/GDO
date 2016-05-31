@@ -27,17 +27,16 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Fill Style",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "FillStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Fill",
             };
             Points = new IntegerParameter
             {
                 Name = "Number of Points",
                 Description = "Number of points for stars and regular polygons. In case of a polygon, the number of points is the number of sides.",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -46,7 +45,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Radius",
                 Description = "Radius of a regular polygon.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -55,7 +53,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Inner Radius",
                 Description = "Inner radius of a star.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -64,7 +61,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Outer Radius",
                 Description = "Outer Radius of a star",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -73,7 +69,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Angle",
                 Description = "Shape's angle in radians. A value of 0 will have one of the shape's point facing up.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = 0
@@ -83,7 +78,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "SnapToPixel",
                 Description = "If true integral numbers of pixels are used as the X and Y pixel coordinate when drawing the shape in the output canvas. If false fractional numbers may be used. Using true allows for sharp rendering (no blur), while using false allows for accurate rendering. Note that accuracy is important if the shape's position is animated. Without it, the shape may jitter noticeably. ",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
@@ -93,10 +87,10 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Stroke Style",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "StrokeStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Stroke",
             };
         }
     }

@@ -25,47 +25,46 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Fill Style",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "FillStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Fill",
             };
             ImageStyle = new LinkParameter
             {
                 Name = "Image Style",
                 Description = "Select Image Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "ImageStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Image",
             };
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "StrokeStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Stroke",
             };
             TextStyle = new LinkParameter
             {
                 Name = "Text Style",
                 Description = "Select Text Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "TextStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Text",
             };
             ZIndex = new NullableIntegerParameter
             {
                 Name = "ZIndex",
                 Description = "ZIndex",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true
             };

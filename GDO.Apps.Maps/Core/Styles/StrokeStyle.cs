@@ -8,9 +8,9 @@ namespace GDO.Apps.Maps.Core.Styles
 {
     public class StrokeStyle : Core.Style
     {
-        public StringParameter Color { get; set; }
-        public StringArrayParameter LineCap { get; set; }
-        public StringArrayParameter LineJoin { get; set; }
+        public ColorParameter Color { get; set; }
+        public DatalistParameter LineCap { get; set; }
+        public DatalistParameter LineJoin { get; set; }
         public FloatArrayParameter LineDash { get; set; }
         public NullableIntegerParameter MiterLimit { get; set; }
         public NullableIntegerParameter Width { get; set; }
@@ -20,32 +20,29 @@ namespace GDO.Apps.Maps.Core.Styles
             ClassName.Value = this.GetType().Name;
             Type.Value = (int)StyleTypes.Stroke;
 
-            Color = new StringParameter
+            Color = new ColorParameter
             {
                 Name = "Color",
                 Description = "Color",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Color,
                 IsEditable = true,
                 IsVisible = true
             };
-            LineCap = new StringArrayParameter
+            LineCap = new DatalistParameter
             {
                 Name = "Line Cap",
                 Description = "Line Cap Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValues = new string[3] { "butt", "round", "square" },
                 DefaultValue = "round"
             };
-            LineJoin = new StringArrayParameter
+            LineJoin = new DatalistParameter
             {
                 Name = "Line Join",
                 Description = "Line Join Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValues = new string[3] { "bevel", "round", "mitter" },
@@ -56,7 +53,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Line Dash",
                 Description = "Line Dash pattern",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = true,
                 IsVisible = true,
                 Length = 4,
@@ -66,7 +62,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Mitter Limit",
                 Description = "Mitter Limit",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 10,
@@ -76,7 +71,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Width",
                 Description = "Width",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
             };

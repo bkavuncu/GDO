@@ -9,21 +9,20 @@ namespace GDO.Apps.Maps.Core.Styles
     public class ImageStyle : Core.Style
     {
         //BASE CLASS (NOT INSTANIATED)
-        public FloatRangeParameter Opacity { get; set; }
-        public FloatRangeParameter Rotation { get; set; }
-        public FloatRangeParameter Scale { get; set; }
+        public SliderParameter Opacity { get; set; }
+        public SliderParameter Rotation { get; set; }
+        public SliderParameter Scale { get; set; }
 
         public ImageStyle()
         {
             ClassName.Value = this.GetType().Name;
             Type.Value = (int)StyleTypes.Image;
 
-            Opacity = new FloatRangeParameter
+            Opacity = new SliderParameter
             {
                 Name = "Opacity",
                 Description = "Transparency of the Image",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 1,
@@ -31,12 +30,11 @@ namespace GDO.Apps.Maps.Core.Styles
                 MaxValue = 1
             };
 
-            Rotation = new FloatRangeParameter
+            Rotation = new SliderParameter
             {
                 Name = "Rotation",
                 Description = "Rotation",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
@@ -44,12 +42,11 @@ namespace GDO.Apps.Maps.Core.Styles
                 MaxValue = 7
             };
 
-            Scale = new FloatRangeParameter
+            Scale = new SliderParameter
             {
                 Name = "Scale",
                 Description = "Scale",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 1,

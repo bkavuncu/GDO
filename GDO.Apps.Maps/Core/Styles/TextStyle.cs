@@ -14,8 +14,8 @@ namespace GDO.Apps.Maps.Core.Styles
         public FloatParameter Scale { get; set; }
         public FloatParameter Rotation { get; set; }
         public StringParameter Content { get; set; }
-        public StringArrayParameter TextAlign { get; set; }
-        public StringArrayParameter TextBaseLine { get; set; }
+        public DatalistParameter TextAlign { get; set; }
+        public DatalistParameter TextBaseLine { get; set; }
         public LinkParameter FillStyle { get; set; }
         public LinkParameter StrokeStyle { get; set; }
 
@@ -29,7 +29,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Font",
                 Description = "Font style as CSS 'font' value",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = "10px sans-serif"
@@ -39,7 +38,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Offset X",
                 Description = "Horizontal text offset in pixels. A positive will shift the text right.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
@@ -49,7 +47,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Offset Y",
                 Description = "Vertical text offset in pixels. A positive will shift the text down.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
@@ -59,7 +56,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Scale",
                 Description = "Scale",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Float,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 1,
@@ -69,7 +65,6 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Rotation",
                 Description = "Rotation in radians",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Float,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
@@ -79,28 +74,25 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Content",
                 Description = "Text Content",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = ""
             };
-            TextAlign = new StringArrayParameter
+            TextAlign = new DatalistParameter
             {
                 Name = "Text Align",
                 Description = "Text Alignment",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValues = new string[5] { "left", "right", "center", "end", "start" },
                 DefaultValue = "start"
             };
-            TextBaseLine = new StringArrayParameter
+            TextBaseLine = new DatalistParameter
             {
                 Name = "Text Baseline",
                 Description = "Text Baseline",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValues = new string[6] { "bottom", "top", "middle", "alphabetic", "hanging", "ideographic" },
@@ -111,20 +103,20 @@ namespace GDO.Apps.Maps.Core.Styles
                 Name = "Fill Style",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "FillStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Fill",
             };
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "StrokeStyle"
+                LinkedParameter = "styles",
+                ObjectType = "ol.style.Stroke",
             };
         }
     }

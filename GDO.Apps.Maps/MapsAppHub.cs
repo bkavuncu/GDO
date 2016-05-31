@@ -582,9 +582,6 @@ namespace GDO.Apps.Maps
                         case (int)SourceTypes.BingMaps:
                             sourceId = maps.AddSource<BingMapsSource>(JsonConvert.DeserializeObject<Source>(serializedSource));
                             break;
-                        case (int)SourceTypes.ImageCanvas:
-                            sourceId = maps.AddSource<CanvasImageSource>(JsonConvert.DeserializeObject<CanvasImageSource>(serializedSource));
-                            break;
                         case (int)SourceTypes.CartoDB:
                             sourceId = maps.AddSource<CartoDBSource>(JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
                             break;
@@ -641,9 +638,6 @@ namespace GDO.Apps.Maps
                     {
                         case (int)SourceTypes.BingMaps:
                             maps.UpdateSource<BingMapsSource>(sourceId, JsonConvert.DeserializeObject<BingMapsSource>(serializedSource));
-                            break;
-                        case (int)SourceTypes.ImageCanvas:
-                            maps.UpdateSource<CanvasImageSource>(sourceId, JsonConvert.DeserializeObject<CanvasImageSource>(serializedSource));
                             break;
                         case (int)SourceTypes.CartoDB:
                             maps.UpdateSource<CartoDBSource>(sourceId, JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
