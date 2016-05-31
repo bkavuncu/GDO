@@ -40,6 +40,8 @@ $(function () {
 
                 parameters.modToggle = json.Mod;
 
+                parameters.fractal = json.Fractal;
+
                 sync = json.Sync;
 
 
@@ -109,6 +111,8 @@ $(function () {
                 parameters.lightZ = json.LightZ;
 
                 parameters.modToggle = json.Mod;
+
+                parameters.fractal = json.Fractal;
 
                 var n = gdo.net.time.getTime()
 
@@ -200,6 +204,7 @@ gdo.net.app["Fractals"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Control at Instance ' + gdo.controlId);
 
+    gdo.loadScript('params', 'Fractals', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('ui', 'Fractals', gdo.SCRIPT_TYPE.APP);
 }
 

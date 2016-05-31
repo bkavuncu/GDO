@@ -64,6 +64,7 @@
         uniform float lightSize;
         uniform vec3 lightLoc;
 
+        uniform int fractal;
         uniform int iterations;
         uniform float power;
         uniform vec4 colour;
@@ -125,14 +126,17 @@
         }
 
         float DE(vec3 pos) {
+
         //
-        /*
+        
         if (modFunction == 1) {
         pos = modPoint(pos, 3.0);
         }
         //float d = opTwist(p);
         // float d = primitiveSphere(p, 0.5);
         //return d;
+
+        if (fractal == 0) {
 
         // Treat as sphere beyond 2.0
         //if (length(pos) > 2.0) {
@@ -169,7 +173,8 @@
         z+=pos;
         }
         return 0.5*log(r)*r/dr;
-        */
+        
+        } else {
 
         vec3 z = pos;
 
@@ -188,6 +193,7 @@
         }
         float r = length(z);
         return r / abs(dr);
+        }
 
         }
 

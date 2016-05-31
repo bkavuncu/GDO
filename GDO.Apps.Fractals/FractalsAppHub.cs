@@ -175,6 +175,74 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public class Params
+        {
+                public double xRot;
+                public double yRot;
+                public double yHeight;
+                public double xTrans;
+                public double yTrans;
+                public double zTrans;
+                public int maxSteps;
+                public double detail;
+                public double fog;
+                public double ambience;
+                public double lightIntensity;
+                public double lightSize;
+                public double lightX;
+                public double lightY;
+                public double lightZ;
+                public int iterations;
+                public double power;
+                public double red;
+                public double green;
+                public double blue;
+                public double scale;
+                public int modToggle;
+                public int fractal;
+        }
+
+        public void FractalSelect(int instanceId, string json, string fractal)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Params p = Newtonsoft.Json.JsonConvert.DeserializeObject<Params>(json, JsonSettings);
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.XRot = (float) p.xRot;
+                    FA.YRot = (float) p.yRot;
+                    FA.XTrans = (float) p.xTrans;
+                    FA.YTrans = (float) p.yTrans;
+                    FA.ZTrans = (float) p.zTrans;
+                    FA.MaxSteps = p.maxSteps;
+                    FA.Detail = (float) p.detail;
+                    FA.Fog = (float) p.fog;
+                    FA.Ambience = (float) p.ambience;
+                    FA.LightIntensity = (float) p.lightIntensity;
+                    FA.LightSize = (float) p.lightSize;
+                    FA.LightX = (float) p.lightX;
+                    FA.LightY = (float) p.lightY;
+                    FA.LightZ = (float) p.lightZ;
+                    FA.Iterations = p.iterations;
+                    FA.Power = (float)p.power;
+                    FA.R = (float) p.red;
+                    FA.G = (float) p.green;
+                    FA.B = (float) p.blue;
+                    FA.Scale = (float) p.scale;
+                    FA.Mod = p.modToggle;
+                    FA.Fractal = p.fractal;
+                    
+
+                    SendParams(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void Iterations(int instanceId, int iterations)
         {
             lock (Cave.AppLocks[instanceId])

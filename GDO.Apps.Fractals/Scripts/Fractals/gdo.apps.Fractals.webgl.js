@@ -17,10 +17,10 @@ function initWebgl(id, locations, shader) {
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
-    //canvas.width = 960;
-    //canvas.height = 540;
-    canvas.width = 1920;
-    canvas.height = 1080;
+    canvas.width = 960;
+    canvas.height = 540;
+    //canvas.width = 1920;
+    //canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -127,6 +127,10 @@ function initWebgl(id, locations, shader) {
     // Set light location
     locations.lightLocLoc = gl.getUniformLocation(program, "lightLoc");
     gl.uniform3f(locations.lightLocLoc, parameters.lightX, parameters.lightY, parameters.lightZ);
+
+    // Set fractal
+    locations.fractalLoc = gl.getUniformLocation(program, "fractal");
+    gl.uniform1i(locations.iterationsLoc, parameters.fractal);
 
     // Set fractal iteration
     locations.iterationsLoc = gl.getUniformLocation(program, "iterations");

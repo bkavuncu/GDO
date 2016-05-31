@@ -1,4 +1,6 @@
-﻿gdo.net.app["Fractals"].server.joystickInit(gdo.controlId);
+﻿
+
+gdo.net.app["Fractals"].server.joystickInit(gdo.controlId);
 initJoystick("#look_joystick", gdo.net.app["Fractals"].server.joystickReceiveParamsRot);
 initJoystick("#move_joystick", gdo.net.app["Fractals"].server.joystickReceiveParamsMove);
 initHeightSlider("#move_height_range", gdo.net.app["Fractals"].server.heightSliderReceiveParamsMove);
@@ -25,22 +27,6 @@ $("iframe").contents().find("#fog_range").on("input", function () {
     val = $("iframe").contents().find("#fog_range").val();
     $("iframe").contents().find("#fog_number").empty().append(val);
     gdo.net.app["Fractals"].server.fog(gdo.controlId, val);
-});
-
-$("iframe").contents().find("#iterations_number").empty().append($("iframe").contents().find("#iterations_range").val());
-
-$("iframe").contents().find("#iterations_range").on("input", function () {
-    val = $("iframe").contents().find("#iterations_range").val();
-    $("iframe").contents().find("#iterations_number").empty().append(val);
-    gdo.net.app["Fractals"].server.iterations(gdo.controlId, val);
-});
-
-$("iframe").contents().find("#power_number").empty().append($("iframe").contents().find("#power_range").val());
-
-$("iframe").contents().find("#power_range").on("input", function () {
-    val = $("iframe").contents().find("#power_range").val();
-    $("iframe").contents().find("#power_number").empty().append(val);
-    gdo.net.app["Fractals"].server.power(gdo.controlId, val);
 });
 
 $("iframe").contents().find("#red_colour_number").empty().append($("iframe").contents().find("#red_colour_range").val());
@@ -72,6 +58,83 @@ $("iframe").contents().find("#blue_colour_range").on("input", function () {
     gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
 });
 
+
+$("iframe").contents().find("#iterations_row").show();
+$("iframe").contents().find("#power_row").show();
+$("iframe").contents().find("#scale_row").hide();
+
+$("iframe").contents().find("#fractal_select").on("change", function () {
+    gdo.consoleOut('.Fractals', 1, this.value);
+
+    var p = new params();
+
+    switch (this.value) {
+        case "Mandelbulb":
+            $("iframe").contents().find("#iterations_row").show();
+            $("iframe").contents().find("#power_row").show();
+            $("iframe").contents().find("#scale_row").hide();
+            p.fractal = 0;
+            break;
+        case "Mandelbox":
+            $("iframe").contents().find("#iterations_row").show();
+            $("iframe").contents().find("#power_row").hide();
+            $("iframe").contents().find("#scale_row").show();
+            p.zTrans = -12;
+            p.lightZ = -12;
+            p.fractal = 1;
+
+            break;
+    }
+    resetUI(p);
+
+    var json = JSON.stringify(p);
+    gdo.net.app["Fractals"].server.fractalSelect(gdo.controlId, json, this.value);
+});
+
+function resetUI(p) {
+    $("iframe").contents().find("#max_steps_number").empty().append(p.maxSteps);
+    $("iframe").contents().find("#max_steps_range").val(p.maxSteps);
+    $("iframe").contents().find("#detail_number").empty().append(Math.pow(10, p.detail));
+    $("iframe").contents().find("#detail_range").val(p.detail);
+    $("iframe").contents().find("#fog_number").empty().append(p.fog);
+    $("iframe").contents().find("#fog_range").val(p.fog);
+    $("iframe").contents().find("#red_colour_number").empty().append(p.red * 255);
+    $("iframe").contents().find("#red_colour_range").val(p.red * 255);
+    $("iframe").contents().find("#green_colour_number").empty().append(p.green * 255);
+    $("iframe").contents().find("#green_colour_range").val(p.green * 255);
+    $("iframe").contents().find("#blue_colour_number").empty().append(p.blue * 255);
+    $("iframe").contents().find("#blue_colour_range").val(p.blue * 255);
+    $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + p.red*255 + "," + p.green*255 + "," + p.blue*255 + ")");
+    $("iframe").contents().find("#iterations_number").empty().append(p.iterations);
+    $("iframe").contents().find("#iterations_range").val(p.iterations);
+    $("iframe").contents().find("#power_number").empty().append(p.power);
+    $("iframe").contents().find("#power_range").val(p.power);
+    $("iframe").contents().find("#scale_number").empty().append(p.scale);
+    $("iframe").contents().find("#scale_range").val(p.scale);
+    $("iframe").contents().find("#ambience_number").empty().append(p.ambience);
+    $("iframe").contents().find("#ambience_range").val(p.ambience);
+    $("iframe").contents().find("#light_intensity_number").empty().append(p.lightIntensity);
+    $("iframe").contents().find("#light_intensity_range").val(p.lightIntensity);
+    $("iframe").contents().find("#light_size_number").empty().append(p.lightSize);
+    $("iframe").contents().find("#light_size_range").val(p.lightSize);
+}
+
+$("iframe").contents().find("#iterations_number").empty().append($("iframe").contents().find("#iterations_range").val());
+
+$("iframe").contents().find("#iterations_range").on("input", function () {
+    val = $("iframe").contents().find("#iterations_range").val();
+    $("iframe").contents().find("#iterations_number").empty().append(val);
+    gdo.net.app["Fractals"].server.iterations(gdo.controlId, val);
+});
+
+$("iframe").contents().find("#power_number").empty().append($("iframe").contents().find("#power_range").val());
+
+$("iframe").contents().find("#power_range").on("input", function () {
+    val = $("iframe").contents().find("#power_range").val();
+    $("iframe").contents().find("#power_number").empty().append(val);
+    gdo.net.app["Fractals"].server.power(gdo.controlId, val);
+});
+
 $("iframe").contents().find("#scale_number").empty().append($("iframe").contents().find("#scale_range").val());
 
 $("iframe").contents().find("#scale_range").on("input", function () {
@@ -79,6 +142,7 @@ $("iframe").contents().find("#scale_range").on("input", function () {
     $("iframe").contents().find("#scale_number").empty().append(val);
     gdo.net.app["Fractals"].server.scale(gdo.controlId, val);
 });
+
 
 $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());
 

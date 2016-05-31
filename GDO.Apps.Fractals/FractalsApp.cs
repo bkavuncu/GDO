@@ -70,6 +70,8 @@ namespace GDO.Apps.Fractals
 
         public int Mod;
 
+        public int Fractal;
+
         public int SyncTime;
 
         public int Nodes;
@@ -93,7 +95,7 @@ namespace GDO.Apps.Fractals
             YRot = 0.0f;
             XTrans = 0.0f;
             YTrans = 0.0f;
-            ZTrans = -12.0f;// -2.0f;
+            ZTrans = -2.0f;
             Mod = 0;
             MaxSteps = 100;
             Detail = -3.0f;
@@ -101,9 +103,10 @@ namespace GDO.Apps.Fractals
             Ambience = 0.5f;
             LightIntensity = 50.0f;
             LightSize = 0.25f;
-            Iterations = 5;// 16;
+            Iterations = 12;
             Power = 8.0f;
             Scale = 2.0f;
+            Fractal = 0;
 
             Lock = new object();
             JoystickRunning = false;
@@ -132,7 +135,7 @@ namespace GDO.Apps.Fractals
 
             LightX = 4.0f;
             LightY = 2.0f;
-            LightZ = -12.0f;//-2.0f;
+            LightZ = -2.0f;
 
             R = 1.0f;
             G = 0.0f;

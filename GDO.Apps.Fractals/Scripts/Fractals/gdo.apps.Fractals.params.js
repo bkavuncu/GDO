@@ -8,7 +8,7 @@ function params() {
     this.yHeight = 0;
     this.xTrans = 0;
     this.yTrans = 0;
-    this.zTrans = -12;//-2;
+    this.zTrans = -2;
     this.maxSteps = 100;
     this.detail = -3;
     this.fog = 0.1;
@@ -17,14 +17,15 @@ function params() {
     this.lightSize = 0.25;
     this.lightX = 4;
     this.lightY = 2;
-    this.lightZ = -12;//-2;
-    this.iterations = 5;//16;
+    this.lightZ = -2;
+    this.iterations = 12;
     this.power = 8;
     this.red = 1;
     this.green = 0;
     this.blue = 0;
     this.scale = 2;
     this.modToggle = 0;
+    this.fractal = 0;
 }
 
 function locs() {
@@ -35,6 +36,7 @@ function locs() {
     this.maxStepsLoc;
     this.detailLoc;
     this.fogLoc;
+    this.fractalLoc;
     this.iterationsLoc;
     this.powerLoc;
     this.colourLoc;
@@ -55,6 +57,7 @@ function applyParams(locations, gl) {
     gl.uniform1i(locations.maxStepsLoc, parameters.maxSteps);
     gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
     gl.uniform1f(locations.fogLoc, parameters.fog);
+    gl.uniform1i(locations.fractalLoc, parameters.fractal);
     gl.uniform1i(locations.iterationsLoc, parameters.iterations);
     gl.uniform1f(locations.powerLoc, parameters.power);
     gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
