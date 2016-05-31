@@ -42,7 +42,7 @@ namespace GDO.Apps.Maps.Core.Formats
                 Name = "Default Style",
                 Description = "Default style. The default default style is the same as Google Earth.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                LinkedParameter = "style",
+                LinkedParameter = "styles",
                 IsEditable = false,
                 IsVisible = true
             };

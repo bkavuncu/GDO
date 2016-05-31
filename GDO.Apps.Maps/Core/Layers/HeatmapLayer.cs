@@ -9,10 +9,10 @@ namespace GDO.Apps.Maps.Core.Layers
     public class HeatmapLayer : Layer
     {
         public StringArrayParameter Gradient { get; set; }
-        public FloatRangeParameter Radius { get; set; }
-        public FloatRangeParameter Shadow { get; set; }
-        public FloatRangeParameter Weight { get; set; }
-        public FloatRangeParameter Blur { get; set; }
+        public SliderParameter Radius { get; set; }
+        public SliderParameter Shadow { get; set; }
+        public SliderParameter Weight { get; set; }
+        public SliderParameter Blur { get; set; }
 
         public HeatmapLayer()
         {
@@ -24,18 +24,16 @@ namespace GDO.Apps.Maps.Core.Layers
                 Name = "Gradient",
                 Description = "Custom Gradient",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = true,
                 IsVisible = true,
                 Length = 5
             };
 
-            Radius = new FloatRangeParameter
+            Radius = new SliderParameter
             {
                 Name = "Radius",
                 Description = "Radius of features",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
                 MinValue = 0,
@@ -43,12 +41,11 @@ namespace GDO.Apps.Maps.Core.Layers
                 DefaultValue = 8
             };
 
-            Shadow = new FloatRangeParameter
+            Shadow = new SliderParameter
             {
                 Name = "Shadow",
                 Description = "Shadow size of features",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = false,
                 IsVisible = true,
                 MinValue = 0,
@@ -56,12 +53,11 @@ namespace GDO.Apps.Maps.Core.Layers
                 DefaultValue = 250
             };
 
-            Weight = new FloatRangeParameter
+            Weight = new SliderParameter
             {
                 Name = "Weight",
                 Description = "Weight of features",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = false,
                 IsVisible = true,
                 MinValue = 0,
@@ -69,12 +65,11 @@ namespace GDO.Apps.Maps.Core.Layers
                 DefaultValue = (float?)0.5
             };
 
-            Blur = new FloatRangeParameter
+            Blur = new SliderParameter
             {
                 Name = "Blur",
                 Description = "Blur size of features",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
                 MinValue = 0,
