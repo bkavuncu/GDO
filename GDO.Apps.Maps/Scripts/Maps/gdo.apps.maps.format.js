@@ -99,7 +99,31 @@ gdo.net.app["Maps"].addFormat = function (instanceId, formatId, deserializedForm
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             format = new ol.format.KML(options);
-            break; 
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.OSMXML:
+            properties = [
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            format = new ol.format.OSMXML(options);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.TopoJSON:
+            properties = [
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            format = new ol.format.TopoJSON(options);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.WFS:
+            properties = [
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            format = new ol.format.WFS(options);
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.XML:
+            properties = [
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            format = new ol.format.XML(options);
+            break;
         default:
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Format Type:' + deserializedFormat.Type.Value + ' for Format ' + deserializedFormat.Id.Value);
             break;
@@ -125,6 +149,14 @@ gdo.net.app["Maps"].updateFormat = function (instanceId, formatId, deserializedF
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.GML3:
             break;
         case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.KML:
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.OSMXML:
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.TopoJSON:
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.WFS:
+            break;
+        case gdo.net.app["Maps"].FORMAT_TYPES_ENUM.XML:
             break;
         default:
             gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Format Type:' + deserializedFormat.Type.Value + ' for Format ' + deserializedFormat.Id.Value);
