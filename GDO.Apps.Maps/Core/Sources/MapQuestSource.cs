@@ -8,19 +8,18 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class MapQuestSource : XYZSource
     {
-        public StringArrayParameter Layer { get; set; }
+        public DatalistParameter Layer { get; set; }
 
         public MapQuestSource()
         {
             ClassName.Value = this.GetType().Name;
             Type.Value = (int)SourceTypes.MapQuest;
 
-            Layer = new StringArrayParameter
+            Layer = new DatalistParameter
             {
                 Name = "Layer",
                 Description = "Layer",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValues = new string[3] {"osm", "sat", "hyb"},

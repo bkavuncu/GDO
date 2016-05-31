@@ -48,6 +48,8 @@ namespace GDO.Utility
         public int InputType { get; set; }
         public bool IsEditable { get; set; }
         public bool IsVisible { get; set; }
+        public bool IsPartOfObject { get; set; }
+        public string ObjectName { get; set; }
     }
     public class BooleanParameter : Parameter
     {

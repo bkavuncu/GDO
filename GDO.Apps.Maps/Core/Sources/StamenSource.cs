@@ -9,19 +9,18 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class StamenSource : XYZSource
     {
-        public StringArrayParameter Layer { get; set; }
+        public DatalistParameter Layer { get; set; }
 
         public StamenSource()
         {
             ClassName.Value = this.GetType().Name;
             Type.Value = (int)SourceTypes.Stamen;
 
-            Layer = new StringArrayParameter
+            Layer = new DatalistParameter
             {
                 Name = "Layer",
                 Description = "Layer",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValues = new string[3] { "toner", "terrain", "watercolor" },
