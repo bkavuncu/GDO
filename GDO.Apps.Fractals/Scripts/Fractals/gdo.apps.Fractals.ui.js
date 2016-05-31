@@ -84,6 +84,12 @@ $("iframe").contents().find("#fractal_select").on("change", function () {
             p.fractal = 1;
 
             break;
+        case "Julia":
+            $("iframe").contents().find("#iterations_row").show();
+            $("iframe").contents().find("#power_row").hide();
+            $("iframe").contents().find("#scale_row").hide();
+            p.fractal = 2;
+            break;
     }
     resetUI(p);
 
