@@ -68,3 +68,8 @@ namespace GDO.Apps.Maps.Core
         }
     }
 }
+Value = 0,
+        Array = 1,
+        Function = 2,
+        JSON = 3,
+        Object = 4,

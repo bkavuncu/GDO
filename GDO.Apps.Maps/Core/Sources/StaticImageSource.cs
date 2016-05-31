@@ -13,6 +13,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         public FloatArrayParameter ImageExtent { get; set; }
         public StringParameter Projection { get; set; }
         public StringParameter ImageLoadFunction { get; set; }
+        public StringParameter Url { get; set; }
 
         public StaticImageSource()
         {
@@ -67,6 +68,16 @@ namespace GDO.Apps.Maps.Core.Sources.Images
                 Description = "Optional function to load an image given a URL.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 VisualisationType = (int)GDO.Utility.VisualisationTypes.Function,
+                IsEditable = false,
+                IsVisible = true,
+            };
+
+            Url = new StringParameter
+            {
+                Name = "Url",
+                Description = "Image URL",
+                Priority = (int)GDO.Utility.Priorities.Required,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
             };

@@ -2,6 +2,7 @@
     None: -1,
     Base: 0,
     BingMaps: 1,
+    CartoDB: 30,
     Cluster: 2,
     Image: 3,
     ImageCanvas: 4,
@@ -33,158 +34,334 @@
 };
 
 gdo.net.app["Maps"].addSource = function (instanceId, sourceId, deserializedSource) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedSource.Id);
-    if (gdo.net.app["Maps"].index["source"] <= deserializedSource.Id) {
-        gdo.net.app["Maps"].index["source"] = deserializedSource.Id;
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding Source: ' + deserializedSource.Id.Value);
+    if (gdo.net.app["Maps"].index["source"] <= deserializedSource.Id.Value) {
+        gdo.net.app["Maps"].index["source"] = deserializedSource.Id.Value;
     }
     var source;
     var properties;
     var options = {};
     var tileGrid;
+    var tileGridProperties;
+    var tileGridOptions = {};
 
     switch (deserializedSource.Type) {
+        // for loop add properties, 
+
+
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.BingMaps:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
             properties = [
-                ["culture",deserializedSource.Culture],
-                ["key",deserializedSource.Key],
-                ["imagerySet", deserializedSource.ImagerySet],
-                ["maxZoom",deserializedSource.MaxZoom]
+                ["culture", deserializedSource.Culture.Value],
+                ["key", deserializedSource.Key.Value],
+                ["imagerySet", deserializedSource.ImagerySet.Value],
+                ["maxZoom", deserializedSource.MaxZoom.Value],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             source = new ol.source.BingMaps(options);
             break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Cluster:
-            properties = [
-                ["distance", deserializedSource.Distance],
-                ["extent", deserializedSource.Extent],
-                ["format", gdo.net.instance[instanceId].formats[deserializedSource.FormatId]],
-                ["source", gdo.net.instance[instanceId].sources[deserializedSource.VectorSourceId]]
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.CartoDB:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
             ];
-            options = gdo.net.app["Maps"].optionConstructor(properties);
-            source = new ol.source.Cluster(options);
-            break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
-            properties = [
-                ["crossOrigin", deserializedSource.CrossOrigin],
-                ["imageExtent", deserializedSource.Extent],
-                ["imageSize", [deserializedSource.Width, deserializedSource.Height]],
-                ["url", deserializedSource.URL]
-            ];
-            options = gdo.net.app["Maps"].optionConstructor(properties);
-            source = new ol.source.ImageStatic(options);
-            break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageVector:
-            properties = [
-                ["ratio", deserializedSource.Ratio],
-                ["source", gdo.net.instance[instanceId].sources[deserializedSource.VectorSourceId]],
-                ["style", gdo.net.instance[instanceId].styles[deserializedSource.StyleId]]
-            ];
-            options = gdo.net.app["Maps"].optionConstructor(properties);
-            source = new ol.source.ImageVector(options);
-            break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
-            properties = [
-                ["extent", deserializedSource.TileGrid.Extent],
-                ["minZoom", deserializedSource.TileGrid.MinZoom],
-                ["maxZoom", deserializedSource.TileGrid.MaxZoom],
-                ["resolutions", deserializedSource.TileGrid.Resolutions],
-                ["tileSize", [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]]
-            ];
-            if (gdo.net.app["Maps"].optionChecker(properties)) {
-                options = gdo.net.app["Maps"].optionConstructor(properties);
-                tileGrid = new ol.tilegrid.TileGrid(options);
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
             }
             properties = [
-                ["crossOrigin", deserializedSource.CrossOrigin],
+                ["config", JSON.parse(deserializedSource.Config.Value)],
+                ["account", deserializedSource.Account.Value],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
                 ["tileGrid", tileGrid],
-                ["opaque", deserializedSource.Opaque]
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            source = new ol.source.TileImage(options);
+            source = new ol.source.CartoDB(options);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.MapQuest:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
+            properties = [
+                ["layer", deserializedSource.Layer.Value],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            source = new ol.source.MapQuest(options);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
-            properties = [
-                ["extent", deserializedSource.TileGrid.Extent],
-                ["minZoom", deserializedSource.TileGrid.MinZoom],
-                ["maxZoom", deserializedSource.TileGrid.MaxZoom],
-                ["resolutions", deserializedSource.TileGrid.Resolutions],
-                ["tileSize", [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]]
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
             ];
-            if (gdo.net.app["Maps"].optionChecker(properties)) {
-                options = gdo.net.app["Maps"].optionConstructor(properties);
-                tileGrid = new ol.tilegrid.TileGrid(options);
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
             }
             properties = [
-                ["crossOrigin", deserializedSource.CrossOrigin],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
                 ["tileGrid", tileGrid],
-                ["opaque", deserializedSource.Opaque],
-                ["projection", deserializedSource.Projection],
-                ["url", deserializedSource.Url]
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             source = new ol.source.XYZ(options);
             break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
-            properties = [
-                ["extent", deserializedSource.TileGrid.Extent],
-                ["minZoom", deserializedSource.TileGrid.MinZoom],
-                ["maxZoom", deserializedSource.TileGrid.MaxZoom],
-                ["resolutions", deserializedSource.TileGrid.Resolutions],
-                ["tileSize", [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]]
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.OSM:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
             ];
-            if (gdo.net.app["Maps"].optionChecker(properties)) {
-                options = gdo.net.app["Maps"].optionConstructor(properties);
-                tileGrid = new ol.tilegrid.TileGrid(options);
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
             }
             properties = [
-                ["crossOrigin", deserializedSource.CrossOrigin],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
                 ["tileGrid", tileGrid],
-                ["opaque", deserializedSource.Opaque],
-                ["projection", deserializedSource.Projection],
-                ["url", deserializedSource.Url],
-                ["layer", deserializedSource.Layer]
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            source = new ol.source.OSM(options);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Stamen:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
+            properties = [
+                ["layer", deserializedSource.Layer.Value],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             source = new ol.source.Stamen(options);
             break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileJSON:
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.ImageStatic:
             properties = [
-                ["crossOrigin", deserializedSource.CrossOrigin],
-                ["url", deserializedSource.Url]
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["imageExtent", deserializedSource.ImageExtent.Value],
+                ["imageSize", deserializedSource.ImageSize.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["imageLoadFunction", eval(deserializedSource.ImageLoadFunction.Value)],
+                ["url", deserializedSource.Url.Value]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            source = new ol.source.TileJSON(options);
+            source = new ol.source.ImageStatic(options);
             break;
-        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileVector:
-            properties = [
-                ["extent", deserializedSource.TileGrid.Extent],
-                ["minZoom", deserializedSource.TileGrid.MinZoom],
-                ["maxZoom", deserializedSource.TileGrid.MaxZoom],
-                ["resolutions", deserializedSource.TileGrid.Resolutions],
-                ["tileSize", [deserializedSource.TileGrid.Width, deserializedSource.TileGrid.Height]]
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileImage:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
             ];
-            if (gdo.net.app["Maps"].optionChecker(properties)) {
-                options = gdo.net.app["Maps"].optionConstructor(properties);
-                tileGrid = new ol.tilegrid.TileGrid(options);
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
             }
             properties = [
-                ["format", gdo.net.instance[instanceId].formats[deserializedSource.FormatId]],
-                ["projection", deserializedSource.Projection],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
                 ["tileGrid", tileGrid],
-                ["url", deserializedSource.Url]
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
-            source = new ol.source.TileVector(options);
+            source = new ol.source.TileImage(options);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileArcGISRest:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
+            properties = [
+                ["params", JSON.parse(deserializedSource.Params.Value)]
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            source = new ol.source.TileArcGISRest(options);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.TileWMS:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
+            properties = [
+                ["params", JSON.parse(deserializedSource.Params.Value)]
+                ["gutter", deserializedSource.Gutter.Value],
+                ["hidpi", deserializedSource.Hidpi.Value],
+                ["serverType", deserializedSource.ServerType.Value],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            source = new ol.source.TileWMS(options);
             break;
         case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Vector:
             properties = [
-                ["format", gdo.net.instance[instanceId].formats[deserializedSource.FormatId]],
-                ["url", deserializedSource.Url],
-                ["strategy", deserializedSource.LoadingStrategy],
-                ["useSpatialIndex", deserializedSource.UseSpatialIndex]
+                ["format", gdo.net.instance[instanceId].formats[deserializedSource.Format.Value]],
+                ["loader", eval(deserializedSource.Loader.Value)],
+                ["url", deserializedSource.Url.Value],
+                ["strategy", deserializedSource.Strategy.Value],
+                ["useSpatialIndex", deserializedSource.UseSpatialIndex.Value]
+                ["wrapX", deserializedSource.WrapX.Value]
             ];
             options = gdo.net.app["Maps"].optionConstructor(properties);
             source = new ol.source.Vector(options);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.XYZ:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
+            properties = [
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            source = new ol.source.XYZ(options);
+            break;
+        case gdo.net.app["Maps"].SOURCE_TYPES_ENUM.Zoomify:
+            tileGridProperties = [
+                ["extent", deserializedSource.Extent.Value],
+                ["minZoom", deserializedSource.MinZoom.Value],
+                ["resolutions", deserializedSource.Resolutions.Value],
+                ["tileSize", deserializedSource.TileSize.Value]
+            ];
+            if (gdo.net.app["Maps"].optionChecker(tileGridProperties)) {
+                tileGridOptions = gdo.net.app["Maps"].optionConstructor(tileGridProperties);
+                tileGrid = new ol.tilegrid.TileGrid(tileGridOptions);
+            }
+            properties = [
+                ["size", deserializedSource.Size.Value],
+                ["tierSizeCalculation", deserializedSource.TierSizeCalculation.Value],
+                ["cacheSize", deserializedSource.CacheSize.Value],
+                ["crossOrigin", deserializedSource.CrossOrigin.Value],
+                ["opaque", deserializedSource.Opaque.Value],
+                ["projection", deserializedSource.Projection.Value],
+                ["tileGrid", tileGrid],
+                ["tileLoadFunction", eval(deserializedSource.TileLoadFunction.Value)],
+                ["tilePixelRatio", deserializedSource.TilePixelRatio.Value],
+                ["url", deserializedSource.Url.Value],
+                ["wrapX", deserializedSource.WrapX.Value],
+            ];
+            options = gdo.net.app["Maps"].optionConstructor(properties);
+            source = new ol.source.Zoomify(options);
             break;
             default:
                 gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Source Type: ' + deserializedSource.Type + ' for Source ' + deserializedSource.Id);
