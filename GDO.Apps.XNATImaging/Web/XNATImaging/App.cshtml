@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html style="overflow: hidden">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>XNAT Imaging Project</title>
+    <link href="../../Scripts/XNATImaging/css/bootstrap.min.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto:500,300,700,400' rel='stylesheet' type='text/css'>
+    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
+</head>
+<body ng-app="xnatApp">
+    <div ng-controller="MainController">
+        <div class="heading">
+            <div class="container">
+                <h1>{{ title }}</h1>
+            </div>
+        </div>
+        <div class="main">
+            <div class="container">
+                <h2>Patient: {{ patient.name }}</h2>
+                <div id="dicomImage"
+                     update-image
+                     mouse-wheel-up=""
+                     mouse-wheel-down=""
+                     mouse-click=""
+                     class="cornerstone-enabled-image"
+                     oncontextmenu="return false"
+                     unselectable='off'
+                     onselectstart='return false;'
+                     onmousedown='return false;'>
+
+                    <div id="mrtopleft">
+                        <p>Optimise ID</p>
+                    </div>
+                    <div id="mrtopright">
+                        Hospital
+                    </div>
+                    <div id="mrbottomright">
+                        <div id="frameRate"></div>
+                        <div id="zoomText"><p>Zoom: {{ view.zoomLevel }}x</p></div>
+                        <div id="sliceText"><p>Image: {{ currentImageIndex + 1 }}</p></div>
+                    </div>
+                    <div id="mrbottomleft">
+                        <p>WW/WC: {{ view.windowWidth }}/{{ view.windowCenter }}</p>
+                    </div>
+                    <div class="controls">
+                        <button id="upNavigationButton" ng-click="navigateUp()" type="button" class="btn btn-default">Up</button>
+                        <button id="downNavigationButton" ng-click="navigateDown()" type="button" class="btn btn-default">Down</button>
+                        <button id="playButton" ng-click="playAll()" type="button" class="btn btn-success">Play</button>
+                        <button id="resetButton" ng-click="resetView()" type="button" class="btn btn-warning">Reset View</button>
+                        <button id="highlightButton" ng-click="highlightEnabled()" type="button" class="btn btn-primary">Highlight</button>
+                        <button id="markerButton" ng-click="markerEnabled()" type="button" class="btn btn-primary">Place Marker</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-view></div>
+    </div>
+
+
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+
+    <script src="../../Scripts/XNATImaging/js/shared/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.2.28/angular-route.min.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/underscore.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstone.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstoneMath.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstone-tools.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/dicomParser.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/jpx.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstoneWADOImageLoader.js"></script>
+    <!-- Modules -->
+    <script src="../../Scripts/XNATImaging/js/app.js"></script>
+    <!-- Controllers -->
+    <script src="../../Scripts/XNATImaging/js/controllers/MainController.js"></script>
+    <!-- Services -->
+    <script src="../../Scripts/XNATImaging/js/services/mriServices.js"></script>
+    <!-- Directives -->
+    <script src="../../Scripts/XNATImaging/js/directives/mouseWheelUp.js"></script>
+    <script src="../../Scripts/XNATImaging/js/directives/mouseWheelDown.js"></script>
+    <script src="../../Scripts/XNATImaging/js/directives/mouseClick.js"></script>
+
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["XNATImaging"].initClient();
+            });
+        });
+    </script>
+    @*<div id="wrapper" style="background-color:#000;width:97vw;height:97vh;text-align:center; vertical-align: middle;" align="center">
+            <div style="display: table; width:100%;height: 100%; overflow: hidden; text-align:center;">
+                <div id="hello_text" style="display: table-cell; font-size: 35vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;"></div>
+            </div>
+        </div>*@
+</body>
+</html>
