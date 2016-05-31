@@ -11,7 +11,7 @@ namespace GDO.Apps.Maps.Core.Formats
     {
         public BooleanParameter ExtractStyles { get; set; }
         public BooleanParameter ShowPointNames { get; set; }
-        public LinkParameter DefaultStyleId { get; set; }
+        public LinkParameter DefaultStyle { get; set; }
 
         public KMLFormat()
         {
@@ -22,8 +22,6 @@ namespace GDO.Apps.Maps.Core.Formats
             {
                 Name = "Extract Styles",
                 Description = "Extract styles from the KML",
-                Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
@@ -34,18 +32,17 @@ namespace GDO.Apps.Maps.Core.Formats
                 Name = "Show Point Names",
                 Description = "Show names as labels for placemarks which contain points.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
             };
 
-            DefaultStyleId = new LinkParameter
+            DefaultStyle = new LinkParameter
             {
-                Name = "Default Styles",
+                Name = "Default Style",
                 Description = "Default style. The default default style is the same as Google Earth.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
+                LinkedParameter = "style",
                 IsEditable = false,
                 IsVisible = true
             };

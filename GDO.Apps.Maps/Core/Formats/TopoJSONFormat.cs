@@ -21,7 +21,6 @@ namespace GDO.Apps.Maps.Core.Formats
                 Name = "Default Data Projection",
                 Description = "Default data projection. ",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = "EPSG:4326",

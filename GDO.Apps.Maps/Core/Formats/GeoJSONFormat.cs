@@ -22,7 +22,6 @@ namespace GDO.Apps.Maps.Core.Formats
                 Name = "Geometry Name",
                 Description = "Geometry name to use when creating features.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true
             };
@@ -32,7 +31,6 @@ namespace GDO.Apps.Maps.Core.Formats
                 Name = "Default Data Projection",
                 Description = "Default data projection",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = "EPSG:4326"

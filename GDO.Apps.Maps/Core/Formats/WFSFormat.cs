@@ -9,7 +9,6 @@ namespace GDO.Apps.Maps.Core.Formats
 {
     public class WFSFormat : Format
     {
-        public IntegerArrayParameter GMLVersion { get; set; }
         public StringParameter SchemaLocation { get; set; }
 
         public WFSFormat()
@@ -17,22 +16,11 @@ namespace GDO.Apps.Maps.Core.Formats
             ClassName.Value = this.GetType().Name;
             Type.Value = (int)FormatTypes.WFS;
 
-            GMLVersion = new IntegerArrayParameter
-            {
-                Name = "GML Version",
-                Description = "GML Version",
-                Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
-                DefaultValues = new int[3] { 1, 2, 3 },
-                IsEditable = false,
-                IsVisible = true
-            };
             SchemaLocation = new StringParameter
             {
                 Name = "Schema Location",
                 Description = "Optional schemaLocation to use for serialization, this will override the default.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true
             };
