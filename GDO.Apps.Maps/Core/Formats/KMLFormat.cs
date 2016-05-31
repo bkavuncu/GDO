@@ -11,7 +11,7 @@ namespace GDO.Apps.Maps.Core.Formats
     {
         public BooleanParameter ExtractStyles { get; set; }
         public BooleanParameter ShowPointNames { get; set; }
-        public IntegerArrayParameter DefaultStyleIds { get; set; }
+        public LinkParameter DefaultStyleId { get; set; }
 
         public KMLFormat()
         {
@@ -40,12 +40,12 @@ namespace GDO.Apps.Maps.Core.Formats
                 IsVisible = true
             };
 
-            DefaultStyleIds = new IntegerArrayParameter
+            DefaultStyleId = new LinkParameter
             {
                 Name = "Default Styles",
                 Description = "Default style. The default default style is the same as Google Earth.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true
             };
