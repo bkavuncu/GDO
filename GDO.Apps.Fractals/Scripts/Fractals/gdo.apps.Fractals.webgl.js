@@ -8,7 +8,7 @@ var canvas2;
 
 var sync;
 
-function initWebgl(id, locations, shader) {
+function initWebgl(id, locations, shader, completeInit) {
 
     var gl;
     var program;
@@ -54,109 +54,168 @@ function initWebgl(id, locations, shader) {
     gl.compileShader(vertexShader);
 
     // Compile fragment shader
-    shaderScript = $("iframe").contents().find(shader)[0];
-    shaderSource = shaderScript.text;
-    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fragmentShader, shaderSource);
-    gl.compileShader(fragmentShader);
+    //shaderScript = $("iframe").contents().find(shader)[0];
+    //shaderSource = shaderScript.text;
+    //fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    //gl.shaderSource(fragmentShader, shaderSource);
+    //gl.compileShader(fragmentShader);
+    alert(window.location.pathname);
+    loadFiles(['../scripts/Fractals/frag.js'], function (shaderText) {
 
-    // Create program with shaders
-    program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    gl.useProgram(program);
+        // Compile fragment shader
+        fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, shaderText[0]);
+        gl.compileShader(fragmentShader);
 
-    // Transparent background
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+        // Create program with shaders
+        program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
 
-    // Turn on alpha
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-    gl.enable(gl.BLEND);
-    gl.disable(gl.DEPTH_TEST);
+        // Transparent background
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Setup rotations
-    locations.xRotLoc = gl.getUniformLocation(program, "xRot");
-    gl.uniform1f(locations.xRotLoc, parameters.xRot);
-    locations.yRotLoc = gl.getUniformLocation(program, "yRot");
-    gl.uniform1f(locations.yRotLoc, parameters.yRot);
+        // Turn on alpha
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        gl.enable(gl.BLEND);
+        gl.disable(gl.DEPTH_TEST);
 
-    // Setup focal
-    var focalLoc = gl.getUniformLocation(program, "focal");
-    gl.uniform1f(focalLoc, 1 / Math.tan((315 / 32) * (Math.PI / 180)));
+        // Setup rotations
+        locations.xRotLoc = gl.getUniformLocation(program, "xRot");
+        gl.uniform1f(locations.xRotLoc, parameters.xRot);
+        locations.yRotLoc = gl.getUniformLocation(program, "yRot");
+        gl.uniform1f(locations.yRotLoc, parameters.yRot);
 
-    // Setup translation
-    locations.transLoc = gl.getUniformLocation(program, "translation");
-    gl.uniform3f(locations.transLoc, parameters.xTrans, parameters.yTrans, parameters.zTrans);
+        // Setup focal
+        var focalLoc = gl.getUniformLocation(program, "focal");
+        gl.uniform1f(focalLoc, 1 / Math.tan((315 / 32) * (Math.PI / 180)));
 
-    // Setup eye
-    locations.eyeLoc = gl.getUniformLocation(program, "eyeHeight");
-    gl.uniform1f(locations.eyeLoc, -parameters.yHeight);
+        // Setup translation
+        locations.transLoc = gl.getUniformLocation(program, "translation");
+        gl.uniform3f(locations.transLoc, parameters.xTrans, parameters.yTrans, parameters.zTrans);
 
-    // Set page size
-    locations.widthloc = gl.getUniformLocation(program, "width");
-    gl.uniform1f(locations.widthloc, canvas.width);
-    locations.heightloc = gl.getUniformLocation(program, "height");
-    gl.uniform1f(locations.heightloc, canvas.height);
+        // Setup eye
+        locations.eyeLoc = gl.getUniformLocation(program, "eyeHeight");
+        gl.uniform1f(locations.eyeLoc, -parameters.yHeight);
 
-    // Set max steps
-    locations.maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
-    gl.uniform1i(locations.maxStepsLoc, parameters.maxSteps);
+        // Set page size
+        locations.widthloc = gl.getUniformLocation(program, "width");
+        gl.uniform1f(locations.widthloc, canvas.width);
+        locations.heightloc = gl.getUniformLocation(program, "height");
+        gl.uniform1f(locations.heightloc, canvas.height);
 
-    // Set detail
-    locations.detailLoc = gl.getUniformLocation(program, "minDetail");
-    gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
+        // Set max steps
+        locations.maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
+        gl.uniform1i(locations.maxStepsLoc, parameters.maxSteps);
 
-    // Set fog
-    locations.fogLoc = gl.getUniformLocation(program, "fog");
-    gl.uniform1f(locations.fogLoc, parameters.fog);
+        // Set detail
+        locations.detailLoc = gl.getUniformLocation(program, "minDetail");
+        gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
 
-    // Set ambience
-    locations.ambienceLoc = gl.getUniformLocation(program, "ambience");
-    gl.uniform1f(locations.ambienceLoc, parameters.ambience);
+        // Set fog
+        locations.fogLoc = gl.getUniformLocation(program, "fog");
+        gl.uniform1f(locations.fogLoc, parameters.fog);
 
-    // Set light intensity
-    locations.lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
-    gl.uniform1f(locations.lightIntensityLoc, parameters.lightIntensity);
+        // Set ambience
+        locations.ambienceLoc = gl.getUniformLocation(program, "ambience");
+        gl.uniform1f(locations.ambienceLoc, parameters.ambience);
 
-    // Set light size
-    locations.lightSizeLoc = gl.getUniformLocation(program, "lightSize");
-    gl.uniform1f(locations.lightSizeLoc, parameters.lightSize);
+        // Set light intensity
+        locations.lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
+        gl.uniform1f(locations.lightIntensityLoc, parameters.lightIntensity);
 
-    // Set light location
-    locations.lightLocLoc = gl.getUniformLocation(program, "lightLoc");
-    gl.uniform3f(locations.lightLocLoc, parameters.lightX, parameters.lightY, parameters.lightZ);
+        // Set light size
+        locations.lightSizeLoc = gl.getUniformLocation(program, "lightSize");
+        gl.uniform1f(locations.lightSizeLoc, parameters.lightSize);
 
-    // Set fractal
-    locations.fractalLoc = gl.getUniformLocation(program, "fractal");
-    gl.uniform1i(locations.iterationsLoc, parameters.fractal);
+        // Set light location
+        locations.lightLocLoc = gl.getUniformLocation(program, "lightLoc");
+        gl.uniform3f(locations.lightLocLoc, parameters.lightX, parameters.lightY, parameters.lightZ);
 
-    // Set fractal iteration
-    locations.iterationsLoc = gl.getUniformLocation(program, "iterations");
-    gl.uniform1i(locations.iterationsLoc, parameters.iterations);
+        // Set fractal
+        locations.fractalLoc = gl.getUniformLocation(program, "fractal");
+        gl.uniform1i(locations.iterationsLoc, parameters.fractal);
 
-    // Set fractal power
-    locations.powerLoc = gl.getUniformLocation(program, "power");
-    gl.uniform1f(locations.powerLoc, parameters.power);
+        // Set fractal iteration
+        locations.iterationsLoc = gl.getUniformLocation(program, "iterations");
+        gl.uniform1i(locations.iterationsLoc, parameters.iterations);
 
-    // Set fractal colour
-    locations.colourLoc = gl.getUniformLocation(program, "colour");
-    gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
+        // Set fractal power
+        locations.powerLoc = gl.getUniformLocation(program, "power");
+        gl.uniform1f(locations.powerLoc, parameters.power);
 
-    // Set scale
-    locations.scaleLoc = gl.getUniformLocation(program, "scale");
-    gl.uniform1f(locations.scaleLoc, parameters.scale);
+        // Set fractal colour
+        locations.colourLoc = gl.getUniformLocation(program, "colour");
+        gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
 
-    // Set mod function
-    locations.modLoc = gl.getUniformLocation(program, "modFunction");
-    gl.uniform1i(locations.modLoc, parameters.modToggle);
+        // Set scale
+        locations.scaleLoc = gl.getUniformLocation(program, "scale");
+        gl.uniform1f(locations.scaleLoc, parameters.scale);
+
+        // Set mod function
+        locations.modLoc = gl.getUniformLocation(program, "modFunction");
+        gl.uniform1i(locations.modLoc, parameters.modToggle);
+
+        completeInit(gl, program, canvas);
+
+    }, function (url) {
+        alert('Failed to download "' + url + '"');
+    });
+
+
 
     // Render the scene
     //render(locations, gl, program);
 
-    return { gl: gl, program: program, canvas: canvas };
+    //return { gl: gl, program: program, canvas: canvas };
 }
+
+function loadFile(url, data, callback, errorCallback) {
+    // Set up an asynchronous request
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+
+    // Hook the event that gets called as the request progresses
+    request.onreadystatechange = function () {
+        // If the request is "DONE" (completed or failed)
+        if (request.readyState == 4) {
+            // If we got HTTP status 200 (OK)
+            if (request.status == 200) {
+                callback(request.responseText, data)
+            } else { // Failed
+                alert(request.status);
+                errorCallback(url);
+            }
+        }
+    };
+
+    request.send(null);
+}
+
+function loadFiles(urls, callback, errorCallback) {
+    var numUrls = urls.length;
+    var numComplete = 0;
+    var result = [];
+
+    // Callback for a single file
+    function partialCallback(text, urlIndex) {
+        result[urlIndex] = text;
+        numComplete++;
+
+        // When all files have downloaded
+        if (numComplete == numUrls) {
+            callback(result);
+        }
+    }
+
+    for (var i = 0; i < numUrls; i++) {
+        loadFile(urls[i], i, partialCallback, errorCallback);
+    }
+}
+
 rendering = false;
 function renderSync(locations, gl, program) {
     

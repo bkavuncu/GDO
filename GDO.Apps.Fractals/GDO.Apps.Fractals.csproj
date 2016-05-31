@@ -131,6 +131,7 @@
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.ui.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.webgl.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Scripts\Fractals\frag.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

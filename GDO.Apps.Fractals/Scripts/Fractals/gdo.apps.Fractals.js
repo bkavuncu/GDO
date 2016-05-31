@@ -184,18 +184,36 @@ gdo.net.app["Fractals"].initClient = function () {
 
     sync = true;
 
-    var webgl1 = initWebgl("#glscreen1", locations1, "#2d-fragment-shader");
-    var webgl2 = initWebgl("#glscreen2", locations2, "#2d-fragment-shader");
+    initWebgl("#glscreen1", locations1, "#2d-fragment-shader", completeinit1);
+    
 
-    gl1 = webgl1.gl;
-    gl2 = webgl2.gl;
-    program1 = webgl1.program;
-    program2 = webgl2.program;
-    canvas1 = webgl1.canvas;
-    canvas2 = webgl2.canvas;
+    //gl1 = webgl1.gl;
+    //gl2 = webgl2.gl;
+    //program1 = webgl1.program;
+    //program2 = webgl2.program;
+    //canvas1 = webgl1.canvas;
+    //canvas2 = webgl2.canvas;
 
+    //canvas1.style.zIndex = 0;
+    //canvas2.style.zIndex = 5;
+
+    //gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
+}
+
+completeinit1 = function (gl, program, canvas) {
+    gl1 = gl;
+    program1 = program;
+    canvas1 = canvas;
     canvas1.style.zIndex = 0;
-    canvas2.style.zIndex = 5;
+
+    initWebgl("#glscreen2", locations2, "#2d-fragment-shader", completeinit2);
+}
+
+completeinit2 = function (gl, program, canvas) {
+    gl2 = gl;
+    program2 = program;
+    canvas2 = canvas;
+    canvas2.style.zIndex = 0;
 
     gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 }
