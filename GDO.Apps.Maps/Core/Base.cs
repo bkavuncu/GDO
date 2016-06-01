@@ -24,9 +24,6 @@ namespace GDO.Apps.Maps.Core
         [JsonProperty(Order = -2)]
         public StringParameter ObjectType { get; set; }
 
-        [JsonProperty(Order = -2)]
-        public StringParameter CollectionName { get; set; }
-
         public Base()
         {
             Id = new IntegerParameter
@@ -64,16 +61,6 @@ namespace GDO.Apps.Maps.Core
                 Name = "Type",
                 Description = "Type of JS Object",
                 Priority = (int) GDO.Utility.Priorities.Required,
-                IsEditable = false,
-                IsVisible = false,
-                IsProperty = false,
-            };
-
-            CollectionName = new StringParameter
-            {
-                Name = "Collection Name",
-                Description = "Collection Name",
-                Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
                 IsVisible = false,
                 IsProperty = false,

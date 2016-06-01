@@ -11,7 +11,6 @@ namespace GDO.Apps.Maps.Core
         public Style () : base ()
         {
             ClassName.Value = this.GetType().Name;
-            CollectionName.Value = "styles";
         }
     }
 }

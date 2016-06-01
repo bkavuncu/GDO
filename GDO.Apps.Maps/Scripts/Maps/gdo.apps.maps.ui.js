@@ -46,7 +46,7 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
 
             $("iframe").contents().find("." + tab + "").append("<div class='" + tab + "_" + i + " row' " + tab + "Id='" + i + "'></div>");
             if (gdo.net.app["Maps"].selected[tab] >= 0) {
-                $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[gdo.net.app["Maps"].selected[tab]].properties.Name + " (" + arr[gdo.net.app["Maps"].selected[tab]].properties.Id + ")");
+                $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[gdo.net.app["Maps"].selected[tab]].properties.Name.Value + " (" + arr[gdo.net.app["Maps"].selected[tab]].properties.Id.Value + ")");
             }
             
             var color = "white";
@@ -83,8 +83,8 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
                 .css("align", "top")
                 .css("width", "100%")
                 .append("<div class='" + tab + "_" + i + "_content table'  " + tab + "Id='" + i + "' style='color:" + color + "'>" +
-                        "<div class='" + tab + "_" + i + "_id col-md-2'  " + tab + "Id='" + i + "'> &nbsp;&nbsp;" + arr[i].properties.Id + "</div>" +
-                        "<div class='" + tab + "_" + i + "_name col-md-8'  " + tab + "Id='" + i + "'> " + arr[i].properties.Name + "</div>" +
+                        "<div class='" + tab + "_" + i + "_id col-md-2'  " + tab + "Id='" + i + "'> &nbsp;&nbsp;" + arr[i].properties.Id.Value + "</div>" +
+                        "<div class='" + tab + "_" + i + "_name col-md-8'  " + tab + "Id='" + i + "'> " + arr[i].properties.Name.Value + "</div>" +
                         "<div class='" + tab + "_" + i + "_icon col-md-1'  " + tab + "Id='" + i + "'><i class='fa " + icon + "'></i></div>" +
                     "</div>");
             $("iframe").contents().find("." + tab + "_" + i + "_content").unbind().click(function () {
@@ -114,7 +114,6 @@ gdo.net.app["Maps"].drawCreateTable = function(instanceId, tab, layer) {
     for (var key in properties) {
         if (key == null) {
             key = "";
-
         }
         if (properties.hasOwnProperty(key) && key != "$type") {
             gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property ' + key + ' for ' + tab);

@@ -81,12 +81,6 @@
   <ItemGroup>
     <Content Include="Configurations\Maps\Default.json" />
     <None Include="packages.config" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.control.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.format.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.interaction.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.layer.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.source.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.style.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.ui.map.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.ui.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.utilities.js" />

@@ -545,48 +545,67 @@ namespace GDO.Apps.Maps
             GeoJSONFormat geoJsonFormat = new GeoJSONFormat();
             GMLFormat gmlFormat = new GMLFormat();
             KMLFormat kmlFormat = new KMLFormat();
+            OSMXMLFormat osmXmlFormat = new OSMXMLFormat();
+            TopoJSONFormat topoJsonFormat = new TopoJSONFormat();
+            WFSFormat wfsFormat = new WFSFormat();
+            XMLFormat xmlFormat = new XMLFormat();
 
 
             formats.Add(esriJsonFormat);
             formats.Add(geoJsonFormat);
             formats.Add(gmlFormat);
             formats.Add(kmlFormat);
+            formats.Add(osmXmlFormat);
+            formats.Add(topoJsonFormat);
+            formats.Add(wfsFormat);
+            formats.Add(xmlFormat);
 
             //Add Styles to Template
             CircleStyle circleStyle = new CircleStyle();
             FillStyle fillStyle = new FillStyle();
             IconStyle iconStyle = new IconStyle();
+            ImageStyle imageStyle = new ImageStyle();
             RegularShapeStyle regularShapeStyle = new RegularShapeStyle();
             StrokeStyle strokeStyle = new StrokeStyle();
             TextStyle textStyle = new TextStyle();
+            GDO.Apps.Maps.Core.Styles.Style style = new GDO.Apps.Maps.Core.Styles.Style();
 
 
-            
+            styles.Add(circleStyle);
             styles.Add(fillStyle);
             styles.Add(iconStyle);
+            styles.Add(imageStyle);
             styles.Add(regularShapeStyle);
             styles.Add(strokeStyle);
             styles.Add(textStyle);
-            styles.Add(circleStyle);
+            styles.Add(style);
 
             //Add Sources to Template
             BingMapsSource bingMapsSource = new BingMapsSource();
-            StaticImageSource staticImageSource = new StaticImageSource();
+            CartoDBSource cartoDBSource = new CartoDBSource();
             ImageTileSource imageTileSource = new ImageTileSource();
-            XYZSource xyzSource = new XYZSource();
+            MapQuestSource mapQuestSource = new MapQuestSource();
+            OSMSource osmSource = new OSMSource();
             StamenSource stamenSource = new StamenSource();
-
+            StaticImageSource staticImageSource = new StaticImageSource();
+            TileArcGISRestSource tileArcGisRestSource = new TileArcGISRestSource();
+            TileWMSSource tileWmsSource = new TileWMSSource();
             VectorSource vectorSource = new VectorSource();
+            XYZSource xyzSource = new XYZSource();
+            ZoomifySource zoomifySource = new ZoomifySource();
 
-
-
-            sources.Add(vectorSource);
             sources.Add(bingMapsSource);
-            sources.Add(staticImageSource);
+            sources.Add(cartoDBSource);
             sources.Add(imageTileSource);
-            sources.Add(xyzSource);
+            sources.Add(mapQuestSource);
+            sources.Add(osmSource);
             sources.Add(stamenSource);
-
+            sources.Add(staticImageSource);
+            sources.Add(tileArcGisRestSource);
+            sources.Add(tileWmsSource);
+            sources.Add(vectorSource);
+            sources.Add(xyzSource);
+            sources.Add(zoomifySource);
 
             //Add Layers to Template
             HeatmapLayer heatmapLayer = new HeatmapLayer();
