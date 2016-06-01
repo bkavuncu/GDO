@@ -16,11 +16,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public ImageStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Image;
+            ObjectType.Value = "ol.style.Image";
 
             Opacity = new SliderParameter
             {
                 Name = "Opacity",
+                PropertyName = "opacity",
                 Description = "Transparency of the Image",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -33,6 +34,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Rotation = new SliderParameter
             {
                 Name = "Rotation",
+                PropertyName = "rotation",
                 Description = "Rotation",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -45,6 +47,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Scale = new SliderParameter
             {
                 Name = "Scale",
+                PropertyName = "scale",
                 Description = "Scale",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,

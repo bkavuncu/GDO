@@ -18,11 +18,12 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         public StaticImageSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.ImageStatic;
+            ObjectType.Value = "ol.source.ImageStatic";
 
             CrossOrigin = new StringParameter
             {
                 Name = "Cross Origin",
+                PropertyName = "crossOrigin",
                 Description = "The crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you are using the WebGL renderer or if you want to access pixel data with the Canvas renderer. ",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -32,6 +33,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             ImageSize = new IntegerArrayParameter
             {
                 Name = "Image Size",
+                PropertyName = "imageSize",
                 Description = "Size of the image in pixels. Usually the image size is auto-detected, so this only needs to be set if auto-detection fails for some reason.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -42,6 +44,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             ImageExtent = new FloatArrayParameter
             {
                 Name = "Image Extent",
+                PropertyName = "imageExtent",
                 Description = "Extent of the image in map coordinates. This is the [left, bottom, right, top] map coordinates of your image.",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -52,6 +55,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             Projection = new StringParameter
             {
                 Name = "Projection",
+                PropertyName = "projection",
                 Description = "Projection",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -61,6 +65,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             ImageLoadFunction = new FunctionParameter
             {
                 Name = "Image Load Function",
+                PropertyName = "imageLoadFunction",
                 Description = "Optional function to load an image given a URL.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -70,6 +75,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
             Url = new StringParameter
             {
                 Name = "Url",
+                PropertyName = "url",
                 Description = "Image URL",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,

@@ -14,11 +14,12 @@ namespace GDO.Apps.Maps.Core.Formats
         public WFSFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.WFS;
+            ObjectType.Value = "ol.format.WFS";
 
             SchemaLocation = new StringParameter
             {
                 Name = "Schema Location",
+                PropertyName = "schemaLocation",
                 Description = "Optional schemaLocation to use for serialization, this will override the default.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

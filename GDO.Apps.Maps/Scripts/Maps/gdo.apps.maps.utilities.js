@@ -37,3 +37,39 @@ gdo.net.app["Maps"].setExceptNull = function (obj, func, value) {
         eval(""+obj+".func("+value+");");
     }
 }
+
+gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding '+ objectType +' :' + deserializedObject.Id.Value);
+    if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
+        gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
+    }
+    var object;
+    var properties;
+    var options = {};
+    
+    for (var index in gdo.net.node) {
+        if (!gdo.net.node.hasOwnProperty((index))) {
+            continue;
+        }
+        if (gdo.net.node[index].connectedToPeer) {
+            connectedNodes[i] = gdo.net.node[index].id;
+            i++;
+        }
+    }
+}
+
+gdo.net.app["Maps"].updateObject = function (instanceId, objectType, objectId, deserializedObject) {
+
+}
+
+gdo.net.app["Maps"].requestObject = function (instanceId, objectType, objectId) {
+
+}
+
+gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, objectId, isNew) {
+
+}
+
+gdo.net.app["Maps"].removeObject = function (instaneId, objectType, objectId) {
+
+}

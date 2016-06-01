@@ -15,11 +15,12 @@ namespace GDO.Apps.Maps.Core.Formats
         public GeoJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.GeoJSON;
+            ObjectType.Value = "ol.format.GeoJSON";
 
             GeometryName = new StringParameter
             {
                 Name = "Geometry Name",
+                PropertyName = "geometryName",
                 Description = "Geometry name to use when creating features.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -29,6 +30,7 @@ namespace GDO.Apps.Maps.Core.Formats
             DefaultDataProjection = new StringParameter
             {
                 Name = "Default Data Projection",
+                PropertyName = "defaultDataProjection",
                 Description = "Default data projection",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

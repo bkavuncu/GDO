@@ -14,11 +14,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public FillStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Fill;
+            ObjectType.Value = "ol.style.Fill";
 
             Color = new ColorParameter
             {
                 Name = "Color",
+                PropertyName = "color",
                 Description = "Color",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,

@@ -14,11 +14,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public TileArcGISRestSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.TileArcGISRest;
+            ObjectType.Value = "ol.source.TileArcGISRest";
 
             Params = new JSONParameter
             {
                 Name = "Parameters",
+                PropertyName = "params",
                 Description = "ArcGIS Rest parameters. This field is optional. Service defaults will be used for any fields not specified. FORMAT is PNG32 by default. F is IMAGE by default. TRANSPARENT is true by default. BBOX,SIZE,BBOXSR, andIMAGESRwill be set dynamically. SetLAYERS` to override the default service layer visibility",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

@@ -20,11 +20,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public RegularShapeStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.RegularShape;
+            ObjectType.Value = "ol.style.RegularShape";
 
             FillStyle = new LinkParameter
             {
                 Name = "Fill Style",
+                PropertyName = "fill",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -35,6 +36,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Points = new IntegerParameter
             {
                 Name = "Number of Points",
+                PropertyName = "points",
                 Description = "Number of points for stars and regular polygons. In case of a polygon, the number of points is the number of sides.",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -43,6 +45,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Radius = new NullableIntegerParameter
             {
                 Name = "Radius",
+                PropertyName = "radius",
                 Description = "Radius of a regular polygon.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -51,6 +54,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Radius1 = new NullableIntegerParameter
             {
                 Name = "Inner Radius",
+                PropertyName = "radius1",
                 Description = "Inner radius of a star.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -59,6 +63,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Radius2 = new NullableIntegerParameter
             {
                 Name = "Outer Radius",
+                PropertyName = "radius2",
                 Description = "Outer Radius of a star",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -67,6 +72,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Angle = new IntegerParameter
             {
                 Name = "Angle",
+                PropertyName = "angle",
                 Description = "Shape's angle in radians. A value of 0 will have one of the shape's point facing up.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -76,6 +82,7 @@ namespace GDO.Apps.Maps.Core.Styles
             SnapToPixel = new BooleanParameter
             {
                 Name = "SnapToPixel",
+                PropertyName = "snapToPixel",
                 Description = "If true integral numbers of pixels are used as the X and Y pixel coordinate when drawing the shape in the output canvas. If false fractional numbers may be used. Using true allows for sharp rendering (no blur), while using false allows for accurate rendering. Note that accuracy is important if the shape's position is animated. Without it, the shape may jitter noticeably. ",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 DefaultValue = true,
@@ -85,6 +92,7 @@ namespace GDO.Apps.Maps.Core.Styles
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
+                PropertyName = "stroke",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

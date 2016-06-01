@@ -14,11 +14,12 @@ namespace GDO.Apps.Maps.Core.Formats
         public TopoJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.TopoJSON;
+            ObjectType.Value = "ol.format.TopoJSON";
 
             DefaultDataProjection = new StringParameter
             {
                 Name = "Default Data Projection",
+                PropertyName = "defaultDataProjection",
                 Description = "Default data projection. ",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,

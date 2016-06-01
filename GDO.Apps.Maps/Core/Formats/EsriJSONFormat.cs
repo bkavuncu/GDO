@@ -14,11 +14,12 @@ namespace GDO.Apps.Maps.Core.Formats
         public EsriJSONFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.EsriJSON;
+            ObjectType.Value = "ol.format.EsriJSON";
 
             GeometryName = new StringParameter
             {
                 Name = "Geometry Name",
+                PropertyName = "geometryName",
                 Description = "Geometry name to use when creating features.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

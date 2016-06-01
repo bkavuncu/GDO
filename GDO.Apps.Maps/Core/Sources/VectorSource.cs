@@ -19,11 +19,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public VectorSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.Vector;
+            ObjectType.Value = "ol.source.Vector";
 
             Format = new LinkParameter
             {
                 Name = "Format",
+                PropertyName = "format",
                 Description = "The feature format used by the XHR feature loader when url is set. Required if url is set, otherwise ignored. ",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -34,6 +35,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Loader = new FunctionParameter
             {
                 Name = "Loader Function",
+                PropertyName = "loader",
                 Description = "The loader function used to load features, from a remote source for example. Note that the source will create and use an XHR feature loader when url is set.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -43,6 +45,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Url = new StringParameter
             {
                 Name = "Url",
+                PropertyName = "url",
                 Description = "Setting this option instructs the source to use an XHR loader (see ol.featureloader.xhr). Use a string and an ol.loadingstrategy.all for a one-off download of all features from the given URL. Use a ol.FeatureUrlFunction to generate the url with other loading strategies. Requires format to be set as well. When default XHR feature loader is provided, the features will be transformed from the data projection to the view projection during parsing. If your remote data source does not advertise its projection properly, this transformation will be incorrect. For some formats, the default projection (usually EPSG:4326) can be overridden by setting the defaultDataProjection constructor option on the format.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -52,6 +55,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Strategy = new DatalistParameter
             {
                 Name = "Loading Strategy",
+                PropertyName = "strategy",
                 Description = "The loading strategy to use.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -62,6 +66,7 @@ namespace GDO.Apps.Maps.Core.Sources
             UseSpatialIndex = new BooleanParameter
             {
                 Name = "Use Spatial Index",
+                PropertyName = "useSpatialIndex",
                 Description = "By default, an RTree is used as spatial index. When features are removed and added frequently, and the total number of features is low, setting this to false may improve performance.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -72,6 +77,7 @@ namespace GDO.Apps.Maps.Core.Sources
             WrapX = new BooleanParameter()
             {
                 Name = "WrapX",
+                PropertyName = "wrapX",
                 Description = "Wrap the world horizontally. Default is true. For vector editing across the -180° and 180° meridians to work properly, this should be set to false. The resulting geometry coordinates will then exceed the world bounds.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

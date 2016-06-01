@@ -18,11 +18,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public BingMapsSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.BingMaps;
+            ObjectType.Value = "ol.source.BingMaps";
 
             Culture = new StringParameter
             {
                 Name = "Culture",
+                PropertyName = "culture",
                 Description = "Culture code",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -32,6 +33,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Key = new StringParameter
             {
                 Name = "Key",
+                PropertyName = "key",
                 Description = "Bing Maps API key",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -41,6 +43,7 @@ namespace GDO.Apps.Maps.Core.Sources
             ImagerySet = new DatalistParameter
             {
                 Name = "Imagery Set",
+                PropertyName = "imagerySet",
                 Description = "Type of imagery",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -51,6 +54,7 @@ namespace GDO.Apps.Maps.Core.Sources
             MaxZoom = new NullableIntegerParameter
             {
                 Name = "Max Zoom",
+                PropertyName = "maxZoom",
                 Description = "Max zoom. Default is what's advertized by the BingMaps service.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

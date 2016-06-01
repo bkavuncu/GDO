@@ -13,11 +13,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public MapQuestSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.MapQuest;
+            ObjectType.Value = "ol.source.MapQuest";
 
             Layer = new DatalistParameter
             {
                 Name = "Layer",
+                PropertyName = "layer",
                 Description = "Layer",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,

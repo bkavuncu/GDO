@@ -22,11 +22,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public IconStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Icon;
+            ObjectType.Value = "ol.style.Icon";
 
             CrossOrigin = new StringParameter
             {
                 Name = "Crossorigin",
+                PropertyName = "crossOrigin",
                 Description = "The crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you are using the WebGL renderer or if you want to access pixel data with the Canvas renderer. ",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -36,6 +37,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Anchor = new FloatArrayParameter
             {
                 Name = "Anchor",
+                PropertyName = "anchor",
                 Description = "Anchor",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -46,6 +48,7 @@ namespace GDO.Apps.Maps.Core.Styles
             AnchorOrigin = new DatalistParameter
             {
                 Name = "Anchor Origin",
+                PropertyName = "anchorOrigin",
                 Description = "Origin of the anchor",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -57,6 +60,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Offset = new FloatArrayParameter
             {
                 Name = "Offset",
+                PropertyName = "offset",
                 Description = "Offset",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -67,6 +71,7 @@ namespace GDO.Apps.Maps.Core.Styles
             OffsetOrigin = new DatalistParameter
             {
                 Name = "Offset Origin",
+                PropertyName = "offsetOrigin",
                 Description = "Origin of the offset",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -78,6 +83,7 @@ namespace GDO.Apps.Maps.Core.Styles
             SnapToPixel = new BooleanParameter
             {
                 Name = "Snap To Pixel",
+                PropertyName = "snapToPixel",
                 Description = "If true integral numbers of pixels are used as the X and Y pixel coordinate when drawing the icon in the output canvas. If false fractional numbers may be used. Using true allows for sharp rendering (no blur), while using false allows for accurate rendering. Note that accuracy is important if the icon's position is animated. Without it, the icon may jitter noticeably. Default value is true.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 DefaultValue = true,
@@ -88,6 +94,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Size = new IntegerArrayParameter
             {
                 Name = "Size",
+                PropertyName = "size",
                 Description = "Icon size in pixel. Can be used together with offset to define the sub-rectangle to use from the origin (sprite) icon image.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -97,6 +104,7 @@ namespace GDO.Apps.Maps.Core.Styles
             ImageSize = new IntegerArrayParameter
             {
                 Name = "ImageSize",
+                PropertyName = "imgSize",
                 Description = "Image size in pixels. Only required if img is set and src is not, and for SVG images in Internet Explorer 11. The provided imgSize needs to match the actual size of the image.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -106,6 +114,7 @@ namespace GDO.Apps.Maps.Core.Styles
             ImageSource = new StringParameter
             {
                 Name = "Image Source",
+                PropertyName = "src",
                 Description = "Image Source URI",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,

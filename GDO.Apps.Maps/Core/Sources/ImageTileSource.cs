@@ -26,11 +26,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public ImageTileSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.TileImage;
+            ObjectType.Value = "ol.source.TileImage";
 
             CacheSize = new NullableIntegerParameter
             {
                 Name = "Cache Size",
+                PropertyName = "cacheSize",
                 Description = "Cache Size",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -41,7 +42,8 @@ namespace GDO.Apps.Maps.Core.Sources
             CrossOrigin = new StringParameter
             {
                 Name = "Cross Origin",
-                Description = "he crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you are using the WebGL renderer or if you want to access pixel data with the Canvas renderer",
+                PropertyName = "crossOrigin",
+                Description = "The crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you are using the WebGL renderer or if you want to access pixel data with the Canvas renderer",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
@@ -50,6 +52,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Opaque = new BooleanParameter
             {
                 Name = "Opaque",
+                PropertyName = "opaque",
                 Description = "Whether the layer is opaque.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -59,6 +62,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Projection = new StringParameter
             {
                 Name = "Projection",
+                PropertyName = "projection",
                 Description = "Projection",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -68,6 +72,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Extent = new FloatArrayParameter
             {
                 Name = "Extent",
+                PropertyName = "extent",
                 Description = "Extent for the tile grid. No tiles outside this extent will be requested",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -79,6 +84,7 @@ namespace GDO.Apps.Maps.Core.Sources
             MinZoom = new NullableIntegerParameter
             {
                 Name = "Minimum Zoom",
+                PropertyName = "minZoom",
                 Description = "Minimum Zoom",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -91,6 +97,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Origin = new FloatArrayParameter
             {
                 Name = "Origin",
+                PropertyName = "origin",
                 Description = "The tile grid origin, i.e. where the x and y axes meet ([z, 0, 0]). Tile coordinates increase left to right and upwards",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -103,6 +110,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Resolutions = new FloatArrayParameter
             {
                 Name = "Resolutions",
+                PropertyName = "resolutions",
                 Description = "Resolutions. The array index of each resolution needs to match the zoom level. This means that even if a minZoom is configured, the resolutions array will have a length of maxZoom + 1",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -115,6 +123,7 @@ namespace GDO.Apps.Maps.Core.Sources
             TileSize = new IntegerArrayParameter
             {
                 Name = "Tile Size",
+                PropertyName = "tileSize",
                 Description = "Tile Size",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -128,6 +137,7 @@ namespace GDO.Apps.Maps.Core.Sources
             TileLoadFunction = new FunctionParameter
             {
                 Name = "Tile Load Function",
+                PropertyName = "tileLoadFunction",
                 Description = "Optional function to load a tile given a URL.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -138,6 +148,7 @@ namespace GDO.Apps.Maps.Core.Sources
             TilePixelRatio = new FloatParameter
             {
                 Name = "Tile Pixel Ratio",
+                PropertyName = "tilePixelRatio",
                 Description = "The pixel ratio used by the tile service. For example, if the tile service advertizes 256px by 256px tiles but actually sends 512px by 512px images (for retina/hidpi devices) then tilePixelRatio should be set to 2.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -148,6 +159,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Url = new StringParameter
             {
                 Name = "Url",
+                PropertyName = "url",
                 Description = "URL template. Must include {x}, {y} or {-y}, and {z} placeholders. A {?-?} template pattern, for example subdomain{a-f}.domain.com, may be used instead of defining each one separately in the urls option",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -156,6 +168,7 @@ namespace GDO.Apps.Maps.Core.Sources
             WrapX = new BooleanParameter()
             {
                 Name = "WrapX",
+                PropertyName = "wrapx",
                 Description = "Whether to wrap the world horizontally. The default, undefined, is to request out-of-bounds tiles from the server. When set to false, only one world will be rendered. When set to true, tiles will be requested for one world only, but they will be wrapped horizontally to render multiple worlds.",
                 Priority = (int) GDO.Utility.Priorities.Optional,
                 IsEditable = false,

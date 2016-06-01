@@ -10,7 +10,7 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class Base
+    public abstract class Base
     {
         [JsonProperty(Order = -2)]
         public IntegerParameter Id { get; set; }
@@ -22,7 +22,7 @@ namespace GDO.Apps.Maps.Core
         public StringParameter ClassName { get; set; }
 
         [JsonProperty(Order = -2)]
-        public IntegerParameter Type { get; set; }
+        public StringParameter ObjectType { get; set; }
 
         public Base()
         {
@@ -33,6 +33,7 @@ namespace GDO.Apps.Maps.Core
                 Priority = (int) GDO.Utility.Priorities.Required,
                 IsEditable = false,
                 IsVisible = true,
+                IsProperty = false,
             };
 
             Name = new StringParameter
@@ -42,6 +43,7 @@ namespace GDO.Apps.Maps.Core
                 Priority = (int) GDO.Utility.Priorities.Required,
                 IsEditable = true,
                 IsVisible = true,
+                IsProperty = false,
             };
 
             ClassName = new StringParameter
@@ -51,15 +53,17 @@ namespace GDO.Apps.Maps.Core
                 Priority = (int) GDO.Utility.Priorities.Required,
                 IsEditable = false,
                 IsVisible = true,
+                IsProperty = false,
             };
 
-            Type = new IntegerParameter
+            ObjectType = new StringParameter
             {
                 Name = "Type",
-                Description = "Type",
+                Description = "Type of JS Object",
                 Priority = (int) GDO.Utility.Priorities.Required,
                 IsEditable = false,
                 IsVisible = false,
+                IsProperty = false,
             };
         }
     }

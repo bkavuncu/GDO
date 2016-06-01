@@ -14,11 +14,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public StamenSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.Stamen;
+            ObjectType.Value = "ol.source.Stamen";
 
             Layer = new DatalistParameter
             {
                 Name = "Layer",
+                PropertyName = "layer",
                 Description = "Layer",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,

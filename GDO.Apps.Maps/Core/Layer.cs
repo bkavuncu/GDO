@@ -9,19 +9,8 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Maps.Core
 {
-    public enum LayerTypes
+    public abstract class Layer : Base
     {
-        Base = 0,
-        Heatmap = 1,
-        Image = 2,
-        Tile = 3,
-        Vector = 4
-    };
-
-    public class Layer : Base
-    {
-        [JsonProperty(Order = -1)]
-        public LinkParameter Source { get; set; }
 
         [JsonProperty(Order = -1)]
         public SliderParameter Opacity { get; set; }
@@ -45,19 +34,10 @@ namespace GDO.Apps.Maps.Core
         {
             ClassName.Value = this.GetType().Name;
 
-            Source = new LinkParameter
-            {
-                Name = "Source",
-                Description = "The source for this layer",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                IsEditable = false,
-                IsVisible = true,
-                LinkedParameter = "sources",
-            };
-
             Opacity = new SliderParameter
             {
                 Name = "Opacity",
+                PropertyName = "opacity",
                 Description = "Opacity (0, 1)",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -70,6 +50,7 @@ namespace GDO.Apps.Maps.Core
             ZIndex = new IntegerParameter
             {
                 Name = "ZIndex",
+                PropertyName = "zIndex",
                 Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -80,6 +61,7 @@ namespace GDO.Apps.Maps.Core
             Visible = new BooleanParameter
             {
                 Name = "Visible",
+                PropertyName = "visible",
                 Description = "Visibility",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -90,6 +72,7 @@ namespace GDO.Apps.Maps.Core
             Extent = new FloatArrayParameter
             {
                 Name = "Extent",
+                PropertyName = "extent",
                 Description = "The bounding extent for layer rendering. The layer will not be rendered outside of this extent: [MinX, MinY, MaxX, MaxY]",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -99,6 +82,7 @@ namespace GDO.Apps.Maps.Core
             MinResolution = new NullableIntegerParameter
             {
                 Name = "Minimum Resolution",
+                PropertyName = "minResolution",
                 Description = "The minimum resolution (inclusive) at which this layer will be visible.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -108,6 +92,7 @@ namespace GDO.Apps.Maps.Core
             MaxResolution = new NullableIntegerParameter
             {
                 Name = "Maximum Resolution",
+                PropertyName = "maxResolution",
                 Description = "The maximum resolution (exclusive) below which this layer will be visible.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,

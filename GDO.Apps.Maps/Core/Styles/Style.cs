@@ -18,11 +18,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public Style()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Style;
+            ObjectType.Value = "ol.style.Style";
 
             FillStyle = new LinkParameter
             {
                 Name = "Fill Style",
+                PropertyName = "fill",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -33,6 +34,7 @@ namespace GDO.Apps.Maps.Core.Styles
             ImageStyle = new LinkParameter
             {
                 Name = "Image Style",
+                PropertyName = "image",
                 Description = "Select Image Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -43,6 +45,7 @@ namespace GDO.Apps.Maps.Core.Styles
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
+                PropertyName = "stroke",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -53,6 +56,7 @@ namespace GDO.Apps.Maps.Core.Styles
             TextStyle = new LinkParameter
             {
                 Name = "Text Style",
+                PropertyName = "text",
                 Description = "Select Text Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -63,6 +67,7 @@ namespace GDO.Apps.Maps.Core.Styles
             ZIndex = new NullableIntegerParameter
             {
                 Name = "ZIndex",
+                PropertyName = "zIndex",
                 Description = "ZIndex",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,

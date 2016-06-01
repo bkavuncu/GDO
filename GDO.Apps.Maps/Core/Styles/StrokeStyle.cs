@@ -18,11 +18,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public StrokeStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Stroke;
+            ObjectType.Value = "ol.style.Stroke";
 
             Color = new ColorParameter
             {
                 Name = "Color",
+                PropertyName = "color",
                 Description = "Color",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -31,6 +32,7 @@ namespace GDO.Apps.Maps.Core.Styles
             LineCap = new DatalistParameter
             {
                 Name = "Line Cap",
+                PropertyName = "lineCap",
                 Description = "Line Cap Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -41,6 +43,7 @@ namespace GDO.Apps.Maps.Core.Styles
             LineJoin = new DatalistParameter
             {
                 Name = "Line Join",
+                PropertyName = "lineJoin",
                 Description = "Line Join Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -51,6 +54,7 @@ namespace GDO.Apps.Maps.Core.Styles
             LineDash = new FloatArrayParameter
             {
                 Name = "Line Dash",
+                PropertyName = "lineDash",
                 Description = "Line Dash pattern",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -59,8 +63,9 @@ namespace GDO.Apps.Maps.Core.Styles
             };
             MiterLimit = new NullableIntegerParameter
             {
-                Name = "Mitter Limit",
-                Description = "Mitter Limit",
+                Name = "Miter Limit",
+                PropertyName = "miterLimit",
+                Description = "Miter Limit",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
                 IsVisible = true,
@@ -69,6 +74,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Width = new NullableIntegerParameter
             {
                 Name = "Width",
+                PropertyName = "width",
                 Description = "Width",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,

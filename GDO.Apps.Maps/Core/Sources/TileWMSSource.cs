@@ -17,11 +17,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public TileWMSSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.TileWMS;
+            ObjectType.Value = "ol.source.TileWMS";
 
             Params = new JSONParameter
             {
                 Name = "Parameters",
+                PropertyName = "params",
                 Description = "WMS request parameters. At least a LAYERS param is required. STYLES is '' by default. VERSION is 1.3.0 by default. WIDTH, HEIGHT, BBOX and CRS (SRS for WMS version < 1.3.0) will be set dynamically.",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -31,6 +32,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Gutter = new NullableIntegerParameter
             {
                 Name = "Gutter",
+                PropertyName = "gutter",
                 Description = "The size in pixels of the gutter around image tiles to ignore. By setting this property to a non-zero value, images will be requested that are wider and taller than the tile size by a value of 2 x gutter. Defaults to zero. Using a non-zero value allows artifacts of rendering at tile edges to be ignored. If you control the WMS service it is recommended to address artifacts at tile edges issues by properly configuring the WMS service.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -40,6 +42,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Hidpi = new BooleanParameter
             {
                 Name = "Hidpi",
+                PropertyName = "hidpi",
                 Description = "Use the ol.Map#pixelRatio value when requesting the image from the remote server.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -49,6 +52,7 @@ namespace GDO.Apps.Maps.Core.Sources
             ServerType = new DatalistParameter
             {
                 Name = "Server Type",
+                PropertyName = "serverType",
                 Description = "The type of the remote WMS server. Currently only used when hidpi is true.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

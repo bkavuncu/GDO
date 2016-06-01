@@ -115,7 +115,6 @@
   <ItemGroup>
     <Compile Include="Core\Base.cs" />
     <Compile Include="Core\Format.cs" />
-    <Compile Include="Core\Image.cs" />
     <Compile Include="Core\Layer.cs" />
     <Compile Include="Core\Layers\HeatmapLayer.cs" />
     <Compile Include="Core\Layers\ImageLayer.cs" />

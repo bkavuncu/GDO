@@ -16,11 +16,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public CartoDBSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.CartoDB;
+            ObjectType.Value = "ol.source.CartoDB";
 
             Config = new JSONParameter
             {
                 Name = "Config",
+                PropertyName = "config",
                 Description = "If using anonymous maps, the CartoDB config to use. See http://docs.cartodb.com/cartodb-platform/maps-api/anonymous-maps/ for more detail. If using named maps, a key-value lookup with the template parameters. See http://docs.cartodb.com/cartodb-platform/maps-api/named-maps/ for more detail.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
@@ -30,6 +31,7 @@ namespace GDO.Apps.Maps.Core.Sources
             Account = new StringParameter
             {
                 Name = "Account",
+                PropertyName = "account",
                 Description = "CartoDB account name",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,

@@ -22,11 +22,12 @@ namespace GDO.Apps.Maps.Core.Styles
         public TextStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Text;
+            ObjectType.Value = "ol.style.Text";
 
             Font = new StringParameter
             {
                 Name = "Font",
+                PropertyName = "font",
                 Description = "Font style as CSS 'font' value",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -36,6 +37,7 @@ namespace GDO.Apps.Maps.Core.Styles
             OffsetX = new NullableIntegerParameter
             {
                 Name = "Offset X",
+                PropertyName = "offsetX",
                 Description = "Horizontal text offset in pixels. A positive will shift the text right.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -45,6 +47,7 @@ namespace GDO.Apps.Maps.Core.Styles
             OffsetY = new NullableIntegerParameter
             {
                 Name = "Offset Y",
+                PropertyName = "offsetY",
                 Description = "Vertical text offset in pixels. A positive will shift the text down.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -54,6 +57,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Scale = new FloatParameter
             {
                 Name = "Scale",
+                PropertyName = "scale",
                 Description = "Scale",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -63,6 +67,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Rotation = new FloatParameter
             {
                 Name = "Rotation",
+                PropertyName = "rotation",
                 Description = "Rotation in radians",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -72,6 +77,7 @@ namespace GDO.Apps.Maps.Core.Styles
             Content = new StringParameter
             {
                 Name = "Content",
+                PropertyName = "text",
                 Description = "Text Content",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -81,6 +87,7 @@ namespace GDO.Apps.Maps.Core.Styles
             TextAlign = new DatalistParameter
             {
                 Name = "Text Align",
+                PropertyName = "textAlign",
                 Description = "Text Alignment",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -91,6 +98,7 @@ namespace GDO.Apps.Maps.Core.Styles
             TextBaseLine = new DatalistParameter
             {
                 Name = "Text Baseline",
+                PropertyName = "textBaseline",
                 Description = "Text Baseline",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -101,6 +109,7 @@ namespace GDO.Apps.Maps.Core.Styles
             FillStyle = new LinkParameter
             {
                 Name = "Fill Style",
+                PropertyName = "fill",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
@@ -111,6 +120,7 @@ namespace GDO.Apps.Maps.Core.Styles
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
+                PropertyName = "stroke",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,

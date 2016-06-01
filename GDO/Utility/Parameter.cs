@@ -42,12 +42,14 @@ namespace GDO.Utility
     public class Parameter
     {
         public string Name { get; set; }
+        public string PropertyName { get; set; }
         public string Description { get; set; }
         public int Priority { get; set; }
         public int ParameterType { get; set; }
         public int InputType { get; set; }
         public bool IsEditable { get; set; }
         public bool IsVisible { get; set; }
+        public bool IsProperty = true;
         public bool IsPartOfObject { get; set; }
         public string ObjectName { get; set; }
     }

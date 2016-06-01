@@ -15,11 +15,12 @@ namespace GDO.Apps.Maps.Core.Sources
         public ZoomifySource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.Zoomify;
+            ObjectType.Value = "ol.source.Zoomify";
 
             Size = new IntegerArrayParameter
             {
                 Name = "Size",
+                PropertyName = "size",
                 Description = "Size of the image (Width,Height).",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
@@ -30,6 +31,7 @@ namespace GDO.Apps.Maps.Core.Sources
             TierSizeCalculation = new DatalistParameter
             {
                 Name = "Tier Size Calculation",
+                PropertyName = "tierSizeCalculation",
                 Description = "Tier size calculation method",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,

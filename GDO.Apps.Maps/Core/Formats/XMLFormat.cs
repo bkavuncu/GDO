@@ -11,7 +11,7 @@ namespace GDO.Apps.Maps.Core.Formats
         public XMLFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.XML;
+            ObjectType.Value = "ol.format.XML";
         }
     }
 }
