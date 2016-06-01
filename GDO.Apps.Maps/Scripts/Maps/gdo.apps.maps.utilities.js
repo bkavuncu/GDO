@@ -112,7 +112,7 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading ' + objectType + ': ' + object.properties.Id);
     var properties = object.properties;
     if (isNew) {
-        eval("gdo.net.app['Maps'].server.add"+upperCaseFirstLetter(objectType)+"("+instanceId+","+ parseInt(properties.Type.Value)+","+ JSON.stringify(clone(properties))+");");
+        eval("gdo.net.app['Maps'].server.add"+upperCaseFirstLetter(objectType)+"("+instanceId+","+ properties.ClassName.Value+","+ JSON.stringify(clone(properties))+");");
     } else {
         eval("gdo.net.app['Maps'].server.update"+upperCaseFirstLetter(objectType)+"("+instanceId+","+ object.properties.Id.Value+","+ parseInt(properties.Type) +","+ JSON.stringify(properties)+");");
     }

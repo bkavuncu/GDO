@@ -77,6 +77,7 @@ namespace GDO.Apps.Maps
                 //TODO update zindex
             }
             CurrentView = Map.CurrentView;
+            SaveEmptyTemplate();
         }
         public string GetSerializedTemplate()
         {

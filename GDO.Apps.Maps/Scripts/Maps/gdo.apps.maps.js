@@ -45,7 +45,7 @@ $(function () {
 
     $.connection.mapsAppHub.client.receiveView = function (instanceId, serializedView) {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received View');
-        gdo.net.app["Maps"].updateCurrentView(instanceId, JSON.parse(serializedView));
+        //gdo.net.app["Maps"].updateCurrentView(instanceId, JSON.parse(serializedView));
     }
 
     $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
@@ -198,11 +198,6 @@ gdo.net.app["Maps"].initClient = function (clientId) {
     //Load Modules
     gdo.loadScript('utilities', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('3d', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('format', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('interaction', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('layer', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('source', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('style', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('view', 'maps', gdo.SCRIPT_TYPE.APP);
 
     //Calculate Necessary Parameters
@@ -224,11 +219,6 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
     //Load Modules
     gdo.loadScript('utilities', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('3d', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('format', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('interaction', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('layer', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('source', 'maps', gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript('style', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('view', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('ui.map', 'maps', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('ui', 'maps', gdo.SCRIPT_TYPE.APP);

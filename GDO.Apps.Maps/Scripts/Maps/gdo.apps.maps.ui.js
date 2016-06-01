@@ -48,7 +48,7 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
             if (gdo.net.app["Maps"].selected[tab] >= 0) {
                 $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[gdo.net.app["Maps"].selected[tab]].properties.Name.Value + " (" + arr[gdo.net.app["Maps"].selected[tab]].properties.Id.Value + ")");
             }
-            
+
             var color = "white";
             var icon = "";
 
@@ -88,7 +88,7 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
                         "<div class='" + tab + "_" + i + "_icon col-md-1'  " + tab + "Id='" + i + "'><i class='fa " + icon + "'></i></div>" +
                     "</div>");
             $("iframe").contents().find("." + tab + "_" + i + "_content").unbind().click(function () {
-                gdo.net.app["Maps"].selected[tab] = $(this).attr(tab+"Id");
+                gdo.net.app["Maps"].selected[tab] = $(this).attr(tab + "Id");
                 gdo.net.app["Maps"].drawListTable(instanceId, tab);
             });
             j++;
@@ -104,7 +104,7 @@ gdo.net.app["Maps"].drawEmptyCreateTable = function (tab) {
     .empty();
 }
 
-gdo.net.app["Maps"].drawCreateTable = function(instanceId, tab, layer) {
+gdo.net.app["Maps"].drawCreateTable = function (instanceId, tab, layer) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Create Table for ' + tab);
 
     gdo.net.app["Maps"].drawEmptyCreateTable(tab);
@@ -122,38 +122,23 @@ gdo.net.app["Maps"].drawCreateTable = function(instanceId, tab, layer) {
 
             $("iframe").contents().find("#" + tab + "_create_property_").append(
                 "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7' style='color:gray' >" + properties[key] + "</div>");
+                "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7' style='color:gray' >" + properties[key].Value + "</div>");
 
             if (key == "Editables") {
 
             } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type") {
-                if (Object.prototype.toString.call(properties[key]) === '[object Object]') {
-                    $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
-                        "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                        "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                        "<input type='text' id='" + tab + "_create_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value='" + properties[key].Id + "'/></input></div>");
-                    $("iframe").contents().find("#" + tab + "_create_property_" + key + "_value_input")
-                        .attr("value", properties[key].Id);
-                } else {
-                    $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
-                        "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                        "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                        "<input type='text' id='" + tab + "_create_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value='" + properties[key] + "'/></input></div>");
-                    $("iframe").contents().find("#" + tab + "_create_property_" + key + "_value_input")
-                        .attr("value", properties[key]);
-                }
+
+                $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
+                    "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                    "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                    "<input type='text' id='" + tab + "_create_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value='" + properties[key].Value + "'/></input></div>");
+                $("iframe").contents().find("#" + tab + "_create_property_" + key + "_value_input")
+                    .attr("value", properties[key].Value);
 
             } else {
-                if (Object.prototype.toString.call(properties[key]) === '[object Object]') {
-                    $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
-                        "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                        "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7' style='color:gray'>" + properties[key].Id + "</div>");
-
-                } else {
-                    $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
-                        "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                        "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7' style='color:gray'>" + properties[key] + "</div>");
-                }
+                $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
+                    "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                    "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7' style='color:gray'>" + properties[key].Value + "</div>");
             }
         }
     }
@@ -197,8 +182,8 @@ gdo.net.app["Maps"].drawPropertyTable = function (instanceId, tab, id) {
 
                     } else {
                         if (key == "Editables") {
-                            
-                        } else if ((contains(arr[id].properties["Editables"].$values, key)) && (key != "Id" && key !="Name" && key !="ClassName" && key !="Type")) {
+
+                        } else if ((contains(arr[id].properties["Editables"].$values, key)) && (key != "Id" && key != "Name" && key != "ClassName" && key != "Type")) {
                             if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Object]') {
                                 $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
                                 "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
@@ -299,7 +284,7 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
         if (!gdo.net.instance[instanceId].template.Layers.$values.hasOwnProperty((index))) {
             continue;
         } else if (gdo.net.instance[instanceId].template.Layers.$values[index] != null) {
-            className = gdo.net.instance[instanceId].template.Layers.$values[index].ClassName;
+            className = gdo.net.instance[instanceId].template.Layers.$values[index].ClassName.Value;
             $("iframe").contents().find("#layer_types").append("<option value='" + className + "'>" + className + "</option>");
         }
     }
@@ -307,7 +292,7 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
         if (!gdo.net.instance[instanceId].template.Sources.$values.hasOwnProperty((index))) {
             continue;
         } else if (gdo.net.instance[instanceId].template.Sources.$values[index] != null) {
-            className = gdo.net.instance[instanceId].template.Sources.$values[index].ClassName;
+            className = gdo.net.instance[instanceId].template.Sources.$values[index].ClassName.Value;
             $("iframe").contents().find("#source_types").append("<option value='" + className + "'>" + className + "</option>");
         }
     }
@@ -315,7 +300,7 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
         if (!gdo.net.instance[instanceId].template.Styles.$values.hasOwnProperty((index))) {
             continue;
         } else if (gdo.net.instance[instanceId].template.Styles.$values[index] != null) {
-            className = gdo.net.instance[instanceId].template.Styles.$values[index].ClassName;
+            className = gdo.net.instance[instanceId].template.Styles.$values[index].ClassName.Value;
             $("iframe").contents().find("#style_types").append("<option value='" + className + "'>" + className + "</option>");
         }
     }
@@ -323,12 +308,11 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
         if (!gdo.net.instance[instanceId].template.Formats.$values.hasOwnProperty((index))) {
             continue;
         } else if (gdo.net.instance[instanceId].template.Formats.$values[index] != null) {
-            className = gdo.net.instance[instanceId].template.Formats.$values[index].ClassName;
+            className = gdo.net.instance[instanceId].template.Formats.$values[index].ClassName.Value;
             $("iframe").contents().find("#format_types").append("<option value='" + className + "'>" + className + "</option>");
         }
     }
 }
-
 
 gdo.net.app["Maps"].registerButtons = function (instanceId) {
     $("iframe").contents().find(".layer-play-button")
@@ -378,14 +362,14 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                     if (!gdo.net.instance[instanceId].template.Layers.$values.hasOwnProperty((index))) {
                         continue;
                     } else if (gdo.net.instance[instanceId].template.Layers.$values[index] != null) {
-                        if (gdo.net.instance[instanceId].template.Layers.$values[index].ClassName == className) {
+                        if (gdo.net.instance[instanceId].template.Layers.$values[index].ClassName.Value == className) {
                             layer.properties = clone(gdo.net.instance[instanceId].template.Layers.$values[index]);
-                            layer.properties.Name = name;
+                            layer.properties.Name.Value = name;
                         }
                     }
                 }
                 gdo.net.app["Maps"].temp["layer"] = layer;
-                gdo.net.app["Maps"].drawCreateTable(instanceId, "layer" , layer);
+                gdo.net.app["Maps"].drawCreateTable(instanceId, "layer", layer);
             }
         });
 
@@ -413,7 +397,7 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                 gdo.net.app["Maps"].server.removeLayer(instanceId, gdo.net.app["Maps"].selected["layer"]);
                 gdo.net.app["Maps"].selected["layer"] = -1;
             }
-            
+
         });
 
     $("iframe").contents().find(".layer-save-button")
@@ -426,7 +410,7 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                     } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "Editables" && key != "$type") {
                         if ($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").val() == '') {
                             gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties[key] = null;
-                        } else if($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").length >0){
+                        } else if ($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").length > 0) {
                             gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties[key] = eval($("iframe").contents().find("#layer_" + gdo.net.app["Maps"].selected["layer"] + "_property_" + key + "_value_input").val().replace(/'/g, "\\'"));
                         }
                     }
@@ -445,9 +429,9 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                     if (!gdo.net.instance[instanceId].template.Sources.$values.hasOwnProperty((index))) {
                         continue;
                     } else if (gdo.net.instance[instanceId].template.Sources.$values[index] != null) {
-                        if (gdo.net.instance[instanceId].template.Sources.$values[index].ClassName == className) {
+                        if (gdo.net.instance[instanceId].template.Sources.$values[index].ClassName.Value == className) {
                             source.properties = clone(gdo.net.instance[instanceId].template.Sources.$values[index]);
-                            source.properties.Name = name;
+                            source.properties.Name.Value = name;
                         }
                     }
                 }

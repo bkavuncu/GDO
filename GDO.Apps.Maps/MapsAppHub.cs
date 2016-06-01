@@ -279,9 +279,12 @@ namespace GDO.Apps.Maps
             BroadcastCurrentView(instanceId);
         }
 
+
+
+
         //Layer
 
-        public void AddLayer(int instanceId, int type, string serializedLayer)
+        public void AddLayer(int instanceId, string className, string serializedLayer)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -289,18 +292,19 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     int layerId = -1;
-                    switch (type)
+
+                    switch (className)
                     {
-                        case (int)LayerTypes.Heatmap:
+                        case "HeatmapLayer":
                             layerId = maps.AddLayer<HeatmapLayer>(JsonConvert.DeserializeObject<HeatmapLayer>(serializedLayer));
                             break;
-                        case (int)LayerTypes.Image:
+                        case "ImageLayer":
                             layerId = maps.AddLayer<ImageLayer>(JsonConvert.DeserializeObject<ImageLayer>(serializedLayer));
                             break;
-                        case (int)LayerTypes.Tile:
+                        case "TileLayer":
                             layerId = maps.AddLayer<TileLayer>(JsonConvert.DeserializeObject<TileLayer>(serializedLayer));
                             break;
-                        case (int)LayerTypes.Vector:
+                        case "VectorLayer":
                             layerId = maps.AddLayer<VectorLayer>(JsonConvert.DeserializeObject<VectorLayer>(serializedLayer));
                             break;
                         default:
@@ -315,25 +319,25 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateLayer(int instanceId, int layerId, int type, string serializedLayer)
+        public void UpdateLayer(int instanceId, int layerId, string className, string serializedLayer)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)LayerTypes.Heatmap:
+                        case "HeatmapLayer":
                             maps.UpdateLayer<HeatmapLayer>(layerId, JsonConvert.DeserializeObject<HeatmapLayer>(serializedLayer));
                             break;
-                        case (int)LayerTypes.Image:
+                        case "ImageLayer":
                             maps.UpdateLayer<ImageLayer>(layerId, JsonConvert.DeserializeObject<ImageLayer>(serializedLayer));
                             break;
-                        case (int)LayerTypes.Tile:
+                        case "TileLayer":
                             maps.UpdateLayer<TileLayer>(layerId, JsonConvert.DeserializeObject<TileLayer>(serializedLayer));
                             break;
-                        case (int)LayerTypes.Vector:
+                        case "VectorLayer":
                             maps.UpdateLayer<VectorLayer>(layerId, JsonConvert.DeserializeObject<VectorLayer>(serializedLayer));
                             break;
                         default:
@@ -371,33 +375,6 @@ namespace GDO.Apps.Maps
                 }
             }
         }
-
-        //TODO
-        /*public void RequestLayers(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    foreach()
-
-                    string serializedLayer = maps.GetSerializedLayer(layerId);
-                    if (serializedLayer != null)
-                    {
-                        Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, serializedLayer, true);
-                    }
-                    else
-                    {
-                        Clients.Caller.receiveLayer(instanceId, layerId, maps.Layers.GetValue<Layer>(layerId).Type, "", false);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }*/
 
         public void BroadcastLayer(int instanceId, int layerId)
         {
@@ -521,55 +498,10 @@ namespace GDO.Apps.Maps
             }
         }
 
-        //Interaction
-
-        public void UpdateInteraction(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestInteraction(int instanceId, int interactionId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RemoveInteraction(int instanceId, int interactionId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
+  
 
         //Source
-        public void AddSource(int instanceId, int type, string serializedSource)
+        public void AddSource(int instanceId, string className, string serializedSource)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -577,42 +509,42 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     int sourceId = -1;
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)SourceTypes.BingMaps:
+                        case "BingMapsSource":
                             sourceId = maps.AddSource<BingMapsSource>(JsonConvert.DeserializeObject<Source>(serializedSource));
                             break;
-                        case (int)SourceTypes.CartoDB:
+                        case "CartoDBSource":
                             sourceId = maps.AddSource<CartoDBSource>(JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.TileImage:
+                        case "ImageTileSource":
                             sourceId = maps.AddSource<ImageTileSource>(JsonConvert.DeserializeObject<ImageTileSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.MapQuest:
+                        case "MapQuestSource":
                             sourceId = maps.AddSource<MapQuestSource>(JsonConvert.DeserializeObject<MapQuestSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.OSM:
+                        case "OSMSource":
                             sourceId = maps.AddSource<OSMSource>(JsonConvert.DeserializeObject<OSMSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Stamen:
+                        case "StamenSource":
                             sourceId = maps.AddSource<StamenSource>(JsonConvert.DeserializeObject<StamenSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.ImageStatic:
+                        case "StaticImageSource":
                             sourceId = maps.AddSource<StaticImageSource>(JsonConvert.DeserializeObject<StaticImageSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.TileArcGISRest:
+                        case "TileArcGISRestSource":
                             sourceId = maps.AddSource<TileArcGISRestSource>(JsonConvert.DeserializeObject<TileArcGISRestSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.TileWMS:
+                        case "TileWMSSource":
                             sourceId = maps.AddSource<TileWMSSource>(JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Vector:
+                        case "VectorSource":
                             sourceId = maps.AddSource<VectorSource>(JsonConvert.DeserializeObject<VectorSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.XYZ:
+                        case "XYZSource":
                             sourceId = maps.AddSource<XYZSource>(JsonConvert.DeserializeObject<XYZSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Zoomify:
+                        case "ZoomifySource":
                             sourceId = maps.AddSource<ZoomifySource>(JsonConvert.DeserializeObject<ZoomifySource>(serializedSource));
                             break;
                         default:
@@ -627,49 +559,49 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateSource(int instanceId, int sourceId, int type, string serializedSource)
+        public void UpdateSource(int instanceId, int sourceId, string className, string serializedSource)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)SourceTypes.BingMaps:
+                        case "BingMapsSource":
                             maps.UpdateSource<BingMapsSource>(sourceId, JsonConvert.DeserializeObject<BingMapsSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.CartoDB:
+                        case "CartoDBSource":
                             maps.UpdateSource<CartoDBSource>(sourceId, JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.TileImage:
+                        case "ImageTileSource":
                             maps.UpdateSource<ImageTileSource>(sourceId, JsonConvert.DeserializeObject<ImageTileSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.MapQuest:
+                        case "MapQuestSource":
                             maps.UpdateSource<MapQuestSource>(sourceId, JsonConvert.DeserializeObject<MapQuestSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.OSM:
+                        case "OSMSource":
                             maps.UpdateSource<OSMSource>(sourceId, JsonConvert.DeserializeObject<OSMSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Stamen:
+                        case "StamenSource":
                             maps.UpdateSource<StamenSource>(sourceId, JsonConvert.DeserializeObject<StamenSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.ImageStatic:
+                        case "StaticImageSource":
                             maps.UpdateSource<StaticImageSource>(sourceId, JsonConvert.DeserializeObject<StaticImageSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.TileArcGISRest:
+                        case "TileArcGISRestSource":
                             maps.UpdateSource<TileArcGISRestSource>(sourceId, JsonConvert.DeserializeObject<TileArcGISRestSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.TileWMS:
+                        case "TileWMSSource":
                             maps.UpdateSource<TileWMSSource>(sourceId, JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Vector:
+                        case "VectorSource":
                             maps.UpdateSource<VectorSource>(sourceId, JsonConvert.DeserializeObject<VectorSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.XYZ:
+                        case "XYZSource":
                             maps.UpdateSource<XYZSource>(sourceId, JsonConvert.DeserializeObject<XYZSource>(serializedSource));
                             break;
-                        case (int)SourceTypes.Zoomify:
+                        case "ZoomifySource":
                             maps.UpdateSource<ZoomifySource>(sourceId, JsonConvert.DeserializeObject<ZoomifySource>(serializedSource));
                             break;
                         default:
@@ -798,7 +730,7 @@ namespace GDO.Apps.Maps
 
         //Style
 
-        public void AddStyle(int instanceId, int type, string serializedStyle)
+        public void AddStyle(int instanceId, string className, string serializedStyle)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -806,30 +738,30 @@ namespace GDO.Apps.Maps
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     int styleId = -1;
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)StyleTypes.Circle:
+                        case "CircleStyle":
                             styleId = maps.AddStyle<CircleStyle>(JsonConvert.DeserializeObject<CircleStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Fill:
+                        case "FillStyle":
                             styleId = maps.AddStyle<FillStyle>(JsonConvert.DeserializeObject<FillStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Icon:
+                        case "IconStyle":
                             styleId = maps.AddStyle<IconStyle>(JsonConvert.DeserializeObject<IconStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Image:
+                        case "ImageStyle":
                             styleId = maps.AddStyle<ImageStyle>(JsonConvert.DeserializeObject<ImageStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.RegularShape:
+                        case "RegularShapeStyle":
                             styleId = maps.AddStyle<RegularShapeStyle>(JsonConvert.DeserializeObject<RegularShapeStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Stroke:
+                        case "StrokeStyle":
                             styleId = maps.AddStyle<StrokeStyle>(JsonConvert.DeserializeObject<StrokeStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Text:
+                        case "TextStyle":
                             styleId = maps.AddStyle<TextStyle>(JsonConvert.DeserializeObject<TextStyle>(serializedStyle));
                             break;
-                        case (int)GDO.Apps.Maps.Core.StyleTypes.Style:
+                        case "Style":
                             styleId = maps.AddStyle<GDO.Apps.Maps.Core.Styles.Style>(JsonConvert.DeserializeObject<GDO.Apps.Maps.Core.Styles.Style>(serializedStyle));
                             break;
                         default:
@@ -844,37 +776,37 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateStyle(int instanceId, int styleId, int type, string serializedStyle)
+        public void UpdateStyle(int instanceId, int styleId, string className, string serializedStyle)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)StyleTypes.Circle:
+                        case "CircleStyle":
                             maps.UpdateStyle<CircleStyle>(styleId, JsonConvert.DeserializeObject<CircleStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Fill:
+                        case "FillStyle":
                             maps.UpdateStyle<FillStyle>(styleId, JsonConvert.DeserializeObject<FillStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Icon:
+                        case "IconStyle":
                             maps.UpdateStyle<IconStyle>(styleId, JsonConvert.DeserializeObject<IconStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Image:
+                        case "ImageStyle":
                             maps.UpdateStyle<ImageStyle>(styleId, JsonConvert.DeserializeObject<ImageStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.RegularShape:
+                        case "RegularShapeStyle":
                             maps.UpdateStyle<RegularShapeStyle>(styleId, JsonConvert.DeserializeObject<RegularShapeStyle>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Stroke:
+                        case "StrokeStyle":
                             maps.UpdateStyle<StrokeStyle>(styleId, JsonConvert.DeserializeObject<StrokeStyle>(serializedStyle));
                             break;
-                        case (int)GDO.Apps.Maps.Core.StyleTypes.Style:
+                        case "Style":
                             maps.UpdateStyle<GDO.Apps.Maps.Core.Styles.Style>(styleId, JsonConvert.DeserializeObject<GDO.Apps.Maps.Core.Styles.Style>(serializedStyle));
                             break;
-                        case (int)StyleTypes.Text:
+                        case "TextStyle":
                             maps.UpdateStyle<TextStyle>(styleId, JsonConvert.DeserializeObject<TextStyle>(serializedStyle));
                             break;
                         default:
@@ -954,7 +886,7 @@ namespace GDO.Apps.Maps
         }
 
         //Format
-        public void AddFormat(int instanceId, int type, string serializedFormat)
+        public void AddFormat(int instanceId, string className, string serializedFormat)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -963,30 +895,30 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     Format deserializedFormat = JsonConvert.DeserializeObject<Format>(serializedFormat);
                     int formatId = -1;
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)FormatTypes.EsriJSON:
+                        case "EsriJSONFormat":
                             formatId = maps.AddFormat<EsriJSONFormat>(JsonConvert.DeserializeObject<EsriJSONFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.GeoJSON:
+                        case "GeoJSONFormat":
                             formatId = maps.AddFormat<GeoJSONFormat>(JsonConvert.DeserializeObject<GeoJSONFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.GML:
+                        case "GMLFormat":
                             formatId = maps.AddFormat<GMLFormat>(JsonConvert.DeserializeObject<GMLFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.KML:
+                        case "KMLFormat":
                             formatId = maps.AddFormat<KMLFormat>(JsonConvert.DeserializeObject<KMLFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.OSMXML:
+                        case "OSMXMLFormat":
                             formatId = maps.AddFormat<OSMXMLFormat>(JsonConvert.DeserializeObject<OSMXMLFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.TopoJSON:
+                        case "TopoJSONFormat":
                             formatId = maps.AddFormat<TopoJSONFormat>(JsonConvert.DeserializeObject<TopoJSONFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.WFS:
+                        case "WFSFormat":
                             formatId = maps.AddFormat<WFSFormat>(JsonConvert.DeserializeObject<WFSFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.XML:
+                        case "XMLFormat":
                             formatId = maps.AddFormat<XMLFormat>(JsonConvert.DeserializeObject<XMLFormat>(serializedFormat));
                             break;
                         default:
@@ -1001,37 +933,37 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateFormat(int instanceId, int formatId, int type, string serializedFormat)
+        public void UpdateFormat(int instanceId, int formatId, string className, string serializedFormat)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    switch (type)
+                    switch (className)
                     {
-                        case (int)FormatTypes.EsriJSON:
+                        case "EsriJSONFormat":
                             maps.UpdateFormat<EsriJSONFormat>(formatId, JsonConvert.DeserializeObject<EsriJSONFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.GeoJSON:
+                        case "GeoJSONFormat":
                             maps.UpdateFormat<GeoJSONFormat>(formatId, JsonConvert.DeserializeObject<GeoJSONFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.GML:
+                        case "GMLFormat":
                             maps.UpdateFormat<GMLFormat>(formatId, JsonConvert.DeserializeObject<GMLFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.KML:
+                        case "KMLFormat":
                             maps.UpdateFormat<KMLFormat>(formatId, JsonConvert.DeserializeObject<KMLFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.OSMXML:
+                        case "OSMXMLFormat":
                             maps.UpdateFormat<OSMXMLFormat>(formatId, JsonConvert.DeserializeObject<OSMXMLFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.TopoJSON:
+                        case "TopoJSONFormat":
                             maps.UpdateFormat<TopoJSONFormat>(formatId, JsonConvert.DeserializeObject<TopoJSONFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.WFS:
+                        case "WFSFormat":
                             maps.UpdateFormat<WFSFormat>(formatId, JsonConvert.DeserializeObject<WFSFormat>(serializedFormat));
                             break;
-                        case (int)FormatTypes.XML:
+                        case "XMLFormat":
                             maps.UpdateFormat<XMLFormat>(formatId, JsonConvert.DeserializeObject<XMLFormat>(serializedFormat));
                             break;
                         default:
