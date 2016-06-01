@@ -196,10 +196,10 @@ float shadow(vec3 ro, vec3 rd, float dist, float detail) {
 	return res;
 }
 
-vec4 march(vec3 ro, vec3 rd) {
+vec3 march(vec3 ro, vec3 rd) {
 
 	// Sky color
-	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+	vec3 color = vec3(0.0, 0.0, 0.0);
 
 	// p - point of current ray
 	vec3 p = ro;
@@ -213,9 +213,9 @@ vec4 march(vec3 ro, vec3 rd) {
 	float attenuation = 1.0;
 
 	// Shading
-	vec4 ambientColour = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 diffuseColour = vec4(1.0, 1.0, 1.0, 1.0);
-	vec4 specularColour = vec4(1.0, 1.0, 1.0, 1.0);
+	vec3 ambientColour = vec3(0.0, 0.0, 0.0);
+	vec3 diffuseColour = vec3(1.0, 1.0, 1.0);
+	vec3 specularColour = vec3(1.0, 1.0, 1.0);
 
 	// t - total distance ray travelled
 	float t = 0.0;
@@ -248,8 +248,8 @@ vec4 march(vec3 ro, vec3 rd) {
 		if (d < detail) {
 			if (d1 < d2) {
 
-				ambientColour = colour;
-				diffuseColour = colour;
+				ambientColour = colour.xyz;
+				diffuseColour = colour.xyz;
 
 				attenuation = lightIntensity / (pow((distance(p, lightLoc)), 2.0));
 				attenuation = clamp(attenuation, 0.0, 1.0);
@@ -286,22 +286,22 @@ vec4 march(vec3 ro, vec3 rd) {
 				// Floor colour
 				if (mod(p.x, 1.0) < 0.5) {
 					if (mod(p.z, 1.0) < 0.5) {
-						diffuseColour = vec4(0.0, 0.0, 0.0, 1.0);
-						ambientColour = vec4(0.0, 0.0, 0.0, 1.0);
+						diffuseColour = vec3(0.0, 0.0, 0.0);
+						ambientColour = vec3(0.0, 0.0, 0.0);
 					}
 					else {
-						diffuseColour = vec4(1.0);
-						ambientColour = vec4(1.0);
+						diffuseColour = vec3(1.0);
+						ambientColour = vec3(1.0);
 					}
 				}
 				else {
 					if (mod(p.z, 1.0) < 0.5) {
-						diffuseColour = vec4(1.0);
-						ambientColour = vec4(1.0);
+						diffuseColour = vec3(1.0);
+						ambientColour = vec3(1.0);
 					}
 					else {
-						diffuseColour = vec4(0.0, 0.0, 0.0, 1.0);
-						ambientColour = vec4(0.0, 0.0, 0.0, 1.0);
+						diffuseColour = vec3(0.0, 0.0, 0.0);
+						ambientColour = vec3(0.0, 0.0, 0.0);
 					}
 				}
 
@@ -324,84 +324,23 @@ vec4 march(vec3 ro, vec3 rd) {
 
 	// Shading
 	// Ambience
-	ambientColour.xyz *= ambience;
-	color = vec4(ambientColour.xyz + s * diffuseColour.xyz  * attenuation * max(dot(normal, lightDirection), 0.0)
-		+ s * specularColour.xyz * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0) / 3.0, 1.0);
+	ambientColour *= ambience;
+	color = (ambientColour + s * diffuseColour  * attenuation * max(dot(normal, lightDirection), 0.0)
+		+ s * specularColour * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0) / 3.0);
 
 	// Ambient occlusion
-	color.xyz *= ao;
+	color *= ao;
 
 
 	// Fog
-	vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
+	vec3 fogColor = vec3(0.0, 0.0, 0.0);
 	color = mix(color, fogColor, 1.0 - exp(-t*fog));
 
 	if (minDistToLight < lightSize) {
-		color = mix(color, vec4(1.0), (lightIntensity / 20.0)* pow(1.0 - minDistToLight / lightSize, 2.0));
+		color = mix(color, vec3(1.0), (lightIntensity / 20.0)* pow(1.0 - minDistToLight / lightSize, 2.0));
 	}
 
 	return color;
 
 }
 
-vec3 calcRayOrigin(float x, float y) {
-	// x rotation
-	float x2 = x*cos(xRot) - focal*sin(xRot);
-	float focal2 = x*sin(xRot) + focal*cos(xRot);
-	x = x2;
-
-	// y rotation
-	float y2 = y*cos(yRot) - focal2*sin(yRot);
-	focal2 = y*sin(yRot) + focal2*cos(yRot);
-	y = y2;
-
-	// ro - ray origin
-	// calculate where ray passes through the screen
-	vec3 ro = vec3(x, y - eyeHeight*cos(yRot), focal2 - eyeHeight*sin(yRot));
-
-	return ro;
-}
-
-void rayMarch() {
-
-	// Keep eye in the origin of the scene
-	vec3 eye = vec3(0, 0, 0);
-
-	// Get x between -1.0 - 1.0
-	float x = gl_FragCoord.x * 2.0 / width - 1.0;
-
-	// Get y between -1.0 - 1.0
-	float y = gl_FragCoord.y * 2.0 / height - 1.0;
-
-	// Apply aspect ratio
-	float ratio = height / width;
-	y *= ratio;
-
-	float xDiffAA = 0.5 / width;
-	float yDiffAA = 0.5*ratio / height;
-
-	// Ray origin
-	vec3 ro = calcRayOrigin(x, y);
-
-	// Set pixel colour
-	vec4 color = march(translation, normalize(ro));
-	color.a = 0.95;
-	gl_FragColor = color;
-
-	// Anti alias
-	/*
-	vec3 ro1 = calcRayOrigin(x+xDiffAA, y);
-	vec3 ro2 = calcRayOrigin(x-xDiffAA, y);
-	vec3 ro3 = calcRayOrigin(x, y+yDiffAA);
-	vec3 ro4 = calcRayOrigin(x+xDiffAA, y-yDiffAA);
-	vec4 c1 = march(translation, normalize(ro1));
-	vec4 c2 = march(translation, normalize(ro2));
-	vec4 c3 = march(translation, normalize(ro3));
-	vec4 c4 = march(translation, normalize(ro4));
-	gl_FragColor = (c1+c2+c3+c4)/4.0;
-	*/
-}
-
-void main() {
-	rayMarch();
-}

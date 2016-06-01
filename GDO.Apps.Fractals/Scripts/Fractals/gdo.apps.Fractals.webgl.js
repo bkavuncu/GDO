@@ -59,12 +59,12 @@ function initWebgl(id, locations, shader, completeInit) {
     //fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     //gl.shaderSource(fragmentShader, shaderSource);
     //gl.compileShader(fragmentShader);
-    alert(window.location.pathname);
-    loadFiles(['../scripts/Fractals/frag.js'], function (shaderText) {
 
+    loadFiles(['../scripts/Fractals/Shaders/rayMarch.js', '../scripts/Fractals/Shaders/init.js'], function (shaderText) {
+        gdo.consoleOut('.Fractals', 1, shaderText[0] + shaderText[1]);
         // Compile fragment shader
         fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragmentShader, shaderText[0]);
+        gl.shaderSource(fragmentShader, shaderText[0] + shaderText[1]);
         gl.compileShader(fragmentShader);
 
         // Create program with shaders
