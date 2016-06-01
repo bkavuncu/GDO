@@ -10,6 +10,7 @@ namespace GDO.Apps.Maps.Core
         public Source()
         {
             ClassName.Value = this.GetType().Name;
+            CollectionName.Value = "sources";
         }
     }
 }

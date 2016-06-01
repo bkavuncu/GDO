@@ -33,6 +33,7 @@ namespace GDO.Apps.Maps.Core
         public Layer() : base ()
         {
             ClassName.Value = this.GetType().Name;
+            CollectionName.Value = "layers";
 
             Opacity = new SliderParameter
             {

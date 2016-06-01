@@ -10,6 +10,7 @@ namespace GDO.Apps.Maps.Core
         public Format() : base ()
         {
             ClassName.Value = this.GetType().Name;
+            CollectionName.Value = "formats";
         }
     }
 }
