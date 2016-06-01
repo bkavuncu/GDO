@@ -2,6 +2,6 @@
   "serverAddress": "http://146.169.46.148/scenes/",
   "fileName": "ImperialWestLandscapeWithBuilding2Sided.obj",
   "startPosition": [ 875.3, 50.1, -2351.6 ],
-  "numMeshesToLoad": 16000,
+  "numMeshesToLoad": 14000,
   "scale": 100
 }
