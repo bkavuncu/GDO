@@ -37,15 +37,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.HelloWorld", "GDO.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.SAGE2", "GDO.Apps.SAGE2\GDO.Apps.SAGE2.csproj", "{C48A1B26-5035-4746-8405-5EE23276EFBA}"
 EndProject
-<<<<<<< HEAD
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Fractals", "GDO.Apps.Fractals\GDO.Apps.Fractals.csproj", "{963BCC97-1E5E-48EA-A39C-31E451142217}"
-=======
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.GigaImages", "GDO.Apps.GigaImages\GDO.Apps.GigaImages.csproj", "{741AE1F3-3877-425A-BB95-DAC0F1586B74}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.LondonCycles", "GDO.Apps.LondonCycles\GDO.Apps.LondonCycles.csproj", "{6233F7A3-4E1E-4566-ADB7-41C313508BFC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Modules.EyeTracking", "GDO.Modules.EyeTracking\GDO.Modules.EyeTracking.csproj", "{74CC3CD2-3404-4478-B074-F30CDD34F052}"
->>>>>>> master
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.RayMarching", "GDO.Apps.RayMarching\GDO.Apps.RayMarching.csproj", "{A15B23B4-5DC4-4A5E-A85A-C3799A25B056}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,12 +117,10 @@ Global
 		{C48A1B26-5035-4746-8405-5EE23276EFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C48A1B26-5035-4746-8405-5EE23276EFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C48A1B26-5035-4746-8405-5EE23276EFBA}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
 		{963BCC97-1E5E-48EA-A39C-31E451142217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{963BCC97-1E5E-48EA-A39C-31E451142217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{963BCC97-1E5E-48EA-A39C-31E451142217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{963BCC97-1E5E-48EA-A39C-31E451142217}.Release|Any CPU.Build.0 = Release|Any CPU
-=======
 		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{741AE1F3-3877-425A-BB95-DAC0F1586B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -135,7 +133,10 @@ Global
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74CC3CD2-3404-4478-B074-F30CDD34F052}.Release|Any CPU.Build.0 = Release|Any CPU
->>>>>>> master
+		{A15B23B4-5DC4-4A5E-A85A-C3799A25B056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A15B23B4-5DC4-4A5E-A85A-C3799A25B056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A15B23B4-5DC4-4A5E-A85A-C3799A25B056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A15B23B4-5DC4-4A5E-A85A-C3799A25B056}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

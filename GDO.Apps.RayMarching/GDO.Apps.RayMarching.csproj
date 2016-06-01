@@ -9,12 +9,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{963BCC97-1E5E-48EA-A39C-31E451142217}</ProjectGuid>
+    <ProjectGuid>{A15B23B4-5DC4-4A5E-A85A-C3799A25B056}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GDO.Apps.Fractals</RootNamespace>
-    <AssemblyName>GDO.Apps.Fractals</AssemblyName>
+    <RootNamespace>GDO.Apps.RayMarching</RootNamespace>
+    <AssemblyName>GDO.Apps.RayMarching</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -124,15 +124,10 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\Fractals\joystick-icon-background.png" />
-    <Content Include="Data\Fractals\joystick-icon.png" />
+    <Content Include="Data\RayMarching\joystick-icon-background.png" />
+    <Content Include="Data\RayMarching\joystick-icon.png" />
     <Content Include="packages.config" />
-    <Content Include="Scripts\Fractals\gdo.apps.Fractals.params.js" />
-    <Content Include="Scripts\Fractals\gdo.apps.Fractals.ui.js" />
-    <Content Include="Scripts\Fractals\gdo.apps.Fractals.webgl.js" />
-    <Content Include="Scripts\Fractals\Shaders\init.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Scripts\Fractals\Shaders\rayMarch.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -141,23 +136,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\Fractals\Default.json" />
+    <Content Include="Configurations\RayMarching\Default.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\Fractals\gdo.apps.Fractals.js" />
+    <Content Include="Scripts\RayMarching\gdo.apps.RayMarching.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Scripts\RayMarching\gdo.apps.RayMarching.params.js" />
+    <Content Include="Scripts\RayMarching\gdo.apps.RayMarching.ui.js" />
+    <Content Include="Scripts\RayMarching\gdo.apps.RayMarching.webgl.js" />
+    <Content Include="Scripts\RayMarching\Shaders\init.js" />
+    <Content Include="Scripts\RayMarching\Shaders\rayMarch.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web\Fractals\App.cshtml" />
-    <Content Include="Web\Fractals\Control.cshtml" />
+    <Content Include="Web\RayMarching\App.cshtml" />
+    <Content Include="Web\RayMarching\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FractalsApp.cs" />
-    <Compile Include="FractalsAppHub.cs" />
+    <Compile Include="RayMarchingApp.cs" />
+    <Compile Include="RayMarchingAppHub.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
