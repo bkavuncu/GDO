@@ -30,6 +30,11 @@ $(function () {
                 parameters.green = json.G;
                 parameters.blue = json.B;
                 parameters.scale = json.Scale;
+                parameters.cx = json.Cx;
+                parameters.cy = json.Cy;
+                parameters.cz = json.Cz;
+                parameters.cw = json.Cw;
+                parameters.threshold = json.Threshold;
 
                 parameters.ambience = json.Ambience;
                 parameters.lightIntensity = json.LightIntensity;
@@ -102,6 +107,11 @@ $(function () {
                 parameters.green = json.G;
                 parameters.blue = json.B;
                 parameters.scale = json.Scale;
+                parameters.cx = json.Cx;
+                parameters.cy = json.Cy;
+                parameters.cz = json.Cz;
+                parameters.cw = json.Cw;
+                parameters.threshold = json.Threshold;
 
                 parameters.ambience = json.Ambience;
                 parameters.lightIntensity = json.LightIntensity;

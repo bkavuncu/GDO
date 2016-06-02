@@ -17,10 +17,10 @@ function initWebgl(id, locations, shader, completeInit) {
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
-    canvas.width = 960;
-    canvas.height = 540;
-    //canvas.width = 1920;
-    //canvas.height = 1080;
+    //canvas.width = 960;
+    //canvas.height = 540;
+    canvas.width = 1920;
+    canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -151,9 +151,18 @@ function initWebgl(id, locations, shader, completeInit) {
         locations.colourLoc = gl.getUniformLocation(program, "colour");
         gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
 
-        // Set scale
+        // Set fractal scale
         locations.scaleLoc = gl.getUniformLocation(program, "scale");
         gl.uniform1f(locations.scaleLoc, parameters.scale);
+
+        // Set fractal julia constant
+        locations.juliaCLoc = gl.getUniformLocation(program, "c");
+        gl.uniform4f(locations.juliaCLoc, parameters.cx, parameters.cy, parameters.cz, parameters.cw);
+
+        // Set fractal threshold
+        locations.thresholdLoc = gl.getUniformLocation(program, "threshold");
+        gl.uniform1f(locations.thresholdLoc, parameters.threshold);
+
 
         // Set mod function
         locations.modLoc = gl.getUniformLocation(program, "modFunction");

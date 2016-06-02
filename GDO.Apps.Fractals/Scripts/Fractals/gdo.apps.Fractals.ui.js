@@ -62,6 +62,11 @@ $("iframe").contents().find("#blue_colour_range").on("input", function () {
 $("iframe").contents().find("#iterations_row").show();
 $("iframe").contents().find("#power_row").show();
 $("iframe").contents().find("#scale_row").hide();
+$("iframe").contents().find("#c_x_row").hide();
+$("iframe").contents().find("#c_y_row").hide();
+$("iframe").contents().find("#c_z_row").hide();
+$("iframe").contents().find("#c_w_row").hide();
+$("iframe").contents().find("#threshold_row").hide();
 
 $("iframe").contents().find("#fractal_select").on("change", function () {
     gdo.consoleOut('.Fractals', 1, this.value);
@@ -73,12 +78,22 @@ $("iframe").contents().find("#fractal_select").on("change", function () {
             $("iframe").contents().find("#iterations_row").show();
             $("iframe").contents().find("#power_row").show();
             $("iframe").contents().find("#scale_row").hide();
+            $("iframe").contents().find("#c_x_row").hide();
+            $("iframe").contents().find("#c_y_row").hide();
+            $("iframe").contents().find("#c_z_row").hide();
+            $("iframe").contents().find("#c_w_row").hide();
+            $("iframe").contents().find("#threshold_row").hide();
             p.fractal = 0;
             break;
         case "Mandelbox":
             $("iframe").contents().find("#iterations_row").show();
             $("iframe").contents().find("#power_row").hide();
             $("iframe").contents().find("#scale_row").show();
+            $("iframe").contents().find("#c_x_row").hide();
+            $("iframe").contents().find("#c_y_row").hide();
+            $("iframe").contents().find("#c_z_row").hide();
+            $("iframe").contents().find("#c_w_row").hide();
+            $("iframe").contents().find("#threshold_row").hide();
             p.zTrans = -12;
             p.lightZ = -12;
             p.fractal = 1;
@@ -88,6 +103,11 @@ $("iframe").contents().find("#fractal_select").on("change", function () {
             $("iframe").contents().find("#iterations_row").show();
             $("iframe").contents().find("#power_row").hide();
             $("iframe").contents().find("#scale_row").hide();
+            $("iframe").contents().find("#c_x_row").show();
+            $("iframe").contents().find("#c_y_row").show();
+            $("iframe").contents().find("#c_z_row").show();
+            $("iframe").contents().find("#c_w_row").show();
+            $("iframe").contents().find("#threshold_row").show();
             p.fractal = 2;
             break;
     }
@@ -117,6 +137,16 @@ function resetUI(p) {
     $("iframe").contents().find("#power_range").val(p.power);
     $("iframe").contents().find("#scale_number").empty().append(p.scale);
     $("iframe").contents().find("#scale_range").val(p.scale);
+    $("iframe").contents().find("#c_x_number").empty().append(p.cx);
+    $("iframe").contents().find("#c_x_range").val(p.cx);
+    $("iframe").contents().find("#c_y_number").empty().append(p.cy);
+    $("iframe").contents().find("#c_y_range").val(p.cy);
+    $("iframe").contents().find("#c_z_number").empty().append(p.cz);
+    $("iframe").contents().find("#c_z_range").val(p.cz);
+    $("iframe").contents().find("#c_w_number").empty().append(p.cw);
+    $("iframe").contents().find("#c_w_range").val(p.cw);
+    $("iframe").contents().find("#threshold_number").empty().append(p.threshold);
+    $("iframe").contents().find("#threshold_range").val(p.threshold);
     $("iframe").contents().find("#ambience_number").empty().append(p.ambience);
     $("iframe").contents().find("#ambience_range").val(p.ambience);
     $("iframe").contents().find("#light_intensity_number").empty().append(p.lightIntensity);
@@ -149,6 +179,51 @@ $("iframe").contents().find("#scale_range").on("input", function () {
     gdo.net.app["Fractals"].server.scale(gdo.controlId, val);
 });
 
+$("iframe").contents().find("#c_x_number").empty().append($("iframe").contents().find("#c_x_range").val());
+$("iframe").contents().find("#c_y_number").empty().append($("iframe").contents().find("#c_y_range").val());
+$("iframe").contents().find("#c_z_number").empty().append($("iframe").contents().find("#c_z_range").val());
+$("iframe").contents().find("#c_w_number").empty().append($("iframe").contents().find("#c_w_range").val());
+
+$("iframe").contents().find("#c_x_range").on("input", function () {
+    cx = $("iframe").contents().find("#c_x_range").val();
+    cy = $("iframe").contents().find("#c_y_range").val();
+    cz = $("iframe").contents().find("#c_z_range").val();
+    cw = $("iframe").contents().find("#c_w_range").val();
+    $("iframe").contents().find("#c_x_number").empty().append(cx);
+    gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
+});
+$("iframe").contents().find("#c_y_range").on("input", function () {
+    cx = $("iframe").contents().find("#c_x_range").val();
+    cy = $("iframe").contents().find("#c_y_range").val();
+    cz = $("iframe").contents().find("#c_z_range").val();
+    cw = $("iframe").contents().find("#c_w_range").val();
+    $("iframe").contents().find("#c_y_number").empty().append(cy);
+    gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
+});
+$("iframe").contents().find("#c_z_range").on("input", function () {
+    cx = $("iframe").contents().find("#c_x_range").val();
+    cy = $("iframe").contents().find("#c_y_range").val();
+    cz = $("iframe").contents().find("#c_z_range").val();
+    cw = $("iframe").contents().find("#c_w_range").val();
+    $("iframe").contents().find("#c_z_number").empty().append(cz);
+    gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
+});
+$("iframe").contents().find("#c_w_range").on("input", function () {
+    cx = $("iframe").contents().find("#c_x_range").val();
+    cy = $("iframe").contents().find("#c_y_range").val();
+    cz = $("iframe").contents().find("#c_z_range").val();
+    cw = $("iframe").contents().find("#c_w_range").val();
+    $("iframe").contents().find("#c_w_number").empty().append(cw);
+    gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
+});
+
+$("iframe").contents().find("#threshold_number").empty().append($("iframe").contents().find("#threshold_range").val());
+
+$("iframe").contents().find("#threshold_range").on("input", function () {
+    val = $("iframe").contents().find("#threshold_range").val();
+    $("iframe").contents().find("#threshold_number").empty().append(val);
+    gdo.net.app["Fractals"].server.threshold(gdo.controlId, val);
+});
 
 $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());
 

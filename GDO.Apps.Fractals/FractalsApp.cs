@@ -51,6 +51,11 @@ namespace GDO.Apps.Fractals
         public float G;
         public float B;
         public float Scale;
+        public float Cx;
+        public float Cy;
+        public float Cz;
+        public float Cw;
+        public float Threshold;
 
         public float Ambience;
         public float LightIntensity;
@@ -107,6 +112,11 @@ namespace GDO.Apps.Fractals
             Power = 8.0f;
             Scale = 2.0f;
             Fractal = 0;
+            Cx = -0.58f;
+            Cy = 0.52f;
+            Cz = 0.48f;
+            Cw = 0.2f;
+            Threshold = 10.0f;
 
             Lock = new object();
             JoystickRunning = false;

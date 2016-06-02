@@ -27,6 +27,8 @@ uniform int iterations;
 uniform float power;
 uniform vec4 colour;
 uniform float scale;
+uniform vec4 c;
+uniform float threshold;
 
 uniform int modFunction;
 
@@ -156,8 +158,8 @@ float DE(vec3 pos) {
 	}
 	else {
 
-		vec4 c = vec4(0.18, 0.88, 0.24, 0.16);
-		float threshold = 10.0;
+		//vec4 c = vec4(0.18, 0.88, 0.24, 0.16);
+		//float threshold = 10.0;
 
 		vec4 p = vec4(pos, 0.0);
 		vec4 dp = vec4(1.0, 0.0, 0.0, 0.0);

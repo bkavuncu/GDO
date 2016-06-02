@@ -198,6 +198,11 @@ namespace GDO.Apps.Fractals
                 public double green;
                 public double blue;
                 public double scale;
+                public double cx;
+                public double cy;
+                public double cz;
+                public double cw;
+                public double threshold;
                 public int modToggle;
                 public int fractal;
         }
@@ -230,6 +235,11 @@ namespace GDO.Apps.Fractals
                     FA.G = (float) p.green;
                     FA.B = (float) p.blue;
                     FA.Scale = (float) p.scale;
+                    FA.Cx = (float) p.cx;
+                    FA.Cy = (float) p.cy;
+                    FA.Cz = (float) p.cz;
+                    FA.Cw = (float) p.cw;
+                    FA.Threshold = (float) p.threshold;
                     FA.Mod = p.modToggle;
                     FA.Fractal = p.fractal;
                     
@@ -285,6 +295,43 @@ namespace GDO.Apps.Fractals
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Scale = scale;
+                    SendParams(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void JuliaConstant(int instanceId, float cx, float cy, float cz, float cw)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.Cx = cx;
+                    FA.Cy = cy;
+                    FA.Cz = cz;
+                    FA.Cw = cw;
+                    SendParams(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void Threshold(int instanceId, float thresh)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FA.Threshold = thresh;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
