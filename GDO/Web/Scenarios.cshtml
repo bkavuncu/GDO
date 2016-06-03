@@ -120,7 +120,7 @@
                         @:gdo.loadScript("@moduleEntry.Value.Name", "@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                                 }
                 }
-            gdo.loadScript("console", "management", gdo.SCRIPT_TYPE.CORE);
+            gdo.loadScript("terminal", "management", gdo.SCRIPT_TYPE.CORE);
             gdo.loadScript('scenarios', 'management', gdo.SCRIPT_TYPE.CORE);
             $(document).ready(function () {
                 gdo.clientId = 1;
@@ -134,7 +134,7 @@
         }
         initApp = function () {
             gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.management.console.drawConsoleInput();
+            gdo.management.terminal.drawTerminalInput();
             gdo.updateSelf();
             gdo.management.scenarios.displayScenariosToLoad("");
         }
@@ -144,17 +144,19 @@
         <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
             <tr>
                 <td>
-                    <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px">Blank</font></button>
+                    <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-square fa-fw'></i>&nbsp;Blank</font></font></button>
                 </td>
                 <td>
-                    <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px">Maintenance</font></button>
+                    <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance</font></button>
                 </td>
                 <td>
-                    <div style="width: 14px"></div>
+                    <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console</font></button></a>
                 </td>
                 <td>
-                    <div id="connection_status" class="img-circle circle" style='width: 45px; height: 45px; background: #2A9FD6; display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-lg' style="display: table-cell; vertical-align: middle; text-align: center"></i>
-                    </div>
+                    <div style="width:14px"></div>
+                </td>
+                <td>
+                    <div id="connection_status" class="img-circle circle" style='width:45px;height:45px; background: #2A9FD6;display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-lg' style="display: table-cell; vertical-align: middle; text-align: center"></i></div>
                 </td>
             </tr>
         </table>
@@ -220,9 +222,6 @@
                         <a href="~/Web/States.cshtml"><i class="fa fa-save fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;States</font></a>
                     </li>
                     <li>
-                        <a href="~/Web/Console.cshtml"><i class="fa fa-terminal fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Console</font></a>
-                    </li>
-                    <li>
                         <a href="~/Web/Scenarios.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
                     </li>
                     <li>
@@ -252,7 +251,7 @@
                 <h6><span class="glyphicon glyphicon-console"></span>&nbsp;&nbsp;Console</h6>
             </div>
             <div class="panel-body">
-                <div id="console_area" style="font-size: 13px; width: 100.5%; height: 17vh; overflow: auto; border: 0px solid #333; background-color: #222; color: #FFF"></div>
+                <div id="terminal_area" style="font-size: 13px; width: 100.5%; height: 17vh; overflow: auto; border: 0px solid #333; background-color: #222; color: #FFF"></div>
             </div>
             <div class="panel-footer">
                 <div class="row">

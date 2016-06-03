@@ -29,6 +29,7 @@ gdo.net.NEIGHBOUR_ENUM = {
 };
 
 gdo.net.time = new Date();
+//gdo.net.time = {};
 gdo.net.connectionState = 0;
 
 $(function() {
@@ -58,6 +59,19 @@ $(function() {
         gdo.updateDisplayCanvas();
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.initBaseFrame();
+        }
+    }
+    $.connection.caveHub.client.receiveConsoleInstanceId = function (consoleInstanceId) {
+        gdo.net.consoleInstanceId = consoleInstanceId;
+        gdo.consoleOut('.NET', 1, 'Console Instance Id:' + consoleInstanceId);
+        gdo.updateDisplayCanvas();
+        if (gdo.net.consoleMode == true) {
+            if (consoleInstanceId >= 0 && gdo.net.instance[gdo.net.consoleInstanceId].exists) {
+                gdo.management.instances.loadInstanceControlFrame(gdo.net.instance[consoleInstanceId].appName, consoleInstanceId, gdo.net.instance[consoleInstanceId].configName);
+            } else {
+                $("iframe").contents().find("body").html('');
+                $("#instance_label").empty().append("<h3><b> Waiting for Control</b></h3>");
+            }
         }
     }
     $.connection.caveHub.client.reloadNodeIFrame = function () {
@@ -209,6 +223,9 @@ $(function() {
         gdo.consoleOut('.NET', 1, 'Executing :' + func);
         eval(func);
     }
+    $.connection.caveHub.client.executeDelayedFunction = function (func,start) {
+        gdo.net.setTimeout(func, start);
+    }
 });
 
 
@@ -261,6 +278,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     gdo.consoleOut('.NET', 2, 'Initializing Net');
     gdo.net.maintenanceMode = true;
     gdo.net.blankMode = false;
+    gdo.net.consoleMode = false;
     gdo.net.initializeArrays(100);
     gdo.net.initHub();
     gdo.net.clientMode = clientMode;
@@ -919,3 +937,7 @@ gdo.net.setInterval = function (statement, start, current, interval, conditionFu
         }, start - current);
     }
 }
+
+/*gdo.net.time.getTime = function() {
+    return new Date().getTime();
+}*/
