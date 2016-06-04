@@ -54,5 +54,20 @@ namespace GDO.Apps.XNATImaging
                 }
             }
         }
+
+        public void SetControl(int instanceId, string controlName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
     }
 }

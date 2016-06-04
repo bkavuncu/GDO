@@ -8,7 +8,7 @@
     <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
 </head>
 <body ng-app="xnatApp">
-    <div ng-controller="MainController">
+    <div id="MainController" ng-controller="MainController">
         <div class="heading">
             <div class="container">
                 <h1>{{ title }}</h1>
@@ -41,14 +41,6 @@
                     </div>
                     <div id="mrbottomleft">
                         <p>WW/WC: {{ view.windowWidth }}/{{ view.windowCenter }}</p>
-                    </div>
-                    <div class="controls">
-                        <button id="upNavigationButton" ng-click="navigateUp()" type="button" class="btn btn-default">Up</button>
-                        <button id="downNavigationButton" ng-click="navigateDown()" type="button" class="btn btn-default">Down</button>
-                        <button id="playButton" ng-click="playAll()" type="button" class="btn btn-success">Play</button>
-                        <button id="resetButton" ng-click="resetView()" type="button" class="btn btn-warning">Reset View</button>
-                        <button id="highlightButton" ng-click="highlightEnabled()" type="button" class="btn btn-primary">Highlight</button>
-                        <button id="markerButton" ng-click="markerEnabled()" type="button" class="btn btn-primary">Place Marker</button>
                     </div>
                 </div>
             </div>
@@ -83,6 +75,7 @@
     <script>
         $(function () {
             $(document).ready(function () {
+                console.log('.XNATImaging', 1, 'DOM Ready for JS');
                 var gdo = parent.gdo;
                 gdo.net.app["XNATImaging"].initClient();
             });

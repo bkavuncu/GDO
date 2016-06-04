@@ -26,6 +26,7 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="../../Scripts/XNATImaging/js/shared/angular.min.js"></script>
     <style>
         body {
             color: #FFF;
@@ -92,13 +93,32 @@
         }
     </style>
 </head>
-<body unselectable="on" class="unselectable">
+<body unselectable="on" class="unselectable" ng-app="xnatApp">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+    <script src="https://code.angularjs.org/1.2.28/angular-route.min.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/underscore.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstone.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstoneMath.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstone-tools.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/dicomParser.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/jpx.js"></script>
+    <script src="../../Scripts/XNATImaging/js/shared/cornerstoneWADOImageLoader.js"></script>
+    <!-- Modules -->
+    <script src="../../Scripts/XNATImaging/js/app.js"></script>
+    <!-- Controllers -->
+    <script src="../../Scripts/XNATImaging/js/controllers/MainController.js"></script>
+    <!-- Services -->
+    <script src="../../Scripts/XNATImaging/js/services/mriServices.js"></script>
+    <!-- Directives -->
+    <script src="../../Scripts/XNATImaging/js/directives/mouseWheelUp.js"></script>
+    <script src="../../Scripts/XNATImaging/js/directives/mouseWheelDown.js"></script>
+    <script src="../../Scripts/XNATImaging/js/directives/mouseClick.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -128,6 +148,16 @@
                         <fieldset>
                             <button id="hello_submit" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
                         </fieldset>
+                    </div>
+                </div>
+                <div id="MainController" ng-controller="MainController">
+                    <div class="controls">
+                        <button id="upNavigationButton" type="button" class="btn btn-default">Up</button>
+                        <button id="downNavigationButton" type="button" class="btn btn-default">Down</button>
+                        <button id="playButton" type="button" class="btn btn-success">Play</button>
+                        <button id="resetButton" type="button" class="btn btn-warning">Reset View</button>
+                        <button id="highlightButton" type="button" class="btn btn-primary">Highlight</button>
+                        <button id="markerButton" type="button" class="btn btn-primary">Place Marker</button>
                     </div>
                 </div>
             </div>
