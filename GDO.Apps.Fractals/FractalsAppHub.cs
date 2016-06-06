@@ -485,11 +485,12 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Sync = !FA.Sync;
-                    string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                    Clients.Group("" + instanceId).updateParams(instanceId, Json);
+                    //FA.Sync = !FA.Sync;
+                    //string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                    //Clients.Group("" + instanceId).updateParams(instanceId, Json);
                     //Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
-
+                    string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                    Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + FA.SyncTime);
                 }
                 catch (Exception e)
                 {
@@ -519,7 +520,7 @@ namespace GDO.Apps.Fractals
 
                             string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
 
-                            Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + FA.SyncTime);
+                            //Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + FA.SyncTime);
                         }
                     }
 
