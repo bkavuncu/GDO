@@ -159,6 +159,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\XNATImaging\cornerstoneWADOImageLoader.js" />
     <Content Include="Scripts\XNATImaging\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\XNATImaging\css\bootstrap-theme.min.css.map" />
     <Content Include="Scripts\XNATImaging\css\bootstrap.css.map" />
@@ -178,29 +179,24 @@
     <Content Include="Scripts\XNATImaging\css\bootstrap.css" />
     <Content Include="Scripts\XNATImaging\css\bootstrap.min.css" />
     <Content Include="Scripts\XNATImaging\css\main.css" />
+    <Content Include="Scripts\XNATImaging\angular.min.js" />
     <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-    <Content Include="Scripts\XNATImaging\js\app.js" />
-    <Content Include="Scripts\XNATImaging\js\controllers\MainController.js" />
-    <Content Include="Scripts\XNATImaging\js\directives\mouseClick.js" />
-    <Content Include="Scripts\XNATImaging\js\directives\mouseWheelDown.js" />
-    <Content Include="Scripts\XNATImaging\js\directives\mouseWheelUp.js" />
-    <Content Include="Scripts\XNATImaging\js\services\mriServices.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\angular.min.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\bootstrap.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\bootstrap.min.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\cornerstone-tools.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\cornerstone.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\cornerstoneMath.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\cornerstoneWADOImageLoader.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\dicomParser.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\jpx.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\jquery.min.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\npm.js" />
-    <Content Include="Scripts\XNATImaging\js\shared\underscore.js" />
+    <Content Include="Scripts\XNATImaging\app.js" />
+    <Content Include="Scripts\XNATImaging\controllers\MainController.js" />
+    <Content Include="Scripts\XNATImaging\directives\mouseClick.js" />
+    <Content Include="Scripts\XNATImaging\directives\mouseWheelDown.js" />
+    <Content Include="Scripts\XNATImaging\directives\mouseWheelUp.js" />
+    <Content Include="Scripts\XNATImaging\services\mriServices.js" />
+    <Content Include="Scripts\XNATImaging\cornerstone-tools.js" />
+    <Content Include="Scripts\XNATImaging\cornerstone.js" />
+    <Content Include="Scripts\XNATImaging\cornerstoneMath.js" />
+    <Content Include="Scripts\XNATImaging\dicomParser.js" />
+    <Content Include="Scripts\XNATImaging\jpx.js" />
+    <Content Include="Scripts\XNATImaging\underscore.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

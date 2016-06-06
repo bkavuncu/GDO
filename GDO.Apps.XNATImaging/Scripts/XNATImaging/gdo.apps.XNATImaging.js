@@ -58,7 +58,7 @@ gdo.net.app["XNATImaging"].terminateClient = function () {
     gdo.consoleOut('.XNATImaging', 1, 'Terminating XNATImaging App Client at Node ' + clientId);
 }
 
-gdo.net.app["XNATImaging"].ternminateControl = function () {
+gdo.net.app["XNATImaging"].terminateControl = function () {
     gdo.consoleOut('.XNATImaging', 1, 'Terminating XNATImaging App Control at Instance ' + gdo.controlId);
 }
 
@@ -66,11 +66,10 @@ gdo.net.app["XNATImaging"].angularControl = function (controlName) {
     switch (controlName) {
         case 'Up':
             angular.element('#MainController').scope().navigateUp();
-            angular.element('#MainController').scope().$apply();
             break;
         case 'Down':
             angular.element('#MainController').scope().navigateDown();
-            angular.element('#MainController').scope().$apply();
             break;
     }
+    angular.element('#MainController').scope().$apply();
 }
