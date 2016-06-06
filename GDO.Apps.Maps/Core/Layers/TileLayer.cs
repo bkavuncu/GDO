@@ -2,28 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Layers
 {
     public class TileLayer : Layer
     {
-        public int? Preload { get; set; }
+        public NullableIntegerParameter Preload { get; set; }
 
-        new public void Init(int preload)
+        public TileLayer()
         {
-            Preload = preload;
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
-            ClassName = this.GetType().Name;
-            AddtoEditables(() => Preload);
-        }
+            ClassName.Value = this.GetType().Name;
+            Type.Value = (int)LayerTypes.Tile;
 
-        new public void Modify(int preload)
-        {
-            Preload = preload;
+            Preload = new NullableIntegerParameter
+            {
+                Name = "Preload",
+                Description = "Preload. Load low-resolution tiles up to preload levels. By default preload is 0, which means no preloading.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
+                IsEditable = true,
+                IsVisible = true,
+                DefaultValue = 0
+            };
         }
     }
 }

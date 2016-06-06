@@ -7,11 +7,10 @@ namespace GDO.Apps.Maps.Core.Layers
 {
     public class ImageLayer : Layer
     {
-        new public void Init()
+        public ImageLayer()
         {
-        }
-        new public void Modify()
-        { 
+            ClassName.Value = this.GetType().Name;
+            Type.Value = (int)LayerTypes.Image;
         }
     }
 }

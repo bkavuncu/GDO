@@ -385,7 +385,7 @@ gdo.management.sections.drawButtonTable = function () {
             "<td id='section_coordinate_table_select' style='width:35%;'></td>" +
             "</tr>" +
             "</table>")
-        .css("width", 2*(gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css("width", 1.5*(gdo.management.table_width / gdo.management.button_cols) + "%")
         .css("color", "#FFF")
         .css('padding', 0)
         .attr("align", "center")
@@ -578,6 +578,50 @@ gdo.management.sections.drawButtonTable = function () {
         $(".control_app_button")
             .addClass("disabled")
             .addClass("btn-default")
+            .removeClass("btn-primary");
+    }
+    $(".send_app_control_button_div")
+    .empty()
+    .append("<button type='button' class='send_app_control_button btn btn-danger btn-lg btn-block'><i class='fa  fa-upload  fa-fw'></i>&nbsp;Send Control</button>")
+    .css("height", "100%")
+    .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+    .css('padding', 1)
+    .attr("align", "center")
+    .unbind()
+    .click(function () {
+        if (gdo.management.sections.selectedSection > -1) {
+            if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
+                gdo.management.apps.selectedApp = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].appName;
+                gdo.management.apps.selectedConfiguration = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].configName;
+                gdo.net.server.updateConsoleInstance(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
+                gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console' + gdo.management.sections.selectedSection);
+                //gdo.updateDisplayCanvas();
+            } else {
+                gdo.net.server.updateConsoleInstance(-1);
+                gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
+            }
+        } else {
+            gdo.net.server.updateConsoleInstance(-1);
+            gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
+        }
+    });
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].integrationMode) {
+            $(".send_app_control_button")
+                //.removeClass("disabled")
+                .removeClass("btn-default")
+                .removeClass("btn-danger")
+                .addClass("btn-primary");
+        } else {
+            $(".send_app_control_button")
+                //.addClass("disabled")
+                .addClass("btn-danger")
+                .removeClass("btn-primary");
+        }
+    } else {
+        $("send_app_control_button")
+            //.addClass("disabled")
+            .addClass("btn-danger")
             .removeClass("btn-primary");
     }
     $(".reset_app_button_div")

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Web;
 using GDO.Apps.Maps.Core.Layers;
+using GDO.Utility;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Maps.Core
@@ -20,89 +21,105 @@ namespace GDO.Apps.Maps.Core
     public class Layer : Base
     {
         [JsonProperty(Order = -1)]
-        public int SourceId { get; set; }
-        [JsonProperty(Order = -1)]
-        public float? Brightness { get; set; }
-        [JsonProperty(Order = -1)]
-        public float? Contrast { get; set; }
-        [JsonProperty(Order = -1)]
-        public float? Saturation { get; set; }
-        [JsonProperty(Order = -1)]
-        public float? Hue { get; set; }
-        [JsonProperty(Order = -1)]
-        public float? Opacity { get; set; }
-        [JsonProperty(Order = -1)]
-        public int ZIndex { get; set; }
-        [JsonProperty(Order = -1)]
-        public bool? Visible { get; set; }
-        [JsonProperty(Order = -1)]
-        public double?[] Extent { get; set; }
-        [JsonProperty(Order = -1)]
-        public int? MinResolution { get; set; }
-        [JsonProperty(Order = -1)]
-        public int? MaxResolution { get; set; }
-        [JsonProperty(Order = -1)]
-        public bool CanAnimate { get; set; }
-        [JsonProperty(Order = -1)]
-        public bool IsAnimating { get; set; }
+        public LinkParameter Source { get; set; }
 
-        public Layer()
-        {
-            
-        }
-        public void Init(int id, string name, int type, int sourceId, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution, int zIndex, bool canAnimate, bool isAnimating)
-        {
-            Id = id;
-            Name = name;
-            Type = type;
-            SourceId = sourceId;
-            Brightness = brightness;
-            Contrast = contrast;
-            Saturation = saturation;
-            Hue = hue;
-            Opacity = opacity;
-            Visible = visible;
-            MinResolution = minResolution;
-            MaxResolution = maxResolution;
-            CanAnimate = canAnimate;
-            IsAnimating = isAnimating;
-            ZIndex = zIndex;
-            Prepare();
-        }
-    
-        new public void Prepare()
-        {
-            ClassName = this.GetType().Name;
+        [JsonProperty(Order = -1)]
+        public FloatRangeParameter Opacity { get; set; }
 
-            //AddtoEditables(() => Id);
-            AddtoEditables(() => Name);
-            //AddtoEditables(() => Type);
-            AddtoEditables(() => Brightness);
-            AddtoEditables(() => Contrast);
-            AddtoEditables(() => Saturation);
-            AddtoEditables(() => Hue);
-            AddtoEditables(() => Opacity);
-            AddtoEditables(() => Visible);
-            AddtoEditables(() => MinResolution);
-            AddtoEditables(() => MaxResolution);
-        }
+        [JsonProperty(Order = -1)]
+        public IntegerParameter ZIndex { get; set; }
 
-        public void Modify(int id, string name, int type, float brightness, float contrast, float saturation, float hue,
-            float opacity, bool visible, int minResolution, int maxResolution, bool isAnimating)
+        [JsonProperty(Order = -1)]
+        public BooleanParameter Visible { get; set; }
+
+        [JsonProperty(Order = -1)]
+        public DoubleArrayParameter Extent { get; set; }
+
+        [JsonProperty(Order = -1)]
+        public NullableIntegerParameter MinResolution { get; set; }
+
+        [JsonProperty(Order = -1)]
+        public NullableIntegerParameter MaxResolution { get; set; }
+
+        public Layer() : base ()
         {
-            Id = id;
-            Name = name;
-            Type = type;
-            Brightness = brightness;
-            Contrast = contrast;
-            Saturation = saturation;
-            Hue = hue;
-            Opacity = opacity;
-            IsAnimating = isAnimating;
-            Visible = visible;
-            MinResolution = minResolution;
-            MaxResolution = maxResolution;
+            ClassName.Value = this.GetType().Name;
+
+            Source = new LinkParameter
+            {
+                Name = "Source",
+                Description = "The source for this layer",
+                Priority = (int)GDO.Utility.Priorities.Required,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
+                IsEditable = false,
+                IsVisible = true,
+                LinkedParameter = "Source",
+            };
+
+            Opacity = new FloatRangeParameter
+            {
+                Name = "Opacity",
+                Description = "Opacity (0, 1)",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
+                IsEditable = true,
+                IsVisible = true,
+                MinValue = 0,
+                MaxValue = 1,
+                DefaultValue = 1
+            };
+
+            ZIndex = new IntegerParameter
+            {
+                Name = "ZIndex",
+                Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
+                IsEditable = true,
+                IsVisible = false,
+                DefaultValue = 0
+            };
+
+            Visible = new BooleanParameter
+            {
+                Name = "Visible",
+                Description = "Visibility",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
+                IsEditable = true,
+                IsVisible = false,
+                DefaultValue = true
+            };
+
+            Extent = new DoubleArrayParameter
+            {
+                Name = "Extent",
+                Description = "The bounding extent for layer rendering. The layer will not be rendered outside of this extent: [MinX, MinY, MaxX, MaxY]",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
+                IsEditable = false,
+                IsVisible = true,
+            };
+
+            MinResolution = new NullableIntegerParameter
+            {
+                Name = "Minimum Resolution",
+                Description = "The minimum resolution (inclusive) at which this layer will be visible.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
+                IsEditable = true,
+                IsVisible = true,
+            };
+
+            MaxResolution = new NullableIntegerParameter
+            {
+                Name = "Maximum Resolution",
+                Description = "The maximum resolution (exclusive) below which this layer will be visible.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
+                IsEditable = true,
+                IsVisible = true,
+            };
         }
     }
 }
