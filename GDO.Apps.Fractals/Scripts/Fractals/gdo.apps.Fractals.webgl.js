@@ -17,6 +17,7 @@ function initWebgl(id, locations, shader, completeInit) {
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
+    //canvas.height = 270;
     //canvas.width = 960;
     //canvas.height = 540;
     canvas.width = 1920;
@@ -236,7 +237,7 @@ function renderSync(locations, gl, program) {
             // Ensure continuous rendering
             window.requestAnimationFrame(function () {
                 rendering = false;
-                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId);
+                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
             });
 
             // Apply params

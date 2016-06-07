@@ -153,14 +153,14 @@ $(function () {
                             
                             $("iframe").contents().find("#screen1_marker").hide();
                             $("iframe").contents().find("#screen2_marker").show();
-                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                         }, timeout);
                     } else {
                         canvas1.style.zIndex = 0;
                         canvas2.style.zIndex = 5;
                         $("iframe").contents().find("#screen1_marker").hide();
                         $("iframe").contents().find("#screen2_marker").show();
-                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                     }
 
                 } else if (json.CurrentFrame == 1) {
@@ -170,14 +170,14 @@ $(function () {
                             canvas2.style.zIndex = 0;
                             $("iframe").contents().find("#screen1_marker").show();
                             $("iframe").contents().find("#screen2_marker").hide();
-                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                         }, timeout);
                     } else {
                         canvas1.style.zIndex = 5;
                         canvas2.style.zIndex = 0;
                         $("iframe").contents().find("#screen1_marker").show();
                         $("iframe").contents().find("#screen2_marker").hide();
-                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                     }
                 }
                 

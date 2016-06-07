@@ -86,6 +86,9 @@ namespace GDO.Apps.Fractals
         public int CurrentFrame;
         public int[] NodesOnline;
 
+        public int[] SwapFrameNodesAcked;
+        public int[] RenderedFrameNodesAcked;
+
         public bool Sync;
 
         public bool rendering;
@@ -157,6 +160,9 @@ namespace GDO.Apps.Fractals
             SwapFrameAcks = 0;
             CurrentFrame = 0;
             NodesOnline = new int[64];
+
+            SwapFrameNodesAcked = new int[64];
+            RenderedFrameNodesAcked = new int[64];
 
             Sync = true;
 
