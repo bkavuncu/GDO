@@ -79,6 +79,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsVisible = true,
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
+                Length = 2,
             };
 
             MinZoom = new NullableIntegerParameter
@@ -112,10 +113,10 @@ namespace GDO.Apps.Maps.Core.Sources
                 Name = "Resolutions",
                 PropertyName = "resolutions",
                 Description = "Resolutions. The array index of each resolution needs to match the zoom level. This means that even if a minZoom is configured, the resolutions array will have a length of maxZoom + 1",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                Length = 21,
+                Length = 10,
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
             };

@@ -44,7 +44,8 @@ namespace GDO.Apps.Maps.Core
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1,
-                DefaultValue = 1
+                DefaultValue = 1,
+                Increment = (float?)0.05,
             };
 
             ZIndex = new IntegerParameter
@@ -77,6 +78,7 @@ namespace GDO.Apps.Maps.Core
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
+                Length = 2,
             };
 
             MinResolution = new NullableIntegerParameter

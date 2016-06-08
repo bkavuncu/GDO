@@ -16,7 +16,7 @@ namespace GDO.Utility
         Increment = 6, //Increment input
         Slider = 7, //Slider with Min-Max
         Color = 8, //Color Picker
-        DataList = 9, //If Array use Array, if not use link
+        DataList = 9, //If Array use Array
         Link = 10, //Link to another object (visualised as datalist)
         IntegerArray = 11, //Input with multiple cols for the array size
         FloatArray = 12, //Input with multiple cols for the array size
@@ -36,7 +36,8 @@ namespace GDO.Utility
     public enum Priorities
     {
         Required = 0,
-        Optional = 1  
+        Optional = 1,
+        System = -1, 
     }
 
     public class Parameter

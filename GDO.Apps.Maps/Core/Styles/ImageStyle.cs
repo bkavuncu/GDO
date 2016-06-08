@@ -28,7 +28,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 DefaultValue = 1,
                 MinValue = 0,
-                MaxValue = 1
+                MaxValue = 1,
+                Increment = (float?)0.05,
             };
 
             Rotation = new SliderParameter
@@ -41,7 +42,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 DefaultValue = 0,
                 MinValue = 0,
-                MaxValue = 7
+                MaxValue = 7,
+                Increment = (float?)0.35,
             };
 
             Scale = new SliderParameter
@@ -54,7 +56,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 DefaultValue = 1,
                 MinValue = 0,
-                MaxValue = 100
+                MaxValue = 100,
+                Increment = (float?)1,
             };
         }
     }

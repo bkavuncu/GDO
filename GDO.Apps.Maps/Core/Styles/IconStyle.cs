@@ -42,7 +42,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValues = new float[2] { (float)0.5, (float)0.5 }
+                DefaultValues = new float[2] { (float)0.5, (float)0.5 },
+                Length = 2,
             };
 
             AnchorOrigin = new DatalistParameter
@@ -65,7 +66,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValues = new float[2] { (float)0, (float)0 }
+                DefaultValues = new float[2] { (float)0, (float)0 },
+                Length = 2,
             };
 
             OffsetOrigin = new DatalistParameter
@@ -98,7 +100,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Icon size in pixel. Can be used together with offset to define the sub-rectangle to use from the origin (sprite) icon image.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Length = 2,
             };
 
             ImageSize = new IntegerArrayParameter
@@ -108,7 +111,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Image size in pixels. Only required if img is set and src is not, and for SVG images in Internet Explorer 11. The provided imgSize needs to match the actual size of the image.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Length = 2,
             };
 
             ImageSource = new StringParameter

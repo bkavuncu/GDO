@@ -54,7 +54,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 100,
-                DefaultValue = 8
+                DefaultValue = 8,
+                Increment = (float?)1,
             };
 
             Shadow = new SliderParameter
@@ -67,7 +68,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1000,
-                DefaultValue = 250
+                DefaultValue = 250,
+                Increment = (float?)5,
             };
 
             Weight = new SliderParameter
@@ -80,7 +82,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1,
-                DefaultValue = (float?)0.5
+                DefaultValue = (float?)0.5,
+                Increment = (float?)0.05,
             };
 
             Blur = new SliderParameter
@@ -93,7 +96,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 100,
-                DefaultValue = 15
+                DefaultValue = 15,
+                Increment = (float?)1,
             };
         }
     }
