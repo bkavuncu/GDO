@@ -26,7 +26,7 @@ var loadModules = function () {
     gdo.loadModule("setupGeneticAlgorithm", "Spreadsheets", gdo.MODULE_TYPE.APP);
     gdo.loadModule("linkOutputs", "Spreadsheets", gdo.MODULE_TYPE.APP);
     gdo.loadModule("unfoldModel", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("bootstrap-switch", "Spreadsheets", gdo.MODULE_TYPE.APP);
+    gdo.loadModule("createFormulaTree", "Spreadsheets", gdo.MODULE_TYPE.APP);
 };
 
 var setEventHandlers = function (message, section) {
@@ -44,6 +44,7 @@ var setEventHandlers = function (message, section) {
         $("iframe").contents().find("#unfoldingMap").empty().show();
         $("iframe").contents().find("#unfold_model_result").show();
         $("iframe").contents().find("#unfold_model_result").siblings().hide();
+        $('iframe').contents().find('#trace_precedent_section').hide();
         gdo.consoleOut(".Spreadsheets", 1, "unfoldModel selected, now to get the viewing information.");
         gdo.net.app["Spreadsheets"].unfoldModel(gdo.controlId, message.data[0], message.data[1]);
     });

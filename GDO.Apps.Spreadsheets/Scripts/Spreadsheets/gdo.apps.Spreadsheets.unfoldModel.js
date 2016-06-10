@@ -1,11 +1,31 @@
-﻿var startPrecedentTracing = function(id, selectedOutput) {
+﻿var stepPrecedents = function(id) {
+    $.ajax({
+        url: "http://146.169.45.194/SheetServer/Operations/StepPrecedents",
+        method: "POST",
+        data: { instanceId: id },
+        success: function(response) {
+            if (response.success) {
+                gdo.net.app["Spreadsheets"].createFormulaTree(response);
+                console.log(response);
+            } else {
+                console.log("Exception[stepPrecedent]:" + response.message);
+            }
+        }
+    });
+}
+
+var startPrecedentTracing = function (id, selectedOutput) {
     $.ajax({
         url: "http://146.169.45.194/SheetServer/Operations/StartPrecedentTracing",
         method: "POST",
         data: { instanceId: id, output: selectedOutput},
         success: function (response) {
             if (response.success) {
+                $('iframe').contents().find('#step_tracing').show();
                 console.log(response);
+                $('iframe').contents().find('#step_tracing').off('click').on('click', function () {
+                    stepPrecedents(id);
+                });
             }
         }
     });
@@ -15,8 +35,9 @@ var generateSelector = function (response) {
     var textBox = "<h6>Trace Output Through Model</h6>\n<select id=\"output_options\" class=\"form-control\">";
     textBox += response.outputs.map(function (o, i) { return "<option value=\"" + i + "\">" + o.Name + "</option>"; }).join("\n");
     textBox += "</select>";
-    var button = "<button id=\"step_output\" class=\"btn btn-success\">Step Output</button>";
-    return "<div class=\"form-inline\">" + textBox + "\n" + button + "</div>";
+    var startButton = "<button id=\"start_tracing\" class=\"btn btn-success\">Start Precedent Tracing</button>";
+    var stepButton = "<button id=\"step_tracing\" class=\"btn btn-success\">Step Precedent</button>";
+    return "<div class=\"form-inline\">" + textBox + "\n" + startButton + "\n" + stepButton + "</div>";
 }
 
 var setupTracePrecedent = function (id) {
@@ -26,8 +47,9 @@ var setupTracePrecedent = function (id) {
         data: { instanceId: id },
         success: function(response) {
             if (response.success) {
-                $('iframe').contents().find('#trace_precedent_section').empty().html(generateSelector(response));
-                $('iframe').contents().find('#step_output').off('click').on('click', function() {
+                $('iframe').contents().find('#trace_precedent_section').empty().html(generateSelector(response)).show();
+                $('iframe').contents().find('#step_tracing').hide();
+                $('iframe').contents().find('#start_tracing').off('click').on('click', function() {
                     var selectedValue = $('iframe').contents().find('#output_options').val();
                     startPrecedentTracing(id, response.outputs[selectedValue]);
                 });
@@ -43,6 +65,8 @@ var drawCanvas = function (packing) {
     var canvas = $('iframe').contents().find('#viewCanvas')[0];
     var context = canvas.getContext('2d');
     context.font = '12px Arial';
+    context.textAlign = "center";
+    context.textBaseLine = "middle";
     var i;
     for (i = 0; i < 4; i++) {
         for (var j = 0; j < 16; j++) {
@@ -57,10 +81,10 @@ var drawCanvas = function (packing) {
         context.fillRect(screenSize * temp.X, screenSize * (4 - temp.Y - temp.Height), screenSize * temp.Width, screenSize * temp.Height);
         context.strokeRect(screenSize * temp.X, screenSize * (4 - temp.Y - temp.Height), screenSize * temp.Width, screenSize * temp.Height);
         //Compute Perceptive Luminance of the background color in question, and set the text colour based on the luminance.
-        var complement = context.fillStyle.substring(1, context.fillStyle.length);
-        var r = parseInt("0x" + complement.substring(0, 2));
-        var g = parseInt("0x" + complement.substring(2, 4));
-        var b = parseInt("0x" + complement.substring(4, 6));
+        var color = context.fillStyle.substring(1, context.fillStyle.length);
+        var r = parseInt("0x" + color.substring(0, 2));
+        var g = parseInt("0x" + color.substring(2, 4));
+        var b = parseInt("0x" + color.substring(4, 6));
         //https://www.w3.org/TR/AERT#color-contrast
         var luminance = 1 - (0.299 * r + 0.587 * g + 0.114 * b) / 255;
         if (luminance < 0.5) {

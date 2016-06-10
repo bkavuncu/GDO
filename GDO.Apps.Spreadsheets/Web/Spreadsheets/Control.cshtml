@@ -104,10 +104,31 @@
             position: relative;
             text-align: center;
         }
+
+        .node {
+          cursor: pointer;
+        }
+
+        .node circle {
+          fill: #fff;
+          stroke: steelblue;
+          stroke-width: 1.5px;
+        }
+
+        .node text {
+          font: 14px sans-serif;
+        }
+
+        .link {
+          fill: none;
+          stroke: #ccc;
+          stroke-width: 1.5px;
+        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
 <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/d3.min.js"></script>
 <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
 <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -261,6 +282,11 @@
                         <tr>
                             <td>
                                 <div id="unfoldingMap"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="formula_tree"></div>
                             </td>
                         </tr>
                     </table>

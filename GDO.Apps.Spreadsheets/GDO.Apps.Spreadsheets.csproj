@@ -129,7 +129,7 @@
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheeets.clearServer.js" />
-    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.bootstrap-switch.js" />
+    <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.createFormulaTree.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.clearModel.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.linkOutputs.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.runAnalysis.js" />
