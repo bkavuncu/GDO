@@ -31,7 +31,6 @@ gdo.net.app["Maps"].drawEmptyListTable = function (tab) {
 }
 
 gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing ' + tab + ' Table');
 
     gdo.net.app["Maps"].drawEmptyListTable(tab);
 
@@ -42,7 +41,6 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
 
     for (var i in arr) {
         if (arr.hasOwnProperty(i) && arr[i] != null && typeof arr[i] != "undefined") {
-            gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing ' + tab + ' ' + i);
 
             $("iframe").contents().find("." + tab + "").append("<div class='" + tab + "_" + i + " row' " + tab + "Id='" + i + "'></div>");
             if (gdo.net.app["Maps"].selected[tab] >= 0) {
@@ -97,11 +95,6 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
     gdo.net.app["Maps"].drawPropertyTable(instanceId, tab, gdo.net.app["Maps"].selected[tab]);
 
     //TODO draw property table
-}
-
-gdo.net.app["Maps"].drawEmptyCreateTable = function (tab) {
-    $("iframe").contents().find("#" + tab + "_create_properties")
-    .empty();
 }
 
 gdo.net.app["Maps"].registerCreateButton = function (instanceId, tab) {
@@ -401,27 +394,33 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
     }
 }
 
-gdo.net.app["Maps"].drawCreateTable = function (instanceId, tab, layer) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Create Table for ' + tab);
+gdo.net.app["Maps"].drawEmptyTable = function (tab) {
+    $("iframe").contents().find("#" + tab + "_properties")
+    .empty();
+}
 
-    gdo.net.app["Maps"].drawEmptyCreateTable(tab);
+gdo.net.app["Maps"].drawTable = function (instanceId, tab, object, isCreate) {
+    if (isCreate) {
+        tab = tab + "_create";
+    }
 
-    var properties = layer.properties;
+    gdo.net.app["Maps"].drawEmptyTable(tab);
+
+    var properties = object.properties;
 
     for (var key in properties) {
         if (key == null) {
             key = "";
         }
         if (properties.hasOwnProperty(key) && key != "$type") {
-            gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property ' + key + ' for ' + tab);
 
-            $("iframe").contents().find("#" + tab + "_create_properties").append("<div id='" + tab + "_create_property_" + key + "' class='row' " + tab + "' property='" + key + "' style='width: 98%;height: 100%;'></div>");
+            $("iframe").contents().find("#" + tab + "_properties").append("<div id='" + tab + "_property_" + key + "' class='row' " + tab + "' property='" + key + "' style='width: 98%;height: 100%;'></div>");
 
-            $("iframe").contents().find("#" + tab + "_create_property_").append(
-                "<div id='" + tab + "_create_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                "<div id='" + tab + "_create_property_" + key + "_value' class='col-md-7' style='color:gray' >" + properties[key].Value + "</div>");
+            $("iframe").contents().find("#" + tab + "_property_").append(
+                "<div id='" + tab + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
+                "<div id='" + tab + "_property_" + key + "_value' class='col-md-7' style='color:gray' >" + properties[key].Value + "</div>");
 
-            gdo.net.app["Maps"].drawInputField(instanceId, properties[key], key, tab + "_create_property_" + key, true);
+            gdo.net.app["Maps"].drawInputField(instanceId, properties[key], key, tab + "_property_" + key, isCreate);
         }
     }
 
@@ -429,92 +428,12 @@ gdo.net.app["Maps"].drawCreateTable = function (instanceId, tab, layer) {
     $('[data-toggle="popover"]').popover();
 }
 
-gdo.net.app["Maps"].drawEmptyPropertyTable = function (tab) {
-    $("iframe").contents().find("#" + tab + "_properties")
-    .empty();
+gdo.net.app["Maps"].drawCreateTable = function (instanceId, tab, object) {
+    gdo.net.app["Maps"].drawTable(instanceId, tab, object, true);
 }
 
-gdo.net.app["Maps"].drawPropertyTable = function (instanceId, tab, id) {
-    gdo.net.app["Maps"].drawEmptyPropertyTable(tab);
-    if (id >= 0) {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property Table for ' + tab + ' ' + id);
-        //TODO change the name of the panel
-
-        var arr = [];
-        arr = eval("gdo.net.instance[instanceId]." + tab + "s");
-
-        if (id >= 0) {
-            for (var key in arr[id].properties) {
-                if (key == null) {
-                    key = "";
-                }
-                if (arr[id].properties.hasOwnProperty(key) && key != "$type") {
-                    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Drawing Property ' + key + ' for ' + tab + ' ' + id);
-
-
-                    $("iframe").contents().find("#" + tab + "_properties").append("<div id='" + tab + "_" + id + "_property_" + key + "' class='row' " + tab + "Id='" + id + "' property='" + key + "' style='width: 98%;height: 100%;'></div>");
-
-                    $("iframe").contents().find("#" + tab + "_" + id + "_property_").append(
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray' >" + arr[id].properties[key].Value + "</div>");
-
-                    if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type") {
-
-                        $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
-                            "<div id='" + tab + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                            "<div id='" + tab + "_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                            "<input type='text' id='" + tab + "_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value='" + properties[key].Value + "'/></input></div>");
-                        $("iframe").contents().find("#" + tab + "_property_" + key + "_value_input")
-                            .attr("value", properties[key].Value);
-
-                    } else {
-                        $("iframe").contents().find("#" + tab + "_create_property_" + key).append(
-                            "<div id='" + tab + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                            "<div id='" + tab + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + properties[key].Value + "</div>");
-                    }
-
-                    /*if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Array]') {
-                        $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                        "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + arr[id].properties[key] + "</div>");
-
-                    } else {
-                        if ((contains(arr[id].properties["Editables"].$values, key)) && (key != "Id" && key != "Name" && key != "ClassName" && key != "Type")) {
-                            if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Object]') {
-                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                                "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                                "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                                    "<input type='text' id='" + tab + "_" + id + "_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value='" + arr[id].properties[key].Id + "'/></input></div>");
-                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key + "_value_input").val(arr[id].properties[key]);
-                            } else {
-                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                                "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                                "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                                    "<input type='text' id='" + tab + "_" + id + "_property_" + key + "_value_input' class='input_field'  style='width: 100%;height: 100%;text-align:left' value='" + arr[id].properties[key] + "'/></input></div>");
-                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key + "_value_input").val(arr[id].properties[key]);
-                            }
-                        } else {
-                            if (Object.prototype.toString.call(arr[id].properties[key]) === '[object Object]') {
-                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                                    "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                                    "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + arr[id].properties[key].Id + "</div>");
-
-                            } else {
-                                $("iframe").contents().find("#" + tab + "_" + id + "_property_" + key).append(
-                                    "<div id='" + tab + "_" + id + "_property_" + key + "_key' class='col-md-5' >&nbsp;&nbsp;" + key + "</div>" +
-                                    "<div id='" + tab + "_" + id + "_property_" + key + "_value' class='col-md-7' style='color:gray'>" + arr[id].properties[key] + "</div>");
-                            }
-                        }
-
-                    }*/
-                }
-            }
-        } else {
-            //TODO empty property table with some kind of template
-        }
-    }
-    $('[data-toggle="tooltip"]').tooltip();
-    $('[data-toggle="popover"]').popover();
+gdo.net.app["Maps"].drawPropertyTable = function (instanceId, tab, object) {
+    gdo.net.app["Maps"].drawTable(instanceId, tab, object, false);
 }
 
 gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
