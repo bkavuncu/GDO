@@ -75,7 +75,7 @@
             display: block;
         }
 
-        .btn:focus {outline: none;box-shadow: none;border:1px solid transparent;}
+        .btn:focus {outline: none;box-shadow: none;border:0px solid transparent;}
         .ui-autocomplete {
         position: absolute;
         top: 100%;

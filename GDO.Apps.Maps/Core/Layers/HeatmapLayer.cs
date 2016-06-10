@@ -9,7 +9,7 @@ namespace GDO.Apps.Maps.Core.Layers
     public class HeatmapLayer : Layer
     {
         public LinkParameter Source { get; set; }
-        public StringArrayParameter Gradient { get; set; }
+        public ColorArrayParameter Gradient { get; set; }
         public SliderParameter Radius { get; set; }
         public SliderParameter Shadow { get; set; }
         public SliderParameter Weight { get; set; }
@@ -32,7 +32,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 ObjectType = "ol.source.Vector",
             };
 
-            Gradient = new StringArrayParameter
+            Gradient = new ColorArrayParameter
             {
                 Name = "Gradient",
                 PropertyName = "gradient",

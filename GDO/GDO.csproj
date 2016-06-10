@@ -620,6 +620,7 @@
     <Content Include="CSS\rangeslider.css" />
     <Content Include="Img\gdo.png" />
     <Content Include="Img\logo.png" />
+    <Content Include="Scripts\colors.js" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\enscroll-0.6.1.min.js" />
     <Content Include="Scripts\gdo.management.console.js" />
@@ -956,6 +957,7 @@
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="CSS\jquery-ui.css" />
+    <Content Include="Scripts\jquery-colorpicker.js" />
     <Content Include="Scripts\jquery-colorpicker.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="CSS\jquery-ui.min.css" />

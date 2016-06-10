@@ -11,16 +11,17 @@ namespace GDO.Utility
     {
         Boolean = 1, //Basic on/off button
         String = 2, //String input
-        Integer = 4, //Integer Input
-        Float = 5, //Float Input
-        Increment = 6, //Increment input
-        Slider = 7, //Slider with Min-Max
-        Color = 8, //Color Picker
-        DataList = 9, //If Array use Array
-        Link = 10, //Link to another object (visualised as datalist)
-        IntegerArray = 11, //Input with multiple cols for the array size
-        FloatArray = 12, //Input with multiple cols for the array size
-        StringArray = 13, //Input with multiple cols for the array size
+        Integer = 3, //Integer Input
+        Float = 4, //Float Input
+        Increment = 5, //Increment input
+        Slider = 6, //Slider with Min-Max
+        Color = 7, //Color Picker
+        DataList = 8, //If Array use Array
+        Link = 9, //Link to another object (visualised as datalist)
+        IntegerArray = 10, //Input with multiple cols for the array size
+        FloatArray = 11, //Input with multiple cols for the array size
+        StringArray = 12, //Input with multiple cols for the array size
+        ColorArray = 13, //Input with multiple cols for the array size
         TextArea = 14, //String appears as a text area input
     }
 
@@ -168,8 +169,6 @@ namespace GDO.Utility
         public int[] Values { get; set; }
         public int[] DefaultValues { get; set; }
         public int Length { get; set; }
-        public int? Value { get; set; }
-        public int? DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.IntegerArray;
         public new int ParameterType = (int)ParameterTypes.Array;
     }
@@ -178,8 +177,6 @@ namespace GDO.Utility
     {
         public float[] Values { get; set; }
         public float[] DefaultValues { get; set; }
-        public float? Value { get; set; }
-        public float? DefaultValue { get; set; }
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.FloatArray;
         public new int ParameterType = (int)ParameterTypes.Array;
@@ -190,10 +187,17 @@ namespace GDO.Utility
     {
         public string[] Values { get; set; }
         public string[] DefaultValues { get; set; }
-        public string Value { get; set; }
-        public string DefaultValue { get; set; }
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.StringArray;
+        public new int ParameterType = (int)ParameterTypes.Array;
+    }
+
+    public class ColorArrayParameter : Parameter
+    {
+        public string[] Values { get; set; }
+        public string[] DefaultValues { get; set; }
+        public int Length { get; set; }
+        public new int InputType = (int)InputTypes.ColorArray;
         public new int ParameterType = (int)ParameterTypes.Array;
     }
 
