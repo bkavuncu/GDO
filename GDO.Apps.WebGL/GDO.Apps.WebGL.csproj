@@ -157,6 +157,7 @@
     <Content Include="Configurations\WebGL\WPB - 100 duplicates.json" />
     <Content Include="Configurations\WebGL\WPB - tearing test.json" />
     <Content Include="Configurations\WebGL\WPB - 121 duplicates.json" />
+    <Content Include="Configurations\WebGL\WPB - 9 duplicates.json" />
     <None Include="Properties\PublishProfiles\DSI.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
