@@ -165,6 +165,8 @@ gdo.net.app["Maps"].registerRemoveButton = function (instanceId, tab) {
     }
 }
 
+
+
 gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputDiv, isCreate) {
     if (property.IsVisible) {
         if (property.Priority == 0 || property.Priority == -1) {
@@ -260,15 +262,30 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 break;
             case 7: //Slider
                 $("iframe").contents().find("#" + inputDiv).append(
-                    "<div id='" + inputDiv + "_value' class='col-md-5 input_field_div' style='text-align:left'>" +
-                    "<input id='" + inputDiv + "_slider_input' type='range' max='" + property.MaxValue + "' min='" + property.MinValue + "' step='" + property.Increment + "' class='input_field'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
-                    "</div><div class='col-md-2' id='" + inputDiv + "_slider_value_div'><input id='" + inputDiv + "_slider_value' class='input_field disable'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>");
+                  "<div id='" + inputDiv + "_value' class='col-md-5 input_field_div' style='text-align:left'>" +
+                  "<input id='" + inputDiv + "_slider_input' type='range' max='" + property.MaxValue + "' min='" + property.MinValue + "' step='" + property.Increment + "' class='input_field range-slider__range'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
+                  "</div><div class='col-md-2' id='" + inputDiv + "_slider_value_div'><input id='" + inputDiv + "_slider_value' class='input_field disable'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>");
                 $("iframe").contents().find("#" + inputDiv + "_slider_input").change(function () {
                     $("iframe").contents().find("#" + inputDiv + "_slider_value").empty().attr("value", ($("iframe").contents().find("#" + inputDiv + "_slider_input").val()));
                 });
+                $("iframe").contents().find("#" + inputDiv + "_slider_input_value").change(function () {
+                    $("iframe").contents().find("#" + inputDiv + "_slider_input").attr("value", ($("iframe").contents().find("#" + inputDiv + "_slider_input_value").val()));
+                });
                 break;
             case 8: //Color
-                //
+                $("iframe").contents().find("#" + inputDiv).append(
+                    "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' >" +
+                    "<input type='text' id='" + inputDiv + "_value_input' class='color no-alpha form-control input_field input-xs'  style='width: 100%;height: 3vh;text-align:left'  value='" + value + "'/></input>" +
+                    "</div>");
+                var frame = parent.document.getElementById("control_frame_content");
+                $("iframe").contents().find("#" + inputDiv + "_value_input").colorPicker({
+                    body: frame.contentDocument.body,
+                    cssAddon: '.cp-color-picker{border-radius:0px}',
+                    margin: '57px 810px',
+                });
+                $("#cp-color-picker").css("right", 0).css("bottom", 0);
+
+
                 break;
             case 9: //DataList
                 $("iframe").contents().find("#" + inputDiv).append(
