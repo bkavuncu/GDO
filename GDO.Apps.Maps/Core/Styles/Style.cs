@@ -71,7 +71,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "ZIndex",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
         }
     }

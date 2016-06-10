@@ -36,7 +36,8 @@ namespace GDO.Apps.Maps.Core.Layers
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
                 IsVisible = true,
-                DefaultValue = 0
+                DefaultValue = 0,
+                Increment = 1,
             };
         }
     }

@@ -13,7 +13,7 @@ namespace GDO.Utility
         String = 2, //String input
         Integer = 3, //Integer Input
         Float = 4, //Float Input
-        Increment = 5, //Increment input
+        //Increment = 5, //Increment input
         Slider = 6, //Slider with Min-Max
         Color = 7, //Color Picker
         DataList = 8, //If Array use Array
@@ -78,17 +78,6 @@ namespace GDO.Utility
         public int? DefaultValue { get; set; }
         public int? Increment { get; set; }
         public new int InputType = (int)InputTypes.Integer;
-        public new int ParameterType = (int)ParameterTypes.Variable;
-    }
-
-    public class IncrementParameter : Parameter
-    {
-        public float? Value { get; set; }
-        public float? DefaultValue { get; set; }
-        public float? MinValue { get; set; }
-        public float? MaxValue { get; set; }
-        public float? Increment { get; set; }
-        public new int InputType = (int)InputTypes.Increment;
         public new int ParameterType = (int)ParameterTypes.Variable;
     }
 

@@ -37,6 +37,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = 2048,
+                Increment = 1,
             };
 
             CrossOrigin = new StringParameter
@@ -93,6 +94,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 DefaultValue = 0,
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
+                Increment = 1,
             };
 
             Origin = new FloatArrayParameter
@@ -155,6 +157,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = 1,
+                Increment = (float)0.1,
             };
 
             Url = new StringParameter

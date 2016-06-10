@@ -43,6 +43,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
+                Increment = 1,
             };
             OffsetY = new NullableIntegerParameter
             {
@@ -53,6 +54,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
+                Increment = 1,
             };
             Scale = new FloatParameter
             {
@@ -63,6 +65,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 1,
+                Increment = (float)0.1,
             };
             Rotation = new FloatParameter
             {
@@ -73,6 +76,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 0,
+                Increment = (float)0.1,
             };
             Content = new StringParameter
             {

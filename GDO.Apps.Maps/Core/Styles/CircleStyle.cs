@@ -38,7 +38,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Radius of the circle",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
 
             SnapToPixel = new BooleanParameter

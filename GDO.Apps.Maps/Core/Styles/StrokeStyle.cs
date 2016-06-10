@@ -70,6 +70,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValue = 10,
+                Increment = 1,
             };
             Width = new NullableIntegerParameter
             {
@@ -79,6 +80,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
                 IsVisible = true,
+                Increment = 1,
             };
         }
     }

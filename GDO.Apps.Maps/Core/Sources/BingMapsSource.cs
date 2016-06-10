@@ -60,6 +60,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
+                Increment = 1,
             };
         }
     }

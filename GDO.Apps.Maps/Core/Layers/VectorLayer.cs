@@ -51,6 +51,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
+                Increment = 1,
             };
 
             UpdateWhileAnimating = new BooleanParameter

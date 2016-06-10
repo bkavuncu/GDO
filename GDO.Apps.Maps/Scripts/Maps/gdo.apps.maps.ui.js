@@ -246,36 +246,41 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
             case 3: //Integer
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                    "<input id='" + inputDiv + "_value_input' type='number' class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
+                    "<div class='col-md-10' style='padding:0px;height: 3vh;'><input id='" + inputDiv + "_value_input' type='number' step='" + property.Increment + "' class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>" +
+                    "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_plus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>+</b></button></div>" +
+                    "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_minus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>-</b></button></div>" +
                     "</div>");
+                /*$("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").val("value", parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) + 1));
+                });
+                $("iframe").contents().find("#" + inputDiv + "_minus").click(function () {
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").val("value",  parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) - 1));
+                });*/
                 break;
             case 4: //Float
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                    "<input id='" + inputDiv + "_value_input' type='number' step='0.00001' class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
+                    "<div class='col-md-10' style='padding:0px;height: 3vh;'><input id='" + inputDiv + "_value_input' type='number' step='0.00001'class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>" +
+                    "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_plus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>+</b></button></div>" +
+                    "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_minus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>-</b></button></div>" +
                     "</div>");
-                break;
-            case 5: //Increment
-                $("iframe").contents().find("#" + inputDiv).append(
-                    "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                    "<input id='" + inputDiv + "_value_input' type='number' step='0.00001' class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
-                    "<button type='button' id='" + inputDiv + "_plus' class='btn btn-primary'>+</button>" +
-                    "<button type='button' id='" + inputDiv + "_minus' class='btn btn-primary'>-</button>" +
-                    "</div>");
-                $("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_value_input").attr("value", $("iframe").contents().find("#" + inputDiv + "_value_input").val() + property.Increment);
+                /*$("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val() + 0.1));
                 });
                 $("iframe").contents().find("#" + inputDiv + "_minus").click(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_value_input").attr("value", $("iframe").contents().find("#" + inputDiv + "_value_input").val() - property.Increment);
-                });
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val() - 0.1));
+                });*/
+                break;
+            case 5: //Increment
+                //
                 break;
             case 6: //Slider
                 $("iframe").contents().find("#" + inputDiv).append(
-                  "<div id='" + inputDiv + "_value' class='col-md-5 input_field_div' style='text-align:left'>" +
-                  "<input id='" + inputDiv + "_slider_input' type='range' max='" + property.MaxValue + "' min='" + property.MinValue + "' step='" + property.Increment + "' class='input_field range-slider__range'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
-                  "</div><div class='col-md-2' id='" + inputDiv + "_slider_value_div'><input id='" + inputDiv + "_slider_value' class='input_field disable'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>");
+                  "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                  "<div class='col-md-10' style='padding:0px;height: 3vh;'><input id='" + inputDiv + "_slider_input' type='range' max='" + property.MaxValue + "' min='" + property.MinValue + "' step='" + property.Increment + "' class='input_field range-slider__range'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>" +
+                  "<div class='col-md-2' style='padding:0px'><input id='" + inputDiv + "_slider_value' class='input_field disable'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div></div>");
                 $("iframe").contents().find("#" + inputDiv + "_slider_input").change(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_slider_value").empty().attr("value", ($("iframe").contents().find("#" + inputDiv + "_slider_input").val()));
+                    $("iframe").contents().find("#" + inputDiv + "_slider_value").val(($("iframe").contents().find("#" + inputDiv + "_slider_input").val()));
                 });
                 /*$("iframe").contents().find("#" + inputDiv + "_slider_input_value").change(function () {
                     $("iframe").contents().find("#" + inputDiv + "_slider_input").attr("value", ($("iframe").contents().find("#" + inputDiv + "_slider_input_value").val()));
@@ -389,7 +394,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
             $("iframe").contents().find("#" + inputDiv).css("opacity", "0.5").css("pointer-events", "none");
         }
         if (property.Priority == -1) {
-            $("iframe").contents().find("#" + inputDiv + "_value_input").css("opacity", "0.5").css("pointer-events", "none");
+            $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
         }
     }
 }

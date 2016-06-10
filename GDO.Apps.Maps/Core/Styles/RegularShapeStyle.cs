@@ -40,7 +40,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Number of points for stars and regular polygons. In case of a polygon, the number of points is the number of sides.",
                 Priority = (int)GDO.Utility.Priorities.Required,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
             Radius = new NullableIntegerParameter
             {
@@ -49,7 +50,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Radius of a regular polygon.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
             Radius1 = new NullableIntegerParameter
             {
@@ -58,7 +60,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Inner radius of a star.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
             Radius2 = new NullableIntegerParameter
             {
@@ -67,7 +70,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Description = "Outer Radius of a star",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
             Angle = new IntegerParameter
             {
@@ -77,7 +81,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValue = 0
+                DefaultValue = 0,
+                Increment = 1,
             };
             SnapToPixel = new BooleanParameter
             {
