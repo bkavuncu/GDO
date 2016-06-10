@@ -17,6 +17,7 @@ function initWebgl(id, locations, shader, completeInit) {
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
+    //canvas.height = 270;
     //canvas.width = 960;
     //canvas.height = 540;
     canvas.width = 1920;
@@ -61,7 +62,7 @@ function initWebgl(id, locations, shader, completeInit) {
     //gl.compileShader(fragmentShader);
 
     loadFiles(['../scripts/Fractals/Shaders/rayMarch.js', '../scripts/Fractals/Shaders/init.js'], function (shaderText) {
-        gdo.consoleOut('.Fractals', 1, shaderText[0] + shaderText[1]);
+        //gdo.consoleOut('.Fractals', 1, shaderText[0] + shaderText[1]);
         // Compile fragment shader
         fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(fragmentShader, shaderText[0] + shaderText[1]);
@@ -236,7 +237,7 @@ function renderSync(locations, gl, program) {
             // Ensure continuous rendering
             window.requestAnimationFrame(function () {
                 rendering = false;
-                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId);
+                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
             });
 
             // Apply params

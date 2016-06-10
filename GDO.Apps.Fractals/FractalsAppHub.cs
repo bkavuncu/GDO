@@ -488,8 +488,7 @@ namespace GDO.Apps.Fractals
                     FA.Sync = !FA.Sync;
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
                     Clients.Group("" + instanceId).updateParams(instanceId, Json);
-                    Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
-
+                    //Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
                 }
                 catch (Exception e)
                 {
@@ -498,7 +497,7 @@ namespace GDO.Apps.Fractals
             }
         }
 
-        public void AckFrameRendered(int instanceId)
+        public void AckFrameRendered(int instanceId, int clientId)
         {
             if (instanceId == -1) return;
             lock (Cave.AppLocks[instanceId])
@@ -506,22 +505,30 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    if (FA.rendering)
-                    {
-                        
-                        FA.Acks++;
 
-                        if (FA.Acks >= FA.Nodes)
+                    // Ack frames
+                    if (FA.RenderedFrameNodesAcked[clientId] == 0)
+                    {
+                        FA.RenderedFrameNodesAcked[clientId] = 1;
+                    }
+
+                    // Sum acks
+                    int sum = 0;
+                    for (int i = 0; i < 64; i++)
+                    {
+                        sum += FA.RenderedFrameNodesAcked[i];
+                    }
+
+                    if (sum >= FA.Section.NumNodes)
                         {
-                            FA.rendering = false;
-                            FA.swapping = true;
+
                             FA.CurrentFrame = (FA.CurrentFrame + 1) % 2;
 
                             string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
 
                             Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + FA.SyncTime);
                         }
-                    }
+                    
 
                 }
                 catch (Exception e)
@@ -531,7 +538,7 @@ namespace GDO.Apps.Fractals
             }
         }
 
-        public void AckSwapFrame(int instanceId)
+        public void AckSwapFrame(int instanceId, int clientId)
         {
             if (instanceId == -1) return;
             lock (Cave.AppLocks[instanceId])
@@ -539,28 +546,58 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    if (FA.swapping)
-                    {
-                        
-                        FA.SwapFrameAcks++;
 
-                        if (FA.SwapFrameAcks >= FA.Nodes)
+                        // Ack frames
+                        if (FA.SwapFrameNodesAcked[clientId] == 0)
                         {
-                            FA.swapping = false;
-                            FA.rendering = true;
-                            FA.Acks = 0;
-                            FA.SwapFrameAcks = 0;
-                            FA.Nodes += FA.NewNodes;
-                            FA.NewNodes = 0;
+                            FA.SwapFrameNodesAcked[clientId] = 1;
+                        }
+
+                        // Sum acks
+                        int sum = 0;
+                        for (int i = 0; i < 64; i++)
+                        {
+                            sum += FA.SwapFrameNodesAcked[i];
+                        }
+
+                        if (sum >= FA.Section.NumNodes)
+                        {
+                            
+                            // Reset acks
+                            for (int i = 0; i < 64; i++)
+                            {
+                                FA.SwapFrameNodesAcked[i] = 0;
+                            }
+
+                            for (int i = 0; i < 64; i++)
+                            {
+                                FA.RenderedFrameNodesAcked[i] = 0;
+                            }                 
+
                             Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
                         }
-                    }
+                    
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        public void BeginRendering(int instanceId)
+        {
+            if (instanceId == -1) return;
+                try
+                {
+                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    Clients.Caller.renderFirstFrame(instanceId, FA.CurrentFrame, FA.Sync);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
         }
 
         public void IncNodes(int instanceId, int clientId)

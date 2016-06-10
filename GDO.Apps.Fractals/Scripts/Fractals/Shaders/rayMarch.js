@@ -98,6 +98,8 @@ float DE(vec3 pos) {
 
 	if (fractal == 0) {
 
+        // MANDELBROT TRIPLEX
+
 		// Treat as sphere beyond 2.0
 		//if (length(pos) > 2.0) {
 		//return length(pos) - 1.9;
@@ -135,7 +137,9 @@ float DE(vec3 pos) {
 		return 0.5*log(r)*r / dr;
 
 	}
-	else if (fractal == 1) {
+		else if (fractal == 1) {
+
+        // MANDELBOX
 
 		vec3 z = pos;
 
@@ -156,7 +160,8 @@ float DE(vec3 pos) {
 		return r / abs(dr);
 
 	}
-	else {
+		else if (fractal == 2) {
+            // JULIA QUAT
 
 		//vec4 c = vec4(0.18, 0.88, 0.24, 0.16);
 		//float threshold = 10.0;
@@ -172,7 +177,62 @@ float DE(vec3 pos) {
 		}
 		float r = length(p);
 		return  0.5 * r * log(r) / length(dp);
-	}
+
+		} else if (fractal == 3) {
+		    // JULIA TRIPLEX
+			    float Bailout = 8.0;
+			    //float Power = 2.0;
+
+			    vec3 z = pos;
+			    float dr = 1.0;
+			    float r = length(pos);
+
+			    //vec4 c = vec4(0.18,0.88,0.24,0.16);
+            
+			    for (int i = 0; i < 1/0 ; i++) {
+
+			        // Weird bug - without 2nd line it crashes ???
+                    if (i >= iterations) break;
+                    if (i>1/0) break;
+
+                    r = length(z);
+                    if (r>Bailout) break;
+		
+			        // convert to polar coordinates
+                    float theta = acos(z.z/r);
+                    float phi = atan(z.y,z.x);
+                    dr =  pow( r, power-1.0)*power*dr;
+		
+			        // scale and rotate the point
+                    float zr = pow( r,power);
+                    theta = theta*power;
+                    phi = phi*power;
+		
+			        // convert back to cartesian coordinates
+                    z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
+                    z+=length(c);
+			    }
+
+		    return 0.5*log(r)*r/dr;
+		} else {
+		    // QUAT MANDELBROT
+		    //vec4 c = vec4(0.18,0.88,0.24,0.16);
+		    //float threshold = 100.0;
+		    //int iterations = 12;
+
+		    vec4 p = vec4(0.0);
+		    vec4 dp = vec4(1.0, 0.0,0.0,0.0);
+		    for (int i = 0; i < 1/0; i++) {
+                if (i > iterations) break;
+                if (i>1 / 0) break;
+                dp = 2.0* vec4(p.x*dp.x-dot(p.yzw, dp.yzw), p.x*dp.yzw+dp.x*p.yzw+cross(p.yzw, dp.yzw)) + vec4(1.0, vec3(0.0));
+                p = vec4(p.x*p.x-dot(p.yzw, p.yzw), vec3(2.0*p.x*p.yzw)) + vec4(pos, 0.0);
+                float p2 = dot(p,p);
+                if (p2 > threshold) break;
+		    }
+		    float r = length(p);
+		    return  0.5 * r * log(r) / length(dp);
+		}
 
 }
 

@@ -99,7 +99,7 @@ $("iframe").contents().find("#fractal_select").on("change", function () {
             p.fractal = 1;
 
             break;
-        case "Julia":
+        case "JuliaQuat":
             $("iframe").contents().find("#iterations_row").show();
             $("iframe").contents().find("#power_row").hide();
             $("iframe").contents().find("#scale_row").hide();
@@ -109,6 +109,29 @@ $("iframe").contents().find("#fractal_select").on("change", function () {
             $("iframe").contents().find("#c_w_row").show();
             $("iframe").contents().find("#threshold_row").show();
             p.fractal = 2;
+            break;
+        case "JuliaTriplex":
+            $("iframe").contents().find("#iterations_row").show();
+            $("iframe").contents().find("#power_row").show();
+            $("iframe").contents().find("#scale_row").hide();
+            $("iframe").contents().find("#c_x_row").show();
+            $("iframe").contents().find("#c_y_row").show();
+            $("iframe").contents().find("#c_z_row").show();
+            $("iframe").contents().find("#c_w_row").show();
+            $("iframe").contents().find("#threshold_row").hide();
+            p.power = 2;
+            p.fractal = 3;
+            break;
+        case "MandelbrotQuat":
+            $("iframe").contents().find("#iterations_row").show();
+            $("iframe").contents().find("#power_row").hide();
+            $("iframe").contents().find("#scale_row").hide();
+            $("iframe").contents().find("#c_x_row").hide();
+            $("iframe").contents().find("#c_y_row").hide();
+            $("iframe").contents().find("#c_z_row").hide();
+            $("iframe").contents().find("#c_w_row").hide();
+            $("iframe").contents().find("#threshold_row").show();
+            p.fractal = 4;
             break;
     }
     resetUI(p);

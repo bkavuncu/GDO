@@ -53,6 +53,22 @@ $(function () {
             }
         };
 
+        $.connection.fractalsAppHub.client.renderFirstFrame = function (instanceId, currentFrame, serverSync) {
+
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                sync = serverSync;
+
+                if (currentFrame == 0) {
+                    renderSync(locations1, gl1, program1);
+                } else {
+                    renderSync(locations2, gl2, program2);
+                }
+
+            }
+        };
+
         $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame) {
 
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -137,14 +153,14 @@ $(function () {
                             
                             $("iframe").contents().find("#screen1_marker").hide();
                             $("iframe").contents().find("#screen2_marker").show();
-                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                         }, timeout);
                     } else {
                         canvas1.style.zIndex = 0;
                         canvas2.style.zIndex = 5;
                         $("iframe").contents().find("#screen1_marker").hide();
                         $("iframe").contents().find("#screen2_marker").show();
-                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                     }
 
                 } else if (json.CurrentFrame == 1) {
@@ -154,14 +170,14 @@ $(function () {
                             canvas2.style.zIndex = 0;
                             $("iframe").contents().find("#screen1_marker").show();
                             $("iframe").contents().find("#screen2_marker").hide();
-                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                            gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                         }, timeout);
                     } else {
                         canvas1.style.zIndex = 5;
                         canvas2.style.zIndex = 0;
                         $("iframe").contents().find("#screen1_marker").show();
                         $("iframe").contents().find("#screen2_marker").hide();
-                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId);
+                        gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                     }
                 }
                 
@@ -225,7 +241,7 @@ completeinit2 = function (gl, program, canvas) {
     canvas2 = canvas;
     canvas2.style.zIndex = 0;
 
-    gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
+    gdo.net.app["Fractals"].server.beginRendering(gdo.net.node[gdo.clientId].appInstanceId);
 }
 
 gdo.net.app["Fractals"].initControl = function () {
@@ -238,7 +254,7 @@ gdo.net.app["Fractals"].initControl = function () {
 
 gdo.net.app["Fractals"].terminateClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Terminating Fractals App Client at Node ' + clientId);
-    gdo.net.app["Fractals"].server.decNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
+    //gdo.net.app["Fractals"].server.decNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 }
 
 gdo.net.app["Fractals"].ternminateControl = function () {
