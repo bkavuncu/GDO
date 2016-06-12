@@ -117,7 +117,7 @@ $("iframe").contents().find("#fractal_select").on("change", function () {
             $("iframe").contents().find("#c_x_row").show();
             $("iframe").contents().find("#c_y_row").show();
             $("iframe").contents().find("#c_z_row").show();
-            $("iframe").contents().find("#c_w_row").show();
+            $("iframe").contents().find("#c_w_row").hide();
             $("iframe").contents().find("#threshold_row").hide();
             p.power = 2;
             p.fractal = 3;

@@ -210,7 +210,7 @@ float DE(vec3 pos) {
 		
 			        // convert back to cartesian coordinates
                     z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
-                    z+=length(c);
+                    z+=c.xyz;
 			    }
 
 		    return 0.5*log(r)*r/dr;
