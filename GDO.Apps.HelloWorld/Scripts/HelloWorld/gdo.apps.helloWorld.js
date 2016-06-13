@@ -16,7 +16,7 @@ gdo.net.app["HelloWorld"].initControl = function () {
     .unbind()
     .click(function () {
         gdo.consoleOut('.HelloWorld', 1, 'Sending Name to Clients :[' + $("iframe").contents().find('#hello_input').val());
-        gdo.net.app["HelloWorld"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val() + " lol.");
+        gdo.net.app["HelloWorld"].server.setName(gdo.controlId, $("iframe").contents().find('#hello_input').val());
     });
 }
 

@@ -23,12 +23,6 @@ var checkGeneticAlgorithm = function (id) {
                 message += "<p>" + response.inputs.map(function (i) { return i.Value === true ? "1" : "0"; }).join('') + "</p>";
                 message += "<p>Hamming Weight : " + response.inputs.filter(function (i) { return i.Value === true; }).length + " </p>";
                 $('iframe').contents().find('#genetic_algorithm_message').html(message);
-                $('iframe').contents().find('#gaSheetManipulation').html("<h6>Currently Viewed Sheet</h6><select class=\"form-control\" id=\"gaSheet\">" +
-                    "<option value=\"" + response.outputDisplaySheet + "\">" + response.outputDisplaySheet + "</option>" + 
-                    "<option value=\"GeneticAlgorithm\">Fitness Chart</option></select>");
-                $('iframe').contents().find('#gaSheet').off('change').on('change', function() {
-                    viewSheet(id, $(this).find(":selected").val());
-                });
             } else {
                 $('iframe').contents().find('#genetic_algorithm_message').html("<p> Genetic Algorithm Running - " + response.iterations + " iterations");
                 setTimeout(function() { checkGeneticAlgorithm(id) }, 500);
@@ -77,7 +71,7 @@ var getFitnessDefinitions = function(response, options) {
 var createForm = function (id,response) {
     var form = $('iframe').contents().find('#output_definition_form');
     form.empty().append("<div class=\"form-inline\"><h5>Settings</h6>" +
-                    "<label>Iterations</label><input type=\"number\" class=\"form-control\" style=\"width:6em\" id=\"iterations\" value=10 />" +
+                    "<label>Generations</label><input type=\"number\" class=\"form-control\" style=\"width:6em\" id=\"iterations\" value=10 />" +
                     "<label>Chromosomes Per Node</label>" +
                     "<input type=\"number\" class=\"form-control\" style=\"width:6em\" id=\"chromosomesPerNode\" value=2 min=2 step=2 />" +
                     "</div>" +
@@ -124,6 +118,12 @@ var createForm = function (id,response) {
             "</div>"
         );
     }
+    $('iframe').contents().find('#gaSheetManipulation').html("<h6>Currently Viewed Sheet</h6><select class=\"form-control\" id=\"gaSheet\"><option value=\"GeneticAlgorithm\">Fitness Chart</option>" +
+    "<option value=\"" + response.outputDisplaySheet + "\">" + response.outputDisplaySheet + "</option>" +
+    "</select>");
+    $('iframe').contents().find('#gaSheet').off('change').on('change', function () {
+        viewSheet(id, $(this).find(":selected").val());
+    });
     form.off('submit').on('submit', function (e) {
         e.preventDefault();
         var options = form.serializeArray();

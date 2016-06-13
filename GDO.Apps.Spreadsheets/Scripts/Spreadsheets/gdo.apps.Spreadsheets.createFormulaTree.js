@@ -14,7 +14,7 @@ gdo.net.app["Spreadsheets"].createFormulaTree = function (response) {
         .projection(function (d) { return [d.y, d.x]; });
     var div = $('iframe').contents().find('#formula_tree');
     div.empty();
-    var svg = div[0].append("svg")
+    var svg = div.append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
