@@ -509,9 +509,9 @@ namespace GDO.Apps.Fractals
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
 
                     // Ack frames
-                    if (FA.RenderedFrameNodesAcked[clientId] == 0)
+                    if (FA.RenderedFrameNodesAcked[clientId-1] == 0)
                     {
-                        FA.RenderedFrameNodesAcked[clientId] = 1;
+                        FA.RenderedFrameNodesAcked[clientId-1] = 1;
                     }
 
                     // Sum acks
@@ -550,9 +550,9 @@ namespace GDO.Apps.Fractals
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
 
                         // Ack frames
-                        if (FA.SwapFrameNodesAcked[clientId] == 0)
+                        if (FA.SwapFrameNodesAcked[clientId-1] == 0)
                         {
-                            FA.SwapFrameNodesAcked[clientId] = 1;
+                            FA.SwapFrameNodesAcked[clientId-1] = 1;
                         }
 
                         // Sum acks
