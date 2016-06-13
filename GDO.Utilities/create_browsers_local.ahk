@@ -56,7 +56,6 @@ Loop, %Rows%
 		Sleep 200
 		WinActivate, %Title%%Node%
 		WinWaitActive, %Title%%Node%
-		
 		WinGet Style, Style, A
 		CordX := ((Col*Width)+TopLeftX)
 		CordY := (((Row-1)*Height)+TopLeftY)
