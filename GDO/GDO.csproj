@@ -1032,7 +1032,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>12332</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:12332</IISUrl>
+          <IISUrl>http://localhost:12332/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
