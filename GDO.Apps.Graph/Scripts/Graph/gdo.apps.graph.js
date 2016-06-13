@@ -19,6 +19,9 @@ $(function () {
     // boolean to track if current graph is zoomed
     var globalZoomed;
 
+    // flag to indicate if all nodes should have the same size. If so, 'normalRadius' is the value to be used.
+    var allNodesSameSize = true;
+
     // set size of nodes and links
     var zoomedRadius = 5;
     var zoomedStrokeWidth = 2;
@@ -79,7 +82,29 @@ $(function () {
     }
 
 
-    $.connection.graphAppHub.client.renderLabels = function (field) {
+    $.connection.graphAppHub.client.setFields = function (options) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.Graph', 1, 'Set fields ');
+
+            //add fields in loaded graph to the appropriate droplists
+            var elem1 = $("iframe").contents().find("#select_label");
+            var elem2 = $("iframe").contents().find("#select_SearchFields");
+            var elem3 = $("iframe").contents().find("#select_SearchLabels");
+            var elem4 = $("iframe").contents().find("#select_mostConnectedLabels");
+            elem1.html();
+            elem2.html();
+            elem3.html();
+            elem4.html();
+            $.each(options, function () {
+                elem1.append($("<option />").val(this).text(this));
+                elem2.append($("<option />").val(this).text(this));
+                elem3.append($("<option />").val(this).text(this));
+                elem4.append($("<option />").val(this).text(this));
+            });
+        } 
+    }
+
+    $.connection.graphAppHub.client.renderLabels = function (field, color) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var labelsDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("labels");
@@ -92,7 +117,7 @@ $(function () {
                     .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
                     .text(node.Attrs[field] ? node.Attrs[field] : "")  // if the field does not exist for the curent node, print nothing
                     .attr("font-size", fontSize)
-                    .attr("fill", "white");    // Labels: normal mode
+                    .attr("fill", color);
             });
         }
     }
@@ -190,12 +215,11 @@ $(function () {
                             .attr("stroke", "yellow");
                     }
                 });
-
             }
         }
     }
 
-    $.connection.graphAppHub.client.renderSearchLabels = function (searchquery, field) {
+    $.connection.graphAppHub.client.renderSearchLabels = function (field) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
 
@@ -207,7 +231,7 @@ $(function () {
                     highlightDom.append("text")
                         .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
                         .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
-                        .text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing (should exist unless the user has changed the droplist...)
+                        .text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the current node, print nothing (should exist unless the user has changed the droplist...)
                         .attr("font-size", fontSize)
                         .attr("fill", "rgb(" + highlightedColor3.r + "," + highlightedColor3.g + "," + highlightedColor3.b + ")");
                 }
@@ -216,7 +240,7 @@ $(function () {
                     highlightDom.append("text")
                         .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
                         .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
-                        //.text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the curent node, print nothing
+                        //.text(node.Attrs[field] ? node.Attrs[field] : "") // if the field does not exist for the current node, print nothing
                         .text(node.Label) // print the label instead
                         .attr("font-size", fontSize)
                         .attr("fill", "rgb(" + highlightedColor2.r + "," + highlightedColor2.g + "," + highlightedColor2.b + ")"); 
@@ -264,7 +288,7 @@ $(function () {
     }
 
 
-    $.connection.graphAppHub.client.renderMostConnectedNodes = function (numLinks) {
+    $.connection.graphAppHub.client.renderMostConnectedNodes = function (numLinks, color) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
@@ -277,14 +301,13 @@ $(function () {
                         .attr("r", Math.ceil(node.Size))
                         .attr("cx", node.Pos.X)
                         .attr("cy", node.Pos.Y)
-                        .attr("fill", "rgb(" + highlightedColor.r + "," + highlightedColor.g + "," + highlightedColor.b + ")");    // Nodes: highlighted mode
+                        .attr("fill", color);   
                 }
             });
-
         }
     }
 
-    $.connection.graphAppHub.client.renderMostConnectedLabels = function (numLinks) {
+    $.connection.graphAppHub.client.renderMostConnectedLabels = function (numLinks, field, color) {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
             var highlightDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("highlight");
@@ -296,12 +319,11 @@ $(function () {
                     highlightDom.append("text")
                         .attr("x", node.Pos.X + Math.ceil(node.Size) + 1)
                         .attr("y", node.Pos.Y - Math.ceil(node.Size) - 1)
-                        .text(node.Label)
+                        .text(node.Attrs[field] ? node.Attrs[field] : "")  // if the field does not exist for the curent node, print nothing
                         .attr("font-size", fontSize)
-                        .attr("fill", "yellow");    // Labels: highlighted mode        
+                        .attr("fill", color); 
                 }
             });
-
         }
     }
 
@@ -325,11 +347,12 @@ $(function () {
             //var radius = globalZoomed ? zoomedRadius : normalRadius;
 
             nodes.forEach(function (node) {
-
                 var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
+                var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size);
+
                 nodesDom.append("circle")
-                    .attr("r", Math.ceil(node.Size)) // radius
+                    .attr("r", radius) // radius
                     .attr("cx", node.Pos.X)
                     .attr("cy", node.Pos.Y)
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
@@ -362,7 +385,7 @@ $(function () {
                     .attr("x2", link.EndPos.X)
                     .attr("y2", link.EndPos.Y)
                     .attr("stroke-width", strokeWidth)
-                    .attr("stroke", "#B8B8B8");
+                    .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
             });
         }
     }
@@ -814,7 +837,7 @@ $(function () {
                                         .attr("x2", link.EndPos.X)
                                         .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", zoomedStrokeWidth)
-                                        .attr("stroke", "#B8B8B8");
+                                        .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
                                 });
 
                                 console.log("Time after appending links: " + window.performance.now());
@@ -866,6 +889,8 @@ $(function () {
                 svgDom: document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("graphArea")
             };
 
+            //Be sure that mostConnectedNodes is empty from previous Graphs
+            mostConnectedNodes = [];
 
             (function e(t, n, r) { function s(o, u) { if (!n[o]) { if (!t[o]) { var a = typeof require == "function" && require; if (!u && a) return a(o, !0); if (i) return i(o, !0); var f = new Error("Cannot find module '" + o + "'"); throw f.code = "MODULE_NOT_FOUND", f } var l = n[o] = { exports: {} }; t[o][0].call(l.exports, function (e) { var n = t[o][1][e]; return s(n ? n : e) }, l, l.exports, e, t, n, r) } return n[o].exports } var i = typeof require == "function" && require; for (var o = 0; o < r.length; o++) s(r[o]); return s })({
                 1: [function (require, module, exports) {
@@ -1257,7 +1282,7 @@ $(function () {
 
                                 svgRoot.attr("viewBox", offset.x + " " + offset.y + " " + settings.defaultDisplayDimension.width + " " + settings.defaultDisplayDimension.height);
 
-                                var radius = zoomed ? zoomedRadius : normalRadius;
+                                //var radius = zoomed ? zoomedRadius : normalRadius;
 
                                 nodes.forEach(function (node) {
 
@@ -1265,9 +1290,11 @@ $(function () {
                                         mostConnectedNodes.push(node);
                                     }
 
+                                    var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size);
+
                                     //var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
                                     nodesDom.append("circle")
-                                        .attr("r", Math.ceil(node.Size)) // radius
+                                        .attr("r", radius) // radius
                                         .attr("cx", node.Pos.X)
                                         .attr("cy", node.Pos.Y)
                                         //.attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");
@@ -1303,7 +1330,7 @@ $(function () {
                                         .attr("x2", link.EndPos.X)
                                         .attr("y2", link.EndPos.Y)
                                         .attr("stroke-width", strokeWidth)
-                                        .attr("stroke", "#B8B8B8");
+                                        .attr("stroke", "rgb(" + link.R + "," + link.G + "," + link.B + ")");
                                 });
                                 console.log("Time after appending links: " + window.performance.now());
                             }
@@ -1325,7 +1352,7 @@ gdo.net.app["Graph"].initClient = function () {
 }
 
 gdo.net.app["Graph"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Initializing Graph Renderer App Control at Instance ' + gdo.controlId);
 }

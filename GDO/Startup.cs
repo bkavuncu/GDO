@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.Reflection;
 using Autofac;
 using Autofac.Integration.SignalR;
@@ -9,6 +10,8 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin;
 using GDO.Core;
+using GDO.Core.Apps;
+using GDO.Core.Modules;
 using log4net;
 using Owin;
 using Microsoft.Owin.Cors;
@@ -62,25 +65,63 @@ namespace GDO
         [ImportMany(typeof(IAppHub))]
         private List<IAppHub> _caveapps { get; set; }
 
+        [ImportMany(typeof(IModuleHub))]
+        private List<IModuleHub> _cavemodules { get; set; }
+
         public IList<Assembly> GetAssemblies()
         {
-        IList<Assembly> assemblies = new List<Assembly>();
-            var catalog = new AggregateCatalog();
-            string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
-            foreach (String appDir in appDirs)
+            try
             {
-                catalog.Catalogs.Add(new DirectoryCatalog(@appDir));
+                IList<Assembly> assemblies = new List<Assembly>();
+                var catalog = new AggregateCatalog();
+                string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
+                foreach (String appDir in appDirs)
+                {
+                    catalog.Catalogs.Add(new DirectoryCatalog(@appDir));
+                }
+                var ccontainer = new CompositionContainer(catalog);
+                ccontainer.ComposeParts(this);
+                assemblies.Add(typeof (CaveHub).Assembly);
+                foreach (var caveapp in _caveapps)
+                {
+                    if (caveapp is IBaseAppHub)
+                    {
+                        Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
+                        assemblies.Add(caveapp.GetType().Assembly);
+                    }
+                    else if (caveapp is IAdvancedAppHub)
+                    {
+                        Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true,
+                            ((IAdvancedAppHub) caveapp).SupportedApps);
+                        assemblies.Add(caveapp.GetType().Assembly);
+                    }
+                    else
+                    {
+                        throw new Exception("Cave App Class not recognized");
+                    }
+
+                    //assemblies.Add(caveapp.InstanceType.Assembly);
+                }
+                foreach (var cavemodule in _cavemodules)
+                {
+                    Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
+                    assemblies.Add(cavemodule.GetType().Assembly);
+                }
+                return assemblies;
             }
-            var ccontainer = new CompositionContainer(catalog);
-            ccontainer.ComposeParts(this);
-            assemblies.Add(typeof(CaveHub).Assembly);
-            foreach (var caveapp in _caveapps)
+            catch (Exception ex)
             {
-                Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType);
-                assemblies.Add(caveapp.GetType().Assembly);
-                //assemblies.Add(caveapp.InstanceType.Assembly);
+                if (ex is ReflectionTypeLoadException)
+                {
+                    var typeLoadException = ex as ReflectionTypeLoadException;
+                    var loaderExceptions = typeLoadException.LoaderExceptions;
+                    foreach (var loaderException in loaderExceptions)
+                    {
+                        throw loaderException;
+                    }
+                }
+                throw ex;
             }
-            return assemblies;
         }
     }
 

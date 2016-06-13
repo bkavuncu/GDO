@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Scripts.imagetiles.js", "application/x-javascript")]
@@ -16,7 +18,7 @@ using Newtonsoft.Json;
 namespace GDO.Apps.Images
 {
     [Export(typeof(IAppHub))]
-    public class ImagesAppHub : Hub, IAppHub
+    public class ImagesAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "Images";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

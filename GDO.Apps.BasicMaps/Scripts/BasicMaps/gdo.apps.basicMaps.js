@@ -11,12 +11,12 @@ var terrainProvider;
 
 $(function () {
     gdo.consoleOut('.BasicMaps', 1, 'Loaded BasicMaps JS');
-    gdo.net.app["BasicMaps"].numLayers = 13;
+    gdo.net.app["BasicMaps"].numLayers = 41;
     $.connection.basicMapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["BasicMaps"].updateCenter(instanceId);
-            //gdo.net.instance[instanceId].map.render();
-            //gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+            gdo.net.instance[instanceId].map.render();
+            gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
         }
     }
 
@@ -34,7 +34,7 @@ $(function () {
                 }
                 gdo.net.instance[instanceId].layers[id].setVisible(true);
             }
-        } else {       
+        } else {
             for (var i = 0; i < gdo.net.app["BasicMaps"].numLayers; i++) {
                 gdo.net.instance[instanceId].layers[i].setVisible(false);
                 if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -81,21 +81,23 @@ $(function () {
             gdo.net.instance[instanceId].map.getView().setZoom(zoom);
             gdo.net.instance[instanceId].map.updateSize();
             gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
+                //gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
+                setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
+                setTimeout(function () { gdo.net.app["BasicMaps"].changeEvent(instanceId); }, 210);
+            });
+            gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
                 setTimeout(function () { gdo.net.app["BasicMaps"].updateCenter(instanceId); }, 70);
-                gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
-            });
-            gdo.net.instance[instanceId].map.getView().on('change:zoom', function() {
-                gdo.net.app["BasicMaps"].changeEvent(instanceId);
-                setTimeout(function() {gdo.net.app["BasicMaps"].updateCenter(instanceId);}, 70);
                 gdo.net.app["BasicMaps"].server.updateResolution(instanceId);
             });
             gdo.net.instance[instanceId].map.getView().on('change:center', function () {
                 gdo.net.app["BasicMaps"].changeEvent(instanceId);
             });
             gdo.net.instance[instanceId].map.getView().on('change:rotation', function () {
-                gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
-                gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                //gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+                //gdo.net.app["BasicMaps"].changeEvent(instanceId);
+                gdo.net.instance[instanceId].map.getView().setRotation(0);
             });
             gdo.net.instance[instanceId].map.on('change:size', function () {
                 gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
@@ -117,14 +119,14 @@ $(function () {
             gdo.net.app["BasicMaps"].changeEvent(instanceId);
             gdo.net.app["BasicMaps"].drawMapTable(instanceId);
             gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
-            setTimeout(function() { gdo.net.app["BasicMaps"].server.updateResolution(instanceId); },700);
+            setTimeout(function () { gdo.net.app["BasicMaps"].server.updateResolution(instanceId); }, 700);
         }
     }
 });
 
 gdo.net.app["BasicMaps"].searchGeoCode = function (instanceId, address) {
     var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'address': address}, function(results, status) {
+    geocoder.geocode({ 'address': address }, function (results, status) {
         if (status === google.maps.GeocoderStatus.OK) {
             $("iframe").contents().find("#map_input_div").removeClass("has-error").addClass("has-success");
             var centerCoordinate = ol.proj.transform([results[0].geometry.location.lng(), results[0].geometry.location.lat()], 'EPSG:4326', 'EPSG:3857');
@@ -146,9 +148,9 @@ gdo.net.app["BasicMaps"].searchGeoCode = function (instanceId, address) {
                 gdo.net.app["BasicMaps"].displayPositionMarker(instanceId, centerCoordinate);
                 gdo.net.app["BasicMaps"].server.uploadMarkerPosition(instanceId, centerCoordinate);
             }, 70);
-            
+
         } else {
-            gdo.consoleOut(".BasicMaps",4,'Geocode was not successful for the following reason: ' + status);
+            gdo.consoleOut(".BasicMaps", 4, 'Geocode was not successful for the following reason: ' + status);
             $("iframe").contents().find("#map_input_div").removeClass("has-success").addClass("has-error");
         }
     });
@@ -171,77 +173,92 @@ gdo.net.app["BasicMaps"].clearInput = function () {
 gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoom) {
     gdo.net.instance[instanceId].view = new ol.View({
         center: [parseFloat(center[0]), parseFloat(center[1])],
+        constrainRotation: 0,
+        enableRotation: false,
         resolution: parseFloat(resolution),
         zoom: parseInt(zoom)
     });
     gdo.net.instance[instanceId].layers = [];
+
+    //Row 1
+
+    //Bing Maps (Aerial)
     gdo.net.instance[instanceId].layers[0] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
             imagerySet: 'Aerial',
             maxZoom: 19
         })
     });
     gdo.net.instance[instanceId].layers[0].wms = false;
 
+    //Bing Maps (Aerial with Labels)
     gdo.net.instance[instanceId].layers[1] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
             imagerySet: 'AerialWithLabels',
             maxZoom: 19
         })
     });
     gdo.net.instance[instanceId].layers[1].wms = false;
 
+    //Bing Maps (Road)
     gdo.net.instance[instanceId].layers[2] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
             imagerySet: 'Road',
             maxZoom: 19
         })
     });
     gdo.net.instance[instanceId].layers[2].wms = false;
 
+    //Bing Maps (Collins Bart)
     gdo.net.instance[instanceId].layers[3] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
             imagerySet: 'collinsBart',
             maxZoom: 19
         })
     });
     gdo.net.instance[instanceId].layers[3].wms = false;
 
+    //Bing Maps (Ordnance Survey)
     gdo.net.instance[instanceId].layers[4] = new ol.layer.Tile({
         preload: Infinity,
         visible: false,
         source: new ol.source.BingMaps({
-            key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
             imagerySet: 'ordnanceSurvey',
             maxZoom: 19
         })
     });
     gdo.net.instance[instanceId].layers[4].wms = false;
 
+    //MapQuest
     gdo.net.instance[instanceId].layers[5] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.MapQuest({ layer: 'osm' })
     });
     gdo.net.instance[instanceId].layers[5].wms = false;
 
+    //MapQuest (Satellite)
     gdo.net.instance[instanceId].layers[6] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.MapQuest({ layer: 'sat' })
     });
     gdo.net.instance[instanceId].layers[6].wms = false;
 
+    //Row 2
+
+    //Stamen Maps (Toner)
     gdo.net.instance[instanceId].layers[7] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.Stamen({
@@ -250,6 +267,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
     gdo.net.instance[instanceId].layers[7].wms = false;
 
+    //Stamen Maps (Terrain)
     gdo.net.instance[instanceId].layers[8] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.Stamen({
@@ -258,6 +276,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
     gdo.net.instance[instanceId].layers[8].wms = false;
 
+    //Stamen Maps (Watercolor)
     gdo.net.instance[instanceId].layers[9] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.Stamen({
@@ -266,41 +285,342 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     });
     gdo.net.instance[instanceId].layers[9].wms = false;
 
+    //CartoDB (Dark Matter)
     gdo.net.instance[instanceId].layers[10] = new ol.layer.Tile({
         visible: false,
-        source: new ol.source.OSM()
+        source: new ol.source.XYZ({
+            url: 'http://s.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+        })
     });
     gdo.net.instance[instanceId].layers[10].wms = false;
 
+    //CartoDB (Positron)
     gdo.net.instance[instanceId].layers[11] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.XYZ({
+            url: 'http://s.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[11].wms = false;
+
+    //MapBox (Runkeepers)
+    gdo.net.instance[instanceId].layers[12] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'https://{a-d}.tiles.mapbox.com/v4/heyitsgarrett.kf2a2nb1/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiaGV5aXRzZ2FycmV0dCIsImEiOiIwdWt5ZlpjIn0.73b7Y47rgFnSD7QCNeS-zA'
+        })
+    });
+    gdo.net.instance[instanceId].layers[12].wms = false;
+
+    //MapBox (Hybrid)
+    gdo.net.instance[instanceId].layers[13] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'https://{a-d}.tiles.mapbox.com/v3/tmcw.map-j5fsp01s/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[13].wms = false;
+
+    //Row 3
+
+    //Open Street Map
+    gdo.net.instance[instanceId].layers[14] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM()
+    });
+    gdo.net.instance[instanceId].layers[14].wms = false;
+
+    //Open Cycle Map
+    gdo.net.instance[instanceId].layers[15] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.OSM({
             url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
         })
     });
-    gdo.net.instance[instanceId].layers[11].wms = false;
+    gdo.net.instance[instanceId].layers[15].wms = false;
 
-    gdo.net.instance[instanceId].layers[12] = new ol.layer.Tile({
+    //Open Transport
+    gdo.net.instance[instanceId].layers[16] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.OSM({
             crossOrigin: null,
-            url: 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png'
+            url: 'https://{a-c}.tile.thunderforest.com/transport/{z}/{x}/{y}.png'
         })
     });
-    gdo.net.instance[instanceId].layers[12].wms = false;
+    gdo.net.instance[instanceId].layers[16].wms = false;
 
-    /*gdo.net.instance[instanceId].layers[13] = new ol.layer.Tile({
+    //Open Transport (Dark)
+    gdo.net.instance[instanceId].layers[17] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'https://{a-c}.tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[17].wms = false;
+
+    //Comic Style
+    gdo.net.instance[instanceId].layers[18] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'https://{a-d}.tiles.mapbox.com/v3/examples.bc17bb2a/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[18].wms = false;
+
+    //Michelin Map
+    gdo.net.instance[instanceId].layers[19] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://map{1-3}.viamichelin.com/map/mapdirect?map=viamichelin&z={z}&x={x}&y={y}&format=png&version=201503191157&layer=background'
+        })
+    });
+    gdo.net.instance[instanceId].layers[19].wms = false;
+
+    //Map1EU
+    gdo.net.instance[instanceId].layers[20] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://alpha.map1.eu/tiles/{z}/{x}/{y}.jpg'
+        })
+    });
+    gdo.net.instance[instanceId].layers[20].wms = false;
+
+    //Row 4 
+
+    //Open Topo Map
+    gdo.net.instance[instanceId].layers[21] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://{a-c}.tile.opentopomap.org/tiles/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[21].wms = false;
+
+    //Geofabrik Topo
+    gdo.net.instance[instanceId].layers[22] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'https://{a-c}.tile.geofabrik.de/15173cf79060ee4a66573954f6017ab0/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[22].wms = false;
+
+    //Esri (Topo)
+    gdo.net.instance[instanceId].layers[23] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}.jpg'
+        })
+    });
+    gdo.net.instance[instanceId].layers[23].wms = false;
+
+    //Esri
+    gdo.net.instance[instanceId].layers[24] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}.jpg'
+        })
+    });
+    gdo.net.instance[instanceId].layers[24].wms = false;
+
+    //Esri (NatGeo)
+    gdo.net.instance[instanceId].layers[25] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}.jpg'
+        })
+    });
+    gdo.net.instance[instanceId].layers[25].wms = false;
+
+    //Falk (OSM)
+    gdo.net.instance[instanceId].layers[26] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://ec2.cdn.ecmaps.de/WmsGateway.ashx.jpg?TileX={x}&TileY={y}&ZoomLevel={z}&Experience=falk&MapStyle=Falk%20OSM'
+        })
+    });
+    gdo.net.instance[instanceId].layers[26].wms = false;
+
+    //Falk (Original)
+    gdo.net.instance[instanceId].layers[27] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://ec2.cdn.ecmaps.de/WmsGateway.ashx.jpg?TileX={x}&TileY={y}&ZoomLevel={z}&Experience=falk&MapStyle=Falk%20Base'
+        })
+    });
+    gdo.net.instance[instanceId].layers[27].wms = false;
+
+    //Row 5
+
+
+
+
+    //ASTER GDEM & SRTM
+    gdo.net.instance[instanceId].layers[28] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://korona.geog.uni-heidelberg.de/tiles/asterh/x={x}&y={y}&z={z} '
+        })
+    });
+    gdo.net.instance[instanceId].layers[28].wms = true;
+
+    //Open Public Transport
+    gdo.net.instance[instanceId].layers[29] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://pt.openmap.lt/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[29].wms = true;
+
+    //Open Railway Map (Standard)
+    gdo.net.instance[instanceId].layers[30] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://{a-c}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[30].wms = true;
+
+    //Open Railway Map (Speed)
+    gdo.net.instance[instanceId].layers[31] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://{a-c}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png'
+        })
+    });
+    gdo.net.instance[instanceId].layers[31].wms = true;
+
+    //Strava Bike Heatmap (Purple)
+    gdo.net.instance[instanceId].layers[32] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color1/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[32].wms = true;
+
+    //Strava Running Heatmap (Purple)
+    gdo.net.instance[instanceId].layers[33] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color1/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[33].wms = true;
+
+    //Strava Bike Heatmap (Green)
+    gdo.net.instance[instanceId].layers[34] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color2/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[34].wms = true;
+
+    //Strava Running Heatmap (Green)
+    gdo.net.instance[instanceId].layers[35] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color2/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[35].wms = true;
+
+    //Strava Bike Heatmap (Orange)
+    gdo.net.instance[instanceId].layers[36] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color8/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[36].wms = true;
+
+    //Strava Running Heatmap (Orange)
+    gdo.net.instance[instanceId].layers[37] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color8/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[37].wms = true;
+
+    //Strava Bike Heatmap (Blue)
+    gdo.net.instance[instanceId].layers[38] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/cycling/color7/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[38].wms = true;
+
+    //Strava Running Heatmap (Blue)
+    gdo.net.instance[instanceId].layers[39] = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.OSM({
+            crossOrigin: null,
+            url: 'http://globalheat.strava.com/tiles/running/color7/{z}/{x}/{y}.png?v=6'
+        })
+    });
+    gdo.net.instance[instanceId].layers[39].wms = true;
+
+    //Imperial College Map
+    gdo.net.instance[instanceId].layers[40] = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            url: '/Data/BasicMaps/sk.json',
+            format: new ol.format.GeoJSON()
+        }),
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: '#64AAD2'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#468CD2',
+                width: 4
+            })
+        }),
+        opacity: 0.7
+    });
+    gdo.net.instance[instanceId].layers[40].wms = true;
+
+    //BGS Bedrock and Superficial Geology
+    /*gdo.net.instance[instanceId].layers[32] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.TileWMS({
             url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
-            params: { 'LAYERS': "BGS_EN_Bedrock_and_Superficial_Geology" },
+            params: { 'LAYERS': "GBR_BGS_625k_BA" },
             serverType: 'geoserver',
             crossOrigin: null
         })
     });
-    gdo.net.instance[instanceId].layers[13].wms = true;
+    gdo.net.instance[instanceId].layers[32].wms = true;*/
 
-    gdo.net.instance[instanceId].layers[14] = new ol.layer.Tile({
+    /*
+    gdo.net.instance[instanceId].layers[] = new ol.layer.Tile({
         visible: false,
         source: new ol.source.TileWMS({
             url: 'http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/ows?language=eng&SERVICE=WMS&REQUEST=GetCapabilities',
@@ -347,7 +667,7 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
     gdo.net.instance[instanceId].controls = new Array();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.instance[instanceId].controls = [];
-        gdo.net.instance[instanceId].controls[0] = new ol.control.OverviewMap({collapsed:false,collapsible:false});
+        gdo.net.instance[instanceId].controls[0] = new ol.control.OverviewMap({ collapsed: false, collapsible: false });
         gdo.net.instance[instanceId].controls[1] = new ol.control.Zoom();
         gdo.net.instance[instanceId].controls[2] = new ol.control.MousePosition({
             coordinateFormat: ol.coordinate.createStringXY(7),
@@ -362,7 +682,15 @@ gdo.net.app["BasicMaps"].initMap = function (instanceId, center, resolution, zoo
         controls: gdo.net.instance[instanceId].controls,
         layers: gdo.net.instance[instanceId].layers,
         target: 'map',
-        view: gdo.net.instance[instanceId].view
+        view: gdo.net.instance[instanceId].view,
+        interactions: ol.interaction.defaults({
+            pinchRotate: false,
+            zoomDuration: 0
+        }).extend([
+               new ol.interaction.MouseWheelZoom({ duration: 0 }),
+               new ol.interaction.PinchZoom({ duration: 0 }),
+               new ol.interaction.DragZoom({ duration: 0 })
+        ])
     });
 
     gdo.net.instance[instanceId].positionFeature = new ol.Feature();
@@ -417,8 +745,8 @@ gdo.net.app["BasicMaps"].calculateLocalCenter = function (topLeft, bottomRight) 
 gdo.net.app["BasicMaps"].initClient = function (clientId) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.BasicMaps', 1, 'Initializing BasicMaps App Instance ' + instanceId + ' Client at Node ' + clientId);
-    gdo.loadModule('ui', 'basicMaps', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'basicMaps', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('ui', 'basicMaps', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'basicMaps', gdo.SCRIPT_TYPE.APP);
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.app["BasicMaps"].C = 156543.034;
     gdo.net.app["BasicMaps"].R = 6378137;
@@ -443,14 +771,14 @@ gdo.net.app["BasicMaps"].initClient = function (clientId) {
 }
 
 gdo.net.app["BasicMaps"].initControl = function (instanceId) {
-    gdo.loadModule('ui', 'basicMaps', gdo.MODULE_TYPE.APP);
-    gdo.loadModule('3d', 'basicMaps', gdo.MODULE_TYPE.APP);
+    gdo.loadScript('ui', 'basicMaps', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('3d', 'basicMaps', gdo.SCRIPT_TYPE.APP);
     gdo.net.instance[instanceId].isInitialized = false;
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
     gdo.net.instance[instanceId].controlMaxWidth = 1490;
-    gdo.net.instance[instanceId].controlMaxHeight = 700;
+    gdo.net.instance[instanceId].controlMaxHeight = 600;
     gdo.net.instance[instanceId].controlRatio = gdo.net.instance[instanceId].controlMaxWidth / gdo.net.instance[instanceId].controlMaxHeight;
     gdo.net.instance[instanceId].controlWidth = 700;
     gdo.net.instance[instanceId].controlHeight = 350;

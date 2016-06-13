@@ -6,32 +6,30 @@ using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
+using GDO.Core.Apps;
 using log4net;
 
 namespace GDO.Apps.Graph
 {
 
-    public class GraphApp : IAppInstance {
+    public class GraphApp : IBaseAppInstance {
         private static readonly ILog Log = LogManager.GetLogger(typeof(GraphApp));
 
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
 
-        private GraphInfo graphinfo = new GraphInfo();
+        public GraphInfo graphinfo = new GraphInfo();
         private List<GraphNode> Nodes = new List<GraphNode>();
         private List<GraphLink> Links = new List<GraphLink>();
         public string FolderNameDigit;
 
-        // init is run when 'Deploy' is clicked
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
             try {
-                this.Id = instanceId;
-                this.AppName = appName;
-                this.Section = section;
-                this.Configuration = configuration;
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph"));
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
@@ -53,8 +51,6 @@ namespace GDO.Apps.Graph
         {
             string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
             GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
-
-            //File.Delete(graphMLfile);
 
             //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();
@@ -159,6 +155,10 @@ namespace GDO.Apps.Graph
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/");
             CreateTempFolder(folderName, basePath);
 
+            // log to index file  
+            String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/Database.txt");
+            File.AppendAllLines(indexFile, new[] { filename + "|" + FolderNameDigit });
+
             string nodesPath, linksPath;
 
             if (!zoomed)
@@ -196,7 +196,7 @@ namespace GDO.Apps.Graph
 
         private static void WriteAllNodesFile(string nodesPath, List<GraphNode> nodes)
         {   
-            // writes a json file containing the information about all nodes in the graph; all browser will need this information for searching
+            // writes a json file containing the information about all nodes in the graph; all browsers will need this information for searching
             using (StreamWriter streamWriter = new StreamWriter(nodesPath +  @"all" + @".json")
             {
                 AutoFlush = true
@@ -262,16 +262,15 @@ namespace GDO.Apps.Graph
             {
                 // Generate random numbers as folder name
                 Random randomDigitGenerator = new Random();
-
                 while (Directory.Exists(basePath + FolderNameDigit))
                 {
-                    this.FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
+                    FolderNameDigit = randomDigitGenerator.Next(10000, 99999).ToString();
                 }
                 Directory.CreateDirectory(basePath + FolderNameDigit);
             }
             else
             {
-                this.FolderNameDigit = folderName;
+                FolderNameDigit = folderName;
             }
         }
 

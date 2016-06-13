@@ -1,5 +1,5 @@
 ﻿$(function () {
-
+    gdo.maintenance.nodeTableDrawn = false;
     gdo.maintenance.table_height = 350;
     gdo.maintenance.table_font_size = 10;
     gdo.maintenance.button_height = 100;
@@ -29,26 +29,47 @@ gdo.maintenance.drawEmptyNodeTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.maintenance.drawMaintenanceTable = function() {
+gdo.maintenance.processNodeUpdate = function (id) {
+    $("#node" + id + "_u").css("background", "#559100");
+    setTimeout(function () { $("#node" + id + "_u").css("background", "#333"); }, 700);
+    
+}
+
+gdo.maintenance.drawMaintenanceTable = function () {
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.node[i];
-        $("#maintenance_node_table").css('padding', 3);
-        $("#maintenance_node_table_row" + node.row + "_col" + node.col)
-            .empty()
-            .css("vertical-align","top")
-            .append("<div id='node" + node.id + "_i' style='text-align:center;background:#333'> <font size='4px'><b> " + node.id + "</b></font></div>")
-            .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-            .append("<div id='node" + node.id + "_s'> <b>&nbsp;Section ID:</b> " + node.sectionId + "</div>")
-            //.append("<div id='node" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
-            //.append("<div id='node" + node.id + "_c'> <b>Conn ID:</b> " + node.connectionId + "</div>")
-            .append("<div id='node" + node.id + "_p'> <b>&nbsp;Peer Conn</b></div>")
-            .append("<div id='node" + node.id + "_c'> <b>&nbsp;Server Conn</b></div>")
-            .css("height", (gdo.maintenance.table_height / gdo.net.rows) + "")
-            .css("width", (gdo.maintenance.table_width / gdo.net.cols) + "%")
-            .css({ fontSize: gdo.maintenance.table_font_size })
-            .css("background-color","#000")
-            .css('padding', 0);
 
+        if (!gdo.maintenance.nodeTableDrawn) {
+            $("#maintenance_node_table").css('padding', 3);
+            $("#maintenance_node_table_row" + node.row + "_col" + node.col)
+                .empty()
+                .css("vertical-align", "top")
+                .append("<div id='node" + node.id + "_i' style='text-align:center;background:#333;position:relative'> <font size='4px'><b> " + node.id + "</b></font> " +
+                    "<div class='circle img-circle' style='width:14px;height:14px;position:absolute;top:3px;right:4px;background:#111'></div>" +
+                    "<div id='node" + node.id + "_u' class='circle img-circle' style='width:10px;height:10px;position:absolute;top:5px;right:6px;background:#333'></div>" +
+                    "</div>")
+                //.append("<div id='node" + node.id + "_u' class='circle img-circle' style='width:10px;height:10px;position:absolute;top:5px;right:5px;background:pink'></div> ")
+                .append("<div id='node" + node.id + "_s'> <b>&nbsp;Section ID:</b> " + node.sectionId + "</div>")
+                //.append("<div id='node" + node.id + "_p'> <b>Peer ID:</b> " + node.peerId + "</div>")
+                //.append("<div id='node" + node.id + "_c'> <b>Conn ID:</b> " + node.connectionId + "</div>")
+                .append("<div id='node" + node.id + "_p'> <b>&nbsp;Peer Conn</b></div>")
+                .append("<div id='node" + node.id + "_c'> <b>&nbsp;Server Conn</b></div>")
+                .css("height", (gdo.maintenance.table_height / gdo.net.rows) + "%")
+                .css("width", (gdo.maintenance.table_width / gdo.net.cols) + "%")
+                .css({ fontSize: gdo.maintenance.table_font_size })
+                .css("background-color", "#000")
+                .css('padding', 0);
+            if (i == gdo.net.cols * gdo.net.rows) {
+                gdo.maintenance.nodeTableDrawn = true;
+            }
+        }
+        /*if (node.lastUpdate > 60) {
+            $("#node" + node.id + "_u").css("background", "#CC0000");
+        }else if (Node.lastUpdate > 30) {
+            $("#node" + node.id + "_u").css("background", "#FF8800");
+        }else{
+            $("#node" + node.id + "_u").css("background", "#559100");
+        }*/
         if (node.id == gdo.clientId) {
             $("#maintenance_node_table_row" + node.row + "_col" + node.col).css("border", "2px solid #097DB4");
             $("#node" + node.id + "_i").css("background", "#097DB4");

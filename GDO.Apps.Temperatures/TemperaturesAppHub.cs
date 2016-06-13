@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 
@@ -11,7 +13,8 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Temperatures {
     [Export(typeof(IAppHub))]
-    public class temperaturesAppHub : Hub, IAppHub {
+    public class temperaturesAppHub : Hub, IBaseAppHub
+    {
         public string Name { get; set; } = "Temperatures";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new TemperaturesApp().GetType();

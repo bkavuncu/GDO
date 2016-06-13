@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 using GDO.Utility;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
@@ -18,24 +19,22 @@ namespace GDO.Apps.Presentation
         CROP = 1,
         FIT = 0
     };
-    public class PresentationApp : IAppInstance
+    public class PresentationApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public string BasePath { get; set; }
         public string FileName { get; set; }
         public string FileNameDigit { get; set; }
         public int PageCount { get; set; }
         public int CurrentPage { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/Presentation/PPTs/");
             this.FileName = "";
             this.FileNameDigit = "";

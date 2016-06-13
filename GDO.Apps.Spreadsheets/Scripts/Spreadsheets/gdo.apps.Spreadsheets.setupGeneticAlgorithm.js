@@ -16,7 +16,7 @@ var checkGeneticAlgorithm = function (id) {
         data: { instanceId: id },
         success: function(response) {
             if (response.complete && response.data != null) {
-                var message = "<p>Final Outputs</p><ul>";
+                var message = "<p>Best Result</p><ul>";
                 message += response.data.map(function (i) { return "<li>" + i.Key + " : " + i.Value.toFixed(2) + "</li>"; }).join("\n");
                 message += "</ul>";
                 message += "<p>Input Chromosome:</p>";

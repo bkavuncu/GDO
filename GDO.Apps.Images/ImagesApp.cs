@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.Images
 {
@@ -11,12 +12,14 @@ namespace GDO.Apps.Images
         // ReSharper disable once InconsistentNaming
         FIT = 0
     };
-    public class ImagesApp : IAppInstance
+    public class ImagesApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public string ImageName { get; set; }
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }
@@ -37,12 +40,8 @@ namespace GDO.Apps.Images
         public DisplayRegionInfo DisplayRegion { get; set; }
         public BlockRegionInfo[,] BlockRegion { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.DisplayMode = (int)Mode.FIT;
             this.ImageName = null;
             this.ImageNameDigit = ""; 

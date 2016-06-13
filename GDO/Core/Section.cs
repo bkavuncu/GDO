@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 
 namespace GDO.Core

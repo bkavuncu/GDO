@@ -7,23 +7,24 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Net;
 using System.IO;
+using System.Web;
+using System.Drawing;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.DD3
 {
-    public class DD3App : IAppInstance
+    public class DD3App : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.Context = (IHubContext<dynamic>) GlobalHost.ConnectionManager.GetHubContext<DD3AppHub>();
 
             JToken value;
@@ -52,6 +53,8 @@ namespace GDO.Apps.DD3
             System.Diagnostics.Debug.WriteLine(" -- Request of data 3 -- ");
             webRequest("id", server, toArray, toObject, toValues, useNames3);
             */
+
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Images/images/dd3"));
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();

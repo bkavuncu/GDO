@@ -22,7 +22,7 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="../../Scripts/Maps/ol.css" type="text/css">
+    <link rel="stylesheet" href="../../Scripts/ShanghaiMetro/ol.css" type="text/css">
     <title></title>
     <style>
         body {
@@ -50,11 +50,7 @@
             height: 100%;
         }
 
-        .map:full-screen {
-            height: 100%;
-        }
-
-        .ol-rotate {
+      .ol-rotate {
             top: 3em;
         }
         .map {
@@ -96,7 +92,7 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
-                gdo.controlId = getUrlVar("controlId");
+                gdo.controlId = parseInt(getUrlVar("controlId"));
                 gdo.net.app["ShanghaiMetro"].initControl(gdo.controlId);
             });
         });

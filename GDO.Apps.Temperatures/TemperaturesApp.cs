@@ -3,15 +3,17 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using GDO.Core;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Temperatures {
-    public class TemperaturesApp : IAppInstance {
+    public class TemperaturesApp : IBaseAppInstance {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
-
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
         public string Keywords { get; set; }
         public string ChannelId { get; set; }
         public string PlaylistId { get; set; }
@@ -210,12 +212,8 @@ namespace GDO.Apps.Temperatures {
             return yJson;
         }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
             this.key = "AIzaSyCVoYXZZHaRNqnJw6pINn9PG3wly3_xNYY";
             this.baseURL = "https://www.googleapis.com/Temperatures/v3/";
             this.Error = false;
@@ -227,7 +225,7 @@ namespace GDO.Apps.Temperatures {
             this.NextVideoUrls = null;
             this.SearchMode = 0;
 
-            string keywords = (string)configuration.Json.SelectToken("channel");
+            string keywords = (string)Configuration.Json.SelectToken("channel");
             if (keywords != "") {
                 Keywords = keywords;
             }

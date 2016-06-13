@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using log4net;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
@@ -12,7 +15,7 @@ using Microsoft.Office.Interop.PowerPoint;
 namespace GDO.Apps.Presentation
 {
     [Export(typeof(IAppHub))]
-    public class PresentationAppHub : Hub, IAppHub
+    public class PresentationAppHub : Hub, IBaseAppHub
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PresentationAppHub));
 

@@ -1,0 +1,47 @@
+{
+	"1": {
+		"id": "1",
+		"name": "Waterloo Station",
+		"coordinates": ["51.503084","-0.112292"]
+	},
+	"2": {
+		"id": "2",
+		"name": "Liverpool Street Station",
+		"coordinates": ["51.518779","-0.081443"]
+	},
+	"3": {
+		"id": "3",
+		"name": "London Bridge",
+		"coordinates": ["51.504577","-0.086046"]
+	},
+	"4": {
+		"id": "4",
+		"name": "Euston Station",
+		"coordinates": ["51.528135","-0.133896"]
+	},
+	"5": {
+		"id": "5",
+		"name": "Kings Cross",
+		"coordinates": ["51.531652","-0.124306"]
+	},
+	"6": {
+		"id": "6",
+		"name": "Paddington Station",
+		"coordinates": ["51.516647","-0.176919"]
+	},
+	"7": {
+		"id": "7",
+		"name": "Victoria Station",
+		"coordinates": ["51.495218","-0.143907"]
+	},
+	"8": {
+		"id": "8",
+		"name": "Blackfriars Station",
+		"coordinates": ["51.511416","-0.103176"]
+	},
+	"9": {
+		"id": "9",
+		"name": "Charing Cross Station",
+		"coordinates": ["51.508192","-0.124981"]
+	}
+}

@@ -18,15 +18,15 @@ gdo.net.app["Spreadsheets"].initClient = function () {
 };
 
 var loadModules = function () {
-    gdo.loadModule("viewModel", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("clearModel", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("clearServer", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("registerInstance", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("runAnalysis", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("setupGeneticAlgorithm", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("linkOutputs", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("unfoldModel", "Spreadsheets", gdo.MODULE_TYPE.APP);
-    gdo.loadModule("createFormulaTree", "Spreadsheets", gdo.MODULE_TYPE.APP);
+    gdo.loadScript("viewModel", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("clearModel", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("clearServer", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("registerInstance", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("runAnalysis", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("setupGeneticAlgorithm", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("linkOutputs", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("unfoldModel", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("createFormulaTree", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
 };
 
 var setEventHandlers = function (message, section) {

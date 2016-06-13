@@ -3,27 +3,24 @@ using GDO.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.HelloWorld
 {
-    public class HelloWorldApp : IAppInstance
+    public class HelloWorldApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public bool IntegrationMode { get; set; }
+        public IAdvancedAppInstance ParentApp { get; set; }
 
         public string Name { get; set; }
-
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init()
         {
-            this.Id = instanceId;
-            this.AppName = appName;
-            this.Section = section;
-            this.Configuration = configuration;
-
         }
 
         public void SetName(string name)

@@ -56,7 +56,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Office.Client.Education, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
@@ -127,7 +126,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheeets.clearServer.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.createFormulaTree.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.clearModel.js" />
@@ -150,12 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\Spreadsheets\Default.json" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Spreadsheets\gdo.apps.Spreadsheets.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -163,21 +156,10 @@
     <Content Include="Web\Spreadsheets\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Excel\Cell.cs" />
-    <Compile Include="Excel\ExcelAddress.cs" />
-    <Compile Include="Excel\ExcelApp.cs" />
-    <Compile Include="Models\InputBool.cs" />
-    <Compile Include="Models\InputNumeric.cs" />
     <Compile Include="LogLevel.cs" />
-    <Compile Include="Models\Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\Scenario.cs" />
-    <Compile Include="Models\ScenarioBool.cs" />
-    <Compile Include="Models\ScenarioManager.cs" />
-    <Compile Include="Models\ScenarioNumeric.cs" />
     <Compile Include="SpreadsheetsApp.cs" />
     <Compile Include="SpreadsheetsAppHub.cs" />
-    <Compile Include="Models\Variable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Spreadsheets\" />

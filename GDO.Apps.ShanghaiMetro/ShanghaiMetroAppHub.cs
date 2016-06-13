@@ -4,13 +4,15 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using GDO.Utility;
 using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.ShanghaiMetro
 {
     [Export(typeof(IAppHub))]
-    public class ShanghaiMetroAppHub : Hub, IAppHub
+    public class ShanghaiMetroAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "ShanghaiMetro";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;

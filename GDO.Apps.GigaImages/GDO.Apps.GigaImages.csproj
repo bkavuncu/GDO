@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{741AE1F3-3877-425A-BB95-DAC0F1586B74}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GDO.Apps.GigaImages</RootNamespace>
+    <AssemblyName>GDO.Apps.GigaImages</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Configurations\GigaImages\Default.json" />
+    <Content Include="Configurations\GigaImages\In2White.json" />
+    <Content Include="Configurations\GigaImages\chetif.json" />
+    <Content Include="Configurations\GigaImages\northface.json" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.min.js.map" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\changelog.txt" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\fullpage_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\fullpage_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\fullpage_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\fullpage_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\home_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\home_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\home_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\home_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\next_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\next_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\next_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\next_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\previous_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\previous_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\previous_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\previous_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateleft_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateleft_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateleft_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateleft_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateright_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateright_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateright_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\rotateright_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomin_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomin_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomin_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomin_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomout_grouphover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomout_hover.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomout_pressed.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\images\zoomout_rest.png" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\LICENSE.txt" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.js" />
+    <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.min.js" />
+    <Content Include="Scripts\GigaImages\jquery.csv-0.71.min.js" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <Content Include="Scripts\GigaImages\gdo.apps.gigaImages.js" />
+    <Content Include="Web\GigaImages\App.cshtml" />
+    <Content Include="Web\GigaImages\Control.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GigaImagesApp.cs" />
+    <Compile Include="GigaImagesAppHub.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GDO\GDO.csproj">
+      <Project>{4A27F694-1D9A-420A-A3A6-62521EAA047E}</Project>
+      <Name>GDO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>32870</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:32870/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <GDOAppData Include="$(ProjectDir)Data\**\*.*" />
+      <GDOAppConfiguration Include="$(ProjectDir)Configurations\**\*.*" />
+      <GDOAppScripts Include="$(ProjectDir)Scripts\**\*.*" />
+      <GDOAppWeb Include="$(ProjectDir)Web\**\*.*" />
+      <GDOAppBin Include="$(ProjectDir)bin\*.*" />
+    </ItemGroup>
+    <Message Text="Exporting $(ProjectName) to App directory ..." Importance="high" />
+    <Copy SourceFiles="@(GDOAppData)" DestinationFiles="@(GDOAppData->'$(SolutionDir)GDO\Data\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppConfiguration)" DestinationFiles="@(GDOAppConfiguration->'$(SolutionDir)GDO\Configurations\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppScripts)" DestinationFiles="@(GDOAppScripts->'$(SolutionDir)GDO\Scripts\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppWeb)" DestinationFiles="@(GDOAppWeb->'$(SolutionDir)GDO\Web\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(GDOAppBin)" DestinationFiles="@(GDOAppBin->'$(SolutionDir)GDO\bin\%(Filename)%(Extension)')" />
+  </Target>
+</Project>

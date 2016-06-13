@@ -12,7 +12,7 @@ gdo.net.app["Bitcoin"].initClient = function () {
 }
 
 gdo.net.app["Bitcoin"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.app["Bitcoin"].control_status = 0;
     gdo.consoleOut('.Bitcoin', 1, 'Initializing Bitcoin App Control at Instance ' + gdo.controlId);
 }

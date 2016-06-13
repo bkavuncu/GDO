@@ -105,7 +105,7 @@ gdo.net.app["Images"].initClient = function () {
 }
 
 gdo.net.app["Images"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
+    gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.app["Images"].control_status = 0;
     //gdo.net.app["Images"].server.requestDisplayMode(gdo.controlId);
     gdo.net.app["Images"].server.requestImageName(gdo.controlId);
