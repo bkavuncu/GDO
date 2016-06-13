@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics;
 using System.Reflection;
 using Autofac;
 using Autofac.Integration.SignalR;
@@ -29,11 +28,12 @@ namespace GDO
         {
             log4net.Config.XmlConfigurator.Configure();
             Log.Info("Successfully started logging");
-            try {
+            try
+            {
                 Cave.Init();
                 var builder = new ContainerBuilder();
                 var config = new HubConfiguration();
-                GlobalHost.DependencyResolver.Register(typeof (IAssemblyLocator), () => new AssemblyLocator());
+                GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
@@ -53,8 +53,9 @@ namespace GDO
                     map.RunSignalR(config);
                 });
             }
-            catch (Exception e) {
-                Log.Error("Failed to pass Startup ",e);
+            catch (Exception e)
+            {
+                Log.Error("Failed to pass Startup ", e);
             }
             Log.Info("Successfully started GDO");
         }
@@ -70,42 +71,41 @@ namespace GDO
 
         public IList<Assembly> GetAssemblies()
         {
-                IList<Assembly> assemblies = new List<Assembly>();
-                var catalog = new AggregateCatalog();
-                string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
-                foreach (String appDir in appDirs)
+            IList<Assembly> assemblies = new List<Assembly>();
+            var catalog = new AggregateCatalog();
+            string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
+            foreach (String appDir in appDirs)
+            {
+                catalog.Catalogs.Add(new DirectoryCatalog(@appDir));
+            }
+            var ccontainer = new CompositionContainer(catalog);
+            ccontainer.ComposeParts(this);
+            assemblies.Add(typeof(CaveHub).Assembly);
+            foreach (var caveapp in _caveapps)
+            {
+                if (caveapp is IBaseAppHub)
                 {
-                    catalog.Catalogs.Add(new DirectoryCatalog(@appDir));
+                    Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
+                    assemblies.Add(caveapp.GetType().Assembly);
                 }
-                var ccontainer = new CompositionContainer(catalog);
-                ccontainer.ComposeParts(this);
-                assemblies.Add(typeof (CaveHub).Assembly);
-                foreach (var caveapp in _caveapps)
+                else if (caveapp is IAdvancedAppHub)
                 {
-                    if (caveapp is IBaseAppHub)
-                    {
-                        Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
-                        assemblies.Add(caveapp.GetType().Assembly);
-                    }
-                    else if (caveapp is IAdvancedAppHub)
-                    {
-                        Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true,
-                            ((IAdvancedAppHub) caveapp).SupportedApps);
-                        assemblies.Add(caveapp.GetType().Assembly);
-                    }
-                    else
-                    {
-                        throw new Exception("Cave App Class not recognized");
-                    }
+                    Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IAdvancedAppHub)caveapp).SupportedApps);
+                    assemblies.Add(caveapp.GetType().Assembly);
+                }
+                else
+                {
+                    throw new Exception("Cave App Class not recognized");
+                }
 
-                    //assemblies.Add(caveapp.InstanceType.Assembly);
-                }
-                foreach (var cavemodule in _cavemodules)
-                {
-                    Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
-                    assemblies.Add(cavemodule.GetType().Assembly);
-                }
-                return assemblies;
+                //assemblies.Add(caveapp.InstanceType.Assembly);
+            }
+            foreach (var cavemodule in _cavemodules)
+            {
+                Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
+                assemblies.Add(cavemodule.GetType().Assembly);
+            }
+            return assemblies;
         }
     }
 
