@@ -6,6 +6,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.Fractals
 {

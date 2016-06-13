@@ -5,6 +5,8 @@ using GDO.Core;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using System.Threading;
+using GDO.Core.Apps;
+
 namespace GDO.Apps.Fractals
 {
     [Export(typeof(IAppHub))]
