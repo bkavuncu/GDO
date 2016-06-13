@@ -1,5 +1,6 @@
-﻿$(function () {
-    gdo.management.nodeTableDrawn = false;
+﻿
+
+$(function () {
     gdo.management.table_font_size = 10;
     gdo.management.section_font_size = 11;
     gdo.management.button_font_size = 21;
@@ -8,7 +9,7 @@
     gdo.management.info_height = 35;
     gdo.management.table_width = 100;
     gdo.management.button_height = 61;
-    gdo.management.button_cols = 9;
+    gdo.management.button_cols = 9.5;
     gdo.management.header_cols = 11;
     gdo.management.cell_padding = 4;
     gdo.management.isRectangle = true;
@@ -17,23 +18,67 @@
     gdo.management.colEnd = -1;
     gdo.management.rowStart = 1000;
     gdo.management.rowEnd = -1;
+
+    gdo.management.isActive = true;
+
+    if (gdo.management.apps == null) {
+        gdo.management.apps = {};
+        gdo.management.apps.isActive = false;
+    }
+
+    if (gdo.management.console == null) {
+        gdo.management.console = {};
+        gdo.management.console.isActive = false;
+    }
+
+    if (gdo.management.instances == null) {
+        gdo.management.instances = {};
+        gdo.management.instances.isActive = false;
+    }
+
+    if (gdo.management.modules == null) {
+        gdo.management.modules = {};
+        gdo.management.modules.isActive = false;
+    }
+
+    if (gdo.management.nodes == null) {
+        gdo.management.nodes = {};
+        gdo.management.nodes.isActive = false;
+    }
+
+    if (gdo.management.scenarios == null) {
+        gdo.management.scenarios = {};
+        gdo.management.scenarios.isActive = false;
+    }
+
+    if (gdo.management.sections == null) {
+        gdo.management.sections = {};
+        gdo.management.sections.isActive = false;
+    }
+
+    if (gdo.management.states == null) {
+        gdo.management.states = {};
+        gdo.management.states.isActive = false;
+    }
+
+    gdo.management.nodes.nodeTableDrawn = false;
 });
 
 gdo.management.updateMaintenanceButton = function () {
     if (gdo.net.maintenanceMode) {
         $("#maintenanceButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-danger")
             .addClass("btn-success")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance ON");
+            //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance ON");
     } else {
         $("#maintenanceButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-success")
             .addClass("btn-danger")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Maintenance OFF");
+            //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance OFF");
     }
     $("#maintenanceButton")
         .unbind()
@@ -48,18 +93,18 @@ gdo.management.updateMaintenanceButton = function () {
         });
     if (gdo.net.blankMode) {
         $("#blankButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-danger")
             .addClass("btn-success")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Blank ON");
+            //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank ON");
     } else {
         $("#blankButton")
-            .empty()
+            //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-success")
             .addClass("btn-danger")
-            .append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Blank OFF");
+            //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank OFF");
     }
     $("#blankButton")
         .unbind()
@@ -108,3 +153,4 @@ gdo.management.updateModulesMenu = function () {
     }
     // $("#side-menu").metisMenu();
 }
+

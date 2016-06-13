@@ -20,14 +20,22 @@ $(function () {
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].appName == "LondonCycles") {
             var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
             gdo.net.app["LondonCycles"].timeStep = timestep;
-            if (!gdo.net.instance[instanceId].entry) {
-                gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
-                    feature.set("weight", Math.log(parseFloat(feature.get("exits")[timestep])) / 7);
-                });
-            } else {
-                gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
-                    feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
-                });
+            switch (gdo.net.instance[instanceId].dataserie) {
+                case "entries":
+                    gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
+                        feature.set("weight", Math.log(parseFloat(feature.get("entries")[timestep])) / 7);
+                    });
+                    break;
+                case "exits":
+                    gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
+                        feature.set("weight", Math.log(parseFloat(feature.get("exits")[timestep])) / 7);
+                    });
+                    break;
+                case "emptiness":
+                    gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
+                        feature.set("weight", parseFloat(feature.get("emptiness")[timestep]));
+                    });
+                    break;
             }
             if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
                 var temp = ((timestep + 237) * 5);
@@ -45,14 +53,13 @@ $(function () {
                 $("iframe").contents().find("#timelabel")
                     .empty()
                     .css("visibility", "visible")
-                    .append(
-                    "" + hour + ":" + minutes);
+                    .append("" + hour + ":" + minutes);
             }
         }
     }
 
-    $.connection.londonCyclesAppHub.client.receiveProperties = function (instanceId, blur, radius, opacity, station, entry) {
-        gdo.consoleOut('.LondonCycles', 1, 'Received Blur: ' + blur + ' and Radius: ' + radius + ' Opacity: ' + opacity + ' Station: ' + station + ' Entry:' + entry);
+    $.connection.londonCyclesAppHub.client.receiveProperties = function (instanceId, blur, radius, opacity, station, series) {
+        gdo.consoleOut('.LondonCycles', 1, 'Received Blur: ' + blur + ' and Radius: ' + radius + ' Opacity: ' + opacity + ' Station: ' + station + ' Series:' + series);
         gdo.net.instance[instanceId].stationWidth = station;
         if (gdo.net.instance[instanceId].heatmapLayer != null) {
             gdo.net.instance[instanceId].heatmapLayer.setOpacity(opacity);
@@ -66,26 +73,22 @@ $(function () {
             $('iframe').contents().find('#station').val(station);
         }
         gdo.net.app["LondonCycles"].updateCenter(instanceId);
-        gdo.net.instance[instanceId].entry = entry;
+        gdo.net.instance[instanceId].dataserie = series;
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL
             && gdo.net.node[gdo.clientId].sectionCol == gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols - 1
             && gdo.net.node[gdo.clientId].sectionRow == 0) {
-            if (entry) {
-                $("iframe").contents().find("#datalabel")
-                    .empty()
-                    .css("visibility", "visible")
-                    .append(
-                    "People Taking Bikes");
-            } else {
-                $("iframe").contents().find("#datalabel")
-                    .empty()
-                    .css("visibility", "visible")
-                    .append(
-                    "People Leaving Bikes");
-            }
-
+                switch (series) {
+                    case "entries":
+                        $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("People Leaving Bikes");
+                        break;
+                    case "exits":
+                        $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("People Taking Bikes");
+                        break;
+                    case "emptiness":
+                        $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("Docks' Emptiness level");
+                        break;
+                    }
         }
-
         //gdo.net.instance[instanceId].map.render();
     }
 
@@ -129,8 +132,10 @@ $(function () {
         gdo.consoleOut('.LondonCycles', 1, 'Seting Stations Layer Visibility: ' + visible);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             gdo.net.instance[instanceId].stationsLayer.setVisible(visible);
+            gdo.net.instance[instanceId].trainstationsLayer.setVisible(visible);
         } else {
             gdo.net.instance[instanceId].stationsLayer.setVisible(false);
+            gdo.net.instance[instanceId].trainstationsLayer.setVisible(false);
         }
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (visible) {
@@ -158,7 +163,7 @@ $(function () {
     }
 
     $.connection.londonCyclesAppHub.client.receiveMapPosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height, zoom) {
-        gdo.consoleOut('.LondonCycles', 1, 'Center: ' + center + ' and TopLeft: ' + topLeft + ' BottomRight: ' + bottomRight + ' Width: ' + width + ' Height: ' + height + ' Zoom' + zoom + ' Resolution ' + resolution);
+        gdo.consoleOut('.LondonCycles', 1, 'Center: ' + center + ' and TopLeft: ' + topLeft + ' BottomRight: ' + bottomRight + ' Width: ' + width + ' Height: ' + height + ' Zoom:' + zoom + ' Resolution: ' + resolution);
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE && gdo.net.node[gdo.clientId].appInstanceId == instanceId) {
             var mapCenter = [0, 0];
             var mapResolution = parseFloat(resolution);
@@ -244,9 +249,14 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
         gdo.net.app["LondonCycles"].stations = data;
     });
 
+    gdo.consoleOut('.LondonCycles', 1, 'Loading ' + '/Data/LondonCycles/trainstations.json');
+    $.getJSON('/Data/LondonCycles/trainstations.json', function (data) {
+        gdo.net.app["LondonCycles"].trainstations = data;
+    });
+
     gdo.consoleOut('.LondonCycles', 1, 'Loading ' + '/Data/LondonCycles/' + gdo.net.app["LondonCycles"].config[gdo.net.instance[instanceId].configName].file + '.json');
     $.getJSON('/Data/LondonCycles/' + gdo.net.app["LondonCycles"].config[gdo.net.instance[instanceId].configName].file + '.json', function (data) {
-        gdo.net.app["LondonCycles"].entry_and_exits = data;
+        gdo.net.app["LondonCycles"].data = data;
     });
 
     view = new ol.View({
@@ -259,8 +269,8 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
     //$("iframe")[0].contentWindow.styles = styles;
     //$("iframe")[0].contentWindow.layers = layers;
 
-    var i, ii;
-    /*for (i = 0, ii = gdo.net.instance[instanceId].styles.length; i < ii; ++i) {
+    /*var i, ii;
+    for (i = 0, ii = gdo.net.instance[instanceId].styles.length; i < ii; ++i) {
         gdo.net.instance[instanceId].layers.push(new ol.layer.Tile({
             visible: false,
             preload: Infinity,
@@ -311,6 +321,8 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
 
         gdo.net.instance[instanceId].stationSource = new ol.source.Vector();
 
+        gdo.net.instance[instanceId].trainstationSource = new ol.source.Vector();
+
         gdo.net.instance[instanceId].cycleSource = new ol.source.Vector();
 
         gdo.net.app["LondonCycles"].server.requestProperties(instanceId);
@@ -326,17 +338,36 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
                 image: new ol.style.Circle({
                     radius: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks)/3, //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
                     fill: new ol.style.Fill({
-                        color: 'lightblue',
+                        color: 'tomato',
                         width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 12 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     }),
                     stroke: new ol.style.Stroke({
                         color: 'black',
-                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 14 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
+                        width: 1
+                        //width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["LondonCycles"].stations[feature.getId()].nbDocks) / 14 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     })
                 })
             });
             return [style];
         }
+
+       /* gdo.net.instance[instanceId].trainsstyleFunction = function (feature, resolution) {
+            var style = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 100,
+                    fill: new ol.style.Fill({
+                        color: 'green',
+                        width: 100
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: 'black',
+                        width: 1
+                    })
+                })
+            });
+            return [style];
+        } */
+
 
         $('iframe').contents().find('#blur').change(function () {
             gdo.net.app["LondonCycles"].uploadProperties(instanceId);
@@ -359,7 +390,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
             parseInt($('iframe').contents().find('#radius').val()),
             parseFloat($('iframe').contents().find('#opacity').val()),
             parseInt($('iframe').contents().find('#station').val()),
-            gdo.net.instance[instanceId].entry);
+            gdo.net.instance[instanceId].dataserie);
             setTimeout(function () { gdo.net.app["LondonCycles"].uploadMapPosition(instanceId); }, 300);
             //gdo.net.app["LondonCycles"].updateChange(instanceId);
         }
@@ -384,6 +415,23 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
                 gdo.net.instance[instanceId].styleFunction
             });
 
+            gdo.net.instance[instanceId].trainstationsLayer = new ol.layer.Vector({
+                source: gdo.net.instance[instanceId].trainstationSource,
+                style: new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: gdo.net.instance[instanceId].stationWidth * 15,
+                        fill: new ol.style.Fill({
+                            color: 'green',
+                            width: gdo.net.instance[instanceId].stationWidth * 15,
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: 'black',
+                            width: 1
+                        })
+                    })
+                })
+            });
+
             gdo.net.instance[instanceId].heatmapLayer = new ol.layer.Heatmap({
                 //gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
                 source: gdo.net.instance[instanceId].cycleSource,
@@ -396,6 +444,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
                 map.addLayer(gdo.net.instance[instanceId].cartodbLayer);
                 map.addLayer(gdo.net.instance[instanceId].openCycleLayer);
                 map.addLayer(gdo.net.instance[instanceId].stationsLayer);
+                map.addLayer(gdo.net.instance[instanceId].trainstationsLayer);
                 map.addLayer(gdo.net.instance[instanceId].heatmapLayer);
                 gdo.net.app["LondonCycles"].server.requestBingLayerVisible(instanceId);
                 gdo.net.app["LondonCycles"].server.requestCartoDBLayerVisible(instanceId);
@@ -412,6 +461,7 @@ gdo.net.app["LondonCycles"].initMap = function (instanceId, center, resolution, 
 }
 
 gdo.net.app["LondonCycles"].drawFeatures = function (instanceId) {
+    //BIKE DOCKS
     for (var index1 in gdo.net.app["LondonCycles"].stations) {
         if (gdo.net.app["LondonCycles"].stations.hasOwnProperty((index1))) {
             var station1 = gdo.net.app["LondonCycles"].stations[index1];
@@ -426,9 +476,25 @@ gdo.net.app["LondonCycles"].drawFeatures = function (instanceId) {
         }
     }
 
-    for (var index3 in gdo.net.app["LondonCycles"].entry_and_exits) {
-        if (gdo.net.app["LondonCycles"].entry_and_exits.hasOwnProperty((index3))) {
-            var dataPoint = gdo.net.app["LondonCycles"].entry_and_exits[index3];
+    //TRAIN STATIONS
+    for (var index1 in gdo.net.app["LondonCycles"].trainstations) {
+        if (gdo.net.app["LondonCycles"].trainstations.hasOwnProperty((index1))) {
+            var station1 = gdo.net.app["LondonCycles"].trainstations[index1];
+            var geom = new ol.geom.Point(ol.proj.transform([parseFloat(station1.coordinates[1]), parseFloat(station1.coordinates[0])], 'EPSG:4326', 'EPSG:3857'));
+            var feature = new ol.Feature({
+                geometry: geom,
+                id: parseInt(station1.id)
+            });
+            feature.setId(station1.id);
+            gdo.net.instance[instanceId].trainstationSource.addFeature(feature);
+            gdo.consoleOut('.LondonCycles', 3, "Adding TrainStation " + station1.name + " with id " + station1.id);
+        }
+    }
+
+    //DATA
+    for (var index3 in gdo.net.app["LondonCycles"].data) {
+        if (gdo.net.app["LondonCycles"].data.hasOwnProperty((index3))) {
+            var dataPoint = gdo.net.app["LondonCycles"].data[index3];
             datax = dataPoint;
             var geom2 = new ol.geom.Point(ol.proj.transform([parseFloat(dataPoint.coordinates[1]), parseFloat(dataPoint.coordinates[0])], 'EPSG:4326', 'EPSG:3857'));
             var feature2 = new ol.Feature({
@@ -437,6 +503,7 @@ gdo.net.app["LondonCycles"].drawFeatures = function (instanceId) {
             feature2.set('weight', parseFloat(dataPoint.entries[gdo.net.app["LondonCycles"].timeStep]));
             feature2.set('entries', dataPoint.entries);
             feature2.set('exits', dataPoint.exits);
+            feature2.set('emptiness', dataPoint.emptiness);
             gdo.net.instance[instanceId].cycleSource.addFeature(feature2);
         }
     }

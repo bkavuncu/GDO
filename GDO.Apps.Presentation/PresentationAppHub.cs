@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using log4net;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;

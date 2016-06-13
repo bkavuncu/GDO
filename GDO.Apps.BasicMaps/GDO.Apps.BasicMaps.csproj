@@ -119,7 +119,6 @@
     <Content Include="Scripts\BasicMaps\Cesium\Assets\IAU2006_XYS\IAU2006_XYS_7.json" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\IAU2006_XYS\IAU2006_XYS_8.json" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\IAU2006_XYS\IAU2006_XYS_9.json" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\Textures\maki\airfield.png" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\Textures\maki\airport.png" />
     <Content Include="Scripts\BasicMaps\Cesium\Assets\Textures\maki\alcohol-shop.png" />
@@ -376,11 +375,8 @@
     <Content Include="Scripts\BasicMaps\Cesium\Workers\upsampleQuantizedTerrainMesh.js" />
     <Content Include="Scripts\BasicMaps\ol.css" />
     <Content Include="Scripts\BasicMaps\ol3\css\ol.css" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\BasicMaps\jquery.csv-0.71.min.js" />
     <Content Include="Scripts\BasicMaps\ol3cesium.js.map" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -396,13 +392,10 @@
     <Content Include="Scripts\BasicMaps\ol3\ol-debug.js" />
     <Content Include="Scripts\BasicMaps\ol3\ol.css" />
     <Content Include="Scripts\BasicMaps\ol3\ol.js" />
-    <Content Include="Scripts\jquery.csv-0.71.min.js" />
     <Content Include="Web\BasicMaps\App.cshtml" />
     <Content Include="Web\BasicMaps\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

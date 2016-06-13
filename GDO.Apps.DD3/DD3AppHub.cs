@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using System.ComponentModel.Composition;
+using GDO.Core.Apps;
+using System.Web;
+
 
 namespace GDO.Apps.DD3
 {
+
     [Export(typeof(IAppHub))]
     public class DD3AppHub : Hub, IBaseAppHub
     {

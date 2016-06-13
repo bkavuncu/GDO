@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
-using System.Web.Mvc;
+using GDO.Core.Apps;
+using GDO.Core.Scenarios;
+using GDO.Core.States;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
-using Timer = System.Threading.Timer;
 
 namespace GDO.Core
 {
@@ -45,25 +46,6 @@ namespace GDO.Core
             return base.OnDisconnected(stopCalled);
 
         }
-
-        private void InitializeSynchronization()
-        {
-            if (!Cave.InitializedSync)
-            {
-                Cave.InitializedSync = true;
-                Cave.SyncTimer = new System.Timers.Timer(70);
-                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
-                Cave.SyncTimer.Start();
-            }
-        }
-
-
-        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
-        {
-            DateTime now = DateTime.Now;
-            Clients.All.receiveHeartbeat((long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds);
-        }
-
 
         /// <summary>
         /// Deploys the node.
@@ -342,11 +324,14 @@ namespace GDO.Core
                     instances.AddRange(Cave.Instances.Select(instanceEntry => GetInstanceUpdate(instanceEntry.Value.Id)));
                     List<string> states = new List<string>(Cave.States.Count);
                     states.AddRange(Cave.States.Select(stateEntry => GetStateUpdate(stateEntry.Value.Id)));
+                    List<string> scenarios = new List<string>(Cave.Scenarios.Count);
+                    scenarios.AddRange(Cave.Scenarios.Select(scenarioEntry => GetScenarioUpdate(scenarioEntry.Value.Name)));
                     string nodeMap = JsonConvert.SerializeObject(Cave.GetNodeMap());
                     string neighbourMap = JsonConvert.SerializeObject(Cave.GetNeighbourMap(nodeId));
                     string moduleList = JsonConvert.SerializeObject(Cave.GetModuleList());
                     string appList = JsonConvert.SerializeObject(Cave.GetAppList());
-                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, moduleList, appList, nodes, sections, modules, apps, instances, states);
+
+                    Clients.Caller.receiveCaveUpdate(Cave.Cols, Cave.Rows, Cave.MaintenanceMode, Cave.BlankMode, Cave.DefaultP2PMode, nodeMap, neighbourMap, moduleList, appList, nodes, sections, modules, apps, instances, states, scenarios);
                 }
                 catch (Exception e)
                 {
@@ -424,9 +409,8 @@ namespace GDO.Core
             {
                 if (Cave.ContainsModule(moduleName))
                 {
-                    IModule module;
-                    Cave.Modules.TryGetValue(moduleName, out module);
-                    return module.SerializeJSON();
+
+                    return "{\"Name\":\""+moduleName+"\"}";
                 }
                 else
                 {
@@ -490,9 +474,31 @@ namespace GDO.Core
             {
                 if (Cave.ContainsState(stateId))
                 {
-                    CaveState state;
+                    State state;
                     Cave.States.TryGetValue(stateId, out state);
                     return JsonConvert.SerializeObject(state);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
+        private string GetScenarioUpdate(string scenarioName)
+        {
+            try
+            {
+                if (Cave.ContainsScenario(scenarioName))
+                {
+                    Scenario scenario;
+                    Cave.Scenarios.TryGetValue(scenarioName, out scenario);
+                    return JsonConvert.SerializeObject(scenario);
                 }
                 else
                 {
@@ -665,6 +671,24 @@ namespace GDO.Core
             InitializeSynchronization();
         }
 
+        private void InitializeSynchronization()
+        {
+            if (!Cave.InitializedSync)
+            {
+                Cave.InitializedSync = true;
+                Cave.SyncTimer = new System.Timers.Timer(70);
+                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
+                Cave.SyncTimer.Start();
+            }
+        }
+
+
+        private void BroadcastHeartbeat(object source, ElapsedEventArgs e)
+        {
+            DateTime now = DateTime.Now;
+            Clients.All.receiveHeartbeat((long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds);
+        }
+
         public void SaveCaveState(string name)
         {
             lock (Cave.ServerLock)
@@ -704,7 +728,7 @@ namespace GDO.Core
         {
             lock (Cave.ServerLock)
             {
-                CaveState caveState = Cave.States[id];
+                State caveState = Cave.States[id];
                 ClearCave();
                 
                 //TODO Advanced apps
@@ -721,7 +745,7 @@ namespace GDO.Core
 
         public void RequestStates()
         {
-            foreach (KeyValuePair<int, CaveState> caveState in Cave.States)
+            foreach (KeyValuePair<int, State> caveState in Cave.States)
             {
                 Clients.Caller.receiveCaveState(JsonConvert.SerializeObject(Cave.States[caveState.Value.Id]));
             }
@@ -729,7 +753,7 @@ namespace GDO.Core
 
         public void BroadcastStates()
         {
-            foreach (KeyValuePair<int, CaveState> caveState in Cave.States)
+            foreach (KeyValuePair<int, State> caveState in Cave.States)
             {
                 BroadcastCaveState(caveState.Value.Id);
             }
@@ -745,6 +769,65 @@ namespace GDO.Core
             {
                 Clients.All.receiveCaveState("", id, false);
             }
+        }
+
+        public void SaveScenario(string json)
+        {
+            lock (Cave.ServerLock)
+            {
+                Scenario scenario = Cave.SaveScenario(json);
+                if (scenario != null)
+                {
+                    Clients.All.receiveScenarioUpdate(true, scenario.Name, GetScenarioUpdate(scenario.Name));
+                }
+            }
+        }
+        public void RemoveScenario(string name)
+        {
+            lock (Cave.ServerLock)
+            {
+                if (Cave.RemoveScenario(name))
+                {
+                    Clients.All.receiveScenarioUpdate(false, name, "");
+                }
+            }
+        }
+
+        public void DisplayTime()
+        {
+            lock (Cave.ServerLock)
+            {
+               Clients.All.displayTime();
+            }
+        }
+        public void ExecuteFunction(string func, int section)
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.Group(""+section).executeFunction(func);
+            }
+        }
+
+        public void ExecuteDelayedFunction(string func, int section, int start)
+        {
+            lock (Cave.ServerLock)
+            {
+                Clients.Group("" + section).executeDelayedFunction(func,start);
+            }
+        }
+
+        public void UpdateConsoleInstance(int instanceId)
+        {
+            lock (Cave.ServerLock)
+            {
+                Cave.ConsoleInstanceId = instanceId;
+                Clients.All.receiveConsoleInstanceId(instanceId);
+            }
+        }
+
+        public void RequestConsoleInstance()
+        {
+            Clients.Caller.receiveConsoleInstanceId(Cave.ConsoleInstanceId);
         }
     }
 }

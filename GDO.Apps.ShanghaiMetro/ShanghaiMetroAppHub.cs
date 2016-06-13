@@ -4,6 +4,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using GDO.Utility;
 using Microsoft.AspNet.SignalR;
 

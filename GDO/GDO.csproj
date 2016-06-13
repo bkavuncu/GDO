@@ -621,10 +621,12 @@
     <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\enscroll-0.6.1.min.js" />
+    <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.modules.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
-    <Content Include="Scripts\gdo.management.console.js" />
+    <Content Include="Scripts\gdo.management.terminal.js" />
+    <Content Include="Scripts\gdo.management.scenarios.js" />
     <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
     <Content Include="Scripts\gdo.management.apps.js" />
@@ -944,9 +946,22 @@
     <None Include="Properties\PublishProfiles\studentserver.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
     <None Include="Properties\PublishProfiles\Testing.pubxml" />
+    <Content Include="Scenarios\matrixBIG.json" />
+    <Content Include="Scenarios\matrixSMALL.json" />
+    <Content Include="Scenarios\matrixVERYSMALL.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\heatmap.js" />
+    <Content Include="Scripts\heatmap.min.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="CSS\jquery-ui.css" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="CSS\jquery-ui.min.css" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="CSS\jquery-ui.structure.css" />
+    <Content Include="CSS\jquery-ui.structure.min.css" />
+    <Content Include="CSS\jquery-ui.theme.css" />
+    <Content Include="CSS\jquery-ui.theme.min.css" />
     <Content Include="Scripts\jquery.csv-0.71.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Scripts\d3.min.js" />
@@ -964,25 +979,30 @@
     <Content Include="Web\Modules.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\IAdvancedAppHub.cs" />
-    <Compile Include="Core\IModuleHub.cs" />
-    <Compile Include="Core\IBaseAppHub.cs" />
-    <Compile Include="Core\IBaseAppInstance.cs" />
-    <Compile Include="Core\AdvancedApp.cs" />
+    <Compile Include="Core\Scenarios\Element.cs" />
+    <Compile Include="Core\Apps\IAdvancedAppHub.cs" />
+    <Compile Include="Core\Modules\IModuleHub.cs" />
+    <Compile Include="Core\Apps\IBaseAppHub.cs" />
+    <Compile Include="Core\Apps\IBaseAppInstance.cs" />
+    <Compile Include="Core\Apps\AdvancedApp.cs" />
     <Compile Include="Core\CaveHub.cs" />
-    <Compile Include="Core\AppConfiguration.cs" />
-    <Compile Include="Core\App.cs" />
-    <Compile Include="Core\CaveState.cs" />
-    <Compile Include="Core\IAppHub.cs" />
-    <Compile Include="Core\IAdvancedAppInstance.cs" />
-    <Compile Include="Core\IAppInstance.cs" />
-    <Compile Include="Core\IModule.cs" />
+    <Compile Include="Core\Apps\AppConfiguration.cs" />
+    <Compile Include="Core\Apps\App.cs" />
+    <Compile Include="Core\Scenarios\Loop.cs" />
+    <Compile Include="Core\States\State.cs" />
+    <Compile Include="Core\Apps\IAppHub.cs" />
+    <Compile Include="Core\Apps\IAdvancedAppInstance.cs" />
+    <Compile Include="Core\Apps\IAppInstance.cs" />
+    <Compile Include="Core\Modules\IModule.cs" />
     <Compile Include="Core\Node.cs" />
+    <Compile Include="Core\Scenarios\Scenario.cs" />
     <Compile Include="Core\Section.cs" />
     <Compile Include="Core\Cave.cs" />
-    <Compile Include="Core\AppState.cs" />
+    <Compile Include="Core\States\AppState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utility\BoundaryCalculation.cs" />
+    <Compile Include="Utility\Parameter.cs" />
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1009,7 +1029,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>12332</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

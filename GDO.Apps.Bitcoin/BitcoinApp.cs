@@ -1,5 +1,6 @@
 ﻿using System;
 using GDO.Core;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.Bitcoin
 {

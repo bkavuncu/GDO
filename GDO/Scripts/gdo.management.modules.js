@@ -1,8 +1,10 @@
-﻿$(function () {
-    
+﻿gdo.management.modules = {};
+
+$(function () {
+    gdo.management.modules.isActive = true;
 });
 
-gdo.management.loadModuleControlFrame = function (moduleName) {
+gdo.management.modules.loadModuleControlFrame = function (moduleName) {
     gdo.consoleOut(".MANAGEMENT", 3, "Loading Control Frame " + moduleName);
     $("#module_label").empty().append("<h3><b>" + moduleName + "</b></h3>");
     $("#nav_modules").addClass("in");

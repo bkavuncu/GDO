@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using GDO.Core;
+using GDO.Core.Apps;
+
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json.Linq;
 

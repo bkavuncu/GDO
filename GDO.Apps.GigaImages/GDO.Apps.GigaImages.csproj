@@ -84,9 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\GigaImages\Default.json" />
+    <Content Include="Configurations\GigaImages\In2White.json" />
+    <Content Include="Configurations\GigaImages\chetif.json" />
+    <Content Include="Configurations\GigaImages\northface.json" />
     <None Include="packages.config" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.min.js.map" />
-    <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\changelog.txt" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\images\fullpage_grouphover.png" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\images\fullpage_hover.png" />
@@ -123,10 +125,7 @@
     <Content Include="Scripts\GigaImages\OpenSeaDragon\LICENSE.txt" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.js" />
     <Content Include="Scripts\GigaImages\OpenSeaDragon\openseadragon.min.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\GigaImages\jquery.csv-0.71.min.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -134,13 +133,10 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="Scripts\GigaImages\gdo.apps.gigaImages.js" />
-    <Content Include="Scripts\jquery.csv-0.71.min.js" />
     <Content Include="Web\GigaImages\App.cshtml" />
     <Content Include="Web\GigaImages\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

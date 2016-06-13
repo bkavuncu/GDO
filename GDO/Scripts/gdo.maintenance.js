@@ -29,7 +29,7 @@ gdo.maintenance.drawEmptyNodeTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.management.processNodeUpdate = function (id) {
+gdo.maintenance.processNodeUpdate = function (id) {
     $("#node" + id + "_u").css("background", "#559100");
     setTimeout(function () { $("#node" + id + "_u").css("background", "#333"); }, 700);
     

@@ -29,6 +29,7 @@ gdo.net.NEIGHBOUR_ENUM = {
 };
 
 gdo.net.time = new Date();
+//gdo.net.time = {};
 gdo.net.connectionState = 0;
 
 $(function() {
@@ -60,6 +61,19 @@ $(function() {
             gdo.initBaseFrame();
         }
     }
+    $.connection.caveHub.client.receiveConsoleInstanceId = function (consoleInstanceId) {
+        gdo.net.consoleInstanceId = consoleInstanceId;
+        gdo.consoleOut('.NET', 1, 'Console Instance Id:' + consoleInstanceId);
+        gdo.updateDisplayCanvas();
+        if (gdo.net.consoleMode == true) {
+            if (consoleInstanceId >= 0 && gdo.net.instance[gdo.net.consoleInstanceId].exists) {
+                gdo.management.instances.loadInstanceControlFrame(gdo.net.instance[consoleInstanceId].appName, consoleInstanceId, gdo.net.instance[consoleInstanceId].configName);
+            } else {
+                $("iframe").contents().find("body").html('');
+                $("#instance_label").empty().append("<h3><b> Waiting for Control</b></h3>");
+            }
+        }
+    }
     $.connection.caveHub.client.reloadNodeIFrame = function () {
         gdo.consoleOut('.NET', 1, 'Reload Node IFrame');
         gdo.reloadNodeIFrame();
@@ -72,7 +86,7 @@ $(function() {
         }
         gdo.updateSelf();
     }
-    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states) {
+    $.connection.caveHub.client.receiveCaveUpdate = function (cols,rows, maintenanceMode,blankMode,p2pmode,nodeMap,neighbourMap,moduleList,appList,nodes,sections,modules,apps,instances,states,scenarios) {
         gdo.consoleOut('.NET', 1, 'Received the image of the Cave');
         gdo.net.maintenanceMode = maintenanceMode;
         gdo.net.blankMode = blankMode;
@@ -121,10 +135,17 @@ $(function() {
                 gdo.net.processState(state, i, true);
             }
         }
+        for (var i = 0; i < scenarios.length; i++) {
+            if (scenarios[i] != null) {
+                var scenario = JSON.parse(scenarios[i]);
+                gdo.net.processScenario(scenario, scenario.Name, true);
+            }
+        }
+
         gdo.net.NodeInitialized = true;
         gdo.net.initModules();
         gdo.updateSelf();
-        if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.management.updateInstancesMenu();
             gdo.management.updateModulesMenu();
         }
@@ -139,7 +160,7 @@ $(function() {
         if (gdo.net.isNodeInitialized()) {
             var node = JSON.parse(serializedNode);
             gdo.net.processNode(node);
-            gdo.updateSelf();
+            //gdo.updateSelf();
         }
     }
 
@@ -162,7 +183,7 @@ $(function() {
             gdo.net.processInstance(status, id, instance);
             setTimeout(gdo.net.updatePeerConnections(gdo.net.node[gdo.clientId].p2pmode), 700 + Math.floor((Math.random() * 21000) + 1));
             gdo.updateSelf();
-            if (gdo.management != null && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 gdo.management.updateInstancesMenu();
             }
         }
@@ -175,7 +196,36 @@ $(function() {
             gdo.updateSelf();
         }
     }
+    $.connection.caveHub.client.receiveScenarioUpdate = function (status, name, serializedScenario) {
+        gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")" );
+        if (gdo.net.isNodeInitialized()) {
+            var scenario = null;
+            if (status) {
+                scenario = JSON.parse(serializedScenario);
+            }
+            gdo.net.processScenario(scenario, name, status);
+            gdo.updateSelf();
+            if (gdo.management.isActive && gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.management.scenarios.isActive) {
+                gdo.management.scenarios.displayScenariosToLoad("");
+                if (status == false && gdo.management.scenarios.currentScenario == name) {
+                    gdo.management.scenarios.unloadScenario(name);
+                }
+            }
+        }
+    }
+
     $.connection.caveHub.connection.stateChanged(gdo.net.connectionStateChanged);
+
+    $.connection.caveHub.client.displayTime = function() {
+        gdo.consoleOut('.NET', 1, 'Time :' + gdo.net.time.getTime());
+    }
+    $.connection.caveHub.client.executeFunction = function (func) {
+        gdo.consoleOut('.NET', 1, 'Executing :' + func);
+        eval(func);
+    }
+    $.connection.caveHub.client.executeDelayedFunction = function (func,start) {
+        gdo.net.setTimeout(func, start);
+    }
 });
 
 
@@ -228,6 +278,7 @@ gdo.net.initNet = function (clientMode) {//todo comment
     gdo.consoleOut('.NET', 2, 'Initializing Net');
     gdo.net.maintenanceMode = true;
     gdo.net.blankMode = false;
+    gdo.net.consoleMode = false;
     gdo.net.initializeArrays(100);
     gdo.net.initHub();
     gdo.net.clientMode = clientMode;
@@ -523,6 +574,7 @@ gdo.net.isNodeInitialized = function () {
 
 gdo.net.initializeArrays = function (num) {
     gdo.net.state = new Array(num);
+    gdo.net.scenario = new Array(num);
     gdo.net.node = new Array(num);
     for (var i = 0; i < num; i++) {
         gdo.net.node[i] = {};
@@ -535,7 +587,7 @@ gdo.net.initializeArrays = function (num) {
         gdo.net.node[i].sectionId = 0;
         gdo.net.node[i].appInstanceId = -1;
         gdo.net.node[i].lastUpdate = 100;
-        gdo.net.node[i].sendData = function (id, type, command, data, mode) {
+        /*gdo.net.node[i].sendData = function (id, type, command, data, mode) {
             var dataObj = {};
             dataObj.type = type;
             dataObj.command = command;
@@ -551,7 +603,7 @@ gdo.net.initializeArrays = function (num) {
             } else if (mode == gdo.net.COMM_MODE.SERVER) {
                 gdo.net.server.sendData(gdo.clientId, id, msg);
             }
-        }
+        }*/
         gdo.net.section[i] = {};
         gdo.net.section[i].id = i;
         gdo.net.section[i].exists = false;
@@ -658,8 +710,11 @@ gdo.net.processNode = function (node)
         }
         gdo.net.section[gdo.net.node[node.Id].sectionId].health = gdo.net.section[gdo.net.node[node.Id].sectionId].health / (gdo.net.section[gdo.net.node[node.Id].sectionId].cols * gdo.net.section[gdo.net.node[node.Id].sectionId].rows);
     }
-    if (gdo.management.processNodeUpdate != null) {
-        gdo.management.processNodeUpdate(node.Id);
+    if (gdo.management.isActive && gdo.management.nodes.isActive) {
+        gdo.management.nodes.processNodeUpdate(node.Id);
+    }
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        gdo.maintenance.processNodeUpdate(node.Id);
     }
     //gdo.consoleOut('.NET', 2, 'Received Node Update : (id:' + node.Id + '),(col,row:' + node.Col + ',' + node.Row + '),(peerId:' + node.PeerId + ')');
 }
@@ -719,6 +774,7 @@ gdo.net.processModule = function (module) {
     gdo.net.module[module.Name].name = module.Name;
     var hubName = lowerCaseFirstLetter(module.Name) + "ModuleHub";
     gdo.net.module[module.Name].server = $.connection[hubName].server;
+    gdo.net.module[module.Name].server.joinGroup(module.Name);
 }
 
 gdo.net.processApp = function (app) {
@@ -823,6 +879,25 @@ gdo.net.processState = function (state, id, exists) {
     }
 }
 
+gdo.net.processScenario = function (scenario, name, exists) {
+    gdo.consoleOut('.NET', 2, 'Updating Scenario: ' + name);
+    if (exists) {
+        gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (exists)');
+        gdo.net.scenario[name] = {}
+        gdo.net.scenario[name] = scenario;
+        for (var index in gdo.net.scenario[name].Elements) {
+            if (!gdo.net.scenario[name].Elements.hasOwnProperty((index))) {
+                continue;
+            }
+            gdo.net.scenario[name].Elements[index].Wait = gdo.net.scenario[name].Elements[index].DefaultWait;
+            gdo.net.scenario[name].Elements[index].Status = 1;
+        }
+    } else {
+        gdo.consoleOut('.NET', 1, 'Received Scenario ' + name + ' (does not exist)');
+        gdo.net.scenario[name] = null;
+    }
+}
+
 gdo.net.initModules = function () {
     gdo.consoleOut('.NET', 1, 'Initializing Modules');
     for (var index in gdo.net.module) {
@@ -840,7 +915,7 @@ gdo.net.setTimeout = function(func, start) {
     /// <param name="func">The function.</param>
     /// <param name="start">The start time: get it by gdo.net.time.getTime() + X milliseconds</param>
     /// <returns></returns>
-    setTimeout(func, gdo.net.time - start);
+    setTimeout(func, start - gdo.net.time.getTime());
 }
 
 gdo.net.setInterval = function (statement, start, current, interval, conditionFunc) {
@@ -862,3 +937,7 @@ gdo.net.setInterval = function (statement, start, current, interval, conditionFu
         }, start - current);
     }
 }
+
+/*gdo.net.time.getTime = function() {
+    return new Date().getTime();
+}*/

@@ -322,7 +322,19 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 27);
         });
+
     $("iframe").contents().find("#map_table_row_4_col_0")
+        .empty()
+        .append("<div><button type='button' id='basicMaps_layer_40' class='btn btn-danger  btn-outline btn-block'>Imperial College London</button></div>")
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", 100 / gdo.net.app["BasicMaps"].numButtons + "%")
+        .css("height", "40px")
+        .unbind()
+        .click(function () {
+            gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 40);
+        });
+    $("iframe").contents().find("#map_table_row_4_col_1")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_28' class='btn btn-danger  btn-outline btn-block'>Topography Overlay (ASTER)</button></div>")
         .css("margin", "0px")
@@ -333,7 +345,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 28);
         });
-    $("iframe").contents().find("#map_table_row_4_col_1")
+    $("iframe").contents().find("#map_table_row_4_col_2")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_29' class='btn btn-danger  btn-outline btn-block'>Open Public Transport</button></div>")
         .css("margin", "0px")
@@ -344,7 +356,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 29);
         });
-    $("iframe").contents().find("#map_table_row_4_col_2")
+    $("iframe").contents().find("#map_table_row_4_col_3")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_30' class='btn btn-danger  btn-outline btn-block'>Open Railway Map (Standard)</button></div>")
         .css("margin", "0px")
@@ -355,7 +367,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 30);
         });
-    $("iframe").contents().find("#map_table_row_4_col_3")
+    $("iframe").contents().find("#map_table_row_4_col_4")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_31' class='btn btn-danger  btn-outline btn-block'>Open Railway Map (Speed)</button></div>")
         .css("margin", "0px")
@@ -366,7 +378,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 31);
         });
-    $("iframe").contents().find("#map_table_row_4_col_4")
+    $("iframe").contents().find("#map_table_row_4_col_5")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_38' class='btn btn-danger  btn-outline btn-block'>Strava Heatmap Bike (Blue)</button></div>")
         .css("margin", "0px")
@@ -377,7 +389,7 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .click(function () {
             gdo.net.app["BasicMaps"].server.setLayerVisible(instanceId, 38);
         });
-    $("iframe").contents().find("#map_table_row_4_col_5")
+    $("iframe").contents().find("#map_table_row_4_col_6")
         .empty()
         .append("<div><button type='button' id='basicMaps_layer_39' class='btn  btn-danger  btn-outline btn-block'>Strava Heatmap Running (Blue)</button></div>")
         .css("margin", "0px")

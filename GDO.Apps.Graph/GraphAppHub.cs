@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
+using GDO.Core.Apps;
+
 
 namespace GDO.Apps.Graph
 {
@@ -27,11 +28,9 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
- 
         public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
-
             lock (Cave.AppLocks[instanceId])
             {
                 try
@@ -51,9 +50,14 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Graph is now being rendered.");
 
                     // After rendering, start processing graph for zooming
+                    /* //TODO commented by now 
                     Clients.Caller.setMessage("Initiating processing of graph to prepare for zooming.");
                     ga.ProcessGraph(filename, true, folderNameDigit);
-                    Clients.Caller.setMessage("Graph is now ready for zooming.");
+                    Clients.Caller.setMessage("Graph is now ready for zooming."); */
+
+                    Clients.Caller.setMessage("Requesting fields...");
+                    Clients.Caller.setFields(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray());
+                    Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)
                 {
@@ -91,6 +95,45 @@ namespace GDO.Apps.Graph
             }
         }
 
+        public void setAllNodesSize(int instanceId, int nodeSize)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Changing size of nodes.");
+                    Clients.Group("" + instanceId).setNodeSize(nodeSize);
+                    Clients.Caller.setMessage("Nodes are changing size.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void setOriginalSize(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Sizing nodes to their original size.");
+                    Clients.Group("" + instanceId).setNodesOriginalSize();
+                    //Clients.Group("" + instanceId).hideNodes();
+                    //Clients.Group("" + instanceId).renderNodes();
+                    Clients.Caller.setMessage("Nodes are changing size.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
 
         public void HideLinks(int instanceId)
         {
@@ -149,14 +192,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void ShowLabels(int instanceId, string field)
+        public void ShowLabels(int instanceId, string field, string color)  //TODO add a default color
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Rendering '" + field +"' field as labels.");
-                    Clients.Group("" + instanceId).renderLabels(field);
+                    Clients.Group("" + instanceId).renderLabels(field, color);
                     Clients.Caller.setMessage("Labels are now being rendered.");
                 }
                 catch (Exception e)
@@ -266,14 +309,14 @@ namespace GDO.Apps.Graph
 
 
 
-        public void RenderMostConnectedNodes(int instanceId, int numLinks)
+        public void RenderMostConnectedNodes(int instanceId, int numLinks, string color)  //TODO add a default color
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Highlighting nodes with more than " + numLinks + " links.");
-                    Clients.Group("" + instanceId).renderMostConnectedNodes(numLinks);
+                    Clients.Group("" + instanceId).renderMostConnectedNodes(numLinks, color);
                     Clients.Caller.setMessage("Nodes with more than " + numLinks + " links are now being rendered.");
                 }
                 catch (Exception e)
@@ -285,14 +328,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void RenderMostConnectedLabels(int instanceId, int numLinks)
+        public void RenderMostConnectedLabels(int instanceId, int numLinks, string field, string color)  //TODO add a default color
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Showing labels for nodes with more than " + numLinks + " links.");
-                    Clients.Group("" + instanceId).renderMostConnectedLabels(numLinks);
+                    Clients.Group("" + instanceId).renderMostConnectedLabels(numLinks, field, color);
                     Clients.Caller.setMessage("Labels for nodes with more than " + numLinks + " links are now being rendered.");
                 }
                 catch (Exception e)
@@ -364,14 +407,14 @@ namespace GDO.Apps.Graph
             }
         }
 
-        public void RenderSearchLabels(int instanceId, string keywords, string field)
+        public void RenderSearchLabels(int instanceId, string field)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     Clients.Caller.setMessage("Rendering labels for selected nodes.");
-                    Clients.Group("" + instanceId).renderSearchLabels(keywords, field);
+                    Clients.Group("" + instanceId).renderSearchLabels(field);
                     Clients.Caller.setMessage("Labels for selected nodes are now being rendered.");
                 }
                 catch (Exception e)

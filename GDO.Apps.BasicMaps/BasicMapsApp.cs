@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.BasicMaps
 {
@@ -17,7 +18,7 @@ namespace GDO.Apps.BasicMaps
         public IAdvancedAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         public string[] MarkerPosition { get; set; }
-        public int MaxLayers { get; set; } = 40;
+        public int MaxLayers { get; set; } = 50;
         public bool[] LayerVisibility { get; set; }
 
         public bool IsInitialized = false;

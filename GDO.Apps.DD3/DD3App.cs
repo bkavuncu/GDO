@@ -7,6 +7,9 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Net;
 using System.IO;
+using System.Web;
+using System.Drawing;
+using GDO.Core.Apps;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.DD3
@@ -50,6 +53,8 @@ namespace GDO.Apps.DD3
             System.Diagnostics.Debug.WriteLine(" -- Request of data 3 -- ");
             webRequest("id", server, toArray, toObject, toValues, useNames3);
             */
+
+            Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Images/images/dd3"));
         }
 
         private ConcurrentDictionary<string, BrowserInfo> browserList = new ConcurrentDictionary<string, BrowserInfo>();

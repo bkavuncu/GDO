@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using GDO.Core;
+using GDO.Core.Apps;
 
 namespace GDO.Apps.GigaImages
 {
@@ -20,12 +21,23 @@ namespace GDO.Apps.GigaImages
 
         public void Init()
         {
-            this.Position = new Position();
-            this.Position.Center[0] = (float)Configuration.Json.SelectToken("center[0]");
-            this.Position.Center[1] = (float)Configuration.Json.SelectToken("center[1]");
-            this.Position.Zoom = (float)Configuration.Json.SelectToken("zoom");
-            this.Position.Width = (float)Configuration.Json.SelectToken("width");
-            this.Position.Height = (float)Configuration.Json.SelectToken("height");
+            this.Position = new Position {
+                TopLeft = {
+                    [0] = (float) Configuration.Json.SelectToken("topLeft[0]"),
+                    [1] = (float) Configuration.Json.SelectToken("topLeft[1]")
+                },
+                Center = {
+                    [0] = (float) Configuration.Json.SelectToken("center[0]"),
+                    [1] = (float) Configuration.Json.SelectToken("center[1]")
+                },
+                BottomRight = {
+                    [0] = (float) Configuration.Json.SelectToken("bottomRight[0]"),
+                    [1] = (float) Configuration.Json.SelectToken("bottomRight[1]")
+                },
+                Zoom = (float) Configuration.Json.SelectToken("zoom"),
+                Width = (float) Configuration.Json.SelectToken("width"),
+                Height = (float) Configuration.Json.SelectToken("height")
+            };
         }
 
 

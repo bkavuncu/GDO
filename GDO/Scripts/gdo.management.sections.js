@@ -1,11 +1,14 @@
+gdo.management.sections = {};
+
 $(function () {
-    gdo.management.selectedSection = -1;
-    gdo.management.selectedApp = null;
-    gdo.management.selectedConfiguration = null;
-    gdo.management.selectedInstance = -1;
+    gdo.management.sections.isActive = true;
+    gdo.management.sections.selectedSection = -1;
+    gdo.management.sections.selectedApp = null;
+    gdo.management.sections.selectedConfiguration = null;
+    gdo.management.sections.selectedInstance = -1;
 });
 
-gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
+gdo.management.sections.drawEmptySectionTable = function (maxCol, maxRow) {
     /// <summary>
     /// Draws the section table.
     /// </summary>
@@ -22,7 +25,7 @@ gdo.management.drawEmptySectionTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.management.drawEmptyAdvancedSectionTable = function (maxCol, maxRow) {
+gdo.management.sections.drawEmptyAdvancedSectionTable = function (maxCol, maxRow) {
     /// <summary>
     /// Draws the section table.
     /// </summary>
@@ -39,12 +42,12 @@ gdo.management.drawEmptyAdvancedSectionTable = function (maxCol, maxRow) {
     }
 }
 
-gdo.management.drawSectionTable =  function (){
+gdo.management.sections.drawSectionTable = function () {
     /// <summary>
     /// Draws the section table.
     /// </summary>
     /// <returns></returns>
-    gdo.management.drawEmptySectionTable(gdo.net.cols, gdo.net.rows+1);
+    gdo.management.sections.drawEmptySectionTable(gdo.net.cols, gdo.net.rows + 1);
 
 
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
@@ -72,7 +75,7 @@ gdo.management.drawSectionTable =  function (){
                         if (gdo.net.node[id].isSelected) {
                             gdo.net.node[id].isSelected = false;
                         } else {
-                            gdo.management.selectedSection = -1;
+                            gdo.management.sections.selectedSection = -1;
                             gdo.net.node[id].isSelected = true;
                         }
                         gdo.updateDisplayCanvas();
@@ -119,19 +122,19 @@ gdo.management.drawSectionTable =  function (){
                 .css({ fontSize: gdo.management.section_font_size })
                 .click(function () {
                     var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
-                    if (gdo.management.selectedSection == id) {
-                        gdo.management.selectedSection = -1;
+                    if (gdo.management.sections.selectedSection == id) {
+                        gdo.management.sections.selectedSection = -1;
 
                     } else {
                         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                             gdo.net.node[i].isSelected = false;
                         }
-                        gdo.management.selectedSection = id;
+                        gdo.management.sections.selectedSection = id;
                         //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
                     }
                     gdo.updateDisplayCanvas();
                 });
-            if (gdo.management.selectedSection == sectionId) {
+            if (gdo.management.sections.selectedSection == sectionId) {
                 if (gdo.net.section[sectionId].appInstanceId >= 0) {
                     $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
                     $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
@@ -162,7 +165,7 @@ gdo.management.drawSectionTable =  function (){
     }
 }
 
-gdo.management.selectNodes = function() {
+gdo.management.sections.selectNodes = function () {
     gdo.management.isRectangle = true;
     gdo.management.isStarted = false;
     gdo.management.colStart = 1000;
@@ -197,12 +200,12 @@ gdo.management.selectNodes = function() {
     }
 }
 
-gdo.management.drawAdvancedSectionTable = function () {
+gdo.management.sections.drawAdvancedSectionTable = function () {
     /// <summary>
     /// Draws the section table.
     /// </summary>
     /// <returns></returns>
-    gdo.management.drawEmptyAdvancedSectionTable(gdo.net.cols, gdo.net.rows + 1);
+    gdo.management.sections.drawEmptyAdvancedSectionTable(gdo.net.cols, gdo.net.rows + 1);
 
 
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
@@ -272,20 +275,20 @@ gdo.management.drawAdvancedSectionTable = function () {
                    .unbind()
                    .click(function () {
                        var id = gdo.net.node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
-                       if (gdo.management.selectedAdvancedSection == id) {
-                           gdo.management.selectedAdvancedSection = -1;
+                       if (gdo.management.sections.selectedAdvancedSection == id) {
+                           gdo.management.sections.selectedAdvancedSection = -1;
 
                        } else {
                            for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                                gdo.net.node[i].isselectedAdvanced = false;
                            }
-                           gdo.management.selectedAdvancedSection = id;
+                           gdo.management.sections.selectedAdvancedSection = id;
                            //gdo.management.selectedAdvancedInstance = gdo.net.section[gdo.management.selectedAdvancedSection].appInstanceId;
                        }
                        gdo.updateDisplayCanvas();
                    });
             }
-            if (gdo.management.selectedAdvancedSection == sectionId) {
+            if (gdo.management.sections.selectedAdvancedSection == sectionId) {
                 if (gdo.net.section[sectionId].appInstanceId >= 0) {
                         if (gdo.net.instance[gdo.net.section[sectionId].appInstanceId].integrationMode) {
                             //Also check deployed instance integration mechanism
@@ -319,7 +322,7 @@ gdo.management.drawAdvancedSectionTable = function () {
     }
 }
 
-gdo.management.drawButtonTable = function() {
+gdo.management.sections.drawButtonTable = function () {
     /// <summary>
     /// Draws the button table.
     /// </summary>
@@ -335,7 +338,7 @@ gdo.management.drawButtonTable = function() {
         .css('padding', 1)
         .attr("align", "center");
 
-    gdo.management.selectNodes();
+    gdo.management.sections.selectNodes();
     $(".create_section_button_div").unbind();
     $(".create_section_button_div").click(function () {
         if (gdo.management.isRectangle && gdo.management.isStarted) {
@@ -382,7 +385,7 @@ gdo.management.drawButtonTable = function() {
             "<td id='section_coordinate_table_select' style='width:35%;'></td>" +
             "</tr>" +
             "</table>")
-        .css("width", 2*(gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css("width", 1.5*(gdo.management.table_width / gdo.management.button_cols) + "%")
         .css("color", "#FFF")
         .css('padding', 0)
         .attr("align", "center")
@@ -434,13 +437,13 @@ gdo.management.drawButtonTable = function() {
             for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                 gdo.net.node[i].isSelected = false;
             }
-            gdo.management.selectedSection = -1;
+            gdo.management.sections.selectedSection = -1;
             for (var i = gdo.net.node[nodeStart].col; i <= gdo.net.node[nodeEnd].col; i++) {
                 for (var j = gdo.net.node[nodeEnd].row; j <= gdo.net.node[nodeStart].row; j++) {
                     gdo.net.node[gdo.net.getNodeId(i, j)].isSelected = true;
                 }
             }
-            gdo.management.selectNodes();
+            gdo.management.sections.selectNodes();
             gdo.updateDisplayCanvas();
         }
     });
@@ -471,17 +474,17 @@ gdo.management.drawButtonTable = function() {
         .attr("align", "center")
         .unbind()
         .click(function() {
-            if (gdo.management.selectedSection > -1) {
-                if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
-                    gdo.net.server.closeSection(gdo.management.selectedSection);
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + gdo.management.selectedSection);
-                    gdo.management.selectedSection = -1;
+            if (gdo.management.sections.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId == -1) {
+                    gdo.net.server.closeSection(gdo.management.sections.selectedSection);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of Section ' + gdo.management.sections.selectedSection);
+                    gdo.management.sections.selectedSection = -1;
                     gdo.updateDisplayCanvas();
                 }
             }
         });
-    if (gdo.management.selectedSection > -1) {
-        if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId == -1) {
             $(".close_section_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
@@ -505,25 +508,25 @@ gdo.management.drawButtonTable = function() {
     $(".deploy_app_button")
         .unbind()
         .click(function() {
-            if (gdo.net.section[gdo.management.selectedSection] != null) {
-                if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1 && gdo.management.selectedApp != null && gdo.management.selectedConfiguration != null) {
-                    gdo.net.server.deployBaseApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedApp + " at Section " + gdo.management.selectedSection + " with Configuration " + gdo.management.selectedConfiguration);
+            if (gdo.net.section[gdo.management.sections.selectedSection] != null) {
+                if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId == -1 && gdo.management.apps.selectedApp != null && gdo.management.apps.selectedConfiguration != null) {
+                    gdo.net.server.deployBaseApp(gdo.management.sections.selectedSection, gdo.management.apps.selectedApp, gdo.management.apps.selectedConfiguration);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.apps.selectedApp + " at Section " + gdo.management.sections.selectedSection + " with Configuration " + gdo.management.apps.selectedConfiguration);
                     //gdo.management.selectedSection = -1;
-                    gdo.management.selectedApp = null;
-                    gdo.management.selectedConfiguration = null;
+                    gdo.management.apps.selectedApp = null;
+                    gdo.management.apps.selectedConfiguration = null;
                     gdo.updateDisplayCanvas();
                 }
             }
         });
-    if (gdo.management.selectedSection > -1) {
-        if (gdo.management.selectedConfiguration != null) {
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.management.apps.selectedConfiguration != null) {
             $(".deploy_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
                 .removeClass("btn-danger")
                 .addClass("btn-success");
-        } else if (gdo.net.section[gdo.management.selectedSection].appInstanceId == -1) {
+        } else if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId == -1) {
             $(".deploy_app_button")
                 .removeClass("btn-default")
                 .removeClass("btn-success")
@@ -552,14 +555,14 @@ gdo.management.drawButtonTable = function() {
         .attr("align", "center")
         .unbind()
         .click(function() {
-            if (gdo.management.selectedSection > -1) {
-                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
-                    window.location.replace("Instances.cshtml?id=" + gdo.net.section[gdo.management.selectedSection].appInstanceId);
+            if (gdo.management.sections.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
+                    window.location.replace("Instances.cshtml?id=" + gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
                 }
             }
         });
-    if (gdo.management.selectedSection > -1) {
-        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.selectedSection].appInstanceId].integrationMode) {
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].integrationMode) {
             $(".control_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
@@ -577,6 +580,50 @@ gdo.management.drawButtonTable = function() {
             .addClass("btn-default")
             .removeClass("btn-primary");
     }
+    $(".send_app_control_button_div")
+    .empty()
+    .append("<button type='button' class='send_app_control_button btn btn-danger btn-lg btn-block'><i class='fa  fa-upload  fa-fw'></i>&nbsp;Send Control</button>")
+    .css("height", "100%")
+    .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+    .css('padding', 1)
+    .attr("align", "center")
+    .unbind()
+    .click(function () {
+        if (gdo.management.sections.selectedSection > -1) {
+            if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
+                gdo.management.apps.selectedApp = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].appName;
+                gdo.management.apps.selectedConfiguration = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].configName;
+                gdo.net.server.updateConsoleInstance(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
+                gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console' + gdo.management.sections.selectedSection);
+                //gdo.updateDisplayCanvas();
+            } else {
+                gdo.net.server.updateConsoleInstance(-1);
+                gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
+            }
+        } else {
+            gdo.net.server.updateConsoleInstance(-1);
+            gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
+        }
+    });
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].integrationMode) {
+            $(".send_app_control_button")
+                //.removeClass("disabled")
+                .removeClass("btn-default")
+                .removeClass("btn-danger")
+                .addClass("btn-primary");
+        } else {
+            $(".send_app_control_button")
+                //.addClass("disabled")
+                .addClass("btn-danger")
+                .removeClass("btn-primary");
+        }
+    } else {
+        $("send_app_control_button")
+            //.addClass("disabled")
+            .addClass("btn-danger")
+            .removeClass("btn-primary");
+    }
     $(".reset_app_button_div")
         .empty()
         .append("<button type='button' class='reset_app_button btn btn-default disabled btn-lg btn-block'><i class='fa  fa-repeat  fa-fw'></i>&nbsp;Reset App</button>")
@@ -586,23 +633,23 @@ gdo.management.drawButtonTable = function() {
         .attr("align", "center")
         .unbind()
         .click(function () {
-            if (gdo.management.selectedSection > -1) {
-                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
-                    gdo.management.selectedApp = gdo.net.instance[gdo.net.section[gdo.management.selectedSection].appInstanceId].appName;
-                    gdo.management.selectedConfiguration = gdo.net.instance[gdo.net.section[gdo.management.selectedSection].appInstanceId].configName;
-                    gdo.net.server.closeApp(gdo.net.section[gdo.management.selectedSection].appInstanceId);
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.selectedSection);
-                    gdo.net.server.deployBaseApp(gdo.management.selectedSection, gdo.management.selectedApp, gdo.management.selectedConfiguration);
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.selectedApp + " at Section " + gdo.management.selectedSection + " with Configuration " + gdo.management.selectedConfiguration);
+            if (gdo.management.sections.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
+                    gdo.management.apps.selectedApp = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].appName;
+                    gdo.management.apps.selectedConfiguration = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].configName;
+                    gdo.net.server.closeApp(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.sections.selectedSection);
+                    gdo.net.server.deployBaseApp(gdo.management.sections.selectedSection, gdo.management.apps.selectedApp, gdo.management.apps.selectedConfiguration);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Deployment of App ' + gdo.management.apps.selectedApp + " at Section " + gdo.management.sections.selectedSection + " with Configuration " + gdo.management.apps.selectedConfiguration);
                     //gdo.management.selectedSection = -1;
-                    gdo.management.selectedApp = null;
-                    gdo.management.selectedConfiguration = null;
+                    gdo.management.apps.selectedApp = null;
+                    gdo.management.apps.selectedConfiguration = null;
                     gdo.updateDisplayCanvas();
                 }
             }
         });
-    if (gdo.management.selectedSection > -1) {
-        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.selectedSection].appInstanceId].integrationMode) {
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1 && !gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].integrationMode) {
             $(".reset_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
@@ -629,17 +676,17 @@ gdo.management.drawButtonTable = function() {
         .attr("align", "center")
         .unbind()
         .click(function() {
-            if (gdo.management.selectedSection > -1) {
-                if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
-                    gdo.net.server.closeApp(gdo.net.section[gdo.management.selectedSection].appInstanceId);
-                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.selectedSection);
-                    gdo.management.selectedSection = -1;
+            if (gdo.management.sections.selectedSection > -1) {
+                if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
+                    gdo.net.server.closeApp(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
+                    gdo.consoleOut('.MANAGEMENT', 1, 'Requested Disposal of App' + gdo.management.sections.selectedSection);
+                    gdo.management.sections.selectedSection = -1;
                     gdo.updateDisplayCanvas();
                 }
             }
         });
-    if (gdo.management.selectedSection > -1) {
-        if (gdo.net.section[gdo.management.selectedSection].appInstanceId > -1) {
+    if (gdo.management.sections.selectedSection > -1) {
+        if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
             $(".close_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
@@ -669,10 +716,10 @@ gdo.management.drawButtonTable = function() {
         .click(function() {
             gdo.consoleOut('.NET', 1, 'Clearing States');
             gdo.net.server.clearCave();
-            gdo.management.selectedSection = -1;
-            gdo.management.selectedApp = null;
-            gdo.management.selectedConfiguration = null;
-            gdo.management.selectedInstance = -1;
+            gdo.management.sections.selectedSection = -1;
+            gdo.management.apps.selectedApp = null;
+            gdo.management.apps.selectedConfiguration = null;
+            gdo.management.apps.selectedInstance = -1;
             gdo.updateDisplayCanvas();
         });
 }
