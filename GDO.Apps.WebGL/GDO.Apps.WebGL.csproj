@@ -136,7 +136,6 @@
     <Content Include="Data\WebGL\textures\skybox_px.jpg" />
     <Content Include="Data\WebGL\textures\skybox_py.jpg" />
     <Content Include="Data\WebGL\textures\skybox_pz.jpg" />
-    <Content Include="Data\WebGL\UV_Grid_Sm.jpg" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
