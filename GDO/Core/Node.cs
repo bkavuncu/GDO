@@ -93,8 +93,6 @@ namespace GDO.Core
             Cave.Sections.TryGetValue(0,out this.Section);
         }
 
-
-
         /// <summary>
         /// Serializes this as a JSON
         /// </summary>

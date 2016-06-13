@@ -70,8 +70,6 @@ namespace GDO
 
         public IList<Assembly> GetAssemblies()
         {
-            try
-            {
                 IList<Assembly> assemblies = new List<Assembly>();
                 var catalog = new AggregateCatalog();
                 string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
@@ -108,20 +106,6 @@ namespace GDO
                     assemblies.Add(cavemodule.GetType().Assembly);
                 }
                 return assemblies;
-            }
-            catch (Exception ex)
-            {
-                if (ex is ReflectionTypeLoadException)
-                {
-                    var typeLoadException = ex as ReflectionTypeLoadException;
-                    var loaderExceptions = typeLoadException.LoaderExceptions;
-                    foreach (var loaderException in loaderExceptions)
-                    {
-                        throw loaderException;
-                    }
-                }
-                throw ex;
-            }
         }
     }
 
