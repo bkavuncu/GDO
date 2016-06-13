@@ -12,9 +12,9 @@ Step := 16
 
 
 Gui, Add, Text,, Width per Node:
-Gui, Add, Edit, w100 vWidth, 640
+Gui, Add, Edit, w100 vWidth, 490
 Gui, Add, Text,, Height per Node:
-Gui, Add, Edit, w100 vHeight , 360
+Gui, Add, Edit, w100 vHeight , 350
 Gui, Add, Text,, Cols:
 Gui, Add, Edit, w70 vCols , 2
 Gui, Add, Text,, Rows:
@@ -55,7 +55,7 @@ Loop, %Rows%
 		run "chrome.exe" --app=%Fullurl%
 		Sleep 200
 		WinActivate, %Title%%Node%
-        Sleep 1000
+		WinWaitActive, %Title%%Node%
 		
 		WinGet Style, Style, A
 		CordX := ((Col*Width)+TopLeftX)

@@ -536,27 +536,7 @@ gdo.net.receiveData = function (data) {
     /// <param name="data">The data.</param>
     /// <returns></returns>
     gdo.consoleOut('.NET', 4, 'RECEIVED DATA');
-
-    var dataObj;
-    try {
-        dataObj = JSON.parse(data);
-    } catch (e) {
-        // Report this?
-        return;
-    }
-
-    var appName = dataObj.appName;
-    var command = dataObj.command;
-
-    if (appName != undefined && command != undefined) {
-        var data = dataObj.data;
-
-        // TODO: Fix this as it's not very safe
-        var fn = gdo.net.app[appName][command];
-        if (typeof fn === 'function') {
-            fn(data);
-        }
-    }
+    //dataObj = JSON.parse(data);
 
     //var type = dataObj.type;
     //var command = dataObj.command;
