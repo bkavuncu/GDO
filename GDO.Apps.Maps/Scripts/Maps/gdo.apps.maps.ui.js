@@ -8,11 +8,6 @@ gdo.net.app["Maps"].selected["layer"] = -1;
 gdo.net.app["Maps"].selected["source"] = -1;
 gdo.net.app["Maps"].selected["style"] = -1;
 gdo.net.app["Maps"].selected["format"] = -1;
-gdo.net.app["Maps"].temp = [];
-gdo.net.app["Maps"].temp["layer"] = {};
-gdo.net.app["Maps"].temp["source"] = {};
-gdo.net.app["Maps"].temp["style"] = {};
-gdo.net.app["Maps"].temp["format"] = {};
 
 
 gdo.net.app["Maps"].drawListTables = function (instanceId) {
@@ -92,24 +87,57 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
             j++;
         }
     }
-    gdo.net.app["Maps"].drawPropertyTable(instanceId, tab, gdo.net.app["Maps"].selected[tab]);
+    if (gdo.net.app["Maps"].selected[tab] >= 0) {
+        gdo.net.app["Maps"].drawPropertyTable(instanceId, tab, eval("gdo.net.instance[" + instanceId + "]." + tab + "s[" + gdo.net.app["Maps"].selected[tab] + "]"));
+    } else {
+        gdo.net.app["Maps"].drawEmptyTable(tab);
+    }
 
     //TODO draw property table
 }
 
+gdo.net.app["Maps"].readValueFromInput = function (input, type) {
+    var value;
+    if (input.val() == null || input.val() == '') {
+        value = null;
+    } else {
+        switch (type) {
+            case 0: // Boolean
+                value = input.val().replace(/'/g, "\\'");
+                break;
+            case 1: // Integer
+                value = parseInt(input.val().replace(/'/g, "\\'"));
+                break;
+            case 2: // Float
+                value = parseFloat(input.val().replace(/'/g, "\\'"));
+                break;
+            case 3: // String
+                value = input.val().replace(/'/g, "\\'");
+                break;
+        }
+    }
+    return value;
+}
+
 gdo.net.app["Maps"].registerCreateButton = function (instanceId, tab) {
-    /*for (var key in gdo.net.app["Maps"].temp["layer"].properties) {
-        if (!gdo.net.app["Maps"].temp["layer"].properties.hasOwnProperty((key))) {
+    for (var key in gdo.net.instance[instanceId].temp[tab].properties) {
+        var property = gdo.net.instance[instanceId].temp[tab].properties[key];
+        if (!gdo.net.instance[instanceId].temp[tab].properties.hasOwnProperty((key))) {
             continue;
-        } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "Editables" && key != "$type") {
-            if ($("iframe").contents().find("#layer_create_property_" + key + "_value_input").val() == '') {
-                gdo.net.app["Maps"].temp["layer"].properties[key] = null;
-            } else {
-                gdo.net.app["Maps"].temp["layer"].properties[key] = eval($("iframe").contents().find("#layer_create_property_" + key + "_value_input").val().replace(/'/g, "\\'"));
+        } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "ObjectType" && key != "Editables" && key != "$type") {
+            if (property.ParameterType == 0 || property.ParameterType == 2 || property.ParameterType == 3) {
+                property.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#" + tab + "_create_property_" + key + "_value_input"), property.VariableType);
+            } else if (property.ParameterType == 1) {
+                for (var i = 0; i < property.Length; i++) {
+                    property.Values.$values[i] = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#" + tab + "_create_property_" + key + "_value_input_" + i), property.VariableType);
+                }
+            } else if (property.ParameterType == 4) {
+                //later
             }
         }
     }
-    gdo.net.app["Maps"].uploadLayer(instanceId, gdo.net.app["Maps"].temp["layer"], true);*/
+    x = gdo.net.instance[instanceId].temp[tab];
+    gdo.net.app["Maps"].uploadObject(instanceId, tab, gdo.net.instance[instanceId].temp[tab], true);
 }
 
 gdo.net.app["Maps"].registerNextButton = function (instanceId, tab) {
@@ -127,7 +155,7 @@ gdo.net.app["Maps"].registerNextButton = function (instanceId, tab) {
                 }
             }
         }
-        gdo.net.app["Maps"].temp[tab] = object;
+        gdo.net.instance[instanceId].temp[tab] = object;
         gdo.net.app["Maps"].drawCreateTable(instanceId, tab, object);
     }
 }
@@ -160,15 +188,28 @@ gdo.net.app["Maps"].registerRemoveButton = function (instanceId, tab) {
 
 gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputDiv, isCreate) {
     if (property.IsVisible) {
-        if (property.Priority == 0 || property.Priority == -1) {
-            $("iframe").contents().find("#" + inputDiv).append(
-                        "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'>&nbsp;&nbsp;" + key + "</div>").popover();
+        if (isCreate) {
+            if (property.Priority == 0 || property.Priority == -1) {
+                $("iframe").contents().find("#" + inputDiv).append(
+                            "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
 
-        } else if (property.Priority == 1) {
-            $("iframe").contents().find("#" + inputDiv).append(
-            "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='gray'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+            } else if (property.Priority == 1) {
+                $("iframe").contents().find("#" + inputDiv).append(
+                "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='gray'>&nbsp;&nbsp;" + key + "</font></div>").popover();
 
+            }
+        } else {
+            if (property.Priority == 0 || property.Priority == -1) {
+                $("iframe").contents().find("#" + inputDiv).append(
+                            "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='#4CBFF8'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+
+            } else if (property.Priority == 1) {
+                $("iframe").contents().find("#" + inputDiv).append(
+                "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+
+            }
         }
+
         $("body").find("#" + inputDiv + "_key").popover();
         $("#" + inputDiv + "_key").popover();
         $("iframe").contents().find("#" + inputDiv + "_key").popover();
@@ -190,20 +231,21 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
             placeholder = '';
         }
 
-        if (property.Values != null && property.Values != "undefined") {
-            values = property.Values.$values;
-            placeholders = property.Values.$values;
-        } else if (property.DefaultValues != null && property.DefaultValues != "undefined") {
+        if (property.Length != null && property.Length != "undefined") {
             for (var i = 0; i < property.Length; i++) {
-                values[i] = '';
-            }
-            placeholders = property.DefaultValues.$values;
-        } else {
-            for (var i = 0; i < property.Length; i++) {
-                values[i] = '';
-                placeholders[i] = '';
+                if (property.Values.$values[i] != null && property.Values.$values[i] != "undefined") {
+                    values[i] = property.Values.$values[i];
+                    placeholders[i] = property.Values.$values[i];
+                } else if (property.DefaultValues.$values[i] != null && property.DefaultValues.$values[i] != "undefined") {
+                    values[i] = '';
+                    placeholders[i] = property.DefaultValues.$values[i];
+                } else {
+                    values[i] = '';
+                    placeholders[i] = '';
+                }
             }
         }
+
 
         switch (property.InputType) {
             case 1: // Boolean
@@ -297,8 +339,8 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     cssAddon: '.cp-color-picker{border-radius:0px}',
                     positionCallback: function ($elm) {
                         return { // the object will be used as in $('.something').css({...});
-                            left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() + 25,
-                            top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top,
+                            left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() - 150,
+                            top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top + $("iframe").contents().find("#" + inputDiv + "_value").height() + 7,
                         }
                     }
                 });
@@ -322,8 +364,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 var collection = eval("gdo.net.instance[instanceId]." + property.LinkedParameter);
                 for (var key in collection) {
                     if (collection.hasOwnProperty(key)) {
-                        //Check object type here somehow
-                        $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + collection[key].properties.Name.Value + "'");
+                        //if (collection[key].properties.ObjectType.Value == property.ObjectType) {
+                            $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + collection[key].properties.Name.Value + "'> " + collection[key].properties.Name.Value + "</option>");
+                        //}
                     }
                 }
                 //somehow assign value somwhere
@@ -371,8 +414,8 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         cssAddon: '.cp-color-picker{border-radius:0px}',
                         positionCallback: function ($elm) {
                             return { // the object will be used as in $('.something').css({...});
-                                left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() + 25,
-                                top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top,
+                                left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() - 150,
+                                top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top + $("iframe").contents().find("#" + inputDiv + "_value").height() + 7,
                             }
                         },
                     });
@@ -390,10 +433,12 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<input type='text' id='" + inputDiv + "_value_input' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                     "</div>");
         }
-        if ((!property.IsEditable && !isCreate)) {
-            $("iframe").contents().find("#" + inputDiv).css("opacity", "0.5").css("pointer-events", "none");
-        }
+
         if (property.Priority == -1) {
+            $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
+            $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
+        } else if ((!property.IsEditable && !isCreate)) {
+            $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
             $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
         }
     }
@@ -412,7 +457,7 @@ gdo.net.app["Maps"].drawTable = function (instanceId, tab, object, isCreate) {
     gdo.net.app["Maps"].drawEmptyTable(tab);
 
     var properties = object.properties;
-
+    xx = object;
     for (var key in properties) {
         if (key == null) {
             key = "";
@@ -521,6 +566,12 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
 }
 
 gdo.net.app["Maps"].registerButtons = function (instanceId) {
+    gdo.net.instance[instanceId].temp = [];
+    gdo.net.instance[instanceId].temp["layer"] = {};
+    gdo.net.instance[instanceId].temp["source"] = {};
+    gdo.net.instance[instanceId].temp["style"] = {};
+    gdo.net.instance[instanceId].temp["format"] = {};
+
     $("iframe").contents().find(".layer-play-button")
         .unbind()
         .click(function () {

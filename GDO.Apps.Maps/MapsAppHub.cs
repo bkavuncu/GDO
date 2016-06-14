@@ -512,7 +512,7 @@ namespace GDO.Apps.Maps
                     switch (className)
                     {
                         case "BingMapsSource":
-                            sourceId = maps.AddSource<BingMapsSource>(JsonConvert.DeserializeObject<Source>(serializedSource));
+                            sourceId = maps.AddSource<BingMapsSource>(JsonConvert.DeserializeObject<BingMapsSource>(serializedSource));
                             break;
                         case "CartoDBSource":
                             sourceId = maps.AddSource<CartoDBSource>(JsonConvert.DeserializeObject<CartoDBSource>(serializedSource));
@@ -924,7 +924,7 @@ namespace GDO.Apps.Maps
                         default:
                             break;
                     }
-                    BroadcastStyle(instanceId, formatId);
+                    BroadcastFormat(instanceId, formatId);
                 }
                 catch (Exception e)
                 {

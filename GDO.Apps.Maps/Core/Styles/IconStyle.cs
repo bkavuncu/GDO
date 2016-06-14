@@ -43,7 +43,9 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValues = new float[2] { (float)0.5, (float)0.5 },
+                Values = new float[2],
                 Length = 2,
+
             };
 
             AnchorOrigin = new DatalistParameter

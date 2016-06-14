@@ -32,10 +32,10 @@ $(function () {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Layer :' + layerId + " (Exists:" + exists + ")");
         if (exists) {
             if (gdo.net.instance[instanceId].layers[layerId] == null || typeof gdo.net.instance[instanceId].layers[layerId] == "undefined") {
-                gdo.net.app["Maps"].addLayer(instanceId, layerId, JSON.parse(serializedLayer));
+                gdo.net.app["Maps"].addObject(instanceId, "layer", layerId, JSON.parse(serializedLayer));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Added Layer :' + layerId);
             } else {
-                gdo.net.app["Maps"].updateLayer(instanceId, layerId, JSON.parse(serializedLayer));
+                gdo.net.app["Maps"].updateObject(instanceId, "layer", layerId, JSON.parse(serializedLayer));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Layer :' + layerId);
             }
         } else {
@@ -61,10 +61,10 @@ $(function () {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Source :' + sourceId + " (Exists:" + exists + ")");
         if (exists) {
             if (gdo.net.instance[instanceId].sources[sourceId] == null || typeof gdo.net.instance[instanceId].sources[sourceId] == "undefined") {
-                gdo.net.app["Maps"].addSource(instanceId, sourceId, JSON.parse(serializedSource));
+                gdo.net.app["Maps"].addObject(instanceId, "source", sourceId, JSON.parse(serializedSource));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Added Source :' + sourceId);
             } else {
-                gdo.net.app["Maps"].updateSource(instanceId, sourceId, JSON.parse(serializedSource));
+                gdo.net.app["Maps"].updateObject(instanceId, "source", sourceId, JSON.parse(serializedSource));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Source :' + sourceId);
             }
         } else {
@@ -80,10 +80,10 @@ $(function () {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Style :' + styleId + " (Exists:" + exists + ")");
         if (exists) {
             if (gdo.net.instance[instanceId].styles[styleId] == null || typeof gdo.net.instance[instanceId].styles[styleId] == "undefined") {
-                gdo.net.app["Maps"].addStyle(instanceId, styleId, JSON.parse(serializedStyle));
+                gdo.net.app["Maps"].addObject(instanceId, "style", styleId, JSON.parse(serializedStyle));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Added Style :' + styleId);
             } else {
-                gdo.net.app["Maps"].updateStyle(instanceId, styleId, JSON.parse(serializedStyle));
+                gdo.net.app["Maps"].updateObject(instanceId, "style", styleId, JSON.parse(serializedStyle));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Style :' + styleId);
             }
         } else {
@@ -95,10 +95,10 @@ $(function () {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Format :' + formatId + " (Exists:" + exists + ")");
         if (exists) {
             if (gdo.net.instance[instanceId].formats[formatId] == null || typeof gdo.net.instance[instanceId].formats[formatId] == "undefined") {
-                gdo.net.app["Maps"].addFormat(instanceId, formatId, JSON.parse(serializedFormat));
+                gdo.net.app["Maps"].addObject(instanceId, "format", formatId, JSON.parse(serializedFormat));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Added Format :' + formatId);
             } else {
-                gdo.net.app["Maps"].updateFormat(instanceId, formatId, JSON.parse(serializedFormat));
+                gdo.net.app["Maps"].updateObject(instanceId, "format", formatId, JSON.parse(serializedFormat));
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Format :' + formatId);
             }
         } else {
@@ -133,16 +133,16 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     dm = deserializedMap;
     var i;
     for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
-        gdo.net.app["Maps"].addFormat(instanceId, deserializedMap.Formats.$values[i].Id, deserializedMap.Formats.$values[i]);
+        gdo.net.app["Maps"].addObject(instanceId, "format", deserializedMap.Formats.$values[i].Id.Value, deserializedMap.Formats.$values[i]);
     }
     for (i = 0; i < deserializedMap.Styles.$values.length; i++) {
-        gdo.net.app["Maps"].addStyle(instanceId, deserializedMap.Styles.$values[i].Id, deserializedMap.Styles.$values[i]);
+        gdo.net.app["Maps"].addObject(instanceId, "style", deserializedMap.Styles.$values[i].Id.Value, deserializedMap.Styles.$values[i]);
     }
     for (i = 0; i < deserializedMap.Sources.$values.length; i++) {
-        gdo.net.app["Maps"].addSource(instanceId, deserializedMap.Sources.$values[i].Id, deserializedMap.Sources.$values[i]);
+        gdo.net.app["Maps"].addObject(instanceId, "source", deserializedMap.Sources.$values[i].Id.Value, deserializedMap.Sources.$values[i]);
     }
     for (i = 0; i < deserializedMap.Layers.$values.length; i++) {
-        gdo.net.app["Maps"].addLayer(instanceId, deserializedMap.Layers.$values[i].Id, deserializedMap.Layers.$values[i]);
+        gdo.net.app["Maps"].addObject(instanceId,"layer", deserializedMap.Sources.$values[i].Id.Value, deserializedMap.Sources.$values[i]);
     }
 
     gdo.net.app["Maps"].setView(instanceId, deserializedMap.Views.$values[deserializedMap.CurrentView]);

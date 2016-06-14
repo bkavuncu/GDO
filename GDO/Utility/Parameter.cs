@@ -34,6 +34,14 @@ namespace GDO.Utility
         Object = 4,
     }
 
+    public enum VariableTypes
+    {
+        Boolean = 0,
+        Integer = 1,
+        Float = 2,
+        String = 3,
+    }
+
     public enum Priorities
     {
         Required = 0,
@@ -48,6 +56,7 @@ namespace GDO.Utility
         public string Description { get; set; }
         public int Priority { get; set; }
         public int ParameterType { get; set; }
+        public int VariableType { get; set; }
         public int InputType { get; set; }
         public bool IsEditable { get; set; }
         public bool IsVisible { get; set; }
@@ -61,6 +70,7 @@ namespace GDO.Utility
         public bool? DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.Boolean;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Boolean;
     }
 
     public class IntegerParameter : Parameter
@@ -70,6 +80,7 @@ namespace GDO.Utility
         public int? Increment { get; set; }
         public new int InputType = (int)InputTypes.Integer;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     public class NullableIntegerParameter : Parameter
@@ -79,6 +90,7 @@ namespace GDO.Utility
         public int? Increment { get; set; }
         public new int InputType = (int)InputTypes.Integer;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     public class SliderParameter : Parameter
@@ -90,6 +102,7 @@ namespace GDO.Utility
         public float? Increment { get; set; }
         public new int InputType = (int)InputTypes.Slider;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Float;
     }
 
     public class FloatParameter : Parameter
@@ -99,6 +112,7 @@ namespace GDO.Utility
         public float? Increment { get; set; }
         public new int InputType = (int)InputTypes.Float;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Float;
     }
 
     public class StringParameter : Parameter
@@ -107,6 +121,7 @@ namespace GDO.Utility
         public string DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.String;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class JSONParameter : Parameter
@@ -115,6 +130,7 @@ namespace GDO.Utility
         public string DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.TextArea;
         public new int ParameterType = (int)ParameterTypes.JSON;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class FunctionParameter : Parameter
@@ -123,6 +139,7 @@ namespace GDO.Utility
         public string DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.TextArea;
         public new int ParameterType = (int)ParameterTypes.Function;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class LinkParameter : Parameter
@@ -133,6 +150,7 @@ namespace GDO.Utility
         public string ObjectType { get; set; }
         public new int InputType = (int)InputTypes.Link;
         public new int ParameterType = (int)ParameterTypes.Object;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     public class ColorParameter : Parameter
@@ -141,6 +159,7 @@ namespace GDO.Utility
         public string DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.Color;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class DatalistParameter : Parameter
@@ -151,6 +170,7 @@ namespace GDO.Utility
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.DataList;
         public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class IntegerArrayParameter : Parameter
@@ -160,6 +180,7 @@ namespace GDO.Utility
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.IntegerArray;
         public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     public class FloatArrayParameter : Parameter
@@ -169,6 +190,7 @@ namespace GDO.Utility
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.FloatArray;
         public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.Float;
     }
 
 
@@ -178,7 +200,8 @@ namespace GDO.Utility
         public string[] DefaultValues { get; set; }
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.StringArray;
-        public new int ParameterType = (int)ParameterTypes.Array;
+        public new int ParameterType = (int) ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class ColorArrayParameter : Parameter
@@ -188,6 +211,7 @@ namespace GDO.Utility
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.ColorArray;
         public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     //How to use:

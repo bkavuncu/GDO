@@ -10,7 +10,7 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core
 {
-    public abstract class Base
+    public class Base
     {
         [JsonProperty(Order = -2)]
         public IntegerParameter Id { get; set; }

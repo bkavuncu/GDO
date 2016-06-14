@@ -81,6 +81,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
                 Length = 2,
+                DefaultValues = new float[2],
+                Values = new float[2],
             };
 
             MinZoom = new NullableIntegerParameter
@@ -108,6 +110,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 Length = 2,
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
+                DefaultValues = new float[2],
+                Values = new float[2],
             };
 
             Resolutions = new FloatArrayParameter
@@ -121,6 +125,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 Length = 10,
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
+                DefaultValues = new float[10],
+                Values = new float[10],
             };
 
             TileSize = new IntegerArrayParameter
@@ -133,6 +139,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsVisible = true,
                 Length = 2,
                 DefaultValues = new int[2] {256,256},
+                Values = new int[2],
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
             };
@@ -169,7 +176,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = true,
                 IsVisible = true,
             };
-            WrapX = new BooleanParameter()
+            WrapX = new BooleanParameter
             {
                 Name = "WrapX",
                 PropertyName = "wrapx",

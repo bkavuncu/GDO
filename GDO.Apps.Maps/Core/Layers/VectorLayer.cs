@@ -43,7 +43,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 ObjectType = "ol.style.Style"
             };
 
-            RenderBuffer = new NullableIntegerParameter()
+            RenderBuffer = new NullableIntegerParameter
             {
                 Name = "Render Buffer",
                 PropertyName = "renderBuffer",

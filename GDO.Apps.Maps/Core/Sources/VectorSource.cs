@@ -74,7 +74,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 DefaultValue = true,
             };
 
-            WrapX = new BooleanParameter()
+            WrapX = new BooleanParameter
             {
                 Name = "WrapX",
                 PropertyName = "wrapX",

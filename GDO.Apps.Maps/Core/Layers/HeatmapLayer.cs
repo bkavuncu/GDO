@@ -41,6 +41,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = true,
                 IsVisible = true,
                 DefaultValues = new string[5] { "#00f", "#0ff", "#0f0", "#ff0", "#f00"},
+                Values = new string[5],
                 Length = 5
             };
 

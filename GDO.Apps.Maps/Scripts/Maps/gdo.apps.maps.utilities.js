@@ -71,10 +71,10 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                 properties.push([deserializedObject[index].PropertyName, eval(deserializedObject[index].Value)]);
                 break;
             case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.JSON:
-                properties.push([deserializedObject[index].PropertyName, JSON.Parse(deserializedObject[index].Value)]);
+                properties.push([deserializedObject[index].PropertyName, JSON.parse(deserializedObject[index].Value)]);
                 break;
             case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
-                properties.push([deserializedObject[index].PropertyName, eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParamater + "[" + deserializedObject[index].Value + "]")]);
+                properties.push([deserializedObject[index].PropertyName, eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParameter + "[" + deserializedObject[index].Value + "]")]);
                 break;
             default:
                 gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + deserializedObject[index].ParameterType + ' for ' + deserializedObject.Name + 's property ' + deserializedObject[index].PropertyName);
@@ -86,6 +86,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
     eval("object = new " + deserializedObject.ObjectType.Value + "(options);");
     object.properties = deserializedObject;
     object.properties.isInitialized = true;
+    eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;")
     gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
@@ -112,9 +113,9 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading ' + objectType + ': ' + object.properties.Id);
     var properties = object.properties;
     if (isNew) {
-        eval("gdo.net.app['Maps'].server.add"+upperCaseFirstLetter(objectType)+"("+instanceId+","+ properties.ClassName.Value+","+ JSON.stringify(clone(properties))+");");
+        eval("gdo.net.app['Maps'].server.add"+upperCaseFirstLetter(objectType)+"("+instanceId+",'"+ properties.ClassName.Value+"','"+ JSON.stringify(clone(properties)).replace(/'/g, "\\'")+"');");
     } else {
-        eval("gdo.net.app['Maps'].server.update"+upperCaseFirstLetter(objectType)+"("+instanceId+","+ object.properties.Id.Value+","+ parseInt(properties.Type) +","+ JSON.stringify(properties)+");");
+        eval("gdo.net.app['Maps'].server.update"+upperCaseFirstLetter(objectType)+"("+instanceId+","+ object.properties.Id.Value+","+ parseInt(properties.Type) +",'"+ JSON.stringify(properties).replace(/'/g, "\\'")+"');");
     }
 }
 

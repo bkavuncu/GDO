@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core
 {
-    public abstract class Source : Base
+    public class Source : Base
     {
         public Source()
         {

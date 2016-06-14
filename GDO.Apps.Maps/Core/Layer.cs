@@ -9,14 +9,14 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Maps.Core
 {
-    public abstract class Layer : Base
+    public class Layer : Base
     {
 
         [JsonProperty(Order = -1)]
         public SliderParameter Opacity { get; set; }
 
         [JsonProperty(Order = -1)]
-        public IntegerParameter ZIndex { get; set; }
+        public NullableIntegerParameter ZIndex { get; set; }
 
         [JsonProperty(Order = -1)]
         public BooleanParameter Visible { get; set; }
@@ -48,7 +48,7 @@ namespace GDO.Apps.Maps.Core
                 Increment = (float?)0.05,
             };
 
-            ZIndex = new IntegerParameter
+            ZIndex = new NullableIntegerParameter
             {
                 Name = "ZIndex",
                 PropertyName = "zIndex",
@@ -79,6 +79,8 @@ namespace GDO.Apps.Maps.Core
                 IsEditable = false,
                 IsVisible = true,
                 Length = 2,
+                DefaultValues = new float[2],
+                Values = new float[2],
             };
 
             MinResolution = new NullableIntegerParameter

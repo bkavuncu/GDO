@@ -6,7 +6,7 @@ using GDO.Apps.Maps.Core.Styles;
 
 namespace GDO.Apps.Maps.Core
 {
-    public abstract class Style : Base
+    public class Style : Base
     {
         public Style () : base ()
         {
