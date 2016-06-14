@@ -7,14 +7,14 @@ using GDO.Core.Apps;
 using GDO.Utility;
 using Microsoft.AspNet.SignalR;
 
-namespace GDO.Apps.Telefonica
+namespace GDO.Apps.UKTravel
 {
     [Export(typeof(IAppHub))]
-    public class TelefonicaAppHub : Hub, IBaseAppHub
+    public class UKTravelAppHub : Hub, IBaseAppHub
     {
-        public string Name { get; set; } = "Telefonica";
+        public string Name { get; set; } = "UKTravel";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
-        public Type InstanceType { get; set; } = new TelefonicaApp().GetType();
+        public Type InstanceType { get; set; } = new UKTravelApp().GetType();
         public void JoinGroup(int instanceId)
         {
             Groups.Add(Context.ConnectionId, "" + instanceId);
@@ -30,7 +30,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).SetMapPosition(topLeft, center, bottomRight, resolution, width, height, zoom);
                     Clients.Caller.receiveMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                     BroadcastMapPosition(instanceId, topLeft, center, bottomRight, resolution, width, height, zoom);
                 }
@@ -43,12 +43,12 @@ namespace GDO.Apps.Telefonica
 
         public void RequestTimeStep()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["Telefonica"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.receiveTimeStep(instanceId, (((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep));
+                    Clients.Caller.receiveTimeStep(instanceId, (((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep));
                 }
                 catch (Exception e)
                 {
@@ -63,11 +63,11 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).Blur = blur;
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Radius = radius;
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Opacity = opacity;
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).StationWidth = station;
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie = dataseries;
+                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).Blur = blur;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Radius = radius;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Opacity = opacity;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationWidth = station;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = dataseries;
                     Clients.Group("" + instanceId).receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                     Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
@@ -84,11 +84,11 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    int blur = ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Blur;
-                    int radius = ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Radius;
-                    float opacity = ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Opacity;
-                    int station = ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).StationWidth;
-                    string dataseries = ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie;
+                    int blur = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Blur;
+                    int radius = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Radius;
+                    float opacity = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Opacity;
+                    int station = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationWidth;
+                    string dataseries = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie;
                     Clients.Caller.receiveProperties(instanceId, blur, radius, opacity, station, dataseries);
                 }
                 catch (Exception e)
@@ -100,10 +100,10 @@ namespace GDO.Apps.Telefonica
 
         public void StartAnimation()
         {
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["Telefonica"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
             try
             {
-                if (((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).IsAnimating == false)
+                if (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating == false)
                 {
                     Animate();
                 }
@@ -117,34 +117,34 @@ namespace GDO.Apps.Telefonica
         public void Animate()
         {
             int MAX_TIMESTEP = 16;
-            int instanceId = Utilities.GetFirstKey(Cave.Apps["Telefonica"].Instances);
+            int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
             try
             {
-                if (((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).IsAnimating == false)
+                if (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating == false)
                 {
-                    ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).IsAnimating = true;
-                    while (((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).IsAnimating)
+                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating = true;
+                    while (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating)
                     {
                         System.Threading.Thread.Sleep(
-                            ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).WaitTime);
-                        if (((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep >= MAX_TIMESTEP)
+                            ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).WaitTime);
+                        if (((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep >= MAX_TIMESTEP)
                         {
-                            ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep = 0;
+                            ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep = 0;
                         }
                         foreach (KeyValuePair<int, IAppInstance> instanceKeyValuePair in Cave.Instances)
                         {
-                            if (instanceKeyValuePair.Value.AppName == "Telefonica")
+                            if (instanceKeyValuePair.Value.AppName == "UKTravel")
                             {
                                 Clients.Group("" + instanceKeyValuePair.Value.Id).receiveTimeStep(
-                                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep);
+                                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep);
                             }
                         }
-                        ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep++;
+                        ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).TimeStep++;
                     }
                 }
                 else
                 {
-                    ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).IsAnimating = false;
+                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).IsAnimating = false;
                 }
 
             }
@@ -161,11 +161,11 @@ namespace GDO.Apps.Telefonica
                 try
                 {
                     //change its value with !
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).BingLayer =
-                        !((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).BingLayer;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer =
+                        !((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer;
                     
-                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).BingLayer);
-                    Clients.Caller.setBingLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).BingLayer);
+                    Clients.Group("" + instanceId).setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer);
+                    Clients.Caller.setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer);
                 }
                 catch (Exception e)
                 {
@@ -181,11 +181,11 @@ namespace GDO.Apps.Telefonica
                 try
                 {
                     //change its value with !
-                    ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).CartoDBLayer =
-                        !((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).CartoDBLayer;
+                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer =
+                        !((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer;
 
-                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).CartoDBLayer);
-                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Group("" + instanceId).setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -200,11 +200,11 @@ namespace GDO.Apps.Telefonica
                 try
                 {
                     //change its value with !
-                    ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).OpenCycleLayer =
-                        !((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).OpenCycleLayer;
+                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer =
+                        !((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer;
 
-                    Clients.Group("" + instanceId).setOpenCycleLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).OpenCycleLayer);
-                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Group("" + instanceId).setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
                 }
                 catch (Exception e)
                 {
@@ -220,11 +220,11 @@ namespace GDO.Apps.Telefonica
                 try
                 {
                     //change its value with !
-                    ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).StationLayer =
-                        !((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).StationLayer;
+                    ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer =
+                        !((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer;
 
-                    Clients.Group("" + instanceId).setStationLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).StationLayer);
-                    Clients.Caller.setStationLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).StationLayer);
+                    Clients.Group("" + instanceId).setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer);
+                    Clients.Caller.setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer);
                 }
                 catch (Exception e)
                 {
@@ -240,11 +240,11 @@ namespace GDO.Apps.Telefonica
                 try
                 {
                     //change its value with !
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).HeatmapLayer = 
-                        !((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).HeatmapLayer;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer = 
+                        !((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer;
 
-                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).HeatmapLayer);
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Group("" + instanceId).setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -259,28 +259,28 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    switch (((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie)
+                    switch (((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie)
                     {
                         case "entries":
-                            ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie = "entries";
+                            ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = "entries";
                             break;
                         case "exits":
-                            ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie = "exits";
+                            ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = "exits";
                             break;
                         case "emptiness":
-                            ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie = "emptiness";
+                            ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = "emptiness";
                             break;
                     }*/
                     /*
-                    if (((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie)
+                    if (((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie)
                     {
-                        ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie = false;
+                        ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = false;
                     }
                     else
                     {
-                        ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie = true;
+                        ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie = true;
                     }*/
- /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Dataserie);
+ /*                   Clients.Group("" + instanceId).setEntry(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Dataserie);
                 }
                 catch (Exception e)
                 {
@@ -295,7 +295,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    Clients.Caller.setBingLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).BingLayer);
+                    Clients.Caller.setBingLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).BingLayer);
                 }
                 catch (Exception e)
                 {
@@ -310,7 +310,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).CartoDBLayer);
+                    Clients.Caller.setCartoDBLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).CartoDBLayer);
                 }
                 catch (Exception e)
                 {
@@ -324,7 +324,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).OpenCycleLayer);
+                    Clients.Caller.setOpenCycleLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).OpenCycleLayer);
                 }
                 catch (Exception e)
                 {
@@ -338,7 +338,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    Clients.Caller.setStationLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).StationLayer);
+                    Clients.Caller.setStationLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).StationLayer);
                 }
                 catch (Exception e)
                 {
@@ -353,7 +353,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).HeatmapLayer);
+                    Clients.Caller.setHeatmapLayerVisible(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).HeatmapLayer);
                 }
                 catch (Exception e)
                 {
@@ -369,8 +369,8 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).Style = style;
-                    Clients.Caller.receiveTelefonicatyle(instanceId, style);
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).Style = style;
+                    Clients.Caller.receiveUKTravelStyle(instanceId, style);
                     BroadcastMapStyle(instanceId, style);
                 }
                 catch (Exception e)
@@ -386,7 +386,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    MapPosition position = ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).GetMapPosition();
+                    MapPosition position = ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).GetMapPosition();
                     if (control)
                     {
                         Clients.Caller.receiveInitialMapPosition(instanceId, position.Center, position.Resolution, position.Zoom);
@@ -409,7 +409,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    string style = ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).Style;
+                    string style = ((UKTravelApp) Cave.Apps["UKTravel"].Instances[instanceId]).Style;
                     Clients.Caller.receiveMapStyle(instanceId, style);
                 }
                 catch (Exception e)
@@ -424,7 +424,7 @@ namespace GDO.Apps.Telefonica
         }
         public void BroadcastMapStyle(int instanceId, string style)
         {
-            Clients.Group("" + instanceId).receiveTelefonicatyle(instanceId, style);
+            Clients.Group("" + instanceId).receiveUKTravelStyle(instanceId, style);
         }
 
         public void Set3DMode(int instanceId, bool mode)
@@ -433,7 +433,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).mode = mode;
+                    ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).mode = mode;
                     Clients.Group("" + instanceId).receive3DMode(instanceId, mode);
                     Clients.Caller.receive3DMode(instanceId, mode);
                 }
@@ -451,7 +451,7 @@ namespace GDO.Apps.Telefonica
             {
                 try
                 {
-                    Clients.Caller.receive3DMode(instanceId, ((TelefonicaApp)Cave.Apps["Telefonica"].Instances[instanceId]).mode);
+                    Clients.Caller.receive3DMode(instanceId, ((UKTravelApp)Cave.Apps["UKTravel"].Instances[instanceId]).mode);
                 }
                 catch (Exception e)
                 {

@@ -53,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.City", "GDO.Apps.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Cortical", "GDO.Apps.Cortical\GDO.Apps.Cortical.csproj", "{193D0D08-0D61-4511-94AC-34AB78FB3793}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Telefonica", "GDO.Apps.Telefonica\GDO.Apps.Telefonica.csproj", "{4E0EC509-B2BE-459A-92CE-5EFB978679DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Apps.UKTravel\GDO.Apps.UKTravel.csproj", "{4E0EC509-B2BE-459A-92CE-5EFB978679DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
