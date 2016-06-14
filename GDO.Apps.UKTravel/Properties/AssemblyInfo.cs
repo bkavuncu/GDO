@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GDO.Apps.Telefonica")]
+[assembly: AssemblyTitle("GDO.Apps.UKTravel")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CSG")]
-[assembly: AssemblyProduct("GDO.Apps.Telefonica")]
+[assembly: AssemblyProduct("GDO.Apps.UKTravel")]
 [assembly: AssemblyCopyright("Copyright © CSG 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

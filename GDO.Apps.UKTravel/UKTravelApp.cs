@@ -1,9 +1,9 @@
 ﻿using GDO.Core;
 using GDO.Core.Apps;
 
-namespace GDO.Apps.Telefonica
+namespace GDO.Apps.UKTravel
 {
-    public class TelefonicaApp : IBaseAppInstance
+    public class UKTravelApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
