@@ -116,6 +116,7 @@ namespace GDO.Apps.Telefonica
 
         public void Animate()
         {
+            int MAX_TIMESTEP = 16;
             int instanceId = Utilities.GetFirstKey(Cave.Apps["Telefonica"].Instances);
             try
             {
@@ -126,7 +127,7 @@ namespace GDO.Apps.Telefonica
                     {
                         System.Threading.Thread.Sleep(
                             ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).WaitTime);
-                        if (((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep >= 285)
+                        if (((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep >= MAX_TIMESTEP)
                         {
                             ((TelefonicaApp) Cave.Apps["Telefonica"].Instances[instanceId]).TimeStep = 0;
                         }

@@ -20,7 +20,7 @@ namespace GDO.Apps.Telefonica
         public bool HeatmapLayer { get; set; }
         public int TimeStep { get; set; } = 0;
         public bool IsAnimating { get; set; } = false;
-        public int WaitTime { get; set; } = 210;
+        public int WaitTime { get; set; } = 840;
 
         public float Opacity { get; set; }
         public int Blur { get; set; }
@@ -58,8 +58,8 @@ namespace GDO.Apps.Telefonica
             this.StationWidth = (int)Configuration.Json.SelectToken("station");
             this.Dataserie = (string)Configuration.Json.SelectToken("dataserie");
             this.BingLayer = false;
-            this.CartoDBLayer = false;
-            this.OpenCycleLayer = true;
+            this.CartoDBLayer = true;
+            this.OpenCycleLayer = false;
             this.StationLayer = true;
             this.HeatmapLayer = true;
             //TODO Read CSV into data dictionaries
