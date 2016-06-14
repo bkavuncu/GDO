@@ -83,13 +83,11 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\Telefonica\Exit - 5min Aggregation.json" />
-    <Content Include="Configurations\Telefonica\Entry - 5min Aggregation.json" />
-    <Content Include="Configurations\Telefonica\Emptiness - 5min Aggregation.json" />
-    <Content Include="Data\Telefonica\entry_exit_data_SLIDINGWINDOW.json" />
-    <Content Include="Data\Telefonica\entry_exit_data_TIMEAGGREGATION.json" />
     <Content Include="Data\Telefonica\stations.json" />
     <Content Include="Data\Telefonica\trainstations.json" />
+    <Content Include="Data\Telefonica\heatdata.json" />
+    <Content Include="Configurations\Telefonica\Destinations.json" />
+    <Content Include="Configurations\Telefonica\Origins.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

@@ -31,14 +31,15 @@ $(function () {
                         feature.set("weight", Math.log(parseFloat(feature.get("exits")[timestep])) / 7);
                     });
                     break;
-                case "emptiness":
+                /*case "emptiness":
                     gdo.net.instance[instanceId].cycleSource.forEachFeature(function (feature) {
                         feature.set("weight", parseFloat(feature.get("emptiness")[timestep]));
                     });
-                    break;
+                    break; */
             }
             if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
-                var temp = ((timestep + 237) * 5);
+
+                /*var temp = ((timestep + 237) * 5);
                 if (temp > 1440) {
                     temp = temp - 1440;
                 }
@@ -49,11 +50,12 @@ $(function () {
                 }
                 if (minutes < 10) {
                     minutes = "0" + minutes;
-                }
+                }*/
                 $("iframe").contents().find("#timelabel")
                     .empty()
                     .css("visibility", "visible")
-                    .append("" + hour + ":" + minutes);
+                    .append(timestep+4);
+                    //.append("" + hour + ":" + minutes);
             }
         }
     }
@@ -84,9 +86,9 @@ $(function () {
                     case "exits":
                         $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("Destination");
                         break;
-                    case "emptiness":
+                    /*case "emptiness":
                         $("iframe").contents().find("#datalabel").empty().css("visibility", "visible").append("Docks' Emptiness level");
-                        break;
+                        break; */
                     }
         }
         //gdo.net.instance[instanceId].map.render();
@@ -244,15 +246,16 @@ $(function () {
 gdo.net.app["Telefonica"].initMap = function (instanceId, center, resolution, zoom) {
     gdo.consoleOut('.Telefonica', 1, 'Map Initialized');
     gdo.net.app["Telefonica"].timeStep = 0;
+
     gdo.consoleOut('.Telefonica', 1, 'Loading ' + '/Data/Telefonica/stations.json');
     $.getJSON('/Data/Telefonica/stations.json', function (data) {
         gdo.net.app["Telefonica"].stations = data;
     });
 
-    gdo.consoleOut('.Telefonica', 1, 'Loading ' + '/Data/Telefonica/trainstations.json');
+    /*gdo.consoleOut('.Telefonica', 1, 'Loading ' + '/Data/Telefonica/trainstations.json');
     $.getJSON('/Data/Telefonica/trainstations.json', function (data) {
         gdo.net.app["Telefonica"].trainstations = data;
-    });
+    }); */
 
     gdo.consoleOut('.Telefonica', 1, 'Loading ' + '/Data/Telefonica/' + gdo.net.app["Telefonica"].config[gdo.net.instance[instanceId].configName].file + '.json');
     $.getJSON('/Data/Telefonica/' + gdo.net.app["Telefonica"].config[gdo.net.instance[instanceId].configName].file + '.json', function (data) {
@@ -304,10 +307,8 @@ gdo.net.app["Telefonica"].initMap = function (instanceId, center, resolution, zo
             url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
         })
     });
+    
     gdo.net.instance[instanceId].layers = [];
-    //gdo.net.instance[instanceId].layers[0] = gdo.net.instance[instanceId].bingLayer;
-    //gdo.net.instance[instanceId].layers[1] = gdo.net.instance[instanceId].cartodbLayer;
-    //gdo.net.instance[instanceId].layers[2] = gdo.net.instance[instanceId].openCycleLayer;
     map = new ol.Map({
         controls: new Array(),
         //renderer: 'webgl',
@@ -320,9 +321,7 @@ gdo.net.app["Telefonica"].initMap = function (instanceId, center, resolution, zo
     setTimeout(function () {
 
         gdo.net.instance[instanceId].stationSource = new ol.source.Vector();
-
         gdo.net.instance[instanceId].trainstationSource = new ol.source.Vector();
-
         gdo.net.instance[instanceId].cycleSource = new ol.source.Vector();
 
         gdo.net.app["Telefonica"].server.requestProperties(instanceId);
@@ -336,10 +335,10 @@ gdo.net.app["Telefonica"].initMap = function (instanceId, center, resolution, zo
         gdo.net.instance[instanceId].styleFunction = function (feature, resolution) {
             var style = new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["Telefonica"].stations[feature.getId()].nbDocks)/3, //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
+                    radius: gdo.net.instance[instanceId].stationWidth, //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols,
                     fill: new ol.style.Fill({
                         color: 'tomato',
-                        width: (gdo.net.instance[instanceId].stationWidth * gdo.net.app["Telefonica"].stations[feature.getId()].nbDocks) / 12 //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
+                        width: gdo.net.instance[instanceId].stationWidth //* gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * gdo.net.section[gdo.net.instance[instanceId].sectionId].cols
                     }),
                     stroke: new ol.style.Stroke({
                         color: 'black',
@@ -367,7 +366,6 @@ gdo.net.app["Telefonica"].initMap = function (instanceId, center, resolution, zo
             });
             return [style];
         } */
-
 
         $('iframe').contents().find('#blur').change(function () {
             gdo.net.app["Telefonica"].uploadProperties(instanceId);
@@ -490,7 +488,7 @@ gdo.net.app["Telefonica"].drawFeatures = function (instanceId) {
             feature2.set('weight', parseFloat(dataPoint.entries[gdo.net.app["Telefonica"].timeStep]));
             feature2.set('entries', dataPoint.entries);
             feature2.set('exits', dataPoint.exits);
-            feature2.set('emptiness', dataPoint.emptiness);
+            //feature2.set('emptiness', dataPoint.emptiness);
             gdo.net.instance[instanceId].cycleSource.addFeature(feature2);
         }
     }
