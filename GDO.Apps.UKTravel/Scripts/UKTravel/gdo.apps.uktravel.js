@@ -384,12 +384,14 @@ gdo.net.app["UKTravel"].initMap = function (instanceId, center, resolution, zoom
         });
         gdo.net.app["UKTravel"].uploadProperties = function (instanceId) {
             gdo.net.app["UKTravel"].server.setProperties(instanceId,
-            parseInt($('iframe').contents().find('#blur').val()),
-            parseInt($('iframe').contents().find('#radius').val()),
-            parseFloat($('iframe').contents().find('#opacity').val()),
-            parseInt($('iframe').contents().find('#station').val()),
-            gdo.net.instance[instanceId].dataserie);
-            setTimeout(function () { gdo.net.app["UKTravel"].uploadMapPosition(instanceId); }, 300);
+                parseInt($('iframe').contents().find('#blur').val()),
+                parseInt($('iframe').contents().find('#radius').val()),
+                parseFloat($('iframe').contents().find('#opacity').val()),
+                parseInt($('iframe').contents().find('#station').val()),
+                gdo.net.instance[instanceId].dataserie);
+            setTimeout(function() {
+                 gdo.net.app["UKTravel"].uploadMapPosition(instanceId);
+            }, 300);
             //gdo.net.app["UKTravel"].updateChange(instanceId);
         }
 
@@ -419,6 +421,7 @@ gdo.net.app["UKTravel"].initMap = function (instanceId, center, resolution, zoom
 
             gdo.net.instance[instanceId].heatmapLayer = new ol.layer.Heatmap({
                 //gradient: ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
+                gradient: ['#404040', '#404040', '#00f','#0ff', '#ff0', '#f00'],
                 source: gdo.net.instance[instanceId].cycleSource,
                 opacity: opacity,
                 blur: blur,
@@ -461,7 +464,7 @@ gdo.net.app["UKTravel"].drawFeatures = function (instanceId) {
         }
     }
 
-    //TRAIN STATIONS
+    /*//TRAIN STATIONS
     for (var index1 in gdo.net.app["UKTravel"].trainstations) {
         if (gdo.net.app["UKTravel"].trainstations.hasOwnProperty((index1))) {
             var station1 = gdo.net.app["UKTravel"].trainstations[index1];
@@ -474,7 +477,7 @@ gdo.net.app["UKTravel"].drawFeatures = function (instanceId) {
             gdo.net.instance[instanceId].trainstationSource.addFeature(feature);
             gdo.consoleOut('.UKTravel', 3, "Adding TrainStation " + station1.name + " with id " + station1.id);
         }
-    }
+    } */
 
     //DATA
     for (var index3 in gdo.net.app["UKTravel"].data) {
@@ -568,6 +571,7 @@ gdo.net.app["UKTravel"].uploadMapPosition = function (instanceId) {
     var center = gdo.net.instance[instanceId].map.getView().getCenter();
     var topLeft = gdo.net.instance[instanceId].map.getCoordinateFromPixel([0, 0]);
     var bottomRight = gdo.net.instance[instanceId].map.getCoordinateFromPixel(gdo.net.instance[instanceId].map.getSize());
+    //TODO FIX topLeft and bottomRight are null
     var size = gdo.net.instance[instanceId].map.getSize();
     var width = size[0];
     var height = size[1];

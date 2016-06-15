@@ -11,5 +11,5 @@
   "blur": 15,
   "station": 1,
   "dataserie": "exits",
-  "file": "heatdata"
+  "file": "heatdata_not_same_zone"
 }
