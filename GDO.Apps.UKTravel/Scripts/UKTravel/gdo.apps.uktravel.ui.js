@@ -79,7 +79,8 @@ gdo.net.app["UKTravel"].drawMapTable = function (instanceId) {
         .css("height", "40px")
         .unbind()
         .click(function () {
-            gdo.net.app["UKTravel"].server.animate();
+            //TODO FIX second time... it is not called...
+            gdo.net.app["UKTravel"].server.startAnimation();
         });
   
 }

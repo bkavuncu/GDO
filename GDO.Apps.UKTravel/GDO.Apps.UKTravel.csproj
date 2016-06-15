@@ -88,6 +88,8 @@
     <Content Include="Data\UKTravel\heatdata.json" />
     <Content Include="Configurations\UKTravel\Destinations.json" />
     <Content Include="Configurations\UKTravel\Origins.json" />
+    <Content Include="Configurations\UKTravel\Destinations - NotSameZone.json" />
+    <Content Include="Configurations\UKTravel\Origins - NotSameZone.json" />
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

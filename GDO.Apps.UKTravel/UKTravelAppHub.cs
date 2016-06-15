@@ -116,7 +116,7 @@ namespace GDO.Apps.UKTravel
 
         public void Animate()
         {
-            int MAX_TIMESTEP = 16;
+            int MAX_TIMESTEP = 17;
             int instanceId = Utilities.GetFirstKey(Cave.Apps["UKTravel"].Instances);
             try
             {
