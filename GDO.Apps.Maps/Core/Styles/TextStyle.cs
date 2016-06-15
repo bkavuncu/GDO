@@ -9,8 +9,8 @@ namespace GDO.Apps.Maps.Core.Styles
     public class TextStyle : Core.Style
     {
         public StringParameter Font { get; set; }
-        public NullableIntegerParameter OffsetX { get; set; }
-        public NullableIntegerParameter OffsetY { get; set; }
+        public IntegerParameter OffsetX { get; set; }
+        public IntegerParameter OffsetY { get; set; }
         public FloatParameter Scale { get; set; }
         public FloatParameter Rotation { get; set; }
         public StringParameter Content { get; set; }
@@ -34,7 +34,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 DefaultValue = "10px sans-serif"
             };
-            OffsetX = new NullableIntegerParameter
+            OffsetX = new IntegerParameter
             {
                 Name = "Offset X",
                 PropertyName = "offsetX",
@@ -45,7 +45,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 DefaultValue = 0,
                 Increment = 1,
             };
-            OffsetY = new NullableIntegerParameter
+            OffsetY = new IntegerParameter
             {
                 Name = "Offset Y",
                 PropertyName = "offsetY",

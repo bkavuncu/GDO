@@ -16,7 +16,7 @@ namespace GDO.Apps.Maps.Core
         public SliderParameter Opacity { get; set; }
 
         [JsonProperty(Order = -1)]
-        public NullableIntegerParameter ZIndex { get; set; }
+        public IntegerParameter ZIndex { get; set; }
 
         [JsonProperty(Order = -1)]
         public BooleanParameter Visible { get; set; }
@@ -25,10 +25,10 @@ namespace GDO.Apps.Maps.Core
         public FloatArrayParameter Extent { get; set; }
 
         [JsonProperty(Order = -1)]
-        public NullableIntegerParameter MinResolution { get; set; }
+        public IntegerParameter MinResolution { get; set; }
 
         [JsonProperty(Order = -1)]
-        public NullableIntegerParameter MaxResolution { get; set; }
+        public IntegerParameter MaxResolution { get; set; }
 
         public Layer() : base ()
         {
@@ -48,7 +48,7 @@ namespace GDO.Apps.Maps.Core
                 Increment = (float?)0.05,
             };
 
-            ZIndex = new NullableIntegerParameter
+            ZIndex = new IntegerParameter
             {
                 Name = "ZIndex",
                 PropertyName = "zIndex",
@@ -83,7 +83,7 @@ namespace GDO.Apps.Maps.Core
                 Values = new float[2],
             };
 
-            MinResolution = new NullableIntegerParameter
+            MinResolution = new IntegerParameter
             {
                 Name = "Minimum Resolution",
                 PropertyName = "minResolution",
@@ -93,7 +93,7 @@ namespace GDO.Apps.Maps.Core
                 IsVisible = true,
             };
 
-            MaxResolution = new NullableIntegerParameter
+            MaxResolution = new IntegerParameter
             {
                 Name = "Maximum Resolution",
                 PropertyName = "maxResolution",

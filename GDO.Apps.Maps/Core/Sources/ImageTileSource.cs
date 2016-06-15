@@ -8,12 +8,12 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class ImageTileSource : Source
     {
-        public NullableIntegerParameter CacheSize { get; set; }
+        public IntegerParameter CacheSize { get; set; }
         public StringParameter CrossOrigin { get; set; }
         public BooleanParameter Opaque { get; set; }
         public StringParameter Projection { get; set; }
         public FloatArrayParameter Extent { get; set; }
-        public NullableIntegerParameter MinZoom { get; set; }
+        public IntegerParameter MinZoom { get; set; }
         public FloatArrayParameter Origin { get; set; }
         public FloatArrayParameter Resolutions { get; set; }
         public IntegerArrayParameter TileSize { get; set; }
@@ -28,7 +28,7 @@ namespace GDO.Apps.Maps.Core.Sources
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.TileImage";
 
-            CacheSize = new NullableIntegerParameter
+            CacheSize = new IntegerParameter
             {
                 Name = "Cache Size",
                 PropertyName = "cacheSize",
@@ -85,7 +85,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Values = new float[2],
             };
 
-            MinZoom = new NullableIntegerParameter
+            MinZoom = new IntegerParameter
             {
                 Name = "Minimum Zoom",
                 PropertyName = "minZoom",

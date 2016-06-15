@@ -56,19 +56,19 @@ namespace GDO.Apps.Maps
 
             foreach (Format format in Map.Formats)
             {
-                Formats.Add(format.Id.Value,format);
+                Formats.Add((int)format.Id.Value,format);
             }
             foreach (Style style in Map.Styles)
             {
-                Styles.Add(style.Id.Value, style);
+                Styles.Add((int)style.Id.Value, style);
             }
             foreach (Source source in Map.Sources)
             {
-                Sources.Add(source.Id.Value, source);
+                Sources.Add((int)source.Id.Value, source);
             }
             foreach (Layer layer in Map.Layers)
             {
-                Layers.Add(layer.Id.Value, layer);
+                Layers.Add((int)layer.Id.Value, layer);
                 //TODO update zindex
             }
             foreach (View view in Map.Views)
@@ -152,13 +152,16 @@ namespace GDO.Apps.Maps
         public string GetSerializedLayer(int layerId)
         {
             Layer layer = null;
-            try
+            if (Layers.Contains(layerId))
             {
-                layer = Layers.GetValue<Layer>(layerId);
-            }
-            catch (Exception e)
-            {
-                
+                try
+                {
+                    layer = Layers.GetValue<Layer>(layerId);
+                }
+                catch (Exception e)
+                {
+                    layer = null;
+                }
             }
             if (layer != null)
             {
@@ -224,7 +227,18 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedView(int viewId)
         {
-            View view = Views.GetValue<View>(viewId);
+            View view = null;
+            if (Views.Contains(viewId))
+            {
+                try
+                {
+                    view = Views.GetValue<View>(viewId);
+                }
+                catch (Exception e)
+                {
+                    view = null;
+                }
+            }
             if (view != null)
             {
                 string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(viewId), JsonSettings);
@@ -346,7 +360,19 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedSource(int sourceId)
         {
-            Source source = Sources.GetValue<Source>(sourceId);
+            Source source = null;
+            if (Sources.Contains(sourceId))
+            {
+                try
+                {
+                    source = Sources.GetValue<Source>(sourceId);
+                }
+                catch (Exception e)
+                {
+                    source = null;
+                }
+            }
+
             if (source != null)
             {
                 string serializedSource = Newtonsoft.Json.JsonConvert.SerializeObject(Sources.GetValue<Source>(sourceId), JsonSettings);
@@ -429,7 +455,18 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedStyle(int styleId)
         {
-            Style style = Styles.GetValue<Style>(styleId);
+            Style style = null;
+            if (Styles.Contains(styleId))
+            {
+                try
+                {
+                    style = Styles.GetValue<Style>(styleId);
+                }
+                catch (Exception e)
+                {
+                    style = null;
+                }
+            }
             if (style != null)
             {
                 string serializedStyle = Newtonsoft.Json.JsonConvert.SerializeObject(Styles.GetValue<Style>(styleId), JsonSettings);
@@ -487,9 +524,20 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetFormat(int formatId)
+        public string GetSerialezFormat(int formatId)
         {
-            Format format = Formats.GetValue<Format>(formatId);
+            Format format = null;
+            if (Formats.Contains(formatId))
+            {
+                try
+                {
+                    format = Formats.GetValue<Format>(formatId);
+                }
+                catch (Exception e)
+                {
+                    format = null;
+                }
+            }
             if (format != null)
             {
                 string serializedFormat = Newtonsoft.Json.JsonConvert.SerializeObject(Formats.GetValue<Format>(formatId), JsonSettings);

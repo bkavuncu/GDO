@@ -985,7 +985,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedFormat = maps.GetFormat(formatId);
+                    string serializedFormat = maps.GetSerialezFormat(formatId);
                     if (serializedFormat != null)
                     {
                         Clients.Caller.receiveFormat(instanceId, formatId,serializedFormat, true);
@@ -1007,7 +1007,7 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedFormat = maps.GetFormat(formatId);
+                string serializedFormat = maps.GetSerialezFormat(formatId);
                 if (serializedFormat != null)
                 {
                     Clients.Group("" + instanceId).receiveFormat(instanceId, formatId,serializedFormat, true);

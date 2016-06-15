@@ -10,7 +10,7 @@ namespace GDO.Apps.Maps.Core.Sources
     public class TileWMSSource : ImageTileSource
     {
         public JSONParameter Params { get; set; }
-        public NullableIntegerParameter Gutter { get; set; }
+        public IntegerParameter Gutter { get; set; }
         public BooleanParameter Hidpi { get; set; }
         public DatalistParameter ServerType { get; set; }
 
@@ -29,7 +29,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsVisible = true,
             };
 
-            Gutter = new NullableIntegerParameter
+            Gutter = new IntegerParameter
             {
                 Name = "Gutter",
                 PropertyName = "gutter",

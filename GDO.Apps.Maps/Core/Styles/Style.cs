@@ -13,7 +13,7 @@ namespace GDO.Apps.Maps.Core.Styles
         public LinkParameter ImageStyle { get; set; }
         public LinkParameter StrokeStyle { get; set; }
         public LinkParameter TextStyle { get; set; }
-        public NullableIntegerParameter ZIndex { get; set; }
+        public IntegerParameter ZIndex { get; set; }
 
         public Style()
         {
@@ -64,7 +64,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 LinkedParameter = "styles",
                 ObjectType = "ol.style.Text",
             };
-            ZIndex = new NullableIntegerParameter
+            ZIndex = new IntegerParameter
             {
                 Name = "ZIndex",
                 PropertyName = "zIndex",

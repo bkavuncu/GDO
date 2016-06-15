@@ -39,7 +39,7 @@ $(function () {
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Layer :' + layerId);
             }
         } else {
-            gdo.net.app["Maps"].removeLayer(instanceId, layerId);
+            gdo.net.app["Maps"].removeObject(instanceId, "layer", layerId);
         }
     }
 
@@ -68,7 +68,7 @@ $(function () {
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Source :' + sourceId);
             }
         } else {
-            gdo.net.app["Maps"].removeSource(instanceId, sourceId);
+            gdo.net.app["Maps"].removeObject(instanceId, "source", sourceId);
         }
     }
 
@@ -87,7 +87,7 @@ $(function () {
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Style :' + styleId);
             }
         } else {
-            gdo.net.app["Maps"].removeStyle(instanceId, styleId);
+            gdo.net.app["Maps"].removeObject(instanceId, "style", styleId);
         }
     }
 
@@ -102,7 +102,7 @@ $(function () {
                 gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Format :' + formatId);
             }
         } else {
-            gdo.net.app["Maps"].removeFormat(instanceId, formatId);
+            gdo.net.app["Maps"].removeObject(instanceId, "format", formatId);
         }
     }
 });
@@ -142,7 +142,7 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
         gdo.net.app["Maps"].addObject(instanceId, "source", deserializedMap.Sources.$values[i].Id.Value, deserializedMap.Sources.$values[i]);
     }
     for (i = 0; i < deserializedMap.Layers.$values.length; i++) {
-        gdo.net.app["Maps"].addObject(instanceId,"layer", deserializedMap.Sources.$values[i].Id.Value, deserializedMap.Sources.$values[i]);
+        gdo.net.app["Maps"].addObject(instanceId, "layer", deserializedMap.Layers.$values[i].Id.Value, deserializedMap.Layers.$values[i]);
     }
 
     gdo.net.app["Maps"].setView(instanceId, deserializedMap.Views.$values[deserializedMap.CurrentView]);

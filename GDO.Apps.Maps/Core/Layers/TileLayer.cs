@@ -9,7 +9,7 @@ namespace GDO.Apps.Maps.Core.Layers
     public class TileLayer : Layer
     {
         public LinkParameter Source { get; set; }
-        public NullableIntegerParameter Preload { get; set; }
+        public IntegerParameter Preload { get; set; }
 
         public TileLayer()
         {
@@ -28,7 +28,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 ObjectType = "ol.source.Tile",
             };
 
-            Preload = new NullableIntegerParameter
+            Preload = new IntegerParameter
             {
                 Name = "Preload",
                 PropertyName = "preload",

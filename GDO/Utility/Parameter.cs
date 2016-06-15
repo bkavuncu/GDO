@@ -61,6 +61,7 @@ namespace GDO.Utility
         public bool IsEditable { get; set; }
         public bool IsVisible { get; set; }
         public bool IsProperty = true;
+        public bool IsNull = true;
         public bool IsPartOfObject { get; set; }
         public string ObjectName { get; set; }
     }
@@ -74,16 +75,6 @@ namespace GDO.Utility
     }
 
     public class IntegerParameter : Parameter
-    {
-        public int Value { get; set; }
-        public int DefaultValue { get; set; }
-        public int? Increment { get; set; }
-        public new int InputType = (int)InputTypes.Integer;
-        public new int ParameterType = (int)ParameterTypes.Variable;
-        public new int VariableType = (int)VariableTypes.Integer;
-    }
-
-    public class NullableIntegerParameter : Parameter
     {
         public int? Value { get; set; }
         public int? DefaultValue { get; set; }

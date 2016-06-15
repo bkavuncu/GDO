@@ -10,9 +10,9 @@ namespace GDO.Apps.Maps.Core.Styles
     {
         public LinkParameter FillStyle { get; set; }
         public IntegerParameter Points { get; set; }
-        public NullableIntegerParameter Radius { get; set; }
-        public NullableIntegerParameter Radius1 { get; set; }
-        public NullableIntegerParameter Radius2 { get; set; }
+        public IntegerParameter Radius { get; set; }
+        public IntegerParameter Radius1 { get; set; }
+        public IntegerParameter Radius2 { get; set; }
         public IntegerParameter Angle { get; set; }
         public BooleanParameter SnapToPixel { get; set; }
         public LinkParameter StrokeStyle { get; set; }
@@ -43,7 +43,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 Increment = 1,
             };
-            Radius = new NullableIntegerParameter
+            Radius = new IntegerParameter
             {
                 Name = "Radius",
                 PropertyName = "radius",
@@ -53,7 +53,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 Increment = 1,
             };
-            Radius1 = new NullableIntegerParameter
+            Radius1 = new IntegerParameter
             {
                 Name = "Inner Radius",
                 PropertyName = "radius1",
@@ -63,7 +63,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsVisible = true,
                 Increment = 1,
             };
-            Radius2 = new NullableIntegerParameter
+            Radius2 = new IntegerParameter
             {
                 Name = "Outer Radius",
                 PropertyName = "radius2",

@@ -69,6 +69,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValues = new float[2] { (float)0, (float)0 },
+                Values = new float[2],
                 Length = 2,
             };
 
@@ -103,6 +104,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
+                DefaultValues = new int[2],
+                Values = new int[2],
                 Length = 2,
             };
 
@@ -114,6 +117,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
+                DefaultValues = new int[2],
+                Values = new int[2],
                 Length = 2,
             };
 

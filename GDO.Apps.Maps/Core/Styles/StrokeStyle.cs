@@ -12,8 +12,8 @@ namespace GDO.Apps.Maps.Core.Styles
         public DatalistParameter LineCap { get; set; }
         public DatalistParameter LineJoin { get; set; }
         public FloatArrayParameter LineDash { get; set; }
-        public NullableIntegerParameter MiterLimit { get; set; }
-        public NullableIntegerParameter Width { get; set; }
+        public IntegerParameter MiterLimit { get; set; }
+        public IntegerParameter Width { get; set; }
 
         public StrokeStyle()
         {
@@ -63,7 +63,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 DefaultValues = new float[4],
                 Values = new float[4],
             };
-            MiterLimit = new NullableIntegerParameter
+            MiterLimit = new IntegerParameter
             {
                 Name = "Miter Limit",
                 PropertyName = "miterLimit",
@@ -74,7 +74,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 DefaultValue = 10,
                 Increment = 1,
             };
-            Width = new NullableIntegerParameter
+            Width = new IntegerParameter
             {
                 Name = "Width",
                 PropertyName = "width",

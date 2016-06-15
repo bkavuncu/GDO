@@ -10,7 +10,7 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public LinkParameter Source { get; set; }
         public LinkParameter Style { get; set; }
-        public NullableIntegerParameter RenderBuffer { get; set; }
+        public IntegerParameter RenderBuffer { get; set; }
         public BooleanParameter UpdateWhileAnimating { get; set; }
         public BooleanParameter UpdateWhileInteracting { get; set; }
 
@@ -43,7 +43,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 ObjectType = "ol.style.Style"
             };
 
-            RenderBuffer = new NullableIntegerParameter
+            RenderBuffer = new IntegerParameter
             {
                 Name = "Render Buffer",
                 PropertyName = "renderBuffer",

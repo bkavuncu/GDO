@@ -13,7 +13,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public StringParameter Culture { get; set; }
         public StringParameter Key { get; set; }
         public DatalistParameter ImagerySet { get; set; }
-        public NullableIntegerParameter MaxZoom { get; set; }
+        public IntegerParameter MaxZoom { get; set; }
 
         public BingMapsSource()
         {
@@ -39,7 +39,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM",
-                Value = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM"
+                Value = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM",
+                IsNull = false,
             };
             ImagerySet = new DatalistParameter
             {
@@ -52,7 +53,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 DefaultValues = new string[5] { "Road", "Aerial", "AerialWithLabels", "collinsBart", "ordnanceSurvey" },
                 DefaultValue = "Road"
             };
-            MaxZoom = new NullableIntegerParameter
+            MaxZoom = new IntegerParameter
             {
                 Name = "Max Zoom",
                 PropertyName = "maxZoom",
