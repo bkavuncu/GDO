@@ -65,7 +65,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Name = "Projection",
                 PropertyName = "projection",
                 Description = "Projection",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
             };

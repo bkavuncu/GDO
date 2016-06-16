@@ -33,7 +33,7 @@ gdo.net.app["Maps"].optionChecker = function (properties) {
 
 gdo.net.app["Maps"].setExceptNull = function (obj, func, value) {
     if (value != null) {
-        eval("" + obj + ".func(" + value + ");");
+        eval("" + obj + "." + func + "(" + value + ");");
     }
 }
 
@@ -46,7 +46,7 @@ gdo.net.app["Maps"].PARAMETER_TYPES_ENUM = {
 };
 
 gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ' :' + deserializedObject.Id.Value);
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ': ' + deserializedObject.Id.Value);
     if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
         gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
     }
@@ -90,10 +90,11 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
     object.properties.isInitialized = true;
     eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
     if ('layer' == objectType) {
-        gdo.consoleOut(".Maps", 4, "Executed: " + "gdo.net.instance[" + instanceId + "].map.addLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])")
-        eval("gdo.net.instance[" + instanceId + "].map.addLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])");
+        eval("gdo.net.instance[" + instanceId + "].map.addLayer(gdo.net.instance[" + instanceId + "].layers[" + objectId + "])");
     }
-    gdo.net.app["Maps"].drawListTables(instanceId);
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.app["Maps"].drawListTables(instanceId);
+    }
 }
 
 gdo.net.app["Maps"].updateObject = function (instanceId, objectType, objectId, deserializedObject) {
@@ -104,10 +105,12 @@ gdo.net.app["Maps"].updateObject = function (instanceId, objectType, objectId, d
             continue;
         }
         if (deserializedObject[index].IsProperty && deserializedObject[index].IsEditable) {
-            gdo.net.app["Maps"].setExceptNull(object, ("set" + upperCaseFirstLetter(deserializedObject[index].PropertyName)), deserializedObject[index].Value);
+            gdo.net.app["Maps"].setExceptNull("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + deserializedObject.Id.Value + "]", ("set" + upperCaseFirstLetter(deserializedObject[index].Name)), deserializedObject[index].Value);
         }
     }
-    gdo.net.app["Maps"].drawListTables(instanceId);
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.app["Maps"].drawListTables(instanceId);
+    }
 }
 
 gdo.net.app["Maps"].requestObject = function (instanceId, objectType, objectId) {
@@ -119,9 +122,14 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading ' + objectType + ': ' + object.properties.Id);
     var properties = object.properties;
     if (isNew) {
-        eval("gdo.net.app['Maps'].server.add" + upperCaseFirstLetter(objectType) + "(" + instanceId + ",'" + properties.ClassName.Value + "','" + JSON.stringify(properties).replace(/'/g, "\\'") + "');");
+        if (objectType == 'layer') {
+            properties.ZIndex.Value = gdo.net.instance[instanceId].layers.length;
+            gdo.net.app['Maps'].server.addLayer(instanceId, properties.ClassName.Value, JSON.stringify(properties).replace(/'/g, "\\'"));
+        } else {
+            eval("gdo.net.app['Maps'].server.add" + upperCaseFirstLetter(objectType) + "(" + instanceId + ",'" + properties.ClassName.Value + "','" + JSON.stringify(properties).replace(/'/g, "\\'") + "');");
+        }
     } else {
-        eval("gdo.net.app['Maps'].server.update" + upperCaseFirstLetter(objectType) + "(" + instanceId + "," + object.properties.Id.Value + "," + parseInt(properties.Type) + ",'" + JSON.stringify(properties).replace(/'/g, "\\'") + "');");
+        eval("gdo.net.app['Maps'].server.update" + upperCaseFirstLetter(objectType) + "(" + instanceId + "," + properties.ClassName.Value + "," + parseInt(properties.Type) + ",'" + JSON.stringify(properties).replace(/'/g, "\\'") + "');");
     }
 }
 
@@ -132,8 +140,11 @@ gdo.net.app["Maps"].removeObject = function (instanceId, objectType, objectId) {
     }
 
     eval("gdo.net.instance[" + instanceId + "]." + objectType + "s.splice(" + objectId + ",1);");
-    if (gdo.net.app["Maps"].selected[objectType] == objectId) {
-        gdo.net.app["Maps"].selected[objectType] = -1;
+
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.net.app["Maps"].selected[objectType] == objectId) {
+            gdo.net.app["Maps"].selected[objectType] = -1;
+        }
+        gdo.net.app["Maps"].drawListTables(instanceId);
     }
-    gdo.net.app["Maps"].drawListTables(instanceId);
 }

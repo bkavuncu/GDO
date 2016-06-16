@@ -55,8 +55,8 @@ namespace GDO.Apps.Maps.Core
                 Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
-                IsVisible = false,
-                DefaultValue = 0
+                IsVisible = true,
+                DefaultValue = -1,
             };
 
             Visible = new BooleanParameter
@@ -66,7 +66,7 @@ namespace GDO.Apps.Maps.Core
                 Description = "Visibility",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
-                IsVisible = false,
+                IsVisible = true,
                 DefaultValue = true
             };
 

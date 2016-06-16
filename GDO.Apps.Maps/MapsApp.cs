@@ -34,7 +34,6 @@ namespace GDO.Apps.Maps
         public GenericDictionary<Source> Sources { get; set; }
         public GenericDictionary<Style> Styles { get; set; }
         public GenericDictionary<Format> Formats { get; set; }
-        public ZindexTable ZindexTable { get; set; }
         public bool IsInitialized = false;
 
         public void Init()
@@ -44,13 +43,11 @@ namespace GDO.Apps.Maps
             Sources = new GenericDictionary<Source>();
             Styles = new GenericDictionary<Style>();
             Formats = new GenericDictionary<Format>();
-            ZindexTable = new ZindexTable();
             Views.Init();
             Layers.Init();
             Sources.Init();
             Styles.Init();
             Formats.Init();
-            ZindexTable.Init();
 
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
 
@@ -172,11 +169,6 @@ namespace GDO.Apps.Maps
             {
                 return null;
             }
-        }
-        public string GetSerializedZIndexTable()
-        {
-            string serializedZindexTable = Newtonsoft.Json.JsonConvert.SerializeObject(ZindexTable, JsonSettings);
-            return serializedZindexTable;
         }
 
         public bool RemoveLayer(int layerId)
