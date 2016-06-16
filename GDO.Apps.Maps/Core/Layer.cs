@@ -79,8 +79,8 @@ namespace GDO.Apps.Maps.Core
                 IsEditable = false,
                 IsVisible = true,
                 Length = 2,
-                DefaultValues = new float[2],
-                Values = new float[2],
+                DefaultValues = new float?[2],
+                Values = new float?[2],
             };
 
             MinResolution = new IntegerParameter

@@ -15,7 +15,6 @@ gdo.net.app["Maps"].index["format"] = 0;
 
 $(function () {
     gdo.consoleOut('.Maps', 1, 'Loaded Maps JS');
-
     $.connection.mapsAppHub.client.receiveTemplate = function (instanceId, serializedTemplate) {
         gdo.consoleOut('.Maps', 1, 'Received Template Table');
         //TODO
@@ -109,20 +108,53 @@ $(function () {
 
 gdo.net.app["Maps"].initMap = function (instanceId) {
 
+    var a = new ol.layer.Tile({
+        preload: Infinity,
+        visible: true,
+        source: new ol.source.BingMaps({
+            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
+            imagerySet: 'Road',
+            maxZoom: 19
+        })
+    });
+
     //Initialize View
     view = new ol.View({
         center: [0, 0],
-        resolution: 77
+        resolution: 77,
+        constrainRotation: 0,
+        enableRotation: false,
     });
 
     gdo.net.instance[instanceId].view = view;
-
+    gdo.net.instance[instanceId].controls = new Array();
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.instance[instanceId].controls = [];
+        gdo.net.instance[instanceId].controls[0] = new ol.control.OverviewMap({ collapsed: false, collapsible: false });
+        gdo.net.instance[instanceId].controls[1] = new ol.control.Zoom();
+        gdo.net.instance[instanceId].controls[2] = new ol.control.MousePosition({
+            coordinateFormat: ol.coordinate.createStringXY(7),
+            projection: 'EPSG:4326',
+            //className: 'custom-mouse-position',
+            //target: document.getElementById('control_frame_content').contentWindow.document.getElementById('mouse-position'),
+            undefinedHTML: '&nbsp;'
+        });
+        //gdo.net.instance[instanceId].controls[2] = new ol.control.Rotate();
+    }
     //Initialize Map
     map = new ol.Map({
-        controls: new Array(),
+        controls: gdo.net.instance[instanceId].controls,
         layers: [],
         target: 'map',
-        view: gdo.net.instance[instanceId].view
+        view: gdo.net.instance[instanceId].view,
+        interactions: ol.interaction.defaults({
+            pinchRotate: false,
+            zoomDuration: 0
+        }).extend([
+       new ol.interaction.MouseWheelZoom({ duration: 0 }),
+       new ol.interaction.PinchZoom({ duration: 0 }),
+       new ol.interaction.DragZoom({ duration: 0 })
+        ])
     });
     gdo.net.instance[instanceId].map = map;
 
@@ -262,6 +294,7 @@ gdo.net.app["Maps"].switchToInstance = function (instanceId) {
 gdo.net.app["Maps"].resizeMap = function (instanceId) {
     $("iframe").contents().find("#map").css("width", gdo.net.instance[instanceId].controlWidth);
     $("iframe").contents().find("#map").css("height", gdo.net.instance[instanceId].controlHeight);
+    gdo.net.instance[instanceId].map.updateSize();
 }
 
 gdo.net.app["Maps"].calculateClientParameters = function (instanceId) {
@@ -288,11 +321,11 @@ gdo.net.app["Maps"].calculateControlParameters = function (instanceId) {
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
-    gdo.net.instance[instanceId].controlMaxWidth = 1070;
-    gdo.net.instance[instanceId].controlMaxHeight = 700;
+    gdo.net.instance[instanceId].controlMaxWidth = 1050;
+    gdo.net.instance[instanceId].controlMaxHeight = 600;
     gdo.net.instance[instanceId].controlRatio = gdo.net.instance[instanceId].controlMaxWidth / gdo.net.instance[instanceId].controlMaxHeight;
-    gdo.net.instance[instanceId].controlWidth = 700;
-    gdo.net.instance[instanceId].controlHeight = 350;
+    gdo.net.instance[instanceId].controlWidth = 70;
+    gdo.net.instance[instanceId].controlHeight = 35;
     if (gdo.net.instance[instanceId].sectionRatio >= gdo.net.instance[instanceId].controlRatio) {
         gdo.net.instance[instanceId].controlWidth = gdo.net.instance[instanceId].controlMaxWidth;
         gdo.net.instance[instanceId].controlHeight = (gdo.net.instance[instanceId].sectionHeight * gdo.net.instance[instanceId].controlWidth) / gdo.net.instance[instanceId].sectionWidth;

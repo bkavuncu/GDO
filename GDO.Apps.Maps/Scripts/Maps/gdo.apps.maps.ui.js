@@ -125,7 +125,7 @@ gdo.net.app["Maps"].registerCreateButton = function (instanceId, tab) {
         if (!gdo.net.instance[instanceId].temp[tab].properties.hasOwnProperty((key))) {
             continue;
         } else if (key != "Id" && key != "Name" && key != "ClassName" && key != "Type" && key != "ObjectType" && key != "Editables" && key != "$type") {
-            if (property.ParameterType == 0 || property.ParameterType == 2 || property.ParameterType == 3) {
+            if (property.ParameterType == 0 || property.ParameterType == 2 || property.ParameterType == 3 || property.ParameterType == 4) {
                 property.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#" + tab + "_create_property_" + key + "_value_input"), property.VariableType);
                 if (property.Value == null) {
                     property.IsNull = true;
@@ -145,8 +145,6 @@ gdo.net.app["Maps"].registerCreateButton = function (instanceId, tab) {
                 } else {
                     property.IsNull = false;
                 }
-            } else if (property.ParameterType == 4) {
-                //later
             }
         }
     }
@@ -199,27 +197,27 @@ gdo.net.app["Maps"].registerRemoveButton = function (instanceId, tab) {
         gdo.net.app["Maps"].selected[tab] = -1;
     }
 }
-
+var a;
 gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputDiv, isCreate) {
     if (property.IsVisible) {
         if (isCreate) {
             if (property.Priority == 0 || property.Priority == -1) {
-                $("iframe").contents().find("#" + inputDiv).append(
-                            "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
+                            "<div id='" + inputDiv + "_key' class='col-md-5'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
 
             } else if (property.Priority == 1) {
-                $("iframe").contents().find("#" + inputDiv).append(
-                "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='gray'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
+                "<div id='" + inputDiv + "_key' class='col-md-5'><font color='gray'>&nbsp;&nbsp;" + key + "</font></div>").popover();
 
             }
         } else {
             if (property.Priority == 0 || property.Priority == -1) {
-                $("iframe").contents().find("#" + inputDiv).append(
-                            "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='#4CBFF8'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
+                            "<div id='" + inputDiv + "_key' class='col-md-5'><font color='#4CBFF8'>&nbsp;&nbsp;" + key + "</font></div>").popover();
 
             } else if (property.Priority == 1) {
-                $("iframe").contents().find("#" + inputDiv).append(
-                "<div id='" + inputDiv + "_key' class='col-md-5' data-toggle='popover' data-placement='left' data-html='true' data-trigger='hover' data-content='" + property.Description + "'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
+                "<div id='" + inputDiv + "_key' class='col-md-5'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
 
             }
         }
@@ -318,12 +316,16 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_plus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>+</b></button></div>" +
                     "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_minus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>-</b></button></div>" +
                     "</div>");
-                /*$("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_value_input").val("value", parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) + 1));
+                $("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
+                    if ($("iframe").contents().find("#" + inputDiv + "_value_input").val() != '') {
+                        $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) + 1));
+                    }
                 });
                 $("iframe").contents().find("#" + inputDiv + "_minus").click(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_value_input").val("value",  parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) - 1));
-                });*/
+                    if ($("iframe").contents().find("#" + inputDiv + "_value_input").val() != '') {
+                        $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) - 1));
+                    }
+                });
                 break;
             case 4: //Float
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -332,12 +334,16 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_plus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>+</b></button></div>" +
                     "<div class='col-md-1' style='padding:1px'><button type='button' id='" + inputDiv + "_minus' step='" + property.Increment + "' class='btn btn-primary btn-sm' style='width:100%;height: 2.8vh;'><b>-</b></button></div>" +
                     "</div>");
-                /*$("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val() + 0.1));
+                $("iframe").contents().find("#" + inputDiv + "_plus").click(function () {
+                    if ($("iframe").contents().find("#" + inputDiv + "_value_input").val() != '') {
+                        $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val()) + 1));
+                    }
                 });
                 $("iframe").contents().find("#" + inputDiv + "_minus").click(function () {
-                    $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val() - 0.1));
-                });*/
+                    if ($("iframe").contents().find("#" + inputDiv + "_value_input").val() != '') {
+                        $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val()) - 1));
+                    }
+                });
                 break;
             case 5: //Increment
                 //
@@ -391,14 +397,19 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
                     "</div>");
-                $("iframe").contents().find("#" + inputDiv + "_value").append("<select id='" + inputDiv + "_value_input' class='form-control input_field' style='width: 100%;height: 3vh;padding-top:3px' value='" + value + "'></select>");
-                $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value=''>Select your option</option>");
+                if (value <= 0) {
+                    $("iframe").contents().find("#" + inputDiv + "_value").append("<select id='" + inputDiv + "_value_input' class='form-control input_field' style='width: 100%;height: 3vh;padding-top:3px' value=-1></select>");
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='-1' selected='selected' >Select your option</option>");
+                } else {
+                    $("iframe").contents().find("#" + inputDiv + "_value").append("<select id='" + inputDiv + "_value_input' class='form-control input_field' style='width: 100%;height: 3vh;padding-top:3px' value='" + value + "'></select>");
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='-1' >Select your option</option>");
+                }
                 var collection = eval("gdo.net.instance[instanceId]." + property.LinkedParameter);
                 for (var key in collection) {
                     if (collection.hasOwnProperty(key)) {
                         //if (collection[key].properties.ObjectType.Value == property.ObjectType) {
-                        if (value == collection[key].properties.Id.Value && value != null) {
-                            $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + collection[key].properties.Id.Value + "' selected> " + collection[key].properties.Name.Value + "</option>");
+                        if (value == collection[key].properties.Id.Value && value >= 0) {
+                            $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + collection[key].properties.Id.Value + "' selected='selected'> " + collection[key].properties.Name.Value + "</option>");
                         } else {
                             $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + collection[key].properties.Id.Value + "'> " + collection[key].properties.Name.Value + "</option>");
                         }

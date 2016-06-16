@@ -39,8 +39,8 @@ namespace GDO.Apps.Maps.Core.Sources.Images
                 IsEditable = false,
                 IsVisible = true,
                 Length = 2,
-                DefaultValues = new int[2],
-                Values = new int[2],
+                DefaultValues = new int?[2],
+                Values = new int?[2],
             };
 
             ImageExtent = new FloatArrayParameter
@@ -52,8 +52,8 @@ namespace GDO.Apps.Maps.Core.Sources.Images
                 IsEditable = false,
                 IsVisible = true,
                 Length = 4,
-                DefaultValues = new float[4],
-                Values = new float[4],
+                DefaultValues = new float?[4],
+                Values = new float?[4],
             };
 
             Projection = new StringParameter

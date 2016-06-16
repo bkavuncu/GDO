@@ -58,7 +58,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
         if (!deserializedObject.hasOwnProperty((index))) {
             continue;
         }
-        if (deserializedObject[index].IsProperty) {
+        if (deserializedObject[index].IsProperty && !deserializedObject[index].IsNull) {
             switch (deserializedObject[index].ParameterType) {
                 case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Variable:
                     properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Value]);
@@ -73,7 +73,10 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                     properties.push([deserializedObject[index].PropertyName, JSON.parse(deserializedObject[index].Value)]);
                     break;
                 case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
-                    properties.push([deserializedObject[index].PropertyName, eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParameter + "[" + deserializedObject[index].Value + "]")]);
+                    if (deserializedObject[index].Value >= 0) {
+                        var obj = eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParameter + "[" + deserializedObject[index].Value + "]");
+                        properties.push([deserializedObject[index].PropertyName, obj]);
+                    }
                     break;
                 default:
                     gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + deserializedObject[index].ParameterType + ' for ' + deserializedObject.Name + 's property ' + deserializedObject[index].PropertyName);
@@ -81,13 +84,15 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
             }
         }
     }
-    gdo.consoleOut("Maps", 4, JSON.stringify(properties));
     options = gdo.net.app["Maps"].optionConstructor(properties);
-    gdo.consoleOut("Maps", 5, JSON.stringify(options));
     eval("object = new " + deserializedObject.ObjectType.Value + "(options);");
     object.properties = deserializedObject;
     object.properties.isInitialized = true;
-    eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;")
+    eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
+    if ('layer' == objectType) {
+        gdo.consoleOut(".Maps", 4, "Executed: " + "gdo.net.instance[" + instanceId + "].map.addLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])")
+        eval("gdo.net.instance[" + instanceId + "].map.addLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])");
+    }
     gdo.net.app["Maps"].drawListTables(instanceId);
 }
 
@@ -123,7 +128,7 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
 gdo.net.app["Maps"].removeObject = function (instanceId, objectType, objectId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing ' + objectType + ': ' + objectId);
     if ('layer' == objectType) {
-        eval("gdo.net.instance[" + instanceId + "].map.remove" + upperCaseFirstLetter(objectType) + "(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])");
+        eval("gdo.net.instance[" + instanceId + "].map.removeLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])");
     }
 
     eval("gdo.net.instance[" + instanceId + "]." + objectType + "s.splice(" + objectId + ",1);");

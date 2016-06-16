@@ -135,7 +135,7 @@ namespace GDO.Utility
 
     public class LinkParameter : Parameter
     {
-        public int? Value { get; set; }
+        public int? Value = -1;
         public int? DefaultValue { get; set; }
         public string LinkedParameter { get; set; }
         public string ObjectType { get; set; }
@@ -166,8 +166,8 @@ namespace GDO.Utility
 
     public class IntegerArrayParameter : Parameter
     {
-        public int[] Values { get; set; }
-        public int[] DefaultValues { get; set; }
+        public int?[] Values { get; set; }
+        public int?[] DefaultValues { get; set; }
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.IntegerArray;
         public new int ParameterType = (int)ParameterTypes.Array;
@@ -176,8 +176,8 @@ namespace GDO.Utility
 
     public class FloatArrayParameter : Parameter
     {
-        public float[] Values { get; set; }
-        public float[] DefaultValues { get; set; }
+        public float?[] Values { get; set; }
+        public float?[] DefaultValues { get; set; }
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.FloatArray;
         public new int ParameterType = (int)ParameterTypes.Array;

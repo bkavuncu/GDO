@@ -60,8 +60,8 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 Length = 4,
-                DefaultValues = new float[4],
-                Values = new float[4],
+                DefaultValues = new float?[4],
+                Values = new float?[4],
             };
             MiterLimit = new IntegerParameter
             {

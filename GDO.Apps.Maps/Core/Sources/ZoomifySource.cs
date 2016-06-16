@@ -26,8 +26,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = false,
                 IsVisible = true,
                 Length = 2,
-                DefaultValues = new int[2],
-                Values = new int[2],
+                DefaultValues = new int?[2],
+                Values = new int?[2],
             };
 
             TierSizeCalculation = new DatalistParameter

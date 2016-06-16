@@ -14,6 +14,7 @@ gdo.management.instances.loadInstanceControlFrame = function (appName, instanceI
     document.title = "" + instanceId + " - " + appName + " - " + configName;
     $('iframe').attr('src', "/Web/" + appName + "/control.cshtml?controlId=" + instanceId);
     $('iframe').fadeIn();
+
     //TODO check if it exists or part of virtual app
 }
 
