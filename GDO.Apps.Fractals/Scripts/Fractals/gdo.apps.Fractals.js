@@ -185,14 +185,31 @@ $(function () {
             }
         };
 
-});
 
+        $.connection.fractalsAppHub.client.startAudio = function (id, time) {
+
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+                var n = gdo.net.time.getTime()
+
+                audio.play();
+                audio.currentTime = (n - time) / 1000;
+                audioPlaying = true;
+
+            }
+        };
+
+});
+var audio;
+var analyser;
 gdo.net.app["Fractals"].initClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Client at Node ' + gdo.clientId);
 
     gdo.loadScript('params', 'Fractals', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('webgl', 'Fractals', gdo.SCRIPT_TYPE.APP);
-    
+
     parameters = new params();
     locations1 = new locs();
     locations2 = new locs();
@@ -210,6 +227,16 @@ gdo.net.app["Fractals"].initClient = function () {
 
     sync = true;
 
+    audio = $("iframe").contents().find("#myAudio")[0];
+
+    var audioCtx = new AudioContext();
+    analyser = audioCtx.createAnalyser();
+    var source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 32;
+
+    
     initWebgl("#glscreen1", locations1, "#2d-fragment-shader", completeinit1);
     
 

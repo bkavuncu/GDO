@@ -61,7 +61,7 @@ function initWebgl(id, locations, shader, completeInit) {
     //gl.shaderSource(fragmentShader, shaderSource);
     //gl.compileShader(fragmentShader);
 
-    loadFiles(['../scripts/Fractals/Shaders/rayMarch.js', '../scripts/Fractals/Shaders/init.js'], function (shaderText) {
+    loadFiles(['../scripts/Fractals/Shaders/rayMarch.frag', '../scripts/Fractals/Shaders/init.frag'], function (shaderText) {
         //gdo.consoleOut('.Fractals', 1, shaderText[0] + shaderText[1]);
         // Compile fragment shader
         fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -240,6 +240,8 @@ function renderSync(locations, gl, program) {
                 gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
             });
 
+            applyAudioAdjustments();
+
             // Apply params
             applyParams(locations, gl);
 
@@ -292,5 +294,27 @@ function render(locations, gl, program) {
         }
     } else {
         gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
+    }
+}
+audioPlaying = false;
+function applyAudioAdjustments() {
+    if (audioPlaying) {
+        var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(frequencyData);
+        gdo.consoleOut('.Fractals', 1, frequencyData);
+        parameters.red *= frequencyData[6] / 255;
+        parameters.green *= 1.0 - frequencyData[7] / 255;
+        parameters.blue *= frequencyData[8] / 255;
+
+        parameters.cx *= frequencyData[4] / 255;
+        parameters.cy *= frequencyData[5] / 255;
+        parameters.cz *= frequencyData[9] / 255;
+        parameters.cw *= frequencyData[10] / 255;
+
+        parameters.scale *= frequencyData[11] / 255;
+
+        parameters.power = 4.0 + parameters.power * 0.5 * frequencyData[5] / 255;
+
+        parameters.ambience *= 0.1 + 0.9 * frequencyData[6] / 255;
     }
 }
