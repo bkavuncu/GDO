@@ -56,7 +56,7 @@ gdo.net.app["Maps"].uploadCurrentView = function(instanceId) {
     var size = gdo.net.instance[instanceId].map.getSize();
     var width = size[0];
     var height = size[1];
-    gdo.net.app["Maps"].server.updateCurrentView(
+    /*gdo.net.app["Maps"].server.updateCurrentView(
         instanceId,
         topLeft,
         center,
@@ -65,7 +65,7 @@ gdo.net.app["Maps"].uploadCurrentView = function(instanceId) {
         gdo.net.instance[instanceId].map.getView().getZoom(),
         gdo.net.instance[instanceId].map.getView().getRotation(),
         width,
-        height);
+        height);*/
 }
 
 gdo.net.app["Maps"].calculateNodeCenter = function (topLeft, bottomRight) {

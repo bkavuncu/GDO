@@ -31,7 +31,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectType = "ol.style.Fill",
+                ObjectTypes = new string[1] { "ol.style.Fill" } ,
             };
             Points = new IntegerParameter
             {
@@ -103,7 +103,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectType = "ol.style.Stroke",
+                ObjectTypes = new string[1] { "ol.style.Stroke" } ,
             };
         }
     }

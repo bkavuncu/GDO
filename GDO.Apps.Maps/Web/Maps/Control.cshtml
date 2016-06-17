@@ -184,25 +184,28 @@
                         <a href="#home" data-toggle="tab"><i class="fa fa-map-marker fa-fw"></i>&nbsp;&nbsp;Map</a>
                     </li>
                     <li>
-                        <a href="#layers" data-toggle="tab"><i class="fa fa-align-justify  fa-fw"></i>&nbsp;&nbsp;Layers</a>
+                        <a href="#layer" data-toggle="tab"><i class="fa fa-align-justify  fa-fw"></i>&nbsp;&nbsp;Layer</a>
                     </li>
                     <li>
-                        <a href="#sources" data-toggle="tab"><i class="fa fa-database  fa-fw"></i>&nbsp;&nbsp;Sources</a>
+                        <a href="#source" data-toggle="tab"><i class="fa fa-database  fa-fw"></i>&nbsp;&nbsp;Source</a>
                     </li>
                     <li>
-                        <a href="#styles" data-toggle="tab"><i class="fa fa-photo fa-fw"></i>&nbsp;&nbsp;Styles</a>
+                        <a href="#style" data-toggle="tab"><i class="fa fa-photo fa-fw"></i>&nbsp;&nbsp;Style</a>
                     </li>
                     <li>
-                        <a href="#formats" data-toggle="tab"><i class="fa fa-file-text fa-fw"></i>&nbsp;&nbsp;Formats</a>
+                        <a href="#format" data-toggle="tab"><i class="fa fa-file-text fa-fw"></i>&nbsp;&nbsp;Format</a>
+                    </li>
+                    <li>
+                        <a href="#data" data-toggle="tab"><i class="fa fa-bar-chart-o fa-fw"></i>&nbsp;&nbsp;Data</a>
                     </li>
                     <li>
                         <a href="#animation" data-toggle="tab"><i class="fa fa-play fa-fw "></i>&nbsp;&nbsp;Animation</a>
                     </li>
                     <li>
-                        <a href="#data" data-toggle="tab"><i class="fa fa-arrow-circle-down fa-fw"></i>&nbsp;&nbsp;Data Import</a>
+                        <a href="#view" data-toggle="tab"><i class="fa  fa-eye fa-fw"></i>&nbsp;&nbsp;View</a>
                     </li>
                     <li>
-                        <a href="#configuration" data-toggle="tab"><i class="fa fa-cog fa-fw"></i>&nbsp;&nbsp;Configurations</a>
+                        <a href="#configuration" data-toggle="tab"><i class="fa fa-cog fa-fw"></i>&nbsp;&nbsp;Configuration</a>
                     </li>
                 </ul>
 
@@ -234,10 +237,6 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-lg-7"><h6><i class='fa  fa-map-marker fa-fw'></i>&nbsp;Map</h6></div>
-                                            <div class="col-lg-5" style="text-align: right">
-                                                <button type='button' class='btn btn-primary view-load-button' style=""><i class='fa  fa-upload  '></i>&nbsp;&nbsp;Load View</button>
-                                                <button type='button' class='btn btn-success view-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save View</button>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="panel-body" style="height: 70vh">
@@ -261,11 +260,11 @@
 
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="layers">
-                        <h4>Layers</h4>
+                    <div class="tab-pane fade" id="layer">
+                        <h4>Layer</h4>
                         <div class="row">
                             <div class="col-lg-3">
-                                <div id="layers_list_panel" class="panel panel-default" style="height: 100%">
+                                <div id="layer_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-align-justify fa-fw'></i>&nbsp;&nbsp;Layers</h6>
                                     </div>
@@ -283,7 +282,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-9">
-                                <div id="layers_edit_panel" class="panel panel-default" style="height: 100%">
+                                <div id="layer_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="layer_label"></font></h6>
                                     </div>
@@ -291,22 +290,22 @@
                                         <div id="layer_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right">
-
-                                        <button type='button' class='btn btn-primary layer-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Layer</button>
+                                        <button type='button' class='btn btn-primary layer-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary layer-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="sources">
-                        <h4>Sources</h4>
+                    <div class="tab-pane fade" id="source">
+                        <h4>Source</h4>
                         <div class="row">
                             <div class="col-lg-3">
-                                <div id="sources_list_panel" class="panel panel-default" style="height: 100%">
+                                <div id="source_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-database fa-fw'></i>&nbsp;&nbsp;Sources</h6>
                                     </div>
-                                    <div class="panel-body" id="source" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div class="source"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
@@ -316,7 +315,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-9">
-                                <div id="sources_edit_panel" class="panel panel-default" style="height: 100%">
+                                <div id="source_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="source_label"></font></h6>
                                     </div>
@@ -324,17 +323,18 @@
                                         <div id="source_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
-                                        <button type='button' class='btn btn-primary source-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Source</button>
+                                        <button type='button' class='btn btn-primary source-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary source-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="styles">
-                        <h4>Styles</h4>
+                    <div class="tab-pane fade" id="style">
+                        <h4>Style</h4>
                         <div class="row">
                             <div class="col-lg-3">
-                                <div id="styles_list_panel" class="panel panel-default" style="height: 100%">
+                                <div id="style_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-image fa-fw'></i>&nbsp;&nbsp;Styles</h6>
                                     </div>
@@ -348,7 +348,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-9">
-                                <div id="styles_edit_panel" class="panel panel-default" style="height: 100%">
+                                <div id="style_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="style_label"></font></h6>
                                     </div>
@@ -356,31 +356,32 @@
                                         <div id="style_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
-                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Style</button>
+                                        <button type='button' class='btn btn-primary style-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="formats">
-                        <h4>Formats</h4>
+                    <div class="tab-pane fade" id="format">
+                        <h4>Format</h4>
                         <div class="row">
                             <div class="col-lg-3">
-                                <div id="formats_list_panel" class="panel panel-default" style="height: 100%">
+                                <div id="format_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-file-text fa-fw'></i>&nbsp;&nbsp;Formats</h6>
                                     </div>
-                                    <div class="panel-body" id="format" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div class="format"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
-                                        <button type='button' class='btn btn-success style-add-button' data-toggle='modal' data-target='#new-format' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;</button>
-                                        <button type='button' class='btn btn-danger style-remove-button' style="">&nbsp;&nbsp;<i class='fa  fa-minus '></i>&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-success format-add-button' data-toggle='modal' data-target='#new-format' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger format-remove-button' style="">&nbsp;&nbsp;<i class='fa  fa-minus '></i>&nbsp;&nbsp;</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-9">
-                                <div id="formats_edit_panel" class="panel panel-default" style="height: 100%">
+                                <div id="format_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="format_label"></font></h6>
                                     </div>
@@ -388,23 +389,146 @@
                                         <div id="format_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
-                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Format</button>
+                                        <button type='button' class='btn btn-primary format-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary format-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="data">
-                        <h4>Data Import</h4>
-                        <p>TBD</p>
+                        <h4>Data</h4>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div id="data_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-bar-chart-o fa-fw'></i>&nbsp;&nbsp;Data Sources</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="data"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                        <button type='button' class='btn btn-success data-add-button' data-toggle='modal' data-target='#new-data' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger data-remove-button' style="">&nbsp;&nbsp;<i class='fa  fa-minus '></i>&nbsp;&nbsp;</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div id="data_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="data_label"></font></h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="data_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
+                                        <button type='button' class='btn btn-primary data-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary data-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="animation">
                         <h4>Animation</h4>
-                        <p>TBD</p>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div id="animation_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-play fa-fw'></i>&nbsp;&nbsp;Animations</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="animation"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                        <button type='button' class='btn btn-success animation-add-button' animation-toggle='modal' data-target='#new-animation' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger animation-remove-button' style="">&nbsp;&nbsp;<i class='fa  fa-minus '></i>&nbsp;&nbsp;</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div id="animation_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="animation_label"></font></h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="animation_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
+                                        <button type='button' class='btn btn-primary animation-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary animation-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="view">
+                        <h4>View</h4>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div id="view_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-eye fa-fw'></i>&nbsp;&nbsp;Views</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="view"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                        <button type='button' class='btn btn-success view-add-button' animation-toggle='modal' data-target='#new-view' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger view-remove-button' style="">&nbsp;&nbsp;<i class='fa  fa-minus '></i>&nbsp;&nbsp;</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div id="view_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="view_label"></font></h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="view_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
+                                        <button type='button' class='btn btn-primary view-set-current-button' style=""><i class='fa  fa-upload  '></i>&nbsp;&nbsp;Set As Current View</button>
+                                        <button type='button' class='btn btn-primary view-save-current-button' style=""><i class='fa  fa-download  '></i>&nbsp;&nbsp;Save Current View As</button>
+                                        <button type='button' class='btn btn-primary view-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary view-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="configuration">
-                        <h4>Animation</h4>
-                        <p>TBD</p>
+                        <h4>Configuration</h4>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div id="configuration_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-cog fa-fw'></i>&nbsp;&nbsp;Configurations</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="configuration"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                        <button type='button' class='btn btn-success configuration-add-button' animation-toggle='modal' data-target='#new-configuration' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger configuration-remove-button' style="">&nbsp;&nbsp;<i class='fa  fa-minus '></i>&nbsp;&nbsp;</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div id="configuration_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="configuration_label"></font></h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="configuration_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
+                                        <button type='button' class='btn btn-primary configuration-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                        <button type='button' class='btn btn-primary configuration-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

@@ -13,7 +13,7 @@ namespace GDO.Utility
         String = 2, //String input
         Integer = 3, //Integer Input
         Float = 4, //Float Input
-        //Increment = 5, //Increment input
+        List = 5, //List input
         Slider = 6, //Slider with Min-Max
         Color = 7, //Color Picker
         DataList = 8, //If Array use Array
@@ -106,6 +106,16 @@ namespace GDO.Utility
         public new int VariableType = (int)VariableTypes.Float;
     }
 
+    public class ListParameter : Parameter
+    {
+        public string[] Values { get; set; }
+        public string[] DefaultValues { get; set; }
+        public int Length { get; set; }
+        public new int InputType = (int)InputTypes.List;
+        public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
     public class StringParameter : Parameter
     {
         public string Value { get; set; }
@@ -138,7 +148,7 @@ namespace GDO.Utility
         public int? Value = -1;
         public int? DefaultValue { get; set; }
         public string LinkedParameter { get; set; }
-        public string ObjectType { get; set; }
+        public string[] ObjectTypes { get; set; }
         public new int InputType = (int)InputTypes.Link;
         public new int ParameterType = (int)ParameterTypes.Object;
         public new int VariableType = (int)VariableTypes.Integer;

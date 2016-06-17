@@ -25,7 +25,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "sources",
-                ObjectType = "ol.source.Tile",
+                ObjectTypes = new string[10] { "ol.source.TileImage", "ol.source.BingMaps", "ol.source.CartoDB", "ol.source.MapQuest", "ol.source.OSM ", "ol.source.Stamen", "ol.source.TileArcGISRest", "ol.source.TileWMS", "ol.source.XYZ", "ol.source.Zoomify " },
             };
 
             Preload = new IntegerParameter

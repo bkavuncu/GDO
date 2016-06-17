@@ -4,55 +4,284 @@
    "Views":{
       "$type":"GDO.Apps.Maps.Core.View[], GDO.Apps.Maps",
       "$values":[
-         {
-            "$type":"GDO.Apps.Maps.Core.View, GDO.Apps.Maps",
-            "Id":0,
-            "Name":"Default",
-            "ClassName":null,
-            "Type":null,
-            "Editables":{
-               "$type":"System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
-               "$values":[
-
-               ]
-            },
-            "Position":{
-               "$type":"GDO.Apps.Maps.Core.Position, GDO.Apps.Maps",
-               "TopLeft":{
-                  "$type":"System.Double[], mscorlib",
-                  "$values":[
-                     0.0,
-                     0.0,
-                     0.0,
-                     0.0
-                  ]
-               },
-               "Center":{
-                  "$type":"System.Double[], mscorlib",
-                  "$values":[
-                     0.0,
-                     0.0,
-                     0.0,
-                     0.0
-                  ]
-               },
-               "BottomRight":{
-                  "$type":"System.Double[], mscorlib",
-                  "$values":[
-                     0.0,
-                     0.0,
-                     0.0,
-                     0.0
-                  ]
-               },
-               "Resolution":0.0,
-               "Zoom":0
-            },
-            "Rotation":0.0,
-            "Width":100,
-            "Height":100,
-            "Projection":"EPSG:4326"
-         }
+              {
+                "$type":"GDO.Apps.Maps.Core.View, GDO.Apps.Maps",
+                "Id":{
+                    "$type":"GDO.Utility.IntegerParameter, GDO",
+                    "InputType":3,
+                    "ParameterType":0,
+                    "VariableType":1,
+                    "IsProperty":false,
+                    "IsNull":false,
+                    "Value":0,
+                    "DefaultValue":null,
+                    "Increment":null,
+                    "Name":"Id",
+                    "PropertyName":null,
+                    "Description":"Id",
+                    "Priority":-1,
+                    "IsEditable":false,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "Name":{
+                    "$type":"GDO.Utility.StringParameter, GDO",
+                    "InputType":2,
+                    "ParameterType":0,
+                    "VariableType":3,
+                    "IsProperty":false,
+                    "IsNull":false,
+                    "Value":"Current View",
+                    "DefaultValue":null,
+                    "Name":"Name",
+                    "PropertyName":null,
+                    "Description":"Name of the Parameter",
+                    "Priority":-1,
+                    "IsEditable":true,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "ClassName":{
+                    "$type":"GDO.Utility.StringParameter, GDO",
+                    "InputType":2,
+                    "ParameterType":0,
+                    "VariableType":3,
+                    "IsProperty":false,
+                    "IsNull":false,
+                    "Value":"View",
+                    "DefaultValue":null,
+                    "Name":"Class Name",
+                    "PropertyName":null,
+                    "Description":"Name of the Class",
+                    "Priority":-1,
+                    "IsEditable":false,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "ObjectType":{
+                    "$type":"GDO.Utility.StringParameter, GDO",
+                    "InputType":2,
+                    "ParameterType":0,
+                    "VariableType":3,
+                    "IsProperty":false,
+                    "IsNull":true,
+                    "Value":"ol.View",
+                    "DefaultValue":null,
+                    "Name":"Type",
+                    "PropertyName":null,
+                    "Description":"Type of JS Object",
+                    "Priority":-1,
+                    "IsEditable":false,
+                    "IsVisible":false,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "Center":{
+                    "$type":"GDO.Utility.FloatArrayParameter, GDO",
+                    "InputType":11,
+                    "ParameterType":1,
+                    "VariableType":2,
+                    "IsProperty":true,
+                    "IsNull":false,
+                    "Values":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "DefaultValues":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Length":2,
+                    "Name":"Center",
+                    "PropertyName":"center",
+                    "Description":"The initial center for the view. The coordinate system for the center is specified with the projection option. Default is undefined, and layer sources will not be fetched if this is not set.",
+                    "Priority":1,
+                    "IsEditable":true,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "TopLeft":{
+                    "$type":"GDO.Utility.FloatArrayParameter, GDO",
+                    "InputType":11,
+                    "ParameterType":1,
+                    "VariableType":2,
+                    "IsProperty":true,
+                    "IsNull":false,
+                    "Values":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "DefaultValues":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Length":2,
+                    "Name":"Top Left",
+                    "PropertyName":"topLeft",
+                    "Description":"Coordinate of the top left of the view, required to calculate local centers on the nodes",
+                    "Priority":-1,
+                    "IsEditable":true,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "BottomRight":{
+                    "$type":"GDO.Utility.FloatArrayParameter, GDO",
+                    "InputType":11,
+                    "ParameterType":1,
+                    "VariableType":2,
+                    "IsProperty":true,
+                    "IsNull":false,
+                    "Values":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "DefaultValues":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Length":2,
+                    "Name":"Bottom Right",
+                    "PropertyName":"bottomRight",
+                    "Description":"Coordinate of the bottom right of the view, required to calculate local centers on the nodes",
+                    "Priority":-1,
+                    "IsEditable":true,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "EnableRotation":{
+                    "$type":"GDO.Utility.BooleanParameter, GDO",
+                    "InputType":1,
+                    "ParameterType":0,
+                    "VariableType":0,
+                    "IsProperty":true,
+                    "IsNull":false,
+                    "Value":false,
+                    "DefaultValue":true,
+                    "Name":"Enable Rotation",
+                    "PropertyName":"enableRotation",
+                    "Description":"Enable rotation. Default is true. If false a rotation constraint that always sets the rotation to zero is used. The constrainRotation option has no effect if enableRotation is false.",
+                    "Priority":1,
+                    "IsEditable":false,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "Extent":{
+                    "$type":"GDO.Utility.FloatArrayParameter, GDO",
+                    "InputType":11,
+                    "ParameterType":1,
+                    "VariableType":2,
+                    "IsProperty":true,
+                    "IsNull":true,
+                    "Values":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            null,
+                            null,
+                            null,
+                            null
+                        ]
+                    },
+                    "DefaultValues":{
+                        "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+                        "$values":[
+                            null,
+                            null,
+                            null,
+                            null
+                        ]
+                    },
+                    "Length":2,
+                    "Name":"Extent",
+                    "PropertyName":"extent",
+                    "Description":"The bounding extent for layer rendering. The layer will not be rendered outside of this extent: [MinX, MinY, MaxX, MaxY]",
+                    "Priority":1,
+                    "IsEditable":false,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "Projection":{
+                    "$type":"GDO.Utility.StringParameter, GDO",
+                    "InputType":2,
+                    "ParameterType":0,
+                    "VariableType":3,
+                    "IsProperty":true,
+                    "IsNull":true,
+                    "Value":null,
+                    "DefaultValue":null,
+                    "Name":"Projection",
+                    "PropertyName":"projection",
+                    "Description":"The projection. Default is EPSG:3857 (Spherical Mercator).",
+                    "Priority":1,
+                    "IsEditable":false,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "Resolution":{
+                    "$type":"GDO.Utility.FloatParameter, GDO",
+                    "InputType":4,
+                    "ParameterType":0,
+                    "VariableType":2,
+                    "IsProperty":true,
+                    "IsNull":false,
+                    "Value":77.0,
+                    "DefaultValue":77.0,
+                    "Increment":null,
+                    "Name":"Resolution",
+                    "PropertyName":"resolution",
+                    "Description":"The initial resolution for the view. The units are projection units per pixel (e.g. meters per pixel). An alternative to setting this is to set zoom.",
+                    "Priority":1,
+                    "IsEditable":true,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                },
+                "Rotation":{
+                    "$type":"GDO.Utility.FloatParameter, GDO",
+                    "InputType":4,
+                    "ParameterType":0,
+                    "VariableType":2,
+                    "IsProperty":true,
+                    "IsNull":true,
+                    "Value":null,
+                    "DefaultValue":0.0,
+                    "Increment":null,
+                    "Name":"Rotation",
+                    "PropertyName":"resolution",
+                    "Description":"The initial rotation for the view in radians (positive rotation clockwise).",
+                    "Priority":1,
+                    "IsEditable":true,
+                    "IsVisible":true,
+                    "IsPartOfObject":false,
+                    "ObjectName":null
+                }
+            }
       ]
    },
    "Formats":{

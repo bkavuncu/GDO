@@ -229,59 +229,6 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateCurrentView(int instanceId, double[] topLeft, double[] center, double[] bottomRight, float resolution,
-            int zoom, string projection, float rotation, int width, int height)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    Position position = new Position(topLeft, center, bottomRight, resolution, zoom);
-                    maps.UpdateCurrentView(position, projection, rotation, width, height);
-                    BroadcastCurrentView(instanceId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestCurrentView(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedView = maps.GetSerializedCurrentView();
-                    Clients.Caller.receiveView(instanceId, serializedView);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void BroadcastCurrentView(int instanceId)
-        {
-            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-            string serializedView = maps.GetSerializedCurrentView();
-            Clients.Group("" + instanceId).receiveCurrentView(instanceId,serializedView);
-        }
-
-        public void SetCurrentView(int instanceId, int viewId)
-        {
-            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-            maps.UseView(viewId);
-            BroadcastCurrentView(instanceId);
-        }
-
-
-
-
         //Layer
 
         public void AddLayer(int instanceId, string className, string serializedLayer)

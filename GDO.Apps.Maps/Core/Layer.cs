@@ -55,7 +55,7 @@ namespace GDO.Apps.Maps.Core
                 Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
-                IsVisible = true,
+                IsVisible = false,
                 DefaultValue = -1,
             };
 
@@ -66,8 +66,10 @@ namespace GDO.Apps.Maps.Core
                 Description = "Visibility",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
-                IsVisible = true,
-                DefaultValue = true
+                IsVisible = false,
+                IsNull = false,
+                DefaultValue = true,
+                Value = true,
             };
 
             Extent = new FloatArrayParameter
@@ -79,8 +81,8 @@ namespace GDO.Apps.Maps.Core
                 IsEditable = false,
                 IsVisible = true,
                 Length = 2,
-                DefaultValues = new float?[2],
-                Values = new float?[2],
+                DefaultValues = new float?[4],
+                Values = new float?[4],
             };
 
             MinResolution = new IntegerParameter

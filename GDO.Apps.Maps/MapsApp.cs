@@ -66,12 +66,10 @@ namespace GDO.Apps.Maps
             foreach (Layer layer in Map.Layers)
             {
                 Layers.Add((int)layer.Id.Value, layer);
-                //TODO update zindex
             }
             foreach (View view in Map.Views)
             {
-                Views.Add(view.Id, view);
-                //TODO update zindex
+                Views.Add((int)view.Id.Value, view);
             }
             CurrentView = Map.CurrentView;
             SaveEmptyTemplate();
@@ -193,8 +191,8 @@ namespace GDO.Apps.Maps
             try
             {
                 int viewId = Views.GetAvailableSlot();
-                view.Id = viewId;
-                Views.Add(viewId, view);
+                view.Id.Value = viewId;
+                Views.Add<View>(viewId, view);
                 return viewId;
             }
             catch (Exception e)
@@ -208,7 +206,7 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Views.Update(viewId, view);
+                Views.Update<View>(viewId, view);
             }
             catch (Exception e)
             {
@@ -231,6 +229,7 @@ namespace GDO.Apps.Maps
                     view = null;
                 }
             }
+
             if (view != null)
             {
                 string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(viewId), JsonSettings);
@@ -254,43 +253,6 @@ namespace GDO.Apps.Maps
                 Console.WriteLine(e);
                 return false;
             }
-        }
-        public bool UseView(int viewId)
-        {
-            try
-            {
-                CurrentView = viewId;
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
-
-        public bool UpdateCurrentView(Position position, string projection, float rotation, int width, int height)
-        {
-            try
-            {
-                Views.GetValue<View>(CurrentView).Position = position;
-                Views.GetValue<View>(CurrentView).Projection = projection;
-                //Views.GetValue<View>(CurrentView).Rotation = rotation;
-                Views.GetValue<View>(CurrentView).Width = width;
-                Views.GetValue<View>(CurrentView).Height = height;
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
-
-        public string GetSerializedCurrentView()
-        {
-            string serializedView = Newtonsoft.Json.JsonConvert.SerializeObject(Views.GetValue<View>(CurrentView), JsonSettings);
-            return serializedView;
         }
 
         //Interaction
@@ -573,12 +535,8 @@ namespace GDO.Apps.Maps
             List<Layer> layers = new List<Layer>();
             List<View> views = new List<View>();
 
-            double[] topLeft = { 0, 0, 0, 0 };
-            double[] bottomRight = { 0, 0, 0, 0 };
-            double[] center = { 0, 0, 0, 0 };
-            Position position = new Position(topLeft, center, bottomRight, 0, 0);
-            View view = new View(position, "EPSG:4326",0, 100, 100);
-
+            //Add View to Template
+            View view = new View();
             views.Add(view);
 
             //Add Formats to Template

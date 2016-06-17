@@ -12,19 +12,19 @@ gdo.net.app["Maps"].index["layer"] = 0;
 gdo.net.app["Maps"].index["source"] = 0;
 gdo.net.app["Maps"].index["style"] = 0;
 gdo.net.app["Maps"].index["format"] = 0;
+gdo.net.app["Maps"].index["view"] = 0;
 
 $(function () {
     gdo.consoleOut('.Maps', 1, 'Loaded Maps JS');
     $.connection.mapsAppHub.client.receiveTemplate = function (instanceId, serializedTemplate) {
         gdo.consoleOut('.Maps', 1, 'Received Template Table');
-        //TODO
         gdo.net.instance[instanceId].template = JSON.parse(serializedTemplate);
         gdo.net.app["Maps"].extractTypes(instanceId);
     }
 
-    $.connection.mapsAppHub.client.receiveZIndexTable = function (instanceId, serializedZIndexTable) {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received ZIndex Table');
-        gdo.net.app["Maps"].updateZIndexTable(instanceId, JSON.parse(serializedZIndexTable));
+    $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
+        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Map');
+        gdo.net.app["Maps"].initLayers(instanceId, JSON.parse(serializedMap));
     }
 
     $.connection.mapsAppHub.client.receiveLayer = function (instanceId, layerId, serializedLayer, exists) {
@@ -42,20 +42,6 @@ $(function () {
         }
     }
 
-    $.connection.mapsAppHub.client.receiveView = function (instanceId, serializedView) {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received View');
-        //gdo.net.app["Maps"].updateCurrentView(instanceId, JSON.parse(serializedView));
-    }
-
-    $.connection.mapsAppHub.client.receiveMap = function (instanceId, serializedMap) {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Map');
-        gdo.net.app["Maps"].initLayers(instanceId, JSON.parse(serializedMap));
-    }
-
-    $.connection.mapsAppHub.client.receiveInteraction = function (instanceId) {
-
-    }
-
     $.connection.mapsAppHub.client.receiveSource = function (instanceId, sourceId, serializedSource, exists) {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Source :' + sourceId + " (Exists:" + exists + ")");
         if (exists) {
@@ -69,10 +55,6 @@ $(function () {
         } else {
             gdo.net.app["Maps"].removeObject(instanceId, "source", sourceId);
         }
-    }
-
-    $.connection.mapsAppHub.client.receiveControl = function (instanceId) {
-
     }
 
     $.connection.mapsAppHub.client.receiveStyle = function (instanceId, styleId, serializedStyle, exists) {
@@ -104,19 +86,14 @@ $(function () {
             gdo.net.app["Maps"].removeObject(instanceId, "format", formatId);
         }
     }
+
+    $.connection.mapsAppHub.client.receiveView = function (instanceId, serializedView) {
+        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received View');
+        //gdo.net.app["Maps"].updateCurrentView(instanceId, JSON.parse(serializedView));
+    }
 });
 
 gdo.net.app["Maps"].initMap = function (instanceId) {
-
-    var a = new ol.layer.Tile({
-        preload: Infinity,
-        visible: true,
-        source: new ol.source.BingMaps({
-            key: 'At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM',
-            imagerySet: 'Road',
-            maxZoom: 19
-        })
-    });
 
     //Initialize View
     view = new ol.View({
@@ -126,7 +103,6 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
         enableRotation: false,
     });
 
-    gdo.net.instance[instanceId].view = view;
     gdo.net.instance[instanceId].controls = new Array();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.instance[instanceId].controls = [];
@@ -146,7 +122,7 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
         controls: gdo.net.instance[instanceId].controls,
         layers: [],
         target: 'map',
-        view: gdo.net.instance[instanceId].view,
+        view: view,
         interactions: ol.interaction.defaults({
             pinchRotate: false,
             zoomDuration: 0
@@ -159,11 +135,13 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
     gdo.net.instance[instanceId].map = map;
 
 }
-var dm;
+
 gdo.net.app["Maps"].initLayers = function(instanceId, deserializedMap) {
     //Process deserialized Map
-    dm = deserializedMap;
     var i;
+    for (i = 0; i < deserializedMap.Views.$values.length; i++) {
+        gdo.net.app["Maps"].addObject(instanceId, "view", deserializedMap.Views.$values[i].Id.Value, deserializedMap.Views.$values[i]);
+    }
     for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
         gdo.net.app["Maps"].addObject(instanceId, "format", deserializedMap.Formats.$values[i].Id.Value, deserializedMap.Formats.$values[i]);
     }
@@ -177,7 +155,9 @@ gdo.net.app["Maps"].initLayers = function(instanceId, deserializedMap) {
         gdo.net.app["Maps"].addObject(instanceId, "layer", deserializedMap.Layers.$values[i].Id.Value, deserializedMap.Layers.$values[i]);
     }
 
-    gdo.net.app["Maps"].setView(instanceId, deserializedMap.Views.$values[deserializedMap.CurrentView]);
+    gdo.net.instance[instanceId].currentView = deserializedMap.CurrentView;
+
+    gdo.net.instance[instanceId].map.setView(gdo.net.instance[instanceId].views[gdo.net.instance[instanceId].currentView]);
 
     //Register Change Handlers
     gdo.net.instance[instanceId].map.getView().on('change:resolution', function() {
@@ -211,7 +191,6 @@ gdo.net.app["Maps"].initLayers = function(instanceId, deserializedMap) {
         gdo.net.app["Maps"].server.requestTemplate(instanceId);
         gdo.net.app["Maps"].drawListTables(instanceId);
     }
-    gdo.net.app["Maps"].requestCurrentView(instanceId);
 }
 
 gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
@@ -222,6 +201,8 @@ gdo.net.app["Maps"].set3DMode = function (instanceId, mode) {
 gdo.net.app["Maps"].initClient = function (clientId) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.consoleOut('.Maps', 1, 'Initializing Maps App Instance ' + instanceId + ' Client at Node ' + clientId);
+
+    gdo.net.instance[instanceId].currentView = 0;
 
     //Initialize Arrays
     gdo.net.app["Maps"].initializeArrays(instanceId);
@@ -279,7 +260,7 @@ gdo.net.app["Maps"].initializeArrays = function (instanceId) {
     gdo.net.instance[instanceId].styles = [];
     gdo.net.instance[instanceId].sources = [];
     gdo.net.instance[instanceId].layers = [];
-    gdo.net.instance[instanceId].view = {};
+    gdo.net.instance[instanceId].views = [];
 }
 
 gdo.net.app["Maps"].switchToInstance = function (instanceId) {

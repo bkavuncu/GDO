@@ -107,7 +107,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Configuration.cs" />
     <Compile Include="Core\Base.cs" />
+    <Compile Include="Core\Animation.cs" />
     <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Layer.cs" />
     <Compile Include="Core\Layers\HeatmapLayer.cs" />
@@ -125,7 +127,6 @@
     <Compile Include="Core\Sources\ImageTileSource.cs" />
     <Compile Include="Core\Sources\VectorSource.cs" />
     <Compile Include="Core\Map.cs" />
-    <Compile Include="Core\Position.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="Core\Sources\XYZSource.cs" />
     <Compile Include="Core\Sources\ZoomifySource.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Core\Styles\StrokeStyle.cs" />
     <Compile Include="Core\Styles\Style.cs" />
     <Compile Include="Core\Styles\TextStyle.cs" />
+    <Compile Include="Core\Data.cs" />
     <Compile Include="Core\View.cs" />
     <Compile Include="Core\Formats\EsriJSONFormat.cs" />
     <Compile Include="Core\Formats\GeoJSONFormat.cs" />
@@ -152,6 +154,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Animation\" />
+    <Folder Include="Core\Data\" />
     <Folder Include="Web\Maps\Images\" />
   </ItemGroup>
   <ItemGroup>

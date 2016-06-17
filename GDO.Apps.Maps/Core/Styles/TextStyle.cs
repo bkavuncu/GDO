@@ -119,7 +119,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectType = "ol.style.Fill",
+                ObjectTypes = new string[1] { "ol.style.Fill" },
             };
             StrokeStyle = new LinkParameter
             {
@@ -130,7 +130,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectType = "ol.style.Stroke",
+                ObjectTypes = new string[1] { "ol.style.Stroke" },
             };
         }
     }

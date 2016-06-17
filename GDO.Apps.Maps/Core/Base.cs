@@ -39,7 +39,7 @@ namespace GDO.Apps.Maps.Core
             Name = new StringParameter
             {
                 Name = "Name",
-                Description = "Name of the Parameter",
+                Description = "Name",
                 Priority = (int) GDO.Utility.Priorities.System,
                 IsEditable = true,
                 IsVisible = true,

@@ -29,7 +29,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "sources",
-                ObjectType = "ol.source.Vector",
+                ObjectTypes = new string[1] { "ol.source.Vector", },
             };
 
             Gradient = new ColorArrayParameter
