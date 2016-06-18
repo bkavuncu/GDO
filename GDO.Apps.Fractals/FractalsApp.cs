@@ -89,6 +89,7 @@ namespace GDO.Apps.Fractals
 
         public int[] SwapFrameNodesAcked;
         public int[] RenderedFrameNodesAcked;
+        public byte[][] Freqs;
 
         public bool Sync;
 
@@ -164,6 +165,7 @@ namespace GDO.Apps.Fractals
 
             SwapFrameNodesAcked = new int[64];
             RenderedFrameNodesAcked = new int[64];
+            Freqs = new byte[64][];
 
             Sync = true;
 

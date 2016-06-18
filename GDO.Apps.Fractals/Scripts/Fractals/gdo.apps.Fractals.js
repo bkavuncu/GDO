@@ -95,13 +95,32 @@ $(function () {
             }
         };
 
-        $.connection.fractalsAppHub.client.swapFrame = function (instanceId, params, timeToRender) {
+        $.connection.fractalsAppHub.client.swapFrame = function (instanceId, params, timeToRender, f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                //gdo.consoleOut('.Fractals', 1, 'server t - ' + timeToRender);
-               // gdo.consoleOut('.Fractals', 1, 'gdo t - ' + gdo.net.time.getTime());
+
                 var json = JSON.parse(params);
+
+                var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+                frequencyData[0] = f0;
+                frequencyData[1] = f1;
+                frequencyData[2] = f2;
+                frequencyData[3] = f3;
+                frequencyData[4] = f4;
+                frequencyData[5] = f5;
+                frequencyData[6] = f6;
+                frequencyData[7] = f7;
+                frequencyData[8] = f8;
+                frequencyData[9] = f9;
+                frequencyData[10] = f10;
+                frequencyData[11] = f11;
+                frequencyData[12] = f12;
+                frequencyData[13] = f13;
+                frequencyData[14] = f14;
+                frequencyData[15] = f15;
+
+                freqs = frequencyData;
 
                 // Set rotation
                 var x = ((gdo.clientId - 1) % 16) - 7.5;
@@ -235,7 +254,7 @@ gdo.net.app["Fractals"].initClient = function () {
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     analyser.fftSize = 32;
-
+    audio.play();
     
     initWebgl("#glscreen1", locations1, "#2d-fragment-shader", completeinit1);
     

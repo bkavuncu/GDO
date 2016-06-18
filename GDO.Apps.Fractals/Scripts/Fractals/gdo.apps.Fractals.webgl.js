@@ -18,10 +18,10 @@ function initWebgl(id, locations, shader, completeInit) {
     gl = canvas.getContext('experimental-webgl');
     //canvas.width = 480;
     //canvas.height = 270;
-    //canvas.width = 960;
-    //canvas.height = 540;
-    canvas.width = 1920;
-    canvas.height = 1080;
+    canvas.width = 960;
+    canvas.height = 540;
+    //canvas.width = 1920;
+    //canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -237,7 +237,11 @@ function renderSync(locations, gl, program) {
             // Ensure continuous rendering
             window.requestAnimationFrame(function () {
                 rendering = false;
-                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
+
+                var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(frequencyData);
+
+                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId, frequencyData[0], frequencyData[1], frequencyData[2], frequencyData[3], frequencyData[4], frequencyData[5], frequencyData[6], frequencyData[7], frequencyData[8], frequencyData[9], frequencyData[10], frequencyData[11], frequencyData[12], frequencyData[13], frequencyData[14], frequencyData[15]);
             });
 
             applyAudioAdjustments();
@@ -296,12 +300,13 @@ function render(locations, gl, program) {
         gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
     }
 }
+
 audioPlaying = false;
+var freqs;
 function applyAudioAdjustments() {
     if (audioPlaying) {
-        var frequencyData = new Uint8Array(analyser.frequencyBinCount);
-        analyser.getByteFrequencyData(frequencyData);
-        gdo.consoleOut('.Fractals', 1, frequencyData);
+        var frequencyData = freqs;
+
         parameters.red *= frequencyData[6] / 255;
         parameters.green *= 1.0 - frequencyData[7] / 255;
         parameters.blue *= frequencyData[8] / 255;
@@ -315,6 +320,6 @@ function applyAudioAdjustments() {
 
         parameters.power = 4.0 + parameters.power * 0.5 * frequencyData[5] / 255;
 
-        parameters.ambience *= 0.1 + 0.9 * frequencyData[6] / 255;
+        parameters.ambience *= 0.1 + 0.9 * frequencyData[1] / 255;
     }
 }
