@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Fill";
+            Description.Value = "Set fill style for vector features.";
 
             Color = new ColorParameter
             {

@@ -19,6 +19,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Style";
+            Description.Value = "Container for vector feature rendering styles. Any changes made to the style or its children through set*() methods will not take effect until the feature or layer that uses the style is re-rendered.";
 
             FillStyle = new LinkParameter
             {

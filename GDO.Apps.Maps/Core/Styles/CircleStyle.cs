@@ -18,6 +18,8 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Circle";
+            Description.Value = "Set circle style for vector features.";
+            Description.Value = "Set circle style for vector features.";
 
             FillStyle = new LinkParameter
             {

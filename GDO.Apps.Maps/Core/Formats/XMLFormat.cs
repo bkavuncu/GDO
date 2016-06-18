@@ -12,6 +12,7 @@ namespace GDO.Apps.Maps.Core.Formats
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.format.XML";
+            Description.Value = "Generic format for reading non-feature XML data";
         }
     }
 }

@@ -9,7 +9,7 @@ namespace GDO.Apps.Maps.Core
 {
     public class Map
     {
-        public int CurrentView { get; set; }
+        public Position Position { get; set; }
         public View[] Views { get; set; }
         public Format[] Formats { get; set; }
         public Style[] Styles { get; set; }
@@ -17,9 +17,9 @@ namespace GDO.Apps.Maps.Core
         public Layer[] Layers { get; set; }
 
 
-        public Map(int currentView, View[] views, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
+        public Map(Position position, View[] views, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
         {
-            CurrentView = currentView;
+            Position = position;
             Views = views;
             Formats = formats;
             Styles = styles;

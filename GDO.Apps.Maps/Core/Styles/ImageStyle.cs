@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Image";
+            Description.Value = "A base class used for creating subclasses and not instantiated in apps. Base class for Icon Style, Circle Style and Regular Shape Style.";
 
             Opacity = new SliderParameter
             {

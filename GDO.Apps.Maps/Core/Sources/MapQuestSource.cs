@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.MapQuest";
+            Description.Value = "Layer source for the MapQuest tile server.";
 
             Layer = new DatalistParameter
             {

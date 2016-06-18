@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.Stamen";
+            Description.Value = "Layer source for the Stamen tile server.";
 
             Layer = new DatalistParameter
             {

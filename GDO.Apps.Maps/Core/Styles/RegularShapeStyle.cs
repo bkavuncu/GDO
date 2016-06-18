@@ -21,6 +21,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.RegularShape";
+            Description.Value = "Set regular shape style for vector features. The resulting shape will be a regular polygon when radius is provided, or a star when radius1 and radius2 are provided.";
 
             FillStyle = new LinkParameter
             {

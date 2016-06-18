@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core
         public Animation() : base()
         {
             ClassName.Value = this.GetType().Name;
+            Description.Value = "";
 
         }
     }

@@ -16,6 +16,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.Zoomify";
+            Description.Value = "Layer source for tile data in Zoomify format.";
 
             Size = new IntegerArrayParameter
             {

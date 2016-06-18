@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,11 +7,10 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class ImageTileSource : Source
+    public class VectorTileSource : Source
     {
         public IntegerParameter CacheSize { get; set; }
-        public StringParameter CrossOrigin { get; set; }
-        public BooleanParameter Opaque { get; set; }
+        public LinkParameter Format { get; set; }
         public StringParameter Projection { get; set; }
         public FloatArrayParameter Extent { get; set; }
         public IntegerParameter MinZoom { get; set; }
@@ -22,12 +22,11 @@ namespace GDO.Apps.Maps.Core.Sources
         public StringParameter Url { get; set; }
         public BooleanParameter WrapX { get; set; }
 
-
-        public ImageTileSource()
+        public VectorTileSource()
         {
             ClassName.Value = this.GetType().Name;
-            ObjectType.Value = "ol.source.TileImage";
-            Description.Value = "Base class for sources providing images divided into a tile grid.";
+            ObjectType.Value = "ol.source.VectorTile";
+            Description.Value = "Class for layer sources providing vector data divided into a tile grid, to be used with VectorTile. Although this source receives tiles with vector features from the server, it is not meant for feature editing. Features are optimized for rendering, their geometries are clipped at or near tile boundaries and simplified for a view resolution. ";
 
             CacheSize = new IntegerParameter
             {
@@ -37,28 +36,19 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValue = 2048,
+                DefaultValue = 128,
                 Increment = 1,
             };
 
-            CrossOrigin = new StringParameter
+            Format = new LinkParameter
             {
-                Name = "Cross Origin",
-                PropertyName = "crossOrigin",
-                Description = "The crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you are using the WebGL renderer or if you want to access pixel data with the Canvas renderer",
+                Name = "Format",
+                PropertyName = "format",
+                Description = "Feature format for tiles. Used and required by the default Tile Load Function.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-            };
-
-            Opaque = new BooleanParameter
-            {
-                Name = "Opaque",
-                PropertyName = "opaque",
-                Description = "Whether the layer is opaque.",
-                Priority = (int)GDO.Utility.Priorities.Optional,
-                IsEditable = false,
-                IsVisible = true,
+                LinkedParameter = "formats"
             };
 
             Projection = new StringParameter
@@ -139,7 +129,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = false,
                 IsVisible = true,
                 Length = 2,
-                DefaultValues = new int?[2] {256,256},
+                DefaultValues = new int?[2] { 256, 256 },
                 Values = new int?[2],
                 IsPartOfObject = true,
                 ObjectName = "ol.tilegrid.TileGrid",
@@ -153,7 +143,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValue = "function(imageTile, src) {imageTile.getImage().src = src;};",
+                DefaultValue = "function(tile, url) {tile.setLoader(function() {var data = // ... fetch datavar format = tile.getFormat();tile.setFeatures(format.readFeatures(data));tile.setProjection(format.readProjection(data));};});",
             };
 
             TilePixelRatio = new FloatParameter
@@ -182,7 +172,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Name = "WrapX",
                 PropertyName = "wrapx",
                 Description = "Whether to wrap the world horizontally. The default, undefined, is to request out-of-bounds tiles from the server. When set to false, only one world will be rendered. When set to true, tiles will be requested for one world only, but they will be wrapped horizontally to render multiple worlds.",
-                Priority = (int) GDO.Utility.Priorities.Optional,
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
             };

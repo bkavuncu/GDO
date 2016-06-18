@@ -543,7 +543,23 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
                     continue;
                 } else if (values[index] != null) {
                     className = values[index].ClassName.Value;
-                    $("iframe").contents().find("#" + arr[i] + "_types").append("<option value='" + className + "'>" + className + "</option>");
+                    //$("iframe").contents().find("#" + arr[i] + "_types").append("<option value='" + className + "'>" + className + "</option>");
+                    $("iframe").contents().find("#" + arr[i] + "_types").append("<div id='" + arr[i] + "_types_" + className + "' index='" + index + "' type='" + arr[i] + "'>" + className + "</option>");
+                    $("iframe").contents().find("#" + arr[i] + "_types_" + className)
+                        .unbind()
+                        .click(function () {
+                            $("iframe").contents().find("#" + $(this).attr("type") + "_types_input").val(eval("gdo.net.instance[" + instanceId + "].template." + upperCaseFirstLetter($(this).attr("type")) + "s.$values[" + parseInt($(this).attr("index")) + "].ClassName.Value"));
+                            $("iframe").contents().find("#" + $(this).attr("type") + "_types_input").attr("index", parseInt($(this).attr("index")));
+                            $("iframe").contents().find("#" + $(this).attr("type") + "_description").empty().append(eval("gdo.net.instance[" + instanceId + "].template." + upperCaseFirstLetter($(this).attr("type")) + "s.$values[" + parseInt($(this).attr("index")) + "].Description.Value"));
+                        }).mouseout(function () {
+                            $(this).css("color", "white");
+                            if ($("iframe").contents().find("#" + $(this).attr("type") + "_types_input").attr("index") != null && $("iframe").contents().find("#" + $(this).attr("type") + "_types_input").attr("index") != 'undefined') {
+                                $("iframe").contents().find("#" + $(this).attr("type") + "_description").empty().append(eval("gdo.net.instance[" + instanceId + "].template." + upperCaseFirstLetter($(this).attr("type")) + "s.$values[" + $("iframe").contents().find("#" + $(this).attr("type") + "_types_input").attr("index") + "].Description.Value"));
+                            }
+                        }).mouseover(function () {
+                            $(this).css("color", "#4CBFF8");
+                            $("iframe").contents().find("#" + $(this).attr("type") + "_description").empty().append(eval("gdo.net.instance[" + instanceId + "].template." + upperCaseFirstLetter($(this).attr("type")) + "s.$values[" + parseInt($(this).attr("index")) + "].Description.Value"));
+                        });
                 }
             }
         }
@@ -555,7 +571,7 @@ gdo.net.app["Maps"].extractTypes = function (instanceId) {
 
 gdo.net.app["Maps"].submitNextButton = function (instanceId, tab) {
     var name = $("iframe").contents().find("#" + tab + "_name_input").val();
-    var className = $("iframe").contents().find("#" + tab + "_types").val();
+    var className = $("iframe").contents().find("#" + tab + "_types_input").val();
     var object = {};
     if (name != null && className != null) {
         for (var index in eval("gdo.net.instance[" + instanceId + "].template." + upperCaseFirstLetter(tab) + "s.$values")) {
@@ -694,7 +710,7 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
         .click(function () {
             if (gdo.net.app["Maps"].selected["layer"] >= 0) {
                 gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Visible.Value = !gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Visible.Value;
-                gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].setVisible(gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Visible.Value);
+                gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties).replace(/'/g, "\\'"));
                 gdo.net.app["Maps"].drawListTables(instanceId);
             }
         });

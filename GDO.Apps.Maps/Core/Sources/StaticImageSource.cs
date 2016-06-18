@@ -19,6 +19,7 @@ namespace GDO.Apps.Maps.Core.Sources.Images
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.ImageStatic";
+            Description.Value = "A layer source for displaying a single, static image.";
 
             CrossOrigin = new StringParameter
             {

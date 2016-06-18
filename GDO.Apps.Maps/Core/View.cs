@@ -17,11 +17,14 @@ namespace GDO.Apps.Maps.Core
         public StringParameter Projection { get; set; }
         public FloatParameter Resolution { get; set; }
         public FloatParameter Rotation { get; set; }
+        public IntegerParameter Width { get; set; }
+        public IntegerParameter Height { get; set; }
 
         public View() : base()
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.View";
+            Description.Value = "An View object represents a simple 2D view of the map.This is the object to act upon to change the center, resolution, and rotation of the map.";
 
             Center = new FloatArrayParameter
             {
@@ -120,6 +123,32 @@ namespace GDO.Apps.Maps.Core
                 IsNull = false,
                 DefaultValue = (float?)0,
                 Value = (float?)0,
+            };
+
+            Width = new IntegerParameter
+            {
+                Name = "Width",
+                PropertyName = "width",
+                Description = "Control Width",
+                Priority = (int)GDO.Utility.Priorities.System,
+                IsEditable = true,
+                IsVisible = true,
+                IsNull = false,
+                DefaultValue = (int?)0,
+                Value = (int?)100,
+            };
+
+            Height = new IntegerParameter
+            {
+                Name = "Height",
+                PropertyName = "heigth",
+                Description = "Control Height",
+                Priority = (int)GDO.Utility.Priorities.System,
+                IsEditable = true,
+                IsVisible = true,
+                IsNull = false,
+                DefaultValue = (int?)0,
+                Value = (int?)100,
             };
         }
     }

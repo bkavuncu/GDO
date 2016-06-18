@@ -23,6 +23,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Text";
+            Description.Value = "Set text style for vector features.";
 
             Font = new StringParameter
             {

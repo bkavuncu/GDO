@@ -18,6 +18,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.TileWMS";
+            Description.Value = "Layer source for tile data from WMS servers.";
 
             Params = new JSONParameter
             {

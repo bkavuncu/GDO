@@ -20,6 +20,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.Vector";
+            Description.Value = "Provides a source of features for vector layers. Vector features provided by this source are suitable for editing.";
 
             Format = new LinkParameter
             {

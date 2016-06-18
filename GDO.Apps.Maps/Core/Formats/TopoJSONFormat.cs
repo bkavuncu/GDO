@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Formats
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.format.TopoJSON";
+            Description.Value = "Feature format for reading data in the TopoJSON format.";
 
             DefaultDataProjection = new StringParameter
             {

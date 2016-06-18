@@ -18,6 +18,7 @@ namespace GDO.Apps.Maps.Core.Layers
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Vector";
+            Description.Value = "Vector data that is rendered client-side.";
 
             Source = new LinkParameter
             {

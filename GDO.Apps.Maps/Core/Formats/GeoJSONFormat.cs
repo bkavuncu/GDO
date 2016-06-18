@@ -16,6 +16,8 @@ namespace GDO.Apps.Maps.Core.Formats
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.format.GeoJSON";
+            Description.Value = "Feature format for reading and writing data in the GeoJSON format.";
+            Description.Value = "Feature format for reading and writing data in the GeoJSON format.";
 
             GeometryName = new StringParameter
             {

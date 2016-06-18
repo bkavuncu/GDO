@@ -17,6 +17,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.CartoDB";
+            Description.Value = "Layer source for the CartoDB tiles.";
 
             Config = new JSONParameter
             {

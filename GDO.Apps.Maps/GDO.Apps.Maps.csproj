@@ -84,7 +84,7 @@
     <Content Include="Scripts\Maps\gdo.apps.maps.ui.map.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.ui.js" />
     <Content Include="Scripts\Maps\gdo.apps.maps.utilities.js" />
-    <Content Include="Scripts\Maps\gdo.apps.maps.view.js" />
+    <Content Include="Scripts\Maps\gdo.apps.maps.position.js" />
     <Content Include="Scripts\Maps\ol3cesium.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -116,6 +116,7 @@
     <Compile Include="Core\Layers\ImageLayer.cs" />
     <Compile Include="Core\Layers\TileLayer.cs" />
     <Compile Include="Core\Layers\VectorLayer.cs" />
+    <Compile Include="Core\Position.cs" />
     <Compile Include="Core\Sources\BingMapsSource.cs" />
     <Compile Include="Core\Sources\CartoDBSource.cs" />
     <Compile Include="Core\Sources\MapQuestSource.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Core\Sources\TileWMSSource.cs" />
     <Compile Include="Core\Sources\StamenSource.cs" />
     <Compile Include="Core\Sources\ImageTileSource.cs" />
+    <Compile Include="Core\Sources\VectorTileSource.cs" />
     <Compile Include="Core\Sources\VectorSource.cs" />
     <Compile Include="Core\Map.cs" />
     <Compile Include="Core\Source.cs" />

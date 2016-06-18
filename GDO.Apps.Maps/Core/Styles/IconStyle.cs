@@ -23,6 +23,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Icon";
+            Description.Value = "Set icon style for vector features.";
 
             CrossOrigin = new StringParameter
             {

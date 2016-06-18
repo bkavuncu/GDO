@@ -19,6 +19,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.BingMaps";
+            Description.Value = "Layer source for Bing Maps tile data.";
 
             Culture = new StringParameter
             {

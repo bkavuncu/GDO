@@ -19,6 +19,7 @@ namespace GDO.Apps.Maps.Core.Layers
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Heatmap";
+            Description.Value = "Layer for rendering vector data as a heatmap.";
 
             Source = new LinkParameter
             {

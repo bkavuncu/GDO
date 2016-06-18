@@ -11,6 +11,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.OSM";
+            Description.Value = "Layer source for the OpenStreetMap tile server.";
         }
     }
 }

@@ -26,9 +26,9 @@ namespace GDO.Apps.Maps
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
         public AppConfiguration Configuration { get; set; }
-
+        public string[] MarkerPosition { get; set; }
         public Map Map;
-        public int CurrentView { get; set; }
+        public Position Position { get; set; }
         public GenericDictionary<View> Views { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
         public GenericDictionary<Source> Sources { get; set; }
@@ -48,6 +48,8 @@ namespace GDO.Apps.Maps
             Sources.Init();
             Styles.Init();
             Formats.Init();
+
+            SaveEmptyTemplate();
 
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
 
@@ -71,8 +73,7 @@ namespace GDO.Apps.Maps
             {
                 Views.Add((int)view.Id.Value, view);
             }
-            CurrentView = Map.CurrentView;
-            SaveEmptyTemplate();
+            Position = Map.Position;
         }
         public string GetSerializedTemplate()
         {
@@ -84,7 +85,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(CurrentView, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(Position, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
@@ -96,12 +97,6 @@ namespace GDO.Apps.Maps
             System.IO.File.WriteAllText(filePath, GetSerializedMap());
         }
 
-        //Feature / Animation
-
-        //TODO Functions 
-
-
-
         //Layer
 
         public int AddLayer<T>(Layer layer) where T : Layer
@@ -110,15 +105,6 @@ namespace GDO.Apps.Maps
             try
             {
                 int layerId = Layers.GetAvailableSlot();
-                /*if (layer.ZIndex == -1)
-                {
-                    ZindexTable.AddLayer(layerId);
-                }
-                else
-                {
-                    ZindexTable.AddLayer(layerId, layer.ZIndex);
-                }
-                */
                 layer.Id.Value = layerId;
                 Layers.Add<T>(layerId, (T)layer);
                 return layerId;
@@ -173,7 +159,6 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                //ZindexTable.RemoveLayer(layerId);
                 Layers.Remove(layerId);
                 return true;
             }
@@ -254,30 +239,53 @@ namespace GDO.Apps.Maps
                 return false;
             }
         }
-
-        //Interaction
-
-        public int AddInteraction()
+        public bool UseView(int viewId)
         {
-
-            return -1;
+            try
+            {
+                View view = Views.GetValue<View>(viewId);
+                Position.BottomRight = view.BottomRight.Values;
+                Position.Center = view.Center.Values;
+                Position.TopLeft = view.TopLeft.Values;
+                Position.Resolution = view.Resolution.Value;
+                Position.Width = view.Width.Value;
+                Position.Height = view.Height.Value;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
-        public bool UpdateInteraction(int interactionId)
+        public bool UpdatePosition(float?[] topLeft, float?[] center, float?[] bottomRight, float? resolution, int? width, int? height)
         {
-
-            return false;
+            try
+            {
+                Position.TopLeft = topLeft;
+                Position.Center = center;
+                Position.BottomRight = bottomRight;
+                Position.Resolution = resolution;
+                Position.Width = width;
+                Position.Height = height;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
-        public string GetSerializedInteraction(int interactionId)
+        public void SetMarkerPosition(string[] pos)
         {
-            return "";
+            MarkerPosition = pos;
         }
 
-        public bool RemoveInteraction(int interactionId)
+        public string[] GetMarkerPosition()
         {
-
-            return false;
+            return MarkerPosition;
         }
 
         //Source
@@ -535,6 +543,13 @@ namespace GDO.Apps.Maps
             List<Layer> layers = new List<Layer>();
             List<View> views = new List<View>();
 
+            //Add Position to Template
+
+            float?[] topLeft = { 0, 0};
+            float?[] bottomRight = { 0, 0};
+            float?[] center = { 0, 0};
+            Position position = new Position(topLeft, center, bottomRight, 77, 100, 100);
+
             //Add View to Template
             View view = new View();
             views.Add(view);
@@ -618,7 +633,7 @@ namespace GDO.Apps.Maps
             layers.Add(tileLayer);
             layers.Add(vectorLayer);
 
-            Map map = new Map(0, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            Map map = new Map(position, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;
         }
 

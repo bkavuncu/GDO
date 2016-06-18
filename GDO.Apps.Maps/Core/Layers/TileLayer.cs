@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Layers
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Tile";
+            Description.Value = "For layer sources that provide pre-rendered, tiled images in grids that are organized by zoom levels for specific resolutions.";
 
             Source = new LinkParameter
             {

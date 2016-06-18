@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Formats
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.format.WFS";
+            Description.Value = "Feature format for reading and writing data in the WFS format. By default, supports WFS version 1.1.0. You can pass a GML format as option if you want to read a WFS that contains GML2 (WFS 1.0.0).";
 
             SchemaLocation = new StringParameter
             {

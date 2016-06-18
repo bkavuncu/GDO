@@ -15,6 +15,7 @@ namespace GDO.Apps.Maps.Core.Sources
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.TileArcGISRest";
+            Description.Value = "Layer source for tile data from ArcGIS Rest services. Map and Image Services are supported.For cached ArcGIS services, better performance is available using the XYZSource.";
 
             Params = new JSONParameter
             {

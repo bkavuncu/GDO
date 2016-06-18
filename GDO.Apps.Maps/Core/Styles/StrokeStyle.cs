@@ -19,6 +19,7 @@ namespace GDO.Apps.Maps.Core.Styles
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.style.Stroke";
+            Description.Value = "Set stroke style for vector features. Note that the defaults given are the Canvas defaults, which will be used if option is not defined.";
 
             Color = new ColorParameter
             {

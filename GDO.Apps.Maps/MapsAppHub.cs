@@ -229,6 +229,92 @@ namespace GDO.Apps.Maps
             }
         }
 
+
+        public void UpdatePosition(int instanceId, float?[] topLeft, float?[] center, float?[] bottomRight, float resolution, int width, int height)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.UpdatePosition(topLeft, center, bottomRight, resolution, width, height);
+                    BroadcastPosition(instanceId);
+                    //Clients.Caller.receivePosition(instanceId, topLeft, center, bottomRight, resolution, width, height);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestPosition(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    Clients.Caller.receivePosition(instanceId, maps.Position.TopLeft, maps.Position.Center, maps.Position.BottomRight, maps.Position.Resolution, maps.Position.Width, maps.Position.Height);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void BroadcastPosition(int instanceId)
+        {
+            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            Clients.Group("" + instanceId).receivePosition(instanceId, maps.Position.TopLeft, maps.Position.Center, maps.Position.BottomRight, maps.Position.Resolution, maps.Position.Width, maps.Position.Height);
+        }
+
+        public void UseView(int instanceId, int viewId)
+        {
+            MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+            maps.UseView(viewId);
+            BroadcastPosition(instanceId);
+        }
+
+        public void UploadMarkerPosition(int instanceId, string[] pos)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]).SetMarkerPosition(pos);
+                    Clients.Caller.receiveMarkerPosition(instanceId, pos);
+                    BroadcastMarkerPosition(instanceId, pos);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestMarkerPosition(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    string[] position = ((MapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).GetMarkerPosition();
+                    Clients.Caller.receiveMarkerPosition(instanceId, position);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void BroadcastMarkerPosition(int instanceId, string[] pos)
+        {
+            Clients.Group("" + instanceId).receiveMarkerPosition(instanceId, pos);
+        }
+
         //Layer
 
         public void AddLayer(int instanceId, string className, string serializedLayer)

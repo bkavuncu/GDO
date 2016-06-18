@@ -22,6 +22,9 @@ namespace GDO.Apps.Maps.Core
         public StringParameter ClassName { get; set; }
 
         [JsonProperty(Order = -2)]
+        public StringParameter Description { get; set; }
+
+        [JsonProperty(Order = -2)]
         public StringParameter ObjectType { get; set; }
 
         public Base()
@@ -55,6 +58,17 @@ namespace GDO.Apps.Maps.Core
                 IsVisible = true,
                 IsProperty = false,
             };
+
+            Description = new StringParameter
+            {
+                Name = "Description",
+                Description = "Description of the Object",
+                Priority = (int)GDO.Utility.Priorities.System,
+                IsEditable = false,
+                IsVisible = false,
+                IsProperty = false,
+                InputType = (int)InputTypes.TextArea,
+        };
 
             ObjectType = new StringParameter
             {

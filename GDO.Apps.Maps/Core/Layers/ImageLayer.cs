@@ -14,6 +14,7 @@ namespace GDO.Apps.Maps.Core.Layers
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Image";
+            Description.Value = "Server-rendered images that are available for arbitrary extents and resolutions.";
 
             Source = new LinkParameter
             {
