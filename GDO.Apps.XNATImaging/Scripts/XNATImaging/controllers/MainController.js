@@ -1,5 +1,5 @@
 app.controller('MainController', ['$scope', '$http', '$routeParams', '$timeout', '$interval', 'mriServices',
-function($scope, $http, $routeParams, $timeout, $interval, mriServices) {
+function ($scope, $http, $routeParams, $timeout, $interval, mriServices) {
     $scope.title = 'XNAT Imaging App';
     $scope.patient = {
         name: 'MY_001'
@@ -13,6 +13,30 @@ function($scope, $http, $routeParams, $timeout, $interval, mriServices) {
         windowWidth: 394,
         windowCenter: 192
     }
+    console.log("Main control");
+   
+
+    //Updating greeting message after receiving a message through the event
+
+    /*$rootScope.$on("receivingControl", function (e, instanceId, controlName) {
+        console.log("Received control");
+        $scope.$apply(function () {
+            switch (controlName) {
+                case 'Up':
+                    $scope.navigateUp();
+                    gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Control : " + controlName);
+                    break;
+                case 'Down':
+                    $scope.navigateDown();
+                    gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Control : " + controlName);
+                    break;
+            }
+        });
+    });*/
+
+    //SignalR testing
+    // http://sravi-kiran.blogspot.co.uk/2013/09/ABetterWayOfUsingAspNetSignalRWithAngularJs.html
+    //signalRSvc.initialize();
 
     // on service completion
     mriServices.success(function(data) {
@@ -58,7 +82,7 @@ function($scope, $http, $routeParams, $timeout, $interval, mriServices) {
                 console.log($scope.imageIds.length);
             }*/
             getImageStack();
-            console.log("got");
+            console.log("Loaded Image Stack");
         });
     }
 

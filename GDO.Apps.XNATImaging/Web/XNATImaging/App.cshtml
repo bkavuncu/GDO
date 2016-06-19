@@ -7,54 +7,53 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:500,300,700,400' rel='stylesheet' type='text/css'>
     <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
 </head>
-<body ng-app="xnatApp">
-    <div id="MainController" ng-controller="MainController">
-        <div class="heading">
-            <div class="container">
-                <h1>{{ title }}</h1>
-            </div>
-        </div>
-        <div class="main">
-            <div class="container">
-                <h2>Patient: {{ patient.name }}</h2>
-                <div id="dicomImage"
-                     update-image
-                     mouse-wheel-up=""
-                     mouse-wheel-down=""
-                     mouse-click=""
-                     class="cornerstone-enabled-image"
-                     oncontextmenu="return false"
-                     unselectable='off'
-                     onselectstart='return false;'
-                     onmousedown='return false;'>
+<body>
+    <div class="container">
+        <div class="row">
+            <div id="dicomImage"
+                    class="col-xs-12 col-md-8"
+                    update-image
+                    mouse-wheel-up=""
+                    mouse-wheel-down=""
+                    mouse-click=""
+                    class="cornerstone-enabled-image"
+                    oncontextmenu="return false"
+                    unselectable='off'
+                    onselectstart='return false;'
+                    onmousedown='return false;'>
 
-                    <div id="mrtopleft">
-                        <p>Optimise ID</p>
+                <div id="mrtopleft">
+                    <p>Optimise ID</p>
+                </div>
+                <div id="mrtopright">
+                    Hospital
+                </div>
+                <div id="mrbottomright">
+                    <div id="frameRate"></div>
+                    <div id="zoomText">
+                        <p>Zoom: 2.0x</p>
                     </div>
-                    <div id="mrtopright">
-                        Hospital
-                    </div>
-                    <div id="mrbottomright">
-                        <div id="frameRate"></div>
-                        <div id="zoomText"><p>Zoom: {{ view.zoomLevel }}x</p></div>
-                        <div id="sliceText"><p>Image: {{ currentImageIndex + 1 }}</p></div>
-                    </div>
-                    <div id="mrbottomleft">
-                        <p>WW/WC: {{ view.windowWidth }}/{{ view.windowCenter }}</p>
+                    <div id="sliceText">
+                        <p>Image: </p>
                     </div>
                 </div>
+                <div id="mrbottomleft">
+                    <p>WW/WC: </p>
+                </div>
+            </div>
+            <div id="dicomTopThumb" class="col-xs-6 col-md-4">
+                <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png"/>
+            </div>
+            <div id="dicomBottomThumb" class="col-xs-6 col-md-4">
+                <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" />
             </div>
         </div>
-        <div ng-view></div>
     </div>
 
-
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/XNATImaging/angular.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
-    
-    <script src="https://code.angularjs.org/1.2.28/angular-route.min.js"></script>
+    <script src="../../Scripts/XNATImaging/angular.min.js"></script>
     <script src="../../Scripts/XNATImaging/underscore.js"></script>
     <script src="../../Scripts/XNATImaging/cornerstone.js"></script>
     <script src="../../Scripts/XNATImaging/cornerstoneMath.js"></script>
@@ -62,21 +61,10 @@
     <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
     <script src="../../Scripts/XNATImaging/jpx.js"></script>
     <script src="../../Scripts/XNATImaging/cornerstoneWADOImageLoader.js"></script>
-    <!-- Modules -->
-    <script src="../../Scripts/XNATImaging/app.js"></script>
-    <!-- Controllers -->
-    <script src="../../Scripts/XNATImaging/controllers/MainController.js"></script>
-    <!-- Services -->
-    <script src="../../Scripts/XNATImaging/services/mriServices.js"></script>
-    <!-- Directives -->
-    <script src="../../Scripts/XNATImaging/directives/mouseWheelUp.js"></script>
-    <script src="../../Scripts/XNATImaging/directives/mouseWheelDown.js"></script>
-    <script src="../../Scripts/XNATImaging/directives/mouseClick.js"></script>
 
     <script>
         $(function () {
             $(document).ready(function () {
-                console.log('.XNATImaging', 1, 'DOM Ready for JS');
                 var gdo = parent.gdo;
                 gdo.net.app["XNATImaging"].initClient();
             });

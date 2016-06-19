@@ -619,7 +619,12 @@
     <Content Include="CSS\gdo.management.css" />
     <Content Include="Img\gdo.png" />
     <Content Include="Img\logo.png" />
+    <Content Include="Scripts\cornerstone-tools.js" />
+    <Content Include="Scripts\cornerstone.js" />
+    <Content Include="Scripts\cornerstoneMath.js" />
+    <Content Include="Scripts\cornerstoneWADOImageLoader.js" />
     <Content Include="Scripts\d3.js" />
+    <Content Include="Scripts\dicomParser.js" />
     <Content Include="Scripts\enscroll-0.6.1.min.js" />
     <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.modules.js" />
@@ -951,6 +956,7 @@
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\heatmap.js" />
     <Content Include="Scripts\heatmap.min.js" />
+    <Content Include="Scripts\jpx.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="CSS\jquery-ui.css" />
@@ -968,6 +974,7 @@
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
     <Content Include="Scripts\peer.js" />
+    <Content Include="Scripts\underscore.js" />
     <Content Include="Web\Nodes.cshtml" />
     <Content Include="Web\Sections.cshtml" />
     <Content Include="Web\States.cshtml" />
