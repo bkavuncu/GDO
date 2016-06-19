@@ -1,4 +1,6 @@
-﻿
+﻿gdo.net.app["Fractals"].audio;
+gdo.net.app["Fractals"].analyser;
+
 gdo.net.app["Fractals"].setParameters = function (params) {
 
     var json = JSON.parse(params);
@@ -140,24 +142,26 @@ $(function () {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-                var n = gdo.net.time.getTime()
+                var n = gdo.net.time.getTime();
 
                 gdo.net.app["Fractals"].audio.play();
-                gdo.net.app["Fractals"].audio.currentTime = (n - time) / 1000;
+                //gdo.net.app["Fractals"].audio.currentTime = (n - time) / 1000;
                 gdo.net.app["Fractals"].audioPlaying = true;
 
+                if (gdo.net.app["Fractals"].audio.error)
+                    gdo.consoleOut('.Fractals', 1, "Music error - " - gdo.net.app["Fractals"].audio.error);
             }
         };
 
 
-        $.connection.fractalsAppHub.client.stopAudio = function (id, time) {
+        $.connection.fractalsAppHub.client.stopAudio = function (id) {
 
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
                 var n = gdo.net.time.getTime()
-
+                
                 gdo.net.app["Fractals"].audioPlaying = false;
                 gdo.net.app["Fractals"].audio.pause();
 
@@ -166,8 +170,7 @@ $(function () {
 
 });
 
-gdo.net.app["Fractals"].audio;
-gdo.net.app["Fractals"].analyser;
+
 
 gdo.net.app["Fractals"].initClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Client at Node ' + gdo.clientId);

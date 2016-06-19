@@ -132,7 +132,7 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    Clients.Group("" + instanceId).startAudio(instanceId, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds);
+                    Clients.Group("" + instanceId).startAudio(instanceId, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + 500);
                 }
                 catch (Exception e)
                 {

@@ -126,7 +126,7 @@
   <ItemGroup>
     <Content Include="Data\Fractals\joystick-icon-background.png" />
     <Content Include="Data\Fractals\joystick-icon.png" />
-    <Content Include="Data\Fractals\test.mp3" />
+    <Content Include="Data\Fractals\Music\test.mp3" />
     <Content Include="packages.config" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.params.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.ui.js" />

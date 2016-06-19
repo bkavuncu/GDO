@@ -274,7 +274,6 @@ gdo.net.app["Fractals"].applyAudioAdjustments = function () {
             frequencyData = gdo.net.app["Fractals"].freqs;
         } else {
             gdo.net.app["Fractals"].analyser.getByteFrequencyData(frequencyData);
-            gdo.consoleOut('.Fractals', 1, frequencyData);
         }
 
         // Colour cycle
