@@ -281,6 +281,8 @@ function render(locations, gl, program) {
                 render(locations, gl, program);
             });
 
+            applyAudioAdjustments();
+
             // Apply params
             applyParams(locations, gl);
 
@@ -305,7 +307,15 @@ audioPlaying = false;
 var freqs;
 function applyAudioAdjustments() {
     if (audioPlaying) {
-        var frequencyData = freqs;
+
+        var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+        if (sync) {
+            frequencyData = freqs;
+        } else {
+            analyser.getByteFrequencyData(frequencyData);
+            gdo.consoleOut('.Fractals', 1, frequencyData);
+        }
 
         if (frequencyData[6] / 255 < 1 / 6) {
             parameters.red = 1;
@@ -346,7 +356,7 @@ function applyAudioAdjustments() {
 
         parameters.scale = 2.0 + 2.0 * frequencyData[11] / 255;
 
-        parameters.power = 4.0 + parameters.power * frequencyData[5] / 255;
+        parameters.power = 4.0 + 4.0 * frequencyData[5] / 255;
 
         parameters.ambience = 0.1 + 0.5 * frequencyData[6] / 255;
     }
