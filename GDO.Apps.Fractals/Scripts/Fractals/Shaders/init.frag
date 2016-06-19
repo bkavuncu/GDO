@@ -1,19 +1,21 @@
-﻿vec3 calcRayOrigin(float x, float y) {
+﻿
+vec3 calcRayIntercept(float x, float y) {
+
 	// x rotation
 	float x2 = x*cos(xRot) - focal*sin(xRot);
-float focal2 = x*sin(xRot) + focal*cos(xRot);
-x = x2;
+    float focal2 = x*sin(xRot) + focal*cos(xRot);
+    x = x2;
 
-// y rotation
-float y2 = y*cos(yRot) - focal2*sin(yRot);
-focal2 = y*sin(yRot) + focal2*cos(yRot);
-y = y2;
+    // y rotation
+    float y2 = y*cos(yRot) - focal2*sin(yRot);
+    focal2 = y*sin(yRot) + focal2*cos(yRot);
+    y = y2;
 
-// ro - ray origin
-// calculate where ray passes through the screen
-vec3 ro = vec3(x, y - eyeHeight*cos(yRot), focal2 - eyeHeight*sin(yRot));
+    // ri - ray intercept
+    // calculate where ray passes through the screen
+    vec3 ri = vec3(x, y - eyeHeight*cos(yRot), focal2 - eyeHeight*sin(yRot));
 
-return ro;
+    return ri;
 }
 
 void rayMarch() {
@@ -34,13 +36,12 @@ void rayMarch() {
     float xDiffAA = 0.5 / width;
     float yDiffAA = 0.5*ratio / height;
 
-    // Ray origin
-    vec3 ro = calcRayOrigin(x, y);
+    // Ray screen intercept
+    vec3 ri = calcRayIntercept(x, y);
 
     // Set pixel colour
-    vec3 color = march(translation, normalize(ro));
-    //color.a = 0.95;
-    gl_FragColor = vec4(color,0.95);
+    vec3 color = march(translation, normalize(ri));
+    gl_FragColor = vec4(color,0.999);
 
     // Anti alias
     /*

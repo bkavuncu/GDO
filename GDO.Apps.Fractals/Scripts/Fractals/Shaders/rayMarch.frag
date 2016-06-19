@@ -5,6 +5,7 @@ precision mediump float;
 #endif
 precision mediump int;
 
+// Camera Controls
 uniform float width;
 uniform float height;
 uniform float xRot;
@@ -13,23 +14,27 @@ uniform float focal;
 uniform vec3 translation;
 uniform float eyeHeight;
 
+// Render Parameters
 uniform int maxSteps;
 uniform float minDetail;
 uniform float fog;
+uniform vec4 colour;
 
+// Fractal Parameters
+uniform int fractal;
+uniform int iterations;
+uniform float power;
+uniform float scale;
+uniform vec4 c;
+uniform float threshold;
+
+// Lighting
 uniform float ambience;
 uniform float lightIntensity;
 uniform float lightSize;
 uniform vec3 lightLoc;
 
-uniform int fractal;
-uniform int iterations;
-uniform float power;
-uniform vec4 colour;
-uniform float scale;
-uniform vec4 c;
-uniform float threshold;
-
+// Infinite Objects
 uniform int modFunction;
 
 // Cylinder function
@@ -87,26 +92,15 @@ void boxFold(inout vec3 z, inout float dz)
 
 float DE(vec3 pos) {
 
-	//
-
 	if (modFunction == 1) {
 		pos = modPoint(pos, 3.0);
 	}
-	//float d = opTwist(p);
-	// float d = primitiveSphere(p, 0.5);
-	//return d;
 
 	if (fractal == 0) {
 
         // MANDELBROT TRIPLEX
 
-		// Treat as sphere beyond 2.0
-		//if (length(pos) > 2.0) {
-		//return length(pos) - 1.9;
-		//}
-
 		float Bailout = 2.0;
-		//float Power = 8.0;
 
 		vec3 z = pos;
 		float dr = 1.0;
@@ -136,8 +130,7 @@ float DE(vec3 pos) {
 		}
 		return 0.5*log(r)*r / dr;
 
-	}
-		else if (fractal == 1) {
+	} else if (fractal == 1) {
 
         // MANDELBOX
 
@@ -159,12 +152,9 @@ float DE(vec3 pos) {
 		float r = length(z);
 		return r / abs(dr);
 
-	}
-		else if (fractal == 2) {
-            // JULIA QUAT
+	} else if (fractal == 2) {
 
-		//vec4 c = vec4(0.18, 0.88, 0.24, 0.16);
-		//float threshold = 10.0;
+        // JULIA QUAT
 
 		vec4 p = vec4(pos, 0.0);
 		vec4 dp = vec4(1.0, 0.0, 0.0, 0.0);
@@ -178,67 +168,71 @@ float DE(vec3 pos) {
 		float r = length(p);
 		return  0.5 * r * log(r) / length(dp);
 
-		} else if (fractal == 3) {
-		    // JULIA TRIPLEX
-			    float Bailout = 8.0;
-			    //float Power = 2.0;
+    } else if (fractal == 3) {
 
-			    vec3 z = pos;
-			    float dr = 1.0;
-			    float r = length(pos);
+		// JULIA TRIPLEX
 
-			    //vec4 c = vec4(0.18,0.88,0.24,0.16);
-            
-			    for (int i = 0; i < 1/0 ; i++) {
+		float Bailout = 8.0;
 
-			        // Weird bug - without 2nd line it crashes ???
-                    if (i >= iterations) break;
-                    if (i>1/0) break;
+		vec3 z = pos;
+		float dr = 1.0;
+		float r = length(pos);
 
-                    r = length(z);
-                    if (r>Bailout) break;
+		for (int i = 0; i < 1/0 ; i++) {
+
+		    // Weird bug - without 2nd line it crashes ???
+            if (i >= iterations) break;
+            if (i>1/0) break;
+
+            r = length(z);
+            if (r>Bailout) break;
 		
-			        // convert to polar coordinates
-                    float theta = acos(z.z/r);
-                    float phi = atan(z.y,z.x);
-                    dr =  pow( r, power-1.0)*power*dr;
+			// convert to polar coordinates
+            float theta = acos(z.z/r);
+            float phi = atan(z.y,z.x);
+            dr =  pow( r, power-1.0)*power*dr;
 		
-			        // scale and rotate the point
-                    float zr = pow( r,power);
-                    theta = theta*power;
-                    phi = phi*power;
+			// scale and rotate the point
+            float zr = pow( r,power);
+            theta = theta*power;
+            phi = phi*power;
 		
-			        // convert back to cartesian coordinates
-                    z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
-                    z+=c.xyz;
-			    }
-
-		    return 0.5*log(r)*r/dr;
-		} else {
-		    // QUAT MANDELBROT
-		    //vec4 c = vec4(0.18,0.88,0.24,0.16);
-		    //float threshold = 100.0;
-		    //int iterations = 12;
-
-		    vec4 p = vec4(0.0);
-		    vec4 dp = vec4(1.0, 0.0,0.0,0.0);
-		    for (int i = 0; i < 1/0; i++) {
-                if (i > iterations) break;
-                if (i>1 / 0) break;
-                dp = 2.0* vec4(p.x*dp.x-dot(p.yzw, dp.yzw), p.x*dp.yzw+dp.x*p.yzw+cross(p.yzw, dp.yzw)) + vec4(1.0, vec3(0.0));
-                p = vec4(p.x*p.x-dot(p.yzw, p.yzw), vec3(2.0*p.x*p.yzw)) + vec4(pos, 0.0);
-                float p2 = dot(p,p);
-                if (p2 > threshold) break;
-		    }
-		    float r = length(p);
-		    return  0.5 * r * log(r) / length(dp);
+			// convert back to cartesian coordinates
+            z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
+            z+=c.xyz;
 		}
 
+		return 0.5*log(r)*r/dr;
+    } else {
+
+	    // QUAT MANDELBROT
+
+		vec4 p = vec4(0.0);
+		vec4 dp = vec4(1.0, 0.0,0.0,0.0);
+
+		for (int i = 0; i < 1/0; i++) {
+
+            if (i > iterations) break;
+            if (i>1 / 0) break;
+
+            dp = 2.0* vec4(p.x*dp.x-dot(p.yzw, dp.yzw), p.x*dp.yzw+dp.x*p.yzw+cross(p.yzw, dp.yzw)) + vec4(1.0, vec3(0.0));
+            p = vec4(p.x*p.x-dot(p.yzw, p.yzw), vec3(2.0*p.x*p.yzw)) + vec4(pos, 0.0);
+
+            float p2 = dot(p,p);
+            if (p2 > threshold) break;
+
+		}
+
+		float r = length(p);
+		return  0.5 * r * log(r) / length(dp);
+	}
 }
 
 float shadow(vec3 ro, vec3 rd, float dist, float detail) {
+
 	float res = 1.0;
 	float t = 0.0;
+
 	for (int i = 0; i < 1 / 0; i++) {
 		if (i >= maxSteps) return 0.0;
 		if (t > dist) break;
@@ -258,6 +252,27 @@ float shadow(vec3 ro, vec3 rd, float dist, float detail) {
 	return res;
 }
 
+float ambientOcclusion(vec3 p, vec3 normal, float detail) {
+
+    // Ambient Occlusion
+    float aoFactor = 0.0;
+    float delta = detail;
+    float aoTotal = 0.0;
+
+    for (int j = 1; j < 6; j++) {
+        vec3 aoPos = p + normal * delta * float(j);
+        float surfaceDist = distance(aoPos, p);
+        float nearestDist = min(abs(DE(aoPos)), abs(aoPos.y + 2.0));
+        float expDist = 1.0 / pow(2.0, float(j));
+        aoTotal += expDist * abs(surfaceDist - nearestDist);
+        aoFactor += expDist * max(surfaceDist, abs(surfaceDist - nearestDist));
+    }
+
+    float ao = 1.0 - (aoTotal / aoFactor);
+
+	return ao;
+}
+
 vec3 march(vec3 ro, vec3 rd) {
 
 	// Sky color
@@ -267,8 +282,6 @@ vec3 march(vec3 ro, vec3 rd) {
 	vec3 p = ro;
 
 	// Lighting
-	//vec3 lightLoc = vec3(4.0, 2.0, -2.0);
-	//float lightIntensity = 50.0;
 	vec3 lightDirection;
 	vec3 normal = vec3(0.0);
 	float ao = 1.0;
@@ -297,11 +310,16 @@ vec3 march(vec3 ro, vec3 rd) {
 		detail = minVisibleDetail > minDetail ? minVisibleDetail : minDetail;
 
 		// distance estimators
+
 		// Fractal
 		float d1 = abs(DE(p));
+
 		// Floor
 		float d2 = abs(p.y + 2.0);
+
+		// Light
 		float d3 = length(p - lightLoc);
+
 		float d = min(d1, d2);
 		d = min(d, d3);
 
@@ -309,6 +327,8 @@ vec3 march(vec3 ro, vec3 rd) {
 
 		if (d < detail) {
 			if (d1 < d2) {
+
+			    // Fractal intercept
 
 				ambientColour = colour.xyz;
 				diffuseColour = colour.xyz;
@@ -325,25 +345,14 @@ vec3 march(vec3 ro, vec3 rd) {
 					DE(p + yDir) - DE(p - yDir),
 					DE(p + zDir) - DE(p - zDir)));
 
-				// Ambient Occlusion
-				float aoFactor = 0.0;
-				float delta = detail;
-				float aoTotal = 0.0;
-				for (int j = 1; j < 6; j++) {
-					vec3 aoPos = p + normal * delta * float(j);
-					float surfaceDist = distance(aoPos, p);
-					float nearestDist = abs(DE(aoPos));
-					float expDist = 1.0 / pow(2.0, float(i));
-					aoTotal += expDist * abs(surfaceDist - nearestDist);
-					aoFactor += expDist * max(surfaceDist, abs(surfaceDist - nearestDist));
-				}
-
-				ao = 1.0 - (aoTotal / aoFactor);
+				ao = ambientOcclusion(p, normal, detail);
 
 				break;
 
 			}
 			else {
+
+			    // Floor intercept
 
 				// Floor colour
 				if (mod(p.x, 1.0) < 0.5) {
@@ -385,24 +394,26 @@ vec3 march(vec3 ro, vec3 rd) {
 	float s = shadow(p + 2.0*detail*normal, lightDirection, distance(p, lightLoc), detail);
 
 	// Shading
+
 	// Ambience
 	ambientColour *= ambience;
+
+	// Phong
 	color = (ambientColour + s * diffuseColour  * attenuation * max(dot(normal, lightDirection), 0.0)
 		+ s * specularColour * attenuation * pow(max(dot(normalize(reflect(lightDirection, normal)), rd), 0.0), 200.0) / 3.0);
 
 	// Ambient occlusion
 	color *= ao;
 
-
 	// Fog
 	vec3 fogColor = vec3(0.0, 0.0, 0.0);
 	color = mix(color, fogColor, 1.0 - exp(-t*fog));
 
+	// Light rendering
 	if (minDistToLight < lightSize) {
+		color = clamp(color, vec3(0.0), vec3(1.0));
 		color = mix(color, vec3(1.0), (lightIntensity / 20.0)* pow(1.0 - minDistToLight / lightSize, 2.0));
 	}
 
 	return color;
-
 }
-
