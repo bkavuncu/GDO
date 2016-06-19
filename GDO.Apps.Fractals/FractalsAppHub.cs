@@ -520,7 +520,6 @@ namespace GDO.Apps.Fractals
                     FA.Sync = !FA.Sync;
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
                     Clients.Group("" + instanceId).updateParams(instanceId, Json);
-                    //Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
                 }
                 catch (Exception e)
                 {
@@ -645,7 +644,7 @@ namespace GDO.Apps.Fractals
                                 FA.RenderedFrameNodesAcked[i] = 0;
                             }                 
 
-                            Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
+                            Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
                         }
                     
                 }
@@ -662,7 +661,7 @@ namespace GDO.Apps.Fractals
                 try
                 {
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    Clients.Caller.renderFirstFrame(instanceId, FA.CurrentFrame, FA.Sync);
+                    Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
 
                 }
                 catch (Exception e)
@@ -684,7 +683,7 @@ namespace GDO.Apps.Fractals
                         {
                             // Start synch cycle
                             FA.Nodes = 1;
-                            Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame);
+                            Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
                         }
                         else
                         {
@@ -698,14 +697,10 @@ namespace GDO.Apps.Fractals
                         FA.swapping = false;
                         FA.Acks = 0;
                         FA.SwapFrameAcks = 0;
-                        // Refreshed page, render relevant frame
-                        if (FA.Sync)
-                        {
-                            Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame);
-                        } else
-                        {
-                            Clients.Group("" + instanceId).renderNextFrameNoSync();
-                        }
+                        // Refreshed page, render next frame
+
+                        Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
+
                     }
                 }
                 catch (Exception e)

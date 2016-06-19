@@ -53,27 +53,13 @@ $(function () {
             }
         };
 
-        $.connection.fractalsAppHub.client.renderFirstFrame = function (instanceId, currentFrame, serverSync) {
+        $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame, serverSync) {
 
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
                 sync = serverSync;
-
-                if (currentFrame == 0) {
-                    renderSync(locations1, gl1, program1);
-                } else {
-                    renderSync(locations2, gl2, program2);
-                }
-
-            }
-        };
-
-        $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame) {
-
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
                 if (currentFrame == 0) {
                     renderSync(locations1, gl1, program1);
@@ -90,7 +76,8 @@ $(function () {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-                render(locations1, gl1, program1);
+                sync = false;
+                renderSync(locations1, gl1, program1);
 
             }
         };

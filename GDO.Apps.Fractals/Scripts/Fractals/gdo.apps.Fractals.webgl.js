@@ -16,12 +16,9 @@ function initWebgl(id, locations, shader, completeInit) {
     // Set up canvas
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
-    //canvas.width = 480;
-    //canvas.height = 270;
-    canvas.width = 960;
-    canvas.height = 540;
-    //canvas.width = 1920;
-    //canvas.height = 1080;
+
+    canvas.width = 1920;
+    canvas.height = 1080;
 
     // Initialise view port
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -244,64 +241,36 @@ function renderSync(locations, gl, program) {
                 gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId, frequencyData[0], frequencyData[1], frequencyData[2], frequencyData[3], frequencyData[4], frequencyData[5], frequencyData[6], frequencyData[7], frequencyData[8], frequencyData[9], frequencyData[10], frequencyData[11], frequencyData[12], frequencyData[13], frequencyData[14], frequencyData[15]);
             });
 
-            applyAudioAdjustments();
-
-            // Apply params
-            applyParams(locations, gl);
-
-            // Set position data of vertex shader
-            positionLocation = gl.getAttribLocation(program, "a_position");
-            gl.enableVertexAttribArray(positionLocation);
-            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-            // Draw quad
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-
         } else {
-            rendering = false;
+
             canvas1.style.zIndex = 5;
             canvas2.style.zIndex = 0;
-            render(locations1, gl1, program1);
-        }
-    } else {
-        gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
-    }
-}
-rendering2 = false;
-function render(locations, gl, program) {
-
-    if (!rendering2) {
-        rendering2 = true;
-
-        if (!sync) {
 
             // Ensure continuous rendering
             window.requestAnimationFrame(function () {
-                rendering2 = false;
-                render(locations, gl, program);
+                rendering = false;
+                renderSync(locations1, gl1, program1);
             });
-
-            applyAudioAdjustments();
-
-            // Apply params
-            applyParams(locations, gl);
-
-            // Set position data of vertex shader
-            positionLocation = gl.getAttribLocation(program, "a_position");
-            gl.enableVertexAttribArray(positionLocation);
-            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-            // Draw quad
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-        } else {
-            rendering2 = false;
-            renderSync(locations2, gl2, program2);
         }
+
+        applyAudioAdjustments();
+
+        // Apply params
+        applyParams(locations, gl);
+
+        // Set position data of vertex shader
+        positionLocation = gl.getAttribLocation(program, "a_position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Draw quad
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
     } else {
         gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
     }
 }
+
 
 audioPlaying = false;
 var freqs;
@@ -317,6 +286,7 @@ function applyAudioAdjustments() {
             gdo.consoleOut('.Fractals', 1, frequencyData);
         }
 
+        // Colour cycle
         if (frequencyData[6] / 255 < 1 / 6) {
             parameters.red = 1;
             parameters.green = (frequencyData[6] / 255) / (1 / 6);
