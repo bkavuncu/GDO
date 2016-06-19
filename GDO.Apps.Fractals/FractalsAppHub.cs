@@ -574,7 +574,7 @@ namespace GDO.Apps.Fractals
                     if (sum >= FA.Section.NumNodes)
                     {
 
-                        byte[] avgFreqs = new byte[frequencyData.Length];
+                        int[] avgFreqs = new int[frequencyData.Length];
                         for (int i = 0; i < 64; i++)
                         {
                             if (FA.Freqs[i] != null)
