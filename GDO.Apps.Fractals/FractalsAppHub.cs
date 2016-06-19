@@ -36,7 +36,7 @@ namespace GDO.Apps.Fractals
                 if (!FA.Sync)
                 {
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                    Clients.Group("" + instanceId).updateParams(instanceId, Json);
+                    Clients.Group("" + instanceId).updateParams(instanceId, Json, FA.Sync);
                 }
 
             }
@@ -519,7 +519,7 @@ namespace GDO.Apps.Fractals
                     FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
                     FA.Sync = !FA.Sync;
                     string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                    Clients.Group("" + instanceId).updateParams(instanceId, Json);
+                    Clients.Group("" + instanceId).updateParams(instanceId, Json, FA.Sync);
                 }
                 catch (Exception e)
                 {
@@ -669,66 +669,5 @@ namespace GDO.Apps.Fractals
                     Console.WriteLine(e);
                 }
         }
-
-        public void IncNodes(int instanceId, int clientId)
-        {
-            if (instanceId == -1) return;
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    if (FA.NodesOnline[clientId] != 1) {
-                        if (FA.NewNodes == 0 && FA.Nodes == 0)
-                        {
-                            // Start synch cycle
-                            FA.Nodes = 1;
-                            Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
-                        }
-                        else
-                        {
-                            // Add new nodes after current cycle
-                            FA.NewNodes++;
-                        }
-                        FA.NodesOnline[clientId] = 1;
-                    } else
-                    {
-                        FA.rendering = true;
-                        FA.swapping = false;
-                        FA.Acks = 0;
-                        FA.SwapFrameAcks = 0;
-                        // Refreshed page, render next frame
-
-                        Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
-
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void DecNodes(int instanceId, int clientId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    if (FA.NodesOnline[clientId] == 1)
-                    {
-                        FA.Nodes--;
-                        FA.NodesOnline[clientId] = 0;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
     }
 }
