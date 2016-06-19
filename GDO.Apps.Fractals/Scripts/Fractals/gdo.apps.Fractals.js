@@ -220,6 +220,21 @@ $(function () {
             }
         };
 
+
+        $.connection.fractalsAppHub.client.stopAudio = function (id, time) {
+
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+                var n = gdo.net.time.getTime()
+
+                audioPlaying = false;
+                audio.pause();
+
+            }
+        };
+
 });
 var audio;
 var analyser;
@@ -254,7 +269,6 @@ gdo.net.app["Fractals"].initClient = function () {
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
     analyser.fftSize = 32;
-    audio.play();
     
     initWebgl("#glscreen1", locations1, "#2d-fragment-shader", completeinit1);
     

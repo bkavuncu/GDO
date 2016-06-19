@@ -307,19 +307,47 @@ function applyAudioAdjustments() {
     if (audioPlaying) {
         var frequencyData = freqs;
 
-        parameters.red *= frequencyData[6] / 255;
-        parameters.green *= 1.0 - frequencyData[7] / 255;
-        parameters.blue *= frequencyData[8] / 255;
+        if (frequencyData[6] / 255 < 1 / 6) {
+            parameters.red = 1;
+            parameters.green = (frequencyData[6] / 255) / (1 / 6);
+            parameters.blue = 0;
+        }
+        else if (frequencyData[6] / 255 < 2 / 6) {
+            parameters.red = 1 - (((frequencyData[6] / 255) - (1 / 6)) / (1 / 6));
+            parameters.green = 1;
+            parameters.blue = 0;
+        }
+        else if (frequencyData[6] / 255 < 3 / 6) {
+            parameters.red = 0;
+            parameters.green = 1;
+            parameters.blue = ((frequencyData[6] / 255) - (2 / 6)) / (1 / 6);
+        }
+        else if (frequencyData[6] / 255 < 4 / 6) {
+            parameters.red = 0;
+            parameters.green = 1 - (((frequencyData[6] / 255) - (3 / 6)) / (1 / 6));
+            parameters.blue = 1;
+        }
+        else if (frequencyData[6] / 255 < 5 / 6) {
+            parameters.red = ((frequencyData[6] / 255) - (4 / 6)) / (1 / 6);
+            parameters.green = 0;
+            parameters.blue = 1;
+        }
+        else {
+            parameters.red = 1;
+            parameters.green = 0;
+            parameters.blue = 1 - (((frequencyData[6] / 255) - (5 / 6)) / (1 / 6));
+        }
 
-        parameters.cx *= frequencyData[4] / 255;
-        parameters.cy *= frequencyData[5] / 255;
-        parameters.cz *= frequencyData[9] / 255;
-        parameters.cw *= frequencyData[10] / 255;
 
-        parameters.scale *= frequencyData[11] / 255;
+        parameters.cx = 1 - (2 * frequencyData[4] / 255);
+        parameters.cy = -1 + (2 * frequencyData[5] / 255);
+        parameters.cz = Math.sin(2 * Math.PI * frequencyData[9] / 255);
+        parameters.cw = Math.cos(2 * Math.PI * frequencyData[10] / 255);
 
-        parameters.power = 4.0 + parameters.power * 0.5 * frequencyData[5] / 255;
+        parameters.scale = 2.0 + 2.0 * frequencyData[11] / 255;
 
-        parameters.ambience *= 0.1 + 0.9 * frequencyData[1] / 255;
+        parameters.power = 4.0 + parameters.power * frequencyData[5] / 255;
+
+        parameters.ambience = 0.1 + 0.5 * frequencyData[6] / 255;
     }
 }

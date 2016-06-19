@@ -141,6 +141,21 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        public void StopAudio(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).stopAudio(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void MaxSteps(int instanceId, int maxSteps)
         {
             lock (Cave.AppLocks[instanceId])

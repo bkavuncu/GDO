@@ -9,6 +9,10 @@ $("iframe").contents().find("#audio_start").on("click", function () {
     gdo.net.app["Fractals"].server.startAudio(gdo.controlId);
 });
 
+$("iframe").contents().find("#audio_stop").on("click", function () {
+    gdo.net.app["Fractals"].server.stopAudio(gdo.controlId);
+});
+
 $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
 
 $("iframe").contents().find("#max_steps_range").on("input", function () {
