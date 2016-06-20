@@ -618,7 +618,7 @@
                                 //Extract to hosted directory, overwrites
                                 entry.ExtractToFile(path + entry.Name, true);
                                 //Add to database.txt
-                                database.Add(entry.Name);
+                                database.Insert(0, entry.Name);
                             }
                         }
                     }
@@ -631,7 +631,7 @@
                     //Put on disk
                     file.SaveAs(path + filename);
                     //Add to database.txt
-                    database.Add(filename);
+                    database.Insert(0, filename);
                 }
                 else //Is not an Image
                 {
