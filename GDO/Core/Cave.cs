@@ -586,6 +586,50 @@ namespace GDO.Core
             return configurations;
         }
 
+        public static List<string> LoadAppConfiguration(string appName, string fileName)
+        {
+            List<string> configurationList = new List<string>();
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
+            if (Directory.Exists(path))
+            {
+                string[] filePaths = Directory.GetFiles(@path, fileName+".json", SearchOption.AllDirectories);//todo comment why the@ is needed
+                foreach (string filePath in filePaths)
+                {
+                    JObject json = Utilities.LoadJsonFile(filePath);
+                    if (json != null)
+                    {
+                        string configurationName = Utilities.RemoveString(filePath, path + "\\");
+                        configurationName = Utilities.RemoveString(configurationName, ".json");
+                        Log.Info("Found config called " + configurationName + " for app " + appName + " about to load");
+                        if (Apps[appName].Configurations.ContainsKey(configurationName))
+                        {
+                            Apps[appName].Configurations[configurationName] = new AppConfiguration(configurationName,json);
+                        }
+                        else
+                        {
+                            Apps[appName].Configurations.TryAdd(configurationName, new AppConfiguration(configurationName, json));
+                        }
+
+                    }
+                }
+            }
+            configurationList = Apps[appName].GetConfigurationList();
+            return configurationList;
+        }
+
+        public static List<string> UnloadAppConfiguration(string appName, string configName)
+        {
+            List<string> configurationList = new List<string>();
+            if (Apps[appName].Configurations.ContainsKey(configName))
+            {
+                AppConfiguration config;
+                Apps[appName].Configurations.TryRemove(configName, out config);
+                Utilities.RemoveJsonFile(configName, "Configurations\\" + appName);
+            }
+            configurationList = Apps[appName].GetConfigurationList();
+            return configurationList;
+        }
 
 
         public static List<string> GetModuleList()

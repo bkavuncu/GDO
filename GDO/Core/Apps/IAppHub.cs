@@ -12,7 +12,7 @@ namespace GDO.Core.Apps
         string Name { get; set; }
         int P2PMode { get; set; }
         Type InstanceType { get; set; }
-        void JoinGroup(int instanceId);
-        void ExitGroup(int instanceId);
+        void JoinGroup(string groupId);
+        void ExitGroup(string groupId);
     }
 }

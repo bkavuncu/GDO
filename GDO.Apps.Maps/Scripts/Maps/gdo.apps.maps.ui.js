@@ -10,6 +10,7 @@ gdo.net.app["Maps"].selected["style"] = -1;
 gdo.net.app["Maps"].selected["format"] = -1;
 gdo.net.app["Maps"].selected["data"] = -1;
 gdo.net.app["Maps"].selected["animation"] = -1;
+gdo.net.app["Maps"].selected["view"] = -1;
 gdo.net.app["Maps"].selected["configuration"] = -1;
 
 
@@ -19,6 +20,10 @@ gdo.net.app["Maps"].drawListTables = function (instanceId) {
         gdo.net.app["Maps"].drawListTable(instanceId, "source");
         gdo.net.app["Maps"].drawListTable(instanceId, "style");
         gdo.net.app["Maps"].drawListTable(instanceId, "format");
+        gdo.net.app["Maps"].drawListTable(instanceId, "data");
+        gdo.net.app["Maps"].drawListTable(instanceId, "animation");
+        gdo.net.app["Maps"].drawListTable(instanceId, "view");
+        gdo.net.app["Maps"].drawListTable(instanceId, "configuration");
     }
 }
 
@@ -818,4 +823,148 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
             $("iframe").contents().find("#new-format-input").modal('show');
             $(".modal-backdrop").css("display", "none");
         });
+
+    $("iframe").contents().find("#data-next-button")
+   .unbind()
+   .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "data"); });
+
+    $("iframe").contents().find("#data-create-button")
+       .unbind()
+       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "data", true); });
+
+    $("iframe").contents().find(".data-remove-button")
+        .unbind()
+       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "data"); });
+
+    $("iframe").contents().find(".data-save-button")
+        .unbind()
+       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "data", false); });
+
+    $("iframe").contents().find(".data-saveas-button")
+        .unbind()
+        .click(function () {
+            gdo.net.instance[instanceId].temp["data"] = {};
+            gdo.net.instance[instanceId].temp["data"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].datas[gdo.net.app["Maps"].selected["data"]].properties);
+            gdo.net.app["Maps"].drawCreateTable(instanceId, "data", gdo.net.instance[instanceId].temp["data"]);
+            $("iframe").contents().find("#new-data-input").modal('show');
+            $(".modal-backdrop").css("display", "none");
+        });
+
+    $("iframe").contents().find("#animation-next-button")
+   .unbind()
+   .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "animation"); });
+
+    $("iframe").contents().find("#animation-create-button")
+       .unbind()
+       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "animation", true); });
+
+    $("iframe").contents().find(".animation-remove-button")
+        .unbind()
+       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "animation"); });
+
+    $("iframe").contents().find(".animation-save-button")
+        .unbind()
+       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "animation", false); });
+
+    $("iframe").contents().find(".animation-saveas-button")
+        .unbind()
+        .click(function () {
+            gdo.net.instance[instanceId].temp["animation"] = {};
+            gdo.net.instance[instanceId].temp["animation"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].animations[gdo.net.app["Maps"].selected["animation"]].properties);
+            gdo.net.app["Maps"].drawCreateTable(instanceId, "animation", gdo.net.instance[instanceId].temp["animation"]);
+            $("iframe").contents().find("#new-animation-input").modal('show');
+            $(".modal-backdrop").css("display", "none");
+        });
+
+    $("iframe").contents().find("#view-next-button")
+   .unbind()
+   .click(function () {
+       gdo.net.app["Maps"].submitNextButton(instanceId, "view");
+       //read values here
+    });
+
+    $("iframe").contents().find("#view-create-button")
+       .unbind()
+       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", true); });
+
+    $("iframe").contents().find(".view-remove-button")
+        .unbind()
+       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "view"); });
+
+    $("iframe").contents().find(".view-set-current-button")
+        .unbind()
+       .click(function() {
+           if (gdo.net.app["Maps"].selected["view"] >= 0) {
+               gdo.net.app["Maps"].server.UseView[gdo.net.app["Maps"].selected["view"]];
+           }
+        });
+
+    $("iframe").contents().find(".view-save-current-button")
+        .unbind()
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["view"] >= 0) {
+                gdo.net.app["Maps"].server.UsePosition[gdo.net.app["Maps"].selected["view"]];
+            }
+        });
+
+    $("iframe").contents().find("#configuration-next-button")
+   .unbind()
+   .click(function () {
+        gdo.net.instance[instanceId].temp["configuration"] = {};
+        var currentConfig = 0;
+        for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++)
+        {
+            if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                currentConfig = i;
+            }
+        }
+        gdo.net.instance[instanceId].temp["configuration"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].configurations[i].properties);
+        gdo.net.app["Maps"].drawCreateTable(instanceId, "configuration", gdo.net.instance[instanceId].temp["configuration"]);
+        $("iframe").contents().find("#new-configuration-input").modal('show');
+        $(".modal-backdrop").css("display", "none");
+    });
+
+    $("iframe").contents().find("#configuration-create-button")
+       .unbind()
+       .click(function () {
+           var configName = $("iframe").contents().find("#" + tab + "_name_input").val();
+            if (configName != null) {
+                gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
+            }
+        });
+
+    $("iframe").contents().find(".configuration-remove-button")
+        .unbind()
+       .click(function () {
+           if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+               gdo.net.app["Maps"].server.deleteConfiguration(instanceId, gdo.net.instance[instanceId].configurations[gdo.net.app["Maps"].selected["configuration"]].properties.Name.Value);
+           }
+        });
+
+    $("iframe").contents().find(".configuration-save-button")
+        .unbind()
+       .click(function() {
+           var configName;
+           for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+               if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                   configName = gdo.net.instance[instanceId].configName;
+               }
+           }
+           if (configName != null) {
+               gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
+           }
+        });
+
+    $("iframe").contents().find(".configuration-load-button")
+        .unbind()
+        .click(function () {
+            //??
+        });
+
+    $("iframe").contents().find(".configuration-upload-button")
+    .unbind()
+    .click(function () {
+        //??
+        gdo.net.app["Maps"].server.scanConfigurations(instanceId);
+    });
 }

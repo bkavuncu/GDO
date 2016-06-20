@@ -340,6 +340,63 @@ namespace GDO.Core
             }
         }
 
+        public void BroadcastAppConfigurations(int instanceId)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        List<string> configList = Cave.Apps[Cave.GetAppName(instanceId)].GetConfigurationList();
+                        Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
+        public void LoadAppConfiguration(int instanceId, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        List<string> configList = Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                        Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
+        public void UnloadAppConfiguration(int instanceId, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        List<string> configList = Cave.UnloadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                        Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
         public void RequestAppConfiguration(int instanceId)
         {
             lock (Cave.ServerLock)
@@ -349,7 +406,7 @@ namespace GDO.Core
                     if (Cave.ContainsInstance(instanceId))
                     {
                         Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId), Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Name,
-                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()));
+                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()), true);
                     }
                 }
                 catch (Exception e)

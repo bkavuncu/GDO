@@ -6,7 +6,7 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Layers
 {
-    public class HeatmapLayer : Layer
+    public class StaticHeatmapLayer : Layer
     {
         public LinkParameter Source { get; set; }
         public ColorArrayParameter Gradient { get; set; }
@@ -15,7 +15,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public SliderParameter Weight { get; set; }
         public SliderParameter Blur { get; set; }
 
-        public HeatmapLayer()
+        public StaticHeatmapLayer()
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Heatmap";

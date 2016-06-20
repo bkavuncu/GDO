@@ -50,42 +50,43 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
     if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
         gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
     }
-    var object;
+    var object = {};
     var properties = [];
     var options = {};
-
-    for (var index in deserializedObject) {
-        if (!deserializedObject.hasOwnProperty((index))) {
-            continue;
-        }
-        if (deserializedObject[index].IsProperty && !deserializedObject[index].IsNull) {
-            switch (deserializedObject[index].ParameterType) {
-                case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Variable:
-                    properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Value]);
-                    break
-                case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Array:
-                    properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Values]);
-                    break;
-                case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Function:
-                    properties.push([deserializedObject[index].PropertyName, eval(deserializedObject[index].Value)]);
-                    break;
-                case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.JSON:
-                    properties.push([deserializedObject[index].PropertyName, JSON.parse(deserializedObject[index].Value)]);
-                    break;
-                case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
-                    if (deserializedObject[index].Value >= 0) {
-                        var obj = eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParameter + "[" + deserializedObject[index].Value + "]");
-                        properties.push([deserializedObject[index].PropertyName, obj]);
-                    }
-                    break;
-                default:
-                    gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + deserializedObject[index].ParameterType + ' for ' + deserializedObject.Name + 's property ' + deserializedObject[index].PropertyName);
-                    break;
+    if (deserializedObject.ObjectType.Value != null && deserializedObject.ObjectType.Value != 'undefined') {
+        for (var index in deserializedObject) {
+            if (!deserializedObject.hasOwnProperty((index))) {
+                continue;
+            }
+            if (deserializedObject[index].IsProperty && !deserializedObject[index].IsNull) {
+                switch (deserializedObject[index].ParameterType) {
+                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Variable:
+                        properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Value]);
+                        break
+                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Array:
+                        properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Values]);
+                        break;
+                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Function:
+                        properties.push([deserializedObject[index].PropertyName, eval(deserializedObject[index].Value)]);
+                        break;
+                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.JSON:
+                        properties.push([deserializedObject[index].PropertyName, JSON.parse(deserializedObject[index].Value)]);
+                        break;
+                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
+                        if (deserializedObject[index].Value >= 0) {
+                            var obj = eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParameter + "[" + deserializedObject[index].Value + "]");
+                            properties.push([deserializedObject[index].PropertyName, obj]);
+                        }
+                        break;
+                    default:
+                        gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + deserializedObject[index].ParameterType + ' for ' + deserializedObject.Name + 's property ' + deserializedObject[index].PropertyName);
+                        break;
+                }
             }
         }
+        options = gdo.net.app["Maps"].optionConstructor(properties);
+        eval("object = new " + deserializedObject.ObjectType.Value + "(options);");
     }
-    options = gdo.net.app["Maps"].optionConstructor(properties);
-    eval("object = new " + deserializedObject.ObjectType.Value + "(options);");
     object.properties = deserializedObject;
     object.properties.isInitialized = true;
     eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");

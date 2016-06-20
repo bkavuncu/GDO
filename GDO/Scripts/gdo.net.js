@@ -189,13 +189,33 @@ $(function() {
         }
     }
 
-    $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config) {
+    $.connection.caveHub.client.receiveAppConfig = function (instanceId, appName, configName, config, exists) {
         if (gdo.net.isNodeInitialized()) {
-            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ")");
-            gdo.net.app[appName].config[configName] = JSON.parse(JSON.parse(config));
+            gdo.consoleOut('.NET', 1, 'Received App Config : (id:' + instanceId + ', config: ' + configName + ", exists: " + exists + ")");
+            if (exists) {
+                gdo.net.app[appName].config[configName] = JSON.parse(JSON.parse(config));
+            } else {
+                gdo.net.app[appName].config[configName] = null;
+            }
             gdo.updateSelf();
         }
     }
+
+    $.connection.caveHub.client.receiveAppConfigList = function (instanceId, serializedConfigList) {
+        if (gdo.net.isNodeInitialized()) {
+            var instance = gdo.net.instance[instanceId];
+            gdo.consoleOut('.NET', 1, 'Received App Config List: (id:' + instanceId + ', app: ' + instance.appName + ")");
+            var configList = JSON.parse(serializedConfigList);
+            gdo.net.app[instance.appName].configList = new Array(configList.length);
+            for (var i = 0; i < configList.length; i++) {
+                gdo.net.app[instance.appName].configList[i] = configList[i];
+            }
+            gdo.net.server.requestAppConfiguration(instance.Id);
+            gdo.updateSelf();
+        }
+    }
+
+
     $.connection.caveHub.client.receiveScenarioUpdate = function (status, name, serializedScenario) {
         gdo.consoleOut('.NET', 1, 'Received Scenario Update : (name:' + name + ', exists: ' + status + ")" );
         if (gdo.net.isNodeInitialized()) {
@@ -722,7 +742,7 @@ gdo.net.processNode = function (node)
 gdo.net.processSection = function(exists, id, section) {
     if (exists) {
         if (gdo.net.node[gdo.clientId].sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.net.server.joinGroup(gdo.net.node[gdo.clientId].sectionId);
+            //gdo.net.server.joinGroup(gdo.net.node[gdo.clientId].sectionId);
         }
         gdo.net.section[id].id = id;
         gdo.net.section[id].exists = true;
@@ -750,7 +770,7 @@ gdo.net.processSection = function(exists, id, section) {
         gdo.net.section[id].health = gdo.net.section[id].health / (section.Cols * section.Rows);
     } else {
         if (gdo.net.node[gdo.clientId].sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.net.server.exitGroup(gdo.net.node[gdo.clientId].sectionId);
+            //gdo.net.server.exitGroup(gdo.net.node[gdo.clientId].sectionId);
         }
         gdo.net.section[id].id = id;
         gdo.net.section[id].exists = false;
@@ -786,11 +806,12 @@ gdo.net.processApp = function (app) {
     var hubName = lowerCaseFirstLetter(app.Name) + "AppHub";
     gdo.net.app[app.Name].server = $.connection[hubName].server;
     gdo.net.app[app.Name].config = new Array();
+    gdo.net.app[app.Name].configList = new Array();
     gdo.net.app[app.Name].p2pMode = app.P2PMode;
     gdo.net.app[app.Name].appType = app.AppType;
-    gdo.net.app[app.Name].config = new Array(app.ConfigurationList.length);
+    gdo.net.app[app.Name].configList = new Array(app.ConfigurationList.length);
     for (var i = 0; i < app.ConfigurationList.length; i++) {
-        gdo.net.app[app.Name].config[i] = app.ConfigurationList[i];
+        gdo.net.app[app.Name].configList[i] = app.ConfigurationList[i];
     }
     gdo.net.app[app.Name].instances = [];
     if (app.SupportedApps != null) {
@@ -809,10 +830,7 @@ gdo.net.processInstance = function (exists, id, instance) {
         gdo.net.instance[instance.Id].id = instance.Id;
         gdo.net.instance[instance.Id].exists = true;
         gdo.net.instance[instance.Id].configName = instance.Configuration.Name;
-
-        if (gdo.net.app[instance.AppName].config[instance.Configuration.Name] == null) {
-            gdo.net.server.requestAppConfiguration(instance.Id);
-        }
+        gdo.net.server.requestAppConfiguration(instance.Id);
 
         if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.BASE) {
             gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.BASE;
@@ -825,10 +843,19 @@ gdo.net.processInstance = function (exists, id, instance) {
                     gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = instance.Id;
                 }
             }
-            if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
-                gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
+            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                if (gdo.net.node[gdo.clientId].sectionId == instance.Section.Id) {
+                    gdo.net.app[instance.AppName].server.joinGroup(gdo.net.node[gdo.clientId].appInstanceId);
+                    gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
+                }
             }
+            /*if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                gdo.consoleOut('.NET', 5, gdo.controlId +'=='+ instance.Id);
+                if (gdo.controlId == instance.Id) {
+                    gdo.net.app[instance.AppName].server.joinGroup("c" + instance.Id);
+                    gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
+                }
+            }*/
         } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
             gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.ADVANCED;
             gdo.net.instance[instance.Id].integratedInstances = instance.IntegratedInstances;

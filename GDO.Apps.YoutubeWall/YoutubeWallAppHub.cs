@@ -18,13 +18,13 @@ namespace GDO.Apps.YoutubeWall
         public string Name { get; set; } = "YoutubeWall";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new YoutubeWallApp().GetType();
-        public void JoinGroup(int instanceId)
-        { 
-            Groups.Add(Context.ConnectionId, "" + instanceId);
-        }
-        public void ExitGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
+        }
+        public void ExitGroup(string groupId)
+        {
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void SetKeywords(int instanceId, string newKeywords)

@@ -13,6 +13,7 @@ using GDO.Core;
 using GDO.Core.Apps;
 using GDO.Utility;
 using Newtonsoft.Json;
+using Configuration = GDO.Apps.Maps.Core.Configuration;
 using Style = GDO.Apps.Maps.Core.Style;
 
 namespace GDO.Apps.Maps
@@ -34,6 +35,11 @@ namespace GDO.Apps.Maps
         public GenericDictionary<Source> Sources { get; set; }
         public GenericDictionary<Style> Styles { get; set; }
         public GenericDictionary<Format> Formats { get; set; }
+        public GenericDictionary<Data> Datas { get; set; }
+        public GenericDictionary<Animation> Animations { get; set; }
+        public GenericDictionary<Core.Configuration> Configurations { get; set; }
+
+
         public bool IsInitialized = false;
 
         public void Init()
@@ -43,13 +49,18 @@ namespace GDO.Apps.Maps
             Sources = new GenericDictionary<Source>();
             Styles = new GenericDictionary<Style>();
             Formats = new GenericDictionary<Format>();
+            Datas = new GenericDictionary<Data>();
+            Animations = new GenericDictionary<Animation>();
+            Configurations = new GenericDictionary<Core.Configuration>();
+
             Views.Init();
             Layers.Init();
             Sources.Init();
             Styles.Init();
             Formats.Init();
-
-            SaveEmptyTemplate();
+            Datas.Init();
+            Animations.Init();
+            Configurations.Init();
 
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
 
@@ -73,6 +84,16 @@ namespace GDO.Apps.Maps
             {
                 Views.Add((int)view.Id.Value, view);
             }
+            foreach (Data data in Map.Datas)
+            {
+                Datas.Add((int)data.Id.Value, data);
+            }
+            foreach (Animation animation in Map.Animations)
+            {
+                Animations.Add((int)animation.Id.Value, animation);
+            }
+            ExtractConfigurations();
+
             Position = Map.Position;
         }
         public string GetSerializedTemplate()
@@ -85,7 +106,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(Position, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(Position, Views.ToArray(), Animations.ToArray(), Datas.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
@@ -95,6 +116,117 @@ namespace GDO.Apps.Maps
             String basePath = System.Web.HttpContext.Current.Server.MapPath("~/Configurations/Maps/");
             String filePath = basePath + configName + ".json";
             System.IO.File.WriteAllText(filePath, GetSerializedMap());
+        }
+
+        //Configurations
+
+        public void ExtractConfigurations()
+        {
+            Configurations = new GenericDictionary<Configuration>();
+            Configurations.Init();
+
+            foreach (AppConfiguration config in Cave.Apps["Maps"].Configurations.Values)
+            {
+                Core.Configuration configuration = new Core.Configuration();
+                configuration.Name.Value = config.Name;
+
+                Map tempMap = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(config.Json.ToString(), JsonSettings);
+
+                string[] tempLayers = new string[tempMap.Layers.Length];
+                for (int i=0; i< tempMap.Layers.Length; i++ )
+                {
+                    tempLayers[i] = tempMap.Layers[i].Name.Value + " (" + tempMap.Layers[i].ClassName.Value + ")";
+                }
+                configuration.Layers.Values = tempLayers;
+                configuration.Layers.Length = tempLayers.Length;
+
+                string[] tempSources = new string[tempMap.Sources.Length];
+                for (int i = 0; i < tempMap.Sources.Length; i++)
+                {
+                    tempSources[i] = tempMap.Sources[i].Name.Value + " (" + tempMap.Sources[i].ClassName.Value + ")";
+                }
+                configuration.Sources.Values = tempSources;
+                configuration.Sources.Length = tempSources.Length;
+
+                string[] tempStyles = new string[tempMap.Styles.Length];
+                for (int i = 0; i < tempMap.Styles.Length; i++)
+                {
+                    tempStyles[i] = tempMap.Styles[i].Name.Value + " (" + tempMap.Styles[i].ClassName.Value + ")";
+                }
+                configuration.Styles.Values = tempStyles;
+                configuration.Styles.Length = tempStyles.Length;
+
+                string[] tempFormats = new string[tempMap.Formats.Length];
+                for (int i = 0; i < tempMap.Formats.Length; i++)
+                {
+                    tempFormats[i] = tempMap.Formats[i].Name.Value + " (" + tempMap.Formats[i].ClassName.Value + ")";
+                }
+                configuration.Formats.Values = tempFormats;
+                configuration.Formats.Length = tempFormats.Length;
+
+                string[] tempDatas = new string[tempMap.Datas.Length];
+                for (int i = 0; i < tempMap.Datas.Length; i++)
+                {
+                    tempDatas[i] = tempMap.Datas[i].Name.Value + " (" + tempMap.Datas[i].ClassName.Value + ")";
+                }
+                configuration.Datas.Values = tempDatas;
+                configuration.Datas.Length = tempDatas.Length;
+
+                string[] tempAnimations = new string[tempMap.Animations.Length];
+                for (int i = 0; i < tempMap.Animations.Length; i++)
+                {
+                    tempAnimations[i] = tempMap.Animations[i].Name.Value + " (" + tempMap.Animations[i].ClassName.Value + ")";
+                }
+                configuration.Animations.Values = tempAnimations;
+                configuration.Animations.Length = tempAnimations.Length;
+
+                string[] tempViews = new string[tempMap.Views.Length];
+                for (int i = 0; i < tempMap.Views.Length; i++)
+                {
+                    tempViews[i] = tempMap.Views[i].Name.Value + " (" + tempMap.Views[i].ClassName.Value + ")";
+                }
+                configuration.Views.Values = tempViews;
+                configuration.Views.Length = tempViews.Length;
+
+                AddConfiguration(configuration);
+            }
+        }
+
+        public int AddConfiguration(Core.Configuration configuration)
+        {
+
+            try
+            {
+                int configurationId = Configurations.GetAvailableSlot();
+                configuration.Id.Value = configurationId;
+                Configurations.Add(configurationId, configuration);
+                return configurationId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
+        }
+
+        public bool RemoveConfiguration(int configurationId)
+        {
+            try
+            {
+                Configurations.Remove(configurationId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public string GetSerializedConfigurations()
+        {
+            string serializedConfigurations = Newtonsoft.Json.JsonConvert.SerializeObject(Configurations.ToArray(), JsonSettings);
+            return serializedConfigurations;
         }
 
         //Layer
@@ -115,6 +247,8 @@ namespace GDO.Apps.Maps
                 return -1;
             }
         }
+
+
         
 
         public void UpdateLayer<T>(int layerId, T layer) where T : Layer
@@ -250,6 +384,26 @@ namespace GDO.Apps.Maps
                 Position.Resolution = view.Resolution.Value;
                 Position.Width = view.Width.Value;
                 Position.Height = view.Height.Value;
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public bool UsePosition(int viewId)
+        {
+            try
+            {
+                View view = Views.GetValue<View>(viewId);
+                view.BottomRight.Values = Position.BottomRight;
+                view.Center.Values = Position.Center;
+                view.TopLeft.Values = Position.TopLeft;
+                view.Resolution.Value = Position.Resolution;
+                view.Width.Value = Position.Width;
+                view.Height.Value = Position.Height;
                 return true;
             }
             catch (Exception e)
@@ -537,6 +691,8 @@ namespace GDO.Apps.Maps
 
         public Map CreateEmptyTemplate()
         {
+            List<Animation> animations = new List<Animation>();
+            List<Data> datas = new List<Data>();
             List<Format> formats = new List<Format>();
             List<Style> styles = new List<Style>();
             List<Source> sources = new List<Source>();
@@ -622,10 +778,10 @@ namespace GDO.Apps.Maps
             sources.Add(zoomifySource);
 
             //Add Layers to Template
-            HeatmapLayer heatmapLayer = new HeatmapLayer();
+            StaticHeatmapLayer heatmapLayer = new StaticHeatmapLayer();
             ImageLayer imageLayer = new ImageLayer();
             TileLayer tileLayer = new TileLayer();
-            VectorLayer vectorLayer = new VectorLayer();
+            DynamicVectorLayer vectorLayer = new DynamicVectorLayer();
 
 
             layers.Add(heatmapLayer);
@@ -633,7 +789,7 @@ namespace GDO.Apps.Maps
             layers.Add(tileLayer);
             layers.Add(vectorLayer);
 
-            Map map = new Map(position, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            Map map = new Map(position, views.ToArray(), animations.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;
         }
 

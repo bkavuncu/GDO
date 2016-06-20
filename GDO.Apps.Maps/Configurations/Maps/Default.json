@@ -33,6 +33,16 @@
 
       ]
    },
+   "Animations":{
+      "$type":"GDO.Apps.Maps.Core.Animation[], GDO.Apps.Maps",
+      "$values":[
+      ]
+   },
+   "Datas":{
+      "$type":"GDO.Apps.Maps.Core.Data[], GDO.Apps.Maps",
+      "$values":[
+      ]
+   },
    "Formats":{
       "$type":"GDO.Apps.Maps.Core.Format[], GDO.Apps.Maps",
       "$values":[

@@ -105,6 +105,20 @@ $(function () {
     $.connection.mapsAppHub.client.receivePosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height) {
         gdo.net.app["Maps"].updatePosition(instanceId, topLeft, center, bottomRight, resolution, width, height);
     }
+
+    $.connection.mapsAppHub.client.receiveConfigurations = function (instanceId, serializedConfigurations) {
+        gdo.net.instance[instanceId].configurations = [];
+        var deserializedConfigurations = JSON.parse(serializedConfigurations);
+        for (var key in deserializedConfigurations.$values) {
+            if (deserializedConfigurations.$values.hasOwnProperty(key)) {
+                gdo.net.app["Maps"].addObject(instanceId, "configuration", deserializedConfigurations.$values[key].Id.Value, deserializedConfigurations.$values[key]);
+            }
+        }
+    }
+
+    $.connection.mapsAppHub.client.updateCaveConfigurations = function (instanceId) {
+        gdo.net.server.broadcastAppConfigurations(instanceId);
+    }
 });
 
 gdo.net.app["Maps"].initMap = function (instanceId) {
@@ -193,6 +207,12 @@ gdo.net.app["Maps"].initLayers = function(instanceId, deserializedMap) {
     var i;
     for (i = 0; i < deserializedMap.Views.$values.length; i++) {
         gdo.net.app["Maps"].addObject(instanceId, "view", deserializedMap.Views.$values[i].Id.Value, deserializedMap.Views.$values[i]);
+    }
+    for (i = 0; i < deserializedMap.Animations.$values.length; i++) {
+        gdo.net.app["Maps"].addObject(instanceId, "animation", deserializedMap.Animations.$values[i].Id.Value, deserializedMap.Animations.$values[i]);
+    }
+    for (i = 0; i < deserializedMap.Datas.$values.length; i++) {
+        gdo.net.app["Maps"].addObject(instanceId, "data", deserializedMap.Datas.$values[i].Id.Value, deserializedMap.Datas.$values[i]);
     }
     for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
         gdo.net.app["Maps"].addObject(instanceId, "format", deserializedMap.Formats.$values[i].Id.Value, deserializedMap.Formats.$values[i]);
@@ -309,6 +329,9 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
 }
 
 gdo.net.app["Maps"].initializeArrays = function (instanceId) {
+    gdo.net.instance[instanceId].configurations = [];
+    gdo.net.instance[instanceId].animations = [];
+    gdo.net.instance[instanceId].datas = [];
     gdo.net.instance[instanceId].formats = [];
     gdo.net.instance[instanceId].styles = [];
     gdo.net.instance[instanceId].sources = [];

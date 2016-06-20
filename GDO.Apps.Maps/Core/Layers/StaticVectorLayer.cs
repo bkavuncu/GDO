@@ -6,7 +6,7 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Layers
 {
-    public class VectorLayer : Layer
+    public class StaticVectorLayer : Layer
     {
         public LinkParameter Source { get; set; }
         public LinkParameter Style { get; set; }
@@ -14,7 +14,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public BooleanParameter UpdateWhileAnimating { get; set; }
         public BooleanParameter UpdateWhileInteracting { get; set; }
 
-        public VectorLayer()
+        public StaticVectorLayer()
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Vector";
