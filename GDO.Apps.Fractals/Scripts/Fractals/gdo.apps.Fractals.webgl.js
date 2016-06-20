@@ -314,7 +314,7 @@ gdo.net.app["Fractals"].applyAudioAdjustments = function () {
         gdo.net.app["Fractals"].parameters.cz = Math.sin(2 * Math.PI * frequencyData[9] / 255);
         gdo.net.app["Fractals"].parameters.cw = Math.cos(2 * Math.PI * frequencyData[10] / 255);
 
-        gdo.net.app["Fractals"].parameters.scale = 2.0 + 2.0 * frequencyData[11] / 255;
+        gdo.net.app["Fractals"].parameters.scale = 2.0 + 2.0 * frequencyData[6] / 255;
 
         gdo.net.app["Fractals"].parameters.power = 4.0 + 4.0 * frequencyData[5] / 255;
 

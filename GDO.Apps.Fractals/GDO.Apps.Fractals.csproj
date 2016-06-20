@@ -131,6 +131,7 @@
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.params.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.ui.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.webgl.js" />
+    <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Scripts\Fractals\Shaders\init.frag" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Scripts\Fractals\Shaders\rayMarch.frag" />
