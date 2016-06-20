@@ -126,13 +126,14 @@
   <ItemGroup>
     <Content Include="Data\Fractals\joystick-icon-background.png" />
     <Content Include="Data\Fractals\joystick-icon.png" />
+    <Content Include="Data\Fractals\Music\test.mp3" />
     <Content Include="packages.config" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.params.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.ui.js" />
     <Content Include="Scripts\Fractals\gdo.apps.Fractals.webgl.js" />
-    <Content Include="Scripts\Fractals\Shaders\init.js" />
+    <None Include="Scripts\Fractals\Shaders\init.frag" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
-    <Content Include="Scripts\Fractals\Shaders\rayMarch.js" />
+    <None Include="Scripts\Fractals\Shaders\rayMarch.frag" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

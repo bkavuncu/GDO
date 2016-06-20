@@ -189,6 +189,42 @@
             <div class="col-lg-6">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
+                        <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Audio</h6>
+                    </div>
+                    <div class="panel-body">
+                        <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                            <tr>
+                                <td>
+                                    <div style="background-color: transparent">
+                                        <h6 id="start_text">Start!</h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button id="audio_start" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 20px"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="background-color: transparent">
+                                        <h6 id="start_text">Stop!</h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button id="audio_stop" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
                         <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Render Parameters</h6>
                     </div>
                     <div class="panel-body">
@@ -304,7 +340,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <select id="fractal_select" style="color:black">
+                                    <select id="fractal_select" style="color:white" class="form-control">
                                         <option value="Mandelbulb">Mandelbulb</option>
                                         <option value="Mandelbox">Mandelbox</option>
                                         <option value="JuliaQuat">Julia Quaternion</option>

@@ -1,245 +1,226 @@
-﻿
+﻿gdo.net.app["Fractals"].audio;
+gdo.net.app["Fractals"].analyser;
 
+gdo.net.app["Fractals"].setParameters = function (params) {
+
+    var json = JSON.parse(params);
+
+    // Set rotation
+    var x = ((gdo.clientId - 1) % 16) - 7.5;
+    var angle = (315 / 16) * (Math.PI / 180);
+    gdo.net.app["Fractals"].parameters.xRot = -angle * x + json.XRot;
+    gdo.net.app["Fractals"].parameters.yRot = json.YRot;
+
+    gdo.net.app["Fractals"].parameters.xTrans = json.XTrans;
+    gdo.net.app["Fractals"].parameters.yTrans = json.YTrans;
+    gdo.net.app["Fractals"].parameters.zTrans = json.ZTrans;
+
+    gdo.net.app["Fractals"].parameters.maxSteps = json.MaxSteps;
+    gdo.net.app["Fractals"].parameters.detail = json.Detail;
+    gdo.net.app["Fractals"].parameters.fog = json.Fog;
+
+    gdo.net.app["Fractals"].parameters.iterations = json.Iterations;
+    gdo.net.app["Fractals"].parameters.power = json.Power;
+    gdo.net.app["Fractals"].parameters.red = json.R;
+    gdo.net.app["Fractals"].parameters.green = json.G;
+    gdo.net.app["Fractals"].parameters.blue = json.B;
+    gdo.net.app["Fractals"].parameters.scale = json.Scale;
+    gdo.net.app["Fractals"].parameters.cx = json.Cx;
+    gdo.net.app["Fractals"].parameters.cy = json.Cy;
+    gdo.net.app["Fractals"].parameters.cz = json.Cz;
+    gdo.net.app["Fractals"].parameters.cw = json.Cw;
+    gdo.net.app["Fractals"].parameters.threshold = json.Threshold;
+
+    gdo.net.app["Fractals"].parameters.ambience = json.Ambience;
+    gdo.net.app["Fractals"].parameters.lightIntensity = json.LightIntensity;
+    gdo.net.app["Fractals"].parameters.lightSize = json.LightSize;
+    gdo.net.app["Fractals"].parameters.lightX = json.LightX;
+    gdo.net.app["Fractals"].parameters.lightY = json.LightY;
+    gdo.net.app["Fractals"].parameters.lightZ = json.LightZ;
+
+    gdo.net.app["Fractals"].parameters.modToggle = json.Mod;
+
+    gdo.net.app["Fractals"].parameters.fractal = json.Fractal;
+}
 
 $(function () {
     gdo.consoleOut('.Fractals', 1, 'Loaded Fractals JS');
 
-        $.connection.fractalsAppHub.client.updateParams = function (instanceId, params) {
+        $.connection.fractalsAppHub.client.updateParams = function (instanceId, params, serverSync) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-                var json = JSON.parse(params);
+                gdo.net.app["Fractals"].setParameters(params);
 
-                // Set rotation
-                var x = ((gdo.clientId - 1) % 16) - 7.5;
-                var angle = (315 / 16) * (Math.PI / 180);
-                parameters.xRot = -angle * x + json.XRot;
-                parameters.yRot = json.YRot;
-
-                parameters.xTrans = json.XTrans;
-                parameters.yTrans = json.YTrans;
-                parameters.zTrans = json.ZTrans;
-
-                parameters.maxSteps = json.MaxSteps;
-                parameters.detail = json.Detail;
-                parameters.fog = json.Fog;
-
-                parameters.iterations = json.Iterations;
-                parameters.power = json.Power;
-                parameters.red = json.R;
-                parameters.green = json.G;
-                parameters.blue = json.B;
-                parameters.scale = json.Scale;
-                parameters.cx = json.Cx;
-                parameters.cy = json.Cy;
-                parameters.cz = json.Cz;
-                parameters.cw = json.Cw;
-                parameters.threshold = json.Threshold;
-
-                parameters.ambience = json.Ambience;
-                parameters.lightIntensity = json.LightIntensity;
-                parameters.lightSize = json.LightSize;
-                parameters.lightX = json.LightX;
-                parameters.lightY = json.LightY;
-                parameters.lightZ = json.LightZ;
-
-                parameters.modToggle = json.Mod;
-
-                parameters.fractal = json.Fractal;
-
-                sync = json.Sync;
-
-
+                gdo.net.app["Fractals"].sync = serverSync;
             }
         };
 
-        $.connection.fractalsAppHub.client.renderFirstFrame = function (instanceId, currentFrame, serverSync) {
+        $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame, serverSync) {
 
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                sync = serverSync;
+
+                gdo.net.app["Fractals"].sync = serverSync;
 
                 if (currentFrame == 0) {
-                    renderSync(locations1, gl1, program1);
+                    gdo.net.app["Fractals"].renderSync(gdo.net.app["Fractals"].locations1, gdo.net.app["Fractals"].gl1, gdo.net.app["Fractals"].program1);
                 } else {
-                    renderSync(locations2, gl2, program2);
+                    gdo.net.app["Fractals"].renderSync(gdo.net.app["Fractals"].locations2, gdo.net.app["Fractals"].gl2, gdo.net.app["Fractals"].program2);
                 }
 
             }
         };
 
-        $.connection.fractalsAppHub.client.renderNextFrame = function (instanceId, currentFrame) {
-
+        $.connection.fractalsAppHub.client.swapFrame = function (instanceId, params, timeToRender, f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-                if (currentFrame == 0) {
-                    renderSync(locations1, gl1, program1);
-                } else {
-                    renderSync(locations2, gl2, program2);
-                }
-
-            }
-        };
-
-        $.connection.fractalsAppHub.client.renderNextFrameNoSync = function () {
-
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-
-                render(locations1, gl1, program1);
-
-            }
-        };
-
-        $.connection.fractalsAppHub.client.swapFrame = function (instanceId, params, timeToRender) {
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                //gdo.consoleOut('.Fractals', 1, 'server t - ' + timeToRender);
-               // gdo.consoleOut('.Fractals', 1, 'gdo t - ' + gdo.net.time.getTime());
                 var json = JSON.parse(params);
 
-                // Set rotation
-                var x = ((gdo.clientId - 1) % 16) - 7.5;
-                var angle = (315 / 16) * (Math.PI / 180);
-                parameters.xRot = -angle * x + json.XRot;
-                parameters.yRot = json.YRot;
+                var frequencyData = new Uint8Array(gdo.net.app["Fractals"].analyser.frequencyBinCount);
+                frequencyData[0] = f0;
+                frequencyData[1] = f1;
+                frequencyData[2] = f2;
+                frequencyData[3] = f3;
+                frequencyData[4] = f4;
+                frequencyData[5] = f5;
+                frequencyData[6] = f6;
+                frequencyData[7] = f7;
+                frequencyData[8] = f8;
+                frequencyData[9] = f9;
+                frequencyData[10] = f10;
+                frequencyData[11] = f11;
+                frequencyData[12] = f12;
+                frequencyData[13] = f13;
+                frequencyData[14] = f14;
+                frequencyData[15] = f15;
 
-                parameters.xTrans = json.XTrans;
-                parameters.yTrans = json.YTrans;
-                parameters.zTrans = json.ZTrans;
+                gdo.net.app["Fractals"].freqs = frequencyData;
 
-                parameters.maxSteps = json.MaxSteps;
-                parameters.detail = json.Detail;
-                parameters.fog = json.Fog;
-
-                parameters.iterations = json.Iterations;
-                parameters.power = json.Power;
-                parameters.red = json.R;
-                parameters.green = json.G;
-                parameters.blue = json.B;
-                parameters.scale = json.Scale;
-                parameters.cx = json.Cx;
-                parameters.cy = json.Cy;
-                parameters.cz = json.Cz;
-                parameters.cw = json.Cw;
-                parameters.threshold = json.Threshold;
-
-                parameters.ambience = json.Ambience;
-                parameters.lightIntensity = json.LightIntensity;
-                parameters.lightSize = json.LightSize;
-                parameters.lightX = json.LightX;
-                parameters.lightY = json.LightY;
-                parameters.lightZ = json.LightZ;
-
-                parameters.modToggle = json.Mod;
-
-                parameters.fractal = json.Fractal;
+                gdo.net.app["Fractals"].setParameters(params);
 
                 var n = gdo.net.time.getTime()
 
                 var timeout = timeToRender - n;
-                //gdo.consoleOut('.Fractals', 1, 'timeout t - ' + timeout);
 
                 if (json.CurrentFrame == 0) {
                     if (timeout > 0) {
                         setTimeout(function () {
-                            canvas1.style.zIndex = 0;
-                            canvas2.style.zIndex = 5;
-                            
-                            $("iframe").contents().find("#screen1_marker").hide();
-                            $("iframe").contents().find("#screen2_marker").show();
+                            gdo.net.app["Fractals"].canvas1.style.zIndex = 0;
+                            gdo.net.app["Fractals"].canvas2.style.zIndex = 5;
                             gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                         }, timeout);
                     } else {
-                        canvas1.style.zIndex = 0;
-                        canvas2.style.zIndex = 5;
-                        $("iframe").contents().find("#screen1_marker").hide();
-                        $("iframe").contents().find("#screen2_marker").show();
+                        gdo.net.app["Fractals"].canvas1.style.zIndex = 0;
+                        gdo.net.app["Fractals"].canvas2.style.zIndex = 5;
                         gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                     }
 
                 } else if (json.CurrentFrame == 1) {
                     if (timeout > 0) {
                         setTimeout(function () {
-                            canvas1.style.zIndex = 5;
-                            canvas2.style.zIndex = 0;
-                            $("iframe").contents().find("#screen1_marker").show();
-                            $("iframe").contents().find("#screen2_marker").hide();
+                            gdo.net.app["Fractals"].canvas1.style.zIndex = 5;
+                            gdo.net.app["Fractals"].canvas2.style.zIndex = 0;
                             gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                         }, timeout);
                     } else {
-                        canvas1.style.zIndex = 5;
-                        canvas2.style.zIndex = 0;
-                        $("iframe").contents().find("#screen1_marker").show();
-                        $("iframe").contents().find("#screen2_marker").hide();
+                        gdo.net.app["Fractals"].canvas1.style.zIndex = 5;
+                        gdo.net.app["Fractals"].canvas2.style.zIndex = 0;
                         gdo.net.app["Fractals"].server.ackSwapFrame(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
                     }
                 }
+            }
+        };
+
+
+        $.connection.fractalsAppHub.client.startAudio = function (id, time) {
+
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+                var n = gdo.net.time.getTime();
+
+                gdo.net.app["Fractals"].audio.play();
+                //gdo.net.app["Fractals"].audio.currentTime = (n - time) / 1000;
+                gdo.net.app["Fractals"].audioPlaying = true;
+
+                if (gdo.net.app["Fractals"].audio.error)
+                    gdo.consoleOut('.Fractals', 1, "Music error - " - gdo.net.app["Fractals"].audio.error);
+            }
+        };
+
+
+        $.connection.fractalsAppHub.client.stopAudio = function (id) {
+
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+                var n = gdo.net.time.getTime()
                 
+                gdo.net.app["Fractals"].audioPlaying = false;
+                gdo.net.app["Fractals"].audio.pause();
 
             }
         };
 
 });
 
+
+
 gdo.net.app["Fractals"].initClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Initializing Fractals App Client at Node ' + gdo.clientId);
 
     gdo.loadScript('params', 'Fractals', gdo.SCRIPT_TYPE.APP);
     gdo.loadScript('webgl', 'Fractals', gdo.SCRIPT_TYPE.APP);
-    
-    parameters = new params();
-    locations1 = new locs();
-    locations2 = new locs();
+
+    gdo.net.app["Fractals"].parameters = new gdo.net.app["Fractals"].params();
+    gdo.net.app["Fractals"].locations1 = new gdo.net.app["Fractals"].locs();
+    gdo.net.app["Fractals"].locations2 = new gdo.net.app["Fractals"].locs();
 
     // Set horizontal rotation
     var x = ((gdo.clientId - 1) % 16) - 7.5;
     var angle = (315 / 16) * (Math.PI / 180);
-    parameters.xRot = -angle * x;
+    gdo.net.app["Fractals"].parameters.xRot = -angle * x;
 
     // Set vertical height
     var y = Math.floor((gdo.clientId - 1) / 16) - 1.5;
     var ratio = (1080 / 1920);
-    parameters.yHeight = 2.0 * ratio * y;
-    gdo.consoleOut('.Fractals', 1, 'Eye height = ' + parameters.yHeight);
+    gdo.net.app["Fractals"].parameters.yHeight = 2.0 * ratio * y;
+    gdo.consoleOut('.Fractals', 1, 'Eye height = ' + gdo.net.app["Fractals"].parameters.yHeight);
 
-    sync = true;
+    gdo.net.app["Fractals"].sync = true;
 
-    initWebgl("#glscreen1", locations1, "#2d-fragment-shader", completeinit1);
+    gdo.net.app["Fractals"].audio = $("iframe").contents().find("#myAudio")[0];
+
+    var audioCtx = new AudioContext();
+    gdo.net.app["Fractals"].analyser = audioCtx.createAnalyser();
+    var source = audioCtx.createMediaElementSource(gdo.net.app["Fractals"].audio);
+    source.connect(gdo.net.app["Fractals"].analyser);
+    gdo.net.app["Fractals"].analyser.connect(audioCtx.destination);
+    gdo.net.app["Fractals"].analyser.fftSize = 32;
     
-
-    //gl1 = webgl1.gl;
-    //gl2 = webgl2.gl;
-    //program1 = webgl1.program;
-    //program2 = webgl2.program;
-    //canvas1 = webgl1.canvas;
-    //canvas2 = webgl2.canvas;
-
-    //canvas1.style.zIndex = 0;
-    //canvas2.style.zIndex = 5;
-
-    //gdo.net.app["Fractals"].server.incNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
+    gdo.net.app["Fractals"].initWebgl("#glscreen1", gdo.net.app["Fractals"].locations1, gdo.net.app["Fractals"].completeinit1);
 }
 
-completeinit1 = function (gl, program, canvas) {
-    gl1 = gl;
-    program1 = program;
-    canvas1 = canvas;
-    canvas1.style.zIndex = 0;
+gdo.net.app["Fractals"].completeinit1 = function (gl, program, canvas) {
+    gdo.net.app["Fractals"].gl1 = gl;
+    gdo.net.app["Fractals"].program1 = program;
+    gdo.net.app["Fractals"].canvas1 = canvas;
+    gdo.net.app["Fractals"].canvas1.style.zIndex = 0;
 
-    initWebgl("#glscreen2", locations2, "#2d-fragment-shader", completeinit2);
+    gdo.net.app["Fractals"].initWebgl("#glscreen2", gdo.net.app["Fractals"].locations2, gdo.net.app["Fractals"].completeinit2);
 }
 
-completeinit2 = function (gl, program, canvas) {
-    gl2 = gl;
-    program2 = program;
-    canvas2 = canvas;
-    canvas2.style.zIndex = 0;
+gdo.net.app["Fractals"].completeinit2 = function (gl, program, canvas) {
+    gdo.net.app["Fractals"].gl2 = gl;
+    gdo.net.app["Fractals"].program2 = program;
+    gdo.net.app["Fractals"].canvas2 = canvas;
+    gdo.net.app["Fractals"].canvas2.style.zIndex = 0;
 
     gdo.net.app["Fractals"].server.beginRendering(gdo.net.node[gdo.clientId].appInstanceId);
 }
@@ -254,10 +235,9 @@ gdo.net.app["Fractals"].initControl = function () {
 
 gdo.net.app["Fractals"].terminateClient = function () {
     gdo.consoleOut('.Fractals', 1, 'Terminating Fractals App Client at Node ' + clientId);
-    //gdo.net.app["Fractals"].server.decNodes(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
 }
 
-gdo.net.app["Fractals"].ternminateControl = function () {
+gdo.net.app["Fractals"].terminateControl = function () {
     gdo.consoleOut('.Fractals', 1, 'Terminating Fractals App Control at Instance ' + gdo.controlId);
     gdo.net.app["Fractals"].server.joystickTerminate(gdo.controlId);
 }

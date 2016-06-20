@@ -89,6 +89,7 @@ namespace GDO.Apps.Fractals
 
         public int[] SwapFrameNodesAcked;
         public int[] RenderedFrameNodesAcked;
+        public byte[][] Freqs;
 
         public bool Sync;
 
@@ -99,7 +100,7 @@ namespace GDO.Apps.Fractals
         {
             rendering = true;
             swapping = false;
-            //Section.NumNodes;////////////////////////////////
+
             XRot = 0.0f;
             YRot = 0.0f;
             XTrans = 0.0f;
@@ -164,6 +165,7 @@ namespace GDO.Apps.Fractals
 
             SwapFrameNodesAcked = new int[64];
             RenderedFrameNodesAcked = new int[64];
+            Freqs = new byte[64][];
 
             Sync = true;
 
@@ -187,7 +189,7 @@ namespace GDO.Apps.Fractals
         {
             while (JoystickRunning)
             {
-                //lock(Lock)
+
                 {
                     if (RotJoystickUpdate)
                     {
@@ -235,7 +237,7 @@ namespace GDO.Apps.Fractals
 
         public void JoystickUpdateParamsRot(float angle, float magnitude)
         {
-            //lock (Lock)
+
             {
                 this.RotAngle = angle;
                 this.RotMagnitude = magnitude;
@@ -245,7 +247,7 @@ namespace GDO.Apps.Fractals
 
         public void JoystickUpdateParamsMove(float angle, float magnitude)
         {
-            //lock (Lock)
+
             {
                 this.MoveAngle = angle;
                 this.MoveMagnitude = magnitude;
@@ -255,7 +257,7 @@ namespace GDO.Apps.Fractals
 
         public void JoystickUpdateParamsLight(float angle, float magnitude)
         {
-            //lock (Lock)
+
             {
                 this.LightAngle = angle;
                 this.LightMagnitude = magnitude;
@@ -271,7 +273,7 @@ namespace GDO.Apps.Fractals
 
         public void HeightSliderUpdateParamsMove(float val)
         {
-            //lock (Lock)
+
             {
                 MoveHeightVal = val;
             }
@@ -279,7 +281,7 @@ namespace GDO.Apps.Fractals
 
         public void HeightSliderUpdateParamsLight(float val)
         {
-            //lock (Lock)
+
             {
                 LightHeightVal = val;
             }

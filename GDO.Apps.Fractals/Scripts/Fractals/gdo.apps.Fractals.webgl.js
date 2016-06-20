@@ -1,14 +1,14 @@
-﻿var gl1;
-var program1;
-var canvas1;
+﻿gdo.net.app["Fractals"].gl1;
+gdo.net.app["Fractals"].program1;
+gdo.net.app["Fractals"].canvas1;
 
-var gl2;
-var program2;
-var canvas2;
+gdo.net.app["Fractals"].gl2;
+gdo.net.app["Fractals"].program2;
+gdo.net.app["Fractals"].canvas2;
 
-var sync;
+gdo.net.app["Fractals"].sync;
 
-function initWebgl(id, locations, shader, completeInit) {
+gdo.net.app["Fractals"].initWebgl = function(id, locations, completeInit) {
 
     var gl;
     var program;
@@ -16,10 +16,7 @@ function initWebgl(id, locations, shader, completeInit) {
     // Set up canvas
     var canvas = $("iframe").contents().find(id)[0];
     gl = canvas.getContext('experimental-webgl');
-    //canvas.width = 480;
-    //canvas.height = 270;
-    //canvas.width = 960;
-    //canvas.height = 540;
+
     canvas.width = 1920;
     canvas.height = 1080;
 
@@ -54,14 +51,7 @@ function initWebgl(id, locations, shader, completeInit) {
     gl.shaderSource(vertexShader, shaderSource);
     gl.compileShader(vertexShader);
 
-    // Compile fragment shader
-    //shaderScript = $("iframe").contents().find(shader)[0];
-    //shaderSource = shaderScript.text;
-    //fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    //gl.shaderSource(fragmentShader, shaderSource);
-    //gl.compileShader(fragmentShader);
-
-    loadFiles(['../scripts/Fractals/Shaders/rayMarch.js', '../scripts/Fractals/Shaders/init.js'], function (shaderText) {
+    gdo.net.app["Fractals"].loadFiles(['../scripts/Fractals/Shaders/rayMarch.frag', '../scripts/Fractals/Shaders/init.frag'], function (shaderText) {
         //gdo.consoleOut('.Fractals', 1, shaderText[0] + shaderText[1]);
         // Compile fragment shader
         fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -84,106 +74,102 @@ function initWebgl(id, locations, shader, completeInit) {
         gl.enable(gl.BLEND);
         gl.disable(gl.DEPTH_TEST);
 
-        // Setup rotations
-        locations.xRotLoc = gl.getUniformLocation(program, "xRot");
-        gl.uniform1f(locations.xRotLoc, parameters.xRot);
-        locations.yRotLoc = gl.getUniformLocation(program, "yRot");
-        gl.uniform1f(locations.yRotLoc, parameters.yRot);
-
-        // Setup focal
-        var focalLoc = gl.getUniformLocation(program, "focal");
-        gl.uniform1f(focalLoc, 1 / Math.tan((315 / 32) * (Math.PI / 180)));
-
-        // Setup translation
-        locations.transLoc = gl.getUniformLocation(program, "translation");
-        gl.uniform3f(locations.transLoc, parameters.xTrans, parameters.yTrans, parameters.zTrans);
-
-        // Setup eye
-        locations.eyeLoc = gl.getUniformLocation(program, "eyeHeight");
-        gl.uniform1f(locations.eyeLoc, -parameters.yHeight);
-
-        // Set page size
-        locations.widthloc = gl.getUniformLocation(program, "width");
-        gl.uniform1f(locations.widthloc, canvas.width);
-        locations.heightloc = gl.getUniformLocation(program, "height");
-        gl.uniform1f(locations.heightloc, canvas.height);
-
-        // Set max steps
-        locations.maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
-        gl.uniform1i(locations.maxStepsLoc, parameters.maxSteps);
-
-        // Set detail
-        locations.detailLoc = gl.getUniformLocation(program, "minDetail");
-        gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
-
-        // Set fog
-        locations.fogLoc = gl.getUniformLocation(program, "fog");
-        gl.uniform1f(locations.fogLoc, parameters.fog);
-
-        // Set ambience
-        locations.ambienceLoc = gl.getUniformLocation(program, "ambience");
-        gl.uniform1f(locations.ambienceLoc, parameters.ambience);
-
-        // Set light intensity
-        locations.lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
-        gl.uniform1f(locations.lightIntensityLoc, parameters.lightIntensity);
-
-        // Set light size
-        locations.lightSizeLoc = gl.getUniformLocation(program, "lightSize");
-        gl.uniform1f(locations.lightSizeLoc, parameters.lightSize);
-
-        // Set light location
-        locations.lightLocLoc = gl.getUniformLocation(program, "lightLoc");
-        gl.uniform3f(locations.lightLocLoc, parameters.lightX, parameters.lightY, parameters.lightZ);
-
-        // Set fractal
-        locations.fractalLoc = gl.getUniformLocation(program, "fractal");
-        gl.uniform1i(locations.iterationsLoc, parameters.fractal);
-
-        // Set fractal iteration
-        locations.iterationsLoc = gl.getUniformLocation(program, "iterations");
-        gl.uniform1i(locations.iterationsLoc, parameters.iterations);
-
-        // Set fractal power
-        locations.powerLoc = gl.getUniformLocation(program, "power");
-        gl.uniform1f(locations.powerLoc, parameters.power);
-
-        // Set fractal colour
-        locations.colourLoc = gl.getUniformLocation(program, "colour");
-        gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
-
-        // Set fractal scale
-        locations.scaleLoc = gl.getUniformLocation(program, "scale");
-        gl.uniform1f(locations.scaleLoc, parameters.scale);
-
-        // Set fractal julia constant
-        locations.juliaCLoc = gl.getUniformLocation(program, "c");
-        gl.uniform4f(locations.juliaCLoc, parameters.cx, parameters.cy, parameters.cz, parameters.cw);
-
-        // Set fractal threshold
-        locations.thresholdLoc = gl.getUniformLocation(program, "threshold");
-        gl.uniform1f(locations.thresholdLoc, parameters.threshold);
-
-
-        // Set mod function
-        locations.modLoc = gl.getUniformLocation(program, "modFunction");
-        gl.uniform1i(locations.modLoc, parameters.modToggle);
+        gdo.net.app["Fractals"].initLocs(locations, gl, program, canvas);
 
         completeInit(gl, program, canvas);
 
     }, function (url) {
         alert('Failed to download "' + url + '"');
     });
-
-
-
-    // Render the scene
-    //render(locations, gl, program);
-
-    //return { gl: gl, program: program, canvas: canvas };
 }
 
-function loadFile(url, data, callback, errorCallback) {
+gdo.net.app["Fractals"].initLocs = function (locations, gl, program, canvas) {
+    // Setup rotations
+    locations.xRotLoc = gl.getUniformLocation(program, "xRot");
+    gl.uniform1f(locations.xRotLoc, gdo.net.app["Fractals"].parameters.xRot);
+    locations.yRotLoc = gl.getUniformLocation(program, "yRot");
+    gl.uniform1f(locations.yRotLoc, gdo.net.app["Fractals"].parameters.yRot);
+
+    // Setup focal
+    var focalLoc = gl.getUniformLocation(program, "focal");
+    gl.uniform1f(focalLoc, 1 / Math.tan((315 / 32) * (Math.PI / 180)));
+
+    // Setup translation
+    locations.transLoc = gl.getUniformLocation(program, "translation");
+    gl.uniform3f(locations.transLoc, gdo.net.app["Fractals"].parameters.xTrans, gdo.net.app["Fractals"].parameters.yTrans, gdo.net.app["Fractals"].parameters.zTrans);
+
+    // Setup eye
+    locations.eyeLoc = gl.getUniformLocation(program, "eyeHeight");
+    gl.uniform1f(locations.eyeLoc, -gdo.net.app["Fractals"].parameters.yHeight);
+
+    // Set page size
+    locations.widthloc = gl.getUniformLocation(program, "width");
+    gl.uniform1f(locations.widthloc, canvas.width);
+    locations.heightloc = gl.getUniformLocation(program, "height");
+    gl.uniform1f(locations.heightloc, canvas.height);
+
+    // Set max steps
+    locations.maxStepsLoc = gl.getUniformLocation(program, "maxSteps");
+    gl.uniform1i(locations.maxStepsLoc, gdo.net.app["Fractals"].parameters.maxSteps);
+
+    // Set detail
+    locations.detailLoc = gl.getUniformLocation(program, "minDetail");
+    gl.uniform1f(locations.detailLoc, Math.pow(10.0, gdo.net.app["Fractals"].parameters.detail));
+
+    // Set fog
+    locations.fogLoc = gl.getUniformLocation(program, "fog");
+    gl.uniform1f(locations.fogLoc, gdo.net.app["Fractals"].parameters.fog);
+
+    // Set ambience
+    locations.ambienceLoc = gl.getUniformLocation(program, "ambience");
+    gl.uniform1f(locations.ambienceLoc, gdo.net.app["Fractals"].parameters.ambience);
+
+    // Set light intensity
+    locations.lightIntensityLoc = gl.getUniformLocation(program, "lightIntensity");
+    gl.uniform1f(locations.lightIntensityLoc, gdo.net.app["Fractals"].parameters.lightIntensity);
+
+    // Set light size
+    locations.lightSizeLoc = gl.getUniformLocation(program, "lightSize");
+    gl.uniform1f(locations.lightSizeLoc, gdo.net.app["Fractals"].parameters.lightSize);
+
+    // Set light location
+    locations.lightLocLoc = gl.getUniformLocation(program, "lightLoc");
+    gl.uniform3f(locations.lightLocLoc, gdo.net.app["Fractals"].parameters.lightX, gdo.net.app["Fractals"].parameters.lightY, gdo.net.app["Fractals"].parameters.lightZ);
+
+    // Set fractal
+    locations.fractalLoc = gl.getUniformLocation(program, "fractal");
+    gl.uniform1i(locations.iterationsLoc, gdo.net.app["Fractals"].parameters.fractal);
+
+    // Set fractal iteration
+    locations.iterationsLoc = gl.getUniformLocation(program, "iterations");
+    gl.uniform1i(locations.iterationsLoc, gdo.net.app["Fractals"].parameters.iterations);
+
+    // Set fractal power
+    locations.powerLoc = gl.getUniformLocation(program, "power");
+    gl.uniform1f(locations.powerLoc, gdo.net.app["Fractals"].parameters.power);
+
+    // Set fractal colour
+    locations.colourLoc = gl.getUniformLocation(program, "colour");
+    gl.uniform4f(locations.colourLoc, gdo.net.app["Fractals"].parameters.red, gdo.net.app["Fractals"].parameters.green, gdo.net.app["Fractals"].parameters.blue, 1.0);
+
+    // Set fractal scale
+    locations.scaleLoc = gl.getUniformLocation(program, "scale");
+    gl.uniform1f(locations.scaleLoc, gdo.net.app["Fractals"].parameters.scale);
+
+    // Set fractal julia constant
+    locations.juliaCLoc = gl.getUniformLocation(program, "c");
+    gl.uniform4f(locations.juliaCLoc, gdo.net.app["Fractals"].parameters.cx, gdo.net.app["Fractals"].parameters.cy, gdo.net.app["Fractals"].parameters.cz, gdo.net.app["Fractals"].parameters.cw);
+
+    // Set fractal threshold
+    locations.thresholdLoc = gl.getUniformLocation(program, "threshold");
+    gl.uniform1f(locations.thresholdLoc, gdo.net.app["Fractals"].parameters.threshold);
+
+    // Set mod function
+    locations.modLoc = gl.getUniformLocation(program, "modFunction");
+    gl.uniform1i(locations.modLoc, gdo.net.app["Fractals"].parameters.modToggle);
+}
+
+gdo.net.app["Fractals"].loadFile = function (url, data, callback, errorCallback) {
     // Set up an asynchronous request
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
@@ -205,7 +191,7 @@ function loadFile(url, data, callback, errorCallback) {
     request.send(null);
 }
 
-function loadFiles(urls, callback, errorCallback) {
+gdo.net.app["Fractals"].loadFiles = function (urls, callback, errorCallback) {
     var numUrls = urls.length;
     var numComplete = 0;
     var result = [];
@@ -222,75 +208,116 @@ function loadFiles(urls, callback, errorCallback) {
     }
 
     for (var i = 0; i < numUrls; i++) {
-        loadFile(urls[i], i, partialCallback, errorCallback);
+        gdo.net.app["Fractals"].loadFile(urls[i], i, partialCallback, errorCallback);
     }
 }
 
-rendering = false;
-function renderSync(locations, gl, program) {
+gdo.net.app["Fractals"].rendering = false;
+
+gdo.net.app["Fractals"].renderSync = function (locations, gl, program) {
     
-    if (!rendering) {
-        rendering = true;
+    if (!gdo.net.app["Fractals"].rendering) {
+        gdo.net.app["Fractals"].rendering = true;
 
-        if (sync) {
+        if (gdo.net.app["Fractals"].sync) {
 
             // Ensure continuous rendering
             window.requestAnimationFrame(function () {
-                rendering = false;
-                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId);
+                gdo.net.app["Fractals"].rendering = false;
+
+                var frequencyData = new Uint8Array(gdo.net.app["Fractals"].analyser.frequencyBinCount);
+                gdo.net.app["Fractals"].analyser.getByteFrequencyData(frequencyData);
+
+                gdo.net.app["Fractals"].server.ackFrameRendered(gdo.net.node[gdo.clientId].appInstanceId, gdo.clientId, frequencyData[0], frequencyData[1], frequencyData[2], frequencyData[3], frequencyData[4], frequencyData[5], frequencyData[6], frequencyData[7], frequencyData[8], frequencyData[9], frequencyData[10], frequencyData[11], frequencyData[12], frequencyData[13], frequencyData[14], frequencyData[15]);
             });
 
-            // Apply params
-            applyParams(locations, gl);
-
-            // Set position data of vertex shader
-            positionLocation = gl.getAttribLocation(program, "a_position");
-            gl.enableVertexAttribArray(positionLocation);
-            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-            // Draw quad
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-
         } else {
-            rendering = false;
-            canvas1.style.zIndex = 5;
-            canvas2.style.zIndex = 0;
-            render(locations1, gl1, program1);
+
+            gdo.net.app["Fractals"].canvas1.style.zIndex = 5;
+            gdo.net.app["Fractals"].canvas2.style.zIndex = 0;
+
+            // Ensure continuous rendering
+            window.requestAnimationFrame(function () {
+                gdo.net.app["Fractals"].rendering = false;
+                gdo.net.app["Fractals"].renderSync(gdo.net.app["Fractals"].locations1, gdo.net.app["Fractals"].gl1, gdo.net.app["Fractals"].program1);
+            });
         }
+
+        gdo.net.app["Fractals"].applyAudioAdjustments();
+
+        // Apply params
+        gdo.net.app["Fractals"].applyParams(locations, gl);
+
+        // Set position data of vertex shader
+        positionLocation = gl.getAttribLocation(program, "a_position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Draw quad
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
     } else {
         gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
     }
 }
-rendering2 = false;
-function render(locations, gl, program) {
 
-    if (!rendering2) {
-        rendering2 = true;
 
-        if (!sync) {
+gdo.net.app["Fractals"].audioPlaying = false;
+gdo.net.app["Fractals"].freqs;
 
-            // Ensure continuous rendering
-            window.requestAnimationFrame(function () {
-                rendering2 = false;
-                render(locations, gl, program);
-            });
+gdo.net.app["Fractals"].applyAudioAdjustments = function () {
+    if (gdo.net.app["Fractals"].audioPlaying) {
 
-            // Apply params
-            applyParams(locations, gl);
+        var frequencyData = new Uint8Array(gdo.net.app["Fractals"].analyser.frequencyBinCount);
 
-            // Set position data of vertex shader
-            positionLocation = gl.getAttribLocation(program, "a_position");
-            gl.enableVertexAttribArray(positionLocation);
-            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-            // Draw quad
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-
+        if (gdo.net.app["Fractals"].sync) {
+            frequencyData = gdo.net.app["Fractals"].freqs;
         } else {
-            rendering2 = false;
-            renderSync(locations2, gl2, program2);
+            gdo.net.app["Fractals"].analyser.getByteFrequencyData(frequencyData);
         }
-    } else {
-        gdo.consoleOut('.Fractals', 1, 'Multiple Renders Detected');
+
+        // Colour cycle
+        if (frequencyData[6] / 255 < 1 / 6) {
+            gdo.net.app["Fractals"].parameters.red = 1;
+            gdo.net.app["Fractals"].parameters.green = (frequencyData[6] / 255) / (1 / 6);
+            gdo.net.app["Fractals"].parameters.blue = 0;
+        }
+        else if (frequencyData[6] / 255 < 2 / 6) {
+            gdo.net.app["Fractals"].parameters.red = 1 - (((frequencyData[6] / 255) - (1 / 6)) / (1 / 6));
+            gdo.net.app["Fractals"].parameters.green = 1;
+            gdo.net.app["Fractals"].parameters.blue = 0;
+        }
+        else if (frequencyData[6] / 255 < 3 / 6) {
+            gdo.net.app["Fractals"].parameters.red = 0;
+            gdo.net.app["Fractals"].parameters.green = 1;
+            gdo.net.app["Fractals"].parameters.blue = ((frequencyData[6] / 255) - (2 / 6)) / (1 / 6);
+        }
+        else if (frequencyData[6] / 255 < 4 / 6) {
+            gdo.net.app["Fractals"].parameters.red = 0;
+            gdo.net.app["Fractals"].parameters.green = 1 - (((frequencyData[6] / 255) - (3 / 6)) / (1 / 6));
+            gdo.net.app["Fractals"].parameters.blue = 1;
+        }
+        else if (frequencyData[6] / 255 < 5 / 6) {
+            gdo.net.app["Fractals"].parameters.red = ((frequencyData[6] / 255) - (4 / 6)) / (1 / 6);
+            gdo.net.app["Fractals"].parameters.green = 0;
+            gdo.net.app["Fractals"].parameters.blue = 1;
+        }
+        else {
+            gdo.net.app["Fractals"].parameters.red = 1;
+            gdo.net.app["Fractals"].parameters.green = 0;
+            gdo.net.app["Fractals"].parameters.blue = 1 - (((frequencyData[6] / 255) - (5 / 6)) / (1 / 6));
+        }
+
+
+        gdo.net.app["Fractals"].parameters.cx = 1 - (2 * frequencyData[4] / 255);
+        gdo.net.app["Fractals"].parameters.cy = -1 + (2 * frequencyData[5] / 255);
+        gdo.net.app["Fractals"].parameters.cz = Math.sin(2 * Math.PI * frequencyData[9] / 255);
+        gdo.net.app["Fractals"].parameters.cw = Math.cos(2 * Math.PI * frequencyData[10] / 255);
+
+        gdo.net.app["Fractals"].parameters.scale = 2.0 + 2.0 * frequencyData[6] / 255;
+
+        gdo.net.app["Fractals"].parameters.power = 4.0 + 4.0 * frequencyData[5] / 255;
+
+        gdo.net.app["Fractals"].parameters.ambience = 0.1 + 0.5 * frequencyData[6] / 255;
     }
 }

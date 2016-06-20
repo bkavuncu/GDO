@@ -1,8 +1,8 @@
-﻿var parameters;
-var locations1;
-var locations2;
+﻿gdo.net.app["Fractals"].parameters;
+gdo.net.app["Fractals"].locations1;
+gdo.net.app["Fractals"].locations2;
 
-function params() {
+gdo.net.app["Fractals"].params = function () {
     this.xRot = 0;
     this.yRot = 0;
     this.yHeight = 0;
@@ -33,7 +33,7 @@ function params() {
     this.fractal = 0;
 }
 
-function locs() {
+gdo.net.app["Fractals"].locs = function () {
     this.xRotLoc;
     this.yRotLoc;
     this.transLoc;
@@ -55,25 +55,25 @@ function locs() {
     this.modLoc;
 }
 
-function applyParams(locations, gl) {
+gdo.net.app["Fractals"].applyParams = function (locations, gl) {
 
-    gl.uniform1f(locations.yRotLoc, parameters.yRot);
-    gl.uniform1f(locations.xRotLoc, parameters.xRot);
-    gl.uniform3f(locations.transLoc, parameters.xTrans, parameters.yTrans, parameters.zTrans);
-    gl.uniform1f(locations.eyeLoc, -parameters.yHeight);
-    gl.uniform1i(locations.maxStepsLoc, parameters.maxSteps);
-    gl.uniform1f(locations.detailLoc, Math.pow(10.0, parameters.detail));
-    gl.uniform1f(locations.fogLoc, parameters.fog);
-    gl.uniform1i(locations.fractalLoc, parameters.fractal);
-    gl.uniform1i(locations.iterationsLoc, parameters.iterations);
-    gl.uniform1f(locations.powerLoc, parameters.power);
-    gl.uniform4f(locations.colourLoc, parameters.red, parameters.green, parameters.blue, 1.0);
-    gl.uniform1f(locations.scaleLoc, parameters.scale);
-    gl.uniform4f(locations.juliaCLoc, parameters.cx, parameters.cy, parameters.cz, parameters.cw);
-    gl.uniform1f(locations.thresholdLoc, parameters.threshold);
-    gl.uniform1f(locations.ambienceLoc, parameters.ambience);
-    gl.uniform1f(locations.lightIntensityLoc, parameters.lightIntensity);
-    gl.uniform1f(locations.lightSizeLoc, parameters.lightSize);
-    gl.uniform3f(locations.lightLocLoc, parameters.lightX, parameters.lightY, parameters.lightZ);
-    gl.uniform1i(locations.modLoc, parameters.modToggle);
+    gl.uniform1f(locations.yRotLoc, gdo.net.app["Fractals"].parameters.yRot);
+    gl.uniform1f(locations.xRotLoc, gdo.net.app["Fractals"].parameters.xRot);
+    gl.uniform3f(locations.transLoc, gdo.net.app["Fractals"].parameters.xTrans, gdo.net.app["Fractals"].parameters.yTrans, gdo.net.app["Fractals"].parameters.zTrans);
+    gl.uniform1f(locations.eyeLoc, -gdo.net.app["Fractals"].parameters.yHeight);
+    gl.uniform1i(locations.maxStepsLoc, gdo.net.app["Fractals"].parameters.maxSteps);
+    gl.uniform1f(locations.detailLoc, Math.pow(10.0, gdo.net.app["Fractals"].parameters.detail));
+    gl.uniform1f(locations.fogLoc, gdo.net.app["Fractals"].parameters.fog);
+    gl.uniform1i(locations.fractalLoc, gdo.net.app["Fractals"].parameters.fractal);
+    gl.uniform1i(locations.iterationsLoc, gdo.net.app["Fractals"].parameters.iterations);
+    gl.uniform1f(locations.powerLoc, gdo.net.app["Fractals"].parameters.power);
+    gl.uniform4f(locations.colourLoc, gdo.net.app["Fractals"].parameters.red, gdo.net.app["Fractals"].parameters.green, gdo.net.app["Fractals"].parameters.blue, 1.0);
+    gl.uniform1f(locations.scaleLoc, gdo.net.app["Fractals"].parameters.scale);
+    gl.uniform4f(locations.juliaCLoc, gdo.net.app["Fractals"].parameters.cx, gdo.net.app["Fractals"].parameters.cy, gdo.net.app["Fractals"].parameters.cz, gdo.net.app["Fractals"].parameters.cw);
+    gl.uniform1f(locations.thresholdLoc, gdo.net.app["Fractals"].parameters.threshold);
+    gl.uniform1f(locations.ambienceLoc, gdo.net.app["Fractals"].parameters.ambience);
+    gl.uniform1f(locations.lightIntensityLoc, gdo.net.app["Fractals"].parameters.lightIntensity);
+    gl.uniform1f(locations.lightSizeLoc, gdo.net.app["Fractals"].parameters.lightSize);
+    gl.uniform3f(locations.lightLocLoc, gdo.net.app["Fractals"].parameters.lightX, gdo.net.app["Fractals"].parameters.lightY, gdo.net.app["Fractals"].parameters.lightZ);
+    gl.uniform1i(locations.modLoc, gdo.net.app["Fractals"].parameters.modToggle);
 }
