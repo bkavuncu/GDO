@@ -945,7 +945,6 @@
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
-    <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Properties\PublishProfiles\Testing.pubxml" />
     <Content Include="Scenarios\matrixBIG.json" />
     <Content Include="Scenarios\matrixSMALL.json" />
