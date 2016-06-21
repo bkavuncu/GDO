@@ -8,47 +8,50 @@
     <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div id="dicomImage"
-                    class="col-xs-12 col-md-8"
-                    update-image
-                    mouse-wheel-up=""
-                    mouse-wheel-down=""
-                    mouse-click=""
-                    class="cornerstone-enabled-image"
-                    oncontextmenu="return false"
-                    unselectable='off'
-                    onselectstart='return false;'
-                    onmousedown='return false;'>
+<div class="container-fluid">
+    <div class="heading">
+        <h1>Axial</h1>
+    </div>
+    <div class="row">
+        <div id="dicomImage"
+             class="col-xs-12 col-md-6"
+             update-image
+             mouse-wheel-up=""
+             mouse-wheel-down=""
+             mouse-click=""
+             class="cornerstone-enabled-image"
+             oncontextmenu="return false"
+             unselectable='off'
+             onselectstart='return false;'
+             onmousedown='return false;'>
 
-                <div id="mrtopleft">
-                    <p>Optimise ID</p>
+            <div id="mrtopleft">
+                <p>Optimise ID</p>
+            </div>
+            <div id="mrtopright">
+                Hospital
+            </div>
+            <div id="mrbottomright">
+                <div id="frameRate"></div>
+                <div id="zoomText">
+                    <p>Zoom: 2.0x</p>
                 </div>
-                <div id="mrtopright">
-                    Hospital
-                </div>
-                <div id="mrbottomright">
-                    <div id="frameRate"></div>
-                    <div id="zoomText">
-                        <p>Zoom: 2.0x</p>
-                    </div>
-                    <div id="sliceText">
-                        <p>Image: </p>
-                    </div>
-                </div>
-                <div id="mrbottomleft">
-                    <p>WW/WC: </p>
+                <div id="sliceText">
+                    <p>Image: </p>
                 </div>
             </div>
-            <div id="dicomTopThumb" class="col-xs-6 col-md-4">
-                <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png"/>
-            </div>
-            <div id="dicomBottomThumb" class="col-xs-6 col-md-4">
-                <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" />
+            <div id="mrbottomleft">
+                <p>WW/WC: </p>
             </div>
         </div>
+        <div id="dicomTopThumb" class="col-xs-6 col-md-3">
+            <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png" height="400" width="420"/>
+        </div>
+        <div id="dicomBottomThumb" class="col-xs-6 col-md-3">
+            <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" height="400" width="420"/>
+        </div>
     </div>
+</div>
 
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>

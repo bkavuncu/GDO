@@ -30,7 +30,7 @@ gdo.net.app["XNATImaging"].initControl = function () {
     gdo.net.app["XNATImaging"].server.requestName(gdo.controlId);
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + gdo.controlId);
 
-    gdo.net.app["XNATImaging"].initialiseCS(600, 400);
+    gdo.net.app["XNATImaging"].initialiseCS(800, 600);
 
     $("iframe").contents().find("#hello_submit")
     .unbind()

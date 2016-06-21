@@ -8,16 +8,8 @@ html, body {
 
 .heading h1 {
     color: #2538f6;
-    font-size: 40px;
-    line-height: 60px;
-    width: 50%;
-}
-
-.main h2 {
-    color: #999999;
-    font-size: 20px;
-    margin: 0;
-    padding: 20px 20px;
+    font-size: 36px;
+    line-height: 40px;
 }
 
 img {
@@ -25,8 +17,9 @@ img {
 }
 
 #dicomImage {
-    width: 70%;
-    height: 100%;
+    width: 1300px;
+    height: 900px;
+    background: #25fff6;
 }
 
 #dicomTopThumb {
