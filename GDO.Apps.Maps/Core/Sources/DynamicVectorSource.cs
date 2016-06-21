@@ -7,20 +7,32 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Sources
 {
-    public class VectorSource : Source
+    public class DynamicVectorSource : Source
     {
+        public LinkParameter DataFile { get; set; }
         public LinkParameter Format { get; set; }
         public FunctionParameter Loader { get; set; }
-        public StringParameter Url { get; set; }
         public DatalistParameter Strategy { get; set; }
         public BooleanParameter UseSpatialIndex { get; set; }
         public BooleanParameter WrapX { get; set; }
 
-        public VectorSource()
+        public DynamicVectorSource()
         {
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.source.Vector";
             Description.Value = "Provides a source of features for vector layers. Vector features provided by this source are suitable for editing.";
+
+            DataFile = new LinkParameter
+            {
+                Name = "DataFile",
+                Description = "The dynamic data file to read data from",
+                Priority = (int)GDO.Utility.Priorities.Required,
+                IsEditable = false,
+                IsVisible = true,
+                IsProperty = false,
+                LinkedParameter = "data",
+                ClassTypes = new string[1] { "DynamicFile" },
+            };
 
             Format = new LinkParameter
             {
@@ -30,7 +42,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "formats"
+                LinkedParameter = "formats",
+                ClassTypes = new string[8] { "EsriJSONFormat", "GeoJSONFormat", "GMLFormat", "KMLFormat", "OSMXMLFormat", "TopoJSONFormat", "WFSFormat", "XMLFormat" },
             };
 
             Loader = new FunctionParameter
@@ -38,16 +51,6 @@ namespace GDO.Apps.Maps.Core.Sources
                 Name = "Loader Function",
                 PropertyName = "loader",
                 Description = "The loader function used to load features, from a remote source for example. Note that the source will create and use an XHR feature loader when url is set.",
-                Priority = (int)GDO.Utility.Priorities.Optional,
-                IsEditable = false,
-                IsVisible = true,
-            };
-
-            Url = new StringParameter
-            {
-                Name = "Url",
-                PropertyName = "url",
-                Description = "Setting this option instructs the source to use an XHR loader (see ol.featureloader.xhr). Use a string and an ol.loadingstrategy.all for a one-off download of all features from the given URL. Use a ol.FeatureUrlFunction to generate the url with other loading strategies. Requires format to be set as well. When default XHR feature loader is provided, the features will be transformed from the data projection to the view projection during parsing. If your remote data source does not advertise its projection properly, this transformation will be incorrect. For some formats, the default projection (usually EPSG:4326) can be overridden by setting the defaultDataProjection constructor option on the format.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,

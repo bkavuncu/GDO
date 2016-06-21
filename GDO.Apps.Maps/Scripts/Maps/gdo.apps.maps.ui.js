@@ -292,6 +292,11 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         "<input type='text' id='" + inputDiv + "_value_input_" + i + "'  class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
                 }
+                if (property.Length == 0) {
+                    $("iframe").contents().find("#" + inputDiv + "_value").append(
+                       "<input type='text' id='" + inputDiv + "_value_input_" + 0 + "'  class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='' value=''/></input>"
+                   );
+                }
                 break;
             case 6: //Slider
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -349,8 +354,8 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 var collection = eval("gdo.net.instance[instanceId]." + property.LinkedParameter);
                 for (var key in collection) {
                     if (collection.hasOwnProperty(key)) {
-                        for (var i = 0; i < property.ObjectTypes.$values.length; i++) {
-                            if (collection[key].properties.ObjectType.Value == property.ObjectTypes.$values[i]) {
+                        for (var i = 0; i < property.ClassTypes.$values.length; i++) {
+                            if (collection[key].properties.ClassName.Value == property.ClassTypes.$values[i]) {
                                 if (value == collection[key].properties.Id.Value && value >= 0) {
                                     $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + collection[key].properties.Id.Value + "' selected='selected'> " + collection[key].properties.Name.Value + "</option>");
                                 } else {
@@ -417,6 +422,33 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
                     "<textarea id='" + inputDiv + "_value_input' rows='4' cols='70' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></textarea>" +
                     "</div>");
+                break;
+            case 15: //Link Datalist
+                $("iframe").contents().find("#" + inputDiv).append(
+                    "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                    "</div>");
+                if (value <= 0) {
+                    $("iframe").contents().find("#" + inputDiv + "_value").append("<select id='" + inputDiv + "_value_input' class='form-control input_field' style='width: 100%;height: 3vh;padding-top:3px' value=-1></select>");
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='-1' selected='selected' >Select your option</option>");
+                } else {
+                    $("iframe").contents().find("#" + inputDiv + "_value").append("<select id='" + inputDiv + "_value_input' class='form-control input_field' style='width: 100%;height: 3vh;padding-top:3px' value='" + value + "'></select>");
+                    $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='-1' >Select your option</option>");
+                }
+                var collection = eval("gdo.net.instance[instanceId]." + property.LinkedParameter);
+                for (var key in collection) {
+                    if (collection.hasOwnProperty(key)) {
+                        for (var i = 0; i < property.ObjectTypes.$values.length; i++) {
+                            if (collection[key].properties.ClassName.Value == property.ClassTypes.$values[i]) {
+                                if (value == eval("collection[key].properties." + property.LinkedProperty + ".Value") && value != null) {
+                                    $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + eval("collection[key].properties." + property.LinkedProperty + ".Value") + "' selected='selected'> " + collection[key].properties.Name.Value + "</option>");
+                                } else {
+                                    $("iframe").contents().find("#" + inputDiv + "_value_input").append("<option value='" + eval("collection[key].properties." + property.LinkedProperty + ".Value") + "'> " + collection[key].properties.Name.Value + "</option>");
+                                }
+                            }
+                        }
+                    }
+                }
+                //somehow assign value somwhere
                 break;
             default:
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -537,7 +569,7 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
 }
 gdo.net.app["Maps"].extractTypes = function (instanceId) {
     var className;
-    var arr = ["layer", "source", "style", "format"];
+    var arr = ["layer", "source", "style", "format", "data", "animation"];
     for (var i in arr) {
         if (!arr.hasOwnProperty((i))) {
             continue;
@@ -880,12 +912,22 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
    .unbind()
    .click(function () {
        gdo.net.app["Maps"].submitNextButton(instanceId, "view");
-       //read values here
-    });
+       gdo.net.instance[instanceId].temp["view"].properties.Center.Values = gdo.net.instance[instanceId].position.Center;
+       gdo.net.instance[instanceId].temp["view"].properties.TopLeft.Values = gdo.net.instance[instanceId].position.TopLeft;
+       gdo.net.instance[instanceId].temp["view"].properties.BottomRight.Values = gdo.net.instance[instanceId].position.BottomRight;
+       gdo.net.instance[instanceId].temp["view"].properties.Resolution.Value = gdo.net.instance[instanceId].position.Resolution;
+       gdo.net.instance[instanceId].temp["view"].properties.Width.Value = gdo.net.instance[instanceId].position.Width;
+       gdo.net.instance[instanceId].temp["view"].properties.Height.Value = gdo.net.instance[instanceId].position.Height;
+       gdo.net.app["Maps"].drawCreateTable(instanceId, "view", gdo.net.instance[instanceId].temp["view"]);
+   });
 
     $("iframe").contents().find("#view-create-button")
        .unbind()
        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", true); });
+
+    $("iframe").contents().find(".view-save-button")
+       .unbind()
+       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", false); });
 
     $("iframe").contents().find(".view-remove-button")
         .unbind()
@@ -893,67 +935,70 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
 
     $("iframe").contents().find(".view-set-current-button")
         .unbind()
-       .click(function() {
+       .click(function () {
            if (gdo.net.app["Maps"].selected["view"] >= 0) {
-               gdo.net.app["Maps"].server.UseView[gdo.net.app["Maps"].selected["view"]];
+               gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]);
+               setTimeout(function () { gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]) }, 250);
+               setTimeout(function () { gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]) }, 500);
            }
-        });
+       });
 
     $("iframe").contents().find(".view-save-current-button")
         .unbind()
         .click(function () {
             if (gdo.net.app["Maps"].selected["view"] >= 0) {
-                gdo.net.app["Maps"].server.UsePosition[gdo.net.app["Maps"].selected["view"]];
+                gdo.net.app["Maps"].server.usePosition(instanceId, gdo.net.app["Maps"].selected["view"]);
             }
         });
 
     $("iframe").contents().find("#configuration-next-button")
    .unbind()
    .click(function () {
-        gdo.net.instance[instanceId].temp["configuration"] = {};
-        var currentConfig = 0;
-        for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++)
-        {
-            if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
-                currentConfig = i;
-            }
-        }
-        gdo.net.instance[instanceId].temp["configuration"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].configurations[i].properties);
-        gdo.net.app["Maps"].drawCreateTable(instanceId, "configuration", gdo.net.instance[instanceId].temp["configuration"]);
-        $("iframe").contents().find("#new-configuration-input").modal('show');
-        $(".modal-backdrop").css("display", "none");
-    });
+       gdo.net.instance[instanceId].temp["configuration"] = {};
+       var currentConfig = 0;
+       for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+           if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+               currentConfig = i;
+           }
+       }
+       gdo.net.instance[instanceId].temp["configuration"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].configurations[currentConfig].properties);
+       gdo.net.instance[instanceId].temp["configuration"].properties.Name.Value = $("iframe").contents().find("#configuration_name_input").val();
+       gdo.net.app["Maps"].drawCreateTable(instanceId, "configuration", gdo.net.instance[instanceId].temp["configuration"]);
+       $("iframe").contents().find("#new-configuration-input").modal('show');
+       $(".modal-backdrop").css("display", "none");
+   });
 
     $("iframe").contents().find("#configuration-create-button")
        .unbind()
        .click(function () {
-           var configName = $("iframe").contents().find("#" + tab + "_name_input").val();
-            if (configName != null) {
-                gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
-            }
-        });
+           var configName = $("iframe").contents().find("#configuration_name_input").val();
+           if (configName != null) {
+               gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
+           }
+       });
 
     $("iframe").contents().find(".configuration-remove-button")
         .unbind()
        .click(function () {
            if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
                gdo.net.app["Maps"].server.deleteConfiguration(instanceId, gdo.net.instance[instanceId].configurations[gdo.net.app["Maps"].selected["configuration"]].properties.Name.Value);
+               gdo.net.app["Maps"].selected["configuration"] = -1;
            }
-        });
+       });
 
     $("iframe").contents().find(".configuration-save-button")
         .unbind()
-       .click(function() {
-           var configName;
+       .click(function () {
+           /*var configName;
            for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
-               if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+               if (gdo.net.instance[instanceId].configurations[gdo.net.app["Maps"].selected["configuration"]].properties.Name.Value == gdo.net.instance[instanceId].configName) {
                    configName = gdo.net.instance[instanceId].configName;
                }
+           }*/
+           if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+               gdo.net.app["Maps"].server.saveConfiguration(instanceId, gdo.net.instance[instanceId].configurations[gdo.net.app["Maps"].selected["configuration"]].properties.Name.Value);
            }
-           if (configName != null) {
-               gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
-           }
-        });
+       });
 
     $("iframe").contents().find(".configuration-load-button")
         .unbind()

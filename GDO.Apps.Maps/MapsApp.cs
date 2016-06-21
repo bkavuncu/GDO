@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using GDO.Apps.Maps.Core;
+using GDO.Apps.Maps.Core.DataSources;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
@@ -710,6 +711,16 @@ namespace GDO.Apps.Maps
             View view = new View();
             views.Add(view);
 
+
+            //Add Data to Template
+            DynamicFile dynamicFile = new DynamicFile();
+            LocalFile localFile = new LocalFile();
+            RemoteFile remoteFile = new RemoteFile();
+
+            datas.Add(dynamicFile);
+            datas.Add(localFile);
+            datas.Add(remoteFile);
+
             //Add Formats to Template
             EsriJSONFormat esriJsonFormat = new EsriJSONFormat();
             GeoJSONFormat geoJsonFormat = new GeoJSONFormat();
@@ -760,7 +771,8 @@ namespace GDO.Apps.Maps
             StaticImageSource staticImageSource = new StaticImageSource();
             TileArcGISRestSource tileArcGisRestSource = new TileArcGISRestSource();
             TileWMSSource tileWmsSource = new TileWMSSource();
-            VectorSource vectorSource = new VectorSource();
+            StaticVectorSource staticVectorSource = new StaticVectorSource();
+            DynamicVectorSource dynamicVectorSource = new DynamicVectorSource();
             XYZSource xyzSource = new XYZSource();
             ZoomifySource zoomifySource = new ZoomifySource();
 
@@ -773,21 +785,26 @@ namespace GDO.Apps.Maps
             sources.Add(staticImageSource);
             sources.Add(tileArcGisRestSource);
             sources.Add(tileWmsSource);
-            sources.Add(vectorSource);
+            sources.Add(dynamicVectorSource);
+            sources.Add(staticVectorSource);
             sources.Add(xyzSource);
             sources.Add(zoomifySource);
 
             //Add Layers to Template
-            StaticHeatmapLayer heatmapLayer = new StaticHeatmapLayer();
+            DynamicHeatmapLayer dynamicHeatmapLayer = new DynamicHeatmapLayer();
+            StaticHeatmapLayer staticHeatmapLayer = new StaticHeatmapLayer();
             ImageLayer imageLayer = new ImageLayer();
             TileLayer tileLayer = new TileLayer();
-            DynamicVectorLayer vectorLayer = new DynamicVectorLayer();
+            DynamicVectorLayer dynamicVectorLayer = new DynamicVectorLayer();
+            StaticVectorLayer staticVectorLayer = new StaticVectorLayer();
 
 
-            layers.Add(heatmapLayer);
+            layers.Add(dynamicHeatmapLayer);
+            layers.Add(staticHeatmapLayer);
             layers.Add(imageLayer);
             layers.Add(tileLayer);
-            layers.Add(vectorLayer);
+            layers.Add(dynamicVectorLayer);
+            layers.Add(staticVectorLayer);
 
             Map map = new Map(position, views.ToArray(), animations.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;

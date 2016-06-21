@@ -29,7 +29,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "sources",
-                ObjectTypes = new string[1] { "ol.source.Vector" } ,
+                ClassTypes = new string[1] { "StaticVectorSource" } ,
             };
 
             Style = new LinkParameter
@@ -41,7 +41,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Style" } ,
+                ClassTypes = new string[1] { "Style" },
             };
 
             RenderBuffer = new IntegerParameter

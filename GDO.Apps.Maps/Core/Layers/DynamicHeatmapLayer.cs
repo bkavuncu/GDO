@@ -30,7 +30,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "sources",
-                ObjectTypes = new string[1] { "ol.source.Vector", },
+                ClassTypes = new string[1] { "DynamicVectorSource", },
             };
 
             Gradient = new ColorArrayParameter

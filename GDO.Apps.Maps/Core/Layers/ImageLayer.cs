@@ -25,7 +25,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "sources",
-                ObjectTypes = new string[1] { "ol.source.ImageStatic" } ,
+                ClassTypes = new string[1] { "StaticImageSource" } ,
             };
         }
     }

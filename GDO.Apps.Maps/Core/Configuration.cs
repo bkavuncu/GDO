@@ -37,7 +37,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Layers",
                 Description = "List of Layers",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
@@ -50,7 +50,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Sources",
                 Description = "List of Sources",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
@@ -63,7 +63,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Styles",
                 Description = "List of Styles",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
@@ -76,7 +76,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Formats",
                 Description = "List of Formats",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
@@ -89,7 +89,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Data",
                 Description = "List of Data Sources",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
@@ -102,7 +102,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Animation",
                 Description = "List of Animations",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
@@ -115,7 +115,7 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Views",
                 Description = "List of Views",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,

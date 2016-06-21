@@ -6,14 +6,14 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.DataSources
 {
-    public class LocalFile : Data
+    public class DynamicFile : Data
     {
         public LinkDatalistParameter File { get; set; }
 
-        public LocalFile()
+        public DynamicFile()
         {
             ClassName.Value = this.GetType().Name;
-            Description.Value = "Local File";
+            Description.Value = "Dynamic File";
 
             File = new LinkDatalistParameter
             {

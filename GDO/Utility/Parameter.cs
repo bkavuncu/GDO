@@ -23,6 +23,7 @@ namespace GDO.Utility
         StringArray = 12, //Input with multiple cols for the array size
         ColorArray = 13, //Input with multiple cols for the array size
         TextArea = 14, //String appears as a text area input
+        LinkDataList = 15, //Datalist where values read dynamically
     }
 
     public enum ParameterTypes
@@ -148,7 +149,7 @@ namespace GDO.Utility
         public int? Value = -1;
         public int? DefaultValue { get; set; }
         public string LinkedParameter { get; set; }
-        public string[] ObjectTypes { get; set; }
+        public string[] ClassTypes { get; set; }
         public new int InputType = (int)InputTypes.Link;
         public new int ParameterType = (int)ParameterTypes.Object;
         public new int VariableType = (int)VariableTypes.Integer;
@@ -170,6 +171,18 @@ namespace GDO.Utility
         public string DefaultValue { get; set; }
         public int Length { get; set; }
         public new int InputType = (int)InputTypes.DataList;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class LinkDatalistParameter : Parameter
+    {
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public string LinkedParameter { get; set; }
+        public string LinkedProperty { get; set; }
+        public string[] ClassTypes { get; set; }
+        public new int InputType = (int)InputTypes.LinkDataList;
         public new int ParameterType = (int)ParameterTypes.Variable;
         public new int VariableType = (int)VariableTypes.String;
     }

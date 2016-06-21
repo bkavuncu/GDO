@@ -30,7 +30,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Fill" } ,
+                ClassTypes = new string[1] { "FillStyle" } ,
             };
 
             Radius = new IntegerParameter
@@ -64,7 +64,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = false,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Stroke" } ,
+                ClassTypes = new string[1] { "StrokeStyle" },
             };
         }
     }

@@ -30,7 +30,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Fill" } ,
+                ClassTypes = new string[1] { "FillStyle" },
             };
             ImageStyle = new LinkParameter
             {
@@ -41,7 +41,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Image" } ,
+                ClassTypes = new string[1] { "ImageStyle" },
             };
             StrokeStyle = new LinkParameter
             {
@@ -52,7 +52,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Stroke" } ,
+                ClassTypes = new string[1] { "StrokeStyle" },
             };
             TextStyle = new LinkParameter
             {
@@ -63,7 +63,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ObjectTypes = new string[1] { "ol.style.Text" } ,
+                ClassTypes = new string[1] { "TextStyle" },
             };
             ZIndex = new IntegerParameter
             {

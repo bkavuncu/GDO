@@ -110,6 +110,8 @@
     <Compile Include="Core\Configuration.cs" />
     <Compile Include="Core\Base.cs" />
     <Compile Include="Core\Animation.cs" />
+    <Compile Include="Core\DataSources\DynamicFile.cs" />
+    <Compile Include="Core\DataSources\File.cs" />
     <Compile Include="Core\DataSources\RemoteFile.cs" />
     <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Layer.cs" />
@@ -130,8 +132,9 @@
     <Compile Include="Core\Sources\TileWMSSource.cs" />
     <Compile Include="Core\Sources\StamenSource.cs" />
     <Compile Include="Core\Sources\ImageTileSource.cs" />
+    <Compile Include="Core\Sources\DynamicVectorSource.cs" />
     <Compile Include="Core\Sources\VectorTileSource.cs" />
-    <Compile Include="Core\Sources\VectorSource.cs" />
+    <Compile Include="Core\Sources\StaticVectorSource.cs" />
     <Compile Include="Core\Map.cs" />
     <Compile Include="Core\Source.cs" />
     <Compile Include="Core\Sources\XYZSource.cs" />

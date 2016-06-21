@@ -200,7 +200,7 @@ namespace GDO.Apps.Maps
 
 
         //View
-        public void AddView(int instanceId, string serializedView)
+        public void AddView(int instanceId, string className, string serializedView)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -218,7 +218,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void UpdateView(int instanceId, int viewId, string serializedView)
+        public void UpdateView(int instanceId, int viewId, string className, string serializedView)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -274,7 +274,7 @@ namespace GDO.Apps.Maps
                 else
                 {
                     Clients.Group("" + instanceId).receiveView(instanceId, viewId, "", false);
-                    Clients.Group("c" + instanceId).receiveSource(instanceId, viewId, "", false);
+                    Clients.Group("c" + instanceId).receiveView(instanceId, viewId, "", false);
                 }
             }
             catch (Exception e)
@@ -345,7 +345,7 @@ namespace GDO.Apps.Maps
         {
             MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
             maps.UseView(viewId);
-            BroadcastPosition(instanceId);
+            Clients.Caller.receivePosition(instanceId, maps.Position.TopLeft, maps.Position.Center, maps.Position.BottomRight, maps.Position.Resolution, maps.Position.Width, maps.Position.Height);
         }
 
         public void UsePosition(int instanceId, int viewId)
@@ -600,7 +600,7 @@ namespace GDO.Apps.Maps
                             sourceId = maps.AddSource<TileWMSSource>(JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
                         case "VectorSource":
-                            sourceId = maps.AddSource<VectorSource>(JsonConvert.DeserializeObject<VectorSource>(serializedSource));
+                            sourceId = maps.AddSource<StaticVectorSource>(JsonConvert.DeserializeObject<StaticVectorSource>(serializedSource));
                             break;
                         case "XYZSource":
                             sourceId = maps.AddSource<XYZSource>(JsonConvert.DeserializeObject<XYZSource>(serializedSource));
@@ -657,7 +657,7 @@ namespace GDO.Apps.Maps
                             maps.UpdateSource<TileWMSSource>(sourceId, JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
                         case "VectorSource":
-                            maps.UpdateSource<VectorSource>(sourceId, JsonConvert.DeserializeObject<VectorSource>(serializedSource));
+                            maps.UpdateSource<StaticVectorSource>(sourceId, JsonConvert.DeserializeObject<StaticVectorSource>(serializedSource));
                             break;
                         case "XYZSource":
                             maps.UpdateSource<XYZSource>(sourceId, JsonConvert.DeserializeObject<XYZSource>(serializedSource));

@@ -74,7 +74,7 @@ namespace GDO.Apps.Maps.Core
                 IsEditable = false,
                 IsVisible = true,
                 IsNull = false,
-                DefaultValue = true,
+                DefaultValue = false,
                 Value = false,
             };
 
