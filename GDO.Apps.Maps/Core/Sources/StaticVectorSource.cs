@@ -65,7 +65,8 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValues = new string[3] { "all", "bbox", "tile" }
+                ParameterType = (int)ParameterTypes.Global,
+                DefaultValues = new string[3] { "ol.loadingstrategy.all", "ol.loadingstrategy.bbox", "ol.loadingstrategy.tile" }
             };
 
             UseSpatialIndex = new BooleanParameter

@@ -34,6 +34,7 @@ namespace GDO.Utility
         Function = 2,
         JSON = 3,
         Object = 4,
+        Global = 5,
     }
 
     public enum VariableTypes

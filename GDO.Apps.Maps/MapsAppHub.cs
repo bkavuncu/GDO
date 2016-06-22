@@ -316,7 +316,20 @@ namespace GDO.Apps.Maps
                 }
             }
         }
-
+        public void UpdateResolution(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.updateResolution(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         public void UpdatePosition(int instanceId, float?[] topLeft, float?[] center, float?[] bottomRight, float resolution, int width, int height)
         {

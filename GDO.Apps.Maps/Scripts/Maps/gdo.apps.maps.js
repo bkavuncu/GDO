@@ -117,6 +117,14 @@ $(function () {
         }
     }
 
+    $.connection.mapsAppHub.client.updateResolution = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.net.app["Maps"].updateCenter(instanceId);
+            gdo.net.instance[instanceId].map.render();
+            gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+        }
+    }
+
     $.connection.mapsAppHub.client.receivePosition = function (instanceId, topLeft, center, bottomRight, resolution, width, height) {
         gdo.net.app["Maps"].updatePosition(instanceId, topLeft, center, bottomRight, resolution, width, height);
     }
@@ -250,12 +258,14 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
 
     //Register Change Handlers
     gdo.net.instance[instanceId].map.getView().on('change:resolution', function () {
-        gdo.net.app["Maps"].changeEvent(instanceId);
+        gdo.net.app["Maps"].server.updateResolution(instanceId);
         setTimeout(function () { gdo.net.app["Maps"].updateCenter(instanceId); }, 70);
+        setTimeout(function () { gdo.net.app["Maps"].changeEvent(instanceId); }, 210);
     });
     gdo.net.instance[instanceId].map.getView().on('change:zoom', function () {
         gdo.net.app["Maps"].changeEvent(instanceId);
         setTimeout(function () { gdo.net.app["Maps"].updateCenter(instanceId); }, 70);
+        gdo.net.app["Maps"].server.updateResolution(instanceId);
     });
     gdo.net.instance[instanceId].map.getView().on('change:center', function () {
         gdo.net.app["Maps"].changeEvent(instanceId);
@@ -265,12 +275,15 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
         //gdo.net.app["Maps"].changeEvent(instanceId);
     });
     gdo.net.instance[instanceId].map.on('change:size', function () {
+        gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
         gdo.net.app["Maps"].changeEvent(instanceId);
     });
     gdo.net.instance[instanceId].map.on('change:view', function () {
-        //gdo.net.app["Maps"].changeEvent(instanceId);
+        gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
+        gdo.net.app["Maps"].changeEvent(instanceId);
     });
     gdo.net.instance[instanceId].map.on('change:target', function () {
+        gdo.net.instance[instanceId].map.getView().setCenter(gdo.net.instance[instanceId].map.getView().getCenter());
         gdo.net.app["Maps"].changeEvent(instanceId);
     });
 

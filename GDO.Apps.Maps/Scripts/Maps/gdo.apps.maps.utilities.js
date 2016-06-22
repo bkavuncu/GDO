@@ -102,6 +102,12 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                             properties.push([deserializedObject[index].PropertyName, obj]);
                         }
                         break;
+                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Global:
+                        if (deserializedObject[index].Value >= 0) {
+                            var obj = eval("new " + deserializedObject[index].Value + "()");
+                            properties.push([deserializedObject[index].PropertyName, obj]);
+                        }
+                        break;
                     default:
                         gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + deserializedObject[index].ParameterType + ' for ' + deserializedObject.Name + 's property ' + deserializedObject[index].PropertyName);
                         break;
