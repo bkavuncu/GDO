@@ -111,7 +111,6 @@
     <Compile Include="Core\Base.cs" />
     <Compile Include="Core\Animation.cs" />
     <Compile Include="Core\DataSources\DynamicFile.cs" />
-    <Compile Include="Core\DataSources\File.cs" />
     <Compile Include="Core\DataSources\RemoteFile.cs" />
     <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Layer.cs" />

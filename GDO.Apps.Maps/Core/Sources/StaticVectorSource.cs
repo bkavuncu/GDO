@@ -52,7 +52,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "data",
+                LinkedParameter = "datas",
                 LinkedProperty = "Url",
                 ClassTypes = new string[2] { "LocalFile", "RemoteFile" },
             };
@@ -65,7 +65,7 @@ namespace GDO.Apps.Maps.Core.Sources
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValues = new string[3] { "ol.loadingstrategy.all", "ol.loadingstrategy.bbox", "ol.loadingstrategy.tile" }
+                DefaultValues = new string[3] { "all", "bbox", "tile" }
             };
 
             UseSpatialIndex = new BooleanParameter

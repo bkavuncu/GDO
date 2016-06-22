@@ -742,7 +742,7 @@ gdo.net.processNode = function (node)
 gdo.net.processSection = function(exists, id, section) {
     if (exists) {
         if (gdo.net.node[gdo.clientId].sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            //gdo.net.server.joinGroup(gdo.net.node[gdo.clientId].sectionId);
+            gdo.net.server.joinGroup(gdo.net.node[gdo.clientId].sectionId);
         }
         gdo.net.section[id].id = id;
         gdo.net.section[id].exists = true;
@@ -770,7 +770,7 @@ gdo.net.processSection = function(exists, id, section) {
         gdo.net.section[id].health = gdo.net.section[id].health / (section.Cols * section.Rows);
     } else {
         if (gdo.net.node[gdo.clientId].sectionId && gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            //gdo.net.server.exitGroup(gdo.net.node[gdo.clientId].sectionId);
+            gdo.net.server.exitGroup(gdo.net.node[gdo.clientId].sectionId);
         }
         gdo.net.section[id].id = id;
         gdo.net.section[id].exists = false;

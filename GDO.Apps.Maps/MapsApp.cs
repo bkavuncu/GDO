@@ -641,7 +641,7 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public string GetSerialezFormat(int formatId)
+        public string GetSerializedFormat(int formatId)
         {
             Format format = null;
             if (Formats.Contains(formatId))
@@ -671,6 +671,77 @@ namespace GDO.Apps.Maps
             try
             {
                 Formats.Remove(formatId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        //Data
+
+        public int AddData<T>(Data data) where T : Data
+        {
+
+            try
+            {
+                int dataId = Datas.GetAvailableSlot();
+                data.Id.Value = dataId;
+                Datas.Add<T>(dataId, (T)data);
+                return dataId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
+        }
+
+
+        public void UpdateData<T>(int dataId, T data) where T : Data
+        {
+            try
+            {
+                Datas.Update<T>(dataId, data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public string GetSerializedData(int dataId)
+        {
+            Data data = null;
+            if (Datas.Contains(dataId))
+            {
+                try
+                {
+                    data = Datas.GetValue<Data>(dataId);
+                }
+                catch (Exception e)
+                {
+                    data = null;
+                }
+            }
+            if (data != null)
+            {
+                string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(Datas.GetValue<Data>(dataId), JsonSettings);
+                return serializedData;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveData(int dataId)
+        {
+            try
+            {
+                Datas.Remove(dataId);
                 return true;
             }
             catch (Exception e)

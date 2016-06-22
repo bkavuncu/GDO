@@ -31,9 +31,26 @@ gdo.net.app["Maps"].optionChecker = function (properties) {
     return check;
 }
 
-gdo.net.app["Maps"].setExceptNull = function (obj, func, value) {
+gdo.net.app["Maps"].setExceptNull = function (obj, func, value, type) {
     if (value != null) {
-        eval("" + obj + "." + func + "(" + value + ");");
+        //gdo.consoleOut(".Maps",2, "Executing: " + obj + "." + func + "('" + value + "');");
+        switch (type) {
+            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Boolean:
+                eval("" + obj + "." + func + "('" + value + "');");
+                break
+            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Integer:
+                eval("" + obj + "." + func + "('" + parseInt(value) + "');");
+                break;
+            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Float:
+                eval("" + obj + "." + func + "(" + parseFloat(value) + ");");
+                break;
+            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.String:
+                eval("" + obj + "." + func + "('" + value + "');");
+                break;
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -43,6 +60,13 @@ gdo.net.app["Maps"].PARAMETER_TYPES_ENUM = {
     Function: 2,
     JSON: 3,
     Object: 4,
+};
+
+gdo.net.app["Maps"].VARIABLE_TYPES_ENUM = {
+    Boolean: 0,
+    Integer: 1,
+    Float: 2,
+    String: 3,
 };
 
 gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
@@ -106,7 +130,7 @@ gdo.net.app["Maps"].updateObject = function (instanceId, objectType, objectId, d
             continue;
         }
         if (deserializedObject[index].IsProperty && deserializedObject[index].IsEditable && deserializedObject[index].Priority >= 0) {
-            gdo.net.app["Maps"].setExceptNull("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + deserializedObject.Id.Value + "]", ("set" + upperCaseFirstLetter(deserializedObject[index].Name)), deserializedObject[index].Value);
+            gdo.net.app["Maps"].setExceptNull("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + deserializedObject.Id.Value + "]", ("set" + upperCaseFirstLetter(deserializedObject[index].Name)), deserializedObject[index].Value, deserializedObject[index].VariableType);
         }
     }
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {

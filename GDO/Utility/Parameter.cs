@@ -24,6 +24,7 @@ namespace GDO.Utility
         ColorArray = 13, //Input with multiple cols for the array size
         TextArea = 14, //String appears as a text area input
         LinkDataList = 15, //Datalist where values read dynamically
+        FileInput = 16, //Datalist where values read dynamically
     }
 
     public enum ParameterTypes
@@ -122,6 +123,15 @@ namespace GDO.Utility
         public string Value { get; set; }
         public string DefaultValue { get; set; }
         public new int InputType = (int)InputTypes.String;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class FileInputParameter : Parameter
+    {
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public new int InputType = (int)InputTypes.FileInput;
         public new int ParameterType = (int)ParameterTypes.Variable;
         public new int VariableType = (int)VariableTypes.String;
     }

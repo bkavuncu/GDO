@@ -8,24 +8,21 @@ namespace GDO.Apps.Maps.Core.DataSources
 {
     public class LocalFile : Data
     {
-        public LinkDatalistParameter File { get; set; }
+        public FileInputParameter Url { get; set; }
 
         public LocalFile()
         {
             ClassName.Value = this.GetType().Name;
             Description.Value = "Local File";
 
-            File = new LinkDatalistParameter
+            Url = new FileInputParameter
             {
                 Name = "File",
                 Description = "Relative path of the file.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                IsEditable = true,
+                IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
-                LinkedParameter = "file",
-                LinkedProperty = "Url",
-                ClassTypes = new string[1] { "File" },
             };
         }
     }

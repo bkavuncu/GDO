@@ -8,6 +8,7 @@ using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using GDO.Apps.Maps.Core;
+using GDO.Apps.Maps.Core.DataSources;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
@@ -91,6 +92,22 @@ namespace GDO.Apps.Maps
                         Clients.Caller.receiveMap(instanceId, "", false);
                         Clients.Caller.receiveConfigurations(instanceId, maps.GetSerializedConfigurations());
                     }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void InitMap(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.Init();
                 }
                 catch (Exception e)
                 {
@@ -406,7 +423,10 @@ namespace GDO.Apps.Maps
 
                     switch (className)
                     {
-                        case "HeatmapLayer":
+                        case "DynamicHeatmapLayer":
+                            layerId = maps.AddLayer<DynamicHeatmapLayer>(JsonConvert.DeserializeObject<DynamicHeatmapLayer>(serializedLayer));
+                            break;
+                        case "StaticHeatmapLayer":
                             layerId = maps.AddLayer<StaticHeatmapLayer>(JsonConvert.DeserializeObject<StaticHeatmapLayer>(serializedLayer));
                             break;
                         case "ImageLayer":
@@ -415,8 +435,11 @@ namespace GDO.Apps.Maps
                         case "TileLayer":
                             layerId = maps.AddLayer<TileLayer>(JsonConvert.DeserializeObject<TileLayer>(serializedLayer));
                             break;
-                        case "VectorLayer":
+                        case "DynamicVectorLayer":
                             layerId = maps.AddLayer<DynamicVectorLayer>(JsonConvert.DeserializeObject<DynamicVectorLayer>(serializedLayer));
+                            break;
+                        case "StaticVectorLayer":
+                            layerId = maps.AddLayer<StaticVectorLayer>(JsonConvert.DeserializeObject<StaticVectorLayer>(serializedLayer));
                             break;
                         default:
                             break;
@@ -439,7 +462,10 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
-                        case "HeatmapLayer":
+                        case "DynamicHeatmapLayer":
+                            maps.UpdateLayer<DynamicHeatmapLayer>(layerId, JsonConvert.DeserializeObject<DynamicHeatmapLayer>(serializedLayer));
+                            break;
+                        case "StaticHeatmapLayer":
                             maps.UpdateLayer<StaticHeatmapLayer>(layerId, JsonConvert.DeserializeObject<StaticHeatmapLayer>(serializedLayer));
                             break;
                         case "ImageLayer":
@@ -448,8 +474,11 @@ namespace GDO.Apps.Maps
                         case "TileLayer":
                             maps.UpdateLayer<TileLayer>(layerId, JsonConvert.DeserializeObject<TileLayer>(serializedLayer));
                             break;
-                        case "VectorLayer":
+                        case "DynamicVectorLayer":
                             maps.UpdateLayer<DynamicVectorLayer>(layerId, JsonConvert.DeserializeObject<DynamicVectorLayer>(serializedLayer));
+                            break;
+                        case "StaticVectorLayer":
+                            maps.UpdateLayer<StaticVectorLayer>(layerId, JsonConvert.DeserializeObject<StaticVectorLayer>(serializedLayer));
                             break;
                         default:
                             break;
@@ -599,7 +628,10 @@ namespace GDO.Apps.Maps
                         case "TileWMSSource":
                             sourceId = maps.AddSource<TileWMSSource>(JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
-                        case "VectorSource":
+                        case "DynamicVectorSource":
+                            sourceId = maps.AddSource<DynamicVectorSource>(JsonConvert.DeserializeObject<DynamicVectorSource>(serializedSource));
+                            break;
+                        case "StaticVectorSource":
                             sourceId = maps.AddSource<StaticVectorSource>(JsonConvert.DeserializeObject<StaticVectorSource>(serializedSource));
                             break;
                         case "XYZSource":
@@ -656,7 +688,10 @@ namespace GDO.Apps.Maps
                         case "TileWMSSource":
                             maps.UpdateSource<TileWMSSource>(sourceId, JsonConvert.DeserializeObject<TileWMSSource>(serializedSource));
                             break;
-                        case "VectorSource":
+                        case "DynamicVectorSource":
+                            maps.UpdateSource<DynamicVectorSource>(sourceId, JsonConvert.DeserializeObject<DynamicVectorSource>(serializedSource));
+                            break;
+                        case "StaticVectorSource":
                             maps.UpdateSource<StaticVectorSource>(sourceId, JsonConvert.DeserializeObject<StaticVectorSource>(serializedSource));
                             break;
                         case "XYZSource":
@@ -1046,7 +1081,7 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedFormat = maps.GetSerialezFormat(formatId);
+                    string serializedFormat = maps.GetSerializedFormat(formatId);
                     if (serializedFormat != null)
                     {
                         Clients.Caller.receiveFormat(instanceId, formatId,serializedFormat, true);
@@ -1068,7 +1103,7 @@ namespace GDO.Apps.Maps
             try
             {
                 MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedFormat = maps.GetSerialezFormat(formatId);
+                string serializedFormat = maps.GetSerializedFormat(formatId);
                 if (serializedFormat != null)
                 {
                     Clients.Group("" + instanceId).receiveFormat(instanceId, formatId,serializedFormat, true);
@@ -1095,6 +1130,134 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveFormat(formatId);
                     BroadcastFormat(instanceId, formatId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        //Data
+
+        public void AddData(int instanceId, string className, string serializedData)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int dataId = -1;
+
+                    switch (className)
+                    {
+                        case "DynamicFile":
+                            dataId = maps.AddData<DynamicFile>(JsonConvert.DeserializeObject<DynamicFile>(serializedData));
+                            break;
+                        case "LocalFile":
+                            dataId = maps.AddData<LocalFile>(JsonConvert.DeserializeObject<LocalFile>(serializedData));
+                            break;
+                        case "RemoteFile":
+                            dataId = maps.AddData<RemoteFile>(JsonConvert.DeserializeObject<RemoteFile>(serializedData));
+                            break;
+                        default:
+                            break;
+                    }
+                    BroadcastData(instanceId, dataId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateData(int instanceId, int dataId, string className, string serializedData)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    switch (className)
+                    {
+                        case "DynamicFile":
+                            maps.UpdateData<DynamicFile>(dataId, JsonConvert.DeserializeObject<DynamicFile>(serializedData));
+                            break;
+                        case "LocalFile":
+                            maps.UpdateData<LocalFile>(dataId, JsonConvert.DeserializeObject<LocalFile>(serializedData));
+                            break;
+                        case "RemoteFile":
+                            maps.UpdateData<RemoteFile>(dataId, JsonConvert.DeserializeObject<RemoteFile>(serializedData));
+                            break;
+                        default:
+                            break;
+                    }
+                    BroadcastData(instanceId, dataId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestData(int instanceId, int dataId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedData = maps.GetSerializedData(dataId);
+                    if (serializedData != null)
+                    {
+                        Clients.Caller.receiveData(instanceId, dataId, serializedData, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveData(instanceId, dataId, "", false);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void BroadcastData(int instanceId, int dataId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedData = maps.GetSerializedData(dataId);
+                if (serializedData != null)
+                {
+                    Clients.Group("" + instanceId).receiveData(instanceId, dataId, serializedData, true);
+                    Clients.Group("c" + instanceId).receiveData(instanceId, dataId, serializedData, true);
+                }
+                else
+                {
+                    Clients.Group("" + instanceId).receiveData(instanceId, dataId, "", false);
+                    Clients.Group("c" + instanceId).receiveData(instanceId, dataId, "", false);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void RemoveData(int instanceId, int dataId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveData(dataId);
+                    BroadcastData(instanceId, dataId);
                 }
                 catch (Exception e)
                 {

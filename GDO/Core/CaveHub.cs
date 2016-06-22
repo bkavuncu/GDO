@@ -359,6 +359,32 @@ namespace GDO.Core
             }
         }
 
+        public void UseAppConfiguration(int instanceId, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        if (Cave.Apps[Cave.GetAppName(instanceId)].Configurations.ContainsKey(configName))
+                        {
+                            Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration = Cave.Apps[Cave.GetAppName(instanceId)].Configurations[configName];
+                            List<string> configList = Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                            string serializedInstance = GetInstanceUpdate(instanceId);
+                            BroadcastAppUpdate(true, instanceId, serializedInstance);
+                            Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                            Clients.Group(""+((IBaseAppInstance)Cave.Instances[instanceId]).Section.Id).reloadNodeIFrame();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
         public void LoadAppConfiguration(int instanceId, string configName)
         {
             lock (Cave.ServerLock)
