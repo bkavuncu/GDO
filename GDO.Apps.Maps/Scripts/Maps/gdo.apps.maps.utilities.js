@@ -36,7 +36,7 @@ gdo.net.app["Maps"].setExceptNull = function (obj, func, value, type) {
         //gdo.consoleOut(".Maps",2, "Executing: " + obj + "." + func + "('" + value + "');");
         switch (type) {
             case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Boolean:
-                eval("" + obj + "." + func + "('" + value + "');");
+                eval("" + obj + "." + func + "(" + value + ");");
                 break
             case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Integer:
                 eval("" + obj + "." + func + "('" + parseInt(value) + "');");
