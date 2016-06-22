@@ -1,5 +1,6 @@
 ﻿var opt;
 var prop;
+var x;
 
 gdo.net.app["Maps"].optionConstructor = function (properties) {
     var options = {}
@@ -31,26 +32,11 @@ gdo.net.app["Maps"].optionChecker = function (properties) {
     return check;
 }
 
-gdo.net.app["Maps"].setExceptNull = function (obj, func, value, type) {
-    if (value != null) {
-        //gdo.consoleOut(".Maps",2, "Executing: " + obj + "." + func + "('" + value + "');");
-        switch (type) {
-            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Boolean:
-                eval("" + obj + "." + func + "(" + value + ");");
-                break
-            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Integer:
-                eval("" + obj + "." + func + "('" + parseInt(value) + "');");
-                break;
-            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Float:
-                eval("" + obj + "." + func + "(" + parseFloat(value) + ");");
-                break;
-            case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.String:
-                eval("" + obj + "." + func + "('" + value + "');");
-                break;
-                break;
-            default:
-                break;
-        }
+gdo.net.app["Maps"].setExceptNull = function (obj, func, value) {
+    if (value != null && value != 'undefined') {
+        //gdo.consoleOut(".Maps",2, "Executing: " + obj + "." + func + "(" + value + ");");
+        var temp = value;
+        eval("" + obj + "." + func + "(temp);");
     }
 }
 
@@ -69,6 +55,51 @@ gdo.net.app["Maps"].VARIABLE_TYPES_ENUM = {
     String: 3,
 };
 
+gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, varType) {
+    switch (paramType) {
+        case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Variable:
+            switch (varType) {
+                case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Boolean:
+                    return object.Value;
+                    break
+                case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Integer:
+                    return parseInt(object.Value);
+                    break;
+                case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Float:
+                    return parseFloat(object.Value);
+                    break;
+                case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.String:
+                    return "" + object.Value;
+                    break;
+                default:
+                    break;
+            }
+            break
+        case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Array:
+            return object.Values;
+            break;
+        case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Function:
+            return eval(object.Value);
+            break;
+        case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.JSON:
+            return JSON.parse(object.Value);
+            break;
+        case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
+            if (object.Value >= 0) {
+                return eval("gdo.net.instance[" + instanceId + "]." + object.LinkedParameter + "[" + object.Value + "]");
+            }
+            break;
+        case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Global:
+            if (object.Value >= 0) {
+                return eval("new " + object.Value + "()");
+            }
+            break;
+        default:
+            gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + object.ParameterType + ' for ' + object.Name + 's property ' + object.PropertyName);
+            break;
+    }
+}
+
 gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ': ' + deserializedObject.Id.Value);
     if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
@@ -83,35 +114,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                 continue;
             }
             if (deserializedObject[index].IsProperty && !deserializedObject[index].IsNull) {
-                switch (deserializedObject[index].ParameterType) {
-                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Variable:
-                        properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Value]);
-                        break
-                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Array:
-                        properties.push([deserializedObject[index].PropertyName, deserializedObject[index].Values]);
-                        break;
-                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Function:
-                        properties.push([deserializedObject[index].PropertyName, eval(deserializedObject[index].Value)]);
-                        break;
-                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.JSON:
-                        properties.push([deserializedObject[index].PropertyName, JSON.parse(deserializedObject[index].Value)]);
-                        break;
-                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
-                        if (deserializedObject[index].Value >= 0) {
-                            var obj = eval("gdo.net.instance[" + instanceId + "]." + deserializedObject[index].LinkedParameter + "[" + deserializedObject[index].Value + "]");
-                            properties.push([deserializedObject[index].PropertyName, obj]);
-                        }
-                        break;
-                    case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Global:
-                        if (deserializedObject[index].Value >= 0) {
-                            var obj = eval("new " + deserializedObject[index].Value + "()");
-                            properties.push([deserializedObject[index].PropertyName, obj]);
-                        }
-                        break;
-                    default:
-                        gdo.consoleOut('.Maps', 5, 'Instance ' + instanceId + ': Invalid Property Type:' + deserializedObject[index].ParameterType + ' for ' + deserializedObject.Name + 's property ' + deserializedObject[index].PropertyName);
-                        break;
-                }
+                properties.push([deserializedObject[index].PropertyName, gdo.net.app["Maps"].prepareProperty(instanceId, deserializedObject[index], deserializedObject[index].ParameterType, deserializedObject[index].VariableType)]);
             }
         }
         options = gdo.net.app["Maps"].optionConstructor(properties);
@@ -135,13 +138,14 @@ gdo.net.app["Maps"].updateObject = function (instanceId, objectType, objectId, d
         if (!deserializedObject.hasOwnProperty((index))) {
             continue;
         }
-        if (deserializedObject[index].IsProperty && deserializedObject[index].IsEditable && deserializedObject[index].Priority >= 0) {
-            gdo.net.app["Maps"].setExceptNull("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + deserializedObject.Id.Value + "]", ("set" + upperCaseFirstLetter(deserializedObject[index].Name)), deserializedObject[index].Value, deserializedObject[index].VariableType);
+        if (deserializedObject[index].IsProperty && deserializedObject[index].IsEditable && deserializedObject[index].Priority >= 0 && !deserializedObject[index].IsNull) {
+            gdo.net.app["Maps"].setExceptNull("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + deserializedObject.Id.Value + "]", ("set" + upperCaseFirstLetter(deserializedObject[index].PropertyName)), gdo.net.app["Maps"].prepareProperty(instanceId, deserializedObject[index], deserializedObject[index].ParameterType, deserializedObject[index].VariableType));
         }
     }
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.app["Maps"].drawListTables(instanceId);
     }
+    gdo.net.app["Maps"].refreshMap(instanceId);
 }
 
 gdo.net.app["Maps"].requestObject = function (instanceId, objectType, objectId) {
@@ -155,6 +159,7 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
     if (isNew) {
         if (objectType == 'layer') {
             properties.ZIndex.Value = gdo.net.instance[instanceId].layers.length;
+            properties.ZIndex.IsNull = false;
             gdo.net.app['Maps'].server.addLayer(instanceId, properties.ClassName.Value, JSON.stringify(properties).replace(/'/g, "\\'"));
         } else {
             eval("gdo.net.app['Maps'].server.add" + upperCaseFirstLetter(objectType) + "(" + instanceId + ",'" + properties.ClassName.Value + "','" + JSON.stringify(properties).replace(/'/g, "\\'") + "');");
@@ -170,12 +175,21 @@ gdo.net.app["Maps"].removeObject = function (instanceId, objectType, objectId) {
         eval("gdo.net.instance[" + instanceId + "].map.removeLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])");
     }
 
-    eval("gdo.net.instance[" + instanceId + "]." + objectType + "s.splice(" + objectId + ",1);");
+    //eval("gdo.net.instance[" + instanceId + "]." + objectType + "s.splice(" + objectId + ",1);");
+    eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = null");
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         if (gdo.net.app["Maps"].selected[objectType] == objectId) {
             gdo.net.app["Maps"].selected[objectType] = -1;
         }
         gdo.net.app["Maps"].drawListTables(instanceId);
+    }
+}
+
+gdo.net.app["Maps"].refreshMap = function (instanceId) {
+    for (var i in gdo.net.instance[instanceId].layers) {
+        if (gdo.net.instance[instanceId].layers.hasOwnProperty(i) && gdo.net.instance[instanceId].layers[i] != null && typeof gdo.net.instance[instanceId].layers[i] != "undefined") {
+            gdo.net.instance[instanceId].layers[i].changed();
+        }
     }
 }

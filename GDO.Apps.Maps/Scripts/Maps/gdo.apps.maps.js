@@ -183,7 +183,7 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
        new ol.interaction.DragZoom({ duration: 0 })
         ])
     });
-    gdo.net.instance[instanceId].positionFeature = new ol.Feature();
+    /*gdo.net.instance[instanceId].positionFeature = new ol.Feature();
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         gdo.net.instance[instanceId].positionFeature.setStyle(new ol.style.Style({
             image: new ol.style.Circle({
@@ -218,10 +218,10 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
         source: new ol.source.Vector({
             features: [gdo.net.instance[instanceId].positionFeature]
         })
-    });
+    });*/
 
     gdo.net.instance[instanceId].map = map;
-    gdo.net.app["Maps"].server.requestMarkerPosition(instanceId);
+    //gdo.net.app["Maps"].server.requestMarkerPosition(instanceId);
     gdo.net.app["Maps"].server.requestPosition(instanceId);
 }
 
@@ -453,8 +453,8 @@ gdo.net.app["Maps"].searchGeoCode = function (instanceId, address) {
             setTimeout(function () {
                 gdo.consoleOut(".Maps", 4, centerCoordinate);
                 gdo.net.app["Maps"].uploadPosition(instanceId);
-                gdo.net.app["Maps"].displayPositionMarker(instanceId, centerCoordinate);
-                gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, centerCoordinate);
+                //gdo.net.app["Maps"].displayPositionMarker(instanceId, centerCoordinate);
+                //gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, centerCoordinate);
             }, 70);
 
         } else {
@@ -465,12 +465,12 @@ gdo.net.app["Maps"].searchGeoCode = function (instanceId, address) {
 }
 
 gdo.net.app["Maps"].displayPositionMarker = function (instanceId, coordinates) {
-    gdo.net.instance[instanceId].positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+    //gdo.net.instance[instanceId].positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
 }
 
 gdo.net.app["Maps"].clearPositionMarker = function (instanceId) {
-    gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, null);
-    gdo.net.app["Maps"].displayPositionMarker(instanceId, null);
+    //gdo.net.app["Maps"].server.uploadMarkerPosition(instanceId, null);
+    //gdo.net.app["Maps"].displayPositionMarker(instanceId, null);
 }
 
 gdo.net.app["Maps"].clearInput = function () {

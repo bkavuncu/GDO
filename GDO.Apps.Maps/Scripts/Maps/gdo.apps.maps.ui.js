@@ -40,20 +40,30 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
     var j = 0;
 
     var arr = [];
-    arr = eval("gdo.net.instance[instanceId]." + tab + "s");
+    arr = jQuery.extend(true, [], eval("gdo.net.instance[instanceId]." + tab + "s"));;
 
     if (gdo.net.app["Maps"].selected[tab] >= 0) {
-        $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[gdo.net.app["Maps"].selected[tab]].properties.Name.Value + " (" + arr[gdo.net.app["Maps"].selected[tab]].properties.Id.Value + ")");
-    }
-    if (tab == "layer") {
-        var temp = [];
-        var j = 0;
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] != null && arr[i] != 'undefined') {
-                temp[arr.length - arr[i].properties.ZIndex.Value - 1] = arr[i];
+        for (var i in arr) {
+            if (arr.hasOwnProperty(i) && arr[i] != null && typeof arr[i] != "undefined") {
+                if (arr[i].properties.Id.Value == gdo.net.app["Maps"].selected[tab]) {
+                    $("iframe").contents().find("#" + tab + "_label").empty().append("&nbsp;&nbsp;" + arr[i].properties.Name.Value + " (" + arr[i].properties.Id.Value + ")");
+                }
             }
         }
-        arr = temp;
+
+    }
+    if (tab == "layer") {
+        arr.sort(function (a, b) {
+            if (a == null && b == null) {
+                return 0;
+            } else if (a == null) {
+                return 100;
+            } else if (b == null) {
+                return -100;
+            } else {
+                return b.properties.ZIndex.Value - a.properties.ZIndex.Value;
+            }
+        });
     }
     for (var i in arr) {
         if (arr.hasOwnProperty(i) && arr[i] != null && typeof arr[i] != "undefined") {
@@ -527,7 +537,9 @@ gdo.net.app["Maps"].drawCreateTable = function (instanceId, tab, object) {
 }
 
 gdo.net.app["Maps"].drawPropertyTable = function (instanceId, tab, object) {
-    gdo.net.app["Maps"].drawTable(instanceId, tab, object, false);
+    if (object != null) {
+        gdo.net.app["Maps"].drawTable(instanceId, tab, object, false);
+    }
 }
 
 gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
@@ -700,8 +712,9 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
 
 gdo.net.app["Maps"].submitRemoveButton = function (instanceId, tab) {
     if (gdo.net.app["Maps"].selected[tab] >= 0) {
-        eval("gdo.net.app['Maps'].server.remove" + upperCaseFirstLetter(tab) + "(" + instanceId + ", gdo.net.app['Maps'].selected['" + tab + "']);");
+        var temp = gdo.net.app["Maps"].selected[tab];
         gdo.net.app["Maps"].selected[tab] = -1;
+        eval("gdo.net.app['Maps'].server.remove" + upperCaseFirstLetter(tab) + "(" + instanceId + ", temp);");
     }
 }
 
@@ -733,35 +746,52 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     $("iframe").contents().find(".layer-up-button")
         .unbind()
         .click(function () {
-            if (gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value < gdo.net.instance[instanceId].layers.length - 1) {
-                for (var i = 0; i < gdo.net.instance[instanceId].layers.length; i++) {
-                    if (gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value == gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value + 1) {
-                        gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value--;
-                        gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[i].properties.Id.Value, gdo.net.instance[instanceId].layers[i].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[i].properties).replace(/'/g, "\\'"));
+            if (gdo.net.app["Maps"].selected["layer"] >= 0) {
+                var tempVal = 1000;
+                var tempIndex = -1;
+
+                for (var i in gdo.net.instance[instanceId].layers) {
+                    if (gdo.net.instance[instanceId].layers.hasOwnProperty(i) && gdo.net.instance[instanceId].layers[i] != null && typeof gdo.net.instance[instanceId].layers[i] != "undefined") {
+                        if (gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value > gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value && gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value < tempVal) {
+                            tempVal = gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value;
+                            tempIndex = i;
+                        }
                     }
                 }
-                gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value++;
-                gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties).replace(/'/g, "\\'"));
-                gdo.net.app["Maps"].drawListTables(instanceId);
+                if (tempIndex > -1) {
+                    gdo.net.instance[instanceId].layers[tempIndex].properties.ZIndex.Value = gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value;
+                    gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value = tempVal;
+                    gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties).replace(/'/g, "\\'"));
+                    gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[tempIndex].properties.Id.Value, gdo.net.instance[instanceId].layers[tempIndex].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[tempIndex].properties).replace(/'/g, "\\'"));
+                }
+                //gdo.net.app["Maps"].drawListTables(instanceId);
             }
         });
 
     $("iframe").contents().find(".layer-down-button")
         .unbind()
         .click(function () {
-            if (gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value > 0) {
-
-                for (var i = 0; i < gdo.net.instance[instanceId].layers.length; i++) {
-                    if (gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value == gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value - 1) {
-                        gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value++;
-                        gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[i].properties.Id.Value, gdo.net.instance[instanceId].layers[i].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[i].properties).replace(/'/g, "\\'"));
+            if (gdo.net.app["Maps"].selected["layer"] >= 0) {
+                var tempVal = -1;
+                var tempIndex = -1;
+                if (gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value > 0) {
+                    for (var i in gdo.net.instance[instanceId].layers) {
+                        if (gdo.net.instance[instanceId].layers.hasOwnProperty(i) && gdo.net.instance[instanceId].layers[i] != null && typeof gdo.net.instance[instanceId].layers[i] != "undefined") {
+                            if (gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value < gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value && gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value > tempVal) {
+                                tempVal = gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value;
+                                tempIndex = i;
+                            }
+                        }
+                    }
+                    if (tempIndex > -1) {
+                        gdo.net.instance[instanceId].layers[tempIndex].properties.ZIndex.Value = gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value;
+                        gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value = tempVal;
+                        gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties).replace(/'/g, "\\'"));
+                        gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[tempIndex].properties.Id.Value, gdo.net.instance[instanceId].layers[tempIndex].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[tempIndex].properties).replace(/'/g, "\\'"));
+                        //gdo.net.app["Maps"].drawListTables(instanceId);
                     }
                 }
-                gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ZIndex.Value--;
-                gdo.net.app['Maps'].server.updateLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.ClassName.Value, JSON.stringify(gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties).replace(/'/g, "\\'"));
-                gdo.net.app["Maps"].drawListTables(instanceId);
             }
-
         });
 
     $("iframe").contents().find(".layer-visible-button")
@@ -879,8 +909,8 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
         });
 
     $("iframe").contents().find("#data-next-button")
-   .unbind()
-   .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "data"); });
+    .unbind()
+    .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "data"); });
 
     $("iframe").contents().find("#data-create-button")
        .unbind()
@@ -905,8 +935,8 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
         });
 
     $("iframe").contents().find("#animation-next-button")
-   .unbind()
-   .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "animation"); });
+    .unbind()
+    .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "animation"); });
 
     $("iframe").contents().find("#animation-create-button")
        .unbind()
@@ -931,17 +961,17 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
         });
 
     $("iframe").contents().find("#view-next-button")
-   .unbind()
-   .click(function () {
-       gdo.net.app["Maps"].submitNextButton(instanceId, "view");
-       gdo.net.instance[instanceId].temp["view"].properties.Center.Values = gdo.net.instance[instanceId].position.Center;
-       gdo.net.instance[instanceId].temp["view"].properties.TopLeft.Values = gdo.net.instance[instanceId].position.TopLeft;
-       gdo.net.instance[instanceId].temp["view"].properties.BottomRight.Values = gdo.net.instance[instanceId].position.BottomRight;
-       gdo.net.instance[instanceId].temp["view"].properties.Resolution.Value = gdo.net.instance[instanceId].position.Resolution;
-       gdo.net.instance[instanceId].temp["view"].properties.Width.Value = gdo.net.instance[instanceId].position.Width;
-       gdo.net.instance[instanceId].temp["view"].properties.Height.Value = gdo.net.instance[instanceId].position.Height;
-       gdo.net.app["Maps"].drawCreateTable(instanceId, "view", gdo.net.instance[instanceId].temp["view"]);
-   });
+    .unbind()
+    .click(function () {
+        gdo.net.app["Maps"].submitNextButton(instanceId, "view");
+        gdo.net.instance[instanceId].temp["view"].properties.Center.Values = gdo.net.instance[instanceId].position.Center;
+        gdo.net.instance[instanceId].temp["view"].properties.TopLeft.Values = gdo.net.instance[instanceId].position.TopLeft;
+        gdo.net.instance[instanceId].temp["view"].properties.BottomRight.Values = gdo.net.instance[instanceId].position.BottomRight;
+        gdo.net.instance[instanceId].temp["view"].properties.Resolution.Value = gdo.net.instance[instanceId].position.Resolution;
+        gdo.net.instance[instanceId].temp["view"].properties.Width.Value = gdo.net.instance[instanceId].position.Width;
+        gdo.net.instance[instanceId].temp["view"].properties.Height.Value = gdo.net.instance[instanceId].position.Height;
+        gdo.net.app["Maps"].drawCreateTable(instanceId, "view", gdo.net.instance[instanceId].temp["view"]);
+    });
 
     $("iframe").contents().find("#view-create-button")
        .unbind()
@@ -974,21 +1004,21 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
         });
 
     $("iframe").contents().find("#configuration-next-button")
-   .unbind()
-   .click(function () {
-       gdo.net.instance[instanceId].temp["configuration"] = {};
-       var currentConfig = 0;
-       for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
-           if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
-               currentConfig = i;
-           }
-       }
-       gdo.net.instance[instanceId].temp["configuration"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].configurations[currentConfig].properties);
-       gdo.net.instance[instanceId].temp["configuration"].properties.Name.Value = $("iframe").contents().find("#configuration_name_input").val();
-       gdo.net.app["Maps"].drawCreateTable(instanceId, "configuration", gdo.net.instance[instanceId].temp["configuration"]);
-       $("iframe").contents().find("#new-configuration-input").modal('show');
-       $(".modal-backdrop").css("display", "none");
-   });
+    .unbind()
+    .click(function () {
+        gdo.net.instance[instanceId].temp["configuration"] = {};
+        var currentConfig = 0;
+        for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+            if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                currentConfig = i;
+            }
+        }
+        gdo.net.instance[instanceId].temp["configuration"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].configurations[currentConfig].properties);
+        gdo.net.instance[instanceId].temp["configuration"].properties.Name.Value = $("iframe").contents().find("#configuration_name_input").val();
+        gdo.net.app["Maps"].drawCreateTable(instanceId, "configuration", gdo.net.instance[instanceId].temp["configuration"]);
+        $("iframe").contents().find("#new-configuration-input").modal('show');
+        $(".modal-backdrop").css("display", "none");
+    });
 
     $("iframe").contents().find("#configuration-create-button")
        .unbind()
