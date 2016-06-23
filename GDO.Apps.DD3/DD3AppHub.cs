@@ -7,6 +7,7 @@ using GDO.Core;
 using System.ComponentModel.Composition;
 using GDO.Core.Apps;
 using System.Web;
+using GDO.Apps.DD3.Domain;
 
 
 namespace GDO.Apps.DD3
