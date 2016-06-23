@@ -15,7 +15,6 @@ namespace GDO.Apps.Maps.Core
         public ListParameter Styles { get; set; }
         public ListParameter Formats { get; set; }
         public ListParameter Datas { get; set; }
-        public ListParameter Animations { get; set; }
         public ListParameter Views { get; set; }
 
         public Configuration() : base()
@@ -89,19 +88,6 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Data",
                 Description = "List of Data Sources",
-                Priority = (int)GDO.Utility.Priorities.System,
-                IsEditable = false,
-                IsVisible = true,
-                IsProperty = false,
-                Length = 1,
-                DefaultValues = new string[1],
-                Values = new string[1],
-            };
-
-            Animations = new ListParameter
-            {
-                Name = "Animation",
-                Description = "List of Animations",
                 Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,

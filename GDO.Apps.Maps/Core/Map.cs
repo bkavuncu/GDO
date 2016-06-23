@@ -11,7 +11,6 @@ namespace GDO.Apps.Maps.Core
     {
         public Position Position { get; set; }
         public View[] Views { get; set; }
-        public Animation[] Animations { get; set; }
         public Data[] Datas { get; set; }
         public Format[] Formats { get; set; }
         public Style[] Styles { get; set; }
@@ -19,11 +18,10 @@ namespace GDO.Apps.Maps.Core
         public Layer[] Layers { get; set; }
 
 
-        public Map(Position position, View[] views, Animation[] animations, Data[] datas, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
+        public Map(Position position, View[] views,  Data[] datas, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
         {
             Position = position;
             Views = views;
-            Animations = animations;
             Datas = datas;
             Formats = formats;
             Styles = styles;

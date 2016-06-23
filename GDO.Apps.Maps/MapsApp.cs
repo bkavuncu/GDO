@@ -37,7 +37,6 @@ namespace GDO.Apps.Maps
         public GenericDictionary<Style> Styles { get; set; }
         public GenericDictionary<Format> Formats { get; set; }
         public GenericDictionary<Data> Datas { get; set; }
-        public GenericDictionary<Animation> Animations { get; set; }
         public GenericDictionary<Core.Configuration> Configurations { get; set; }
 
 
@@ -51,7 +50,6 @@ namespace GDO.Apps.Maps
             Styles = new GenericDictionary<Style>();
             Formats = new GenericDictionary<Format>();
             Datas = new GenericDictionary<Data>();
-            Animations = new GenericDictionary<Animation>();
             Configurations = new GenericDictionary<Core.Configuration>();
 
             Views.Init();
@@ -60,7 +58,6 @@ namespace GDO.Apps.Maps
             Styles.Init();
             Formats.Init();
             Datas.Init();
-            Animations.Init();
             Configurations.Init();
 
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
@@ -89,10 +86,6 @@ namespace GDO.Apps.Maps
             {
                 Datas.Add((int)data.Id.Value, data);
             }
-            foreach (Animation animation in Map.Animations)
-            {
-                Animations.Add((int)animation.Id.Value, animation);
-            }
             ExtractConfigurations();
 
             Position = Map.Position;
@@ -107,7 +100,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(Position, Views.ToArray(), Animations.ToArray(), Datas.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(Position, Views.ToArray(), Datas.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
@@ -172,14 +165,6 @@ namespace GDO.Apps.Maps
                 }
                 configuration.Datas.Values = tempDatas;
                 configuration.Datas.Length = tempDatas.Length;
-
-                string[] tempAnimations = new string[tempMap.Animations.Length];
-                for (int i = 0; i < tempMap.Animations.Length; i++)
-                {
-                    tempAnimations[i] = tempMap.Animations[i].Name.Value + " (" + tempMap.Animations[i].ClassName.Value + ")";
-                }
-                configuration.Animations.Values = tempAnimations;
-                configuration.Animations.Length = tempAnimations.Length;
 
                 string[] tempViews = new string[tempMap.Views.Length];
                 for (int i = 0; i < tempMap.Views.Length; i++)
@@ -763,7 +748,6 @@ namespace GDO.Apps.Maps
 
         public Map CreateEmptyTemplate()
         {
-            List<Animation> animations = new List<Animation>();
             List<Data> datas = new List<Data>();
             List<Format> formats = new List<Format>();
             List<Style> styles = new List<Style>();
@@ -784,11 +768,9 @@ namespace GDO.Apps.Maps
 
 
             //Add Data to Template
-            DynamicFile dynamicFile = new DynamicFile();
             LocalFile localFile = new LocalFile();
             RemoteFile remoteFile = new RemoteFile();
 
-            datas.Add(dynamicFile);
             datas.Add(localFile);
             datas.Add(remoteFile);
 
@@ -877,7 +859,7 @@ namespace GDO.Apps.Maps
             layers.Add(dynamicVectorLayer);
             layers.Add(staticVectorLayer);
 
-            Map map = new Map(position, views.ToArray(), animations.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            Map map = new Map(position, views.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;
         }
 

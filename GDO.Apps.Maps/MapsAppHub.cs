@@ -1164,9 +1164,6 @@ namespace GDO.Apps.Maps
 
                     switch (className)
                     {
-                        case "DynamicFile":
-                            dataId = maps.AddData<DynamicFile>(JsonConvert.DeserializeObject<DynamicFile>(serializedData));
-                            break;
                         case "LocalFile":
                             dataId = maps.AddData<LocalFile>(JsonConvert.DeserializeObject<LocalFile>(serializedData));
                             break;
@@ -1194,9 +1191,6 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     switch (className)
                     {
-                        case "DynamicFile":
-                            maps.UpdateData<DynamicFile>(dataId, JsonConvert.DeserializeObject<DynamicFile>(serializedData));
-                            break;
                         case "LocalFile":
                             maps.UpdateData<LocalFile>(dataId, JsonConvert.DeserializeObject<LocalFile>(serializedData));
                             break;

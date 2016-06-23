@@ -9,7 +9,6 @@ gdo.net.app["Maps"].selected["source"] = -1;
 gdo.net.app["Maps"].selected["style"] = -1;
 gdo.net.app["Maps"].selected["format"] = -1;
 gdo.net.app["Maps"].selected["data"] = -1;
-gdo.net.app["Maps"].selected["animation"] = -1;
 gdo.net.app["Maps"].selected["view"] = -1;
 gdo.net.app["Maps"].selected["configuration"] = -1;
 
@@ -21,7 +20,6 @@ gdo.net.app["Maps"].drawListTables = function (instanceId) {
         gdo.net.app["Maps"].drawListTable(instanceId, "style");
         gdo.net.app["Maps"].drawListTable(instanceId, "format");
         gdo.net.app["Maps"].drawListTable(instanceId, "data");
-        gdo.net.app["Maps"].drawListTable(instanceId, "animation");
         gdo.net.app["Maps"].drawListTable(instanceId, "view");
         gdo.net.app["Maps"].drawListTable(instanceId, "configuration");
     }
@@ -603,7 +601,7 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
 }
 gdo.net.app["Maps"].extractTypes = function (instanceId) {
     var className;
-    var arr = ["layer", "source", "style", "format", "data", "animation"];
+    var arr = ["layer", "source", "style", "format", "data"];
     for (var i in arr) {
         if (!arr.hasOwnProperty((i))) {
             continue;
@@ -931,32 +929,6 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
             gdo.net.instance[instanceId].temp["data"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].datas[gdo.net.app["Maps"].selected["data"]].properties);
             gdo.net.app["Maps"].drawCreateTable(instanceId, "data", gdo.net.instance[instanceId].temp["data"]);
             $("iframe").contents().find("#new-data-input").modal('show');
-            $(".modal-backdrop").css("display", "none");
-        });
-
-    $("iframe").contents().find("#animation-next-button")
-    .unbind()
-    .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "animation"); });
-
-    $("iframe").contents().find("#animation-create-button")
-       .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "animation", true); });
-
-    $("iframe").contents().find(".animation-remove-button")
-        .unbind()
-       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "animation"); });
-
-    $("iframe").contents().find(".animation-save-button")
-        .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "animation", false); });
-
-    $("iframe").contents().find(".animation-saveas-button")
-        .unbind()
-        .click(function () {
-            gdo.net.instance[instanceId].temp["animation"] = {};
-            gdo.net.instance[instanceId].temp["animation"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].animations[gdo.net.app["Maps"].selected["animation"]].properties);
-            gdo.net.app["Maps"].drawCreateTable(instanceId, "animation", gdo.net.instance[instanceId].temp["animation"]);
-            $("iframe").contents().find("#new-animation-input").modal('show');
             $(".modal-backdrop").css("display", "none");
         });
 
