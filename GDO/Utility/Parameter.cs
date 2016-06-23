@@ -134,6 +134,7 @@ namespace GDO.Utility
     {
         public string Value { get; set; }
         public string DefaultValue { get; set; }
+        public bool IsExtractable = false;
         public new int InputType = (int)InputTypes.FileInput;
         public new int ParameterType = (int)ParameterTypes.Variable;
         public new int VariableType = (int)VariableTypes.String;
