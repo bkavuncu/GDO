@@ -25,6 +25,7 @@ namespace GDO.Utility
         TextArea = 14, //String appears as a text area input
         LinkDataList = 15, //Datalist where values read dynamically
         FileInput = 16, //Datalist where values read dynamically
+        Time = 17, //Time Parameter
     }
 
     public enum ParameterTypes
@@ -35,6 +36,7 @@ namespace GDO.Utility
         JSON = 3,
         Object = 4,
         Global = 5,
+        Time = 6,
     }
 
     public enum VariableTypes
@@ -237,6 +239,20 @@ namespace GDO.Utility
         public new int InputType = (int)InputTypes.ColorArray;
         public new int ParameterType = (int)ParameterTypes.Array;
         public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class TimeParameter : Parameter
+    {
+        public int? Year { get; set; }
+        public int? Month { get; set; }
+        public int? Day { get; set; }
+        public int? Hour { get; set; }
+        public int? Minute { get; set; }
+        public int? Second { get; set; }
+
+        public new int InputType = (int)InputTypes.Time;
+        public new int ParameterType = (int)ParameterTypes.Time;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     //How to use:

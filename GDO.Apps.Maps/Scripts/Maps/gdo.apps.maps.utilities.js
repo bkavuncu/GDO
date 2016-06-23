@@ -76,7 +76,7 @@ gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, v
             }
             break
         case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Array:
-            return object.Values;
+            return object.Values.$values;
             break;
         case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Function:
             return eval(object.Value);
@@ -158,7 +158,15 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
     var properties = object.properties;
     if (isNew) {
         if (objectType == 'layer') {
-            properties.ZIndex.Value = gdo.net.instance[instanceId].layers.length;
+            var temp = 0;
+            for (var i in gdo.net.instance[instanceId].layers) {
+                if (gdo.net.instance[instanceId].layers.hasOwnProperty(i) && gdo.net.instance[instanceId].layers[i] != null && typeof gdo.net.instance[instanceId].layers[i] != "undefined") {
+                    if (gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value > temp) {
+                        temp = gdo.net.instance[instanceId].layers[i].properties.ZIndex.Value;
+                    }
+                }
+            }
+            properties.ZIndex.Value = temp+1;
             properties.ZIndex.IsNull = false;
             gdo.net.app['Maps'].server.addLayer(instanceId, properties.ClassName.Value, JSON.stringify(properties).replace(/'/g, "\\'"));
         } else {

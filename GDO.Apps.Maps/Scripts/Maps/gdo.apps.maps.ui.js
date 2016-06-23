@@ -37,8 +37,14 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
 
     var j = 0;
 
+    var collection = eval("gdo.net.instance[instanceId]." + tab + "s");
     var arr = [];
-    arr = jQuery.extend(true, [], eval("gdo.net.instance[instanceId]." + tab + "s"));;
+    for (var i in collection) {
+        if (collection.hasOwnProperty(i) && collection[i] != null && typeof collection[i] != "undefined") {
+            arr[i] = {};
+            arr[i].properties = jQuery.extend(true, {}, collection[i].properties);;
+        }
+    }
 
     if (gdo.net.app["Maps"].selected[tab] >= 0) {
         for (var i in arr) {
