@@ -125,11 +125,11 @@ var initDD3App = function () {
                 if (data[0].hasOwnProperty(p))
                     prop.push(p);
 
-            prop.forEach(function (p) {
+            prop.forEach(function(p) {
                 dimensions[p] = {};
                 dimensions[p].min = d3.min(data, utils.d(p, true));
                 dimensions[p].max = d3.max(data, utils.d(p, true));
-            })
+            });
 
             dimensions.length = data.length;
 
@@ -164,7 +164,7 @@ var initDD3App = function () {
                     } else {
                         for (var k in d) {
                             if (d.hasOwnProperty(k))
-                                obj[k] = d[k]
+                                obj[k] = d[k];
                         }
                     }
 
@@ -196,7 +196,7 @@ var initDD3App = function () {
                     } else {
                         for (var k in d) {
                             if (d.hasOwnProperty(k))
-                                obj[k] = d[k]
+                                obj[k] = d[k];
                         }
                     }
 
@@ -259,7 +259,7 @@ var initDD3App = function () {
                 } else {
                     for (var k in d) {
                         if (d.hasOwnProperty(k))
-                            obj[k] = d[k]
+                            obj[k] = d[k];
                     }
                 }
 

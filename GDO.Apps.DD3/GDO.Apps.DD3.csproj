@@ -115,9 +115,18 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\BarDataRequest.cs" />
+    <Compile Include="Domain\BrowserBroadcastInfo.cs" />
+    <Compile Include="Domain\BrowserInfo.cs" />
+    <Compile Include="Domain\ControllerMessage.cs" />
+    <Compile Include="Domain\Data.cs" />
+    <Compile Include="Domain\DataRequest.cs" />
     <Compile Include="DD3App.cs" />
     <Compile Include="DD3AppHub.cs" />
+    <Compile Include="Domain\PathDataRequest.cs" />
+    <Compile Include="Domain\PointDataRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Domain\RemoteDataRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Data\FileMapTube.txt" />
