@@ -95,6 +95,45 @@ namespace GDO.Apps.Graph
             }
         }
 
+        public void setAllNodesSize(int instanceId, int nodeSize)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Changing size of nodes.");
+                    Clients.Group("" + instanceId).setNodeSize(nodeSize);
+                    Clients.Caller.setMessage("Nodes are changing size.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void setOriginalSize(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Sizing nodes to their original size.");
+                    Clients.Group("" + instanceId).setNodesOriginalSize();
+                    //Clients.Group("" + instanceId).hideNodes();
+                    //Clients.Group("" + instanceId).renderNodes();
+                    Clients.Caller.setMessage("Nodes are changing size.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
 
         public void HideLinks(int instanceId)
         {

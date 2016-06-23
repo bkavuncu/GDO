@@ -10,7 +10,7 @@
     <title></title>
     <style>
         body {
-            background: grey;
+            background: black;
             color: #FFF;
             font-family: helvetica;
             font-size: 70%;
@@ -570,18 +570,42 @@
 	                    height = dd3.cave.svgHeight,
 	                    bwidth = dd3.browser.svgWidth,
 	                    bheight = dd3.browser.svgHeight;
+                    var max_y = 0;
+                    var current_y = 0;
+                    var last_row = 0;
 
-
-                    orderController.orders['createRect'] = function (id, image) {
+                    orderController.orders['createRect'] = function (id, image, w_img, h_img) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
                         var col = (id_int - 1) % 5, row = Math.floor((id_int - 1) / 5);
                         var offx = (((2 * width / 10) * col) % width) + col;
                         var offy = (((2 * height / 10) * row) % height) + row;
-                        rectG.attr("transform", "translate(" + [offx, offy] + ")");
                         //*
                         var inner_rect = rectG.append('rect');
-                        var w = (2 * width / 10) - 2, h = (2 * height / 10) - 2;
+                        var w1 = (2 * width / 10) - 2;
+                        var w = w_img < w1 ? w_img : w1;
+                        var h1 = (2 * height / 10) - 2, h2 = w * (h_img / w_img);
+                        var h = h2;
+
+                       
+
+                        if (last_row !== row) { // Just changed of row ? 
+                            current_y = max_y; //set the offset to lower Y
+                            max_y = 0;
+                            last_row = row;
+                            if (row % 5 === 0)
+                                current_y = row;
+                        }
+
+                        max_y = max_y > (offy + h1 + row) ? max_y : (offy + h1 + row); //Get max from static layout
+                        max_y = max_y > (offy + h2 + row) ? max_y : (offy + h2 + row); //Get max from static layout with image full height
+                        max_y = max_y > (current_y + h1 + row) ? max_y : (current_y + h1 + row); //Get max from dynamic layout with static image height
+                        max_y = max_y > (current_y + h2 + row) ? max_y : (current_y + h2 + row); //Get max from dynamic layout with image full height
+
+                        rectG.attr("transform", "translate(" + [offx, current_y] + ")");
+
+                       
+
                         inner_rect.attr("x", 0)
                             .attr("y", 0)
                             .attr("width", w)
@@ -593,9 +617,9 @@
                             .attr("xlink:href", image)
                             .attr("x", 0)
                             .attr("y", 0)
-                            .attr("preserveAspectRatio", "none")
-                            .attr("width", inner_rect.attr("width"))
-                            .attr("height", inner_rect.attr("height"));
+                            //.attr("preserveAspectRatio", "none")
+                            .attr("width", w)
+                            .attr("height", h);
                     };
 
                     orderController.orders['moveRect'] = function (id, x, y) {

@@ -28,11 +28,12 @@ namespace GDO
         {
             log4net.Config.XmlConfigurator.Configure();
             Log.Info("Successfully started logging");
-            try {
+            try
+            {
                 Cave.Init();
                 var builder = new ContainerBuilder();
                 var config = new HubConfiguration();
-                GlobalHost.DependencyResolver.Register(typeof (IAssemblyLocator), () => new AssemblyLocator());
+                GlobalHost.DependencyResolver.Register(typeof(IAssemblyLocator), () => new AssemblyLocator());
                 builder.RegisterType<AssemblyLocator>().As<IAssemblyLocator>().SingleInstance();
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
@@ -52,8 +53,9 @@ namespace GDO
                     map.RunSignalR(config);
                 });
             }
-            catch (Exception e) {
-                Log.Error("Failed to pass Startup ",e);
+            catch (Exception e)
+            {
+                Log.Error("Failed to pass Startup ", e);
             }
             Log.Info("Successfully started GDO");
         }
@@ -69,7 +71,7 @@ namespace GDO
 
         public IList<Assembly> GetAssemblies()
         {
-        IList<Assembly> assemblies = new List<Assembly>();
+            IList<Assembly> assemblies = new List<Assembly>();
             var catalog = new AggregateCatalog();
             string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
             foreach (String appDir in appDirs)
@@ -86,7 +88,7 @@ namespace GDO
                     Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
                     assemblies.Add(caveapp.GetType().Assembly);
                 }
-                else if(caveapp is IAdvancedAppHub)
+                else if (caveapp is IAdvancedAppHub)
                 {
                     Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IAdvancedAppHub)caveapp).SupportedApps);
                     assemblies.Add(caveapp.GetType().Assembly);
@@ -100,7 +102,7 @@ namespace GDO
             }
             foreach (var cavemodule in _cavemodules)
             {
-                Cave.RegisterModule(cavemodule.Name,  cavemodule.ModuleType);
+                Cave.RegisterModule(cavemodule.Name, cavemodule.ModuleType);
                 assemblies.Add(cavemodule.GetType().Assembly);
             }
             return assemblies;

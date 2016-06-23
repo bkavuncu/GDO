@@ -411,40 +411,46 @@
                 });
 
                 var createHostedRect = function(url) {
-                    id++;
-                    server.sendOrder(instanceId, order("createRect", ['d' + id, url]), false);
 
-                    //Custom offset that stays in bounds and translate image on x&y according to ID
-                    var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
-                    var offx = (((2 * wr / 10) * col) % wr) + col;
-                    var offy = (((2 * hr / 10) * row) % hr) + row;
-                    var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
-                    var r = rg.append("rect").attr("x", 0)
-                        .attr("y", 0)
-                        .attr("width", (2 * wr / 10) - 2)
-                        .attr("height", (2 * hr / 10) - 2)
-                        .attr("stroke", "black")
-                        .attr("fill", "#EEE")
-                        .call(drag, this)
-                        .on("click", function() {
-                            selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
-                            selected = this.parentElement.id;
-                            d3.select(this).style("fill", "#FDD1FD");
-                        });
+                    var that = this;
+                    var img = new Image();
+                    img.onload = function () {
+                        console.log(this.width + 'x' + this.height);
 
-                    rg.append("circle").attr("cx", wr * 2 / 10)
-                        .attr("cy", hr * 2 / 10)
-                        .attr("r", 20)
-                        .attr("stroke", "transparent")
-                        .attr("fill", "rgba(252,231,31,0.5)")
-                        .call(dragC, this);
+                        id++;
+                        server.sendOrder(instanceId, order("createRect", ['d' + id, url, this.width, this.height]), false);
+                        //Custom offset that stays in bounds and translate image on x&y according to ID
+                        var col = (id - 1) % 5, row = Math.floor((id - 1) / 5);
+                        var offx = (((2 * wr / 10) * col) % wr) + col;
+                        var offy = (((2 * hr / 10) * row) % hr) + row;
+                        var rg = g.append("g").attr("id", "d" + id).classed("r", true).attr("transform", "translate(" + [offx, offy] + ")");
+                        var r = rg.append("rect").attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", (2 * wr / 10) - 2)
+                            .attr("height", (2 * hr / 10) - 2)
+                            .attr("stroke", "black")
+                            .attr("fill", "#EEE")
+                            .call(drag, this)
+                            .on("click", function () {
+                                selected !== "" ? d3.select("#" + selected + " rect").style("fill", "#EEE") : false;
+                                selected = this.parentElement.id;
+                                d3.select(this).style("fill", "#FDD1FD");
+                            });
+
+                        rg.append("circle").attr("cx", wr * 2 / 10)
+                            .attr("cy", hr * 2 / 10)
+                            .attr("r", 20)
+                            .attr("stroke", "transparent")
+                            .attr("fill", "rgba(252,231,31,0.5)")
+                            .call(dragC, that);
+                    }
+                    img.src = url;
+
+                    
                 };
 
                 var createLocalRect = function(name, fileobj) {
                     id++;
-
-                    //server.uploadFile(fileobj);
-
                     server.sendOrder(instanceId, order("createRect", ['d' + id, "\\Web\\Images\\images\\" + name]), false);
 
                     //Custom offset that stays in bounds and translate image on x&y according to ID
@@ -612,7 +618,7 @@
                                 //Extract to hosted directory, overwrites
                                 entry.ExtractToFile(path + entry.Name, true);
                                 //Add to database.txt
-                                database.Add(entry.Name);
+                                database.Insert(0, entry.Name);
                             }
                         }
                     }
@@ -625,7 +631,7 @@
                     //Put on disk
                     file.SaveAs(path + filename);
                     //Add to database.txt
-                    database.Add(filename);
+                    database.Insert(0, filename);
                 }
                 else //Is not an Image
                 {
