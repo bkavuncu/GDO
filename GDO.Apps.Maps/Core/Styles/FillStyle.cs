@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services.Protocols;
+using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Styles
 {
     public class FillStyle : Core.Style
     {
-        public string Color { get; set; }
+        public StringParameter Color { get; set; }
 
-        new public void Init(string color)
+        public FillStyle()
         {
-            Color = color;
-            Prepare();
-        }
-        new public void Prepare()
-        {
-            base.Prepare();
-            AddtoEditables(() => Color);
-            ClassName = this.GetType().Name;
-        }
+            ClassName.Value = this.GetType().Name;
+            Type.Value = (int)StyleTypes.Fill;
 
-        new public void Modify(string color)
-        {
-            Color = color;
+            Color = new StringParameter
+            {
+                Name = "Color",
+                Description = "Color",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                VisualisationType = (int)GDO.Utility.VisualisationTypes.Color,
+                IsEditable = true,
+                IsVisible = true
+            };
         }
     }
 }

@@ -8,5 +8,10 @@ namespace GDO.Apps.Maps.Core.Formats
 {
     public class XMLFormat : Format
     {
+        public XMLFormat()
+        {
+            ClassName.Value = this.GetType().Name;
+            Type.Value = (int)FormatTypes.XML;
+        }
     }
 }

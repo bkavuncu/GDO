@@ -114,44 +114,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Base.cs" />
-    <Compile Include="Core\Control.cs" />
-    <Compile Include="Core\Feature.cs" />
     <Compile Include="Core\Format.cs" />
-    <Compile Include="Core\Geometries\LinearRing.cs" />
-    <Compile Include="Core\Geometries\LineString.cs" />
-    <Compile Include="Core\Geometries\MultiLineString.cs" />
-    <Compile Include="Core\Geometries\MultiPoint.cs" />
-    <Compile Include="Core\Geometries\MultiPolygon.cs" />
-    <Compile Include="Core\Geometries\Point.cs" />
-    <Compile Include="Core\Geometries\Polygon.cs" />
-    <Compile Include="Core\Geometry.cs" />
-    <Compile Include="Core\Geometries\Circle.cs" />
     <Compile Include="Core\Image.cs" />
-    <Compile Include="Core\Interaction.cs" />
-    <Compile Include="Core\Interactions\DrawInteraction.cs" />
-    <Compile Include="Core\Interactions\SelectInteraction.cs" />
     <Compile Include="Core\Layer.cs" />
     <Compile Include="Core\Layers\HeatmapLayer.cs" />
     <Compile Include="Core\Layers\ImageLayer.cs" />
     <Compile Include="Core\Layers\TileLayer.cs" />
     <Compile Include="Core\Layers\VectorLayer.cs" />
     <Compile Include="Core\Sources\BingMapsSource.cs" />
-    <Compile Include="Core\Sources\ClusterSource.cs" />
-    <Compile Include="Core\Sources\ImageSource.cs" />
-    <Compile Include="Core\Sources\Images\CanvasImageSource.cs" />
-    <Compile Include="Core\Sources\Images\StaticImageSource.cs" />
-    <Compile Include="Core\Sources\Images\VectorImageSource.cs" />
-    <Compile Include="Core\Sources\Tiles\StamenSource.cs" />
-    <Compile Include="Core\Sources\TileSource.cs" />
-    <Compile Include="Core\Sources\Tiles\TileGrid.cs" />
-    <Compile Include="Core\Sources\Tiles\ImageTileSource.cs" />
-    <Compile Include="Core\Sources\Tiles\JSONTileSource.cs" />
-    <Compile Include="Core\Sources\Tiles\VectorTileSource.cs" />
+    <Compile Include="Core\Sources\CanvasImageSource.cs" />
+    <Compile Include="Core\Sources\CartoDBSource.cs" />
+    <Compile Include="Core\Sources\MapQuestSource.cs" />
+    <Compile Include="Core\Sources\OSMSource.cs" />
+    <Compile Include="Core\Sources\StaticImageSource.cs" />
+    <Compile Include="Core\Sources\TileArcGISRestSource.cs" />
+    <Compile Include="Core\Sources\TileWMSSource.cs" />
+    <Compile Include="Core\Sources\StamenSource.cs" />
+    <Compile Include="Core\Sources\ImageTileSource.cs" />
     <Compile Include="Core\Sources\VectorSource.cs" />
     <Compile Include="Core\Map.cs" />
     <Compile Include="Core\Position.cs" />
     <Compile Include="Core\Source.cs" />
-    <Compile Include="Core\Sources\Tiles\XYZSource.cs" />
+    <Compile Include="Core\Sources\XYZSource.cs" />
+    <Compile Include="Core\Sources\ZoomifySource.cs" />
     <Compile Include="Core\Style.cs" />
     <Compile Include="Core\Styles\CircleStyle.cs" />
     <Compile Include="Core\Styles\FillStyle.cs" />
@@ -176,7 +161,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Controls\" />
     <Folder Include="Web\Maps\Images\" />
   </ItemGroup>
   <ItemGroup>

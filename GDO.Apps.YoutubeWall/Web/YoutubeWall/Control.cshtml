@@ -165,7 +165,7 @@
         var gdo = parent.gdo;
         gdo.consoleOut('.YoutubeWall', 1, 'Toggle mute for node : ' + $(this).text());
         $(this).toggleClass("btn-success");
-        gdo.net.app["YoutubeWall"].server.toggleMute(gdo.controlId, $(this).text());
+        gdo.net.app["YoutubeWall"].server.toggleMute(gdo.controlId, [$(this).text()]);
     });
     $("#search_mode").click(function () {
         var gdo = parent.gdo;
@@ -177,9 +177,9 @@
         $("#get_next_videos").prop("disabled", true);
         gdo.consoleOut('.YoutubeWall', 1, 'Updating keywords: ' + $("#new_keyword").val());
         if (gdo.net.app["YoutubeWall"].searchMode == 0) {
-            gdo.net.app["YoutubeWall"].server.updateChannelName(gdo.controlId, $("#new_keyword").val());
+            gdo.net.app["YoutubeWall"].server.setChannelName(gdo.controlId, $("#new_keyword").val());
         } else if (gdo.net.app["YoutubeWall"].searchMode == 1) {
-            gdo.net.app["YoutubeWall"].server.updateKeywords(gdo.controlId, $("#new_keyword").val());
+            gdo.net.app["YoutubeWall"].server.setKeywords(gdo.controlId, $("#new_keyword").val());
         }
     });
     $("#get_next_videos").click(function () {

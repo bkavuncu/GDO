@@ -621,10 +621,11 @@
     <Content Include="Img\logo.png" />
     <Content Include="Scripts\d3.js" />
     <Content Include="Scripts\enscroll-0.6.1.min.js" />
+    <Content Include="Scripts\gdo.management.console.js" />
     <Content Include="Scripts\gdo.management.modules.js" />
     <Content Include="Scripts\gdo.management.nodes.js" />
     <Content Include="Scripts\gdo.management.js" />
-    <Content Include="Scripts\gdo.management.console.js" />
+    <Content Include="Scripts\gdo.management.terminal.js" />
     <Content Include="Scripts\gdo.management.scenarios.js" />
     <Content Include="Scripts\gdo.management.states.js" />
     <Content Include="Scripts\gdo.node.base.js" />
@@ -944,6 +945,10 @@
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver2.pubxml" />
+    <None Include="Properties\PublishProfiles\Testing.pubxml" />
+    <Content Include="Scenarios\matrixBIG.json" />
+    <Content Include="Scenarios\matrixSMALL.json" />
+    <Content Include="Scenarios\matrixVERYSMALL.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\heatmap.js" />
     <Content Include="Scripts\heatmap.min.js" />
@@ -997,6 +1002,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utility\BoundaryCalculation.cs" />
+    <Compile Include="Utility\Parameter.cs" />
     <Compile Include="Utility\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1011,7 +1017,6 @@
   <ItemGroup>
     <Folder Include="Configurations\" />
     <Folder Include="Data\" />
-    <Folder Include="Scenarios\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
