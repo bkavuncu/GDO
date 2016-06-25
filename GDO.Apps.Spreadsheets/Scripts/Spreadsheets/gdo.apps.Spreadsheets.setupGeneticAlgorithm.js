@@ -1,6 +1,9 @@
-﻿var viewSheet = function(id, sheet) {
+﻿var confName = this.gdo.net.instance[this.instanceId].configName;
+var conf = this.gdo.net.app["Spreadsheets"].config[configName];
+
+var viewSheet = function (id, sheet) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/ViewOnAllNodes",
+        url: conf.serverAddress + "Operations/ViewOnAllNodes",
         method: "POST",
         data : { instanceId : id, sheet : sheet },
         success: function(response) {
@@ -11,7 +14,7 @@
 
 var checkGeneticAlgorithm = function (id) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/CheckGeneticAlgorithm",
+        url: conf.serverAddress + "Operations/CheckGeneticAlgorithm",
         method: "GET",
         data: { instanceId: id },
         success: function(response) {
@@ -39,7 +42,7 @@ var startGeneticAlgorithm = function (id, numInputs, fitnessDefinition, iteratio
     gdo.consoleOut(".Spreadsheets", 1, "running GA for instance ID " +
         id + " with " + numInputs + " inputs and " + iterations + " iterations with " + chromPerNode + " chromosomes per node.");
         $.ajax({
-            url: "http://146.169.45.194/SheetServer/Operations/StartGeneticAlgorithm",
+            url: conf.serverAddress + "Operations/StartGeneticAlgorithm",
             method: "POST",
             data: {
                 instanceId: id,
@@ -146,7 +149,7 @@ var createForm = function (id,response) {
 var obtainOutputs = function (id) {
     $('iframe').contents().find('#genetic_algorithm_result').siblings().hide();
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/GetInputsAndOutputs",
+        url: conf.serverAddress + "Operations/GetInputsAndOutputs",
         method: "GET",
         data: { instanceId: id },
         success: function (response) {
@@ -171,7 +174,7 @@ var obtainOutputs = function (id) {
 
 gdo.net.app["Spreadsheets"].setupGeneticAlgorithm = function (id, model, config) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/SetupGeneticAlgorithm",
+        url: conf.serverAddress + "Operations/SetupGeneticAlgorithm",
         method: "POST",
         data: { instanceId: id, model: model, config: config},
         success: function (response) {
