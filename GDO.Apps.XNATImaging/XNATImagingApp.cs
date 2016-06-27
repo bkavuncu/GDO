@@ -23,13 +23,14 @@ namespace GDO.Apps.XNATImaging
         {
         }
 
-        public void init(int instanceId, string appName, Section section, AppConfiguration configuration)
+        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration)
         {
             this.Id = instanceId;
             this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
 
+            InitConfigurations();
         }
 
         public void SetName(string name)
@@ -40,6 +41,17 @@ namespace GDO.Apps.XNATImaging
         public string GetName()
         {
             return Name;
+        }
+
+        public void InitConfigurations()
+        {
+            Console.WriteLine(Configuration.Name);
+            Console.WriteLine(Configuration.Json);
+
+            Console.WriteLine(Cave.Apps["XNATImaging"].Instances[Id].Configuration);
+            List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
+            Console.WriteLine(configurations.Count);
+
         }
     }
 }

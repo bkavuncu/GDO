@@ -14,7 +14,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
+    <!-- JqueryUI stylesheet -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <!-- Bootstrap Core CSS -->
     <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
@@ -27,6 +28,8 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
     <style>
         body {
             color: #FFF;
@@ -96,10 +99,11 @@
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!--script src="../../Scripts/jquery.csv-0.71.min.js"></!--script>
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
-    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script-->
 
     <script src="../../Scripts/XNATImaging/underscore.js"></script>
     <script src="../../Scripts/XNATImaging/cornerstone.js"></script>
@@ -116,9 +120,22 @@
     </script>
 <div class="wrapper container" style="width: 97%">
     <h1>Controls</h1>
+
+    <form action="#">
+
+        <fieldset>
+            <label for="view">Select a view</label>
+            <select name="view" id="viewSelect">
+                <option selected="selected">Sagittal</option>
+                <option>Axial</option>
+                <option>Coronal</option>
+            </select>
+        </fieldset>
+    </form>
+
     <div class="row">
         <div id="dicomImage"
-             class="col-xs-12 col-md-6"
+             class="col-md-9 col-lg-10"
              update-image
              mouse-wheel-up=""
              mouse-wheel-down=""
@@ -148,15 +165,15 @@
                 <p>WW/WC: </p>
             </div>
         </div>
-        <div id="dicomTopThumb" class="col-xs-6 col-md-3">
-            <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png" height="120" width="120" />
+        <div id="dicomTopThumb" class="col-md-3 col-lg-2">
+            <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png" height="100" width="100" />
         </div>
-        <div id="dicomBottomThumb" class="col-xs-6 col-md-3">
-            <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" height="120" width="120" />
+        <div id="dicomBottomThumb" class="col-md-3 col-lg-2">
+            <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" height="100" width="100" />
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-md-6">
             <div class="controls">
                 <button id="upNavigationButton" type="button" class="btn btn-default">Up</button>
                 <button id="downNavigationButton" type="button" class="btn btn-default">Down</button>
@@ -166,7 +183,7 @@
                 <button id="markerButton" type="button" class="btn btn-primary">Place Marker</button>
             </div>
         </div>
-        <div class="col-lg-3">
+        <!--div class="col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Say Hello</h6>
@@ -193,7 +210,7 @@
                     </fieldset>
                 </div>
             </div>
-        </div>
+        <div-->
     </div>
 </div>
 </body>

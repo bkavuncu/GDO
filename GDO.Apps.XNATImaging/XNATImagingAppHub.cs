@@ -61,6 +61,7 @@ namespace GDO.Apps.XNATImaging
             {
                 try
                 {
+                    Console.WriteLine("Setting new control - server");
                     Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
                 }
                 catch (Exception e)
