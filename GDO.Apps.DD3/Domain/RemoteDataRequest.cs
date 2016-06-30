@@ -7,15 +7,23 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.DD3.Domain {
+    //Implemented on the server and the client, but never used in any visualisation
+    //Can be used to query data from a remote data source (json file)
+    //Given that this class doesn't inherit from DataRequest (which is coupled to local data), a lot of functions are redefined
     public class RemoteDataRequest
     {
+        //Id of the dataset to query
         public string dataId { get; set; }
+        //Hostname of the remote server
         public string server { get; set; }
+        //Given that they are never actually used it is hard to say what these for  optionnal functions are for
+        //We can infer that it is used to store the data
         public string[] toObject { get; set; }
         public string[] toArray { get; set; }
         public string[][] toValues { get; set; }
         public string[][] useNames { get; set; }
 
+        //Try to parse numbers from the aggregate
         private Func<JToken, string, JToken> tryParseNumber = (agg, next) =>
         {
             if (agg == null || agg is JValue)
@@ -30,6 +38,7 @@ namespace GDO.Apps.DD3.Domain {
                 return null;
         };
 
+        //Constructor
         public RemoteDataRequest(string dataId, string server, string[] toArray, string[] toObject, string[][] toValues, string[][] useNames)
         {
             this.dataId = dataId;
@@ -40,6 +49,7 @@ namespace GDO.Apps.DD3.Domain {
             this.useNames = useNames;
         }
 
+        //Request the data from remote
         private JToken requestToServer (out JToken output)
         {
             dynamic error = new JObject();
@@ -81,6 +91,7 @@ namespace GDO.Apps.DD3.Domain {
             return error;
         }
 
+        //Format the data returned
         private JToken formatData (JToken responseObject, out JToken output)
         {
             dynamic error = new JObject();
@@ -133,6 +144,7 @@ namespace GDO.Apps.DD3.Domain {
             return error;
         }
 
+        //Execute the request: request data and format it
         public string execute (Data data)
         {
             JToken unformattedData, formattedData;

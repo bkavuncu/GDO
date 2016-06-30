@@ -146,7 +146,7 @@ namespace GDO.Apps.DD3
             }
         }
 
-        // Define which node is the controller
+        // Define which node is the controller and send the cluster's configuration
         public void defineController (string id)
         {
             controllerId = id;
@@ -157,6 +157,7 @@ namespace GDO.Apps.DD3
             }
         }
 
+        //Broadcast configurations to all the Browser nodes
         private void broadcastConfiguration () {
             BrowserBroadcastInfo[] browserInfos = new BrowserBroadcastInfo[browserList.Count];
             int i = 0;
@@ -171,6 +172,7 @@ namespace GDO.Apps.DD3
             DD3AppHub.self.broadcastConfiguration(browserInfoJson, ConfigurationId, Id);
         }
 
+        // Request the App hub to send a synchronize order to the browser nodes (this will synchronize the signalR connection)
         public void synchronize(string cid)
         {
             syncList.AddOrUpdate(cid, true, (key, value) => true);
@@ -181,6 +183,7 @@ namespace GDO.Apps.DD3
             }
         }
 
+        //Get the first Browser node of this instance.
         public string getFirstNode()
         {
             var e = browserList.GetEnumerator();
@@ -188,6 +191,7 @@ namespace GDO.Apps.DD3
             return e.Current.Key;
         }
 
+        //Remove a browser node from the instance
         public bool removeClient(string id)
         {
             lock (_locker)

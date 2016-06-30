@@ -1,6 +1,12 @@
 using Newtonsoft.Json;
 
 namespace GDO.Apps.DD3.Domain {
+    /*This class represents the message that will be sent from the server to the controller
+     * For example, when adding a new browser or initialising the controller
+     * Id of the configuration (i.e. data viz)
+     * Number of clients
+     * state: if the application is stateful. Not used at the moment always initialised at one.
+     */
     public class ControllerMessage
     {
         public ControllerMessage(int configurationId, int state, int numClient)

@@ -14,17 +14,26 @@ namespace GDO.Apps.DD3
 {
 
     [Export(typeof(IAppHub))]
+    //Synchronization, configuration, orders
     public class DD3AppHub : Hub, IBaseAppHub
     {
-
+        //Dictionnary of the running instances of DD3 on the cluster
         private static ConcurrentDictionary<int, IAppInstance> instances;
+
+        //Never used ...
         private readonly object _locker = new Object();
+
+        //I guess that's a Singleton Design pattern in .Net
         public static DD3AppHub self;
 
+        //Name of the application: "DD3"
         public string Name { get; set; }
+        //P2P mode ON/Off => here off since dd3 maintains its own peerjs connection
         public int P2PMode { get; set; }
+        //Type of instances: DD3App
         public Type InstanceType { get; set; }
 
+        //Constructor
         public DD3AppHub () {
             self = this;
             this.Name = "DD3";
@@ -34,21 +43,25 @@ namespace GDO.Apps.DD3
 
         // == APP ==
 
+        //add the instance to the group
         public void JoinGroup(int instanceId)
         { 
             Groups.Add(Context.ConnectionId, "" + instanceId);
         }
 
+        //Remove the instance from the group
         public void ExitGroup(int instanceId)
         {
             Groups.Remove(Context.ConnectionId, "" + instanceId);
         }
 
+        //Event Handler for a new instance connection
         public override System.Threading.Tasks.Task OnConnected()
         {
             return base.OnConnected();
         }
 
+        //Event Handler for an instance disconnection
         public override System.Threading.Tasks.Task OnDisconnected(Boolean b)
         {
             if (instances != null)
@@ -64,6 +77,7 @@ namespace GDO.Apps.DD3
             return base.OnDisconnected(b);
         }
 
+        //update information on each browser for a given instance
         public void updateInformation (int instanceId, BrowserInfo b)
         {
             JoinGroup(instanceId);
@@ -71,22 +85,26 @@ namespace GDO.Apps.DD3
             ((DD3App) instances[instanceId]).newClient(Context.ConnectionId, b);
         }
 
+        //Send synchronize order to an instance. See DD3App synchronize.
         public void synchronize(int instanceId)
         {
             ((DD3App) instances[instanceId]).synchronize(Context.ConnectionId);
         }
 
+        //Broadcast configuration about the browser to the browsers
         public void broadcastConfiguration(string browserInfoJson, int confId, int Id)
         {
             Clients.Group("" + Id).dd3Receive("receiveConfiguration", browserInfoJson);
             Clients.Group("" + Id).receiveGDOConfiguration(confId);
         }
 
+        //broadcast synchronize order to the browser node
         public void broadcastSynchronize(int Id)
         {
             Clients.Group("" + Id).dd3Receive("receiveSynchronize");
         }
 
+        //Remove client from the instance
         public void removeClient(int instanceId)
         {
             ExitGroup(instanceId);
@@ -98,20 +116,23 @@ namespace GDO.Apps.DD3
 
         // Data
 
+        //Get dimensions from the data set and instance id
         public void getDimensions(int instanceId, string dataId)
         {
             System.Diagnostics.Debug.WriteLine("Dimensions were requested");
             var dimensions = ((DD3App)instances[instanceId]).getDimensions(dataId);
             Clients.Client(Context.ConnectionId).dd3Receive("receiveDimensions", dataId, dimensions);
         }
-        
+
+        //call the data request from the data app and then send it back to browser nodes.
         public void getData(int instanceId, DataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
             var data = ((DD3App)instances[instanceId]).requestData(request);
             Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
-    
+
+        //call the point data request from the data app and then send it back to browser nodes.
         public void getPointData(int instanceId, PointDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
@@ -119,6 +140,7 @@ namespace GDO.Apps.DD3
             Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
 
+        //call the path data request from the data app and then send it back to browser nodes.
         public void getPathData(int instanceId, PathDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
@@ -126,6 +148,7 @@ namespace GDO.Apps.DD3
             Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
 
+        //call the bar data request from the data app and then send it back to browser nodes.
         public void getBarData(int instanceId, BarDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Data was requested : " + request.ToString());
@@ -133,6 +156,7 @@ namespace GDO.Apps.DD3
             Clients.Client(Context.ConnectionId).dd3Receive("receiveData", request.dataName, request.dataId, data);
         }
 
+        //call the data remote request from the data app and then send it back to browser nodes.
         public void requestFromRemote(int instanceId, RemoteDataRequest request)
         {
             System.Diagnostics.Debug.WriteLine("Received request for remote server data : " + request.ToString());
@@ -141,25 +165,28 @@ namespace GDO.Apps.DD3
         }
 
         // Orders
-
+        //Broadcast order from the controller to the browser nodes
         public void broadcastControllerOrder(int Id, string order)
         {
             Clients.Group("" + Id).receiveControllerOrder(order);
         }
 
+        //Broadcast order from the controller to one browser node
         public void sendControllerOrder(string Id, string order)
         {
             Clients.Client(Id).receiveControllerOrder(order);
         }
 
         // == CONTROLLER ==
-
+        //Define the controller node for this instance. See DD3App and defineController for more info
         public void defineController(int instanceId)
         {
             instances = Cave.Apps["DD3"].Instances;
             ((DD3App)instances[instanceId]).defineController(Context.ConnectionId);
         }
 
+        //Send an order to browser nodes of an instance
+        // if all is true, order will be sent to all browsers. Else, only to the first one
         public void sendOrder(int instanceId, string order, bool all)
         {
             if (all)
@@ -176,6 +203,7 @@ namespace GDO.Apps.DD3
             }
         }
 
+        //Send a message to the controller
         public void updateController(string controllerId, string message)
         {
             Clients.Client(controllerId).updateController(message);

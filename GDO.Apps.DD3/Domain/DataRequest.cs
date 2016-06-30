@@ -4,13 +4,19 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.DD3.Domain {
+    //Class representing the data requested from the instance. (used directly by the appshub)
     public class DataRequest
     {
+        //id of the data requested
         public string dataId { get; set; }
+        //name of the data requested
         public string dataName { get; set; }
+        //limit of the filter. Untyped so different kind of filters can be sent regardless of the implementation
         public dynamic limit { get; set; }
+        //Keys selected in the data
         public string [][] _keys { get; set; }
 
+        //Try to parse numbers from the aggregate (used by path and point data request)
         protected static Func<JToken, string, JToken> tryAggregateNumber = (agg, next) =>
         {
             if (agg == null || agg is JValue)
@@ -25,6 +31,7 @@ namespace GDO.Apps.DD3.Domain {
                 return null;
         };
 
+        //Constructor
         public DataRequest(string dataId, string dataName, dynamic limit, string [][] _keys)
         {
             this.dataId = dataId;
@@ -33,6 +40,7 @@ namespace GDO.Apps.DD3.Domain {
             this._keys = _keys;
         }
 
+        // create a response object upon request. 
         public IEnumerable<JToken> createResponseObject(IEnumerable<JToken> data)
         {
             Func<JToken, JToken> mapFunction = d => {
