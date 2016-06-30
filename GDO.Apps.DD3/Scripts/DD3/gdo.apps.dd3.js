@@ -12,6 +12,7 @@ var initDD3App = function () {
 
     var utils = (function () {
         return {
+            //get the 
             getUrlVar: function (variable) {
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -22,6 +23,7 @@ var initDD3App = function () {
                 return false;
             },
 
+            //Clamp a given value between min and max
             clamp: function (value, min, max) {
                 return value < min ? min : value > max ? max : value;
             },
@@ -1204,7 +1206,7 @@ var initDD3App = function () {
 
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
-            var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.enter.prototype);
+            var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.prototype.enter.prototype);
 
             var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
@@ -1268,13 +1270,13 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.remove = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.remove, 'remove', 0);
 
-            _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
+            //TODO _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.prototype.enter.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
 
             _dd3.selection.prototype.insert = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');
 
-            _dd3.selection.enter.prototype.append = _dd3_watchEnterFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
+            _dd3.selection.prototype.enter.prototype.append = _dd3_watchEnterFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
 
-            _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
+            //TODO _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
 
             _dd3.selection.prototype.selectAll = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.selectAll, 'selectAll');
 
@@ -1865,7 +1867,8 @@ var initDD3App = function () {
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
                 var c1 = containers[0], c2;
-                while (c1 && c1.__dd3_transitions__.empty()) {
+                //console.log(c1);
+                while (c1 && c1.__dd3_transitions__ && c1.__dd3_transitions__.empty()) {//v4: replaced__dd3_transitions__.empty()
                     c2 = containers.shift()
                     c1 = containers[0];
                 }
@@ -1875,7 +1878,7 @@ var initDD3App = function () {
 
                 clones = containers.map(function (c) {
                     g = c.cloneNode(c.nodeName === "g" ? false : true);
-                    c2.appendChild(g);
+                    //v4: doesn't matter c2.appendChild(g);
                     c2 = g;
                     return g;
                 });
@@ -2189,7 +2192,7 @@ var initDD3App = function () {
              * Create the svg and provide it for use
              */
 
-            _dd3.svgNode = _dd3.select_("body").append_("svg");
+            _dd3.svgNode = _dd3.select_("body").append("svg");//append_ doesn't exist in v4
 
             _dd3.svgCanvas = _dd3.svgNode
                 .attr_("width", browser.width)
