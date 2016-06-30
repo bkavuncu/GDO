@@ -18,6 +18,16 @@
         }
     }
 
+    $.connection.xNATImagingAppHub.client.receiveConfig = function (instanceId, config) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Config? nah");
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Config : ");
+            gdo.consoleOut('.XNATImaging', 1, JSON.stringify(config));
+            gdo.net.app["XNATImaging"].initZoom(instanceId, config);
+        }
+    }
+
     /*  TODO: Add receive method to update image parameters based on control input
         Update image parameters
         WW/WC
@@ -38,49 +48,55 @@ gdo.net.app["XNATImaging"].getSection = function(row, col) {
 };
 
 gdo.net.app["XNATImaging"].initClient = function () {
-    var nodeId = gdo.clientId;
+    var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
 
-    gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Client at Node ' + nodeId);
+    gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Client at Node ' + gdo.clientId);
 
-    var row = gdo.net.node[nodeId].row;
-    var col = gdo.net.node[nodeId].col;
+    var row = gdo.net.node[gdo.clientId].row;
+    var col = gdo.net.node[gdo.clientId].col;
     var section = gdo.net.app["XNATImaging"].getSection(row, col);
 
     gdo.consoleOut('.XNATImaging', 1, 'Part of section: ' + section);
 
     if (section == "MRI") {
-        gdo.net.app["XNATImaging"].setupMRI(nodeId, row, col);
+        gdo.net.app["XNATImaging"].setupMRI(instanceId, row, col);
 
     } else if (section == "PDF") {
-        gdo.net.app["XNATImaging"].setupPDF(row, col);
+        gdo.net.app["XNATImaging"].setupPDF(row);
 
     } else if (section == "ZOOM") {
-        gdo.net.app["XNATImaging"].setupZOOM();
+        $("iframe").contents().find("#main").empty();
+        $("iframe").contents().find("#main").append("<div class='heading'>");
+        $("iframe").contents().find(".heading").append("<h3>ZOOM ZOOM ZOOM</h3>");
+        $("iframe").contents().find("#main").append("</div>");
+        $("iframe").contents().find("#main").append("<p>Zoom goes here!</p>");
+        gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId, "Zoom");
     }
 }
 
-gdo.net.app["XNATImaging"].initControl = function () {
-    gdo.controlId = getUrlVar("controlId");
-    gdo.net.app["XNATImaging"].server.requestName(gdo.controlId);
-    gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + gdo.controlId);
+gdo.net.app["XNATImaging"].initControl = function (instanceId) {
+   
+
+    gdo.net.app["XNATImaging"].server.requestName(instanceId);
+    gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
 
     $("iframe").contents().find("#viewSelect").selectmenu();
 
-    gdo.net.instance[gdo.controlId].playing = false;
-    gdo.net.instance[gdo.controlId].interval = null;
+    gdo.net.instance[instanceId].playing = false;
+    gdo.net.instance[instanceId].interval = null;
 
     var mode = "t1";
     var url = "GSK131086_000001/Baseline/flair";
-    gdo.net.instance[gdo.controlId].stack = {
+    gdo.net.instance[instanceId].stack = {
         currentImageIndex: 0,
         imageIds: []
     }
-    gdo.net.app["XNATImaging"].initialiseCS(url, mode, 900, 600, gdo.controlId);
+    gdo.net.app["XNATImaging"].initialiseCS(url, mode, 900, 600, instanceId);
 
-    gdo.net.app["XNATImaging"].initButtons(gdo.controlId);
+    gdo.net.app["XNATImaging"].initButtons(instanceId);
 }
 
-gdo.net.app["XNATImaging"].setupMRI = function(nodeId, row, col) {
+gdo.net.app["XNATImaging"].setupMRI = function(instanceId, row, col) {
     var url;
     var mode;
 
@@ -127,18 +143,18 @@ gdo.net.app["XNATImaging"].setupMRI = function(nodeId, row, col) {
         }
         $("iframe").contents().find("#main").append("</div>");
     } else {
-        gdo.net.instance[nodeId].playing = false;
-        gdo.net.instance[nodeId].interval = null;
+        gdo.net.instance[instanceId].playing = false;
+        gdo.net.instance[instanceId].interval = null;
 
-        gdo.net.instance[nodeId].stack = {
+        gdo.net.instance[instanceId].stack = {
             currentImageIndex: 0,
             imageIds: []
         }
-        gdo.net.app["XNATImaging"].initialiseCS(url, mode, 1300, 900, nodeId);
+        gdo.net.app["XNATImaging"].initialiseCS(url, mode, 1300, 900, instanceId);
     }
 }
 
-gdo.net.app["XNATImaging"].setupPDF = function (row, col) {
+gdo.net.app["XNATImaging"].setupPDF = function (row) {
     // hardcoded pdf urls based on screen row
     switch (row) {
         case 1:
@@ -173,21 +189,34 @@ gdo.net.app["XNATImaging"].setupPDF = function (row, col) {
     }
 }
 
-gdo.net.app["XNATImaging"].setupZOOM = function() {
+gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
     $("iframe").contents().find("#main").empty();
-    $("iframe").contents().find("#main").append("<div class='heading'>");
-    $("iframe").contents().find(".heading").append("<h3>ZOOM ZOOM ZOOM</h3>");
-    $("iframe").contents().find("#main").append("</div>");
-    $("iframe").contents().find("#main").append("<p>Zoom goes here!</p>");
+    //$("iframe").contents().find('#main').append("<button id='testButton' type='button'>MoveIt</button>");
+    $("iframe").contents().find("#main").append(
+        "<div id='dicomImage' update-image " +
+        "mouse-wheel-up='' mouse-wheel-down='' mouse-click='' " +
+        "class='cornerstone-enabled-image' oncontextmenu='return false' " +
+        "unselectable='off' onselectstart='return false;' onmousedown='return false;'></div>"
+    );
+
+    gdo.net.instance[instanceId].playing = false;
+    gdo.net.instance[instanceId].interval = null;
+
+    gdo.net.instance[instanceId].stack = {
+        currentImageIndex: 0,
+        imageIds: []
+    }
+    gdo.net.instance[instanceId].zoomView = {
+        zoomId: json.id,
+        url: json.url,
+        topLeft: json.topLeft,
+        bottomRight: json.topRight,
+        zoomFactor: json.zoomFactor
+    }
+    gdo.net.app["XNATImaging"].initialiseCS(json.url, "zoom", gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height, instanceId);
 }
 
 gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, instanceId) {
-
-    var view = {
-        zoomLevel: 2.34,
-        windowWidth: 394,
-        windowCenter: 192
-    }
 
     if (mode == "ajax") {
         var baseUrl = "https://central.xnat.org";
@@ -208,12 +237,7 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
                         return "wadouri:" + baseUrl + image.URI;
                     })
                 //gdo.consoleOut(gdo.net.instance[instanceId].stack.imageIds);
-                gdo.net.app["XNATImaging"].sortImageStack(instanceId, mode);
-                setTimeout(function() {
-                        gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
-                    },
-                    1000);
-                gdo.consoleOut("Loaded Image Stack");
+                gdo.net.app["XNATImaging"].sortImageStack(instanceId);
             }
         });
     } else {
@@ -228,48 +252,17 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
                         gdo.net.instance[instanceId].stack.imageIds.push("wadouri:" + "http://localhost:12332/" + filename);
                         //console.log(filename);
                     });
-
-                //console.log(gdo.net.instance[instanceId].stack.imageIds);
-
-                setTimeout(function() {
-                        gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
-                    },
-                    1000);
-                gdo.consoleOut("Loaded Image Stack");
             }
         });
     }
-}
-
-gdo.net.app["XNATImaging"].sortImageStack = function (instanceId, mode) {
-    function compareNumbers (a, b) {
-        //1.3.12.2.1107.5.2.36.40436.30000014081908371717200000064-8-41-skte63.dcm
-        //index
-        var strippedA = a.substr(a.lastIndexOf("/") + 1);
-        var strippedB = b.substr(b.lastIndexOf("/") + 1);
-        //gdo.consoleOut(strippedA);
-
-        //8-41-skte63.dcm
-        strippedA = strippedA.substring(strippedA.indexOf("-"));
-        strippedB = strippedB.substring(strippedB.indexOf("-"));
-        //gdo.consoleOut(strippedA);
-
-        //8-41
-        strippedA = strippedA.substring(0, strippedA.lastIndexOf("-"));
-        strippedB = strippedB.substring(0, strippedB.lastIndexOf("-"));
-        //gdo.consoleOut(strippedA);
-
-        //41
-        strippedA = strippedA.substring(strippedA.lastIndexOf("-") + 1);
-        strippedB = strippedB.substring(strippedB.lastIndexOf("-") + 1);
-        //gdo.consoleOut(strippedA);
-
-        return parseInt(strippedA) - parseInt(strippedB);
-    }
-
-    if (mode == "ajax") {
-        gdo.net.instance[instanceId].stack.imageIds = gdo.net.instance[instanceId].stack.imageIds.sort(compareNumbers);
-    }
+    setTimeout(function() {
+        if (mode == "zoom") {
+            gdo.net.app["XNATImaging"].getZoomStack(width, height, instanceId);
+        } else {
+            gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
+        }
+    }, 1000);
+    gdo.consoleOut("Loaded Image Stack");
 }
 
 gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) {
@@ -284,12 +277,16 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
     var numLoadedImages = 1;
     $("iframe").contents().find("#mrtopleft").text("Image: " + 1);
 
-    gdo.consoleOut("First image loaded?");
+    // resize dicom image frame to fill screen
+    gdo.consoleOut("Resize image to " + width + "x" + height);
+    $("iframe").contents().find('#dicomImage').width(width).height(height);
+    cornerstone.resize(element);
 
     // add handlers for mouse events once the image is loaded.
     imagePromise.then(function () {
         gdo.consoleOut("Image promise loaded");
         var viewport = cornerstone.getViewport(element);
+
         // Temp Fix for followup image brightness
         if (viewport.voi.windowCenter < -350) {
             viewport.voi.windowCenter = 35;
@@ -370,11 +367,71 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
             numLoadedImages++;
         });
     }
+}
+
+gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
+    var element = $("iframe").contents().find('#dicomImage').get(0);
+    cornerstone.enable(element);
+
+    cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.mouseWheelInput.enable(element);
+
+    // load and display first image
+    var imagePromise = gdo.net.app["XNATImaging"].updateTheImage(instanceId);
+
+    var canvasWidth = width * 3;
+    var canvasHeight = height * 4;
 
     // resize dicom image frame to fill screen
-    gdo.consoleOut("Resize 1000");
-    $("iframe").contents().find('#dicomImage').width(width).height(height);
+    gdo.consoleOut("Resize image to " + width + "x" + height);
+    $("iframe").contents().find('#dicomImage').width(canvasWidth).height(canvasHeight);
     cornerstone.resize(element);
+
+    gdo.consoleOut(".XNATImaging", 1, "Width x Height of image: (" + width + ", " + height + ")");
+    gdo.consoleOut(".XNATImaging", 1, "Canvas dimensions: (" + canvasWidth + ", " + canvasHeight + ")");
+
+    imagePromise.then(function () {
+
+        var scaleFactorX = canvasWidth / width;
+        var scaleFactorY = canvasHeight / height;
+        var offsetX = gdo.net.instance[instanceId].zoomView.topLeft[0];
+        var offsetY = gdo.net.instance[instanceId].zoomView.topLeft[1];
+        gdo.consoleOut(".XNATImaging", 1, "Offset image by: (" + offsetX + ", " + offsetY + ")");
+
+        var viewport = cornerstone.getViewport(element);
+        viewport.translation.x += (-offsetX * width)/viewport.scale;
+        viewport.translation.y += (-offsetY * height)/viewport.scale;s
+        cornerstone.setViewport(element, viewport);
+        gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");
+        
+        var img = cornerstone.getImage(element);
+//        var ctx = img.getCanvas().getContext('2d');
+//        ctx.drawImage(img, offsetX, offsetY, width/3, height/3, 0, 0, width, height);
+    });
+}
+
+gdo.net.app["XNATImaging"].sortImageStack = function (instanceId) {
+    function compareNumbers(a, b) {
+        //1.3.12.2.1107.5.2.36.40436.30000014081908371717200000064-8-41-skte63.dcm
+        //index
+        var strippedA = a.substr(a.lastIndexOf("/") + 1);
+        var strippedB = b.substr(b.lastIndexOf("/") + 1);
+
+        //8-41-skte63.dcm
+        strippedA = strippedA.substring(strippedA.indexOf("-"));
+        strippedB = strippedB.substring(strippedB.indexOf("-"));
+
+        //8-41
+        strippedA = strippedA.substring(0, strippedA.lastIndexOf("-"));
+        strippedB = strippedB.substring(0, strippedB.lastIndexOf("-"));
+
+        //41
+        strippedA = strippedA.substring(strippedA.lastIndexOf("-") + 1);
+        strippedB = strippedB.substring(strippedB.lastIndexOf("-") + 1);
+
+        return parseInt(strippedA) - parseInt(strippedB);
+    }
+    gdo.net.instance[instanceId].stack.imageIds = gdo.net.instance[instanceId].stack.imageIds.sort(compareNumbers);
 }
 
 gdo.net.app["XNATImaging"].updateTheImage = function (instanceId) {
@@ -402,11 +459,15 @@ gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
             break;
         case 'Reset View':
             gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Reset');
-            gdo.net.app["XNATImaging"].resetView(gdo.clientId);
+            gdo.net.app["XNATImaging"].resetView(instanceId);
             break;
         case 'Play':
             gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Play');
-            gdo.net.app["XNATImaging"].playAll(gdo.clientId);
+            gdo.net.app["XNATImaging"].playAll(instanceId);
+            break;
+        case 'Pause':
+            gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Pause');
+            gdo.net.app["XNATImaging"].playAll(instanceId);
             break;
         default:
             gdo.consoleOut('.XNATImaging', 1, "Not a command");
@@ -463,41 +524,39 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
 }
 
 gdo.net.app["XNATImaging"].navigateUp = function (instanceId) {
-    var id;
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        id = instanceId;
-    } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-        id = gdo.clientId;
-    }
-    if (gdo.net.instance[id].stack.currentImageIndex < gdo.net.instance[id].stack.imageIds.length - 1) {
-        gdo.net.instance[id].stack.currentImageIndex++;
-        gdo.net.app["XNATImaging"].updateTheImage(id);
+
+    if (gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
+        gdo.net.instance[instanceId].stack.currentImageIndex++;
+        gdo.net.app["XNATImaging"].updateTheImage(instanceId);
     }
 }
 
 gdo.net.app["XNATImaging"].navigateDown = function (instanceId) {
-    var id;
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        id = instanceId;
-    } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-        id = gdo.clientId;
-    }
-    if (gdo.net.instance[id].stack.currentImageIndex > 0) {
-        gdo.net.instance[id].stack.currentImageIndex--;
-        gdo.net.app["XNATImaging"].updateTheImage(id);
+
+    if (gdo.net.instance[instanceId].stack.currentImageIndex > 0) {
+        gdo.net.instance[instanceId].stack.currentImageIndex--;
+        gdo.net.app["XNATImaging"].updateTheImage(instanceId);
     }
 }
 
 gdo.net.app["XNATImaging"].resetView = function(instanceId) {
     gdo.net.instance[instanceId].stack.currentImageIndex = 0;
     gdo.net.app["XNATImaging"].updateTheImage(instanceId);
+    // TODO: Test this change
+    gdo.net.app["XNATImaging"].pause(instanceId);
+
 }
 
-/* TODO: Clean mess; make pausing work on client properly/in sync
+gdo.net.app["XNATImaging"].pause = function(instanceId) {
+    clearInterval(gdo.net.instance[instanceId].interval);
+    $('iframe').contents().find('#playButton').text("Play");
+    gdo.net.instance[instanceId].playing = false;
+}
+
+/* TODO: Clean mess; make pausing work on client in sync
 ** TODO: Want to push currentImg onto clients on pause
 */
 gdo.net.app["XNATImaging"].playAll = function (instanceId) {
-    console.log("Playing: " + gdo.net.instance[instanceId].playing);
     if (gdo.net.instance[instanceId].playing == false && gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
         gdo.net.instance[instanceId].playing = true;
         $('iframe').contents().find('#playButton').text("Pause");
@@ -513,9 +572,7 @@ gdo.net.app["XNATImaging"].playAll = function (instanceId) {
             }
         }, 300);
     } else if (gdo.net.instance[instanceId].playing == true || gdo.net.instance[instanceId].stack.currentImageIndex >= gdo.net.instance[instanceId].stack.imageIds.length) {
-        $('iframe').contents().find('#playButton').text("Play");
-        clearInterval(gdo.net.instance[instanceId].interval);
-        gdo.net.instance[instanceId].playing = false;
+        gdo.net.app["XNATImaging"].pause(instanceId);
     }
     console.log("Playing: " + gdo.net.instance[instanceId].playing);
 }

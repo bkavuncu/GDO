@@ -112,12 +112,37 @@
     <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
     <script src="../../Scripts/XNATImaging/jpx.js"></script>
 
-    <script>
-        $(function () {
-            var gdo = parent.gdo;
-            gdo.net.app["XNATImaging"].initControl();
-        });
-    </script>
+<script>
+    function getUrlVar(variable) {
+        /// <summary>
+        /// Gets the URL variable.
+        /// </summary>
+        /// <param name="variable">The variable.</param>
+        /// <returns></returns>
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        query = window.frames['control_frame_content'].location.search.substring(1);
+        vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return (false);
+    }
+    $(function () {
+        var gdo = parent.gdo;
+        gdo.controlId = getUrlVar("controlId");
+        gdo.net.app["XNATImaging"].initControl(gdo.controlId);
+    });
+</script>
 <div class="wrapper container" style="width: 97%">
     <h1>Controls</h1>
 
