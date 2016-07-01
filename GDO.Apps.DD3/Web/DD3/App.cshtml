@@ -150,7 +150,9 @@
                     //var fpss = [r, c];
                     var fpss = [];
                     var triggered = false;
-                    var nbcircle = 0;
+                    var nbc = 0;
+                    var nbdc = 0;
+                    var nbr = 0;
 
                     //var counter = 0;
                     var peerObject = { host: "146.169.32.109", port: 55555 };
@@ -159,10 +161,14 @@
 
 
                     var app_peer = new Peer(peerObject, { label: "(" + r + ", " + c + " ): " });
-                    var conn_to_controller = app_peer.connect('idofthecontrollerfordd3');
-                    conn_to_controller.on('open', function () {
-                        console.log("Connection with the controller established");
-                    });
+                    var conn_to_controller;
+
+                    function connectToController() {
+                        conn_to_controller = app_peer.connect('idofthecontrollerfordd3');
+                        conn_to_controller.on('open', function () {
+                            console.log("Connection with the controller established");
+                        });
+                    }
 
                     function loop() {
                         if (!lastRun) {
@@ -198,7 +204,7 @@
                         var avg = total / fpss.length;
                         if (!triggered) {
                             console.log(avg);
-                            conn_to_controller.send(r + ";" + c + ";" +nbcircle +";" + new Date().getTime() + ";" + avg);
+                            conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg);
                             triggered=true;
                         }
                         
@@ -269,6 +275,8 @@
                     });
 
                     orderController.orders['createRect'] = function () {
+                        nbr = 1;
+
                         rect = rectG.append('rect');
                         rect.attr("x", width / 10)
                             .attr("y", 4.5 * height / 10)
@@ -277,13 +285,18 @@
                             .attr("stroke", "black")
                             .style("fill", "#EEE")
                             .text("None");
+
+                        connectToController()
                     };
 
                     orderController.orders['removeRect'] = function () {
+                        nbr = 0;
                         rectG.selectAll("rect").remove();
                     };
 
                     orderController.orders['createCircles'] = function (number, opacity) {
+                        nbc += number || 10;
+
                         circleGroup.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('circle')
                             .attr("class", "c new");
@@ -296,14 +309,17 @@
                             .attr("opacity", opacity || 1)
                             .attr("fill", "#FFF")
                             .classed("new", false);
+
+                        connectToController();
                     };
 
                     orderController.orders['removeCircles'] = function () {
+                        nbc = 0;
                         circleGroup.selectAll(".c").remove();
                     };
 
                     orderController.orders['createDistributedCircles'] = function (number, opacity) {
-                        nbcircle += number || 10;
+                        nbdc += number || 10;
                         circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
                             .append('g')
                             .append('circle')
@@ -317,10 +333,13 @@
                             .attr("opacity", opacity || 1)
                             .attr("fill", "#FFF")
                             .classed("new", false);
+
+                        connectToController();
+                        
                     };
 
                     orderController.orders['removeDistributedCircles'] = function () {
-                        nbcircle = 0;
+                        nbdc = 0;
                         circleGroupDistributed.selectAll(".c").remove();
                     };
 
@@ -333,6 +352,8 @@
 			               .attr("stroke", "orange")
 			               .attr("stroke-width", "4")
 			               .attr("fill", "transparent");
+
+                        connectToController();
                     };
 
                     orderController.orders['removePolygon'] = function () {
@@ -341,6 +362,8 @@
                     };
 
                     orderController.orders['startXTranslation'] = function (name) {
+                        fpss = [];
+                        triggered = false;
                         rect.transition(name)
                             .duration(10000)
                             .style("fill", "#AAA")
@@ -352,19 +375,25 @@
                             .transition(name)
                             .duration(5000)
                             .style("fill", "#EEE")
-                            .attr('x', width / 10);
+                            .attr('x', width / 10)
+                            .each("end", sendFPSAvg);
                     };
 
                     orderController.orders['startYTranslation'] = function (name) {
+                        fpss = [];
+                        triggered = false;
                         rect.transition(name)
                             .duration(10000)
                             .attr('y', 8 * height / 10)
                             .transition(name)
                             .duration(5000)
-                            .attr('y', 4.5 * height / 10);
+                            .attr('y', 4.5 * height / 10)
+                            .each("end", sendFPSAvg);
                     };
 
                     orderController.orders['startRotation'] = function (name) {
+                        fpss = [];
+                        triggered = false;
                         rect.transition(name)
                             .duration(3000)
                             .attr('transform', 'rotate(-40)')
@@ -373,17 +402,21 @@
                             .attr('transform', 'rotate(40)')
                             .transition(name)
                             .duration(3000)
-                            .attr('transform', 'rotate(0)');
+                            .attr('transform', 'rotate(0)')
+                            .each("end", sendFPSAvg);
                     };
 
                     orderController.orders['startMoveCircles'] = function (name) {
+                        fpss = [];
+                        triggered = false;
                         circleGroup.selectAll(".c")
                             .transition()
                             .duration(15000)
                             .precision(0.05)
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
-                            .attr("r", function () { return 40 * Math.random() + 20; });
+                            .attr("r", function () { return 40 * Math.random() + 20; })
+                            .each("end", sendFPSAvg);
                     };
 
                     orderController.orders['startMoveDistributedCircles'] = function (name) {
@@ -400,6 +433,8 @@
                     };
 
                     orderController.orders['startMovePolygon'] = function () {
+                        fpss = [];
+                        triggered = false;
                         var pw = 300, ph = 300, n = 50, period = 2;
                         var points = d3.range(n + 1).map(function (d) { var x = d * (width - pw) / n; var y =  (1 + Math.cos(d / n * 2 * Math.PI * period)) * (height - ph) / 2; return [x, y]; });
 
@@ -420,7 +455,8 @@
                             .transition()
                             .attrTween('transform', 'tweenRotation')
                             .duration(10000)
-                            .ease("linear");
+                            .ease("linear")
+                            .each("end", sendFPSAvg);
 
                     };
 

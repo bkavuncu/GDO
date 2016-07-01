@@ -183,15 +183,14 @@
                     var peerObject = { host: "146.169.32.109", port: 55555 };
                     //{ host: "localhost", port: 55555 };
                     //{ host: "146.169.32.109", port: 55555 }
-                    var con_peer = new Peer("idofthecontrollerfordd3", peerObject);
+                    var con_peer= new Peer("idofthecontrollerfordd3", peerObject);
                     con_peer.on('open', function (conn) {
-
                         gdo.consoleOut(".DD3", 4, "The peer client of the controller is opened");
                     });
                     var dataset = [];
                     var eventLog = [];
 
-                    var updateFPSChart= function (){
+                    /*var updateFPSChart= function (){
                         d3.select("#fps_graph").selectAll("div")
                                 .data(dataset[conn.label])
                                 .enter()
@@ -284,7 +283,8 @@
                             .attr("class", "axis")
                             .attr("transform", "translate(" + padding + ",0)")
                             .call(yAxis);
-                    }
+                    };
+                    */
      
 
                     con_peer.on('connection', function (conn) {
@@ -294,21 +294,18 @@
                             var raw = data.split(';');
                             var row = raw[0];
                             var col = raw[1];
-                            var nbcircle = raw[2];
-                            var ts = raw[3];
-                            var fps = raw[4];
-                            dataset.push([row, col, nbcircle, ts, fps]);
-                            /*
-                            for (var i = 1; 2*i < raw.length; i++) {
-                                dataset.push([row, col, raw[2*i], raw[2*i+1]]);
-                            }
-                            */
+                            var nbr = raw[2];
+                            var nbc = raw[3];
+                            var nbdc = raw[4];
+                            var ts = raw[5];
+                            var fps = raw[6];
+                            dataset.push([row, col, nbr, nbc, nbdc, ts, fps]);
                             //gdo.consoleOut(".DD3", 4, dataset);
                             
                             //updateFPSChart();
                         });
                     });
-
+                    
                     
 
             if (!gdo.net.app["DD3"].initControl) {
@@ -486,6 +483,7 @@
 
                     $('#fps_data').click(function () {
                         var csvContent = "data:text/csv;charset=utf-8,";
+                        csvContent += "Row; Column; Rectangles; Circles; Distributed Circles; Timestamp; FPS \n";
                         dataset.forEach(function (infoArray, index) {
                             dataString = infoArray.join(";");
                             csvContent += index < dataset.length ? dataString + "\n" : dataString;
@@ -500,7 +498,7 @@
                     $('#event_data').click(function () {
                         var csvContent = "data:text/csv;charset=utf-8,";
                         eventLog.forEach(function (infoArray, index) {
-                            dataString = infoArray.join(";");
+                            dataString = infoArray.join(",");
                             csvContent += index < eventLog.length ? dataString + "\n" : dataString;
                         });
                         var encodedUri = encodeURI(csvContent);
