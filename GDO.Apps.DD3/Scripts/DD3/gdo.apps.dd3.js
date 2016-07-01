@@ -1867,8 +1867,8 @@ var initDD3App = function () {
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
                 var c1 = containers[0], c2;
-                //console.log(c1);
-                while (c1 && c1.__dd3_transitions__ && c1.__dd3_transitions__.empty()) {//v4: replaced__dd3_transitions__.empty()
+                
+                while (c1 && c1.__dd3_transitions__.empty()) {//v4
                     c2 = containers.shift()
                     c1 = containers[0];
                 }
@@ -1878,7 +1878,7 @@ var initDD3App = function () {
 
                 clones = containers.map(function (c) {
                     g = c.cloneNode(c.nodeName === "g" ? false : true);
-                    //v4: doesn't matter c2.appendChild(g);
+                    c2.appendChild(g);
                     c2 = g;
                     return g;
                 });
