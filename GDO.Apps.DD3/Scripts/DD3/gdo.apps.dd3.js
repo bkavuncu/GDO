@@ -40,8 +40,8 @@ var initDD3App = function () {
             extend: function (base, extension) {
                 if (arguments.length > 2) {
                     [].forEach.call(arguments, function (extension) {
-                        utils.extend(base, extension)
-                    })
+                        utils.extend(base, extension);
+                    });
                 } else {
                     for (var k in extension)
                         base[k] = extension[k];
@@ -138,7 +138,7 @@ var initDD3App = function () {
                 prop = [],
                 data = api.dataPoints[dataId];
 
-            for (p in data[0])
+            for (var p in data[0])
                 if (data[0].hasOwnProperty(p))
                     prop.push(p);
 
@@ -204,7 +204,7 @@ var initDD3App = function () {
             data.sort(sorter(sortOnKey || "id"))
                 .forEach(function (d, i) { d.order = i; });
 
-            var requestedData = data.filter(function (d, i) { return i >= limit.min && i < limit.max })
+            var requestedData = data.filter(function (d, i) { return i >= limit.min && i < limit.max; })
                 .map(function (d) {
                     var obj = {};
 
@@ -239,7 +239,7 @@ var initDD3App = function () {
             var pts = [], counter = approx;
 
             var isIn = function (d) {
-                return (d[xKey] >= limit.xmin && d[xKey] < limit.xmax && d[yKey] >= limit.ymin && d[yKey] < limit.ymax)
+                return (d[xKey] >= limit.xmin && d[xKey] < limit.xmax && d[yKey] >= limit.ymin && d[yKey] < limit.ymax);
             };
 
             for (var i = 0, l = data.length; i < l; i++) {
@@ -414,7 +414,7 @@ var initDD3App = function () {
             //check if all librairies were loaded and if so set browser configuration (signalr) and connect to peer server (peerjs)
             var init = function () {
                 if (!init.checkLibraries()) {
-                    state("fatal")
+                    state("fatal");
                     return;
                 }
 
@@ -545,30 +545,30 @@ var initDD3App = function () {
                 signalR.server.updateInformation(signalR.sid, thisInfo);
             };
 
-//Receive the configuration of the whole cave from the backend
+            //Receive the configuration of the whole cave from the backend
             init.getCaveConfiguration = function (obj) {
                 utils.log("Receiving connected browsers' ids from signalR server", 1);
 
-//obj contains info about all browsers
+                //obj contains info about all browsers
                 syncTime = Date.now();
                 var peersInfo = JSON.parse(obj);
                 var maxCol, minCol, maxRow, minRow;
 
-//define the mine and max row and columns
+                //define the mine and max row and columns
                 minCol = d3.min(peersInfo, utils.d('col', true));
                 maxCol = d3.max(peersInfo, utils.d('col', true));
                 minRow = d3.min(peersInfo, utils.d('row', true));
                 maxRow = d3.max(peersInfo, utils.d('row', true));
 
-//nb of rows and column
+                //nb of rows and column
                 cave.rows = maxRow - minRow + 1;
                 cave.columns = maxCol - minCol + 1;
 
-//Offset the column,row coordinate of this browser with minimal row and column
+                //Offset the column,row coordinate of this browser with minimal row and column
                 browser.column = browser.initColumn - minCol;
                 browser.row = browser.initRow - minRow;
 
-//Initialize the peerjs connection
+                //Initialize the peerjs connection
                 peersInfo.forEach(function (p) {
                     p.initColumn = +p.col;
                     p.initRow = +p.row;
@@ -580,14 +580,14 @@ var initDD3App = function () {
                 peer.connections = d3.range(0, cave.rows).map(function () { return []; });
                 peer.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
-//Initialize cave property
+                //Initialize cave property
                 cave.margin = options.margin;
                 cave.width = cave.columns * browser.width;
                 cave.height = cave.rows * browser.height;
                 cave.svgWidth = cave.width - cave.margin.left - cave.margin.right;
                 cave.svgHeight = cave.height - cave.margin.top - cave.margin.bottom;
 
-//Define browser content position in the context of the cave geometrical referral
+                //Define browser content position in the context of the cave geometrical referral
                 browser.margin = {
                     top: Math.max(cave.margin.top - browser.row * browser.height, 0),
                     left: Math.max(cave.margin.left - browser.column * browser.width, 0),
@@ -595,7 +595,7 @@ var initDD3App = function () {
                     right: Math.max(cave.margin.right - (cave.columns - browser.column - 1) * browser.width, 0)
                 };
 
-//Size of the svg element in the browser
+                //Size of the svg element in the browser
                 browser.svgWidth = Math.max(browser.width - browser.margin.left - browser.margin.right, 0);
                 browser.svgHeight = Math.max(browser.height - browser.margin.top - browser.margin.bottom, 0);
 
@@ -608,7 +608,7 @@ var initDD3App = function () {
         })();
 
         // Create all dd3 functions	
-        var defineDD3Functions= function () {
+        var defineDD3Functions = function () {
 
             /**
              * dd3.position
@@ -619,14 +619,14 @@ var initDD3App = function () {
                 return function (x) { return x + sign * s; };
             }
 
-/*APIDOC: used to translate coordinates between global and local referential
-            * context1: output referential
-            * range1: output containing element
-            * context2: input referential
-            * range2: input element
-            * this returns p.left and p.top, two functions which translates each 2D coordinates from the input referential to the output referential
-            * ex: ("svg", "local", "svg", "global") => I want to know the position in the svg element according to the local referential based on the position in the svg element according to the global referential
-            */
+            /*APIDOC: used to translate coordinates between global and local referential
+                        * context1: output referential
+                        * range1: output containing element
+                        * context2: input referential
+                        * range2: input element
+                        * this returns p.left and p.top, two functions which translates each 2D coordinates from the input referential to the output referential
+                        * ex: ("svg", "local", "svg", "global") => I want to know the position in the svg element according to the local referential based on the position in the svg element according to the global referential
+                        */
             _dd3.position = function (context1, range1, context2, range2) {
                 var p = {};
                 if (context1 === context2) {
@@ -648,13 +648,13 @@ var initDD3App = function () {
                 return p;
             };
 
-//position of the svg element in the cave referential
+            //position of the svg element in the cave referential
             _dd3.position.svg = {
                 left: browser.column * browser.width - cave.margin.left + browser.margin.left,
                 top: browser.row * browser.height - cave.margin.top + browser.margin.top
             };
 
-//position of the html element in the cave referential
+            //position of the html element in the cave referential
             _dd3.position.html = {
                 left: browser.column * browser.width,
                 top: browser.row * browser.height
@@ -758,13 +758,13 @@ var initDD3App = function () {
                     signalR.server.getDimensions(signalR.sid, dataId);
             };
 
-/*APIDOC:get the raw data of the data set according to its name or id. You can filter by key if needed.
-            * dataName: name of the data => Apparently, this isn't used
-            * dataId: id of the dataset
-            * callback: function to call once the data is received
-            * keys: array of the attributes that you want to retrieve
-            * No return as data will be passed to callback
-            */
+            /*APIDOC:get the raw data of the data set according to its name or id. You can filter by key if needed.
+                        * dataName: name of the data => Apparently, this isn't used
+                        * dataId: id of the dataset
+                        * callback: function to call once the data is received
+                        * keys: array of the attributes that you want to retrieve
+                        * No return as data will be passed to callback
+                        */
             dd3_data.getData = function (dataName, dataId, callback, keys) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -785,18 +785,18 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-/*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will de represented as point
-            * dataName: name of the data => Apparently, this isn't used
-            * dataId: id of the dataset
-            * callback: function to call once the data is received
-            * scaleX: scale of the data to return according to x (cf. D3 scale object) 
-            * scaleY: scale of the data to return according to y (cf. D3 scale object)
-            * xKey: attribute of the data set to use for x axis
-            * yKey: attribute of the data set to use for y axis
-            * keys: array of the attributes that you want to retrieve
-            * limit: bounds of the data to return. If null, will be computed from the scales and keys
-            * No return as data will be passed to callback
-            */
+            /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will de represented as point
+                        * dataName: name of the data => Apparently, this isn't used
+                        * dataId: id of the dataset
+                        * callback: function to call once the data is received
+                        * scaleX: scale of the data to return according to x (cf. D3 scale object) 
+                        * scaleY: scale of the data to return according to y (cf. D3 scale object)
+                        * xKey: attribute of the data set to use for x axis
+                        * yKey: attribute of the data set to use for y axis
+                        * keys: array of the attributes that you want to retrieve
+                        * limit: bounds of the data to return. If null, will be computed from the scales and keys
+                        * No return as data will be passed to callback
+                        */
             dd3_data.getPointData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, limit) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
@@ -825,19 +825,19 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-           /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as path 
-            * dataName: name of the data => Apparently, this isn't used
-            * dataId: id of the dataset
-            * callback: function to call once the data is received
-            * scaleX: scale of the data to return according to x (cf. D3 scale object) 
-            * scaleY: scale of the data to return according to y (cf. D3 scale object)
-            * xKey: attribute of the data set to use for x axis
-            * yKey: attribute of the data set to use for y axis
-            * keys: array of the attributes that you want to retrieve
-            * approximation: approximation around the min and max
-            * limit: bounds of the data to return. If null, will be computed from the scales and keys
-            * No return as data will be passed to callback
-            */
+            /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as path 
+             * dataName: name of the data => Apparently, this isn't used
+             * dataId: id of the dataset
+             * callback: function to call once the data is received
+             * scaleX: scale of the data to return according to x (cf. D3 scale object) 
+             * scaleY: scale of the data to return according to y (cf. D3 scale object)
+             * xKey: attribute of the data set to use for x axis
+             * yKey: attribute of the data set to use for y axis
+             * keys: array of the attributes that you want to retrieve
+             * approximation: approximation around the min and max
+             * limit: bounds of the data to return. If null, will be computed from the scales and keys
+             * No return as data will be passed to callback
+             */
             dd3_data.getPathData = function (dataName, dataId, callback, scaleX, scaleY, xKey, yKey, keys, approximation, limit) {
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
@@ -867,16 +867,16 @@ var initDD3App = function () {
                 utils.log("Data requested : " + dataName + " (" + dataId + ")", 1);
             };
 
-/*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as bar
-            * dataName: name of the data => Apparently, this isn't used
-            * dataId: id of the dataset
-            * callback: function to call once the data is received
-            * orderingKey: which key will be used for ordering
-            * keys: array of the attributes that you want to retrieve
-            * orientation: Orientation for the bar chart (cf d3 orientation)
-            * limit: bounds of the data to return. If null, will be computed from the scales and keys
-            * No return as data will be passed to callback
-            */
+            /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as bar
+                        * dataName: name of the data => Apparently, this isn't used
+                        * dataId: id of the dataset
+                        * callback: function to call once the data is received
+                        * orderingKey: which key will be used for ordering
+                        * keys: array of the attributes that you want to retrieve
+                        * orientation: Orientation for the bar chart (cf d3 orientation)
+                        * limit: bounds of the data to return. If null, will be computed from the scales and keys
+                        * No return as data will be passed to callback
+                        */
             dd3_data.getBarData = function (dataName, dataId, callback, scale, orderingKey, keys, orientation, limit) {
 
                 orientation = orientation || "bottom";
@@ -917,14 +917,14 @@ var initDD3App = function () {
             };
 
 
-/*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as pie
-            * dataName: name of the data => Apparently, this isn't used
-            * dataId: id of the dataset
-            * callback: function to call once the data is received
-            * centerX: X coordinate of the center
-            * centerY: Y coordinate of the center
-            * No return as data will be passed to callback
-            */
+            /*APIDOC:get data of the data set according to its name or id. You can filter by key if needed. Tailored for data that will be represented as pie
+                        * dataName: name of the data => Apparently, this isn't used
+                        * dataId: id of the dataset
+                        * callback: function to call once the data is received
+                        * centerX: X coordinate of the center
+                        * centerY: Y coordinate of the center
+                        * No return as data will be passed to callback
+                        */
             dd3_data.getPieData = function (dataName, dataId, callback, centerX, centerY) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -937,13 +937,13 @@ var initDD3App = function () {
                 return dd3_data.receiveData(dataName, dataId, "[]");
             };
 
-/*APIDOC:get data from a remote source
-            * dataId: id of the dataset
-            * address: Address of the remote data source
-            * callback: function to call once the data is received
-            * toArray, toObjects, toValues, useNames : DD3Q: wut?
-            * No return as data will be passed to callback
-            */
+            /*APIDOC:get data from a remote source
+                        * dataId: id of the dataset
+                        * address: Address of the remote data source
+                        * callback: function to call once the data is received
+                        * toArray, toObjects, toValues, useNames : DD3Q: wut?
+                        * No return as data will be passed to callback
+                        */
             dd3_data.requestRemoteData = function (dataId, address, callback, toArray, toObject, toValues, useNames) {
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)].callback_remoteDataReady = callback;
@@ -980,7 +980,7 @@ var initDD3App = function () {
                 data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
             };
 
-//Callback upon data reception => store it and call the next callback
+            //Callback upon data reception => store it and call the next callback
             dd3_data.receiveData = function (dataName, dataId, dataPoints) {
                 utils.log("Data received : " + dataName + " (" + dataId + ")", 1);
                 dataPoints = JSON.parse(dataPoints);
@@ -991,14 +991,14 @@ var initDD3App = function () {
                 data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
             };
 
-//Callback upon remote data readiness reception
+            //Callback upon remote data readiness reception
             dd3_data.receiveRemoteDataReady = function (dataId, result) {
                 utils.log("Received result of remote server request : " + dataId, 1);
                 result = JSON.parse(result);
                 data[pr(dataId)].callback_remoteDataReady && data[pr(dataId)].callback_remoteDataReady(result);
             };
 
-//Link this callback with signalr
+            //Link this callback with signalr
             signalR_callback['receiveDimensions'] = dd3_data.receiveDimensions;
             signalR_callback['receiveData'] = dd3_data.receiveData;
             signalR_callback['receiveRemoteDataReady'] = dd3_data.receiveRemoteDataReady;
@@ -1168,7 +1168,7 @@ var initDD3App = function () {
 
                 if (data.name == "image") {
                     obj.attr_("xlink:href", data.attr.href);
-                    delete data.attr.href
+                    delete data.attr.href;
                 }
 
                 obj.attr_(data.attr)
@@ -1202,7 +1202,7 @@ var initDD3App = function () {
                     var trst = _dd3_hook_selection_transition.call(obj, data.name);
 
                     //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
-                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)")
+                    utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
 
                     obj.attr_(data.start.attr)
                         .style_(data.start.style);
@@ -1309,11 +1309,11 @@ var initDD3App = function () {
                         syncTime = Date.now();
                         utils.log("Synchronized !", 0);
                         _();
-                    }
+                    };
                     setTimeout(function () {
                         signalR.server.synchronize(signalR.sid);
                     }, t || 0);
-                }
+                };
             })();
 
             /**
@@ -1327,7 +1327,7 @@ var initDD3App = function () {
                     path[funcName + '_'] = original;
                     return watcher.apply(null, [].slice.call(arguments, 1));
                 };
-            }
+            };
 
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
@@ -1347,7 +1347,7 @@ var initDD3App = function () {
                         _dd3_selection_send.call(e, 'property', { 'function': funcName, 'property': arguments[0] });
 
                     return this;
-                }
+                };
             };
 
             var _dd3_watchAdd = function (original, funcName) {
@@ -1435,7 +1435,7 @@ var initDD3App = function () {
                         return false;
                     });
                     return r;
-                }
+                };
 
                 ns.forEach(function (d) {
                     if ((i = contain(os, d)) >= 0) {
@@ -1451,7 +1451,7 @@ var initDD3App = function () {
                 exit = os;
 
                 return [enter, update, exit];
-            }
+            };
 
             // Find all browsers which MAY need to receive the element
             var _dd3_findRecipients = function (el) {
@@ -1526,7 +1526,7 @@ var initDD3App = function () {
             _dd3.selection.prototype.send = function () {
                 _dd3_selection_createProperties(this);
                 return _dd3_selection_send.call(this, 'shape');
-            }
+            };
 
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
@@ -1767,7 +1767,7 @@ var initDD3App = function () {
                 };
 
                 var formatGroup = function (elem, type, selections, args, active, objs, obj) {
-                    var onSend = []
+                    var onSend = [];
                     if (type === 'property') {
                         if (typeof args.property === 'object') { // If we gave object as { property -> value, ... }
                             obj = createPropertiesObject(obj, elem, args.function, args.property);
@@ -1800,7 +1800,7 @@ var initDD3App = function () {
                         };
 
 
-                    selections.forEach(function (s, i) { isElem ? formatElem(s, i, elem, type, selections, args, active, objs, obj) : formatGroup(elem, type, selections, args, active, objs, obj) });
+                    selections.forEach(function (s, i) { isElem ? formatElem(s, i, elem, type, selections, args, active, objs, obj) : formatGroup(elem, type, selections, args, active, objs, obj); });
 
                     return objs;
                 };
@@ -1879,13 +1879,13 @@ var initDD3App = function () {
             var _dd3_selection_filterWatched = function (e) {
                 return e.filter(function (d, i) {
                     return !this.__unwatch__ && ([].indexOf.call(this.classList, 'dd3_received') < 0);
-                })
+                });
             };
 
             var _dd3_selection_filterUnreceived = function (e) {
                 return e.filter(function () {
                     return !_dd3_isReceived(this);
-                })
+                });
             };
 
             var _dd3_isReceived = function (e) {
@@ -1895,13 +1895,13 @@ var initDD3App = function () {
             var _dd3_selection_filterGroup = function (e) {
                 return e.filter(function (d, i) {
                     return (this.nodeName.toLowerCase() === "g");
-                })
+                });
             };
 
             var _dd3_selection_filterNonGroup = function (e) {
                 return e.filter(function (d, i) {
                     return (this.nodeName.toLowerCase() !== "g");
-                })
+                });
             };
 
             var _dd3_notifyChildren = function (name) {
@@ -1925,13 +1925,13 @@ var initDD3App = function () {
                 var prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
 
                 if (prev = getPreviousElemOrdered(elem)) {
-                    var s = prev.getAttribute("order").split("_")
+                    var s = prev.getAttribute("order").split("_");
                     if (s[0] === o)
                         prevOrder = +s[1];
                 }
 
                 if (next = getNextElemOrdered(elem)) {
-                    var s = next.getAttribute("order").split("_")
+                        var s = next.getAttribute("order").split("_");
                     if (s[0] === o)
                         nextOrder = +s[1];
                 }
@@ -1993,7 +1993,7 @@ var initDD3App = function () {
 
                 var c1 = containers[0], c2;
                 while (c1 && c1.__dd3_transitions__.empty()) {
-                    c2 = containers.shift()
+                    c2 = containers.shift();
                     c1 = containers[0];
                 }
 
@@ -2034,7 +2034,7 @@ var initDD3App = function () {
                         });
                     });
                     var rcpt = _dd3_findRecipients(g);
-                    rcpt.forEach(function (r) { r.min = time - step; r.max = time + step })
+                    rcpt.forEach(function (r) { r.min = time - step; r.max = time + step; });
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
 
@@ -2282,7 +2282,7 @@ var initDD3App = function () {
                     };
 
                     return t;
-                }
+                };
 
                 return initialize(t, ease, precision);
             };
@@ -2385,7 +2385,7 @@ var initDD3App = function () {
     })();
 
     return dd3;
-}
+};
 
 // These functions need to be defined before signalR is started, so we need to use a callback system:
 // signalR_callback is defined later in dd3 when it is initiated.
@@ -2410,7 +2410,7 @@ dd3Server.client.receiveGDOConfiguration = function (id) {
 
 dd3Server.client.receiveControllerOrder = function (orders) {
     if (orderTransmitter) {
-        orders = JSON.parse(orders)
+        orders = JSON.parse(orders);
         gdo.consoleOut('.DD3', 1, 'Order received : ' + orders.name + ' [' + orders.args + ']');
         orderTransmitter(orders);
     } else {
@@ -2436,7 +2436,7 @@ gdo.net.app["DD3"].initClient = function (launcher, orderController) {
     orderTransmitter = orderController;
     main_callback = launcher;
     return initDD3App();
-}
+};
 
 gdo.net.app["DD3"].initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
