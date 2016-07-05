@@ -1931,7 +1931,7 @@ var initDD3App = function () {
                 }
 
                 if (next = getNextElemOrdered(elem)) {
-                        var s = next.getAttribute("order").split("_");
+                    var s = next.getAttribute("order").split("_");
                     if (s[0] === o)
                         nextOrder = +s[1];
                 }
@@ -2443,13 +2443,13 @@ gdo.net.app["DD3"].initControl = function (callback) {
     main_callback = callback;
     dd3Server.server.defineController(gdo.net.instance[gdo.controlId].id);
     return gdo.net.instance[gdo.controlId].id;
-}
+};
 
 gdo.net.app["DD3"].terminateClient = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
     dd3Server.server.removeClient(dd3Server.instanceId);
-}
+};
 
 gdo.net.app["DD3"].terminateControl = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
-}
+};
