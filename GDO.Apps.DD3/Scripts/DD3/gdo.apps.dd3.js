@@ -629,19 +629,20 @@ var initDD3App = function () {
                         */
             _dd3.position = function (context1, range1, context2, range2) {
                 var p = {};
+                var f, sign, g;
                 if (context1 === context2) {
-                    var f = dd3.position[(context1 === 'html') ? 'html' : 'svg'];
-                    var sign = (range1 == range2) ? 0 : (range1 == 'local') ? 1 : -1;
+                    f = dd3.position[(context1 === 'html') ? 'html' : 'svg'];
+                    sign = (range1 == range2) ? 0 : (range1 == 'local') ? 1 : -1;
                     p.left = sumWith(f.left, sign);
                     p.top = sumWith(f.top, sign);
                 } else if (range1 === range2) {
-                    var f = ((range1 === 'local') ? browser : cave).margin;
-                    var sign = (context1 === 'html') ? -1 : 1;
+                    f = ((range1 === 'local') ? browser : cave).margin;
+                    sign = (context1 === 'html') ? -1 : 1;
                     p.left = sumWith(f.left, sign);
                     p.top = sumWith(f.top, sign);
                 } else {
-                    var f = _dd3.position(context1, range1, context1, range2);
-                    var g = _dd3.position(context1, range2, context2, range2);
+                    f = _dd3.position(context1, range1, context1, range2);
+                    g = _dd3.position(context1, range2, context2, range2);
                     p.left = function (x) { return g.left(f.left(x)); };
                     p.top = function (x) { return g.top(f.top(x)); };
                 }
@@ -977,7 +978,9 @@ var initDD3App = function () {
                     utils.log("Error requesting dimensions : " + dimensions.error, 3);
                 }
                 data[pr(dataId)].dataDimensions = dimensions;
-                data[pr(dataId)].callback_dimensions && data[pr(dataId)].callback_dimensions(dimensions);
+                if (data[pr(dataId)].callback_dimensions) {
+                    data[pr(dataId)].callback_dimensions(dimensions);
+                }
             };
 
             //Callback upon data reception => store it and call the next callback
@@ -988,14 +991,18 @@ var initDD3App = function () {
                     utils.log("Error requesting data : " + dataPoints.error, 3);
                 }
                 data[pr(dataId)][pr(dataName)].dataPoints = dataPoints;
-                data[pr(dataId)][pr(dataName)].callback_data && data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
+                if (data[pr(dataId)][pr(dataName)].callback_data) {
+                    data[pr(dataId)][pr(dataName)].callback_data(dataPoints);
+                }
             };
 
             //Callback upon remote data readiness reception
             dd3_data.receiveRemoteDataReady = function (dataId, result) {
                 utils.log("Received result of remote server request : " + dataId, 1);
                 result = JSON.parse(result);
-                data[pr(dataId)].callback_remoteDataReady && data[pr(dataId)].callback_remoteDataReady(result);
+                if (data[pr(dataId)].callback_remoteDataReady) {
+                    data[pr(dataId)].callback_remoteDataReady(result);
+                }
             };
 
             //Link this callback with signalr
@@ -1211,18 +1218,31 @@ var initDD3App = function () {
                         .style(data.end.style)
                         .duration(data.duration);
 
-                    data.tweens && data.tweens.forEach(function (o) {
-                        _dd3_tweens[o.value] && trst.tween(o.key, _dd3_tweens[o.value]);
-                    });
+                    if (data.tweens) {
+                        data.tweens.forEach(function (o) {
+                            if (_dd3_tweens[o.value]) {
+                                trst.tween(o.key, _dd3_tweens[o.value]);
+                            }
+                        });
+                    }
 
-                    data.attrTweens && data.attrTweens.forEach(function (o) {
-                        _dd3_tweens[o.value] && trst.attrTween(o.key, _dd3_tweens[o.value]);
-                    });
+                    if (data.attrTweens) {
+                        data.attrTweens.forEach(function (o) {
+                            if (_dd3_tweens[o.value]) {
+                                trst.attrTween(o.key, _dd3_tweens[o.value]);
+                            }
+                        });
+                    }
 
-                    data.styleTweens && data.styleTweens.forEach(function (o) {
-                        var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
-                        _dd3_tweens[o.value[0]] && trst.styleTween.apply(trst, args);
-                    });
+
+                    if (data.styleTweens) {
+                        data.styleTweens.forEach(function (o) {
+                            var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
+                            if (_dd3_tweens[o.value[0]]) {
+                                trst.styleTween.apply(trst, args);
+                            }
+                        });
+                    }
 
                     if (_dd3_timeTransitionRelative)
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
@@ -1230,8 +1250,14 @@ var initDD3App = function () {
                         trst.delay(data.delay + (data.elapsed - Date.now()));
 
 
-                    if (data.ease)
-                        _dd3_eases[data.ease] ? trst.ease(_dd3_eases[data.ease]) : trst.ease(data.ease);
+                    if (data.ease) {
+                        if (_dd3_eases[data.ease]) {
+                            trst.ease(_dd3_eases[data.ease]);
+                        } else {
+                            trst.ease(data.ease);
+                        }
+                    }
+
                 };
                 /**/
                 launchTransition(data);
@@ -1577,7 +1603,7 @@ var initDD3App = function () {
                 if (this.parentNode) // If the group is still in the dom, we notify children. Otherwise they will be deleted in every previous recipients dom with the group deletion anyway
                     _dd3_notifyChildren.call(this, 'updateContainer');
 
-                var rcpt = _dd3_getSelections(_dd3_getChildrenRcpts.call(this, []), rcpt)[1];
+                rcpt = _dd3_getSelections(_dd3_getChildrenRcpts.call(this, []), rcpt)[1];
 
                 if (rcpt.length > 0) {
                     // Create the object to send
@@ -1762,7 +1788,9 @@ var initDD3App = function () {
                             break;
                     }
 
-                    objTemp && (objTemp.onSend = onSend);
+                    if (objTemp) {
+                        objTemp.onSend = onSend;
+                    }
                     objs.push(objTemp);
                 };
 
@@ -1784,7 +1812,9 @@ var initDD3App = function () {
                         utils.log('Not handling : type is ' + type);
                         return;
                     }
-                    obj && (obj.onSend = onSend);
+                    if (obj) {
+                        obj.onSend = onSend;
+                    }
                     objs.push(obj);
                 };
 
@@ -1800,7 +1830,13 @@ var initDD3App = function () {
                         };
 
 
-                    selections.forEach(function (s, i) { isElem ? formatElem(s, i, elem, type, selections, args, active, objs, obj) : formatGroup(elem, type, selections, args, active, objs, obj); });
+                    selections.forEach(function (s, i) {
+                        if (isElem) {
+                            formatElem(s, i, elem, type, selections, args, active, objs, obj);
+                        } else {
+                            formatGroup(elem, type, selections, args, active, objs, obj);
+                        }
+                    });
 
                     return objs;
                 };
@@ -1922,16 +1958,16 @@ var initDD3App = function () {
             };
 
             var getOrder = function (elem) {
-                var prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
+                var s, prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
 
                 if (prev = getPreviousElemOrdered(elem)) {
-                    var s = prev.getAttribute("order").split("_");
+                    s = prev.getAttribute("order").split("_");
                     if (s[0] === o)
                         prevOrder = +s[1];
                 }
 
                 if (next = getNextElemOrdered(elem)) {
-                    var s = next.getAttribute("order").split("_");
+                    s = next.getAttribute("order").split("_");
                     if (s[0] === o)
                         nextOrder = +s[1];
                 }
@@ -2023,15 +2059,17 @@ var initDD3App = function () {
 
                 range.forEach(function (time) {
                     transitionsInfos.forEach(function (c, i) {
-                        c && c.forEach(function (obj) {
-                            var a = (time - obj.time) / obj.duration;
-                            if (a >= 0 && a <= 1) {
-                                var t = obj.ease(a);
-                                obj.tweened.forEach(function (f) {
-                                    f.call(clones[i], t);
-                                });
-                            }
-                        });
+                        if (c) {
+                            c.forEach(function (obj) {
+                                var a = (time - obj.time) / obj.duration;
+                                if (a >= 0 && a <= 1) {
+                                    var t = obj.ease(a);
+                                    obj.tweened.forEach(function (f) {
+                                        f.call(clones[i], t);
+                                    });
+                                }
+                            });
+                        }
                     });
                     var rcpt = _dd3_findRecipients(g);
                     rcpt.forEach(function (r) { r.min = time - step; r.max = time + step; });
@@ -2209,14 +2247,15 @@ var initDD3App = function () {
                     };
 
                     t.attrTween = function (attr, tween) {
+                        var temp, trst;//TODO rename
                         if (arguments.length < 2) return attrTweens.get(attr);
 
                         if (tween == null) {
                             attrTweens.remove(attr);
 
-                            var temp = this.tween;
+                            temp = this.tween;
                             this.tween = d3.transition.prototype.tween;
-                            var trst = d3.transition.prototype.attrTween.call(this, attr, null);
+                            trst = d3.transition.prototype.attrTween.call(this, attr, null);
                             this.tween = temp;
 
                             return trst;
@@ -2230,23 +2269,24 @@ var initDD3App = function () {
 
                         attrTweens.set(attr, 'dd3_' + tween);
 
-                        var temp = this.tween;
+                        temp = this.tween;
                         this.tween = d3.transition.prototype.tween;
-                        var trst = d3.transition.prototype.attrTween.call(this, attr, _dd3_tweens['dd3_' + tween]);
+                        trst = d3.transition.prototype.attrTween.call(this, attr, _dd3_tweens['dd3_' + tween]);
                         this.tween = temp;
 
                         return trst;
                     };
 
                     t.styleTween = function (style, tween, priority) {
+                        var temp, trst;//TODO rename
                         if (arguments.length < 2) return styleTweens.get(style);
 
                         if (tween == null) {
                             styleTweens.remove(style);
 
-                            var temp = this.tween;
+                            temp = this.tween;
                             this.tween = d3.transition.prototype.tween;
-                            var trst = d3.transition.prototype.styleTween.call(this, style, null);
+                            trst = d3.transition.prototype.styleTween.call(this, style, null);
                             this.tween = temp;
 
                             return trst;
@@ -2263,9 +2303,9 @@ var initDD3App = function () {
                         var args = [].slice.call(arguments);
                         args[1] = _dd3_tweens['dd3_' + tween];
 
-                        var temp = this.tween;
+                        temp = this.tween;
                         this.tween = d3.transition.prototype.tween;
-                        var trst = d3.transition.prototype.styleTween.apply(this, args);
+                        trst = d3.transition.prototype.styleTween.apply(this, args);
                         this.tween = temp;
 
                         return trst;
