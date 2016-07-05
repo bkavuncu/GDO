@@ -492,12 +492,12 @@ var initDD3App = function () {
                                 return;
                             }
 
-                            if(peer.connections[r][c].open){
+                            if (peer.connections[r][c].open) {
                                 peer.connections[r][c].close();
-                            }else{
+                            } else {
                                 peer.connections[r][c].removeAllListeners().on("open", peer.connections[r][c].close);
                             }
-                                
+
                         }
 
                         peer.connections[r][c] = conn;
@@ -1983,16 +1983,20 @@ var initDD3App = function () {
             };
 
             var getPreviousElemOrdered = function (elem) {
-                while (elem = elem.previousElementSibling) {
+                elem = elem.previousElementSibling;
+                while (elem) {
                     if (elem.getAttribute("order"))
                         return elem;
+                    elem = elem.previousElementSibling;
                 }
             };
 
             var getNextElemOrdered = function (elem) {
-                while (elem = elem.nextElementSibling) {
+                elem = elem.nextElementSibling;
+                while (elem) {
                     if (elem.getAttribute("order"))
                         return elem;
+                    elem = elem.nextElementSibling;
                 }
             };
 
@@ -2011,7 +2015,7 @@ var initDD3App = function () {
             var _dd3_eases = {};
 
             var _dd3_transitionNamespace = function (name) {
-                return name == null ? "__transition__" : "__transition_" + name + "__";//TOFIX
+                return !name ? "__transition__" : "__transition_" + name + "__";
             };
 
             var _dd3_findTransitionsRecipients = function (elem) {
@@ -2237,7 +2241,7 @@ var initDD3App = function () {
                     t.tween = function (name, tween) {
                         if (arguments.length < 2) return tweens.get(name);
 
-                        if (tween == null) {
+                        if (!tween) {
                             tweens.remove(name);
                             return d3.transition.prototype.tween.call(this, name, null);
                         } else if (typeof tween !== "string") {
@@ -2256,7 +2260,7 @@ var initDD3App = function () {
                         var temp, trst;//TODO rename
                         if (arguments.length < 2) return attrTweens.get(attr);
 
-                        if (tween == null) {
+                        if (!tween) {
                             attrTweens.remove(attr);
 
                             temp = this.tween;
@@ -2287,7 +2291,7 @@ var initDD3App = function () {
                         var temp, trst;//TODO rename
                         if (arguments.length < 2) return styleTweens.get(style);
 
-                        if (tween == null) {
+                        if (!tween) {
                             styleTweens.remove(style);
 
                             temp = this.tween;
@@ -2335,14 +2339,14 @@ var initDD3App = function () {
 
             _dd3.defineEase = function (name, func) {
                 if (arguments.length < 2) return _dd3_eases['dd3_' + name];
-                if (func == null) delete _dd3_eases['dd3_' + name];
+                if (!func) delete _dd3_eases['dd3_' + name];
                 else _dd3_eases['dd3_' + name] = func;
                 return name;
             };
 
             _dd3.defineTween = function (name, func, spec) {
                 if (arguments.length < 2) return _dd3_tweens['dd3_' + name];
-                if (func == null) delete _dd3_tweens['dd3_' + name];
+                if (!func) delete _dd3_tweens['dd3_' + name];
                 else {
                     func.type = "tween" + (spec || "");
                     _dd3_tweens['dd3_' + name] = func;

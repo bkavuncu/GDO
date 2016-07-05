@@ -54,7 +54,7 @@ var animation = function (arg) {
 			a.aggregatedData = d3.map();
 			a.dataLength = 0;
 
-			if (data.length != 0) {
+			if (data.length !== 0) {
 			    a.dataLength = data[Object.keys(data)[0]].entries.length;
 			    data.forEach(function (d) {
 			        a.data.set(d.name, d.entries);
