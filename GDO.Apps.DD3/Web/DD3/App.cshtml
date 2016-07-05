@@ -99,6 +99,7 @@
                 configId = gdo.net.app.DD3.config[configName].id;
                 */
 
+                //Launch the data viz if dd3 is ready, else wait before launching
                 var launcher = function (configId) {
                     if (dd3.state() === "ready") {
                         test_bench[configId](configId);
