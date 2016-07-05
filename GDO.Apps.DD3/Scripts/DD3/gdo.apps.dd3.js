@@ -327,7 +327,7 @@ var initDD3App = function () {
         var state = (function () {
             var _state = 'loading';
             return function (newState) {
-                if (arguments.length == 0) return _state;
+                if (arguments.length === 0) return _state;
 
                 if (newState === 'connecting') {
                     _state = 'connecting';
@@ -2444,7 +2444,11 @@ dd3Server.client.dd3Receive = function (f) {
 
 dd3Server.client.receiveGDOConfiguration = function (id) {
     // To get configId from server
-    main_callback ? main_callback(id) : gdo.consoleOut('.DD3', 1, 'No callback defined');
+    if(main_callback){
+        main_callback(id);
+    }else{
+        gdo.consoleOut('.DD3', 1, 'No callback defined');
+    }
     main_callback = null;
 };
 
@@ -2462,7 +2466,9 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 
 dd3Server.client.updateController = function (obj) {
     gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
-    main_callback && main_callback(JSON.parse(obj));
+    if(main_callback){
+        main_callback(JSON.parse(obj));
+    }
 };
 
 
