@@ -492,9 +492,12 @@ var initDD3App = function () {
                                 return;
                             }
 
-                            peer.connections[r][c].open ?
-                                peer.connections[r][c].close() :
+                            if(peer.connections[r][c].open){
+                                peer.connections[r][c].close();
+                            }else{
                                 peer.connections[r][c].removeAllListeners().on("open", peer.connections[r][c].close);
+                            }
+                                
                         }
 
                         peer.connections[r][c] = conn;
@@ -1492,7 +1495,7 @@ var initDD3App = function () {
                 var rcpt = [];
                 var rect = el.getBoundingClientRect(); // Relative to local html
 
-                if ((rect.bottom > browser.height || rect.top < 0 || rect.right > browser.width || rect.left < 0) && (rect.width != 0 && rect.height != 0)) {
+                if ((rect.bottom > browser.height || rect.top < 0 || rect.right > browser.width || rect.left < 0) && (rect.width !== 0 && rect.height !== 0)) {
                     var f = hlhg,
                         topLeft = _dd3_findBrowserAt(f.left(rect.left), f.top(rect.top), 'html'),
                         bottomRight = _dd3_findBrowserAt(f.left(rect.right), f.top(rect.bottom), 'html');
@@ -1739,7 +1742,7 @@ var initDD3App = function () {
                 };
 
                 var formatElem = function (s, i, elem, type, selections, args, active, objs, obj) {
-                    if (s.length == 0) {
+                    if (s.length === 0) {
                         objs.push(false);
                         return;
                     }
@@ -1960,13 +1963,15 @@ var initDD3App = function () {
             var getOrder = function (elem) {
                 var s, prev = elem, prevOrder = 0, next = elem, nextOrder, o = browser.row + '-' + browser.column;
 
-                if (prev = getPreviousElemOrdered(elem)) {
+                prev = getPreviousElemOrdered(elem);
+                if (prev) {
                     s = prev.getAttribute("order").split("_");
                     if (s[0] === o)
                         prevOrder = +s[1];
                 }
 
-                if (next = getNextElemOrdered(elem)) {
+                next = getNextElemOrdered(elem);
+                if (next) {
                     s = next.getAttribute("order").split("_");
                     if (s[0] === o)
                         nextOrder = +s[1];
@@ -2006,7 +2011,7 @@ var initDD3App = function () {
             var _dd3_eases = {};
 
             var _dd3_transitionNamespace = function (name) {
-                return name == null ? "__transition__" : "__transition_" + name + "__";
+                return name == null ? "__transition__" : "__transition_" + name + "__";//TOFIX
             };
 
             var _dd3_findTransitionsRecipients = function (elem) {
@@ -2094,7 +2099,8 @@ var initDD3App = function () {
 
                 tween.forEach(function (key, value) {
                     var type = value.type;
-                    if (value = value.call(elem, args.data, args.index)) {
+                    value = value.call(elem, args.data, args.index);
+                    if (value) {
                         properties.push(type || key);
                         tweened.push(value);
                     }
@@ -2444,9 +2450,9 @@ dd3Server.client.dd3Receive = function (f) {
 
 dd3Server.client.receiveGDOConfiguration = function (id) {
     // To get configId from server
-    if(main_callback){
+    if (main_callback) {
         main_callback(id);
-    }else{
+    } else {
         gdo.consoleOut('.DD3', 1, 'No callback defined');
     }
     main_callback = null;
@@ -2466,7 +2472,7 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 
 dd3Server.client.updateController = function (obj) {
     gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
-    if(main_callback){
+    if (main_callback) {
         main_callback(JSON.parse(obj));
     }
 };
