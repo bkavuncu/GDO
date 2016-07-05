@@ -527,8 +527,8 @@ var initDD3App = function () {
 
 
                 // Define server interaction functions
-                signalR_callback['receiveConfiguration'] = init.getCaveConfiguration;
-                signalR_callback['receiveSynchronize'] = signalR.receiveSynchronize;
+                signalR_callback.receiveConfiguration = init.getCaveConfiguration;
+                signalR_callback.receiveSynchronize = signalR.receiveSynchronize;
 
                 utils.log("Connected to signalR server", 1);
                 utils.log("Waiting for everyone to connect", 1);
@@ -999,9 +999,9 @@ var initDD3App = function () {
             };
 
             //Link this callback with signalr
-            signalR_callback['receiveDimensions'] = dd3_data.receiveDimensions;
-            signalR_callback['receiveData'] = dd3_data.receiveData;
-            signalR_callback['receiveRemoteDataReady'] = dd3_data.receiveRemoteDataReady;
+            signalR_callback.receiveDimensions = dd3_data.receiveDimensions;
+            signalR_callback.receiveData = dd3_data.receiveData;
+            signalR_callback.receiveRemoteDataReady = dd3_data.receiveRemoteDataReady;
 
             /**
              * PEER FUNCTIONS
@@ -2428,9 +2428,9 @@ dd3Server.client.updateController = function (obj) {
 
 // ===============================
 
-gdo.net.app["DD3"].displayMode = 0;
+gdo.net.app.DD3.displayMode = 0;
 
-gdo.net.app["DD3"].initClient = function (launcher, orderController) {
+gdo.net.app.DD3.initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     orderTransmitter = orderController;
@@ -2438,18 +2438,18 @@ gdo.net.app["DD3"].initClient = function (launcher, orderController) {
     return initDD3App();
 };
 
-gdo.net.app["DD3"].initControl = function (callback) {
+gdo.net.app.DD3.initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
     dd3Server.server.defineController(gdo.net.instance[gdo.controlId].id);
     return gdo.net.instance[gdo.controlId].id;
 };
 
-gdo.net.app["DD3"].terminateClient = function () {
+gdo.net.app.DD3.terminateClient = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
     dd3Server.server.removeClient(dd3Server.instanceId);
 };
 
-gdo.net.app["DD3"].terminateControl = function () {
+gdo.net.app.DD3.terminateControl = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 };
