@@ -94,7 +94,7 @@ var animation = function (arg) {
 
 			initialized = 1;
 			console.log("Data loaded");
-			callback && callback();
+			if(callback) callback();
 		}, null, null, ["coordinates", 0], ["coordinates", 1], [["name"], ["entries"]], limit);
 	};
 	

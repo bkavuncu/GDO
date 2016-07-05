@@ -14,7 +14,7 @@ var stations = function (svg, map) {
 	        data.forEach(function (d) {
 	            s.stations.set(d.name, [d.coordinates, d.lines]);
 	        });
-	        userCallback && userCallback(s.stations);
+	        if(userCallback) userCallback(s.stations);
 	    };
 
 	    var toCoordinateTopLeft = map.projection.invert([dd3.position.svg.left, dd3.position.svg.top]);
@@ -55,7 +55,7 @@ var stations = function (svg, map) {
 			.attr("fill", function (d) {return d[1] !== "none" ? "white" : "none";})
 			.attr("stroke", function (d) {return d[1];})
 			.attr("stroke-width", strokeWidth);
-	}
+	};
 	
 	s.getStationCoordinates = function (station) {
 		return s.stations.get(station)[0];

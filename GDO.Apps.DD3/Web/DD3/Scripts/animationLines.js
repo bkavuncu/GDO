@@ -104,7 +104,7 @@ var animationLines = function (arg) {
 			}
 
 			initialized = 1;
-			if (--end == 0)
+			if (--end === 0)
 			    (console.log("Data loaded"), callback && callback());
 		}, null, null, ["coordinates", 0], ["coordinates", 1], [["name"], ["entries"]], limit);
 

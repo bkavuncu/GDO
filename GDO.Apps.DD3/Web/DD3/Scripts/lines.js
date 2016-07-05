@@ -16,7 +16,7 @@ var tubeLines = function (svg, map, lineNames, lineColors) {
 		    console.log("Loading tube lines");
 		    dd3.getData('lines', 'linesData', function (data) {
 		        l.lines = d3.map(data);
-		        callback && callback();
+		        if(callback)  callback();
 		    });
 		});
 	};
