@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Cortical", "GDO.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.RayMarching", "GDO.Apps.RayMarching\GDO.Apps.RayMarching.csproj", "{A3076015-E50D-49D1-8FA2-3F9DD8853FBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Apps.UKTravel\GDO.Apps.UKTravel.csproj", "{4E0EC509-B2BE-459A-92CE-5EFB978679DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +181,10 @@ Global
 		{A3076015-E50D-49D1-8FA2-3F9DD8853FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3076015-E50D-49D1-8FA2-3F9DD8853FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3076015-E50D-49D1-8FA2-3F9DD8853FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
