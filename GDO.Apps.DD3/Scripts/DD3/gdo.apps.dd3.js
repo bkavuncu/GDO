@@ -24,7 +24,7 @@ var initDD3App = function () {
             },
 
             //Clamp a given value between min and max
-            clamp: function (value, min, max) {
+            clamp: function (value, min, max) { 
                 return value < min ? min : value > max ? max : value;
             },
 
@@ -1868,7 +1868,8 @@ var initDD3App = function () {
 
                 var c1 = containers[0], c2;
                 
-                while (c1 && c1.__dd3_transitions__.empty()) {//v4
+                utils.log("I AM THE MAP " + c1.__dd3_transitions__ , 2);
+                while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4
                     c2 = containers.shift()
                     c1 = containers[0];
                 }
