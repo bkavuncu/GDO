@@ -77,8 +77,9 @@ namespace GDO.Apps.Images
                     //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
                     //File.Delete(path1);
 
-                    //create thumnail
-                    Image thumb = image.GetThumbnailImage(150 * image.Width / image.Height, 150, () => false, IntPtr.Zero);
+                    //create thumbnail
+                    int thumbHeight = 500;
+                    Image thumb = image.GetThumbnailImage(thumbHeight * image.Width / image.Height, thumbHeight, () => false, IntPtr.Zero);
                     thumb.Save(basePath + ia.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
                     thumb.Dispose();
 
