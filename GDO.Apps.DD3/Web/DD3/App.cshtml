@@ -454,8 +454,8 @@
                             yDomain = [dim.y.min - coef * extentY - c, dim.y.max + coef * extentY + c];
 
                         // Setup Scales
-                        xScale = dd3.scale.linear().range([0, dd3.cave.svgWidth]).domain(xDomain);
-                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
+                        xScale = dd3.scaleLinear().range([0, dd3.cave.svgWidth]).domain(xDomain);
+                        yScale = dd3.scaleLinear().range([dd3.cave.svgHeight, 0]).domain(yDomain);
 
                         dd3.getPointData('pointData', dataId, function (d) {
                             data = d;
@@ -478,8 +478,8 @@
                             circleGroup = svg.append("g").attr("id", "dd3_circle");
 
                         // Setup Axis
-                        var xAxis = d3.svg.axis().scale(xScale).orient("bottom"),
-                            yAxis = d3.svg.axis().scale(yScale).orient("left");
+                        var xAxis = d3.axisBottom(xScale),
+                            yAxis = d3.axisLeft(yScale);
 
                         // x-axis
                         svg.append("g")
@@ -521,7 +521,7 @@
                           .style("fill", function (d, i) { return "black"; })
                           .style("stroke", "red");
 
-                        var lineFunction = d3.svg.line()
+                        var lineFunction = d3.line()
                                 .x(function (d) { return xScale(d['x']); })
                                 .y(function (d) { return yScale(d['y']); })
                                 .interpolate("monotone");
@@ -556,12 +556,12 @@
                         xDomain = d3.range(dim.length);
 
                         // Setup x
-                        xRange = dd3.scale.ordinal().rangeBands([0, dd3.cave.svgWidth], 0.2);
-                        xAxis = d3.svg.axis().scale(xRange).orient("bottom");
+                        xRange = dd3.scaleBand().range([0, dd3.cave.svgWidth]).paddingInner(0.2);
+                        xAxis = d3.axisBottom(xRange);
 
                         // Setup y
-                        yScale = dd3.scale.linear().range([dd3.cave.svgHeight, 0]);
-                        yAxis = d3.svg.axis().scale(yScale).orient("left");
+                        yScale = dd3.scaleLinear().range([dd3.cave.svgHeight, 0]);
+                        yAxis = d3.axisLeft(yScale);
 
                         xRange.domain(xDomain);
                         yScale.domain(yDomain);
@@ -611,7 +611,7 @@
                           .attr('y', function (d) {
                               return (yScale(d.gdp));
                           })
-                          .attr('width', xRange.rangeBand())
+                          .attr('width', xRange.bandwidth())
                           .attr('height', function (d) {
                               return (yScale(0) - yScale(d.gdp));
                           })
@@ -620,7 +620,7 @@
                           .attr('stroke-width', '2');
                     };
 
-                    var color = d3.scale.category20(),
+                    var color = d3.scaleOrdinal(d3.schemeCategory10);
                         i = 0;
 
                     orderController.orders['changeValues'] = function (time) {
@@ -750,7 +750,7 @@
                     titleDiv.text("London Tube").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
                     
                     loadMap = function () {
-                        var projection = d3.geo.mercator()
+                        var projection = d3.geoMercator()
 		                    .translate([cwidth / 2, cheight / 2]);
 
                         var zoom = 10;
@@ -872,7 +872,7 @@
                     titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
-                        var projection = d3.geo.mercator()
+                        var projection = d3.geoMercator()
 		                    .translate([cwidth / 2, cheight / 2]);
 
                         var zoom = 11;
@@ -1054,7 +1054,7 @@
                     titleDiv.text("Shanghai Metro：上海地铁").style("display", "").style("left", dd3.position.html.left + "px").style("top", dd3.position.html.top + "px");
 
                     loadMap = function () {
-                        var projection = d3.geo.mercator()
+                        var projection = d3.geoMercator()
 		                    .translate([cwidth / 2, cheight / 2]);
 
                         var zoom = 11;

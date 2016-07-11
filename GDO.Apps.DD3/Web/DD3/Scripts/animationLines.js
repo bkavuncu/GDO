@@ -5,9 +5,9 @@ var animationLines = function (arg) {
 		currentTime = 0,
 		initialized = 0,
 		running = false,
-		scale = d3.scale.log().clamp(true),
-		linkScale = d3.scale.linear().clamp(true),
-        colorScale = d3.scale.linear().clamp(true).interpolate(d3.interpolateRgb).range(["green", "red"]),  // GDOCONFIG
+		scale = d3.scaleLog().clamp(true),
+		linkScale = d3.scaleLinear().clamp(true),
+        colorScale = d3.scaleLinear().clamp(true).interpolate(d3.interpolateRgb).range(["green", "red"]),  // GDOCONFIG
 	    polygonPosition;
 		
 	var a = function (arg) {

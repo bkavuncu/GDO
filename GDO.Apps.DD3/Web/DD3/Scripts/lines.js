@@ -22,7 +22,7 @@ var tubeLines = function (svg, map, lineNames, lineColors) {
 	};
 	
 	l.drawLines = function () {
-		var lineGenerator = d3.svg.line().interpolate("cardinal");
+		var lineGenerator = d3.line().curve(d3.curveCardinal());
 		var g = svg.append("g").unwatch().attr("id", "tubeLines").style("filter", "url(#shadow)");
 		
 		// filters go in defs element

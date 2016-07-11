@@ -791,8 +791,8 @@ var initDD3App = function () {
                     orientation === "left" && browser.column === 0 ||
                     orientation === "right" && browser.column === cave.column - 1) {
 
-                    limits.min = limits.min || d3.bisect(r, toGlobal(0) - scale.rangeBand() / 2);
-                    limits.max = limits.max || d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.rangeBand() / 2);
+                    limits.min = limits.min || d3.bisect(r, toGlobal(0) - scale.bandwidth() / 2);
+                    limits.max = limits.max || d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.bandwidth() / 2);
 
                     var request = {
                         dataId: dataId,
@@ -1868,8 +1868,8 @@ var initDD3App = function () {
 
                 var c1 = containers[0], c2;
                 
-                utils.log("I AM THE MAP " + c1.__dd3_transitions__ , 2);
-                while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4
+                utils.log(c1 , 2);
+                while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c2 is
                     c2 = containers.shift()
                     c1 = containers[0];
                 }

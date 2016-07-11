@@ -217,7 +217,7 @@
                             .attr("y", function (d) {
                                 return h - yScale(d);
                             })
-                            .attr("width", xScale.rangeBand())
+                            .attr("width", xScale.bandwidth())
                             .attr("height", function (d) {
                                 return yScale(d);
                             })
@@ -234,7 +234,7 @@
                             .attr("y", function (d) {
                                 return h - yScale(d.value);
                             })
-                            .attr("width", xScale.rangeBand())
+                            .attr("width", xScale.bandwidth())
                             .attr("height", function (d) {
                                 return yScale(d.value);
                             });
@@ -243,7 +243,7 @@
                         bars.exit()
                             .transition()
                             .duration(500)
-                            .attr("x", -xScale.rangeBand())
+                            .attr("x", -xScale.bandwidth())
                             .remove();
                     };
 
@@ -252,23 +252,17 @@
                         var h = 300;
                         var padding = 30;
 
-                        var xScale = d3.scale.linear()
+                        var xScale = d3.scaleLinear()
                             .domain(d3.range(dataset.length))
                             .range([padding, w - padding * 2]);
 
-                        var yScale = d3.scale.linear()
+                        var yScale = d3.scaleLinear()
                                      .domain([0, d3.max(dataset, function (d) { return ((typeof d) === "number") ? d : 60; })])
                                      .range([h - padding, padding]);
 
-                        var xAxis = d3.svg.axis()
-                            .scale(xScale)
-                            .orient("bottom")
-                            .ticks(5);
+                        var xAxis = d3.axisBottom(xScale).ticks(5);
 
-                        var yAxis = d3.svg.axis()
-                            .scale(yScale)
-                            .orient("left")
-                            .ticks(5);
+                        var yAxis = d3.axisLeft(yScale).ticks(5);
 
                         var svg = d3.select("#fps_graph")
                             .append("svg")
