@@ -580,7 +580,9 @@ var initDD3App = function () {
                 });
 
                 peer.peers = peersInfo;
+                //peer.connections are the peerjs connections matained between this node and others
                 peer.connections = d3.range(0, cave.rows).map(function () { return []; });
+                //peer.buffers is the buffer of the data sent from this node to another one
                 peer.buffers = d3.range(0, cave.rows).map(function () { return []; });
 
                 //Initialize cave property
@@ -1018,12 +1020,17 @@ var initDD3App = function () {
              * Data reception handling
              */
 
+            //Methods of the peer object: callback when a peer is created and opened
+            //Will log the connection, link to the behaviour upon data reception and call peer.flush
             peer.init = function (conn, r, c) {
                 utils.log("Connection established with Peer (" + [r, c] + "): " + conn.peer, 0);
                 conn.on("data", peer.receive);
                 peer.flush(r, c);
             };
 
+            //Open the connection to row, column peer
+            //Empty the buffers for the connection to ths peer
+            //TODO: unobfuscate the code 
             peer.connect = function (r, c) {
                 r = +r;
                 c = +c;
@@ -1041,6 +1048,10 @@ var initDD3App = function () {
                 });
             };
 
+
+            //If buffer is set to true, Put data in the buffer of the connection to the node at row r and column c
+            //If buffer is set to false, send the data directly
+            //returns false if no connection exists 
             peer.sendTo = function (r, c, data, buffer) {
 
                 if (typeof peer.connections[r][c] === "undefined" && !peer.connect(r, c)) {
@@ -1058,6 +1069,7 @@ var initDD3App = function () {
                 return true;
             };
 
+            //flush the peer: i.e. SEND the data in the buffer of the connection the node (r,c) AND EMPTY the buffer
             peer.flush = function (r, c) {
                 var buff = peer.buffers[r][c],
                     conn = peer.connections[r][c];
@@ -1069,6 +1081,9 @@ var initDD3App = function () {
                 return false;
             };
 
+            //Callback when data is received from another peer. Will call different functions depending on the nature of the data (shape, property, remove, transition, endTransition)
+            //Return false if the data.type is unrecognised.
+            //If data is an array: peer.reveive will be called recursively on each elements of the array.
             peer.receive = function (data) {
                 if (data instanceof Array) {
                     data.forEach(peer.receive);
@@ -1104,11 +1119,13 @@ var initDD3App = function () {
                     default:
                         utils.log("Receiving an unsupported data : Aborting !", 2);
                         utils.log(data, 2);
+                        return false;
                 }
 
             };
 
             /* Functions handling data reception  */
+            //INFO: 
             var _dd3_timeoutStartReceivedTransition = d3.map();
             var _dd3_timeoutEndReceivedTransition = d3.map();
 
