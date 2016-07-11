@@ -198,14 +198,20 @@
                     loop();
 
                     function sendFPSAvg() {
-                        var total = 0;
+                        var total = 0, totalvar=0;
                         for (var i = 0; i < fpss.length; i++) {
                             total += fpss[i];
                         }
                         var avg = total / fpss.length;
+
+                        for (var i = 0; i < fpss.length; i++) {
+                            totalvar += (avg-fpss[i])*(avg-fpss[i]);
+                        }
+                        var std = Math.sqrt(totalvar/fpss.length);
                         if (!triggered) {
-                            console.log(avg);
-                            conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg);
+                            console.log("Average FPS: "+avg);
+                            console.log("Standard Deviation: "+std);
+                            conn_to_controller.send(r + ";" + c + ";" + nbr + ";" + nbc + ";" + nbdc + ";" + new Date().getTime() + ";" + avg + ";" + std);
                             triggered=true;
                         }
                         

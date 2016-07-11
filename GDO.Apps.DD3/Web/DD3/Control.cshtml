@@ -299,7 +299,8 @@
                             var nbdc = raw[4];
                             var ts = raw[5];
                             var fps = raw[6];
-                            dataset.push([row, col, nbr, nbc, nbdc, ts, fps]);
+                            var std = raw[7];
+                            dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
                             //gdo.consoleOut(".DD3", 4, dataset);
                             
                             //updateFPSChart();
@@ -452,6 +453,14 @@
                         }
                     });
 
+                    $('#benchmark250DistributedCircles').click(function(){
+                       var nbOnOneScreen = Math.floor(250/numClients);
+                       server.sendOrder(instanceId, order("createDistributedCircles", [nbOnOneScreen, 0.9]), true);
+                       server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
+                       setTimeout();
+                        
+                    });
+
                 // == Group Transition ==
 
                     $('#createPolygon').click(function () {
@@ -483,7 +492,7 @@
 
                     $('#fps_data').click(function () {
                         var csvContent = "data:text/csv;charset=utf-8,";
-                        csvContent += "Row; Column; Rectangles; Circles; Distributed Circles; Timestamp; FPS \n";
+                        csvContent += "Row; Column; Rectangles; Circles; Distributed Circles; Timestamp; Average FPS; Standard Deviation FPS \n";
                         dataset.forEach(function (infoArray, index) {
                             dataString = infoArray.join(";");
                             csvContent += index < dataset.length ? dataString + "\n" : dataString;
@@ -900,12 +909,15 @@
                 <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
             </tr>
             <tr class="superposition distributed">
-                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td rowspan="3" class="green" id="createDistributedCircles">Create distributed Circles</td>
                 <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
-                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+                <td rowspan="3" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
             </tr>
             <tr class="superposition distributed">
                 <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
+            </tr>
+            <tr class="superposition distributed">
+                <td class="red" id="benchmark250DistributedCircles"> Benchmark 250 Distributed Circles</td>
             </tr>
             <tr class="group">
                 <td colspan="3">Group transition</td>
