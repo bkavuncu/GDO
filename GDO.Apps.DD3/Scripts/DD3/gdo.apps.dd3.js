@@ -1247,9 +1247,9 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
-
+                            console.log(this.childNodes);
+                            console.log(d3.selectAll(this.childNodes));
                             var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
-                            temporary_store=a;
                             return (a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);
                         };
                     }
