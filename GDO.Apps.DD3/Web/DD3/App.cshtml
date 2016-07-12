@@ -250,7 +250,7 @@
                         .attr("dominant-baseline", "text-before-edge")
                         .attr("transform", 'translate(' + [p.left(0), p.top(0)] + ')');
 
-                    dd3.defineEase("normalEase", d3.ease('linear'));
+                    dd3.defineEase("normalEase", d3.easeLinear());
 
                     dd3.defineTween("myTween", function () {
                         return function (t) {

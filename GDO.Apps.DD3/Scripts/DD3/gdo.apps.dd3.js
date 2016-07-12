@@ -1247,6 +1247,7 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
+
                             var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
                             temporary_store=a;
                             return (a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);
@@ -2220,7 +2221,7 @@ var initDD3App = function () {
             /**
              * Create the svg and provide it for use
              */
-
+            //V4 frigging ugly but it works
             _dd3.svgNode = _dd3.select_("body").append_("svg");
 
             _dd3.svgCanvas = _dd3.svgNode
