@@ -5,7 +5,7 @@
 
 // ==== IF THIS NODE IS AN APP ====
 var d3;
-
+var temporary_store;
 var initDD3App = function () {
 
     //Retrieve the d3 library element
@@ -1400,7 +1400,13 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
-                            var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
+                            var chldnd = this.childNodes;
+                            temporary_store=chldnd;
+                            var sel = d3.selectAll(chldnd);
+                            
+                            //this retuns an array
+                            var a = _dd3_selection_filterUnreceived(sel);
+                            
                             return (a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);
                         };
                     }
