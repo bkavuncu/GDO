@@ -1205,19 +1205,28 @@ var initDD3App = function () {
 
             _dd3.selection = d3.selection;
 
+            //IN: path of the object to watch for. (usually prototype)
+            //OUT: a function (watcher)
             var _dd3_factory = function (path) {
                 return function (watcher, original, funcName) {
+                    //add a function to the prototype specified in the second arguments.
                     path[funcName + '_'] = original;
+                    //INFO: difference between apply and call: apply lets you specify arguments as an array.
+                    //Call the watcher function with no context and the argument 1 in an array 
                     return watcher.apply(null, [].slice.call(arguments, 1));
                 };
             }
 
+            //Function to add a watcher function on a change function call to selection. Function in _dd3.selection.prototype
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
+            //Function to add a watcher function on a enter funtion call to selection. Function in _dd3.selection.prototype.enter.prototype 
             var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.prototype.enter.prototype);
 
+            //Function to add a watcher function on selection function. Function in _dd3
             var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
+            //Called on a change to the DOM structure
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
                     if (arguments.length < expectedArg && typeof arguments[0] !== 'object')
@@ -1233,11 +1242,13 @@ var initDD3App = function () {
                 }
             };
 
+            //Called when a DOM element is added to the DOM structure
             var _dd3_watchAdd = function (original, funcName) {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
                             var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
+                            temporary_store=a;
                             return (a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);
                         };
                     }
@@ -1250,6 +1261,7 @@ var initDD3App = function () {
                 };
             };
 
+            //Called when a DOM element is selected
             var _dd3_watchSelect = function (original) {
                 return function (string) {
                     if (typeof string !== "string") return original.apply(this, arguments);
@@ -1258,7 +1270,8 @@ var initDD3App = function () {
                 };
             };
 
-            var _dd3_watchNop = function (original) {
+            //Called when no operation is performer ... or an insert call in some remote circumstances
+            var _dd3_watchNoOperation = function (original) {
                 return function () {
                     return original.apply(this, arguments);
                 };
@@ -1278,17 +1291,17 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.remove = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.remove, 'remove', 0);
 
-            _dd3.selection.enter={};
-            _dd3.selection.enter.prototype={};
-            _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
+            //_dd3.selection.enter={};
+            //_dd3.selection.enter.prototype={};
+            //_dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNoOperation, d3.selection.enter.prototype.insert, 'insert');
             //TODO _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.prototype.enter.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
+            //PREVIOUSLY: _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
 
             _dd3.selection.prototype.insert = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');
 
             _dd3.selection.prototype.enter.prototype.append = _dd3_watchEnterFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
 
-            _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
-            //TODO _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');
+            _dd3.selection.prototype.append = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.append, 'append');//v4
 
             _dd3.selection.prototype.selectAll = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.selectAll, 'selectAll');
 
@@ -2208,7 +2221,7 @@ var initDD3App = function () {
              * Create the svg and provide it for use
              */
 
-            _dd3.svgNode = _dd3.select_("body").append_("svg");//TODO: smells fishy. append_ doesn't exist in v4
+            _dd3.svgNode = _dd3.select_("body").append_("svg");
 
             _dd3.svgCanvas = _dd3.svgNode
                 .attr_("width", browser.width)
@@ -2278,7 +2291,7 @@ var initDD3App = function () {
 
     })();
     utils.log('Returning dd3', 1);
-    temporary_store = dd3;
+
     return dd3;
 }
 
