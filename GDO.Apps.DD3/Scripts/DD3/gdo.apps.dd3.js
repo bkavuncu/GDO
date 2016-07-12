@@ -1400,10 +1400,12 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
+                            console.log("WatchAdd append call");
+                            console.log(this);
                             var chldnd = this.childNodes;
-                            temporary_store=chldnd;
+                            console.log(chldnd);
                             var sel = d3.selectAll(chldnd);
-                            
+                            console.log(sel);
                             //this retuns an array
                             var a = _dd3_selection_filterUnreceived(sel);
                             
