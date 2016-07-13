@@ -72,7 +72,7 @@ var mapHandler = function (arg) {
 		d3.json("http://vector.mapzen.com/osm/" + type + "/" + m.zoom + "/" + i + "/" + j +".json", function (error, tile) {
 			if (error) {
 				return console.error(error);
-			};
+			}
 			
 			tile.features = tile.features.filter(function (d) {
 				if (isAbsurd(m.path.bounds(d))) {

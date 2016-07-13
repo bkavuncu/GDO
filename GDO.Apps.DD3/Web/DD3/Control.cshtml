@@ -183,15 +183,14 @@
                     var peerObject = { host: "146.169.32.109", port: 55555 };
                     //{ host: "localhost", port: 55555 };
                     //{ host: "146.169.32.109", port: 55555 }
-                    var con_peer = new Peer("idofthecontrollerfordd3", peerObject);
+                    var con_peer= new Peer("idofthecontrollerfordd3", peerObject);
                     con_peer.on('open', function (conn) {
-
                         gdo.consoleOut(".DD3", 4, "The peer client of the controller is opened");
                     });
                     var dataset = [];
                     var eventLog = [];
 
-                    var updateFPSChart= function (){
+                    /*var updateFPSChart= function (){
                         d3.select("#fps_graph").selectAll("div")
                                 .data(dataset[conn.label])
                                 .enter()
@@ -278,7 +277,8 @@
                             .attr("class", "axis")
                             .attr("transform", "translate(" + padding + ",0)")
                             .call(yAxis);
-                    }
+                    };
+                    */
      
 
                     con_peer.on('connection', function (conn) {
@@ -288,21 +288,19 @@
                             var raw = data.split(';');
                             var row = raw[0];
                             var col = raw[1];
-                            var nbcircle = raw[2];
-                            var ts = raw[3];
-                            var fps = raw[4];
-                            dataset.push([row, col, nbcircle, ts, fps]);
-                            /*
-                            for (var i = 1; 2*i < raw.length; i++) {
-                                dataset.push([row, col, raw[2*i], raw[2*i+1]]);
-                            }
-                            */
+                            var nbr = raw[2];
+                            var nbc = raw[3];
+                            var nbdc = raw[4];
+                            var ts = raw[5];
+                            var fps = raw[6];
+                            var std = raw[7];
+                            dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
                             //gdo.consoleOut(".DD3", 4, dataset);
                             
                             //updateFPSChart();
                         });
                     });
-
+                    
                     
 
             if (!gdo.net.app["DD3"].initControl) {
@@ -449,6 +447,14 @@
                         }
                     });
 
+                    $('#benchmark250DistributedCircles').click(function(){
+                       var nbOnOneScreen = Math.floor(250/numClients);
+                       server.sendOrder(instanceId, order("createDistributedCircles", [nbOnOneScreen, 0.9]), true);
+                       server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
+                       setTimeout();
+                        
+                    });
+
                 // == Group Transition ==
 
                     $('#createPolygon').click(function () {
@@ -480,6 +486,7 @@
 
                     $('#fps_data').click(function () {
                         var csvContent = "data:text/csv;charset=utf-8,";
+                        csvContent += "Row; Column; Rectangles; Circles; Distributed Circles; Timestamp; Average FPS; Standard Deviation FPS \n";
                         dataset.forEach(function (infoArray, index) {
                             dataString = infoArray.join(";");
                             csvContent += index < dataset.length ? dataString + "\n" : dataString;
@@ -494,7 +501,7 @@
                     $('#event_data').click(function () {
                         var csvContent = "data:text/csv;charset=utf-8,";
                         eventLog.forEach(function (infoArray, index) {
-                            dataString = infoArray.join(";");
+                            dataString = infoArray.join(",");
                             csvContent += index < eventLog.length ? dataString + "\n" : dataString;
                         });
                         var encodedUri = encodeURI(csvContent);
@@ -896,12 +903,15 @@
                 <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
             </tr>
             <tr class="superposition distributed">
-                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td rowspan="3" class="green" id="createDistributedCircles">Create distributed Circles</td>
                 <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
-                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+                <td rowspan="3" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
             </tr>
             <tr class="superposition distributed">
                 <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
+            </tr>
+            <tr class="superposition distributed">
+                <td class="red" id="benchmark250DistributedCircles"> Benchmark 250 Distributed Circles</td>
             </tr>
             <tr class="group">
                 <td colspan="3">Group transition</td>
