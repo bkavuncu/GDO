@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+        body {
+            background: black;
+        }
+
+        .popup {
+            position: absolute;
+            z-index: 2;
+        }
+
+        #wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0 none;
+            z-index: 9;
+            overflow: hidden;
+        }
+
+        #youtube_player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            border: 0px;
+            zoom: 1;
+            -moz-transform: scale(1);
+            -moz-transform-origin: 0 0;
+            -o-transform: scale(1);
+            -o-transform-origin: 0 0;
+            -webkit-transform: scale(1);
+            -webkit-transform-origin: 0 0;
+        }
+
+        #element::-webkit-scrollbar {
+            display: none;
+        }
+        ::-webkit-scrollbar { 
+            display: none; 
+        }
+        body {
+            overflow: hidden;
+            margin: 0px;
+            color: #000;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script>
+            $(function () {
+                $(document).ready(function () {
+                    var gdo = parent.gdo;
+                    //load youtube API
+                    var tag = document.createElement('script');
+                    tag.src = "https://www.youtube.com/iframe_api";
+                    var firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                    gdo.net.app["Youtube"].initClient(gdo.clientId);
+                });
+
+            });
+            var gdo;
+            //this function is called when the Youtube api is ready. It loads the iframe for the video
+            function onYouTubeIframeAPIReady() {
+                var gdo = parent.gdo;
+                gdo.consoleOut('.Youtube', 1, 'onYouTubeIframeAPIReady called');
+                gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].youtubePlayer = new YT.Player('youtube_player', {
+                    height: gdo.net.section[gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].sectionId].height,
+                    width: gdo.net.section[gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].sectionId].width,
+                    videoId: '',
+                    playerVars: { 'autoplay': 0, 'controls': 0, 'rel': 0, 'showinfo': 0, 'loop': 1 },
+                    events: {
+                        'onReady': function (event) { event.target.mute(); },
+                        'onStateChange': gdo.net.app["Youtube"].stateChange
+                    }
+                });
+            }
+
+    </script>
+    <div id="youtube_player" style="display:none"></div>
+
+</body>
+</html>

@@ -1,0 +1,532 @@
+﻿@using System.IO
+@using System.Web
+@using GDO.Core
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.css" rel="stylesheet">
+    <!-- Timeline CSS -->
+    <link href="../../Bootstrap/dist/css/timeline.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../Bootstrap/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            color: #FFF;
+        }
+
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .thumb {
+            height: 75px;
+            border: 1px solid #000;
+            margin: 10px 5px 0 0;
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            cursor: inherit;
+            display: block;
+        }
+
+        input[readonly] {
+            background-color: #555 !important;
+            cursor: text !important;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+
+        .input_field_div {
+            margin: 0;
+            padding: 0;
+        }
+
+        .input_field {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #333;
+            background: #333;
+            color: #FFF;
+            padding: 0;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+        }
+        .color_field {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            padding: 0;
+            border: 0;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+        }
+        table {
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+<script>
+    $(document).on('change', '.btn-file :file', function () {
+        var input = $(this),
+            numFiles = input.get(0).files ? input.get(0).files.length : 1,
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        input.trigger('fileselect', [numFiles, label]);
+    });
+
+    $(document).ready(function () {
+        $('.btn-file :file').on('fileselect', function (event, numFiles, label) {
+
+            var input = $(this).parents('.input-group').find(':text'),
+                log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+            if (input.length) {
+                input.val(log);
+            }
+        });
+    });
+
+    $(function () {
+
+        var gdo = parent.gdo;
+
+        $("#image_digit_button").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, $("#graph_digit").val());
+        });
+
+        $("#graph_digit").keypress(function (e) {
+            if (e.keyCode == 13) {
+                $("#image_digit_button").click();
+            }
+        });
+
+        $("#toggle_nodeSize").click(function () {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Graph"].server.setAllNodesSize(gdo.controlId, parseInt($("#allNodeSize").val()));
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Original size");
+            } else {
+                gdo.net.app["Graph"].server.setOriginalSize(gdo.controlId);
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size");
+            }
+        });
+
+        $("#toggle_links").click(function () {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Graph"].server.hideLinks(gdo.controlId);
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Show Links");
+            } else {
+                gdo.net.app["Graph"].server.showLinks(gdo.controlId);
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links");
+            }
+        });
+
+        $("#toggle_labels").click(function () {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Graph"].server.hideLabels(gdo.controlId);
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-tag  fa-fw'></i>&nbsp;Show");
+                $(this).parent().siblings().show();
+            } else {
+                gdo.net.app["Graph"].server.showLabels(gdo.controlId, $("#select_label").val(), $("#color_Labels").val());
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-tag  fa-fw'></i>&nbsp;Hide Labels");
+                $(this).parent().siblings().hide();
+            }
+        });
+
+        // trigger panning
+        $("#up").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "up");
+        });
+
+
+        $("#left").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "left");
+        });
+
+
+        $("#down").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "down");
+        });
+
+        $("#right").click(function () {
+            gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, "right");
+        });
+
+        /* //TODO Panning using key is disabled for now
+        // because it's being triggered unnecessarily sometimes when typing
+
+        window.addEventListener('keydown', processKeyPress, true);
+
+        function processKeyPress(evt) {
+            var key = evt.keyCode;
+            var direction = null;
+
+            if (key == 37) {    // default code for arrow keys
+                direction = "left";
+            } else if (key == 38) {
+                direction = "up";
+            } else if (key == 39) {
+                direction = "right";
+            } else if (key == 40) {
+                direction = "down";
+            }
+
+            if (direction != null) {
+                gdo.net.app["Graph"].server.triggerPanning(gdo.controlId, direction);
+            }
+        }
+
+        */
+
+        /* //TODO zooming functionality removed
+        $("#zoomIn").click(function () {
+            gdo.net.app["Graph"].server.triggerZoomIn(gdo.controlId);
+        });
+
+        $("#zoomOut").click(function () {
+            gdo.net.app["Graph"].server.triggerZoomOut(gdo.controlId);
+        });
+        */
+
+        $("#blue").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "blue");
+        });
+
+        $("#green").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "green");
+        });
+
+        $("#orange").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "orange");
+        });
+
+        $("#red").click(function () {
+            gdo.net.app["Graph"].server.triggerRGB(gdo.controlId, "red");
+        });
+
+
+        $("#show_mostConnectedNodes").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering most connected nodes.");
+            gdo.net.app["Graph"].server.renderMostConnectedNodes(gdo.controlId, parseInt($("#numLinks").val()), $("#color_mostConnectedNodes").val());
+        });
+
+        $("#toggle_mostConnectedLabels").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of most connected nodes.");
+            gdo.net.app["Graph"].server.renderMostConnectedLabels(gdo.controlId, parseInt($("#numLinks").val()), $("#select_mostConnectedLabels").val(), $("#color_mostConnectedLabels").val());
+        });
+
+        $("#hide_mostConnected").click(function () {
+            gdo.net.app["Graph"].server.hideMostConnected(gdo.controlId);
+        });
+
+
+        // Search event listeners
+
+        $("#startSearch").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Start searching for label -- " + $("#searchKeywords").val());
+            gdo.net.app["Graph"].server.initiateSearch(gdo.controlId, $("#searchKeywords").val(), $("#select_SearchFields").val());
+        });
+
+        $("#toggle_searchLabels").click(function () {
+            gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Rendering labels of selected nodes.");
+            gdo.net.app["Graph"].server.renderSearchLabels(gdo.controlId, $("#select_SearchLabels").val());
+        });
+
+        $("#hide_sublinks").click(function () {
+            gdo.net.app["Graph"].server.hideSublinks(gdo.controlId);
+        });
+
+        $("#hide_search").click(function () {
+            gdo.net.app["Graph"].server.hideSearch(gdo.controlId);
+        });
+
+
+        gdo.net.app["Graph"].initControl();
+    });
+</script>
+
+    <div class="wrapper" style="width: 97%">
+        @{
+            var path = "";
+            var filename = "";
+            if (IsPost)
+            {
+
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null && !file.FileName.IsEmpty())   //need to add this check, because it tried to save empty file in subsequent button clicks
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    //foldername
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
+                    path = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/") + filename;
+                    if (File.Exists(path)) {  // if the file already exists, delete it
+                        File.Delete(path);
+                    }
+                    file.SaveAs(path);
+                    }
+                }
+        }
+        <div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Graph</h6>
+                        </div>
+                        <div class="panel-body">
+                            <fieldset>
+                                <form id="submit_graph_form" action="" method="post" enctype="multipart/form-data">
+                                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                        <tr>
+                                            <td>
+                                                <div style="background-color: transparent">
+                                                    <span class="btn btn-primary btn-file btn-block" style="border-color: transparent;"><i class='fa  fa-file-picture-o fa-fw'></i>&nbsp;Choose File <input type="file" name="Graph" class="upload" id="select_graph"></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input id="submit_graph" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Render Graph"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Find Processed Graph</h6>
+                        </div>
+                        <div class="panel-body">
+                            <fieldset>
+                                <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
+                                    <tr>
+                                        <td>
+                                            <div style="background-color:transparent"><h6>Previous Graph:</h6></div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div">
+                                                <select class="input_field" id="graph_digit">
+                                                    @{
+                                                        string graphfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls");
+                                                        string[] files = Directory.GetFiles(graphfolder);
+                                                    }
+                                                    @foreach (var s in files)
+                                                    {  <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>  }
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type='button' id="image_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Messages</h6>
+                        </div>
+                        <div class="panel-body">
+                            <h6 id="message_from_server">&nbsp;</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6><i class='fa  fa-sliders  fa-fw'></i>&nbsp;Control</h6>
+                        </div>
+                        <div class="panel-body">
+                            <fieldset id="graph_UI">
+                                <table style="width: 100%; background: transparent">
+                                    <tr>
+                                        <td style="width: 40%;">
+                                            <label> Colour Scheme </label>
+                                            <br />
+                                            <button class='btn btn-primary' id="blue">Blue</button>
+                                            <button class='btn btn-success' id="green">Green</button>
+                                            <button class='btn btn-warning' id="orange">Orange</button>
+                                            <button class='btn btn-danger' id="red">Red</button>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <label> for All nodes </label>
+                                            <br/>
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></td>
+                                                    <td>&nbsp;Default size: &nbsp;</td>
+                                                    <td><input size="2" class="input_field" type="text" id="allNodeSize" value="3"/></td>
+                                                </tr>
+                                                <tr><td><button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button></td></tr>
+                                                <tr>
+                                                    <td><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
+                                                    <td><select id="select_label" required class="input_field"></select></td>
+                                                    <td><span>&nbsp;as labels&nbsp;</span></td>
+                                                    <td><input type="color" id="color_Labels" value="#FFFFFF" class="color_field"></td>
+                                                </tr>
+                                            </table>
+                                            <br/>
+                                            <br/>
+                                            <br/>
+                                            <label> Toggle panning </label>
+                                            <br/>
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td></td>
+                                                    <td><button class='btn btn-default' id="up"><i class='fa  fa-arrow-circle-up fa-fw'></i>&nbsp;</button></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><button class='btn btn-default' id="left"><i class='fa  fa-arrow-circle-left  fa-fw'></i>&nbsp;</button></td>
+                                                    <td></td>
+                                                    <td><button class='btn btn-default' id="right"><i class='fa  fa-arrow-circle-right fa-fw'></i>&nbsp;</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td><button class='btn btn-default' id="down"><i class='fa  fa-arrow-circle-down fa-fw'></i>&nbsp;</button></td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+
+                                            <!-- //TODO zooming functionality removed
+                                            <label> Toggle zooming </label>
+                                            <br/>
+                                            <button class='btn btn-default' id="zoomIn"><i class='fa  fa-plus-circle  fa-fw'></i>&nbsp;Zoom in</button>
+                                            <button class='btn btn-default' id="zoomOut"><i class='fa  fa-minus-circle  fa-fw'></i>&nbsp;Zoom out</button>
+                                            <br/>
+                                            <br/>
+                                            <br/> -->
+
+                                        </td>
+                                        <td style="width: 60%;">
+                                            <label> Most connected </label>
+                                            <br />
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td><button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button></td>
+                                                    <td><input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field"></td>
+                                                    <td>&nbsp;nodes with more than&nbsp;</td>
+                                                    <td><input class="input_field" size="4" type="text" id="numLinks" value="5" /></td>
+                                                    <td>&nbsp;links</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
+                                                    <td><select id="select_mostConnectedLabels" required class="input_field"></select></td>
+                                                    <td><span>&nbsp;as labels&nbsp;</span></td>
+                                                    <td><input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field"></td>
+                                                </tr>
+                                            </table>
+                                            <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <label> Search </label>
+                                            <br />
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td><button class='btn btn-default' id="startSearch">Search</button></td>
+                                                    <td><span>&nbsp;nodes with&nbsp;</span></td>
+                                                    <td><input class="input_field" size="60" type="text" id="searchKeywords"/></td>
+                                                    <td><span>&nbsp;in&nbsp;</span></td>
+                                                    <td><select id="select_SearchFields" required class="input_field"></select></td>
+                                                </tr>
+                                            </table>
+                                            <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td><button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
+                                                    <td><select id="select_SearchLabels" required class="input_field"></select></td>
+                                                    <td><span>&nbsp;as labels&nbsp;</span></td>
+                                                    <!--  <td><input type="color" id="color_SearchLabels" value="#ff0000" class="color_field"></td>  -->
+                                                </tr>
+                                            </table>
+                                                <button class='btn btn-default' id="hide_sublinks">Hide links</button>
+                                                <button class='btn btn-default' id="hide_search">Hide all</button>
+                                            <br/>
+                                      </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (path != "")
+    {
+        <script>
+            $(function () {
+                $(document).ready(function () {
+                    var gdo = parent.gdo;
+                    gdo.consoleOut('.GRAPHRENDERER', 1, 'Instance ' + gdo.controlId + ": Uploaded Graph " + "@filename");
+                    gdo.net.app["Graph"].server.initiateProcessing(gdo.controlId, "@filename");
+                });
+            });
+        </script>
+    }
+</body>
+</html>
