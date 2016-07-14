@@ -270,6 +270,7 @@ namespace GDO.Core
                 return false;
             }
         }
+
         /// <summary>
         /// Uploads the node information.
         /// </summary>
@@ -277,6 +278,7 @@ namespace GDO.Core
         /// <param name="connectionId">The connection identifier.</param>
         /// <param name="connectedNodes">The connected nodes.</param>
         /// <param name="peerId">The peer identifier.</param>
+        /// <param name="isConnectedToPeerServer">whether the peer is connected to a server or not</param>
         public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId, bool isConnectedToPeerServer)
         {
             lock (Cave.ServerLock)
@@ -583,7 +585,6 @@ namespace GDO.Core
                 Console.WriteLine(e);
                 return false;
             }
-            return false;
         }
 
         /// <summary>

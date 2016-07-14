@@ -13,7 +13,7 @@ namespace GDO.Apps.Maps.Core.Sources
         public StringParameter Culture { get; set; }
         public StringParameter Key { get; set; }
         public StringArrayParameter ImagerySet { get; set; }
-        public NullableIntegerParameter MaxZoom { get; set; }
+        public new NullableIntegerParameter MaxZoom { get; set; }// todo this is hiding a parent class method. assume thats intentional 
 
         public BingMapsSource()
         {

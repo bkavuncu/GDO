@@ -63,7 +63,6 @@ namespace GDO.Modules.EyeTracking.Core
         public void StartTCPClient()
         {
             ClientSocket = new System.Net.Sockets.TcpClient();
-            bool IsInitialized = false;
             try
             {
 
