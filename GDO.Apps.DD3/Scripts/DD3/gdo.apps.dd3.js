@@ -1,6 +1,11 @@
 ﻿/**
 *   Version 0.0.1
 *   dd3 - v0.0.2
+*   Commentary Glossary:
+*   TODO: code or function to be refactored
+*   TODEL: code that doesn't appear to serve any purpose and should be deleted after validation
+*   APIDOC: to be included in dd3 documentation
+*   INFO: so you don't have to google it
 */
 
 // ==== IF THIS NODE IS AN APP ====
@@ -1036,6 +1041,7 @@ var initDD3App = function () {
                 c = +c;
 
                 // Try to find peer with r and c as row and column - use Array.some to stop when found
+                // if the row, column pair is not the same as those of the connections, return false
                 return peer.peers.some(function (p) {
                     if (+p.row !== r || +p.col !== c)
                         return false;
@@ -1125,16 +1131,20 @@ var initDD3App = function () {
             };
 
             /* Functions handling data reception  */
-            //INFO: 
+            //INFO: d3.map() is an implementation of Map according to ES6 specification. Nothing to do with d3 data visualization function.
+            //TODEL: Never used...
             var _dd3_timeoutStartReceivedTransition = d3.map();
+            //TODEL: Never used...
             var _dd3_timeoutEndReceivedTransition = d3.map();
 
+            // Returun the next HTML element in an ordered group. Used solely for shape handling
+            // g: Current element in the ordered group.
+            // order: current 'position' of in the ordered group
             var getOrderFollower = function (g, order) {
                 var s = order.split("_");
-                var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),
+                var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),//TODO document this CSS selector query
                     follower,
                     o;
-
 
                 if (!elems.empty()) {
                     s[1] = +s[1];
@@ -1157,7 +1167,7 @@ var initDD3App = function () {
 
                     elems[0].some(function (a) {
                         var o = a.getAttribute('order');
-                        if (o > order) {
+                        if (o > order) {//TODO: What if order is NaN as suggested by the first line of the function
                             follower = a;
                             return true;
                         }
@@ -1168,6 +1178,8 @@ var initDD3App = function () {
                 return follower;
             };
 
+            //Handler to be called upon the reception of a shape from peerjs.
+            // Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
             var _dd3_shapeHandler = function (data) {
                 var mainId = data.containers.shift(),
                     obj = d3.select("#" + data.sendId),
@@ -1176,13 +1188,14 @@ var initDD3App = function () {
 
                 if (g1.empty()) {
                     utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
+                    console.log("V4: PROBLEM WITH DD3 SHAPEHANDLER");
                     return;
                 }
 
-                data.containers.forEach(function (o) {
+                data.containers.forEach(function (o) {//TODO v4 uses select_, insert_ and attr_. Seems fishy.
                     g2 = g1.select_("#" + o.id);
                     g1 = g2.empty() ? (c = true, g1.insert_('g', function () { return getOrderFollower(g1, o.order); })) : g2;
-                    g1.attr_(o);
+                    g1.attr_(o);//TODEL: doesn't do anything.
                     if (o.transition)
                         peer.receive(o.transition);
                 });
@@ -1193,8 +1206,8 @@ var initDD3App = function () {
                     obj = g1.insert_(data.name, function () { return getOrderFollower(g1, data.attr.order); });
                 }
 
-                if (data.name == "image") {
-                    obj.attr_("xlink:href", data.attr.href);
+                if (data.name === "image") {
+                    obj.attr_("xlink:href", data.attr.href); 
                     delete data.attr.href;
                 }
 
@@ -1204,6 +1217,8 @@ var initDD3App = function () {
                     .attr_("id", data.sendId); // Here because attr can contain id
             };
 
+            //Handler to be called upon the reception of a remove request from peerjs.
+            // removes the corresponding element (data.sendId) and all its children from the DOM
             var _dd3_removeHandler = function (data) {
                 var el = d3.select("#" + data.sendId).node();
                 while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
@@ -1211,6 +1226,8 @@ var initDD3App = function () {
                 d3.select(el).remove();
             };
 
+            //Handler to be called upon the reception of a property from peerjs.
+            //find the object and set the properties to their values
             var _dd3_propertyHandler = function (data) {
                 var obj = d3.select("#" + data.sendId);
 
@@ -1222,22 +1239,33 @@ var initDD3App = function () {
                 }
             };
 
+
+            
+            //Handler to be called upon the reception of a transition from peerjs.
+            //TODO: v4: d3.ease implementation changed radically
             var _dd3_transitionHandler = function (data) {
+                //TODO: refactor as this function is only called once ...
                 var launchTransition = function (data) {
                     var obj = d3.select("#" + data.sendId);
+                    //interrupt any ongoing animation
                     obj.interrupt(data.name);
-                    var trst = _dd3_hook_selection_transition.call(obj, data.name);
+                    //create the transition object
+                    var trst = _dd3_hook_selection_transition.call(obj, data.name);// ie d3 selection transition
 
                     //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
                     utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
 
+                    //define the state of the object at the beginning of the transition
                     obj.attr_(data.start.attr)
                         .style_(data.start.style);
 
+                    //define the state of the object at the end of the transition and the transition duration
                     trst.attr(data.end.attr)
                         .style(data.end.style)
                         .duration(data.duration);
 
+                    //define the transition tweens
+                    //INFO: tweens are custom function that are called during a d3 transition. 
                     if (data.tweens) {
                         data.tweens.forEach(function (o) {
                             if (_dd3_tweens[o.value]) {
@@ -1246,6 +1274,9 @@ var initDD3App = function () {
                         });
                     }
 
+                    //define the transition attribute tweens
+                    //_dd3_tweens is a an object which contains the raw tween function (created at initialisation) 
+                    //TODO v4: check if still exists
                     if (data.attrTweens) {
                         data.attrTweens.forEach(function (o) {
                             if (_dd3_tweens[o.value]) {
@@ -1254,7 +1285,8 @@ var initDD3App = function () {
                         });
                     }
 
-
+                    //define the transition style tweens
+                    //TODO v4: check if still exists
                     if (data.styleTweens) {
                         data.styleTweens.forEach(function (o) {
                             var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
@@ -1264,12 +1296,14 @@ var initDD3App = function () {
                         });
                     }
 
-                    if (_dd3_timeTransitionRelative)
+                    //TODO v4: check if d3 transition delay still exists
+                    if (_dd3_timeTransitionRelative)//TODEL: initialize at false and never changed
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
                     else
                         trst.delay(data.delay + (data.elapsed - Date.now()));
 
-
+                    //TODO: v4 check it is consistent with the current implementation of ease
+                    //_dd3_eases is an object containing the ease functions.
                     if (data.ease) {
                         if (_dd3_eases[data.ease]) {
                             trst.ease(_dd3_eases[data.ease]);
@@ -1293,6 +1327,8 @@ var initDD3App = function () {
                 //*/
             };
 
+            //Handler to be called upon the reception of an end transition from peerjs.
+            //Interrupt the transition and remove element if data.remove is true.
             var _dd3_endTransitionHandler = function (data) {
                 var obj = d3.select("#" + data.sendId);
                 obj.interrupt(data.name);
@@ -1304,6 +1340,7 @@ var initDD3App = function () {
              *  Hook helper functions for d3
              */
 
+            //TODEL: used once by a function which is never used
             var _dd3_hook_d3 = function (hook, newObj) {
                 var a = function () {
                     if (!arguments.length) return hook();
@@ -1313,6 +1350,7 @@ var initDD3App = function () {
                 return a;
             };
 
+            //TODEL: used once by a function which is never used
             var _dd3_hook_basic = function (hook) {
                 var a = function () {
                     return hook.apply(this, arguments);
@@ -1320,6 +1358,7 @@ var initDD3App = function () {
                 return a;
             };
 
+            //TODEL: Never used
             var _dd3_hookD3Object = function (oldObj, newObj) {
                 for (var func in oldObj) {
                     if (oldObj.hasOwnProperty(func)) {
@@ -1328,6 +1367,7 @@ var initDD3App = function () {
                 }
             };
 
+            //TODEL: Never used
             var _dd3_hookObject = function (oldObj, newObj) {
                 for (var func in oldObj) {
                     if (oldObj.hasOwnProperty(func)) {
@@ -1336,6 +1376,7 @@ var initDD3App = function () {
                 }
             };
 
+            //TODEL: Never user
             var _dd3_default = function (value, def) {
                 return typeof value === "undefined" ? def : value;
             };
@@ -1366,8 +1407,10 @@ var initDD3App = function () {
             *  dd3.selection
             */
 
+            /*APIDOC: see d3.selection */
             _dd3.selection = d3.selection;
 
+            //
             var _dd3_factory = function (path) {
                 return function (watcher, original, funcName) {
                     path[funcName + '_'] = original;
@@ -1380,6 +1423,8 @@ var initDD3App = function () {
             var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.enter.prototype);
 
             var _dd3_watchSelectFactory = _dd3_factory(_dd3);
+
+            /**/
 
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
@@ -1408,7 +1453,7 @@ var initDD3App = function () {
                             console.log(sel);
                             //this retuns an array
                             var a = _dd3_selection_filterUnreceived(sel);
-                            
+
                             return (a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);
                         };
                     }
@@ -2029,14 +2074,17 @@ var initDD3App = function () {
              *  Transition
              */
 
+            //TODEL: set to false and never changed
             var _dd3_timeTransitionRelative = false;
 
             var _dd3_precision = 0.01;
 
             var _dd3_idTransition = 1;
 
+            //Contain tween functions for transitions. Prevents having to send tween funciton definition through peerjs
             var _dd3_tweens = {};
 
+            //Contain tween functions for transitions. Prevents having to send ease function definition through peerjs
             var _dd3_eases = {};
 
             var _dd3_transitionNamespace = function (name) {
@@ -2164,9 +2212,9 @@ var initDD3App = function () {
                 args.properties = properties;
             };
 
-            var _dd3_hook_selection_transition = _dd3.selection.prototype.transition_ = d3.selection.prototype.transition;
+            var _dd3_hook_selection_transition = _dd3.selection.prototype.transition_ = d3.selection.prototype.transition;//TODO: v4 still exist?
 
-            var _dd3_hook_transition_transition = d3.transition.prototype.transition;
+            var _dd3_hook_transition_transition = d3.transition.prototype.transition; //TODO: v4 still exists?
 
             _dd3.selection.prototype.transition = function (name) {
                 var t = _dd3_selection_createProperties(_dd3_hook_selection_transition.apply(this, arguments)),
