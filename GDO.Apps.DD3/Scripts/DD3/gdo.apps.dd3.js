@@ -1421,10 +1421,10 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
-                            console.log(this.childNodes);
-                            console.log(d3.selectAll(this.childNodes));
+                            //console.log(this.childNodes);
+                            //console.log(d3.selectAll(this.childNodes));
                             var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
-                            console.log(a);
+                            //console.log(a);
                             return (a[0] && a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);//TO v4 added one additionnal condition which shouldn't trigger
                         };
                     }
@@ -2084,17 +2084,17 @@ var initDD3App = function () {
 
 
                 do {
-                    containers.unshift(g);
+                    if(g.__dd3_transitions__) containers.unshift(g);//v4
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
-                console.log(containers);
+                //console.log(containers);
                 
 
                 var c1 = containers[0], c2;
 
-                console.log(c1);
+                //console.log(c1);
 
-                while (c1 && c1.__dd3_transitions__ && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
+                while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
                     c2 = containers.shift();
                     c1 = containers[0];
                 }
@@ -2104,7 +2104,7 @@ var initDD3App = function () {
 
                 clones = containers.map(function (c) {
                     g = c.cloneNode(c.nodeName === "g" ? false : true);
-                    //c2.appendChild(g); V4: is erased by next line
+                    //c2.appendChild(g); //V4: is erased by next line
                     c2 = g;
                     return g;
                 });
@@ -2141,8 +2141,7 @@ var initDD3App = function () {
                     rcpt.forEach(function (r) { r.min = time - step; r.max = time + step; });
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
-
-                c1.removeChild(clones[0]);
+                //c1.removeChild(clones[0]); //TODO v4: doesn't appear to be used after that.
 
                 //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
@@ -2424,7 +2423,7 @@ var initDD3App = function () {
              */
             //V4 frigging ugly but it works
             _dd3.svgNode = _dd3.select_("body").append_("svg");
-            console.log(_dd3.svgNode);
+            //console.log(_dd3.svgNode);
 
             _dd3.svgCanvas = _dd3.svgNode
                 .attr_("width", browser.width)
@@ -2433,7 +2432,7 @@ var initDD3App = function () {
                 .attr_("id", "dd3_rootGroup")
                 .attr_("transform", "translate(" + [browser.margin.left - slsg.left(0), browser.margin.top - slsg.top(0)] + ")");
 
-            console.log(_dd3.svgCanvas);
+            //console.log(_dd3.svgCanvas);
 
             /**
              *  Getter
