@@ -75,7 +75,6 @@ gdo.net.app["XNATImaging"].initClient = function () {
 }
 
 gdo.net.app["XNATImaging"].initControl = function (instanceId) {
-   
 
     gdo.net.app["XNATImaging"].server.requestName(instanceId);
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
@@ -97,41 +96,7 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId) {
 }
 
 gdo.net.app["XNATImaging"].setupMRI = function(instanceId, row, col) {
-    var url;
-    var mode;
-
-    switch (row) {
-        case 1:
-            mode = "flair";
-            if (col == 0) {
-                $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
-                $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
-                url = "GSK131086_000001/Baseline/flair";
-            } else {
-                url = "GSK131086_000001/Followup/flair";
-            }
-            break;
-        case 2:
-            mode = "t1";
-            if (col == 0) {
-                $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
-                $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
-                url = "GSK131086_000001/Baseline/t1";
-            } else {
-                url = "GSK131086_000001/Followup/t1";
-            }
-            break;
-        case 3:
-            mode = "ajax";
-            if (col == 0) {
-                $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
-                $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
-                url = "/data/experiments/CENTRAL_E07330/scans/7/files?format=json";
-            } else {
-                url = "/data/experiments/CENTRAL_E07330/scans/7/files?format=json";
-            }
-            break;
-    }
+    
     if (row == 0) {
         $("iframe").contents().find("#main").empty();
         $("iframe").contents().find("#main").append("<div class='heading'>");
@@ -142,7 +107,45 @@ gdo.net.app["XNATImaging"].setupMRI = function(instanceId, row, col) {
             $("iframe").contents().find(".heading").append("<h2>Followup</h2>");
         }
         $("iframe").contents().find("#main").append("</div>");
+
     } else {
+
+        var url;
+        var mode;
+
+        switch (row) {
+            case 1:
+                mode = "flair";
+                if (col == 0) {
+                    $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
+                    $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
+                    url = "GSK131086_000001/Baseline/flair";
+                } else {
+                    url = "GSK131086_000001/Followup/flair";
+                }
+                break;
+            case 2:
+                mode = "t1";
+                if (col == 0) {
+                    $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
+                    $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
+                    url = "GSK131086_000001/Baseline/t1";
+                } else {
+                    url = "GSK131086_000001/Followup/t1";
+                }
+                break;
+            case 3:
+                mode = "ajax";
+                if (col == 0) {
+                    $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
+                    $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
+                    url = "/data/experiments/CENTRAL_E07330/scans/7/files?format=json";
+                } else {
+                    url = "/data/experiments/CENTRAL_E07330/scans/7/files?format=json";
+                }
+                break;
+        }
+
         gdo.net.instance[instanceId].playing = false;
         gdo.net.instance[instanceId].interval = null;
 
@@ -227,7 +230,7 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
                 'Content-Type': 'application/json'
             },
             success: function(data) {
-                gdo.consoleOut(data);
+                gdo.consoleOut('.XNATImaging', 1, data);
                 var filtered = _.filter(data.ResultSet.Result,
                     function(image) {
                         return image.collection === "DICOM";
@@ -236,12 +239,14 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
                     function(image) {
                         return "wadouri:" + baseUrl + image.URI;
                     })
-                //gdo.consoleOut(gdo.net.instance[instanceId].stack.imageIds);
+                //gdo.consoleOut('.XNATImaging', 1, gdo.net.instance[instanceId].stack.imageIds);
                 gdo.net.app["XNATImaging"].sortImageStack(instanceId);
             }
         });
     } else {
         var baseUrl = "http://localhost:12332/Scripts/XNATImaging/Scans/";
+            //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
+            //"http://localhost:12332/Scripts/XNATImaging/Scans/";
         $.ajax({
             url: baseUrl + url,
             success: function(data) {
@@ -250,7 +255,8 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
                     .each(function() {
                         var filename = this.href.replace(window.location.host, "").replace("http:///", "");
                         gdo.net.instance[instanceId].stack.imageIds.push("wadouri:" + "http://localhost:12332/" + filename);
-                        //console.log(filename);
+                        //"http://dsigdotesting.doc.ic.ac.uk/"
+                        //console.log("wadouri:" + "http://localhost:12332/" + filename);
                     });
             }
         });
@@ -262,7 +268,7 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
             gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
         }
     }, 1000);
-    gdo.consoleOut("Loaded Image Stack");
+    gdo.consoleOut('.XNATImaging', 1, "Loaded Image Stack");
 }
 
 gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) {
@@ -274,25 +280,25 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
 
     // load and display first image
     var imagePromise = gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    var numLoadedImages = 1;
-    $("iframe").contents().find("#mrtopleft").text("Image: " + 1);
+    $("iframe").contents().find("#mrtopleft").text("Image: 1");
 
     // resize dicom image frame to fill screen
-    gdo.consoleOut("Resize image to " + width + "x" + height);
+    gdo.consoleOut('.XNATImaging', 1, "Resize image to " + width + "x" + height);
     $("iframe").contents().find('#dicomImage').width(width).height(height);
     cornerstone.resize(element);
 
     // add handlers for mouse events once the image is loaded.
     imagePromise.then(function () {
-        gdo.consoleOut("Image promise loaded");
+        gdo.consoleOut('.XNATImaging', 1, "Image promise loaded");
         var viewport = cornerstone.getViewport(element);
 
         // Temp Fix for followup image brightness
-        if (viewport.voi.windowCenter < -350) {
-            viewport.voi.windowCenter = 35;
-            viewport.voi.windowWidth = 80;
+        if (viewport.voi.windowCenter < -3500) {
+            viewport.voi.windowCenter = 26;
+            viewport.voi.windowWidth = 204;
             cornerstone.setViewport(element, viewport);
         }
+
 
         $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
         $("iframe").contents().find('#mrbottomleft').text("WW/WC:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
@@ -364,7 +370,6 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
         // load entire image stack without displaying
         cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[i]).then(function (image) {
             //cornerstone.displayImage(element, image);
-            numLoadedImages++;
         });
     }
 }
@@ -383,7 +388,7 @@ gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
     var canvasHeight = height * 4;
 
     // resize dicom image frame to fill screen
-    gdo.consoleOut("Resize image to " + width + "x" + height);
+    gdo.consoleOut('.XNATImaging', 1, "Resize image to " + width + "x" + height);
     $("iframe").contents().find('#dicomImage').width(canvasWidth).height(canvasHeight);
     cornerstone.resize(element);
 
@@ -400,7 +405,7 @@ gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
 
         var viewport = cornerstone.getViewport(element);
         viewport.translation.x += (-offsetX * width)/viewport.scale;
-        viewport.translation.y += (-offsetY * height)/viewport.scale;s
+        viewport.translation.y += (-offsetY * height)/viewport.scale;
         cornerstone.setViewport(element, viewport);
         gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");
         
@@ -441,7 +446,7 @@ gdo.net.app["XNATImaging"].updateTheImage = function (instanceId) {
         var element = $("iframe").contents().find('#dicomImage').get(0);
         var viewport = cornerstone.getViewport(element);
         cornerstone.displayImage(element, image, viewport);
-        gdo.consoleOut("Image " + gdo.net.instance[instanceId].stack.currentImageIndex + " loaded and displaying");
+        gdo.consoleOut('.XNATImaging', 1, "Image " + gdo.net.instance[instanceId].stack.currentImageIndex + " loaded and displaying");
     });
 };
 

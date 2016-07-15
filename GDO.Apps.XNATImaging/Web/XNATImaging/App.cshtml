@@ -1,4 +1,7 @@
-﻿@{
+﻿@using System.IO
+@using System.Web.Helpers
+@using GDO.Core
+@{
     Layout = null;
 }
 
@@ -9,7 +12,7 @@
     <title>XNAT Imaging Project</title>
     <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:500,300,700,400' rel='stylesheet' type='text/css'>
-    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
+    
 </head>
 <body>
 <div id="main" class="container-fluid">
@@ -60,7 +63,9 @@
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
-    <script src="../../Scripts/XNATImaging/angular.min.js"></script>
+    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
+
+<script src="../../Scripts/XNATImaging/angular.min.js"></script>
     <script src="../../Scripts/XNATImaging/underscore.js"></script>
     <script src="../../Scripts/XNATImaging/cornerstone.js"></script>
     <script src="../../Scripts/XNATImaging/cornerstoneMath.js"></script>

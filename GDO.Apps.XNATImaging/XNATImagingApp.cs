@@ -1,7 +1,6 @@
 ﻿using System;
 using GDO.Core;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
@@ -22,10 +21,6 @@ namespace GDO.Apps.XNATImaging
         public string Name { get; set; }
         public void Init()
         {
-            Debug.WriteLine("Time taken to compute adjacencies: ");
-            Debug.WriteLine(Configuration.Name);
-
-            InitConfigurations();
         }
 
         public void Init(int instanceId, string appName, Section section, AppConfiguration configuration)
@@ -34,8 +29,8 @@ namespace GDO.Apps.XNATImaging
             this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
-            Debug.WriteLine(Configuration.Name);
-            
+
+            InitConfigurations();
         }
 
         public void SetName(string name)
@@ -50,9 +45,12 @@ namespace GDO.Apps.XNATImaging
 
         public void InitConfigurations()
         {
-            Debug.WriteLine(Configuration.Name);
-            Debug.WriteLine(Configuration.Json);
+            Console.WriteLine(Configuration.Name);
+            Console.WriteLine(Configuration.Json);
 
+            Console.WriteLine(Cave.Apps["XNATImaging"].Instances[Id].Configuration);
+            List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
+            Console.WriteLine(configurations.Count);
 
         }
     }

@@ -1,7 +1,7 @@
 ﻿{
-  "url": 'GSK131086_000001/Followup/flair',
-  "topLeft": [ 0, 0 ],
-  "bottomRight": [ 1, 1 ],
-  "id": 1,
-  "zoomFactor": 3.5
+    "topLeft": 0,
+    "bottomRight": "1",
+    "center": 0.5,
+    "title": [ "Zoom" ],
+    "url": 'https"://central.xnat.org/data/experiments/CENTRAL_E07330/scans/7/files?format=json'
 }
