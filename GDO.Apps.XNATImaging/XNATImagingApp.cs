@@ -1,6 +1,7 @@
 ﻿using System;
 using GDO.Core;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using Newtonsoft.Json;
@@ -19,8 +20,16 @@ namespace GDO.Apps.XNATImaging
         public IAdvancedAppInstance ParentApp { get; set; }
 
         public string Name { get; set; }
+        public int CurrentId { get; set; }
+        public double WindowWidth { get; set; }
+        public double WindowCenter { get; set; }
+        public double Scale { get; set; }
+        public double TranslationX { get; set; }
+        public double TranslationY { get; set; }
+
         public void Init()
         {
+            InitConfigurations();
         }
 
         public void Init(int instanceId, string appName, Section section, AppConfiguration configuration)
@@ -29,8 +38,6 @@ namespace GDO.Apps.XNATImaging
             this.AppName = appName;
             this.Section = section;
             this.Configuration = configuration;
-
-            InitConfigurations();
         }
 
         public void SetName(string name)
@@ -43,14 +50,23 @@ namespace GDO.Apps.XNATImaging
             return Name;
         }
 
+        public void SetImage(int currentId, double windowWidth, double windowCenter, 
+                                double scale, double translationX, double translationY)
+        {
+            CurrentId = currentId;
+            WindowWidth = windowWidth;
+            WindowCenter = windowCenter;
+            Scale = scale;
+            TranslationX = translationX;
+            TranslationY = translationY;
+        }
+
+        // test method
         public void InitConfigurations()
         {
-            Console.WriteLine(Configuration.Name);
-            Console.WriteLine(Configuration.Json);
+            Debug.WriteLine(Configuration.Name);
+            Debug.WriteLine(Configuration.Json);
 
-            Console.WriteLine(Cave.Apps["XNATImaging"].Instances[Id].Configuration);
-            List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
-            Console.WriteLine(configurations.Count);
 
         }
     }

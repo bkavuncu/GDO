@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using GDO.Core;
 using GDO.Core.Apps;
 using Microsoft.AspNet.SignalR;
@@ -61,12 +63,85 @@ namespace GDO.Apps.XNATImaging
             {
                 try
                 {
-                    Console.WriteLine("Setting new control - server");
-                    Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
+                    Debug.WriteLine("Setting new control - server");
+
+                    /*dynamic variableJson = Utilities.LoadJsonFile("Configurations/XNATImaging/Zoom.json");
+                    ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration = new AppConfiguration("Zoom", variableJson);
+                    Debug.WriteLine(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration.Name);
+
+                    List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
+                    Debug.WriteLine(configurations.Count);
+                    for (int i = 0; i < configurations.Count; i++)
+                    {
+                        Debug.WriteLine(i + ". " + configurations[i]);
+                    }
+                    */
+                   Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestConfig(int instanceId, int nodeId, string configName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    AppConfiguration value;
+                    if (Cave.Apps["XNATImaging"].Configurations.TryGetValue(configName + nodeId, out value))
+                    {
+                        Debug.WriteLine(configName + nodeId);
+                        Debug.WriteLine(value.Name);
+                        Debug.WriteLine(value.Json);
+                        Clients.Caller.receiveConfig(instanceId, value.Json);
+                    }
+                    
+                    /*Debug.WriteLine(Cave.Apps["XNATImaging"].Instances[Id].Configuration);
+                    List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
+                    Debug.WriteLine(configurations.Count);*/
+
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void SetImageConfig(int instanceId, int currentImageId, double windowWidth, double windowCenter, double scale, double translationX, double translationY)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Debug.WriteLine("Updating Image Config- server");
+                    
+                    ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).SetImage(
+                                    currentImageId, 
+                                    windowWidth, 
+                                    windowCenter,
+                                    scale, 
+                                    translationX, 
+                                    translationY
+                    );
+
+                    Clients.Group("" + instanceId).receiveImageUpdate(
+                                    instanceId, 
+                                    currentImageId, 
+                                    windowWidth, 
+                                    windowCenter, 
+                                    scale, 
+                                    translationX, 
+                                    translationY
+                    );
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
                 }
             }
         }

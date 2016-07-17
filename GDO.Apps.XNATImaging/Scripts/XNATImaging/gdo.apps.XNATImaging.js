@@ -35,6 +35,16 @@
         Pan
         currentImgIndex
     */
+    $.connection.xNATImagingAppHub.client.receiveImageUpdate =
+        function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY) {
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                // ignore
+                gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
+            } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
+                gdo.net.app["XNATImaging"].updateImage(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY);
+            }
+        }
 });
 
 gdo.net.app["XNATImaging"].getSection = function(row, col) {
@@ -76,7 +86,6 @@ gdo.net.app["XNATImaging"].initClient = function () {
 
 gdo.net.app["XNATImaging"].initControl = function (instanceId) {
 
-    gdo.net.app["XNATImaging"].server.requestName(instanceId);
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
 
     $("iframe").contents().find("#viewSelect").selectmenu();
@@ -244,6 +253,7 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
             }
         });
     } else {
+        // TODO: Scans to lowercase scans
         var baseUrl = "http://localhost:12332/Scripts/XNATImaging/Scans/";
             //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
             //"http://localhost:12332/Scripts/XNATImaging/Scans/";
@@ -280,14 +290,13 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
 
     // load and display first image
     var imagePromise = gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    $("iframe").contents().find("#mrtopleft").text("Image: 1");
+    //$("iframe").contents().find("#mrtopleft").text("Image: 1");
 
     // resize dicom image frame to fill screen
     gdo.consoleOut('.XNATImaging', 1, "Resize image to " + width + "x" + height);
     $("iframe").contents().find('#dicomImage').width(width).height(height);
     cornerstone.resize(element);
 
-    // add handlers for mouse events once the image is loaded.
     imagePromise.then(function () {
         gdo.consoleOut('.XNATImaging', 1, "Image promise loaded");
         var viewport = cornerstone.getViewport(element);
@@ -299,80 +308,126 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
             cornerstone.setViewport(element, viewport);
         }
 
-
         $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
         $("iframe").contents().find('#mrbottomleft').text("WW/WC:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-        // add event handlers to pan image on mouse move
-        $("iframe").contents().find('#dicomImage').mousedown(function (e) {
-            var lastX = e.pageX;
-            var lastY = e.pageY;
-            var mouseButton = e.which;
-            $("iframe").contents().find('#dicomImage').mousemove(function (e) {
-                var deltaX = e.pageX - lastX,
-                        deltaY = e.pageY - lastY;
-                lastX = e.pageX;
-                lastY = e.pageY;
-                if (mouseButton == 1) {
-                    var viewport = cornerstone.getViewport(element);
-                    viewport.voi.windowWidth += (deltaX / viewport.scale);
-                    viewport.voi.windowCenter += (deltaY / viewport.scale);
-                    cornerstone.setViewport(element, viewport);
-                    $("iframe").contents().find('#mrbottomleft').text("WW/WL:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-                }
-                else if (mouseButton == 2) {
-                    var viewport = cornerstone.getViewport(element);
-                    viewport.translation.x += (deltaX / viewport.scale);
-                    viewport.translation.y += (deltaY / viewport.scale);
-                    cornerstone.setViewport(element, viewport);
-                }
-                else if (mouseButton == 3) {
-                    var viewport = cornerstone.getViewport(element);
-                    viewport.scale += (deltaY / 100);
-                    cornerstone.setViewport(element, viewport);
-                    $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
-                }
-            });
-            $("iframe").contents().find('#dicomImage').mouseup(function (e) {
-                $("iframe").contents().find('#dicomImage').unbind('mousemove');
-                $("iframe").contents().find('#dicomImage').unbind('mouseup');
-            });
-        });
 
-        $("iframe").contents().find('#dicomImage').on('mousewheel DOMMouseScroll', function (e) {
-            // Firefox e.originalEvent.detail > 0 scroll back, < 0 scroll forward
-            // chrome/safari e.originalEvent.wheelDelta < 0 scroll back, > 0 scroll forward
-            if (e.originalEvent.wheelDelta < 0 || e.originalEvent.detail > 0) {
-                gdo.net.app["XNATImaging"].navigateDown(instanceId);
-                if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                    gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Down');
-                    gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#downNavigationButton').text());
-                }
-            } else if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
-                if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                    gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Up');
-                    gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#upNavigationButton').text());
-                }
-                gdo.net.app["XNATImaging"].navigateUp(instanceId);
+        // add handlers for mouse events once the image is loaded
+        gdo.net.app["XNATImaging"].setMouseHandlers(instanceId, element, viewport);
+    });
+
+    // load entire image stack without displaying
+    for (var i = 1; i < gdo.net.instance[instanceId].stack.imageIds.length; i++) {
+        cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[i]);
+    }
+}
+
+gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, element, viewport) {
+    // add event handlers to pan image on mouse move
+    $("iframe").contents().find('#dicomImage').mousedown(function (e) {
+        var lastX = e.pageX;
+        var lastY = e.pageY;
+        var mouseButton = e.which;
+        var diffX = 0.0;
+        var diffY = 0.0;
+        var diffScale = 0.0;
+        $("iframe").contents().find('#dicomImage').mousemove(function(e) {
+            var deltaX = e.pageX - lastX,
+                deltaY = e.pageY - lastY;
+            lastX = e.pageX;
+            lastY = e.pageY;
+            if (mouseButton == 1) {
+                var viewport = cornerstone.getViewport(element);
+                viewport.voi.windowWidth += (deltaX / viewport.scale);
+                viewport.voi.windowCenter += (deltaY / viewport.scale);
+                cornerstone.setViewport(element, viewport);
+                $("iframe")
+                    .contents()
+                    .find('#mrbottomleft')
+                    .text("WW/WL:" +
+                        Math.round(viewport.voi.windowWidth) +
+                        "/" +
+                        Math.round(viewport.voi.windowCenter));
+            } else if (mouseButton == 2) {
+                var viewport = cornerstone.getViewport(element);
+                diffX = (deltaX / viewport.scale);
+                diffY = (deltaY / viewport.scale);
+                viewport.translation.x += diffX;
+                viewport.translation.y += diffY;
+                cornerstone.setViewport(element, viewport);
+            } else if (mouseButton == 3) {
+                var viewport = cornerstone.getViewport(element);
+                diffScale = (deltaY / 100);
+                viewport.scale += diffScale;
+                cornerstone.setViewport(element, viewport);
+                $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
             }
-
-            //prevent page fom scrolling
-            return false;
         });
+        $("iframe").contents().find('#dicomImage').mouseup(function () {
+            $("iframe").contents().find('#dicomImage').unbind('mousemove');
+            $("iframe").contents().find('#dicomImage').unbind('mouseup');
 
-        $(element).mousemove(function (event) {
-            var pixelCoords = cornerstone.pageToPixel(element, event.pageX, event.pageY);
-            var x = event.pageX;
-            var y = event.pageY;
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                var viewport = cornerstone.getViewport(element);
+                var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
+
+                gdo.consoleOut(".XNATImaging", 1, viewport.voi.windowWidth + ", " + viewport.voi.windowCenter + ", " + diffX + ", " + diffY + ", " + viewport.scale);
+                gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, currentImageId, viewport.voi.windowWidth,
+                                                                    viewport.voi.windowCenter, viewport.scale, diffX, diffY);
+                gdo.consoleOut(".XNATImaging", 1, "Requested New Image Config");
+            }
         });
     });
 
-    for (var i = 1; i < gdo.net.instance[instanceId].stack.imageIds.length; i++) {
-        // load entire image stack without displaying
-        cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[i]).then(function (image) {
-            //cornerstone.displayImage(element, image);
-        });
-    }
+    $("iframe").contents().find('#dicomImage').on('mousewheel DOMMouseScroll', function (e) {
+        // Firefox e.originalEvent.detail > 0 scroll back, < 0 scroll forward
+        // chrome/safari e.originalEvent.wheelDelta < 0 scroll back, > 0 scroll forward
+        if (e.originalEvent.wheelDelta < 0 || e.originalEvent.detail > 0) {
+            gdo.net.app["XNATImaging"].navigateDown(instanceId);
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Down');
+                gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#downNavigationButton').text());
+            }
+        } else if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Up');
+                gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#upNavigationButton').text());
+            }
+            gdo.net.app["XNATImaging"].navigateUp(instanceId);
+        }
+        //prevent page fom scrolling
+        return false;
+    });
 }
+
+gdo.net.app["XNATImaging"].updateImage = function (
+                                            instanceId,
+                                            currentImageId,
+                                            windowWidth,
+                                            windowCenter,
+                                            scale,
+                                            translationX,
+                                            translationY) {
+
+    var element = $("iframe").contents().find("#dicomImage").get(0);
+    var viewport = cornerstone.getViewport(element);
+
+    gdo.consoleOut(".XNATImaging", 1, windowWidth + "/" + windowCenter + ", " + scale);
+
+    viewport.voi.windowWidth = windowWidth;
+    viewport.voi.windowCenter = windowCenter;
+    // TODO: Figure out a scaling solution
+    viewport.scale = scale;
+
+    // TODO: needs to be compatible with both MRI and ZOOM sections
+    viewport.translation.x += translationX;
+    viewport.translation.y += translationY;
+
+    $("iframe").contents().find('#mrbottomleft').text("WW/WL:" + Math.round(windowWidth) + "/" + Math.round(windowCenter));
+    $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
+
+    cornerstone.setViewport(element, viewport);
+}
+
 
 gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
     var element = $("iframe").contents().find('#dicomImage').get(0);
@@ -388,7 +443,7 @@ gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
     var canvasHeight = height * 4;
 
     // resize dicom image frame to fill screen
-    gdo.consoleOut('.XNATImaging', 1, "Resize image to " + width + "x" + height);
+    gdo.consoleOut('.XNATImaging', 1, "Resize image to " + canvasWidth + "x" + canvasHeight);
     $("iframe").contents().find('#dicomImage').width(canvasWidth).height(canvasHeight);
     cornerstone.resize(element);
 
@@ -410,9 +465,14 @@ gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
         gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");
         
         var img = cornerstone.getImage(element);
-//        var ctx = img.getCanvas().getContext('2d');
-//        ctx.drawImage(img, offsetX, offsetY, width/3, height/3, 0, 0, width, height);
+        // var ctx = img.getCanvas().getContext('2d');
+        // ctx.drawImage(img, offsetX, offsetY, width/3, height/3, 0, 0, width, height);
     });
+
+    // load entire image stack without displaying
+    /*for (var i = 1; i < gdo.net.instance[instanceId].stack.imageIds.length; i++) {
+        cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[i]);
+    }*/
 }
 
 gdo.net.app["XNATImaging"].sortImageStack = function (instanceId) {
@@ -440,20 +500,21 @@ gdo.net.app["XNATImaging"].sortImageStack = function (instanceId) {
 }
 
 gdo.net.app["XNATImaging"].updateTheImage = function (instanceId) {
-    return cornerstone.loadImage(gdo.net.instance[instanceId].stack.imageIds[gdo.net.instance[instanceId].stack.currentImageIndex]).then(function (image) {
-        $("iframe").contents().find("#mrtopleft").text("Image: " + (gdo.net.instance[instanceId].stack.currentImageIndex + 1));
+    var currentImgIdx = gdo.net.instance[instanceId].stack.currentImageIndex;
+    var element = $("iframe").contents().find('#dicomImage').get(0);
+    var viewport = cornerstone.getViewport(element);
 
-        var element = $("iframe").contents().find('#dicomImage').get(0);
-        var viewport = cornerstone.getViewport(element);
+    return cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[currentImgIdx]).then(function (image) {
+        $("iframe").contents().find("#mrtopleft").text("Image: " + (currentImgIdx + 1));
+
         cornerstone.displayImage(element, image, viewport);
-        gdo.consoleOut('.XNATImaging', 1, "Image " + gdo.net.instance[instanceId].stack.currentImageIndex + " loaded and displaying");
+        gdo.consoleOut('.XNATImaging', 1, "Image " + currentImgIdx + " loaded and displaying");
     });
 };
 
 gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
     
     switch(controlName) {
-    
         case 'Up':
             gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Up');
             gdo.net.app["XNATImaging"].navigateUp(instanceId);
@@ -547,7 +608,6 @@ gdo.net.app["XNATImaging"].navigateDown = function (instanceId) {
 gdo.net.app["XNATImaging"].resetView = function(instanceId) {
     gdo.net.instance[instanceId].stack.currentImageIndex = 0;
     gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    // TODO: Test this change
     gdo.net.app["XNATImaging"].pause(instanceId);
 
 }

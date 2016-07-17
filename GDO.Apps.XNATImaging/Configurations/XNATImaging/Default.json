@@ -1,6 +1,7 @@
 ﻿{
-    "id": 1,
-    "name": "A green door",
-    "price": 12.50,
-    "tags": ["home", "green"]
+  "host":  "http://localhost:12332/",
+  "patientName": "GSK131086_000001",
+  "mriUrl": "Scripts/XNATImaging/Scans/",
+  "pdfUrl": "../../Scripts/XNATImaging/pdf/",
+  "zoomUrl": "GSK131086_000001/"
 }
