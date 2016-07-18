@@ -28,12 +28,16 @@
         }
     }
 
-    /*  TODO: Add receive method to update image parameters based on control input
-        Update image parameters
-        WW/WC
-        Zoom
-        Pan
-        currentImgIndex
+    /* 
+    ** SignalR receive method to update image parameters based on control input
+    **  Update image parameters:
+    **  instanceId      int
+    **  windowWidth     int
+    **  windowCenter    int
+    **  currentImageId  int
+    **  scale           double
+    **  translationX    double
+    **  translationY    double
     */
     $.connection.xNATImagingAppHub.client.receiveImageUpdate =
         function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY) {
@@ -42,12 +46,15 @@
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
-                gdo.net.app["XNATImaging"].updateImage(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY);
+                gdo.net.app["XNATImaging"].updateImageParams(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY);
             }
         }
 });
 
-gdo.net.app["XNATImaging"].getSection = function(row, col) {
+/* 
+**  Determine app section based on column
+*/
+gdo.net.app["XNATImaging"].getSection = function(col) {
     if (col < 2) {
         return "MRI";
     } else if (col == 2) {
@@ -57,6 +64,9 @@ gdo.net.app["XNATImaging"].getSection = function(row, col) {
     }
 };
 
+/*
+** Entry point for Client nodes
+*/
 gdo.net.app["XNATImaging"].initClient = function () {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
 
@@ -64,7 +74,7 @@ gdo.net.app["XNATImaging"].initClient = function () {
 
     var row = gdo.net.node[gdo.clientId].row;
     var col = gdo.net.node[gdo.clientId].col;
-    var section = gdo.net.app["XNATImaging"].getSection(row, col);
+    var section = gdo.net.app["XNATImaging"].getSection(col);
 
     gdo.consoleOut('.XNATImaging', 1, 'Part of section: ' + section);
 
@@ -84,6 +94,9 @@ gdo.net.app["XNATImaging"].initClient = function () {
     }
 }
 
+/*
+** Entry point for Control node
+*/
 gdo.net.app["XNATImaging"].initControl = function (instanceId) {
 
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
@@ -104,6 +117,9 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId) {
     gdo.net.app["XNATImaging"].initButtons(instanceId);
 }
 
+/*
+** Initialise Client nodes on MRI section of app
+*/
 gdo.net.app["XNATImaging"].setupMRI = function(instanceId, row, col) {
     
     if (row == 0) {
@@ -166,6 +182,9 @@ gdo.net.app["XNATImaging"].setupMRI = function(instanceId, row, col) {
     }
 }
 
+/*
+** Initialise Client nodes on PDF section of app
+*/
 gdo.net.app["XNATImaging"].setupPDF = function (row) {
     // hardcoded pdf urls based on screen row
     switch (row) {
@@ -201,6 +220,9 @@ gdo.net.app["XNATImaging"].setupPDF = function (row) {
     }
 }
 
+/*
+** Initialise Client nodes on Zoom section of app
+*/
 gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
     $("iframe").contents().find("#main").empty();
     //$("iframe").contents().find('#main').append("<button id='testButton' type='button'>MoveIt</button>");
@@ -228,6 +250,9 @@ gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
     gdo.net.app["XNATImaging"].initialiseCS(json.url, "zoom", gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height, instanceId);
 }
 
+/*
+** Gathers ImageIds Array from DICOM data source
+*/
 gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, instanceId) {
 
     if (mode == "ajax") {
@@ -275,12 +300,34 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
         if (mode == "zoom") {
             gdo.net.app["XNATImaging"].getZoomStack(width, height, instanceId);
         } else {
+            gdo.consoleOut(".XNATImaging", 1, "non zoom node");
             gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
+            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+                gdo.consoleOut(".XNATImaging", 1, "In control node");
+                gdo.net.app["XNATImaging"].initialiseSlider(instanceId);
+            }
         }
     }, 1000);
     gdo.consoleOut('.XNATImaging', 1, "Loaded Image Stack");
 }
 
+gdo.net.app["XNATImaging"].initialiseSlider = function (instanceId) {
+    // Initialize range input
+    var range = $("iframe").contents().find('#slice-range').get(0);
+    gdo.consoleOut(".XNATImaging", 1, "Initialised slider");
+    // Set minimum and maximum value
+    range.min = 0;
+    range.step = 1;
+    range.max = gdo.net.instance[instanceId].stack.imageIds.length - 1;
+    gdo.consoleOut(".XNATImaging", 1, "Initialised slider with range 0-" + range.max);
+    // Set current value
+    range.value = gdo.net.instance[instanceId].stack.currentImageIndex;
+    gdo.consoleOut(".XNATImaging", 1, "Initialised slider to current index " + range.value);
+}
+
+/*
+** Loads in image stack using cornerstone for Client and Control nodes
+*/
 gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) {
     var element = $("iframe").contents().find('#dicomImage').get(0);
     cornerstone.enable(element);
@@ -290,7 +337,6 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
 
     // load and display first image
     var imagePromise = gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    //$("iframe").contents().find("#mrtopleft").text("Image: 1");
 
     // resize dicom image frame to fill screen
     gdo.consoleOut('.XNATImaging', 1, "Resize image to " + width + "x" + height);
@@ -321,6 +367,9 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId) 
     }
 }
 
+/*
+** Sets mouse handlers for control Node
+*/
 gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, element, viewport) {
     // add event handlers to pan image on mouse move
     $("iframe").contents().find('#dicomImage').mousedown(function (e) {
@@ -356,9 +405,10 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, element, vie
                 cornerstone.setViewport(element, viewport);
             } else if (mouseButton == 3) {
                 var viewport = cornerstone.getViewport(element);
-                diffScale = (deltaY / 100);
-                viewport.scale += diffScale;
+                var oldScale = viewport.scale;
+                viewport.scale += (deltaY / 100);
                 cornerstone.setViewport(element, viewport);
+                diffScale = viewport.scale / oldScale;
                 $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
             }
         });
@@ -370,10 +420,10 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, element, vie
                 var viewport = cornerstone.getViewport(element);
                 var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
 
-                gdo.consoleOut(".XNATImaging", 1, viewport.voi.windowWidth + ", " + viewport.voi.windowCenter + ", " + diffX + ", " + diffY + ", " + viewport.scale);
+                gdo.consoleOut(".XNATImaging", 1, viewport.voi.windowWidth + ", " + viewport.voi.windowCenter + ", " + diffX + ", " + diffY + ", " + diffScale);
                 gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, currentImageId, viewport.voi.windowWidth,
-                                                                    viewport.voi.windowCenter, viewport.scale, diffX, diffY);
-                gdo.consoleOut(".XNATImaging", 1, "Requested New Image Config");
+                                                                    viewport.voi.windowCenter, diffScale, diffX, diffY);
+                gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
             }
         });
     });
@@ -397,16 +447,34 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, element, vie
         //prevent page fom scrolling
         return false;
     });
+
+    // Bind the range slider events
+    $("iframe").contents().find('#slice-range').on("input", function (event) {
+        gdo.consoleOut(".XNATImaging", 1, "slider input event");
+        var currentImageIndex = gdo.net.instance[instanceId].stack.currentImageIndex;
+        // Get the range input value
+        var newImageIndex = parseInt(event.currentTarget.value, 10);
+
+        // Switch images, if necessary
+        if (newImageIndex !== currentImageIndex && gdo.net.instance[instanceId].stack.imageIds[currentImageIndex] !== undefined) {
+
+            gdo.consoleOut(".XNATImaging", 1, "Updating image using slider to " + newImageIndex);
+            gdo.net.instance[instanceId].stack.currentImageIndex = newImageIndex;
+
+            var viewport = cornerstone.getViewport(element);
+            gdo.net.app["XNATImaging"].updateTheImage(instanceId);
+            gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, newImageIndex, viewport.voi.windowWidth, viewport.voi.windowCenter, 0, 0, 0);
+            gdo.consoleOut(".XNATImaging", 1, "Set New Image Config- image id");
+        }
+    });
 }
 
-gdo.net.app["XNATImaging"].updateImage = function (
-                                            instanceId,
-                                            currentImageId,
-                                            windowWidth,
-                                            windowCenter,
-                                            scale,
-                                            translationX,
-                                            translationY) {
+/*
+** Update DICOM image using data received from server
+*/
+gdo.net.app["XNATImaging"].updateImageParams = function (
+                                            instanceId, currentImageId, windowWidth,
+                                            windowCenter, scale, translationX, translationY) {
 
     var element = $("iframe").contents().find("#dicomImage").get(0);
     var viewport = cornerstone.getViewport(element);
@@ -416,11 +484,18 @@ gdo.net.app["XNATImaging"].updateImage = function (
     viewport.voi.windowWidth = windowWidth;
     viewport.voi.windowCenter = windowCenter;
     // TODO: Figure out a scaling solution
-    viewport.scale = scale;
+    if (scale > 0) {
+        viewport.scale *= scale;
+    }
 
     // TODO: needs to be compatible with both MRI and ZOOM sections
     viewport.translation.x += translationX;
     viewport.translation.y += translationY;
+
+    if (currentImageId != gdo.net.instance[instanceId].stack.currentImageIndex) {
+        gdo.net.instance[instanceId].stack.currentImageIndex = currentImageId;
+        gdo.net.app["XNATImaging"].updateTheImage(instanceId);
+    }
 
     $("iframe").contents().find('#mrbottomleft').text("WW/WL:" + Math.round(windowWidth) + "/" + Math.round(windowCenter));
     $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
@@ -428,7 +503,9 @@ gdo.net.app["XNATImaging"].updateImage = function (
     cornerstone.setViewport(element, viewport);
 }
 
-
+/*
+** Loads in image stack using cornerstone for Client nodes in Zoom section of app
+*/
 gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
     var element = $("iframe").contents().find('#dicomImage').get(0);
     cornerstone.enable(element);
@@ -452,8 +529,8 @@ gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
 
     imagePromise.then(function () {
 
-        var scaleFactorX = canvasWidth / width;
-        var scaleFactorY = canvasHeight / height;
+        //var scaleFactorX = canvasWidth / width;
+        //var scaleFactorY = canvasHeight / height;
         var offsetX = gdo.net.instance[instanceId].zoomView.topLeft[0];
         var offsetY = gdo.net.instance[instanceId].zoomView.topLeft[1];
         gdo.consoleOut(".XNATImaging", 1, "Offset image by: (" + offsetX + ", " + offsetY + ")");
@@ -475,6 +552,9 @@ gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
     }*/
 }
 
+/*
+** Sorts ImageIds Array acquired via AJAX from XNAT Central database
+*/
 gdo.net.app["XNATImaging"].sortImageStack = function (instanceId) {
     function compareNumbers(a, b) {
         //1.3.12.2.1107.5.2.36.40436.30000014081908371717200000064-8-41-skte63.dcm
@@ -499,10 +579,22 @@ gdo.net.app["XNATImaging"].sortImageStack = function (instanceId) {
     gdo.net.instance[instanceId].stack.imageIds = gdo.net.instance[instanceId].stack.imageIds.sort(compareNumbers);
 }
 
+/*
+** Updates currently displayed image of stack using cornerstone
+*/
 gdo.net.app["XNATImaging"].updateTheImage = function (instanceId) {
     var currentImgIdx = gdo.net.instance[instanceId].stack.currentImageIndex;
     var element = $("iframe").contents().find('#dicomImage').get(0);
     var viewport = cornerstone.getViewport(element);
+
+    // Update the slider value
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        var slider = $("iframe").contents().find('#slice-range').get(0);
+        if (slider.value != currentImgIdx) {
+            gdo.consoleOut(".XNATImaging", 1, "Updating slider");
+            slider.value = currentImgIdx;
+        }
+    }
 
     return cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[currentImgIdx]).then(function (image) {
         $("iframe").contents().find("#mrtopleft").text("Image: " + (currentImgIdx + 1));
@@ -512,6 +604,9 @@ gdo.net.app["XNATImaging"].updateTheImage = function (instanceId) {
     });
 };
 
+/*
+** Calls control functions based on received input from Control node
+*/
 gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
     
     switch(controlName) {
@@ -540,6 +635,9 @@ gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
     }
 }
 
+/*
+** Sets event handlers for buttons on Control node
+*/
 gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
 
     $("iframe").contents().find("#upNavigationButton")
@@ -586,40 +684,51 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
         .click(function () {
             gdo.consoleOut('.XNATImaging', 1, "Mark");
     });
-
 }
 
+/*
+** Method to handle scrolling up the image stack
+*/
 gdo.net.app["XNATImaging"].navigateUp = function (instanceId) {
-
     if (gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
         gdo.net.instance[instanceId].stack.currentImageIndex++;
         gdo.net.app["XNATImaging"].updateTheImage(instanceId);
     }
 }
 
+/*
+** Method to handle scrolling down the image stack
+*/
 gdo.net.app["XNATImaging"].navigateDown = function (instanceId) {
-
     if (gdo.net.instance[instanceId].stack.currentImageIndex > 0) {
         gdo.net.instance[instanceId].stack.currentImageIndex--;
         gdo.net.app["XNATImaging"].updateTheImage(instanceId);
     }
 }
 
+/*
+** Resets to top of image stack
+** TODO: May consider resetting image param values to defaults here as well
+*/
 gdo.net.app["XNATImaging"].resetView = function(instanceId) {
     gdo.net.instance[instanceId].stack.currentImageIndex = 0;
     gdo.net.app["XNATImaging"].updateTheImage(instanceId);
     gdo.net.app["XNATImaging"].pause(instanceId);
-
 }
 
+/*
+** Method to handle pausing the stack playAll() function
+*/
 gdo.net.app["XNATImaging"].pause = function(instanceId) {
     clearInterval(gdo.net.instance[instanceId].interval);
     $('iframe').contents().find('#playButton').text("Play");
     gdo.net.instance[instanceId].playing = false;
 }
 
-/* TODO: Clean mess; make pausing work on client in sync
-** TODO: Want to push currentImg onto clients on pause
+/*
+** TODO: Clean mess; make pausing work on client in sync
+** TODO: Need to implement synchronization algorithm for coregistered MRI image stacks
+** Method to handle stack play event
 */
 gdo.net.app["XNATImaging"].playAll = function (instanceId) {
     if (gdo.net.instance[instanceId].playing == false && gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
