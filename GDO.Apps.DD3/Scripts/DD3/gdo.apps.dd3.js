@@ -1410,7 +1410,7 @@ var initDD3App = function () {
             /*APIDOC: see d3.selection */
             _dd3.selection = d3.selection;
 
-            //
+
             var _dd3_factory = function (path) {
                 return function (watcher, original, funcName) {
                     path[funcName + '_'] = original;
@@ -2451,6 +2451,7 @@ var initDD3App = function () {
 
             /**
              *  Getter
+             *  Allow outside access to dd3 methods
              */
 
             _dd3.peers = peer;
@@ -2473,14 +2474,17 @@ var initDD3App = function () {
 
             _dd3.requestRemoteData = dd3_data.requestRemoteData;
 
+            //Access to the data dimensions of dd3
             _dd3.retrieveDimensions = function (id) {
                 return data["dd3_" + id].dataDimensions;
             };
 
+            //Access to the data of dd3
             _dd3.retrieveData = function (name, id) {
                 return data["dd3_" + id]["dd3_" + name].dataPoints;
             };
 
+            //Access to the state of dd3
             _dd3.state = function () { return state(); };
 
             // We could re-synchronize before emitting the 'ready' event
@@ -2514,10 +2518,10 @@ var initDD3App = function () {
 // These functions need to be defined before signalR is started, so we need to use a callback system:
 // signalR_callback is defined later in dd3 when it is initiated.
 
-var dd3Server = $.connection.dD3AppHub;
-var signalR_callback = {};
-var main_callback; // Callback inside the html file
-var orderTransmitter; // Callback inside the html file
+var dd3Server = $.connection.dD3AppHub;//Contains all methods of AppHub
+var signalR_callback = {};//Contains server interaction functions
+var main_callback; // Callback inside the html file called when the configuration of GDO is received for application node or when the controller is updated for a controller
+var orderTransmitter; // Callback inside the html file when the client is initialized
 
 // Function used for dd3 callback
 dd3Server.client.dd3Receive = function (f) {
@@ -2526,6 +2530,7 @@ dd3Server.client.dd3Receive = function (f) {
 
 // Non-dd3 functions
 
+// called by AppHub when the configuration is broadcasted. Execute main_callback as defined in HTML file
 dd3Server.client.receiveGDOConfiguration = function (id) {
     // To get configId from server
     if (main_callback) {
@@ -2536,6 +2541,8 @@ dd3Server.client.receiveGDOConfiguration = function (id) {
     main_callback = null;
 };
 
+//called from AppHub. orderTransmitter is actually the orderController defined in html file. 
+//It isn't in the library as the controller embed the application logic.
 dd3Server.client.receiveControllerOrder = function (orders) {
     if (orderTransmitter) {
         orders = JSON.parse(orders);
@@ -2548,6 +2555,7 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 
 // ==== IF THIS NODE IS A CONTROLLER ====
 
+//What to do when the controller is updated by the server => execute main_callback on  the received object.
 dd3Server.client.updateController = function (obj) {
     gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
     if (main_callback) {
@@ -2558,8 +2566,10 @@ dd3Server.client.updateController = function (obj) {
 
 // ===============================
 
+// TODO: check in the GDO documentation what this parameter does
 gdo.net.app.DD3.displayMode = 0;
 
+//Initialize the application node, set the orderController, the instance id, the main callback and call initDD3App;
 gdo.net.app.DD3.initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
@@ -2568,6 +2578,7 @@ gdo.net.app.DD3.initClient = function (launcher, orderController) {
     return initDD3App();
 };
 
+//Initialize the controller node.
 gdo.net.app.DD3.initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
@@ -2575,11 +2586,13 @@ gdo.net.app.DD3.initControl = function (callback) {
     return gdo.net.instance[gdo.controlId].id;
 };
 
+//What to do when application node is killed => log it + remove the client from SignalR 
 gdo.net.app.DD3.terminateClient = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
-    dd3Server.server.removeClient(dd3Server.instanceId);
+    dd3Server.server.removeClient(dd3Server.instanceId);//in DD3AppHub and DD3App
 };
 
+//What to do when controller node is killed => just log it
 gdo.net.app.DD3.terminateControl = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 };
