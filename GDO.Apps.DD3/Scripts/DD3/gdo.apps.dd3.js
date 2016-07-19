@@ -16,11 +16,15 @@ var initDD3App = function () {
     //Retrieve the d3 library element
     d3 = document.getElementById('app_frame_content').contentWindow.d3;
 
-    //Common JS utility function.
+    /**
+     * Common JS utility function. 
+     */
     var utils = (function () {
         return {
-            //get the value of an url variable if it exist, false else
-
+            
+            /**
+             *get the value of an url variable if it exist, false else
+             */
             getUrlVar: function (variable) {
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -30,7 +34,8 @@ var initDD3App = function () {
                 }
                 return false;
             },
-            //Clamp a value between a min and a max
+            
+            /**Clamp a value between a min and a max */
             clamp: function (value, min, max) {
                 return value < min ? min : value > max ? max : value;
             },
@@ -1411,29 +1416,41 @@ var initDD3App = function () {
             _dd3.selection = d3.selection;
 
 
+            //Create the watcher function for a given prototype
+            //IN: prototype of the object to watch for 
+            //OUT: the watcher function:  
             var _dd3_factory = function (path) {
+                //append the original function with functionName suffixed with a _ to the input prototype.
+                // and then call watcher with arguments as its first argument.
                 return function (watcher, original, funcName) {
                     path[funcName + '_'] = original;
+                    //trick to return the return value of the watcher insted of the watcher itself
                     return watcher.apply(null, [].slice.call(arguments, 1));
                 };
             };
 
+            //Watcher for functions to add under _dd3.selection.prototype
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
 
+            //Watcher for functions to add under _dd3.selection.enter.prototype.
             var _dd3_watchEnterFactory = _dd3_factory(_dd3.selection.enter.prototype);
 
+            //Watcher for functions to add under _dd3
+            //TODO: v4 check if _dd3.prototype is more appropriate
             var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
-            /**/
-
+            //to call when a d3 elements is changed
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
                     if (arguments.length < expectedArg && typeof arguments[0] !== 'object')
                         return original.apply(this, arguments);
+                    console.log("watchChange is called with more arg than expected or its first argument is an object");
                     original.apply(this, arguments);
 
+                    //e is the property  of changes that have yet to be received and that we are watching for
                     var e = _dd3_selection_createProperties(_dd3_selection_filterWatched(this));
 
+                    //If there are properties to change on watched and unreceived, send them
                     if (!e.empty())
                         _dd3_selection_send.call(e, 'property', { 'function': funcName, 'property': arguments[0] });
 
@@ -1441,6 +1458,7 @@ var initDD3App = function () {
                 };
             };
 
+            //to call when a d3 elements is added
             var _dd3_watchAdd = function (original, funcName) {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
@@ -1451,13 +1469,14 @@ var initDD3App = function () {
                             console.log(chldnd);
                             var sel = d3.selectAll(chldnd);
                             console.log(sel);
-                            //this retuns an array
+                            //this returns an array
                             var a = _dd3_selection_filterUnreceived(sel);
 
                             return (a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);
                         };
                     }
 
+                    //TODO: v4 check if still exists
                     return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {
                         _dd3_createProperties.call(this);
                         if (this.parentNode.__unwatch__)
@@ -1466,19 +1485,25 @@ var initDD3App = function () {
                 };
             };
 
+            //to call when a d3 elements is selected
             var _dd3_watchSelect = function (original) {
-                return function (string) {
-                    if (typeof string !== "string") return original.apply(this, arguments);
-                    string += ':not(.dd3_received)';
-                    return original.call(this, string);
+                return function (selector) {
+                    if (typeof selector !== "string") return original.apply(this, arguments);// if the selector is not a string, nothing to do
+                    selector += ':not(.dd3_received)';
+                    //else, we don't want to select elements that have yet to be received.
+                    return original.call(this, selector);
                 };
             };
 
+            //"void" watcher when you want both the function and the function_ to be added to the prototype
             var _dd3_watchNop = function (original) {
                 return function () {
                     return original.apply(this, arguments);
                 };
             };
+
+            //watchFactory since D3 functions under d3.selection.prototype
+            //first arg is the watcher, second is the d3 function to watch for, third is the name of the new function and fourth is the number of expected arguments for this function.
 
             _dd3.selection.prototype.attr = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.attr, 'attr', 2);
 
@@ -1494,6 +1519,9 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.remove = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.remove, 'remove', 0);
 
+            
+            //watchFactory since D3 functions under d3.selection.enter.prototype
+
             _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
 
             _dd3.selection.prototype.insert = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');
@@ -1505,6 +1533,8 @@ var initDD3App = function () {
             _dd3.selection.prototype.selectAll = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.selectAll, 'selectAll');
 
             _dd3.selection.prototype.select = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.select, 'select');
+
+            //watchFactory since D3 functions under d3
 
             _dd3.selectAll = _dd3_watchSelectFactory(_dd3_watchSelect, d3.selectAll, 'selectAll');
 
@@ -1627,6 +1657,7 @@ var initDD3App = function () {
                 return _dd3_selection_send.call(this, 'shape');
             };
 
+            //Sends each element of an array based on its type.
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
 
@@ -1969,6 +2000,7 @@ var initDD3App = function () {
                     [].forEach.call(this.childNodes, function (_) { _dd3_unwatch.call(_); });
             };
 
+            /** calls _dd3_createProperties for each element in the input*/
             var _dd3_selection_createProperties = function (elem) {
                 elem.each(function () { _dd3_createProperties.call(this); });
                 return elem;
@@ -1985,6 +2017,7 @@ var initDD3App = function () {
                     [].forEach.call(this.childNodes, function (_) { _dd3_createProperties.call(_); });
             };
 
+            //Filter elements from a d3 selection to keep only  
             var _dd3_selection_filterWatched = function (e) {
                 return e.filter(function (d, i) {
                     return !this.__unwatch__ && ([].indexOf.call(this.classList, 'dd3_received') < 0);
