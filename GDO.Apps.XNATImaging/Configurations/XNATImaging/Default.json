@@ -3,5 +3,11 @@
   "patientName": "GSK131086_000001",
   "mriUrl": "Scripts/XNATImaging/Scans/",
   "pdfUrl": "../../Scripts/XNATImaging/pdf/",
-  "zoomUrl": "GSK131086_000001/"
+  "zoomUrl": "GSK131086_000001/",
+  "zoomConfiguration": [
+    [ 52, 53, 54 ],
+    [ 36, 37, 38 ],
+    [ 20, 21, 22 ],
+    [ 4, 5, 6 ]
+  ]
 }

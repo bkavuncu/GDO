@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using GDO.Core;
@@ -85,21 +84,19 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
-        public void RequestConfig(int instanceId, int nodeId, string configName)
+        public void RequestConfig(int instanceId, int nodeId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    AppConfiguration value;
-                    if (Cave.Apps["XNATImaging"].Configurations.TryGetValue(configName + nodeId, out value))
+                    AppConfiguration zoomConfig = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).GetZoomConfiguration(nodeId);
+                    if (zoomConfig != null)
                     {
-                        Debug.WriteLine(configName + nodeId);
-                        Debug.WriteLine(value.Name);
-                        Debug.WriteLine(value.Json);
-                        Clients.Caller.receiveConfig(instanceId, value.Json);
+                        Debug.WriteLine(zoomConfig.Name);
+                        Debug.WriteLine(zoomConfig.Json);
+                        Clients.Caller.receiveConfig(instanceId, zoomConfig.Json);
                     }
-                    
                     /*Debug.WriteLine(Cave.Apps["XNATImaging"].Instances[Id].Configuration);
                     List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
                     Debug.WriteLine(configurations.Count);*/

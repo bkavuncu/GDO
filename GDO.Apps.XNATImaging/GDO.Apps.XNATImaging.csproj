@@ -152,11 +152,6 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Configurations\XNATImaging\Zoom54.json" />
-    <Content Include="Configurations\XNATImaging\Zoom52.json" />
-    <Content Include="Configurations\XNATImaging\Zoom36.json" />
-    <Content Include="Configurations\XNATImaging\Zoom37.json" />
-    <None Include="Configurations\XNATImaging\Zoom53.json" />
     <Content Include="Data\XNATImaging\bottomThumb.png" />
     <Content Include="Data\XNATImaging\topThumb.png" />
     <Content Include="packages.config" />
@@ -171,7 +166,7 @@
     <Content Include="Scripts\XNATImaging\css\bootstrap-theme.min.css.map" />
     <Content Include="Scripts\XNATImaging\css\bootstrap.css.map" />
     <Content Include="Scripts\XNATImaging\css\bootstrap.min.css.map" />
-    <Content Include="Configurations\XNATImaging\Zoom.json" />
+    <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.mpr.js" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001_msmetrix_report-2.pdf" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001_140926_msmetrix_report-3.pdf" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001_150925_msmetrix_report-3.pdf" />
@@ -879,13 +874,6 @@
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Followup\flair\Ad201713-MR-3-2355.dcm" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Followup\flair\Ad201713-MR-3-2356.dcm" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Followup\flair\Ad201713-MR-3-2357.dcm" />
-    <Content Include="Configurations\XNATImaging\Zoom38.json" />
-    <Content Include="Configurations\XNATImaging\Zoom4.json" />
-    <Content Include="Configurations\XNATImaging\Zoom5.json" />
-    <Content Include="Configurations\XNATImaging\Zoom6.json" />
-    <Content Include="Configurations\XNATImaging\Zoom20.json" />
-    <Content Include="Configurations\XNATImaging\Zoom21.json" />
-    <Content Include="Configurations\XNATImaging\Zoom22.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

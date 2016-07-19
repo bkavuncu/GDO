@@ -69,6 +69,7 @@ gdo.net.app["XNATImaging"].getSection = function(col) {
 */
 gdo.net.app["XNATImaging"].initClient = function () {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+    gdo.loadScript('mpr', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
 
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Client at Node ' + gdo.clientId);
 
@@ -90,7 +91,7 @@ gdo.net.app["XNATImaging"].initClient = function () {
         $("iframe").contents().find(".heading").append("<h3>ZOOM ZOOM ZOOM</h3>");
         $("iframe").contents().find("#main").append("</div>");
         $("iframe").contents().find("#main").append("<p>Zoom goes here!</p>");
-        gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId, "Zoom");
+        gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
     }
 }
 
@@ -98,6 +99,7 @@ gdo.net.app["XNATImaging"].initClient = function () {
 ** Entry point for Control node
 */
 gdo.net.app["XNATImaging"].initControl = function (instanceId) {
+    gdo.loadScript('mpr', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
 
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
 
@@ -301,11 +303,20 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
             gdo.net.app["XNATImaging"].getZoomStack(width, height, instanceId);
         } else {
             gdo.consoleOut(".XNATImaging", 1, "non zoom node");
-            gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
+
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 gdo.consoleOut(".XNATImaging", 1, "In control node");
                 gdo.net.app["XNATImaging"].initialiseSlider(instanceId);
             }
+            gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId);
+
+            var url = "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2678.dcm";
+            $.when( gdo.net.app["XNATImaging"].getImageProperties(url) ).then(
+                function (data) {
+                    console.log(data.url + ":" + data.orientation);
+                }
+            );
+            //console.log(currentImageLoaded);
         }
     }, 1000);
     gdo.consoleOut('.XNATImaging', 1, "Loaded Image Stack");
