@@ -568,7 +568,7 @@
                         var lineFunction = d3.line()
                                 .x(function (d) { return xScale(d['x']); })
                                 .y(function (d) { return yScale(d['y']); })
-                                .interpolate("monotone");
+                                .curve(d3.curveMonotoneX);
 
                         //*
                         pathGroup.append("path").datum(pathData)
