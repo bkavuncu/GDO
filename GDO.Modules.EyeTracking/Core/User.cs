@@ -349,9 +349,10 @@ namespace GDO.Modules.EyeTracking.Core
             }
             catch (Exception e)
             {
-                LocationData overallLocationData = new LocationData();
-                overallLocationData.Angle = 0;
-                overallLocationData.Distance = 0;
+                LocationData overallLocationData = new LocationData {
+                    Angle = 0,
+                    Distance = 0
+                };
                 return overallLocationData;
             }
         }

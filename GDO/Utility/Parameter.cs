@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
-using System.Web;
-
-namespace GDO.Utility
+﻿namespace GDO.Utility
 {
     public enum VisualisationTypes
     {
@@ -63,7 +56,7 @@ namespace GDO.Utility
     {
         public bool? Value { get; set; }
         public bool? DefaultValue { get; set; }
-        public new int ParameterType = 0;
+        public new int ParameterType = 0;//TODO why does this not use the Parameter Type Enum? 
     }
 
     public class IntegerParameter : Parameter

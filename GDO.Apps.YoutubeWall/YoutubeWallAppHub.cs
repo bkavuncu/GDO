@@ -296,9 +296,10 @@ namespace GDO.Apps.YoutubeWall
                     {
                         for (int j = 0; j < yf.Section.Cols; j++)
                         {
-                            videoName[i*yf.Section.Cols + j] = new YoutubeWallApp.NameInfo();
-                            videoName[i*yf.Section.Cols + j].currentName = yf.CurrentVideoName[i, j];
-                            videoName[i*yf.Section.Cols + j].nextName = yf.NextVideoName[i, j];
+                            videoName[i*yf.Section.Cols + j] = new YoutubeWallApp.NameInfo {
+                                currentName = yf.CurrentVideoName[i, j],
+                                nextName = yf.NextVideoName[i, j]
+                            };
                         }
                     }
                     Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName), instanceId);
