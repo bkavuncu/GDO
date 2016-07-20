@@ -131,7 +131,7 @@ var animationLines = function (arg) {
 	            break;
 	        }
 
-	        if (--end == 0)
+	        if (--end === 0)
 	            (console.log("Data loaded"), callback && callback());
 	    });
 
@@ -297,7 +297,7 @@ var animationLines = function (arg) {
 
 	                            poly.transition()
                                     .duration(a.timeStep)
-                                    .ease("linear")
+                                    .ease(d3.easeLinear)
                                     .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
                                     .attr("fill", fillColor);
 	                        }
@@ -338,7 +338,7 @@ var animationLines = function (arg) {
 
 	                        stationLine.transition()
                                         .duration(a.timeStep)
-                                        .ease("linear")
+                                        .ease(d3.easeLinear)
                                         .attr({
                                             "x1": ptActs[0][0],
                                             "y1": ptActs[0][1],

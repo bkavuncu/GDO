@@ -138,7 +138,7 @@ var animation = function (arg) {
                     .transition()
                     .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
                     .attr('r', 0)
-                    .each("end.new", function () {
+                    .on("end.new", function () {
                         d3.select(this).remove();
                     });
 	        }

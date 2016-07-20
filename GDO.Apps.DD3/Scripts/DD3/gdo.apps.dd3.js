@@ -1251,7 +1251,7 @@ var initDD3App = function () {
                         .duration(data.duration);
 
                     if (data.tweens) {
-                        console.log("data.tweens");
+                        
                         data.tweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
                                 trst.tween(o.key, _dd3_tweens[o.value]);
@@ -1260,7 +1260,7 @@ var initDD3App = function () {
                     }
 
                     if (data.attrTweens) {
-                        console.log("data.attrTweens");
+                        
                         data.attrTweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
                                 trst.attrTween(o.key, _dd3_tweens[o.value]);
@@ -1270,7 +1270,7 @@ var initDD3App = function () {
 
 
                     if (data.styleTweens) {
-                        console.log("data.styleTweens");
+                        
                         data.styleTweens.each(function (o) {
                             var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
                             if (_dd3_tweens[o.value[0]]) {
@@ -1435,7 +1435,7 @@ var initDD3App = function () {
                         };
                     }
 
-                    console.log("_dd3_watchAdd");
+                    
                     return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {
                         _dd3_createProperties.call(this);
                         if (this.parentNode.__unwatch__)
@@ -1618,7 +1618,7 @@ var initDD3App = function () {
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
 
-                console.log("_dd3_selection_send" );
+                
                 this.each(function () {
                     if (this.nodeName === 'g')
                         counter += _dd3_sendGroup.call(this, type, args, rcpts);
@@ -1931,7 +1931,7 @@ var initDD3App = function () {
 
 
             /**
-            *  Watch methods
+            *  Watch methods    
             */
 
             // To go to helpers
@@ -1943,7 +1943,7 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.watch = function (spread) {
                 spread = typeof spread === "undefined" ? false : spread;
-                console.log("_dd3.selection.prototype.watch ");
+                
                 this.each(_dd3_funct(_dd3_watch, [spread]));
                 return this;
             };
@@ -1955,7 +1955,7 @@ var initDD3App = function () {
             };
 
             _dd3.selection.prototype.unwatch = function () {
-                console.log("_dd3.selection.prototype.unwatch");
+                
                 this.each(_dd3_unwatch);
                 return this;
             };
@@ -1967,7 +1967,7 @@ var initDD3App = function () {
             };
 
             var _dd3_selection_createProperties = function (elem) {
-                console.log("_dd3_selection_createProperties");
+                
                 elem.each(function () { _dd3_createProperties.call(this); });
                 return elem;
             };
@@ -2132,7 +2132,8 @@ var initDD3App = function () {
                         var trst = v.transition;
                         max = (trst.time + trst.duration + trst.delay) > max ? (trst.time + trst.duration + trst.delay) : max;
                         precision = v.precision < precision ? v.precision : precision;
-                        return { tweened: v.tweened, ease: d3.ease(v.ease), time: trst.time + trst.delay, duration: trst.duration };
+                        //INFO: in v4, v.ease is a function not a string
+                        return { tweened: v.tweened, ease: v.ease, time: trst.time + trst.delay, duration: trst.duration };
                     });
                 });
 
@@ -2180,7 +2181,6 @@ var initDD3App = function () {
 
                 //if(!(tween instanceof Array))  console.log("V4 Error: tween  is a Map ");
                 
-                if (!temporary_store)  temporary_store=tween;
                 tween.each(function (key, value) {
                     var type = value.type;
                     value = value.call(elem, args.data, args.index);
@@ -2189,7 +2189,7 @@ var initDD3App = function () {
                         tweened.push(value);
                     }
                 });
-
+                
                 group.appendChild(node);
 
                 var d3_node = d3.select(node);
@@ -2226,7 +2226,7 @@ var initDD3App = function () {
             _dd3.selection.prototype.transition = function (name) {
                 var t = _dd3_selection_createProperties(_dd3_hook_selection_transition.apply(this, arguments)),
                     ns = _dd3_transitionNamespace(name),
-                    ease = "cubic-in-out",
+                    ease = d3.easeCubicInOut,
                     precision = _dd3_precision;
 
                 var initialize = function (t, ease, precision) {
@@ -2253,7 +2253,6 @@ var initDD3App = function () {
                             });
                         });
 
-                        ;
                         var attrTweenFunctions = [].slice.call(attrTweens.entries());
                         if(!(attrTweenFunctions instanceof Array))  console.log("V4 Error: attrTweenFunctions  is a Map ");
                         attrTweenFunctions.forEach(function (d) {
@@ -2315,6 +2314,7 @@ var initDD3App = function () {
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
 
+                    //TODO: v4 will probably fail as ease is a function not a string
                     t.ease = function (e) {
                         if (typeof e !== "string") {
                             utils.log("Custom ease functions have to be defined with dd3.defineEase", 2);
@@ -2330,12 +2330,14 @@ var initDD3App = function () {
 
                     t.tween = function (name, tween) {
                         if (arguments.length < 2) return tweens.get(name);
-                        console.log(typeof tween);
+                        //console.log(name);
+                        if(!temporary_store) temporary_store=tween;
 
                         if (!tween) {
                             tweens.remove(name);
                             return d3.transition.prototype.tween.call(this, name, null);
                         } else if (typeof tween !== "string") {
+                            console.log("tween: "+tween);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2361,6 +2363,7 @@ var initDD3App = function () {
 
                             return trst;
                         } else if (typeof tween !== "string") {
+                            console.log("attrtween: "+tween);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2392,6 +2395,7 @@ var initDD3App = function () {
 
                             return trst;
                         } else if (typeof tween !== "string") {
+                            console.log("styletween: "+tween);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2428,6 +2432,7 @@ var initDD3App = function () {
                 return initialize(t, ease, precision);
             };
 
+            //TODO v4: will probably fail
             _dd3.defineEase = function (name, func) {
                 if (arguments.length < 2) return _dd3_eases['dd3_' + name];
                 if (!func) delete _dd3_eases['dd3_' + name];

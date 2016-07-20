@@ -377,14 +377,14 @@
                             .style("fill", "#AAA")
                             .attr('x', 8 * width / 10)
                             .text("test")
-                            .ease("normalEase")
+                            .ease(d3.easeLinear)
                             //.tween('name', 'myTween')
                             //.styleTween('fill', 'my3Tween')
                             .transition(name)
                             .duration(5000)
                             .style("fill", "#EEE")
                             .attr('x', width / 10)
-                            .each("end", sendFPSAvg);
+                            .on("end", sendFPSAvg);
                     };
 
                     orderController.orders['startYTranslation'] = function (name) {
@@ -396,7 +396,7 @@
                             .transition(name)
                             .duration(5000)
                             .attr('y', 4.5 * height / 10)
-                            .each("end", sendFPSAvg);
+                            .on("end", sendFPSAvg);
                     };
 
                     orderController.orders['startRotation'] = function (name) {
@@ -411,7 +411,7 @@
                             .transition(name)
                             .duration(3000)
                             .attr('transform', 'rotate(0)')
-                            .each("end", sendFPSAvg);
+                            .on("end", sendFPSAvg);
                     };
 
                     orderController.orders['startMoveCircles'] = function (name) {
@@ -424,7 +424,7 @@
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
                             .attr("r", function () { return 40 * Math.random() + 20; })
-                            .each("end", sendFPSAvg);
+                            .on("end", sendFPSAvg);
                     };
 
                     orderController.orders['startMoveDistributedCircles'] = function (name) {
@@ -437,7 +437,7 @@
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
                             .attr("r", function () { return 30 * Math.random() + 20; })
-                            .each("end", sendFPSAvg);
+                            .on("end", sendFPSAvg);
                     };
 
                     orderController.orders['startMovePolygon'] = function () {
@@ -454,7 +454,7 @@
                         points.forEach(function (p) {
                             tr = tr.transition()
                                 .duration(200)
-                                .ease("linear")
+                                .ease(d3.easeLinear)
                                 .attr('transform', 'translate(' + p[0] + ' ' + p[1] + ')');
                         });
 
@@ -463,8 +463,8 @@
                             .transition()
                             .attrTween('transform', 'tweenRotation')
                             .duration(10000)
-                            .ease("linear")
-                            .each("end", sendFPSAvg);
+                            .ease(d3.easeLinear)
+                            .on("end", sendFPSAvg);
 
                     };
 
