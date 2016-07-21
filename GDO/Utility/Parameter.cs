@@ -67,13 +67,9 @@
     {
         public bool? Value { get; set; }
         public bool? DefaultValue { get; set; }
-<<<<<<< HEAD
         public new int InputType = (int)InputTypes.Boolean;
         public new int ParameterType = (int)ParameterTypes.Variable;
         public new int VariableType = (int)VariableTypes.Boolean;
-=======
-        public new int ParameterType = 0;//TODO why does this not use the Parameter Type Enum? 
->>>>>>> cd6a2abf482faf5b4346568824152561c1b2d2c4
     }
 
     public class IntegerParameter : Parameter

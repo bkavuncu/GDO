@@ -15,13 +15,13 @@ namespace GDO.Apps.UKTravel
         public string Name { get; set; } = "UKTravel";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new UKTravelApp().GetType();
-        public void JoinGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-        public void ExitGroup(int instanceId)
+        public void ExitGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void UploadMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height,  int zoom)
