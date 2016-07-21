@@ -24,17 +24,24 @@ namespace GDO.Apps.BasicMaps
         public bool IsInitialized = false;
         public void Init()
         {
-            this.Position = new MapPosition();
-            this.Position.Center[0] = (string)Configuration.Json.SelectToken("center[0]");
-            this.Position.Center[1] = (string)Configuration.Json.SelectToken("center[1]");
-            this.Position.TopLeft[0] = (string)Configuration.Json.SelectToken("topLeft[0]");
-            this.Position.TopLeft[1] = (string)Configuration.Json.SelectToken("topLeft[1]");
-            this.Position.BottomRight[0] = (string)Configuration.Json.SelectToken("bottomRight[0]");
-            this.Position.BottomRight[1] = (string)Configuration.Json.SelectToken("bottomRight[1]");
-            this.Position.Resolution = (string)Configuration.Json.SelectToken("resolution");
-            this.Position.Zoom = (int)Configuration.Json.SelectToken("zoom");
-            this.Position.Width = (int)Configuration.Json.SelectToken("width");
-            this.Position.Height = (int)Configuration.Json.SelectToken("height");
+            this.Position = new MapPosition {
+                Center = {
+                    [0] = (string) Configuration.Json.SelectToken("center[0]"),
+                    [1] = (string) Configuration.Json.SelectToken("center[1]")
+                },
+                TopLeft = {
+                    [0] = (string) Configuration.Json.SelectToken("topLeft[0]"),
+                    [1] = (string) Configuration.Json.SelectToken("topLeft[1]")
+                },
+                BottomRight = {
+                    [0] = (string) Configuration.Json.SelectToken("bottomRight[0]"),
+                    [1] = (string) Configuration.Json.SelectToken("bottomRight[1]")
+                },
+                Resolution = (string) Configuration.Json.SelectToken("resolution"),
+                Zoom = (int) Configuration.Json.SelectToken("zoom"),
+                Width = (int) Configuration.Json.SelectToken("width"),
+                Height = (int) Configuration.Json.SelectToken("height")
+            };
             LayerVisibility = new bool[MaxLayers];
             for (int i = 0; i < MaxLayers; i++)
             {
@@ -71,14 +78,15 @@ namespace GDO.Apps.BasicMaps
         public void SetMapPosition(string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height, int zoom)
         {
             IsInitialized = true;
-            Position = new MapPosition();
-            Position.TopLeft = topLeft;
-            Position.Center = center;
-            Position.BottomRight = bottomRight;
-            Position.Resolution = resolution;
-            Position.Width = width;
-            Position.Height = height;
-            Position.Zoom = zoom;
+            Position = new MapPosition {
+                TopLeft = topLeft,
+                Center = center,
+                BottomRight = bottomRight,
+                Resolution = resolution,
+                Width = width,
+                Height = height,
+                Zoom = zoom
+            };
         }
 
         public void SetMarkerPosition(string[] pos)

@@ -149,6 +149,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DD3_handover.pptx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
