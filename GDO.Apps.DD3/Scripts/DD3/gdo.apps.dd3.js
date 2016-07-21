@@ -1251,7 +1251,7 @@ var initDD3App = function () {
                         .duration(data.duration);
 
                     if (data.tweens) {
-                        
+
                         data.tweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
                                 trst.tween(o.key, _dd3_tweens[o.value]);
@@ -1259,10 +1259,12 @@ var initDD3App = function () {
                         });
                     }
 
+                    //TODO v4: check this passes
                     if (data.attrTweens) {
-                        
+                        console.log("data.attrTweens is defined");
                         data.attrTweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
+                                console.log("Transition attrtween is called with o.key: " + o.key + " and _dd3_tweens[o.value]: " + _dd3_tweens[o.value]);
                                 trst.attrTween(o.key, _dd3_tweens[o.value]);
                             }
                         });
@@ -1270,7 +1272,7 @@ var initDD3App = function () {
 
 
                     if (data.styleTweens) {
-                        
+
                         data.styleTweens.each(function (o) {
                             var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
                             if (_dd3_tweens[o.value[0]]) {
@@ -1435,7 +1437,7 @@ var initDD3App = function () {
                         };
                     }
 
-                    
+
                     return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {
                         _dd3_createProperties.call(this);
                         if (this.parentNode.__unwatch__)
@@ -1618,7 +1620,7 @@ var initDD3App = function () {
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
 
-                
+
                 this.each(function () {
                     if (this.nodeName === 'g')
                         counter += _dd3_sendGroup.call(this, type, args, rcpts);
@@ -1913,7 +1915,7 @@ var initDD3App = function () {
                 if (!(selections instanceof Array)) console.log("V4 Error: selections  is a Map ");
                 selections.forEach(function (s, i) {
                     if (objs[i]) {
-                        if(!(s instanceof Array))  console.log("V4 Error: s  is a Map ");
+                        if (!(s instanceof Array)) console.log("V4 Error: s  is a Map ");
                         s.forEach(function (d) {
                             var obj = objs[i];
                             if (obj.onSend.length > 0) {
@@ -1943,7 +1945,7 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.watch = function (spread) {
                 spread = typeof spread === "undefined" ? false : spread;
-                
+
                 this.each(_dd3_funct(_dd3_watch, [spread]));
                 return this;
             };
@@ -1955,7 +1957,7 @@ var initDD3App = function () {
             };
 
             _dd3.selection.prototype.unwatch = function () {
-                
+
                 this.each(_dd3_unwatch);
                 return this;
             };
@@ -1967,7 +1969,7 @@ var initDD3App = function () {
             };
 
             var _dd3_selection_createProperties = function (elem) {
-                
+
                 elem.each(function () { _dd3_createProperties.call(this); });
                 return elem;
             };
@@ -2143,14 +2145,14 @@ var initDD3App = function () {
                 range.push(max);
 
                 range.forEach(function (time) {
-                    if(!(transitionsInfos instanceof Array))  console.log("V4 Error: transitionsInfos is a Map ");
+                    if (!(transitionsInfos instanceof Array)) console.log("V4 Error: transitionsInfos is a Map ");
                     transitionsInfos.forEach(function (c, i) {
                         if (c) {
                             c.forEach(function (obj) {
                                 var a = (time - obj.time) / obj.duration;
                                 if (a >= 0 && a <= 1) {
                                     var t = obj.ease(a);
-                                    if(!(obj.tweened instanceof Array))  console.log("V4 Error: obj.tweened  is a Map ");
+                                    if (!(obj.tweened instanceof Array)) console.log("V4 Error: obj.tweened  is a Map ");
                                     obj.tweened.forEach(function (f) {
                                         f.call(clones[i], t);
                                     });
@@ -2159,7 +2161,7 @@ var initDD3App = function () {
                         }
                     });
                     var rcpt = _dd3_findRecipients(g);
-                    if(!(rcpt instanceof Array))  console.log("V4 Error: rcpt  is a Map ");
+                    if (!(rcpt instanceof Array)) console.log("V4 Error: rcpt  is a Map ");
                     rcpt.forEach(function (r) { r.min = time - step; r.max = time + step; });
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
@@ -2180,20 +2182,26 @@ var initDD3App = function () {
                     endValues = [];
 
                 //if(!(tween instanceof Array))  console.log("V4 Error: tween  is a Map ");
-                
-                tween.each(function (key, value) {
-                    var type = value.type;
-                    value = value.call(elem, args.data, args.index);
-                    if (value) {
-                        properties.push(type || key);
-                        tweened.push(value);
-                    }
-                });
-                
+                if (tween.each) {
+                    console.log("tween.each appears to exist sometimes");
+                    tween.each(function (key, value) {
+                        var type = value.type;
+                        value = value.call(elem, args.data, args.index);
+                        if (value) {
+                            properties.push(type || key);
+                            tweened.push(value);
+                        }
+                    });
+                } else {
+                    if(!temporary_store) temporary_store=tween;
+                    console.log(tween);
+                }
+
+
                 group.appendChild(node);
 
                 var d3_node = d3.select(node);
-                if(!(tweened instanceof Array))  console.log("V4 Error: tweened  is a Map ");
+                if (!(tweened instanceof Array)) console.log("V4 Error: tweened  is a Map ");
                 tweened.forEach(function (f, j) {
                     var ps = properties[j].split('.'),
                         p0 = ps[0],
@@ -2232,18 +2240,21 @@ var initDD3App = function () {
                 var initialize = function (t, ease, precision) {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
                     //console.log("V4 WARNING: each of start.dd3");
-                    
+
                     t.on("start.dd3", function (d, i) {
                         //console.log("V4 WARNING: Handling start.dd3 on on");
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
                         //var transition = this[ns][this[ns].active];
-                        var transition = d3.active(this);
+                        console.log(t);
+                        console.log("name: "+name+" namespace: "+ns);
+                        var transition = d3.active(this);//v4 this appear to be the problem
+                        //console.log(transition);
                         // Needed for integration into GDO framework as it seems that constructor are different !
                         // And peer.js test equality with constructors to send data !
-                        
+
                         var tweenFunctions = [].slice.call(tweens.entries());
-                        if(!(tweenFunctions instanceof Array))  console.log("V4 Error: tweenFunctions  is a Map ");
+                        if (!(tweenFunctions instanceof Array)) console.log("V4 Error: tweenFunctions  is a Map ");
                         tweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2254,7 +2265,7 @@ var initDD3App = function () {
                         });
 
                         var attrTweenFunctions = [].slice.call(attrTweens.entries());
-                        if(!(attrTweenFunctions instanceof Array))  console.log("V4 Error: attrTweenFunctions  is a Map ");
+                        if (!(attrTweenFunctions instanceof Array)) console.log("V4 Error: attrTweenFunctions  is a Map ");
                         attrTweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2265,7 +2276,7 @@ var initDD3App = function () {
                         });
 
                         var styleTweenFunctions = [].slice.call(styleTweens.entries());
-                        if(!(styleTweenFunctions instanceof Array))  console.log("V4 Error: styleTweenFunctions  is a Map ");
+                        if (!(styleTweenFunctions instanceof Array)) console.log("V4 Error: styleTweenFunctions  is a Map ");
                         styleTweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2306,7 +2317,7 @@ var initDD3App = function () {
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
 
-                    
+
                     t.on("end.dd3", function (d, i) {
                         if (_dd3_isReceived(this) || this.__unwatch__)
                             return;
@@ -2331,13 +2342,13 @@ var initDD3App = function () {
                     t.tween = function (name, tween) {
                         if (arguments.length < 2) return tweens.get(name);
                         //console.log(name);
-                        if(!temporary_store) temporary_store=tween;
+                        if (!temporary_store) temporary_store = tween;
 
                         if (!tween) {
                             tweens.remove(name);
                             return d3.transition.prototype.tween.call(this, name, null);
                         } else if (typeof tween !== "string") {
-                            console.log("tween: "+tween);
+                            //console.log("tween: "+tween);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2349,6 +2360,7 @@ var initDD3App = function () {
                         return d3.transition.prototype.tween.call(this, name, _dd3_tweens['dd3_' + tween]);
                     };
 
+                    //TODO: v4 doesn't work
                     t.attrTween = function (attr, tween) {
                         var temp, trst;//TODO rename
                         if (arguments.length < 2) return attrTweens.get(attr);
@@ -2363,7 +2375,7 @@ var initDD3App = function () {
 
                             return trst;
                         } else if (typeof tween !== "string") {
-                            console.log("attrtween: "+tween);
+                            console.log("attrtween: " + tween);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2395,7 +2407,7 @@ var initDD3App = function () {
 
                             return trst;
                         } else if (typeof tween !== "string") {
-                            console.log("styletween: "+tween);
+                            //console.log("styletween: "+tween);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2441,6 +2453,7 @@ var initDD3App = function () {
             };
 
             _dd3.defineTween = function (name, func, spec) {
+                //console.log("defineTween called with name:"+name+" function: "+func+" and specification: "+spec);
                 if (arguments.length < 2) return _dd3_tweens['dd3_' + name];
                 if (!func) delete _dd3_tweens['dd3_' + name];
                 else {

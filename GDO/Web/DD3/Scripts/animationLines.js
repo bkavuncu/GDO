@@ -131,7 +131,7 @@ var animationLines = function (arg) {
 	            break;
 	        }
 
-	        if (--end == 0)
+	        if (--end === 0)
 	            (console.log("Data loaded"), callback && callback());
 	    });
 

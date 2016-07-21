@@ -597,12 +597,12 @@
                     d3.select(this).remove();
                 };
 
-                var drag = d3.behavior.drag();
-                var dragC = d3.behavior.drag();
+                var drag = d3.drag();
+                var dragC = d3.drag();
                 drag.on("drag", function() {
                     moveRect.call(this);
                 });
-                drag.on("dragstart", function() {
+                drag.on("start", function() {
                     console.log('move');
                     console.log(this);
                     d3.select(this.parentElement).moveToFront();
@@ -614,7 +614,7 @@
                 dragC.on("drag", function() {
                     resizeRect.call(this);
                 });
-                dragC.on("dragstart", function() {
+                dragC.on("start", function() {
                     console.log('resize');
                     console.log(this);
                     d3.select(this.parentElement).moveToFront();
