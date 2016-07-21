@@ -17,7 +17,7 @@ gdo.management.nodes.drawEmptyNodeTable = function (maxCol, maxRow) {
         $("#node_table").append("<tr id='node_table_row_" + i + "' row='" + i + "'></tr>");
         $("#node_table_row_" + i).css("height", (gdo.management.table_height / gdo.net.rows) + "%");
         for (var j = 0; j < maxCol; j++) {
-            $("#node_table tr:last").append("<td id='node_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "' style='height:8.5vh'></td>");
+            $("#node_table tr:last").append("<td id='node_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'></td>");
             $("#node_table_row_" + i + "_col_" + j).css("height", (gdo.management.table_height / gdo.net.rows) + "%");
         }
     }
