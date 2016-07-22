@@ -70,15 +70,15 @@ gdo.management.updateMaintenanceButton = function () {
             //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-danger")
-            .addClass("btn-success")
-            //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance ON");
+            .addClass("btn-success");
+        //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance ON");
     } else {
         $("#maintenanceButton")
             //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-success")
-            .addClass("btn-danger")
-            //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance OFF");
+            .addClass("btn-danger");
+        //.append("<i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance OFF");
     }
     $("#maintenanceButton")
         .unbind()
@@ -96,15 +96,15 @@ gdo.management.updateMaintenanceButton = function () {
             //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-danger")
-            .addClass("btn-success")
-            //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank ON");
+            .addClass("btn-success");
+        //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank ON");
     } else {
         $("#blankButton")
             //.empty()
             .removeClass("btn-primary")
             .removeClass("btn-success")
-            .addClass("btn-danger")
-            //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank OFF");
+            .addClass("btn-danger");
+        //.append("<i class='fa  fa-square fa-fw'></i>&nbsp;Blank OFF");
     }
     $("#blankButton")
         .unbind()

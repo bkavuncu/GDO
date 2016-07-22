@@ -13,9 +13,9 @@ gdo.SCRIPT_TYPE = {
 $(function () {
     /// <summary>
     /// Registering Event Handlers on load
-    gdo.loadScript('utilities', 'utilities', gdo.SCRIPT_TYPE.CORE);
     /// </summary>
     /// <returns></returns>
+    gdo.loadScript('utilities', 'utilities', gdo.SCRIPT_TYPE.CORE);
 });
 gdo.initGDO = function (clientMode) {
     /// <summary>

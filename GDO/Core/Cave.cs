@@ -24,7 +24,7 @@ namespace GDO.Core
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Cave));
 
-        private static Cave Self = null;
+        private static Cave Self;
         public static readonly object ServerLock = new object();
         public static readonly List<object> AppLocks = new List<object>();
         public static readonly Dictionary<string,object> ModuleLocks = new Dictionary<string,object>();
@@ -450,15 +450,9 @@ namespace GDO.Core
         public static bool RegisterApp(string name, int p2pmode, Type appClassType, bool isAdvanced, List<string> supportedApps ) {
             if (!Apps.ContainsKey(name))
             {
-                App app;
-                if (isAdvanced)
-                {
-                    app = new AdvancedApp(name, appClassType, (int)Cave.AppTypes.Advanced, supportedApps);
-                }
-                else
-                {
-                    app = new App(name, p2pmode, appClassType, (int)Cave.AppTypes.Base);
-                }
+                var app = isAdvanced 
+                    ? new AdvancedApp(name, appClassType, (int)AppTypes.Advanced, supportedApps) 
+                    : new App(name, p2pmode, appClassType, (int)AppTypes.Base);
                 Apps.TryAdd(name, app);
                 List<AppConfiguration> configurations = LoadAppConfigurations(name);
                 foreach (var configuration in configurations)
@@ -492,7 +486,7 @@ namespace GDO.Core
                 String path = Directory.GetCurrentDirectory() + @"\Scenarios\";  // TODO using server.map path
                 if (Directory.Exists(path))
                 {
-                    string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);
+                    string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
                     //todo comment why the@ is needed
                     foreach (string filePath in filePaths)
                     {
@@ -513,6 +507,7 @@ namespace GDO.Core
             }
             catch (Exception e)
             {
+                Log.Debug("failed to load scenarios ",e);
                 return false;
             }
         }
@@ -533,6 +528,7 @@ namespace GDO.Core
             }
             catch (Exception e)
             {
+                Log.Debug("failed to save scenario",e);
                 return null;
             }
         }
@@ -552,6 +548,7 @@ namespace GDO.Core
             }
             catch (Exception e)
             {
+                Log.Error("failed to delete scenario ",e);
                 return false;
             }
         }
@@ -570,7 +567,7 @@ namespace GDO.Core
             String path = Directory.GetCurrentDirectory() + @"\Configurations\" + appName;  // TODO using server.map path
             if (Directory.Exists(path))
             {
-                string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);//todo comment why the@ is needed
+                string[] filePaths = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);//todo comment why the@ is needed
                 foreach (string filePath in filePaths)
                 {
                     JObject json = Utilities.LoadJsonFile(filePath);
@@ -709,7 +706,7 @@ namespace GDO.Core
             {
                 if (Apps[appName].Instances.ContainsKey(instanceId))
                 {
-                    if (Apps[appName].AppType == (int)Cave.AppTypes.Base)
+                    if (Apps[appName].AppType == (int)AppTypes.Base)
                     {
                         Section section = ((IBaseAppInstance)Apps[appName].Instances[instanceId]).Section;
                         if (Apps[appName].DisposeAppInstance(instanceId))
@@ -718,7 +715,7 @@ namespace GDO.Core
                             return true;
                         }
                     }
-                    else if (Apps[appName].AppType == (int)Cave.AppTypes.Advanced)
+                    else if (Apps[appName].AppType == (int)AppTypes.Advanced)
                     {
                         if (Apps[appName].DisposeAppInstance(instanceId))
                         {

@@ -119,7 +119,7 @@ namespace GDO.Utility
                 T temp = (T)obj;
                 string json = JsonConvert.SerializeObject(temp);
                 string path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
-                File.WriteAllText(@path, json);
+                File.WriteAllText(path, json);
             }
             catch (Exception e)
             {
