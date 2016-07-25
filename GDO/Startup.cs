@@ -69,6 +69,8 @@ namespace GDO
         [ImportMany(typeof(IModuleHub))]
         private List<IModuleHub> _cavemodules { get; set; }
 
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Startup));
+
         public IList<Assembly> GetAssemblies()
         {
             IList<Assembly> assemblies = new List<Assembly>();
@@ -79,7 +81,23 @@ namespace GDO
                 catalog.Catalogs.Add(new DirectoryCatalog(appDir));
             }
             var ccontainer = new CompositionContainer(catalog);
-            ccontainer.ComposeParts(this);
+            try {
+                ccontainer.ComposeParts(this);
+            } catch (Exception e) {
+
+                Log.Error("loader Exception ", e);
+
+                if (e is ReflectionTypeLoadException) {
+                    var loadException = (ReflectionTypeLoadException)e;
+                    Log.Error("Type Load Exception ", loadException);
+                    foreach (var innerexception in loadException.LoaderExceptions) {
+                        Log.Error("Loader Exception ", innerexception);
+                    }
+                }
+
+                throw e;
+            }
+
             assemblies.Add(typeof(CaveHub).Assembly);
             foreach (var caveapp in _caveapps)
             {
