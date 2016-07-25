@@ -603,6 +603,10 @@
     <Content Include="Bootstrap\index.html" />
     <Content Include="Bootstrap\js\flot-data.js" />
     <Content Include="Bootstrap\js\morris-data.js" />
+    <Content Include="CSS\keyboard-dark.min.css" />
+    <Content Include="CSS\keyboard.min.css" />
+    <Content Include="Scripts\jquery.keyboard.min.js" />
+    <Content Include="Scripts\jquery.mousewheel.min.js" />
     <Content Include="Bootstrap\pages\blank.html" />
     <Content Include="Bootstrap\pages\buttons.html" />
     <Content Include="Bootstrap\pages\flot.html" />

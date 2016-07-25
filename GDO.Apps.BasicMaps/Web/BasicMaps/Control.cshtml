@@ -99,7 +99,7 @@
         $(document).ready(function() {
             var gdo = parent.gdo;
             if (gdo.net.consoleMode) {
-                $("iframe").contents().find("#map").css("zoom", 0.5);
+                $("#map").css("zoom", 0.5);
             }
             gdo.controlId = parseInt(getUrlVar("controlId"));
             gdo.net.app["BasicMaps"].initControl(gdo.controlId);

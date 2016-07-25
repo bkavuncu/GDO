@@ -25,6 +25,9 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard-dark.min.css" rel="stylesheet" type="text/css">
     <link href="../../CSS/gdo.management.css" rel="stylesheet">
     <link href="../../CSS/jquery-ui.min.css" rel="stylesheet">
     <link href="../../CSS/rangeslider.css" rel="stylesheet">
@@ -119,7 +122,19 @@
         .ol-rotate {
             top: 3em;
         }
-
+        /* override Bootstrap excessive button padding */
+         button.ui-keyboard-button.btn {
+            padding: 1px 6px;
+        }
+        /* Bootswatch Darkly input is too bright */
+         .ui-keyboard-input.light, .ui-keyboard-preview.light {
+            color: #282828;
+            background: #ddd;
+        }
+        .ui-keyboard-input.dark, .ui-keyboard-preview.dark {
+            color: #ddd;
+            background: #282828;
+        }
 
         .map {
             border: 0 none;
@@ -133,6 +148,7 @@
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Scripts/jquery.keyboard.js"></script>
     <script src="../../Scripts/enscroll-0.6.1.min.js"></script>
     <script src='../../Scripts/colors.js'></script>
     <script src='../../Scripts/jquery-colorpicker.js'></script>
@@ -163,7 +179,7 @@
             $(document).ready(function () {
                 var gdo = parent.gdo;
                 if (gdo.net.consoleMode) {
-                    $("iframe").contents().find("#map").css("zoom", 0.5);
+                    $("#map").css("zoom", 0.5);
                 }
                 gdo.controlId = parseInt(getUrlVar("controlId"));
                 gdo.net.app["Maps"].initControl(gdo.controlId);
@@ -173,7 +189,35 @@
                     verticalTrackClass: 'track4',
                     verticalHandleClass: 'handle4'
                 }).css("width", "100%").css("height", "70vh").css("padding-right", "5px");
-
+                if (gdo.net.consoleMode) {
+                    var opt = {
+                        layout: 'international',
+                        css: {
+                            // input & preview
+                            // "label-default" for a darker background
+                            // "light" for white text
+                            input: 'form-control input-sm dark',
+                            // keyboard container
+                            container: 'center-block well',
+                            // default state
+                            buttonDefault: 'btn btn-default',
+                            // hovered button
+                            buttonHover: 'btn-primary',
+                            // Action keys (e.g. Accept, Cancel, Tab, etc);
+                            // this replaces "actionClass" option
+                            buttonAction: 'active',
+                            // used when disabling the decimal button {dec}
+                            // when a decimal exists in the input area
+                            buttonDisabled: 'disabled'
+                        }
+                    }
+                    $("#layer_name_input").keyboard(opt);
+                    $("#source_name_input").keyboard(opt);
+                    $("#style_name_input").keyboard(opt);
+                    $("#format_name_input").keyboard(opt);
+                    $("#data_name_input").keyboard(opt);
+                    $("#configuration_name_input").keyboard(opt);
+                }
             });
         });
     </script>

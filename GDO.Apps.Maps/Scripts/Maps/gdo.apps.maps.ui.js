@@ -11,6 +11,63 @@ gdo.net.app["Maps"].selected["format"] = -1;
 gdo.net.app["Maps"].selected["data"] = -1;
 gdo.net.app["Maps"].selected["view"] = -1;
 gdo.net.app["Maps"].selected["configuration"] = -1;
+gdo.net.app["Maps"].keyboardOptions = {};
+gdo.net.app["Maps"].keyboardOptions.tex = {
+    layout: 'international',
+    css: {
+        // input & preview
+        // "label-default" for a darker background
+        // "light" for white text
+        input: 'form-control input-sm dark',
+        // keyboard container
+        container: 'center-block well',
+        // default state
+        buttonDefault: 'btn btn-default',
+        // hovered button
+        buttonHover: 'btn-primary',
+        // Action keys (e.g. Accept, Cancel, Tab, etc);
+        // this replaces "actionClass" option
+        buttonAction: 'active',
+        // used when disabling the decimal button {dec}
+        // when a decimal exists in the input area
+        buttonDisabled: 'disabled'
+    }
+}
+
+gdo.net.app["Maps"].keyboardOptions.num = {
+    layout: 'custom',
+    customLayout: {
+        'default': [
+            '7 8 9',
+            '4 5 6',
+            '1 2 3',
+            '0 . {bksp}',
+            '{a} {c}'
+        ]
+    },
+    // Prevent keys not in the displayed keyboard from being typed in
+    restrictInput: true,
+    css: {
+        // input & preview
+        // "label-default" for a darker background
+        // "light" for white text
+        input: 'form-control input-sm dark',
+        // keyboard container
+        container: 'center-block well',
+        // default state
+        buttonDefault: 'btn btn-default',
+        // hovered button
+        buttonHover: 'btn-primary',
+        // Action keys (e.g. Accept, Cancel, Tab, etc);
+        // this replaces "actionClass" option
+        buttonAction: 'active',
+        // used when disabling the decimal button {dec}
+        // when a decimal exists in the input area
+        buttonDisabled: 'disabled'
+    }
+}
+
+gdo.net.app["Maps"].keyboardOptions.area = gdo.net.app["Maps"].keyboardOptions.tex;
 
 
 gdo.net.app["Maps"].drawListTables = function (instanceId) {
@@ -262,6 +319,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
                 "<input type='text' id='" + inputDiv + "_value_input' class='form-control input_field input-xs '  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                 "</div>");
+                if (gdo.net.consoleMode) {
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.tex);
+                }
                 break;
             case 3: //Integer
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -280,6 +340,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseInt(parseInt($("iframe").contents().find("#" + inputDiv + "_value_input").val()) - 1));
                     }
                 });
+                if (gdo.net.consoleMode) {
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.num);
+                }
                 break;
             case 4: //Float
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -298,6 +361,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         $("iframe").contents().find("#" + inputDiv + "_value_input").val(parseFloat(parseFloat($("iframe").contents().find("#" + inputDiv + "_value_input").val()) - 1));
                     }
                 });
+                if (gdo.net.consoleMode) {
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.num);
+                }
                 break;
             case 5: //List
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -329,6 +395,16 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<input type='text' id='" + inputDiv + "_value_input' class='color no-alpha form-control input_field input-xs'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                     "</div>");
                 var frame = parent.document.getElementById("control_frame_content");
+                /*$colorPicker($("iframe").contents().find("#" + inputDiv + "_value_input"),{
+                    body: frame.contentDocument.body,
+                    cssAddon: '.cp-color-picker{border-radius:0px}',
+                    positionCallback: function ($elm) {
+                        return { // the object will be used as in $('.something').css({...});
+                            left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() - 150,
+                            top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top + $("iframe").contents().find("#" + inputDiv + "_value").height() + 7,
+                        }
+                    }
+                })*/
                 $("iframe").contents().find("#" + inputDiv + "_value_input").colorPicker({
                     body: frame.contentDocument.body,
                     cssAddon: '.cp-color-picker{border-radius:0px}',
@@ -391,6 +467,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     $("iframe").contents().find("#" + inputDiv + "_value").append(
                         "<input id='" + inputDiv + "_value_input_" + i + "' type='number'  class='input_field form-control'  style='width: " + (100 / property.Length) + "%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
+                    if (gdo.net.consoleMode) {
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.app["Maps"].keyboardOptions.num);
+                    }
                 }
                 break;
             case 11: //Float Array
@@ -401,6 +480,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     $("iframe").contents().find("#" + inputDiv + "_value").append(
                         "<input id='" + inputDiv + "_value_input_" + i + "' type='number' step='0.0001' class='input_field form-control'  style='width: " + (100 / property.Length) + "%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
+                    if (gdo.net.consoleMode) {
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.app["Maps"].keyboardOptions.num);
+                    }
                 }
                 break;
             case 12: //String Array
@@ -411,6 +493,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     $("iframe").contents().find("#" + inputDiv + "_value").append(
                         "<input type='text' id='" + inputDiv + "_value_input_" + i + "'  class='input_field form-control'  style='width: " + (100 / property.Length) + "%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
+                    if (gdo.net.consoleMode) {
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.app["Maps"].keyboardOptions.tex);
+                    }
                 }
                 break;
             case 13: //Color Array
@@ -438,6 +523,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
                     "<textarea id='" + inputDiv + "_value_input' rows='4' cols='70' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></textarea>" +
                     "</div>");
+                if (gdo.net.consoleMode) {
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.area);
+                }
                 break;
             case 15: //Link Datalist
                 $("iframe").contents().find("#" + inputDiv).append(
@@ -481,6 +569,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                             "</div>" +
                         "</form>" +
                     "</div>");
+                if (gdo.net.consoleMode) {
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.tex);
+                }
                 $("iframe").contents().find("#" + inputDiv + "_form").on('submit', function () {
                     $("iframe").contents().find("#" + inputDiv + "_value_input").val("../../Data/Maps/" + $("iframe").contents().find("#" + inputDiv + "_select_file").val().slice(12, 500));
                 });
@@ -491,6 +582,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
                     "<input type='text' id='" + inputDiv + "_value_input' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                     "</div>");
+                if (gdo.net.consoleMode) {
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.tex);
+                }
         }
 
         if (property.Priority == -1 && !property.IsEditable) {

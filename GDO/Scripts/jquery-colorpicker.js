@@ -6,11 +6,11 @@
             return factory(root, jQuery, Colors);
         });
     } else {
-        factory(root, root.jQuery, root.Colors);
+        //factory(root, root.jQuery, root.Colors);
+        factory(parent, parent.jQuery, root.Colors);
     }
 }(this, function(window, $, Colors, undefined){
     'use strict';
-
     var $document = $(document),
         _instance = $(),
         _colorPicker,
@@ -21,7 +21,7 @@
         _$z_slider, _$xy_slider,
         _$xy_cursor, _$z_cursor , _$alpha , _$alpha_cursor,
 
-        _pointermove = 'touchmove.tcp mousemove.tcp pointermove.tcp',
+        _pointermove = 'touchmove.tcp  pointermove.tcp',
         _pointerdown = 'touchstart.tcp mousedown.tcp pointerdown.tcp',
         _pointerup = 'touchend.tcp mouseup.tcp pointerup.tcp',
         _GPU = false,
@@ -56,6 +56,11 @@
             _options = _color.options;
             _colorPicker = this;
         };
+        /*parent.$colorPicker = function(elm , options) {
+            _color = elm.color = new Colors(options);
+            _options = _color.options;
+            _colorPicker = elm;
+        };*/
 
     ColorPicker.prototype = {
         render: preRender,
