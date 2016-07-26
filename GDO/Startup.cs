@@ -38,7 +38,7 @@ namespace GDO
                 builder.RegisterHubs(Assembly.GetExecutingAssembly());
                 var container = builder.Build();
                 config.Resolver = new AutofacDependencyResolver(container);
-                app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+                app.UseCors(CorsOptions.AllowAll);
                 app.UseAutofacMiddleware(container);
                 //app.MapSignalR("/signalr", config);
                 //config.EnableCors(new EnableCorsAttribute("*", "*", "GET, POST, OPTIONS, PUT, DELETE"));
@@ -46,7 +46,7 @@ namespace GDO
                 app.Map("/signalr", map =>
                 {
                     map.UseCors(CorsOptions.AllowAll);
-                    var hubConfiguration = new HubConfiguration
+                    var hubConfiguration = new HubConfiguration//todo this is never used? 
                     {
                         EnableJSONP = true
                     };
@@ -69,6 +69,8 @@ namespace GDO
         [ImportMany(typeof(IModuleHub))]
         private List<IModuleHub> _cavemodules { get; set; }
 
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Startup));
+
         public IList<Assembly> GetAssemblies()
         {
             IList<Assembly> assemblies = new List<Assembly>();
@@ -76,10 +78,26 @@ namespace GDO
             string[] appDirs = System.Configuration.ConfigurationManager.AppSettings["appDirs"].Split(',');
             foreach (String appDir in appDirs)
             {
-                catalog.Catalogs.Add(new DirectoryCatalog(@appDir));
+                catalog.Catalogs.Add(new DirectoryCatalog(appDir));
             }
             var ccontainer = new CompositionContainer(catalog);
-            ccontainer.ComposeParts(this);
+            try {
+                ccontainer.ComposeParts(this);
+            } catch (Exception e) {
+
+                Log.Error("loader Exception ", e);
+
+                if (e is ReflectionTypeLoadException) {
+                    var loadException = (ReflectionTypeLoadException)e;
+                    Log.Error("Type Load Exception ", loadException);
+                    foreach (var innerexception in loadException.LoaderExceptions) {
+                        Log.Error("Loader Exception ", innerexception);
+                    }
+                }
+
+                throw e;
+            }
+
             assemblies.Add(typeof(CaveHub).Assembly);
             foreach (var caveapp in _caveapps)
             {

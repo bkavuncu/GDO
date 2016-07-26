@@ -301,10 +301,7 @@ gdo.management.scenarios.addElementToUI = function (element) {
                 },
                 source: gdo.functions.array.funcs[element.Mod]
             });
-        } else {
         }
-
-
         $("#scenario_element_" + element.Id + "_params_input").off().on('change', gdo.management.scenarios.saveEdits);
         $("#scenario_element_" + element.Id + "_wait_input").off().on('change', gdo.management.scenarios.saveEdits);
     } else {

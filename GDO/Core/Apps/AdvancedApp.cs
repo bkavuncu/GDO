@@ -33,7 +33,7 @@ namespace GDO.Core.Apps
                 return -1;
             }
 
-            int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
+            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
             IAdvancedAppInstance instance = (IAdvancedAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
             AppConfiguration conf;
             Configurations.TryGetValue(configName, out conf);

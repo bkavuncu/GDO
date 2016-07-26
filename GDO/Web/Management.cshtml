@@ -1,6 +1,4 @@
-﻿@using System.Collections.Generic
-@using System.Threading.Tasks
-@using GDO.Core
+﻿@using GDO.Core
 @using GDO.Core.Apps
 @using GDO.Core.Modules
 @{
@@ -166,10 +164,10 @@
                         </div>
                         <div class="col-md-7">
                             <div class="row" style="width: 90%">
-                                <font color="#fff" size="5.5px"><b>GDO</b></font>
+                                <span style="color: #fff" font-size 5.5px><b>GDO</b></span>
                             </div>
                             <div class="row" style="width: 90%">
-                                <font color="#fff" size="5.5px">Management</font>
+                                <span style="color: #fff" font-size 5.5px>Management</span>
                             </div>
                         </div>
                         <!-- /.col-lg-12 -->
@@ -190,35 +188,62 @@
                     <ul class="nav" id="side-menu">
 
                         <li>
-                            <a href="~/Web/Nodes.cshtml"><i class="fa fa-th fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Nodes</font></a>
+                            <a href="~/Web/Nodes.cshtml">
+                                <i class="fa fa-th fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Nodes</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="~/Web/Sections.cshtml"><i class="fa fa-th-large fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Sections</font></a>
+                            <a href="~/Web/Sections.cshtml">
+                                <i class="fa fa-th-large fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Sections</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-cubes  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Instances</font><span class="fa arrow"></span></a>
+                            <a href="#">
+                                <i class="fa fa-cubes  fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Instances</span><span class="fa arrow"></span>
+                            </a>
                             <ul class="nav nav-second-level" id="nav_instances"></ul>
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="#"><i class="fa fa-codepen  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Modules</font><span class="fa arrow"></span></a>
+                            <a href="#">
+                                <i class="fa fa-codepen  fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Modules</span><span class="fa arrow"></span>
+                            </a>
                             <ul class="nav nav-second-level" id="nav_modules"></ul>
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a href="~/Web/States.cshtml"><i class="fa fa-save fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;States</font></a>
+                            <a href="~/Web/States.cshtml">
+                                <i class="fa fa-save fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;States</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="~/Web/Scenarios.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
+                            <a href="~/Web/Scenarios.cshtml">
+                                <i class="fa fa-play-circle fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Scenarios</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="https://wiki.imperial.ac.uk/display/DG/DSI+-+GDO+Home"><i class="fa fa-file-text fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Wiki</font></a>
+                            <a href="https://wiki.imperial.ac.uk/display/DG/DSI+-+GDO+Home">
+                                <i class="fa fa-file-text fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Wiki</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="https://github.com/bkavuncu/GDO"><i class="fa fa-github fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Github</font></a>
+                            <a href="https://github.com/bkavuncu/GDO">
+                                <i class="fa fa-github fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Github</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="https://trello.com/gdo6"><i class="fa fa-trello fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Trello</font></a>
+                            <a href="https://trello.com/gdo6">
+                                <i class="fa fa-trello fa-fw"></i>
+                                <span style="color: #fff" font-size 3.5px>&nbsp;&nbsp;Trello</span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -263,21 +288,21 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4><font color="white">Global Data Observatory</font></h4>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <p class="lead">Welcome to GDO Management Interface</p>
+                        <h4><span style="color: white">Global Data Observatory</span></h4>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <p class="lead">Welcome to GDO Management Interface</p>
+                                </div>
+                                <!-- /.col-lg-12 -->
                             </div>
-                            <!-- /.col-lg-12 -->
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="~/Img/gdo.png" width="200%">
+                            <br />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="~/Img/gdo.png" width="200%">
+                                </div>
+                                <!-- /.col-lg-12 -->
                             </div>
-                            <!-- /.col-lg-12 -->
-                        </div>
-                    </div>
+</div>
                     <div class="modal-body">
                        
                     </div>
