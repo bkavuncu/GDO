@@ -190,33 +190,13 @@
                     verticalHandleClass: 'handle4'
                 }).css("width", "100%").css("height", "70vh").css("padding-right", "5px");
                 if (gdo.net.consoleMode) {
-                    var opt = {
-                        layout: 'international',
-                        css: {
-                            // input & preview
-                            // "label-default" for a darker background
-                            // "light" for white text
-                            input: 'form-control input-sm dark',
-                            // keyboard container
-                            container: 'center-block well',
-                            // default state
-                            buttonDefault: 'btn btn-default',
-                            // hovered button
-                            buttonHover: 'btn-primary',
-                            // Action keys (e.g. Accept, Cancel, Tab, etc);
-                            // this replaces "actionClass" option
-                            buttonAction: 'active',
-                            // used when disabling the decimal button {dec}
-                            // when a decimal exists in the input area
-                            buttonDisabled: 'disabled'
-                        }
-                    }
-                    $("#layer_name_input").keyboard(opt);
-                    $("#source_name_input").keyboard(opt);
-                    $("#style_name_input").keyboard(opt);
-                    $("#format_name_input").keyboard(opt);
-                    $("#data_name_input").keyboard(opt);
-                    $("#configuration_name_input").keyboard(opt);
+                    $("#layer_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#source_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#style_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#format_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#data_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#configuration_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#map_input_div").keyboard(gdo.net.keyboardOptions.tex);
                 }
             });
         });

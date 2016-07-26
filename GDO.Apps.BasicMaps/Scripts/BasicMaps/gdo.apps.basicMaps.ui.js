@@ -552,6 +552,9 @@ gdo.net.app["BasicMaps"].drawMapTable = function (instanceId) {
         .attr("text-align", "center")
         .focus(gdo.net.app['BasicMaps'].clearInput)
         .css({ fontSize: gdo.management.button_font_size * 0.7 });
+    if (gdo.net.consoleMode) {
+        $keyboard($("iframe").contents().find("#map_input"), gdo.net.keyboardOptions.tex);
+    }
     $("iframe").contents().find("#map_input").keyup(function (event) {
         if (event.keyCode == 13) {
             $("iframe").contents().find("#map_submit").click();

@@ -900,18 +900,18 @@ namespace GDO.Core
             }
         }
 
-        public void UpdateConsoleInstance(int instanceId)
+        public void UpdateConsole(string consoleId)
         {
             lock (Cave.ServerLock)
             {
-                Cave.ConsoleInstanceId = instanceId;
-                Clients.All.receiveConsoleInstanceId(instanceId);
+                Cave.ConsoleId = consoleId;
+                Clients.All.receiveConsoleId(consoleId);
             }
         }
 
-        public void RequestConsoleInstance()
+        public void RequestConsole()
         {
-            Clients.Caller.receiveConsoleInstanceId(Cave.ConsoleInstanceId);
+            Clients.Caller.receiveConsoleId(Cave.ConsoleId);
         }
     }
 }

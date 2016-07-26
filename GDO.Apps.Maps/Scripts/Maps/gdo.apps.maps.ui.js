@@ -11,63 +11,6 @@ gdo.net.app["Maps"].selected["format"] = -1;
 gdo.net.app["Maps"].selected["data"] = -1;
 gdo.net.app["Maps"].selected["view"] = -1;
 gdo.net.app["Maps"].selected["configuration"] = -1;
-gdo.net.app["Maps"].keyboardOptions = {};
-gdo.net.app["Maps"].keyboardOptions.tex = {
-    layout: 'international',
-    css: {
-        // input & preview
-        // "label-default" for a darker background
-        // "light" for white text
-        input: 'form-control input-sm dark',
-        // keyboard container
-        container: 'center-block well',
-        // default state
-        buttonDefault: 'btn btn-default',
-        // hovered button
-        buttonHover: 'btn-primary',
-        // Action keys (e.g. Accept, Cancel, Tab, etc);
-        // this replaces "actionClass" option
-        buttonAction: 'active',
-        // used when disabling the decimal button {dec}
-        // when a decimal exists in the input area
-        buttonDisabled: 'disabled'
-    }
-}
-
-gdo.net.app["Maps"].keyboardOptions.num = {
-    layout: 'custom',
-    customLayout: {
-        'default': [
-            '7 8 9',
-            '4 5 6',
-            '1 2 3',
-            '0 . {bksp}',
-            '{a} {c}'
-        ]
-    },
-    // Prevent keys not in the displayed keyboard from being typed in
-    restrictInput: true,
-    css: {
-        // input & preview
-        // "label-default" for a darker background
-        // "light" for white text
-        input: 'form-control input-sm dark',
-        // keyboard container
-        container: 'center-block well',
-        // default state
-        buttonDefault: 'btn btn-default',
-        // hovered button
-        buttonHover: 'btn-primary',
-        // Action keys (e.g. Accept, Cancel, Tab, etc);
-        // this replaces "actionClass" option
-        buttonAction: 'active',
-        // used when disabling the decimal button {dec}
-        // when a decimal exists in the input area
-        buttonDisabled: 'disabled'
-    }
-}
-
-gdo.net.app["Maps"].keyboardOptions.area = gdo.net.app["Maps"].keyboardOptions.tex;
 
 
 gdo.net.app["Maps"].drawListTables = function (instanceId) {
@@ -320,7 +263,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 "<input type='text' id='" + inputDiv + "_value_input' class='form-control input_field input-xs '  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                 "</div>");
                 if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.tex);
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
                 }
                 break;
             case 3: //Integer
@@ -341,7 +284,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     }
                 });
                 if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.num);
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.num);
                 }
                 break;
             case 4: //Float
@@ -362,7 +305,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     }
                 });
                 if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.num);
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.num);
                 }
                 break;
             case 5: //List
@@ -468,7 +411,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         "<input id='" + inputDiv + "_value_input_" + i + "' type='number'  class='input_field form-control'  style='width: " + (100 / property.Length) + "%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
                     if (gdo.net.consoleMode) {
-                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.app["Maps"].keyboardOptions.num);
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.keyboardOptions.num);
                     }
                 }
                 break;
@@ -481,7 +424,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         "<input id='" + inputDiv + "_value_input_" + i + "' type='number' step='0.0001' class='input_field form-control'  style='width: " + (100 / property.Length) + "%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
                     if (gdo.net.consoleMode) {
-                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.app["Maps"].keyboardOptions.num);
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.keyboardOptions.num);
                     }
                 }
                 break;
@@ -494,7 +437,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         "<input type='text' id='" + inputDiv + "_value_input_" + i + "'  class='input_field form-control'  style='width: " + (100 / property.Length) + "%;height: 3vh;text-align:left' placeholder='" + placeholders[i] + "' value='" + values[i] + "'/></input>"
                     );
                     if (gdo.net.consoleMode) {
-                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.app["Maps"].keyboardOptions.tex);
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.keyboardOptions.tex);
                     }
                 }
                 break;
@@ -524,7 +467,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<textarea id='" + inputDiv + "_value_input' rows='4' cols='70' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></textarea>" +
                     "</div>");
                 if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.area);
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
                 }
                 break;
             case 15: //Link Datalist
@@ -570,7 +513,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         "</form>" +
                     "</div>");
                 if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.tex);
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
                 }
                 $("iframe").contents().find("#" + inputDiv + "_form").on('submit', function () {
                     $("iframe").contents().find("#" + inputDiv + "_value_input").val("../../Data/Maps/" + $("iframe").contents().find("#" + inputDiv + "_select_file").val().slice(12, 500));
@@ -583,7 +526,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     "<input type='text' id='" + inputDiv + "_value_input' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                     "</div>");
                 if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.app["Maps"].keyboardOptions.tex);
+                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
                 }
         }
 
@@ -660,6 +603,9 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
         .attr("text-align", "center")
         .focus(gdo.net.app['Maps'].clearInput)
         .css({ fontSize: gdo.management.button_font_size * 0.7 });
+    if (gdo.net.consoleMode) {
+        $keyboard($("iframe").contents().find("#map_input"), gdo.net.keyboardOptions.tex);
+    }
     $("iframe").contents().find("#map_input").keyup(function (event) {
         if (event.keyCode == 13) {
             $("iframe").contents().find("#map_submit").click();

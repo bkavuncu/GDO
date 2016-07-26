@@ -593,15 +593,15 @@ gdo.management.sections.drawButtonTable = function () {
             if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
                 gdo.management.apps.selectedApp = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].appName;
                 gdo.management.apps.selectedConfiguration = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].configName;
-                gdo.net.server.updateConsoleInstance(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
+                gdo.net.server.updateConsole(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
                 gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console' + gdo.management.sections.selectedSection);
                 //gdo.updateDisplayCanvas();
             } else {
-                gdo.net.server.updateConsoleInstance(-1);
+                gdo.net.server.updateConsole(-1);
                 gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
             }
         } else {
-            gdo.net.server.updateConsoleInstance(-1);
+            gdo.net.server.updateConsole(-1);
             gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
         }
     });

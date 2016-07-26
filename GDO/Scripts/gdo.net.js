@@ -28,6 +28,62 @@ gdo.net.NEIGHBOUR_ENUM = {
     BOTTOMRIGHT: 8
 };
 
+gdo.net.keyboardOptions = {};
+gdo.net.keyboardOptions.tex = {
+    layout: 'international',
+    css: {
+        // input & preview
+        // "label-default" for a darker background
+        // "light" for white text
+        input: 'form-control input-sm dark',
+        // keyboard container
+        container: 'center-block well',
+        // default state
+        buttonDefault: 'btn btn-default',
+        // hovered button
+        buttonHover: 'btn-primary',
+        // Action keys (e.g. Accept, Cancel, Tab, etc);
+        // this replaces "actionClass" option
+        buttonAction: 'active btn-primary',
+        // used when disabling the decimal button {dec}
+        // when a decimal exists in the input area
+        buttonDisabled: 'disabled'
+    }
+}
+
+gdo.net.keyboardOptions.num = {
+    layout: 'custom',
+    customLayout: {
+        'default': [
+            '7 8 9',
+            '4 5 6',
+            '1 2 3',
+            '0 . {bksp}',
+            '{a} {c}'
+        ]
+    },
+    // Prevent keys not in the displayed keyboard from being typed in
+    restrictInput: true,
+    css: {
+        // input & preview
+        // "label-default" for a darker background
+        // "light" for white text
+        input: 'form-control input-sm dark',
+        // keyboard container
+        container: 'center-block well',
+        // default state
+        buttonDefault: 'btn btn-default',
+        // hovered button
+        buttonHover: 'btn-primary',
+        // Action keys (e.g. Accept, Cancel, Tab, etc);
+        // this replaces "actionClass" option
+        buttonAction: 'active btn-primary',
+        // used when disabling the decimal button {dec}
+        // when a decimal exists in the input area
+        buttonDisabled: 'disabled'
+    }
+}
+
 gdo.net.time = new Date();
 //gdo.net.time = {};
 gdo.net.connectionState = 0;
@@ -61,16 +117,18 @@ $(function() {
             gdo.initBaseFrame();
         }
     }
-    $.connection.caveHub.client.receiveConsoleInstanceId = function (consoleInstanceId) {
-        gdo.net.consoleInstanceId = consoleInstanceId;
-        gdo.consoleOut('.NET', 1, 'Console Instance Id:' + consoleInstanceId);
+    $.connection.caveHub.client.receiveConsoleId = function (consoleId) {
+        gdo.net.consoleId = consoleId;
+        gdo.consoleOut('.NET', 1, 'Console Id:' + consoleId);
         gdo.updateDisplayCanvas();
         if (gdo.net.consoleMode == true) {
-            if (consoleInstanceId >= 0 && gdo.net.instance[gdo.net.consoleInstanceId].exists) {
-                gdo.management.instances.loadInstanceControlFrame(gdo.net.instance[consoleInstanceId].appName, consoleInstanceId, gdo.net.instance[consoleInstanceId].configName);
+            if ($.isNumeric(consoleId) && consoleId >= 0 && gdo.net.instance[gdo.net.consoleId].exists) {
+                gdo.management.instances.loadInstanceControlFrame(gdo.net.instance[consoleId].appName, consoleId, gdo.net.instance[consoleId].configName);
+            } else if (consoleId != null && consoleId != "" && consoleId != -1 && consoleId != "-1") {
+                gdo.management.modules.loadModuleControlFrame(consoleId);
             } else {
                 $("iframe").contents().find("body").html('');
-                $("#instance_label").empty().append("<h3><b> Waiting for Control</b></h3>");
+                $("#console_label").empty().append("<h3><b> Waiting for Control</b></h3>");
             }
         }
     }
