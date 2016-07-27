@@ -1543,8 +1543,10 @@ var initDD3App = function () {
 
             /**
             *  Function for preparing and sending data
+            *  newSelection are the recipients
+            *  oldSelection are the former recipients
+            *  Returns which elements enter, update or exit the new selection 
             */
-
             var _dd3_getSelections = function (newSelection, oldSelection) {
                 var ns = newSelection.slice(),
                     os = oldSelection.slice();
@@ -1582,7 +1584,7 @@ var initDD3App = function () {
                 return [enter, update, exit];
             };
 
-            // Find all browsers which MAY need to receive the element
+            /**  Find all browsers which MAY need to receive the element */
             var _dd3_findRecipients = function (el) {
                 if (!el)
                     return [];
@@ -1612,6 +1614,8 @@ var initDD3App = function () {
                 return rcpt;
             };
 
+            /** Return the browser coordinates adapted to the svg/html context
+             */
             var _dd3_findBrowserAt = function (left, top, context) {
                 context = context || 'svg';
 
@@ -1627,7 +1631,7 @@ var initDD3App = function () {
                 return pos;
             };
 
-            // Take the first array of recipients and add to the second one all those which are not already in it
+            /** Take the first array of recipients and add to the second one all those which are not already in it */
             var _dd3_mergeRecipientsIn = function (a, b) {
                 var chk;
                 a.forEach(function (c) {
@@ -1646,18 +1650,20 @@ var initDD3App = function () {
                 });
             };
 
+            /** Take the two arrays of recipients, add all those which are not already in it and returned a merged array*/
             var _dd3_mergeRecipients = function (a, b) {
                 var c = b.slice();
                 _dd3_mergeRecipientsIn(a, c);
                 return c;
             };
 
+            /** Behaviour when a shape is sent. Can be used manually.  */
             _dd3.selection.prototype.send = function () {
                 _dd3_selection_createProperties(this);
                 return _dd3_selection_send.call(this, 'shape');
             };
 
-            //Sends each element of an array based on its type.
+            /** Sends each elements of an array based on its type.*/
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
 
@@ -1677,6 +1683,12 @@ var initDD3App = function () {
                 return this;
             };
 
+            /** send an element to its recipients
+             * type: can be shape, property, endTransition, transitions and updateContainer
+             * args: 
+             * rcpts: array of recipients for this send
+             */
+            
             var _dd3_sendElement = function (type, args, rcpts) {
                 var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
 
@@ -1698,6 +1710,7 @@ var initDD3App = function () {
                 return rcpt.length;
             };
 
+            /** Send group of elements to their recipients */
             var _dd3_sendGroup = function (type, args, rcpts) {
                 var active = this.__dd3_transitions__.size() > 0, rcpt, objs;
 
@@ -1721,6 +1734,7 @@ var initDD3App = function () {
                 return rcpt.length;
             };
 
+            /**Format the data before sending it*/
             var _dd3_dataFormatter = (function () {
                 var sendId = 1;
 
@@ -2006,6 +2020,7 @@ var initDD3App = function () {
                 return elem;
             };
 
+            /** Create dd3 specific properties on the object: recipient list, transitions and ordering  */
             var _dd3_createProperties = function () {
                 if (!this.__recipients__) {
                     this.__recipients__ = [];
@@ -2507,17 +2522,17 @@ var initDD3App = function () {
 
             _dd3.requestRemoteData = dd3_data.requestRemoteData;
 
-            //Access to the data dimensions of dd3
+            /**Access to the data dimensions of dd3*/
             _dd3.retrieveDimensions = function (id) {
                 return data["dd3_" + id].dataDimensions;
             };
 
-            //Access to the data of dd3
+            /**Access to the data of dd3*/
             _dd3.retrieveData = function (name, id) {
                 return data["dd3_" + id]["dd3_" + name].dataPoints;
             };
 
-            //Access to the state of dd3
+            /** Access to the state of dd3 */
             _dd3.state = function () { return state(); };
 
             // We could re-synchronize before emitting the 'ready' event
@@ -2619,13 +2634,13 @@ gdo.net.app.DD3.initControl = function (callback) {
     return gdo.net.instance[gdo.controlId].id;
 };
 
-//What to do when application node is killed => log it + remove the client from SignalR 
+/**What to do when application node is killed => log it + remove the client from SignalR*/ 
 gdo.net.app.DD3.terminateClient = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
     dd3Server.server.removeClient(dd3Server.instanceId);//in DD3AppHub and DD3App
 };
 
-//What to do when controller node is killed => just log it
+/**What to do when controller node is killed => just log it*/
 gdo.net.app.DD3.terminateControl = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 };
