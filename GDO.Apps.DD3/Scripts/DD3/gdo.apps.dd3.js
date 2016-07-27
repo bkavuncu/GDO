@@ -6,7 +6,7 @@
 // ==== IF THIS NODE IS AN APP ====
 var d3;
 
-var temporary_store;//TODO: delete
+var temporary_store;//TODO v4: delete
 
 var initDD3App = function () {
 
@@ -1479,7 +1479,7 @@ var initDD3App = function () {
             //_dd3.selection.enter={};
             //_dd3.selection.enter.prototype={};
             //_dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNoOperation, d3.selection.enter.prototype.insert, 'insert');
-            //TODO _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.prototype.enter.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
+            //TODO v4: _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.prototype.enter.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
             //PREVIOUSLY: _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
 
             _dd3.selection.prototype.insert = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');
@@ -2112,8 +2112,6 @@ var initDD3App = function () {
 
                 var c1 = containers[0], c2;
 
-                //console.log(c1);
-
                 while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
                     c2 = containers.shift();
                     c1 = containers[0];
@@ -2325,7 +2323,7 @@ var initDD3App = function () {
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
 
-                    //TODO: v4 will probably fail as ease is a function not a string
+                    //TODO v4: will probably fail as ease is a function not a string
                     t.ease = function (e) {
                         if (typeof e !== "string") {
                             utils.log("Custom ease functions have to be defined with dd3.defineEase", 2);
@@ -2360,11 +2358,12 @@ var initDD3App = function () {
                         return d3.transition.prototype.tween.call(this, name, _dd3_tweens['dd3_' + tween]);
                     };
 
-                    //TODO: v4 doesn't work
+                    //TODO v4: doesn't work
                     t.attrTween = function (attr, tween) {
-                        var temp, trst;//TODO rename
+                        var temp, trst;
                         if (arguments.length < 2) return attrTweens.get(attr);
 
+                        //console.log("dd3 tweens doesn't exist: "+!_dd3_tweens['dd3_' + tween]);
                         if (!tween) {
                             attrTweens.remove(attr);
 
@@ -2372,7 +2371,6 @@ var initDD3App = function () {
                             this.tween = d3.transition.prototype.tween;
                             trst = d3.transition.prototype.attrTween.call(this, attr, null);
                             this.tween = temp;
-
                             return trst;
                         } else if (typeof tween !== "string") {
                             console.log("attrtween: " + tween);
@@ -2394,7 +2392,7 @@ var initDD3App = function () {
                     };
 
                     t.styleTween = function (style, tween, priority) {
-                        var temp, trst;//TODO rename
+                        var temp, trst;
                         if (arguments.length < 2) return styleTweens.get(style);
 
                         if (!tween) {
