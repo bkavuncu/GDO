@@ -99,6 +99,13 @@ var initDD3App = function () {
                 return objf;
             },
 
+            //return name of a function
+            getFnName(fn) {
+                var f = typeof fn == 'function';
+                var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
+                return (!f && 'not a function') || (s && s[1] || 'anonymous');
+            },
+
             // Following functions : Keeped for memory for now, will probably be deleted as not needed
             //Warning: still used. Replace before delete
             //Return the containing group of a SVG element.
@@ -111,6 +118,8 @@ var initDD3App = function () {
                 }
                 return container;
             }
+
+
         };
     })();
 
@@ -1264,6 +1273,7 @@ var initDD3App = function () {
                         console.log("data.attrTweens is defined");
                         data.attrTweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
+                                console.log("THIS SHOULD TRIGGER !!!!!");
                                 console.log("Transition attrtween is called with o.key: " + o.key + " and _dd3_tweens[o.value]: " + _dd3_tweens[o.value]);
                                 trst.attrTween(o.key, _dd3_tweens[o.value]);
                             }
@@ -2191,7 +2201,7 @@ var initDD3App = function () {
                         }
                     });
                 } else {
-                    if(!temporary_store) temporary_store=tween;
+                    if (!temporary_store) temporary_store = tween;
                     console.log(tween);
                 }
 
@@ -2245,7 +2255,7 @@ var initDD3App = function () {
                             return;
                         //var transition = this[ns][this[ns].active];
                         console.log(t);
-                        console.log("name: "+name+" namespace: "+ns);
+                        console.log("name: " + name + " namespace: " + ns);
                         var transition = d3.active(this);//v4 this appear to be the problem
                         //console.log(transition);
                         // Needed for integration into GDO framework as it seems that constructor are different !
@@ -2362,6 +2372,8 @@ var initDD3App = function () {
                     t.attrTween = function (attr, tween) {
                         var temp, trst;
                         if (arguments.length < 2) return attrTweens.get(attr);
+                        console.log(attr);
+                        //check attrFunctionNS$1
 
                         //console.log("dd3 tweens doesn't exist: "+!_dd3_tweens['dd3_' + tween]);
                         if (!tween) {
@@ -2373,7 +2385,7 @@ var initDD3App = function () {
                             this.tween = temp;
                             return trst;
                         } else if (typeof tween !== "string") {
-                            console.log("attrtween: " + tween);
+                            console.log("attrtween: " + utils.getFnName(tween));
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {

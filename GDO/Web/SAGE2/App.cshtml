@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                window.onload = function() {
+                    setTimeout(function () {
+                        var sageId = gdo.net.cols * ((gdo.net.rows - 1) - ((gdo.clientId - 1) / gdo.net.cols)) + (2 * ((gdo.clientId - 1) % gdo.net.cols));
+                        var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+                        gdo.consoleOut(".SAGE2", 1, "Connecting to Sage Node at " + gdo.net.app["SAGE2"].config[gdo.net.instance[instanceId].configName].clientIp + sageId);
+                        window.location = gdo.net.app["SAGE2"].config[gdo.net.instance[instanceId].configName].clientIp + sageId;
+                    }, 700);
+                };
+            });
+        });
+    </script>
+</body>
+</html>

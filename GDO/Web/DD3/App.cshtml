@@ -56,17 +56,21 @@
 <body>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/d3.js"></script>
+    <script src="~/Web/DD3/Scripts/d3.v4.js"></script>
     <script src="../../Scripts/peer.js"></script>
 
-    <!-- JS FOR TUBE VIZ-->
-    <script src="~/Web/DD3/Scripts/map.js"></script>
-    <script src="~/Web/DD3/Scripts/stations.js"></script>
-    <script src="~/Web/DD3/Scripts/lines.js"></script>
-    <script src="~/Web/DD3/Scripts/animation.js"></script>
-    <script src="~/Web/DD3/Scripts/animationLines.js"></script>
 
     <script>
+
+        //we load the d3 library WITHOUT the requestAnimationFrame function. Therefore, the d3.timer will fall back on using the timeout function
+        //This prevents animations from slowing down.
+        var temp = requestAnimationFrame;
+        requestAnimationFrame=undefined;
+        $.getScript('Scripts/d3.v4.js', function(data, textStatus) { 
+            d3.now();
+            requestAnimationFrame=temp; 
+        });
+
         d3.selection.prototype.moveToFront = function () {
             return this.each(function () {
                 this.parentNode.appendChild(this);
@@ -83,6 +87,14 @@
         };
 
     </script>
+    <!-- JS FOR TUBE VIZ-->
+    <script src="~/Web/DD3/Scripts/map.js"></script>
+    <script src="~/Web/DD3/Scripts/stations.js"></script>
+    <script src="~/Web/DD3/Scripts/lines.js"></script>
+    <script src="~/Web/DD3/Scripts/animation.js"></script>
+    <script src="~/Web/DD3/Scripts/animationLines.js"></script>
+
+    
     <script>
         var dd3, loadMap, launchAnimation, map, anim;
 
@@ -1217,6 +1229,7 @@
         });
 
     </script>
+    
 
     <div id="error" style="display:none">
         <p style="color: rgb(237, 20, 51);font-size: 2.5em;">
