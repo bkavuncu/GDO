@@ -23,13 +23,13 @@ namespace GDO.Apps.Images
         public string Name { get; set; } = "Images";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new ImagesApp().GetType();
-        public void JoinGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-        public void ExitGroup(int instanceId)
+        public void ExitGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void ProcessImage(int instanceId, string imageName)
@@ -77,8 +77,9 @@ namespace GDO.Apps.Images
                     //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
                     //File.Delete(path1);
 
-                    //create thumnail
-                    Image thumb = image.GetThumbnailImage(150 * image.Width / image.Height, 150, () => false, IntPtr.Zero);
+                    //create thumbnail
+                    int thumbHeight = 500;
+                    Image thumb = image.GetThumbnailImage(thumbHeight * image.Width / image.Height, thumbHeight, () => false, IntPtr.Zero);
                     thumb.Save(basePath + ia.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
                     thumb.Dispose();
 

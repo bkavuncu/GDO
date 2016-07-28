@@ -185,11 +185,11 @@ var blkTimer;
 var s = new sigma({
     renderer: {
         container: document.getElementById('graphcontainer'),
-        type: 'webgl'
+        type: 'canvas'
     },
     settings: {
         verbose: true,
-        scalingMode: 'inside',
+        scalingMode: 'outside',
         batchEdgesDrawing: false,
         webglEdgesBatchSize: 50,
         hideEdgesOnMove: true,
@@ -202,6 +202,8 @@ var s = new sigma({
         animationsTime: 3000
     }
 });
+//establish the camera
+s.cameras[0].goTo({x:0,y:0,ratio:1.15,angle:0})
 
 /**
  * Establish connection to remote controller using PeerJS

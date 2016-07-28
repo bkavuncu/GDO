@@ -1,95 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
-using System.Web;
-
-namespace GDO.Utility
+﻿namespace GDO.Utility
 {
-    public enum VisualisationTypes
+    public enum InputTypes
     {
         Boolean = 1, //Basic on/off button
         String = 2, //String input
-        URL = 3, //URL input (Not used currently, use string instead)
-        Integer = 4, //Integer Input
-        Float = 5, //Float Input
-        Increment = 6, //Increment input
-        Slider = 7, //Slider with Min-Max
-        Color = 8, //Color Picker
-        Datalist = 9, //If Array use Array, if not use link
-        Array = 10, //Input with multiple cols for the array size
-        TextArea = 11, //String appears as a text area input
-        JSON = 12, //JSON text: {'BLA': 'afafreaf', 'BLABLA': true}
-        Function = 13, //function(img, src) {img.getImage().src = src;}
+        Integer = 3, //Integer Input
+        Float = 4, //Float Input
+        List = 5, //List input
+        Slider = 6, //Slider with Min-Max
+        Color = 7, //Color Picker
+        DataList = 8, //If Array use Array
+        Link = 9, //Link to another object (visualised as datalist)
+        IntegerArray = 10, //Input with multiple cols for the array size
+        FloatArray = 11, //Input with multiple cols for the array size
+        StringArray = 12, //Input with multiple cols for the array size
+        ColorArray = 13, //Input with multiple cols for the array size
+        TextArea = 14, //String appears as a text area input
+        LinkDataList = 15, //Datalist where values read dynamically
+        FileInput = 16, //Datalist where values read dynamically
+        Time = 17, //Time Parameter
     }
 
     public enum ParameterTypes
     {
+        Variable = 0,
+        Array = 1,
+        Function = 2,
+        JSON = 3,
+        Object = 4,
+        Global = 5,
+        Time = 6,
+    }
+
+    public enum VariableTypes
+    {
         Boolean = 0,
         Integer = 1,
-        NullableInteger = 2,
-        IntegerRange = 3,
-        Float = 4,
-        FloatRange = 5,
-        Double = 6,
-        DoubleRange = 7,
-        String = 8,
-        Link = 9,
-        BooleanArray = 10,
-        IntegerArray = 11,
-        FloatArray = 12,
-        DoubleArray = 13,
-        StringArray = 14
+        Float = 2,
+        String = 3,
     }
 
     public enum Priorities
     {
         Required = 0,
-        Optional = 1  
+        Optional = 1,
+        System = -1, 
     }
 
     public class Parameter
     {
         public string Name { get; set; }
+        public string PropertyName { get; set; }
         public string Description { get; set; }
         public int Priority { get; set; }
         public int ParameterType { get; set; }
-        public int VisualisationType { get; set; }
+        public int VariableType { get; set; }
+        public int InputType { get; set; }
         public bool IsEditable { get; set; }
         public bool IsVisible { get; set; }
+        public bool IsProperty = true;
+        public bool IsNull = true;
+        public bool IsPartOfObject { get; set; }
+        public string ObjectName { get; set; }
     }
     public class BooleanParameter : Parameter
     {
         public bool? Value { get; set; }
         public bool? DefaultValue { get; set; }
-        public new int ParameterType = 0;
+        public new int InputType = (int)InputTypes.Boolean;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Boolean;
     }
 
     public class IntegerParameter : Parameter
     {
-        public int Value { get; set; }
-        public int DefaultValue { get; set; }
-        public int? Increment { get; set; }
-        public new int ParameterType = 1;
-    }
-
-    public class NullableIntegerParameter : Parameter
-    {
         public int? Value { get; set; }
         public int? DefaultValue { get; set; }
         public int? Increment { get; set; }
-        public new int ParameterType = 2;
+        public new int InputType = (int)InputTypes.Integer;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
-    public class IntegerRangeParameter : Parameter
+    public class SliderParameter : Parameter
     {
-        public int? Value { get; set; }
-        public int? DefaultValue { get; set; }
-        public int? MinValue { get; set; }
-        public int? MaxValue { get; set; }
-        public int? Increment { get; set; }
-        public new int ParameterType = 3;
+        public float? Value { get; set; }
+        public float? DefaultValue { get; set; }
+        public float? MinValue { get; set; }
+        public float? MaxValue { get; set; }
+        public float? Increment { get; set; }
+        public new int InputType = (int)InputTypes.Slider;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Float;
     }
 
     public class FloatParameter : Parameter
@@ -97,100 +99,154 @@ namespace GDO.Utility
         public float? Value { get; set; }
         public float? DefaultValue { get; set; }
         public float? Increment { get; set; }
-        public new int ParameterType = 4;
+        public new int InputType = (int)InputTypes.Float;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Float;
     }
 
-    public class FloatRangeParameter : Parameter
+    public class ListParameter : Parameter
     {
-        public float? Value { get; set; }
-        public float? DefaultValue { get; set; }
-        public float? MinValue { get; set; }
-        public float? MaxValue { get; set; }
-        public float? Increment { get; set; }
-        public new int ParameterType = 5;
-    }
-
-    public class DoubleParameter : Parameter
-    {
-        public double? Value { get; set; }
-        public double? DefaultValue { get; set; }
-        public double? Increment { get; set; }
-        public new int ParameterType = 6;
-    }
-
-    public class DoubleRangeParameter : Parameter
-    {
-        public double? Value { get; set; }
-        public double? DefaultValue { get; set; }
-        public double? MinValue { get; set; }
-        public double? MaxValue { get; set; }
-        public double? Increment { get; set; }
-        public new int ParameterType = 7;
+        public string[] Values { get; set; }
+        public string[] DefaultValues { get; set; }
+        public int Length { get; set; }
+        public new int InputType = (int)InputTypes.List;
+        public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class StringParameter : Parameter
     {
         public string Value { get; set; }
         public string DefaultValue { get; set; }
-        public new int ParameterType = 8;
+        public new int InputType = (int)InputTypes.String;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class FileInputParameter : Parameter
+    {
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public bool IsExtractable = false;
+        public new int InputType = (int)InputTypes.FileInput;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class JSONParameter : Parameter
+    {
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public new int InputType = (int)InputTypes.TextArea;
+        public new int ParameterType = (int)ParameterTypes.JSON;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class FunctionParameter : Parameter
+    {
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public new int InputType = (int)InputTypes.TextArea;
+        public new int ParameterType = (int)ParameterTypes.Function;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class LinkParameter : Parameter
     {
-        public int? Value { get; set; }
+        public int? Value = -1;
         public int? DefaultValue { get; set; }
         public string LinkedParameter { get; set; }
-        public new int ParameterType = 9;
+        public string[] ClassTypes { get; set; }
+        public new int InputType = (int)InputTypes.Link;
+        public new int ParameterType = (int)ParameterTypes.Object;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
-    public class BooleanArrayParameter : Parameter
+    public class ColorParameter : Parameter
     {
-        public bool[] Values { get; set; }
-        public bool[] DefaultValues { get; set; }
-        public bool? Value { get; set; }
-        public bool? DefaultValue { get; set; }
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public new int InputType = (int)InputTypes.Color;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class DatalistParameter : Parameter
+    {
+        public string[] DefaultValues { get; set; }
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
         public int Length { get; set; }
-        public new int ParameterType = 10;
+        public new int InputType = (int)InputTypes.DataList;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class LinkDatalistParameter : Parameter
+    {
+        public string Value { get; set; }
+        public string DefaultValue { get; set; }
+        public string LinkedParameter { get; set; }
+        public string LinkedProperty { get; set; }
+        public string[] ClassTypes { get; set; }
+        public new int InputType = (int)InputTypes.LinkDataList;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.String;
     }
 
     public class IntegerArrayParameter : Parameter
     {
-        public int[] Values { get; set; }
-        public int[] DefaultValues { get; set; }
+        public int?[] Values { get; set; }
+        public int?[] DefaultValues { get; set; }
         public int Length { get; set; }
-        public int? Value { get; set; }
-        public int? DefaultValue { get; set; }
-        public new int ParameterType = 11;
+        public new int InputType = (int)InputTypes.IntegerArray;
+        public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     public class FloatArrayParameter : Parameter
     {
-        public float[] Values { get; set; }
-        public float[] DefaultValues { get; set; }
-        public float? Value { get; set; }
-        public float? DefaultValue { get; set; }
+        public float?[] Values { get; set; }
+        public float?[] DefaultValues { get; set; }
         public int Length { get; set; }
-        public new int ParameterType = 12;
+        public new int InputType = (int)InputTypes.FloatArray;
+        public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.Float;
     }
 
-    public class DoubleArrayParameter : Parameter
-    {
-        public double[] Values { get; set; }
-        public double[] DefaultValues { get; set; }
-        public double? Value { get; set; }
-        public double? DefaultValue { get; set; }
-        public int Length { get; set; }
-        public new int ParameterType = 13;
-    }
 
     public class StringArrayParameter : Parameter
     {
         public string[] Values { get; set; }
         public string[] DefaultValues { get; set; }
-        public string Value { get; set; }
-        public string DefaultValue { get; set; }
         public int Length { get; set; }
-        public new int ParameterType = 14;
+        public new int InputType = (int)InputTypes.StringArray;
+        public new int ParameterType = (int) ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class ColorArrayParameter : Parameter
+    {
+        public string[] Values { get; set; }
+        public string[] DefaultValues { get; set; }
+        public int Length { get; set; }
+        public new int InputType = (int)InputTypes.ColorArray;
+        public new int ParameterType = (int)ParameterTypes.Array;
+        public new int VariableType = (int)VariableTypes.String;
+    }
+
+    public class TimeParameter : Parameter
+    {
+        public int? Year { get; set; }
+        public int? Month { get; set; }
+        public int? Day { get; set; }
+        public int? Hour { get; set; }
+        public int? Minute { get; set; }
+        public int? Second { get; set; }
+
+        public new int InputType = (int)InputTypes.Time;
+        public new int ParameterType = (int)ParameterTypes.Time;
+        public new int VariableType = (int)VariableTypes.Integer;
     }
 
     //How to use:

@@ -1,0 +1,34 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body unselectable="on" class="unselectable" style="margin:0">
+    <canvas id="glscreen1" style="position:absolute"></canvas>
+    <canvas id="glscreen2" style="position:absolute"></canvas>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script>
+        $(function () {          
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["RayMarching"].initClient();
+            });
+        });
+    </script>
+
+    <script id="2d-vertex-shader" type="x-shader/x-vertex">
+        attribute vec2 a_position;
+
+        void main() {
+        gl_Position = vec4(a_position, 0, 1);
+        }
+    </script>
+</body>
+</html>

@@ -19,13 +19,13 @@ namespace GDO.Apps.Graph
         public string Name { get; set; } = "Graph";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.Neighbours;
         public Type InstanceType { get; set; } = new GraphApp().GetType();
-        public void JoinGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-        public void ExitGroup(int instanceId)
+        public void ExitGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void InitiateProcessing(int instanceId, string filename)
@@ -95,6 +95,45 @@ namespace GDO.Apps.Graph
             }
         }
 
+        public void setAllNodesSize(int instanceId, int nodeSize)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Changing size of nodes.");
+                    Clients.Group("" + instanceId).setNodeSize(nodeSize);
+                    Clients.Caller.setMessage("Nodes are changing size.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void setOriginalSize(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Sizing nodes to their original size.");
+                    Clients.Group("" + instanceId).setNodesOriginalSize();
+                    //Clients.Group("" + instanceId).hideNodes();
+                    //Clients.Group("" + instanceId).renderNodes();
+                    Clients.Caller.setMessage("Nodes are changing size.");
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage("Error: Failed to change node size.");
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
 
         public void HideLinks(int instanceId)
         {

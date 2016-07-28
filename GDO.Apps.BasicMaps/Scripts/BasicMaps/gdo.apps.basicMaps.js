@@ -777,8 +777,13 @@ gdo.net.app["BasicMaps"].initControl = function (instanceId) {
     gdo.net.instance[instanceId].sectionWidth = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
     gdo.net.instance[instanceId].sectionHeight = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;
     gdo.net.instance[instanceId].sectionRatio = gdo.net.instance[instanceId].sectionWidth / gdo.net.instance[instanceId].sectionHeight;
-    gdo.net.instance[instanceId].controlMaxWidth = 1490;
-    gdo.net.instance[instanceId].controlMaxHeight = 600;
+    if (gdo.net.consoleMode) {
+        gdo.net.instance[instanceId].controlMaxWidth = 3200;
+        gdo.net.instance[instanceId].controlMaxHeight = 1200;
+    } else {
+        gdo.net.instance[instanceId].controlMaxWidth = 1600;
+        gdo.net.instance[instanceId].controlMaxHeight = 600;
+    }
     gdo.net.instance[instanceId].controlRatio = gdo.net.instance[instanceId].controlMaxWidth / gdo.net.instance[instanceId].controlMaxHeight;
     gdo.net.instance[instanceId].controlWidth = 700;
     gdo.net.instance[instanceId].controlHeight = 350;

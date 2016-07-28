@@ -10,18 +10,11 @@
 
         public Newtonsoft.Json.Linq.JObject Json { get; set; }
 
-        public AppConfiguration(string Name, dynamic Json)
+        public AppConfiguration(string name, dynamic json)
         {
-            this.Name = Name;
-            this.Json = Json;
-            if (this.Name == "Integration Mode")
-            {
-                IntegrationMode = true;
-            }
-            else
-            {
-                IntegrationMode = false;
-            }
+            this.Name = name;
+            this.Json = json;
+            IntegrationMode = this.Name == "Integration Mode";
         }
     }
 }

@@ -9,22 +9,11 @@ using Newtonsoft.Json;
 
 namespace GDO.Apps.Maps.Core
 {
-    public enum LayerTypes
-    {
-        Base = 0,
-        Heatmap = 1,
-        Image = 2,
-        Tile = 3,
-        Vector = 4
-    };
-
     public class Layer : Base
     {
-        [JsonProperty(Order = -1)]
-        public LinkParameter Source { get; set; }
 
         [JsonProperty(Order = -1)]
-        public FloatRangeParameter Opacity { get; set; }
+        public SliderParameter Opacity { get; set; }
 
         [JsonProperty(Order = -1)]
         public IntegerParameter ZIndex { get; set; }
@@ -33,90 +22,85 @@ namespace GDO.Apps.Maps.Core
         public BooleanParameter Visible { get; set; }
 
         [JsonProperty(Order = -1)]
-        public DoubleArrayParameter Extent { get; set; }
+        public FloatArrayParameter Extent { get; set; }
 
         [JsonProperty(Order = -1)]
-        public NullableIntegerParameter MinResolution { get; set; }
+        public IntegerParameter MinResolution { get; set; }
 
         [JsonProperty(Order = -1)]
-        public NullableIntegerParameter MaxResolution { get; set; }
+        public IntegerParameter MaxResolution { get; set; }
 
         public Layer() : base ()
         {
             ClassName.Value = this.GetType().Name;
 
-            Source = new LinkParameter
-            {
-                Name = "Source",
-                Description = "The source for this layer",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
-                IsEditable = false,
-                IsVisible = true,
-                LinkedParameter = "Source",
-            };
-
-            Opacity = new FloatRangeParameter
+            Opacity = new SliderParameter
             {
                 Name = "Opacity",
+                PropertyName = "opacity",
                 Description = "Opacity (0, 1)",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Slider,
                 IsEditable = true,
                 IsVisible = true,
                 MinValue = 0,
                 MaxValue = 1,
-                DefaultValue = 1
+                DefaultValue = 1,
+                Increment = (float?)0.05,
             };
 
             ZIndex = new IntegerParameter
             {
                 Name = "ZIndex",
+                PropertyName = "zIndex",
                 Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
-                IsVisible = false,
-                DefaultValue = 0
+                IsVisible = true,
+                DefaultValue = -1,
             };
 
             Visible = new BooleanParameter
             {
                 Name = "Visible",
+                PropertyName = "visible",
                 Description = "Visibility",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = true,
                 IsVisible = false,
-                DefaultValue = true
+                IsNull = false,
+                DefaultValue = true,
+                Value = true,
             };
 
-            Extent = new DoubleArrayParameter
+            Extent = new FloatArrayParameter
             {
                 Name = "Extent",
+                PropertyName = "extent",
                 Description = "The bounding extent for layer rendering. The layer will not be rendered outside of this extent: [MinX, MinY, MaxX, MaxY]",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
                 IsEditable = false,
                 IsVisible = true,
+                Length = 2,
+                DefaultValues = new float?[4],
+                Values = new float?[4],
             };
 
-            MinResolution = new NullableIntegerParameter
+            MinResolution = new IntegerParameter
             {
                 Name = "Minimum Resolution",
+                PropertyName = "minResolution",
                 Description = "The minimum resolution (inclusive) at which this layer will be visible.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
             };
 
-            MaxResolution = new NullableIntegerParameter
+            MaxResolution = new IntegerParameter
             {
                 Name = "Maximum Resolution",
+                PropertyName = "maxResolution",
                 Description = "The maximum resolution (exclusive) below which this layer will be visible.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
                 IsVisible = true,
             };

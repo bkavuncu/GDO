@@ -8,7 +8,8 @@
   } else if (typeof define === "function" && define.amd) {
     define([], factory);
   } else {
-    root.ol = factory();
+      //root.ol = factory();
+      parent.ol = factory();
   }
 }(this, function () {
   var OPENLAYERS = {};

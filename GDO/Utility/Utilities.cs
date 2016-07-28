@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.IO;
+using log4net;
 using Newtonsoft.Json;
 
 namespace GDO.Utility
 {
     public static class Utilities
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Utilities));
+
         public static List<string> ParseString(string str, string divider, bool includeRemainder)
-        {
+        {//TODO include as comment a sample of what this code is meant to parse 
+
+            //todo think this could be simplified by string.split method - this will avoid any exceptions being thrown here due to index out of range 
             List<string> lines = new List<string>();
-            if (String.IsNullOrEmpty(str) || String.IsNullOrEmpty(divider))
+            if (string.IsNullOrEmpty(str) || string.IsNullOrEmpty(divider))
             {
                 return lines;
             }
@@ -20,7 +25,7 @@ namespace GDO.Utility
             for (int index = 0; index < str.Length; index += divider.Length)
             {
 
-                index = str.IndexOf(divider, index);
+                index = str.IndexOf(divider, index, StringComparison.Ordinal);
                 if (index > 0)
                 {
                     string line = str.Substring(lastIndex, index - lastIndex);
@@ -78,38 +83,31 @@ namespace GDO.Utility
             }
             return slot;
         }
-        public static dynamic LoadJsonFile(string fileName)
-        {
+
+        public static dynamic LoadJsonFile(string fileName) {
             dynamic obj = null;
-            try
-            {
-                using (StreamReader r = new StreamReader(fileName))
-                {
+            try {
+                using (StreamReader r = new StreamReader(fileName)) {
                     string json = r.ReadToEnd();
                     obj = JsonConvert.DeserializeObject(json);
                 }
             }
-            catch (Exception e)
-            {
-
+            catch (Exception e) {
+                Log.Error("Unable to load JSON file " + fileName, e);
             }
             return obj;
         }
 
-        public static dynamic LoadJsonFile<T>(string fileName)
-        {
+        public static dynamic LoadJsonFile<T>(string fileName) {
             dynamic obj = null;
-            try
-            {
-                using (StreamReader r = new StreamReader(fileName))
-                {
+            try {
+                using (StreamReader r = new StreamReader(fileName)) {
                     string json = r.ReadToEnd();
                     obj = JsonConvert.DeserializeObject<T>(json);
                 }
             }
-            catch (Exception e)
-            {
-
+            catch (Exception e) {
+                Log.Error("Unable to load JSON file " + fileName, e);
             }
             return obj;
         }
@@ -120,12 +118,12 @@ namespace GDO.Utility
             {
                 T temp = (T)obj;
                 string json = JsonConvert.SerializeObject(temp);
-                String path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
-                System.IO.File.WriteAllText(@path, json);
+                string path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
+                File.WriteAllText(path, json);
             }
             catch (Exception e)
             {
-
+                Log.Error("Unable to save JSON file " + fileName, e);
             }
         }
 
@@ -133,23 +131,29 @@ namespace GDO.Utility
         {
             try
             {
-                String path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
-                System.IO.File.Delete(path);
+                string path = Directory.GetCurrentDirectory() + @"\\" + folderName + "\\" + fileName + ".json";
+                File.Delete(path);
             }
             catch (Exception e)
             {
-                
+                Log.Error("Unable to delete JSON file " + fileName, e);
             }
 
         }
 
-        public static string RemoveString(string source, string remove)
+        public static string RemoveString(string source, string remove) // TODO what does this method do? 
         {
-            int index = source.IndexOf(remove);
-            string cleanPath = (index < 0)
-                ? source
-                : source.Remove(index, remove.Length);
-            return cleanPath;
+            if (source != null && remove != null) {
+                int index = source.IndexOf(remove, StringComparison.Ordinal);
+                string cleanPath = (index < 0)
+                    ? source
+                    : source.Remove(index, remove.Length);
+                return cleanPath;
+            }
+            else {
+                Log.Debug("Error in Remove String due to null arguments");
+                return null;
+            }
         }
         public static byte[] GetBytes(string str)
         {
@@ -168,6 +172,7 @@ namespace GDO.Utility
             }
         }
     }
+
     public class GenericDictionary<TU>
     {
         private Dictionary<int, TU> _dict;
@@ -184,7 +189,7 @@ namespace GDO.Utility
 
         public int AddNextAvailableSlot<T>(T value) where T : TU
         {
-            int key = this.GetAvailableSlot();
+            int key = GetAvailableSlot();
             _dict.Add(key, value);
             return key;
         }

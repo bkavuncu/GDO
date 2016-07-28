@@ -42,19 +42,24 @@ namespace GDO.Core.Apps
                 return -1;
             }
 
-            int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
+            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
             IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
             AppConfiguration conf;
             Cave.Sections[sectionId].CalculateDimensions();
             Configurations.TryGetValue(configName, out conf);
+            if (conf==null) {
+                Log.Error("Failed to find config name "+configName);
+                return -1;
+            }
             instance.Id = instanceId;
             instance.AppName = this.Name;
             instance.Section = Cave.Sections[sectionId];
             instance.Configuration = conf;
-            ((IBaseAppInstance) instance).IntegrationMode = conf.IntegrationMode;
+            instance.IntegrationMode = conf.IntegrationMode;
             instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Instances.TryAdd(instanceId,instance);
+            Log.Info("created app "+Name+ " instance "+configName);
             return instanceId;
         }
 

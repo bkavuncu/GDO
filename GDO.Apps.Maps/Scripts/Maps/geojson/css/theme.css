@@ -1,0 +1,29 @@
+.CodeMirror-gutters {
+    background:#fff;
+    border:1px solid #444;
+}
+.cm-s-eclipse span.cm-meta {color: #FF2200;}
+.cm-s-eclipse span.cm-keyword { line-height: 1em; font-weight: bold; color: #ff4dff; }
+.cm-s-eclipse span.cm-atom {color: #0099ff;}
+.cm-s-eclipse span.cm-number {color: #25da92;}
+.cm-s-eclipse span.cm-def {color: #00ace6;}
+.cm-s-eclipse span.cm-variable {color: white;}
+.cm-s-eclipse span.cm-variable-2 {color: #3399ff;}
+.cm-s-eclipse span.cm-variable-3 {color: #3399ff;}
+.cm-s-eclipse span.cm-property {color: white;}
+.cm-s-eclipse span.cm-operator {color: white;}
+.cm-s-eclipse span.cm-comment {color: #00ff99;}
+.cm-s-eclipse span.cm-string {color: #FF9900;}
+.cm-s-eclipse span.cm-string-2 {color: #FF9900;}
+.cm-s-eclipse span.cm-error {color: #FF2200;}
+.cm-s-eclipse span.cm-qualifier {color: #555;}
+.cm-s-eclipse span.cm-builtin {color: #3399ff;}
+.cm-s-eclipse span.cm-bracket {color: #ffff4d;}
+.cm-s-eclipse span.cm-tag {color: #67ff4d;}
+.cm-s-eclipse span.cm-attribute {color: #33ccff;}
+.cm-s-eclipse span.cm-link {color: #00ccff;}
+
+.cm-s-eclipse .CodeMirror-matchingbracket {
+	outline:1px solid grey;
+	color:#fff !important;
+}

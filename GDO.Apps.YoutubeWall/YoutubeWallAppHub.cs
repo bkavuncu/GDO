@@ -18,13 +18,13 @@ namespace GDO.Apps.YoutubeWall
         public string Name { get; set; } = "YoutubeWall";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new YoutubeWallApp().GetType();
-        public void JoinGroup(int instanceId)
-        { 
-            Groups.Add(Context.ConnectionId, "" + instanceId);
-        }
-        public void ExitGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
+        }
+        public void ExitGroup(string groupId)
+        {
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void SetKeywords(int instanceId, string newKeywords)
@@ -296,9 +296,10 @@ namespace GDO.Apps.YoutubeWall
                     {
                         for (int j = 0; j < yf.Section.Cols; j++)
                         {
-                            videoName[i*yf.Section.Cols + j] = new YoutubeWallApp.NameInfo();
-                            videoName[i*yf.Section.Cols + j].currentName = yf.CurrentVideoName[i, j];
-                            videoName[i*yf.Section.Cols + j].nextName = yf.NextVideoName[i, j];
+                            videoName[i*yf.Section.Cols + j] = new YoutubeWallApp.NameInfo {
+                                currentName = yf.CurrentVideoName[i, j],
+                                nextName = yf.NextVideoName[i, j]
+                            };
                         }
                     }
                     Clients.Caller.updateVideoList(JsonConvert.SerializeObject(videoName), instanceId);
