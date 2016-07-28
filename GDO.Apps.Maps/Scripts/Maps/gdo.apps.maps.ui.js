@@ -8,7 +8,6 @@ gdo.net.app["Maps"].selected["layer"] = -1;
 gdo.net.app["Maps"].selected["source"] = -1;
 gdo.net.app["Maps"].selected["style"] = -1;
 gdo.net.app["Maps"].selected["format"] = -1;
-gdo.net.app["Maps"].selected["data"] = -1;
 gdo.net.app["Maps"].selected["view"] = -1;
 gdo.net.app["Maps"].selected["configuration"] = -1;
 
@@ -19,7 +18,6 @@ gdo.net.app["Maps"].drawListTables = function (instanceId) {
         gdo.net.app["Maps"].drawListTable(instanceId, "source");
         gdo.net.app["Maps"].drawListTable(instanceId, "style");
         gdo.net.app["Maps"].drawListTable(instanceId, "format");
-        gdo.net.app["Maps"].drawListTable(instanceId, "data");
         gdo.net.app["Maps"].drawListTable(instanceId, "view");
         gdo.net.app["Maps"].drawListTable(instanceId, "configuration");
     }
@@ -520,6 +518,8 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 });
 
                 break;
+
+                //Time Parameter
             default:
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
@@ -647,7 +647,7 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
 }
 gdo.net.app["Maps"].extractTypes = function (instanceId) {
     var className;
-    var arr = ["layer", "source", "style", "format", "data"];
+    var arr = ["layer", "source", "style", "format"];
     for (var i in arr) {
         if (!arr.hasOwnProperty((i))) {
             continue;
@@ -742,6 +742,8 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
                     } else {
                         property.IsNull = false;
                     }
+                } else if (property.ParameterType == 6) {
+                    //Time parameter read
                 }
             }
         }
@@ -949,32 +951,6 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
             gdo.net.instance[instanceId].temp["format"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].formats[gdo.net.app["Maps"].selected["format"]].properties);
             gdo.net.app["Maps"].drawCreateTable(instanceId, "format", gdo.net.instance[instanceId].temp["format"]);
             $("iframe").contents().find("#new-format-input").modal('show');
-            $(".modal-backdrop").css("display", "none");
-        });
-
-    $("iframe").contents().find("#data-next-button")
-    .unbind()
-    .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "data"); });
-
-    $("iframe").contents().find("#data-create-button")
-       .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "data", true); });
-
-    $("iframe").contents().find(".data-remove-button")
-        .unbind()
-       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "data"); });
-
-    $("iframe").contents().find(".data-save-button")
-        .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "data", false); });
-
-    $("iframe").contents().find(".data-saveas-button")
-        .unbind()
-        .click(function () {
-            gdo.net.instance[instanceId].temp["data"] = {};
-            gdo.net.instance[instanceId].temp["data"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].datas[gdo.net.app["Maps"].selected["data"]].properties);
-            gdo.net.app["Maps"].drawCreateTable(instanceId, "data", gdo.net.instance[instanceId].temp["data"]);
-            $("iframe").contents().find("#new-data-input").modal('show');
             $(".modal-backdrop").css("display", "none");
         });
 

@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using GDO.Apps.Maps.Core;
-using GDO.Apps.Maps.Core.DataSources;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
@@ -765,14 +764,6 @@ namespace GDO.Apps.Maps
             //Add View to Template
             View view = new View();
             views.Add(view);
-
-
-            //Add Data to Template
-            LocalFile localFile = new LocalFile();
-            RemoteFile remoteFile = new RemoteFile();
-
-            datas.Add(localFile);
-            datas.Add(remoteFile);
 
             //Add Formats to Template
             EsriJSONFormat esriJsonFormat = new EsriJSONFormat();

@@ -10,6 +10,10 @@ namespace GDO.Apps.Maps.Core.Layers
     {
         public LinkParameter Source { get; set; }
         public LinkParameter Style { get; set; }
+        public TimeParameter StartTime { get; set; }
+        public TimeParameter EndTime { get; set; }
+        public TimeParameter TimeStep { get; set; }
+        public IntegerParameter Milliseconds { get; set; }
         public IntegerParameter RenderBuffer { get; set; }
         public BooleanParameter UpdateWhileAnimating { get; set; }
         public BooleanParameter UpdateWhileInteracting { get; set; }
@@ -19,6 +23,7 @@ namespace GDO.Apps.Maps.Core.Layers
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Vector";
             Description.Value = "Vector data that is rendered client-side dynamically.";
+
 
             Source = new LinkParameter
             {
@@ -41,7 +46,47 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ClassTypes = new string[1] { "Style" } ,
+                ClassTypes = new string[1] { "Style" },
+            };
+
+            StartTime = new TimeParameter
+            {
+                Name = "Start Time",
+                Description = "Starting Time of the Animation",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+            };
+
+            EndTime = new TimeParameter
+            {
+                Name = "End Time",
+                Description = "Ending Time of the Animation",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+            };
+
+            TimeStep = new TimeParameter
+            {
+                Name = "Time Step",
+                Description = "Each Step of the Animation",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+            };
+
+            Milliseconds = new IntegerParameter
+            {
+                Name = "Milliseconds",
+                Description = "Animation time of each timestep",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
             };
 
             RenderBuffer = new IntegerParameter

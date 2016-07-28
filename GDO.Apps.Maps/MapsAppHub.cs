@@ -8,7 +8,6 @@ using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using GDO.Apps.Maps.Core;
-using GDO.Apps.Maps.Core.DataSources;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
@@ -1143,128 +1142,6 @@ namespace GDO.Apps.Maps
                     MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
                     maps.RemoveFormat(formatId);
                     BroadcastFormat(instanceId, formatId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        //Data
-
-        public void AddData(int instanceId, string className, string serializedData)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    int dataId = -1;
-
-                    switch (className)
-                    {
-                        case "LocalFile":
-                            dataId = maps.AddData<LocalFile>(JsonConvert.DeserializeObject<LocalFile>(serializedData));
-                            break;
-                        case "RemoteFile":
-                            dataId = maps.AddData<RemoteFile>(JsonConvert.DeserializeObject<RemoteFile>(serializedData));
-                            break;
-                        default:
-                            break;
-                    }
-                    BroadcastData(instanceId, dataId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void UpdateData(int instanceId, int dataId, string className, string serializedData)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    switch (className)
-                    {
-                        case "LocalFile":
-                            maps.UpdateData<LocalFile>(dataId, JsonConvert.DeserializeObject<LocalFile>(serializedData));
-                            break;
-                        case "RemoteFile":
-                            maps.UpdateData<RemoteFile>(dataId, JsonConvert.DeserializeObject<RemoteFile>(serializedData));
-                            break;
-                        default:
-                            break;
-                    }
-                    BroadcastData(instanceId, dataId);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void RequestData(int instanceId, int dataId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    string serializedData = maps.GetSerializedData(dataId);
-                    if (serializedData != null)
-                    {
-                        Clients.Caller.receiveData(instanceId, dataId, serializedData, true);
-                    }
-                    else
-                    {
-                        Clients.Caller.receiveData(instanceId, dataId, "", false);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public void BroadcastData(int instanceId, int dataId)
-        {
-            try
-            {
-                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                string serializedData = maps.GetSerializedData(dataId);
-                if (serializedData != null)
-                {
-                    Clients.Group("" + instanceId).receiveData(instanceId, dataId, serializedData, true);
-                    Clients.Group("c" + instanceId).receiveData(instanceId, dataId, serializedData, true);
-                }
-                else
-                {
-                    Clients.Group("" + instanceId).receiveData(instanceId, dataId, "", false);
-                    Clients.Group("c" + instanceId).receiveData(instanceId, dataId, "", false);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        public void RemoveData(int instanceId, int dataId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    maps.RemoveData(dataId);
-                    BroadcastData(instanceId, dataId);
                 }
                 catch (Exception e)
                 {

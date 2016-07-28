@@ -100,11 +100,8 @@ gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, v
     }
 }
 
-gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ': ' + deserializedObject.Id.Value);
-    if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
-        gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
-    }
+gdo.net.app["Maps"].createObject  = function(instanceId, objectType, objectId, deserializedObject) {
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Creating ' + objectType + ': ' + deserializedObject.Id.Value);
     var object = {};
     var properties = [];
     var options = {};
@@ -119,6 +116,27 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
         }
         options = gdo.net.app["Maps"].optionConstructor(properties);
         eval("object = new " + deserializedObject.ObjectType.Value + "(options);");
+    }
+    return object;
+}
+
+gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ': ' + deserializedObject.Id.Value);
+    if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
+        gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
+    }
+    var object = {};
+    if (objectType == "DynamicVectorSource") {
+        object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
+
+        //create first one,
+        //use clone for deserialized object to create other ones with different url setting which is read from config
+        //loop through to put in object.versions[] each with xhr loader? so no overhead, good or bad?
+        //version.timestamp
+        //version.source
+        //
+    } else {
+        object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
     }
     object.properties = deserializedObject;
     object.properties.isInitialized = true;

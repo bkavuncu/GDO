@@ -87,21 +87,6 @@ $(function () {
         }
     }
 
-    $.connection.mapsAppHub.client.receiveData = function (instanceId, dataId, serializedData, exists) {
-        gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received Data Source :' + dataId + " (Exists:" + exists + ")");
-        if (exists) {
-            if (gdo.net.instance[instanceId].datas[dataId] == null || typeof gdo.net.instance[instanceId].datas[dataId] == "undefined") {
-                gdo.net.app["Maps"].addObject(instanceId, "data", dataId, JSON.parse(serializedData));
-                gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Added Data Source :' + dataId);
-            } else {
-                gdo.net.app["Maps"].updateObject(instanceId, "data", dataId, JSON.parse(serializedData));
-                gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Updated Data Source :' + dataId);
-            }
-        } else {
-            gdo.net.app["Maps"].removeObject(instanceId, "data", dataId);
-        }
-    }
-
     $.connection.mapsAppHub.client.receiveView = function (instanceId, viewId, serializedView, exists) {
         gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Received View :' + viewId + " (Exists:" + exists + ")");
         if (exists) {
@@ -233,9 +218,6 @@ gdo.net.app["Maps"].initLayers = function (instanceId, deserializedMap) {
     for (i = 0; i < deserializedMap.Views.$values.length; i++) {
         gdo.net.app["Maps"].addObject(instanceId, "view", deserializedMap.Views.$values[i].Id.Value, deserializedMap.Views.$values[i]);
     }
-    for (i = 0; i < deserializedMap.Datas.$values.length; i++) {
-        gdo.net.app["Maps"].addObject(instanceId, "data", deserializedMap.Datas.$values[i].Id.Value, deserializedMap.Datas.$values[i]);
-    }
     for (i = 0; i < deserializedMap.Formats.$values.length; i++) {
         gdo.net.app["Maps"].addObject(instanceId, "format", deserializedMap.Formats.$values[i].Id.Value, deserializedMap.Formats.$values[i]);
     }
@@ -357,7 +339,6 @@ gdo.net.app["Maps"].initControl = function (instanceId) {
 
 gdo.net.app["Maps"].initializeArrays = function (instanceId) {
     gdo.net.instance[instanceId].configurations = [];
-    gdo.net.instance[instanceId].datas = [];
     gdo.net.instance[instanceId].formats = [];
     gdo.net.instance[instanceId].styles = [];
     gdo.net.instance[instanceId].sources = [];

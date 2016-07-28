@@ -9,7 +9,7 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class DynamicVectorSource : Source
     {
-        public LinkParameter DataFile { get; set; }
+        public JSONParameter Config { get; set; }
         public LinkParameter Format { get; set; }
         public FunctionParameter Loader { get; set; }
         public DatalistParameter Strategy { get; set; }
@@ -22,16 +22,15 @@ namespace GDO.Apps.Maps.Core.Sources
             ObjectType.Value = "ol.source.Vector";
             Description.Value = "Provides a source of features for vector layers. Vector features provided by this source are suitable for editing.";
 
-            DataFile = new LinkParameter
+            Config = new JSONParameter
             {
-                Name = "DataFile",
-                Description = "The dynamic data file to read data from",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Name = "Config JSON",
+                Description = "Configuration JSON",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
-                LinkedParameter = "data",
-                ClassTypes = new string[1] { "DynamicFile" },
+                DefaultValue = "{\"files\": [{\"timestamp\": \"1990-10-30 17:32:01\"},\"file\": \"/Data/Maps/Sample/1.json\"}]}",
             };
 
             Format = new LinkParameter
