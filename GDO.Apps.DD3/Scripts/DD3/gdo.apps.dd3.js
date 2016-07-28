@@ -1193,7 +1193,6 @@ var initDD3App = function () {
 
                 if (g1.empty()) {
                     utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
-                    console.log("V4: PROBLEM WITH DD3 SHAPEHANDLER");
                     return;
                 }
 
@@ -1444,7 +1443,7 @@ var initDD3App = function () {
                 return function () {
                     if (arguments.length < expectedArg && typeof arguments[0] !== 'object')
                         return original.apply(this, arguments);
-                    console.log("watchChange is called with more arg than expected or its first argument is an object");
+                    //console.log("watchChange is called with more arg than expected or its first argument is an object");
                     original.apply(this, arguments);
 
                     //e is the property  of changes that have yet to be received and that we are watching for
@@ -1463,12 +1462,12 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
-                            console.log("WatchAdd append call");
-                            console.log(this);
+                            //console.log("WatchAdd append call");
+                            //console.log(this);
                             var chldnd = this.childNodes;
-                            console.log(chldnd);
+                            //console.log(chldnd);
                             var sel = d3.selectAll(chldnd);
-                            console.log(sel);
+                            //console.log(sel);
                             //this returns an array
                             var a = _dd3_selection_filterUnreceived(sel);
 
@@ -2157,7 +2156,6 @@ var initDD3App = function () {
                     containers.unshift(g);
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
-                console.log(containers);
                 var c1 = containers[0], c2;
                 while (c1 && c1.__dd3_transitions__.empty()) {
                     c2 = containers.shift();
