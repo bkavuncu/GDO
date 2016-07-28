@@ -2372,7 +2372,11 @@ var initDD3App = function () {
                     t.attrTween = function (attr, tween) {
                         var temp, trst;
                         if (arguments.length < 2) return attrTweens.get(attr);
-                        console.log(attr);
+                        //In v4, d3.transition.attr uses attrTween, which we don't need.  
+                        if(utils.getFnName(tween)==="anonymous"){
+                            console.log("Calling D3 attrween");
+                            return d3.transition.prototype.attrTween.call(this, attr, tween);
+                        }  
                         //check attrFunctionNS$1
 
                         //console.log("dd3 tweens doesn't exist: "+!_dd3_tweens['dd3_' + tween]);
