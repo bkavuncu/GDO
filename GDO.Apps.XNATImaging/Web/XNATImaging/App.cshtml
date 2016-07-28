@@ -1,61 +1,62 @@
 ﻿@using System.IO
 @using System.Web.Helpers
 @using GDO.Core
-@{
-    Layout = null;
-}
 
 <!DOCTYPE html>
 <html style="overflow: hidden">
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css" />
+    <script src="../../Scripts/XNATImaging/papaya.js"></script>
+
     <title>XNAT Imaging Project</title>
     <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:500,300,700,400' rel='stylesheet' type='text/css'>
-    
+    <script type="text/javascript">
+
+        var params = [];
+        var imageIds = ["http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2824.dcm", "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2825.dcm"];
+        var imageName = "MPRAGE_ADNI_P2";
+
+        //params["images"] = imageIds;
+        //params[imageName] = { min: 10, max: 1345 };
+        params["orthogonal"] = true;
+        params["fullScreen"] = false;
+        params["mainView"] = "sagittal";
+        params["radiological"] = false;
+        params["worldSpace"] = false;
+        params["showControls"] = false;
+    </script>
 </head>
 <body>
-<div id="main" class="container-fluid">
+<div id="main">
     <div class="heading">
         <h3> </h3>
     </div>
-    <div class="row">
-        <div id="dicomImage"
-             class="col-xs-12 col-md-9"
-             update-image
-             mouse-wheel-up=""
-             mouse-wheel-down=""
-             mouse-click=""
-             class="cornerstone-enabled-image"
-             oncontextmenu="return false"
-             unselectable='off'
-             onselectstart='return false;'
-             onmousedown='return false;'>
+    <div class="papaya" data-params="params">
 
-            <div id="mrtopleft">
-                <p>Optimise ID</p>
+        <div id="mrtopleft">
+            <p>Optimise ID</p>
+        </div>
+        <div id="mrtopright">
+            Hospital
+        </div>
+        <div id="mrbottomright">
+            <div id="frameRate"></div>
+            <div id="zoomText">
+                <p>Zoom: 2.0x</p>
             </div>
-            <div id="mrtopright">
-                Hospital
-            </div>
-            <div id="mrbottomright">
-                <div id="frameRate"></div>
-                <div id="zoomText">
-                    <p>Zoom: 2.0x</p>
-                </div>
-                <div id="sliceText">
-                    <p>Image: </p>
-                </div>
-            </div>
-            <div id="mrbottomleft">
-                <p>WW/WC: </p>
+            <div id="sliceText">
+                <p>Image: </p>
             </div>
         </div>
-        <div id="dicomTopThumb" class="col-xs-6 col-md-3">
-            <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png" height="400" width="420"/>
-        </div>
-        <div id="dicomBottomThumb" class="col-xs-6 col-md-3">
-            <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" height="400" width="420"/>
+        <div id="mrbottomleft">
+            <p>WW/WC: </p>
         </div>
     </div>
 </div>
@@ -63,25 +64,20 @@
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
-    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
-
-<script src="../../Scripts/XNATImaging/angular.min.js"></script>
+<   <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
     <script src="../../Scripts/XNATImaging/underscore.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstone.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstoneMath.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstone-tools.js"></script>
-    <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
-    <script src="../../Scripts/XNATImaging/jpx.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstoneWADOImageLoader.js"></script>
 
-    <script>
-        $(function () {
-            $(document).ready(function () {
-                var gdo = parent.gdo;
-                gdo.net.app["XNATImaging"].initClient();
-            });
+<script>
+    $(window).load(function () {
+
+            console.log("Papaya loaded");
+            console.log(params);
+
+            var gdo = parent.gdo;
+            gdo.net.app["XNATImaging"].initClient(papaya, papayaContainers);
         });
-    </script>
+</script>
+
     @*<div id="wrapper" style="background-color:#000;width:97vw;height:97vh;text-align:center; vertical-align: middle;" align="center">
             <div style="display: table; width:100%;height: 100%; overflow: hidden; text-align:center;">
                 <div id="hello_text" style="display: table-cell; font-size: 35vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;"></div>

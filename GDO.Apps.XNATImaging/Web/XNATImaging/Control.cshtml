@@ -11,9 +11,17 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css"/>
+    <script src="../../Scripts/XNATImaging/papaya.js"></script>
+    
+
     <!-- JqueryUI stylesheet -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <!-- Bootstrap Core CSS -->
@@ -95,151 +103,133 @@
             text-align: center;
         }
     </style>
+
+    <script type="text/javascript">
+
+        var params = [];
+        var imageIds = ["http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2824.dcm", "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2825.dcm"];
+        var imageName = "MPRAGE_ADNI_P2";
+
+        //params["images"] = imageIds;
+        //params[imageName] = { min: 10, max: 1345 };
+        params["orthogonal"] = true;
+        params["fullScreen"] = false;
+        params["mainView"] = "sagittal";
+        params["radiological"] = false;
+        params["worldSpace"] = false;
+        params["showControls"] = false;
+    </script>
 </head>
 <body unselectable="on" class="unselectable">
+
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <!--script src="../../Scripts/jquery.csv-0.71.min.js"></!--script>
-    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
-    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script-->
-
     <script src="../../Scripts/XNATImaging/underscore.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstone.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstoneMath.js"></script>
-    <script src="../../Scripts/XNATImaging/cornerstone-tools.js"></script>
     <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
-    <script src="../../Scripts/XNATImaging/jpx.js"></script>
 
-<script>
-    
-    function getUrlVar(variable) {
-        /// Gets the URL variable.
-        var query = window.location.search.substring(1);
-        var vars = query.split('&');
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split('=');
-            if (pair[0] === variable) {
-                return pair[1];
-            }
-        }
-        query = window.frames['control_frame_content'].location.search.substring(1);
-        vars = query.split('&');
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split('=');
-            if (pair[0] === variable) {
-                return pair[1];
-            }
-        }
-        return (false);
-    }
 
-    $(function () {
-        var gdo = parent.gdo;
-        gdo.controlId = parseInt(getUrlVar("controlId"));
-        gdo.net.app["XNATImaging"].initControl(gdo.controlId);
-    });
-</script>
-<div class="wrapper container" style="width: 97%">
-    <h1>Controls</h1>
 
-    <form action="#">
+    <div class="wrapper container" style="width: 97%">
+        <h1>Controls</h1>
 
-        <fieldset>
-            <label for="view">Select a view</label>
-            <select name="view" id="viewSelect">
-                <option selected="selected">Sagittal</option>
-                <option>Axial</option>
-                <option>Coronal</option>
-            </select>
-        </fieldset>
-    </form>
+        <form action="#">
 
-    <div class="row">
-        <div id="dicomImage"
-             class="col-md-9 col-lg-10"
-             update-image
-             mouse-wheel-up=""
-             mouse-wheel-down=""
-             mouse-click=""
-             class="cornerstone-enabled-image"
-             oncontextmenu="return false"
-             unselectable='off'
-             onselectstart='return false;'
-             onmousedown='return false;'>
+            <fieldset>
+                <label for="view">Select a view</label>
+                <select name="view" id="viewSelect">
+                    <option selected="selected">Sagittal</option>
+                    <option>Axial</option>
+                    <option>Coronal</option>
+                </select>
+            </fieldset>
+        </form>
 
-            <div id="mrtopleft">
-                <p>Optimise ID</p>
-            </div>
-            <div id="mrtopright">
-                Hospital
-            </div>
-            <div id="mrbottomright">
-                <div id="frameRate"></div>
-                <div id="zoomText">
-                    <p>Zoom: 2.0x</p>
+        <div style="width: 1050px; height: 800px;">
+            <div class="papaya" id="dicomImage" data-params="params">
+
+                <div id="mrtopleft">
+                    <p>Optimise ID</p>
                 </div>
-                <div id="sliceText">
-                    <p>Image: </p>
+                <div id="mrtopright">
+                    Hospital
+                </div>
+                <div id="mrbottomright">
+                    <div id="frameRate"></div>
+                    <div id="zoomText">
+                        <p>Zoom: 2.0x</p>
+                    </div>
+                    <div id="sliceText">
+                        <p>Image: </p>
+                    </div>
+                </div>
+                <div id="mrbottomleft">
+                    <p>WW/WC: </p>
                 </div>
             </div>
-            <div id="mrbottomleft">
-                <p>WW/WC: </p>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="controls">
+                    <button id="upNavigationButton" type="button" class="btn btn-default">Up</button>
+                    <button id="downNavigationButton" type="button" class="btn btn-default">Down</button>
+                    <button id="playButton" type="button" class="btn btn-success">Play</button>
+                    <button id="resetButton" type="button" class="btn btn-warning">Reset View</button>
+                    <button id="highlightButton" type="button" class="btn btn-primary">Highlight</button>
+                    <button id="markerButton" type="button" class="btn btn-primary">Place Marker</button>
+                </div>
             </div>
         </div>
-        <div id="dicomTopThumb" class="col-md-3 col-lg-2">
-            <img class="img-thumbnail" src="../../Data/XNATImaging/topThumb.png" height="100" width="100" />
-        </div>
-        <div id="dicomBottomThumb" class="col-md-3 col-lg-2">
-            <img class="img-thumbnail" src="../../Data/XNATImaging/bottomThumb.png" height="100" width="100" />
+        <div class="row">
+            <div class="col-md-8">
+                <input type="range" id="slice-range">
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="controls">
-                <button id="upNavigationButton" type="button" class="btn btn-default">Up</button>
-                <button id="downNavigationButton" type="button" class="btn btn-default">Down</button>
-                <button id="playButton" type="button" class="btn btn-success">Play</button>
-                <button id="resetButton" type="button" class="btn btn-warning">Reset View</button>
-                <button id="highlightButton" type="button" class="btn btn-primary">Highlight</button>
-                <button id="markerButton" type="button" class="btn btn-primary">Place Marker</button>
-            </div>
-        </div>
-        <!--div class="col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Say Hello</h6>
-            </div>
-            <div class="panel-body">
-                <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
-                    <tr>
-                        <td>
-                            <div style="background-color: transparent">
-                                <h6>To:</h6>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input_field_div">
-                                <input type="text" class="input_field" id="hello_input">
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="panel-footer">
-                <fieldset>
-                    <button id="hello_submit" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
-                </fieldset>
-            </div>
-        </div>
-        <div-->
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <input type="range" id="slice-range">
-        </div>
-    </div>
-</div>
+
+    <script>
+        function getUrlVar(variable) {
+            /// Gets the URL variable.
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+            query = window.frames['control_frame_content'].location.search.substring(1);
+            vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+            return (false);
+        }
+
+        $(window).load(function () {
+            var gdo = parent.gdo;
+            gdo.controlId = parseInt(getUrlVar("controlId"));
+
+            console.log("Papaya loaded");
+            
+            gdo.net.app["XNATImaging"].initControl(gdo.controlId, papaya, papayaContainers);
+        });
+
+    </script>
+
+    <script>
+        $('#markerButton')
+            .click(function() {
+                papayaContainers[0].viewer.rotateViews();
+            });
+
+        $('#highlightButton')
+            .click(function () {
+                
+            });
+    </script>
 </body>
 </html>

@@ -24,11 +24,11 @@ namespace GDO.Apps.XNATImaging
 
         public string[,] ZoomConfigJson;
         public static int[,] ZoomConfiguration = {
-                    { 52, 53, 54 },
-                    { 36, 37, 38 },
-                    { 20, 21, 22 },
-                    { 4, 5, 6 }
-                };
+                { 52, 53, 54 },
+                { 36, 37, 38 },
+                { 20, 21, 22 },
+                { 4, 5, 6 }
+            };
 
         public void Init()
         {
@@ -67,7 +67,6 @@ namespace GDO.Apps.XNATImaging
 
         public void ZoomConfigurations()
         {
-
             ZoomConfigJson = new string[ZoomConfiguration.GetLength(0), ZoomConfiguration.GetLength(1)];
             for (int i = 0; i < ZoomConfiguration.GetLength(0); i++)
             {
@@ -77,7 +76,7 @@ namespace GDO.Apps.XNATImaging
                                         "   'url': 'GSK131086_000001/Baseline/flair'," +
                                         "   'topLeft': [ " + j + ", " + i + " ]," +
                                         "   'bottomRight': [ " + (j + 1) + ", " + (i + 1) + " ]," +
-                                        "   'id': " + (i * ZoomConfiguration.GetLength(1) + (j + 1)) + "," +
+                                        "   'zoomId': " + (i * ZoomConfiguration.GetLength(1) + (j + 1)) + "," +
                                         "   'zoomFactor': 16" +
                                         "}";
                 }
@@ -107,8 +106,8 @@ namespace GDO.Apps.XNATImaging
         {
             Debug.WriteLine(Configuration.Name);
             Debug.WriteLine(Configuration.Json);
-
-
+            dynamic json = Configuration.Json;
+            //ZoomConfiguration = json.zoomConfiguration;
         }
     }
 }

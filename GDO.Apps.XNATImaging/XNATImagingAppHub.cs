@@ -109,7 +109,7 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
-        public void SetImageConfig(int instanceId, int currentImageId, double windowWidth, double windowCenter, double scale, double translationX, double translationY)
+        public void SetImageConfig(int instanceId, int currentImageId, double windowWidth, double windowCenter, double scale, double translationX, double translationY, bool rotateView)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -133,7 +133,8 @@ namespace GDO.Apps.XNATImaging
                                     windowCenter, 
                                     scale, 
                                     translationX, 
-                                    translationY
+                                    translationY,
+                                    rotateView
                     );
                 }
                 catch (Exception e)
