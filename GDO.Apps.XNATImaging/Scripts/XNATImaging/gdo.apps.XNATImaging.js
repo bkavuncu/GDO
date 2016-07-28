@@ -73,6 +73,9 @@ gdo.net.app["XNATImaging"].initClient = function (papaya, containers) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
     gdo.loadScript('mpr', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
 
+    gdo.net.app["XNATImaging"].papaya = papaya;
+    gdo.net.app["XNATImaging"].papayaContainers = containers;
+
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Client at Node ' + gdo.clientId);
 
     var row = gdo.net.node[gdo.clientId].row;
@@ -532,8 +535,8 @@ gdo.net.app["XNATImaging"].updateImageParams = function (
                                             instanceId, currentImageId, windowWidth, windowCenter,
                                             scale, translationX, translationY, rotate) {
     if (rotate) {
-        console.log(papayaContainers);
-        papayaContainers[0].viewer.rotateViews();
+        console.log(gdo.net.app["XNATImaging"].papayaContainers);
+        gdo.net.app["XNATImaging"].papayaContainers[0].viewer.rotateViews();
     }
 
     /*var element = $("iframe").contents().find("#dicomImage").get(0);
