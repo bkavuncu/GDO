@@ -1,0 +1,468 @@
+﻿@using System.IO
+@using System.Web
+@using GDO.Core.Apps
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.css" rel="stylesheet">
+    <!-- Timeline CSS -->
+    <link href="../../Bootstrap/dist/css/timeline.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../Bootstrap/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <style>
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
+
+            .btn-file input[type=submit] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
+
+        input[readonly] {
+            background-color: #555 !important;
+            cursor: text !important;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+
+        .panel-body {
+            padding: 0px;
+        }
+
+        .track4 {
+            width: 20px;
+            background-clip: padding-box;
+            background: #333;
+            border-style: solid;
+            border-color: transparent;
+            border-width: 0;
+            border-left-width: 1px;
+        }
+
+            .track4.dragging,
+            .track4:hover {
+                background: #333; /* No RGBA support */
+            }
+
+            .track4:active {
+                background: #222; /* No RGBA support */
+            }
+
+        .handle4 {
+            width: 20px;
+            background-clip: padding-box;
+            background: #444; /* No RGBA support */
+        }
+
+            .handle4:hover {
+                background: #555; /* No RGBA support */
+            }
+
+            .dragging .handle4,
+            .handle4:active {
+                background: #444; /* No RGBA support */
+            }
+
+        .list-group.list-group-root {
+            padding: 0;
+            border: 0px solid;
+            overflow: auto;
+            margin-bottom: 0px;
+            height: 100%;
+        }
+
+            .list-group.list-group-root .list-group {
+                margin-bottom: 0;
+            }
+
+            .list-group.list-group-root > .list-group > .list-group-item {
+                padding-left: 30px;
+            }
+
+            .list-group.list-group-root > .list-group > .list-group > .list-group-item {
+                padding-left: 45px;
+            }
+
+        .list-group-item .fa {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/enscroll-0.6.1.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+    <script>
+        $(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].initControl();
+        });
+    </script>
+    <div class="wrapper" style="width:97%">
+        @{
+            var path = "";
+            var filename = "";
+            var extension = "";
+            if (IsPost)
+            {
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null)
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    extension = Path.GetExtension(file.FileName).ToLower();
+                    //foldername
+                    if (extension.Equals(".pptx") || extension.Equals(".ppt"))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/PPTs"));
+                        path = System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/PPTs/") + filename;
+                        file.SaveAs(path);
+                    }
+                    else if (extension.Equals(".png") || extension.Equals(".jpg"))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/Images"));
+                        path = System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/Images/") + filename;
+                        file.SaveAs(path);
+                    }
+                }
+            }
+        }
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-9" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 id="current_slide" style="text-align:left;float:left;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Slide: 0</h6>
+                            <h6 id="message_from_server" style="text-align:right;float:right;">Message</h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+
+                        </div>
+                        <div class="panel-footer">
+                            <button id="previous_slide" class="btn btn-primary presentation_button"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</button>
+                            <button id="next_slide" class="btn btn-primary presentation_button"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</button>
+                            <button id="new_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;New Slide</button>
+                            <button id="delete_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Delete Slide</button>
+                            <button id="load_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Load Slide</button>
+                            <button id="play_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Play</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 style="text-align:left;float:left;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Files</h6>
+                            <h6 id="file_name" style="text-align:right;float:right;"></h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;">
+                            <div class="list-group list-group-root" id="file_list">
+                                <a href="#item_ppts" class="list-group-item" data-toggle="collapse">
+                                    <i class="fa fa-chevron-down fa-fw"></i>PPTs
+                                </a>
+                                <ul class="list-group collapse in" id="item_ppts"></ul>
+                                <a href="#item_images" class="list-group-item" data-toggle="collapse">
+                                    <i class="fa fa-chevron-down fa-fw"></i>Images
+                                </a>
+                                <ul class="list-group collapse in" id="item_images"></ul>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+
+                            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
+                                <fieldset>
+                                    <table style="border-collapse: separate; border-spacing: 4px 0;background-color:transparent;">
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <span id="choose_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Choose File <input type="file" name="file" class="upload" id="file"></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <span id="submit_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;">&nbsp;Submit<input id="submit" name="submit" type="submit" /></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 100%; height: 28vh; border-collapse: separate; border-spacing: 2px; text-align:center"></table>
+                <div id="section_table_space">
+                    <br>
+                </div>
+                <div id="button_table" unselectable="on" class="unselectable" style="width: 99.5%; padding: 3px;">
+                    <div class="col-lg-1 select_section_div"></div>
+                    <div class="col-lg-1 create_section_button_div"></div>
+                    <div class="col-lg-1 close_section_button_div"></div>
+                    <div class="col-lg-1 deploy_app_button_div"></div>
+                    <div class="col-lg-1 close_app_button_div"></div>
+                </div>
+
+                <div id="hidden_app_control" style="display: none; visibility: hidden; width: 1920px; height: 1000px">
+                    <iframe id="hidden_app_iframe" style="width:100%;height:100%;border:0; border:none;"></iframe>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $(document).ready(function() {
+            $('#submit_image_form').on('submit', function (e) {
+                if ($.trim($("#file").val()) === "") {
+                    $("#message_from_server").html("Please choose a file to upload!");
+                    return false;
+                }
+                e.preventDefault();
+                var formData = new FormData();
+                formData.append('file', $('#file')[0].files[0]);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        var filename = $('input[type=file]').val().split('\\').pop();
+                        var gdo = parent.gdo;
+                        gdo.consoleOut('.PresentationTool', 1, "Uploaded " + filename);
+                        var extension = filename.split(".").pop().toLowerCase();
+                        if (extension === "pptx" || extension === "ppt") {
+                            gdo.net.app["PresentationTool"].server.uploadPPT(gdo.controlId, filename);
+                        } else if (extension === "png" || extension === "jpg") {
+                            gdo.net.app["PresentationTool"].server.uploadImage(gdo.controlId, filename);
+                        }
+                    },
+                    error: function(jXHR, textStatus, errorThrown) {
+                        $("#message_from_server").html("Something wrong!");
+                    }
+                });
+            });
+        });
+
+        $("#file_list").enscroll({
+            showOnHover: false,
+            verticalTrackClass: 'track4',
+            verticalHandleClass: 'handle4'
+        }).css({ "padding-right": "0px", "width": "99.5%" });
+
+        $('#file').change(function() {
+            var filename = $('input[type=file]').val().split('\\').pop();
+            $("#file_name").html(filename);
+        });
+
+        $("#previous_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].previousSlide();
+        });
+
+        $("#next_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].nextSlide();
+        });
+
+        $("#new_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].createNewSlide();
+        });
+
+        $("#delete_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].deleteCurrentSlide();
+        });
+
+        $("#load_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].loadCurrentSlide();
+        });
+
+        $("#play_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].playCurrentSlide(1);
+        });
+    </script>
+
+    <script>
+        /** draw section table quickly instead of using iframe find() **/
+        var gdo = parent.gdo;
+        gdo.net.app["PresentationTool"].drawSectionTable = function () {
+            /// <summary>
+            /// Draws the section table.
+            /// </summary>
+            /// <returns></returns>
+            gdo.net.app["PresentationTool"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
+            for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+                var node = gdo.net.app["PresentationTool"].node[i];
+                if (!node.isValid)
+                  continue;
+                $("#section_table_row_" + gdo.net.rows).css("height", 0);
+                var sectionId = node.sectionId;
+                if (sectionId == 0) {
+                    $("#section_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
+                    $("#section_table_row_" + node.row + "_col_" + node.col)
+                            .empty()
+                            .unbind()
+                            .css("vertical-align", "top")
+                            .append("<div id='section_table_node_" + node.id + "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" + node.id + "</b></font></div>")
+                            .append("</br>")
+                            .append(node.col + " , " + node.row)
+                            //.css("height", (gdo.net.app["PresentationTool"].table_height / gdo.net.rows) + "")
+                            .css("width", (gdo.net.app["PresentationTool"].table_width / gdo.net.cols) + "%")
+                            .css("border", "1px solid #333")
+                            .css('overflow', 'hidden')
+                            .css("background", "#222")
+                            .css({ fontSize: gdo.net.app["PresentationTool"].section_font_size })
+                            .css('padding', 0)
+                            .click(function () {
+                                var id = gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'));
+
+                                if (gdo.net.app["PresentationTool"].node[id].isSelected) {
+                                    gdo.net.app["PresentationTool"].node[id].isSelected = false;
+
+                                } else {
+                                    gdo.net.app["PresentationTool"].selectedSection = -1;
+                                    gdo.net.app["PresentationTool"].node[id].isSelected = true;
+
+                                }
+                                gdo.updateDisplayCanvas();
+                            });
+                } else if ((node.sectionCol == 0 && node.sectionRow == 0) && sectionId > 0) {
+                    $("#section_table_row_" + node.row + "_col_" + node.col)
+                        .empty()
+                        .unbind()
+                        .attr('colspan', gdo.net.app["PresentationTool"].section[sectionId].cols)
+                        .attr('rowspan', gdo.net.app["PresentationTool"].section[sectionId].rows)
+                        //.css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
+                        .css("width", ((gdo.net.app["PresentationTool"].table_width / gdo.net.cols) * gdo.net.app["PresentationTool"].section[sectionId].cols) + "%")
+                        .css("border", "1px solid #2A9FD6")
+                        .css("background", "#087DB4")
+                        .css('padding', 0)
+                        .css('overflow', 'hidden')
+                        .css("vertical-align", "top")
+                        .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#5A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>")
+                        .append("<div style='height:5px'></div>");
+                    if (gdo.net.app["PresentationTool"].section[sectionId].src !== null) {
+                        $("#section_table_section_" + sectionId + "_i")
+                            .empty()
+                            .append("<font size='4px'><b> S" + sectionId + "</b></font>")
+                            .append("<img style= 'max-height: 100%; max-width: 100%' src='" + gdo.net.app["PresentationTool"].section[sectionId].src + "'/>");
+                        $("#section_table_row_" + node.row + "_col_" + node.col)
+                            .append("</br>")
+                            .css('overflow', 'hidden')
+                            .css('overflow', 'hidden')
+                            .css("background", "#559100");
+                        $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
+                        $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");
+                    }
+                    $("#section_table_row_" + node.row + "_col_" + node.col)
+                       .css({ fontSize: gdo.net.app["PresentationTool"].section_font_size })
+                       .click(function () {
+                           var id = gdo.net.app["PresentationTool"].node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
+                           if (gdo.net.app["PresentationTool"].selectedSection == id) {
+                               gdo.net.app["PresentationTool"].selectedSection = -1;
+
+                           } else {
+                               for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+                                   gdo.net.app["PresentationTool"].node[i].isSelected = false;
+                               }
+                               gdo.net.app["PresentationTool"].selectedSection = id;
+                               //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
+                           }
+                           gdo.updateDisplayCanvas();
+                       });
+
+                    if (gdo.net.app["PresentationTool"].selectedSection == sectionId) {
+                        if (gdo.net.app["PresentationTool"].section[sectionId].src !== null) {
+                            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
+                            $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
+                        } else {
+                            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#2A9FD6").css("border", "1px solid #4CBFF8");
+                            $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");
+                        }
+
+                    }
+                } else if ((node.sectionCol != 0 || node.sectionRow != 0) && sectionId > 0) {
+                    $("#section_table_row_" + node.row + "_col_" + node.col).hide();
+                }
+
+                if (node.isSelected) {
+                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#333").css("border", "1px solid #555");
+                    $("#section_table_node_" + node.id + "_i").css("background-color", "#555");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
