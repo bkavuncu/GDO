@@ -76,6 +76,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = true,
                 IsVisible = true,
+                IsDuration = true,
                 IsProperty = false,
             };
 

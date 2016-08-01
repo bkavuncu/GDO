@@ -79,10 +79,10 @@ gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, v
             return object.Values.$values;
             break;
         case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Function:
-            return eval(object.Value);
+            return eval(unescape(object.Value));
             break;
         case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.JSON:
-            return JSON.parse(object.Value);
+            return JSON.parse(unescape(object.Value));
             break;
         case gdo.net.app["Maps"].PARAMETER_TYPES_ENUM.Object:
             if (object.Value >= 0) {
@@ -100,7 +100,7 @@ gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, v
     }
 }
 
-gdo.net.app["Maps"].createObject  = function(instanceId, objectType, objectId, deserializedObject) {
+gdo.net.app["Maps"].createObject = function (instanceId, objectType, objectId, deserializedObject) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Creating ' + objectType + ': ' + deserializedObject.Id.Value);
     var object = {};
     var properties = [];
@@ -119,22 +119,33 @@ gdo.net.app["Maps"].createObject  = function(instanceId, objectType, objectId, d
     }
     return object;
 }
-
 gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ': ' + deserializedObject.Id.Value);
     if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
         gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
     }
     var object = {};
-    if (objectType == "DynamicVectorSource") {
-        object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
-
-        //create first one,
-        //use clone for deserialized object to create other ones with different url setting which is read from config
-        //loop through to put in object.versions[] each with xhr loader? so no overhead, good or bad?
-        //version.timestamp
-        //version.source
-        //
+    if (deserializedObject.ClassName.Value == "DynamicVectorSource") {
+        var isFirstOne = true;
+        var config = JSON.parse(unescape(deserializedObject.Config.Value));
+        if (config != null) {
+            for (var i = 0; i < config.files.length; i++) {
+                var tempProperties = jQuery.extend(true, {}, deserializedObject);
+                tempProperties.Url.Value = config.files[i].file;
+                tempProperties.Url.IsNull = false;
+                if (isFirstOne) {
+                    isFirstOne = false;
+                    object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                    object.properties = deserializedObject;
+                    object.version = [];
+                }
+                object.version[i] = {};
+                object.version[i].source = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                object.version[i].timeStamp = readTimeStamp(config.files[i].timestamp);
+            }
+            object.properties.isInitialized = true;
+            eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
+        }
     } else {
         object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
     }
@@ -184,7 +195,7 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
                     }
                 }
             }
-            properties.ZIndex.Value = temp+1;
+            properties.ZIndex.Value = temp + 1;
             properties.ZIndex.IsNull = false;
             gdo.net.app['Maps'].server.addLayer(instanceId, properties.ClassName.Value, JSON.stringify(properties).replace(/'/g, "\\'"));
         } else {

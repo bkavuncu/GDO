@@ -10,6 +10,7 @@ namespace GDO.Apps.Maps.Core.Sources
     public class DynamicVectorSource : Source
     {
         public JSONParameter Config { get; set; }
+        public StringParameter Url { get; set; }
         public LinkParameter Format { get; set; }
         public FunctionParameter Loader { get; set; }
         public DatalistParameter Strategy { get; set; }
@@ -30,7 +31,17 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
-                DefaultValue = "{\"files\": [{\"timestamp\": \"1990-10-30 17:32:01\"},\"file\": \"/Data/Maps/Sample/1.json\"}]}",
+                DefaultValue = "%7B%22files%22%3A%20%5B%7B%22timestamp%22%3A%20%221990-10-30%2017%3A32%3A01%3A000%22%7D%2C%22file%22%3A%20%22../../Data/Maps/sk0.json%22%7D%2C%7B%22timestamp%22%3A%20%221996-10-30%2017%3A32%3A01%3A000%22%7D%2C%22file%22%3A%20%22../../Data/Maps/sk1.json%22%7D%5D%7D"
+            };
+
+            Url = new StringParameter
+            {
+                Name = "Url",
+                PropertyName = "url",
+                Description = "",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = false,
+                IsVisible = false,
             };
 
             Format = new LinkParameter

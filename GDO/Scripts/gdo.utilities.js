@@ -107,6 +107,20 @@ function timeStamp() {
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }
 
+function readTimeStamp(str) {
+    //'1990-10-30 17:32:01:000'
+    //'01234567890123456789012'
+    var timestamp = [];
+    timestamp[0] = parseInt(str.slice(0, 4));
+    timestamp[1] = parseInt(str.slice(5, 7));
+    timestamp[2] = parseInt(str.slice(8, 9));
+    timestamp[3] = parseInt(str.slice(11, 13));
+    timestamp[4] = parseInt(str.slice(14, 16));
+    timestamp[5] = parseInt(str.slice(17, 19));
+    timestamp[6] = parseInt(str.slice(20, 23));
+    return timestamp;
+}
+
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var ARGUMENT_NAMES = /([^\s,]+)/g;
 function getParamNames(func) {

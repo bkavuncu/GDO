@@ -257,9 +257,9 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 break;
             case 2: //String
                 $("iframe").contents().find("#" + inputDiv).append(
-                "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                "<input type='text' id='" + inputDiv + "_value_input' class='form-control input_field input-xs '  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
-                "</div>");
+                    "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                    "<input type='text' id='" + inputDiv + "_value_input' class='form-control input_field input-xs '  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
+                    "</div>");
                 if (gdo.net.consoleMode) {
                     $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
                 }
@@ -317,15 +317,15 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 }
                 if (property.Length == 0) {
                     $("iframe").contents().find("#" + inputDiv + "_value").append(
-                       "<input type='text' id='" + inputDiv + "_value_input_" + 0 + "'  class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='' value=''/></input>"
-                   );
+                        "<input type='text' id='" + inputDiv + "_value_input_" + 0 + "'  class='input_field form-control'  style='width: 100%;height: 3vh;text-align:left' placeholder='' value=''/></input>"
+                    );
                 }
                 break;
             case 6: //Slider
                 $("iframe").contents().find("#" + inputDiv).append(
-                  "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                  "<div class='col-md-10' style='padding:0px;height: 3vh;'><input id='" + inputDiv + "_slider_input' type='range' max='" + property.MaxValue + "' min='" + property.MinValue + "' step='" + property.Increment + "' class='input_field range-slider__range'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>" +
-                  "<div class='col-md-2' style='padding:0px'><input id='" + inputDiv + "_value_input' class='input_field disable'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div></div>");
+                    "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
+                    "<div class='col-md-10' style='padding:0px;height: 3vh;'><input id='" + inputDiv + "_slider_input' type='range' max='" + property.MaxValue + "' min='" + property.MinValue + "' step='" + property.Increment + "' class='input_field range-slider__range'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div>" +
+                    "<div class='col-md-2' style='padding:0px'><input id='" + inputDiv + "_value_input' class='input_field disable'  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input></div></div>");
                 $("iframe").contents().find("#" + inputDiv + "_slider_input").change(function () {
                     $("iframe").contents().find("#" + inputDiv + "_value_input").val(($("iframe").contents().find("#" + inputDiv + "_slider_input").val()));
                 });
@@ -350,7 +350,8 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     body: frame.contentDocument.body,
                     cssAddon: '.cp-color-picker{border-radius:0px}',
                     positionCallback: function ($elm) {
-                        return { // the object will be used as in $('.something').css({...});
+                        return {
+                            // the object will be used as in $('.something').css({...});
                             left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() - 150,
                             top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top + $("iframe").contents().find("#" + inputDiv + "_value").height() + 7,
                         }
@@ -451,7 +452,8 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                         body: frame.contentDocument.body,
                         cssAddon: '.cp-color-picker{border-radius:0px}',
                         positionCallback: function ($elm) {
-                            return { // the object will be used as in $('.something').css({...});
+                            return {
+                                // the object will be used as in $('.something').css({...});
                                 left: $("iframe").contents().find("#" + inputDiv + "_value").offset().left + $('iframe').offset().left + $("iframe").contents().find("#" + inputDiv + "_value").width() - 150,
                                 top: $("iframe").contents().find("#" + inputDiv + "_value").offset().top + $('iframe').offset().top + $("iframe").contents().find("#" + inputDiv + "_value").height() + 7,
                             }
@@ -462,7 +464,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
             case 14: //Text Area
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                    "<textarea id='" + inputDiv + "_value_input' rows='4' cols='70' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></textarea>" +
+                    "<textarea id='" + inputDiv + "_value_input' rows='4' cols='70' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + unescape(placeholder) + "' value='" + unescape(value) + "'/></textarea>" +
                     "</div>");
                 if (gdo.net.consoleMode) {
                     $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
@@ -498,17 +500,17 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
             case 16: //File
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                        "<form class='row' id='" + inputDiv + "_form' action='' method='post' enctype='multipart/form-data' target='dummy' style='margin:0px;padding:0px;'>" +
-                            "<div class='col-sm-8' style='text-align:left;margin:0px;padding:0px;'>" +
-                                "<input type='text' id='" + inputDiv + "_value_input' class='form-control input_field input-sm '  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
-                            "</div>" +
-                            "<div class='col-sm-2' style='  padding:1px;height: 3vh;text-align:left''>" +
-                                "<button class='btn btn-primary btn-file btn-sm btn-block' style='border-color:transparent;width: 100%;height: 100%;'>Choose File <input type='file' name='File' class='upload' id='" + inputDiv + "_select_file'></button>" +
-                            "</div>" +
-                            "<div class='col-sm-2' style=' padding:1px;height: 3vh;text-align:left''>" +
-                                "<input id='" + inputDiv + "_submit_file' class='btn btn-success btn-sm btn-block' style='border-color: transparent;width: 100%;height: 100%;' type='submit' value='Submit'></input>" +
-                            "</div>" +
-                        "</form>" +
+                    "<form class='row' id='" + inputDiv + "_form' action='' method='post' enctype='multipart/form-data' target='dummy' style='margin:0px;padding:0px;'>" +
+                    "<div class='col-sm-8' style='text-align:left;margin:0px;padding:0px;'>" +
+                    "<input type='text' id='" + inputDiv + "_value_input' class='form-control input_field input-sm '  style='width: 100%;height: 3vh;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
+                    "</div>" +
+                    "<div class='col-sm-2' style='  padding:1px;height: 3vh;text-align:left''>" +
+                    "<button class='btn btn-primary btn-file btn-sm btn-block' style='border-color:transparent;width: 100%;height: 100%;'>Choose File <input type='file' name='File' class='upload' id='" + inputDiv + "_select_file'></button>" +
+                    "</div>" +
+                    "<div class='col-sm-2' style=' padding:1px;height: 3vh;text-align:left''>" +
+                    "<input id='" + inputDiv + "_submit_file' class='btn btn-success btn-sm btn-block' style='border-color: transparent;width: 100%;height: 100%;' type='submit' value='Submit'></input>" +
+                    "</div>" +
+                    "</form>" +
                     "</div>");
                 if (gdo.net.consoleMode) {
                     $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
@@ -519,23 +521,35 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
 
                 break;
 
-                //Time Parameter
-            default:
+
+            case 17: //Time Parameter
                 $("iframe").contents().find("#" + inputDiv).append(
                     "<div id='" + inputDiv + "_value' class='col-md-7 input_field_div' style='text-align:left'>" +
-                    "<input type='text' id='" + inputDiv + "_value_input' class='input_field form-control'  style='width: 100%;text-align:left' placeholder='" + placeholder + "' value='" + value + "'/></input>" +
                     "</div>");
-                if (gdo.net.consoleMode) {
-                    $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input"), gdo.net.keyboardOptions.tex);
-                }
-        }
 
-        if (property.Priority == -1 && !property.IsEditable) {
-            $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
-            $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
-        } else if ((!property.IsEditable && !isCreate)) {
-            $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
-            $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
+                $("iframe").contents().find("#" + inputDiv + "_value").append(
+                    "&nbspDate:&nbsp<input id='" + inputDiv + "_value_input_0' type='text' maxlength='4' pattern='([1-2]|[0-9]|[0-9]|[0-9])' class='input_field form-control'  style='width:" + (85 / property.Length) + "%;height: 3vh;text-align:left' placeholder='YYYY' value='" + values[0] + "'/></input>" +
+                    "-<input id='" + inputDiv + "_value_input_1' type='text' maxlength='2' pattern='([0-1]|[0-9])' class='input_field form-control'  style='width:" + (70 / property.Length) + "%;height: 3vh;text-align:left' placeholder='MM' value='" + values[1] + "'/></input>" +
+                    "-<input id='" + inputDiv + "_value_input_2' type='text' maxlength='2' pattern='([0-3]|[0-9])' class='input_field form-control'  style='width:" + (70 / property.Length) + "%;height: 3vh;text-align:left' placeholder='DD' value='" + values[2] + "'/></input>" +
+                    "&nbsp Time:&nbsp<input id='" + inputDiv + "_value_input_3' type='text' maxlength='2' pattern='([0-3]|[0-9])' class='input_field form-control'  style='width:" + (70 / property.Length) + "%;height: 3vh;text-align:left' placeholder='HH' value='" + values[3] + "'/></input>" +
+                    ":<input id='" + inputDiv + "_value_input_4' type='text' maxlength='2' pattern='([0-6]|[0-9])' class='input_field form-control'  style='width:" + (70 / property.Length) + "%;height: 3vh;text-align:left' placeholder='MM' value='" + values[4] + "'/></input>" +
+                    ":<input id='" + inputDiv + "_value_input_5' type='text' maxlength='2' pattern='([0-6]|[0-9])' class='input_field form-control'  style='width:" + (70 / property.Length) + "%;height: 3vh;text-align:left' placeholder='SS' value='" + values[5] + "'/></input>" +
+                    ":<input id='" + inputDiv + "_value_input_6' type='text' maxlength='3' pattern='([0-9]|[0-9]|[0-9])' class='input_field form-control'  style='width:" + (87 / property.Length) + "%;height: 3vh;text-align:left' placeholder='MMM' value='" + values[6] + "'/></input>"
+                );
+                for (var i = 0; i < property.Length; i++) {
+                    if (gdo.net.consoleMode) {
+                        $keyboard($("iframe").contents().find("#" + inputDiv + "_value_input_" + i), gdo.net.keyboardOptions.num);
+                    }
+                }
+
+                if (property.Priority == -1 && !property.IsEditable) {
+                    $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
+                    $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
+                } else if ((!property.IsEditable && !isCreate)) {
+                    $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
+                    $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
+                }
+                break;
         }
     }
 }
@@ -585,12 +599,12 @@ gdo.net.app["Maps"].drawPropertyTable = function (instanceId, tab, object) {
 
 gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
     $("iframe").contents().find("#map_input_div")
-      .css("margin", "0px")
-      .css("padding", "0px")
-      .css("width", "60%")
-      //.css("height", "40px")
-      .empty()
-      .append("<input type='text'  class='form-control' id='map_input' value='&nbsp;Enter Location' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", "60%")
+        //.css("height", "40px")
+        .empty()
+        .append("<input type='text'  class='form-control' id='map_input' value='&nbsp;Enter Location' spellcheck='false' style='width: 95%;height: 100%;' /></input>");
     $("iframe").contents().find("#map_input")
         .css("width", "100%")
         .css("height", "40px")
@@ -629,14 +643,14 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
             gdo.net.app["Maps"].searchGeoCode(instanceId, $("iframe").contents().find('#map_input').val());
         });
     $("iframe").contents().find("#map_clear_div")
-       .css("margin", "0px")
-       .css("padding", "0px")
-       .css("width", "20%")
-             .css("align", "center")
-       //.css("height", "40px")
-       .css("background", "#444")
-       .empty()
-       .append("<button type='button' id='map_clear' class='btn btn-danger btn-block'><i class='fa fa-times-circle fa-fw'></i>&nbsp;Clear Marker</button>");
+        .css("margin", "0px")
+        .css("padding", "0px")
+        .css("width", "20%")
+                .css("align", "center")
+        //.css("height", "40px")
+        .css("background", "#444")
+        .empty()
+        .append("<button type='button' id='map_clear' class='btn btn-danger btn-block'><i class='fa fa-times-circle fa-fw'></i>&nbsp;Clear Marker</button>");
     $("iframe").contents().find("#map_clear")
         .css("width", "100%")
         .css({ fontSize: gdo.management.button_font_size * 0.7 })
@@ -722,7 +736,7 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
             if (!properties.hasOwnProperty((key))) {
                 continue;
             } else if (key != "Id" && key != "ClassName" && key != "Type" && key != "ObjectType" && key != "$type" && property.IsVisible) {
-                if (property.ParameterType == 0 || property.ParameterType == 2 || property.ParameterType == 3 || property.ParameterType == 4) {
+                if (property.ParameterType == 0 ||property.ParameterType == 4) {
                     property.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#" + tab + c + "_property_" + key + "_value_input"), property.VariableType);
                     if (property.Value == null) {
                         property.IsNull = true;
@@ -742,8 +756,14 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
                     } else {
                         property.IsNull = false;
                     }
-                } else if (property.ParameterType == 6) {
-                    //Time parameter read
+                } else if (property.ParameterType == 2 || property.ParameterType == 3) {
+                    property.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#" + tab + c + "_property_" + key + "_value_input"), property.VariableType);
+                    if (property.Value == null) {
+                        property.IsNull = true;
+                    } else {
+                        property.IsNull = false;
+                        property.Value = escape(property.Value);
+                    }
                 }
             }
         }
@@ -929,20 +949,20 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     });
 
     $("iframe").contents().find("#format-next-button")
-       .unbind()
-       .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "format"); });
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "format"); });
 
     $("iframe").contents().find("#format-create-button")
-       .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "format", true); });
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "format", true); });
 
     $("iframe").contents().find(".format-remove-button")
         .unbind()
-       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "format"); });
+        .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "format"); });
 
     $("iframe").contents().find(".format-save-button")
         .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "format", false); });
+        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "format", false); });
 
     $("iframe").contents().find(".format-saveas-button")
         .unbind()
@@ -968,26 +988,26 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     });
 
     $("iframe").contents().find("#view-create-button")
-       .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", true); });
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", true); });
 
     $("iframe").contents().find(".view-save-button")
-       .unbind()
-       .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", false); });
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "view", false); });
 
     $("iframe").contents().find(".view-remove-button")
         .unbind()
-       .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "view"); });
+        .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "view"); });
 
     $("iframe").contents().find(".view-set-current-button")
         .unbind()
-       .click(function () {
-           if (gdo.net.app["Maps"].selected["view"] >= 0) {
-               gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]);
-               setTimeout(function () { gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]) }, 250);
-               setTimeout(function () { gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]) }, 500);
-           }
-       });
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["view"] >= 0) {
+                gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]);
+                setTimeout(function () { gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]) }, 250);
+                setTimeout(function () { gdo.net.app["Maps"].server.useView(instanceId, gdo.net.app["Maps"].selected["view"]) }, 500);
+            }
+        });
 
     $("iframe").contents().find(".view-save-current-button")
         .unbind()
@@ -1015,38 +1035,38 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     });
 
     $("iframe").contents().find("#configuration-create-button")
-       .unbind()
-       .click(function () {
-           var configName = $("iframe").contents().find("#configuration_name_input").val();
-           if (configName != null) {
-               gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
-           }
-       });
+        .unbind()
+        .click(function () {
+            var configName = $("iframe").contents().find("#configuration_name_input").val();
+            if (configName != null) {
+                gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
+            }
+        });
 
     $("iframe").contents().find(".configuration-remove-button")
         .unbind()
-       .click(function () {
-           if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
-               gdo.net.app["Maps"].server.deleteConfiguration(instanceId, gdo.net.instance[instanceId].configurations[gdo.net.app["Maps"].selected["configuration"]].properties.Name.Value);
-               gdo.net.app["Maps"].selected["configuration"] = -1;
-           }
-       });
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+                gdo.net.app["Maps"].server.deleteConfiguration(instanceId, gdo.net.instance[instanceId].configurations[gdo.net.app["Maps"].selected["configuration"]].properties.Name.Value);
+                gdo.net.app["Maps"].selected["configuration"] = -1;
+            }
+        });
 
     $("iframe").contents().find(".configuration-save-button")
         .unbind()
-       .click(function () {
+        .click(function () {
 
-           if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
-               var configName;
-               for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
-                   if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
-                       configName = gdo.net.instance[instanceId].configName;
-                   }
-               }
-               gdo.net.app["Maps"].selected["configuration"] = -1;
-               gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
-           }
-       });
+            if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+                var configName;
+                for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+                    if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                        configName = gdo.net.instance[instanceId].configName;
+                    }
+                }
+                gdo.net.app["Maps"].selected["configuration"] = -1;
+                gdo.net.app["Maps"].server.saveConfiguration(instanceId, configName);
+            }
+        });
 
     $("iframe").contents().find(".configuration-load-button")
         .unbind()
