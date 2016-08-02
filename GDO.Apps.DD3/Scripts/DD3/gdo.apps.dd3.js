@@ -2613,7 +2613,7 @@ dd3Server.client.updateController = function (obj) {
 
 // ===============================
 
-gdo.net.app.DD3.displayMode = 0;
+gdo.net.app.DD3.displayMode = 0;//TODO: email david about it
 
 gdo.net.app.DD3.initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
