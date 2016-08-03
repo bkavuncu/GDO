@@ -15,7 +15,7 @@ using GDO.Apps.Maps.Core.Styles;
 using GDO.Apps.Maps.Core.Formats;
 using GDO.Core;
 using GDO.Core.Apps;
-
+using GDO.Utility;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using Style = GDO.Apps.Maps.Core.Style;
@@ -212,8 +212,41 @@ namespace GDO.Apps.Maps
             }
         }
 
+        public void UpdateLabel(int instanceId, string label, string sublabel)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.UpdateLabel(label, sublabel);
+                    Clients.Group("c" + instanceId).receiveLabel(instanceId, label, sublabel);
+                    Clients.Group("" + instanceId).receiveLabel(instanceId, label, sublabel);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
-
+        public void SetLabelVisible(int instanceId, bool visible)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.SetLabelVisible(visible);
+                    Clients.Group("c" + instanceId).receiveLabelVisibility(instanceId, visible);
+                    Clients.Group("" + instanceId).receiveLabelVisibility(instanceId, visible);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
 
         //View
         public void AddView(int instanceId, string className, string serializedView)
@@ -568,39 +601,83 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void AnimateLayer(int instanceId, int layerId)
+        public void PlayLayer(int instanceId, int layerId)
         {
-            lock (Cave.AppLocks[instanceId])
+            try
             {
-                try
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
+                if (layer != null)
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    //TODO
+                    int startTime = Utilities.CalculateTimeSpan(layer.StartTime.Values, false);
+                    int endTime = Utilities.CalculateTimeSpan(layer.EndTime.Values, false);
+                    int currentTime = Utilities.CastToInt(layer.CurrentTime.Value, 0);
+                    int timeStep = Utilities.CalculateTimeSpan(layer.TimeStep.Values, true);
+                    while (Utilities.CastToBool(layer.IsPlaying.Value, false))
+                    {
+                        if ((startTime + currentTime < endTime))
+                        {
+                            System.Threading.Thread.Sleep(Utilities.CastToInt(layer.WaitTime.Value, 1000));
+                            currentTime = currentTime + timeStep;
+                            layer.CurrentTime.Value = currentTime;
+                            Clients.Group("" + instanceId).receiveTimeStep(startTime + currentTime);
+                        }
+                        else
+                        {
+                            if (Utilities.CastToBool(layer.IsLooping.Value, false))
+                            {
+                                currentTime = 0;
+                            }
+                            else
+                            {
+                                layer.IsPlaying.Value = false;
+                                Clients.Group("" + instanceId).receiveTimeStep(0);
+                            }
+                        }
+
+                    }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
-        public void SetLayerVisible(int instanceId, int layerId, bool visible)
+        public void PauseLayer(int instanceId, int layerId)
         {
-            lock (Cave.AppLocks[instanceId])
+            try
             {
-                try
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
+                if (layer != null)
                 {
-                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
-                    //TODO
+                    layer.IsPlaying.Value = false;
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
-  
+        public void StopLayer(int instanceId, int layerId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
+                if (layer != null)
+                {
+                    layer.IsPlaying.Value = false;
+                    layer.CurrentTime.Value = 0;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
 
         //Source
         public void AddSource(int instanceId, string className, string serializedSource)

@@ -550,6 +550,7 @@
     <Compile Include="Core\Base.cs" />
     <Compile Include="Core\Format.cs" />
     <Compile Include="Core\Layer.cs" />
+    <Compile Include="Core\Layers\DynamicLayer.cs" />
     <Compile Include="Core\Layers\DynamicHeatmapLayer.cs" />
     <Compile Include="Core\Layers\StaticHeatmapLayer.cs" />
     <Compile Include="Core\Layers\ImageLayer.cs" />

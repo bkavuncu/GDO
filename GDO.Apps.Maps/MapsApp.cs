@@ -18,7 +18,7 @@ using Style = GDO.Apps.Maps.Core.Style;
 
 namespace GDO.Apps.Maps
 {
-    public class MapsApp : IBaseAppInstance
+    public class MapsApp : IBaseAppInstanceu
     {
         public JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
@@ -29,6 +29,9 @@ namespace GDO.Apps.Maps
         public AppConfiguration Configuration { get; set; }
         public string[] MarkerPosition { get; set; }
         public Map Map;
+        public string Label { get; set; }
+        public string SubLabel { get; set; }
+        public bool ShowLabel { get; set; }
         public Position Position { get; set; }
         public GenericDictionary<View> Views { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
@@ -60,6 +63,10 @@ namespace GDO.Apps.Maps
             Configurations.Init();
 
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
+
+            Label = Map.Label;
+            SubLabel = Map.SubLabel;
+            ShowLabel = Map.ShowLabel;
 
             foreach (Format format in Map.Formats)
             {
@@ -99,7 +106,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(Position, Views.ToArray(), Datas.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(Label, SubLabel, ShowLabel, Position, Views.ToArray(), Datas.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
@@ -123,7 +130,12 @@ namespace GDO.Apps.Maps
                 Core.Configuration configuration = new Core.Configuration();
                 configuration.Name.Value = config.Name;
 
+
                 Map tempMap = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(config.Json.ToString(), JsonSettings);
+
+                configuration.Label.Value = tempMap.Label;
+                configuration.SubLabel.Value = tempMap.SubLabel;
+                configuration.ShowLabel.Value = tempMap.ShowLabel;
 
                 string[] tempLayers = new string[tempMap.Layers.Length];
                 for (int i=0; i< tempMap.Layers.Length; i++ )
@@ -214,6 +226,20 @@ namespace GDO.Apps.Maps
             return serializedConfigurations;
         }
 
+        public void UpdateLabel(string label, string sublabel)
+        {
+            Label = label;
+            Map.Label = label;
+            SubLabel = sublabel;
+            Map.SubLabel = sublabel;
+        }
+
+        public void SetLabelVisible(bool visible)
+        {
+            ShowLabel = visible;
+            Map.ShowLabel = visible;
+        }
+
         //Layer
 
         public int AddLayer<T>(Layer layer) where T : Layer
@@ -232,9 +258,6 @@ namespace GDO.Apps.Maps
                 return -1;
             }
         }
-
-
-        
 
         public void UpdateLayer<T>(int layerId, T layer) where T : Layer
         {
@@ -285,6 +308,19 @@ namespace GDO.Apps.Maps
             {
                 Console.WriteLine(e);
                 return false;
+            }
+        }
+
+        public T GetLayer<T>(int layerId) where T : Layer
+        {
+            try
+            {
+                return Layers.GetValue<T>(layerId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
             }
         }
 
@@ -747,6 +783,8 @@ namespace GDO.Apps.Maps
 
         public Map CreateEmptyTemplate()
         {
+            string label = "";
+            string sublabel = "";
             List<Data> datas = new List<Data>();
             List<Format> formats = new List<Format>();
             List<Style> styles = new List<Style>();
@@ -850,7 +888,7 @@ namespace GDO.Apps.Maps
             layers.Add(dynamicVectorLayer);
             layers.Add(staticVectorLayer);
 
-            Map map = new Map(position, views.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            Map map = new Map(label, sublabel, false, position, views.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;
         }
 

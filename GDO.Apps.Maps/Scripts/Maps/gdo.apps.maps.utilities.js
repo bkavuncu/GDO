@@ -68,6 +68,9 @@ gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, v
                 case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.Float:
                     return parseFloat(object.Value);
                     break;
+
+
+
                 case gdo.net.app["Maps"].VARIABLE_TYPES_ENUM.String:
                     return "" + object.Value;
                     break;
@@ -137,11 +140,14 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                     isFirstOne = false;
                     object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
                     object.properties = deserializedObject;
-                    object.version = [];
+                    object.sources = [];
+                    object.timestamps = [];
                 }
-                object.version[i] = {};
-                object.version[i].source = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
-                object.version[i].timeStamp = readTimeStamp(config.files[i].timestamp);
+                object.sources[i] = {};
+                object.sources[i] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                object.sources[i].date = parseDate(config.files[i].timestamp);
+                object.timestamps[i] = object.sources[i].date.getTime();
+
             }
             object.properties.isInitialized = true;
             eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
@@ -185,6 +191,11 @@ gdo.net.app["Maps"].requestObject = function (instanceId, objectType, objectId) 
 gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isNew) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading ' + objectType + ': ' + object.properties.Id);
     var properties = object.properties;
+    if (objectType == 'layer') {
+        if (properties.IsPlaying != null && properties.IsPlaying != "undefined") {
+            properties.IsPlaying.Value = false;
+        }
+    }
     if (isNew) {
         if (objectType == 'layer') {
             var temp = 0;

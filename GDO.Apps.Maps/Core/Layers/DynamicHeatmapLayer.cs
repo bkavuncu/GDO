@@ -6,9 +6,8 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Layers
 {
-    public class DynamicHeatmapLayer : Layer
+    public class DynamicHeatmapLayer : DynamicLayer
     {
-        public LinkParameter Source { get; set; }
         public ColorArrayParameter Gradient { get; set; }
         public SliderParameter Radius { get; set; }
         public SliderParameter Shadow { get; set; }
@@ -20,18 +19,6 @@ namespace GDO.Apps.Maps.Core.Layers
             ClassName.Value = this.GetType().Name;
             ObjectType.Value = "ol.layer.Heatmap";
             Description.Value = "Layer for rendering vector data as a heatmap dynamically";
-
-            Source = new LinkParameter
-            {
-                Name = "Source",
-                PropertyName = "source",
-                Description = "The source for this layer",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                IsEditable = false,
-                IsVisible = true,
-                LinkedParameter = "sources",
-                ClassTypes = new string[1] { "DynamicVectorSource", },
-            };
 
             Gradient = new ColorArrayParameter
             {

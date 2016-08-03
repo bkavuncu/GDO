@@ -102,6 +102,21 @@ $(function () {
         }
     }
 
+    $.connection.mapsAppHub.client.receiveTimeStep = function (instanceId, layerId, timeStep) {
+        gdo.checkpoint(timeStep);
+        var index = getClosest(timeStep, gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].timestamps);
+        gdo.net.instance[instanceId].layers[layerId].setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].versions[index]);
+        //update label?
+    }
+
+    $.connection.mapsAppHub.client.receiveLabel = function (instanceId, label, sublabel) {
+        //todo
+    }
+
+    $.connection.mapsAppHub.client.receiveLabelVisibility = function (instanceId, showlabel) {
+        //todo
+    }
+
     $.connection.mapsAppHub.client.updateResolution = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["Maps"].updateCenter(instanceId);

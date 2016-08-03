@@ -107,7 +107,7 @@ function timeStamp() {
     return date.join("/") + " " + time.join(":") + " " + suffix;
 }
 
-function readTimeStamp(str) {
+function parseTimeStamp(str) {
     //'1990-10-30 17:32:01:000'
     //'01234567890123456789012'
     var timestamp = [];
@@ -119,6 +119,26 @@ function readTimeStamp(str) {
     timestamp[5] = parseInt(str.slice(17, 19));
     timestamp[6] = parseInt(str.slice(20, 23));
     return timestamp;
+}
+
+function parseDate(str) {
+    //'1990-10-30 17:32:01:000'
+    //'01234567890123456789012'
+    var timestamp = readTimeStamp(str);
+    var date = new Date(timestamp[0], timestamp[1], timestamp[2], timestamp[3], timestamp[4], timestamp[5], timestamp[6]);
+    return date;
+}
+
+function getClosest(number, array) {
+    var current = array[0];
+    var index = 0;
+    for (var i = 0; i <array.length; i++) {
+        if (Math.abs(number - array[i]) < Math.abs(number - current)) {
+            current = array[i];
+            index = i;
+        }
+    }
+    return index;
 }
 
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;

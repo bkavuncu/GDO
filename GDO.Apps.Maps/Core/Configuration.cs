@@ -9,7 +9,9 @@ namespace GDO.Apps.Maps.Core
 {
     public class Configuration : Base
     {
-
+        public StringParameter Label { get; set; }
+        public StringParameter SubLabel { get; set; }
+        public BooleanParameter ShowLabel { get; set; }
         public ListParameter Layers { get; set; }
         public ListParameter Sources { get; set; }
         public ListParameter Styles { get; set; }
@@ -20,7 +22,49 @@ namespace GDO.Apps.Maps.Core
         public Configuration() : base()
         {
             ClassName.Value = this.GetType().Name;
-            Description.Value = "";
+            Description.Value = "Configuration";
+
+            Label = new StringParameter
+            {
+                Name = "Label",
+                Description = "Configuration Label",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+            };
+
+            SubLabel = new StringParameter
+            {
+                Name = "SubLabel",
+                Description = "Configuration SubLabel",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+            };
+
+            ShowLabel = new BooleanParameter
+            {
+                Name = "Show Label",
+                Description = "Show Label",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+                DefaultValue = false
+            };
+
+            ShowLabel = new BooleanParameter
+            {
+                Name = "Show Label",
+                Description = "Show Label",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = true,
+                IsVisible = true,
+                IsProperty = false,
+                DefaultValue = false
+            };
 
             Name = new StringParameter
             {

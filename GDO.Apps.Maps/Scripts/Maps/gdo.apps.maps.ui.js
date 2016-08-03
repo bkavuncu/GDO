@@ -791,22 +791,47 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     gdo.net.instance[instanceId].temp["style"] = {};
     gdo.net.instance[instanceId].temp["format"] = {};
 
+    $("iframe").contents().find(".show-label-button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+            var configName;
+            for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+                if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                    gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value = !gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value;
+                    gdo.net.app["Maps"].server.setLabelVisible(instanceId, gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value);
+                    if (gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value) {
+                        $("iframe").contents().find(".show-label-button").removeClass("btn-primary").removeClass("btn-danger").addClass("btn-success");
+                    } else {
+                        $("iframe").contents().find(".show-label-button").removeClass("btn-primary").removeClass("btn-success").addClass("btn-danger");
+                    }
+                }
+            }
+        }
+    });
+
     $("iframe").contents().find(".layer-play-button")
         .unbind()
         .click(function () {
-
+            if (gdo.net.app["Maps"].selected["layer"] >= 0) {
+                gdo.net.app['Maps'].server.playLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value);
+            }
         });
 
     $("iframe").contents().find(".layer-pause-button")
         .unbind()
         .click(function () {
-
+            if (gdo.net.app["Maps"].selected["layer"] >= 0) {
+                gdo.net.app['Maps'].server.pauseLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value);
+            }
         });
 
     $("iframe").contents().find(".layer-stop-button")
         .unbind()
         .click(function () {
-
+            if (gdo.net.app["Maps"].selected["layer"] >= 0) {
+                gdo.net.app['Maps'].server.stopLayer(instanceId, gdo.net.instance[instanceId].layers[gdo.net.app["Maps"].selected["layer"]].properties.Id.Value);
+            }
         });
 
     $("iframe").contents().find(".layer-up-button")
@@ -1076,6 +1101,19 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                 gdo.net.server.useAppConfiguration(instanceId, configName);
                 setTimeout(function () { gdo.net.app["Maps"].server.initMap(instanceId) }, 500);
                 setTimeout(function () { gdo.management.instances.loadInstanceControlFrame("Maps", instanceId, configName) }, 1500);
+            }
+        });
+    $("iframe").contents().find(".configuration-update-button")
+        .unbind()
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+                var configName;
+                for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+                    if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                        gdo.net.app["Maps"].server.updateLabel(instanceId, gdo.net.instance[instanceId].configurations[i].properties.Label.Value, gdo.net.instance[instanceId].configurations[i].properties.SubLabel.Value);
+                        gdo.net.app["Maps"].server.setLabelVisible(instanceId, gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value);
+                    }
+                }
             }
         });
 
