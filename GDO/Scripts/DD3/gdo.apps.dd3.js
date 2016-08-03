@@ -1263,6 +1263,7 @@ var initDD3App = function () {
 
                         data.tweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
+                                //console.log("Transition tween is called with o.key: " + o.key + " and _dd3_tweens[o.value]: " + _dd3_tweens[o.value]);
                                 trst.tween(o.key, _dd3_tweens[o.value]);
                             }
                         });
@@ -1270,11 +1271,9 @@ var initDD3App = function () {
 
                     //TODO v4: check this passes
                     if (data.attrTweens) {
-                        console.log("data.attrTweens is defined");
                         data.attrTweens.each(function (o) {
                             if (_dd3_tweens[o.value]) {
-                                console.log("THIS SHOULD TRIGGER !!!!!");
-                                console.log("Transition attrtween is called with o.key: " + o.key + " and _dd3_tweens[o.value]: " + _dd3_tweens[o.value]);
+                                //console.log("Transition attrtween is called with o.key: " + o.key + " and _dd3_tweens[o.value]: " + _dd3_tweens[o.value]);
                                 trst.attrTween(o.key, _dd3_tweens[o.value]);
                             }
                         });
@@ -1439,10 +1438,7 @@ var initDD3App = function () {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
-                            //console.log(this.childNodes);
-                            //console.log(d3.selectAll(this.childNodes));
                             var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
-                            //console.log(a);
                             return (a[0] && a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);//TO v4 added one additionnal condition which shouldn't trigger
                         };
                     }
@@ -2117,8 +2113,6 @@ var initDD3App = function () {
                     if (g.__dd3_transitions__) containers.unshift(g);//v4
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
-                //console.log(containers);
-
 
                 var c1 = containers[0], c2;
 
@@ -2201,8 +2195,8 @@ var initDD3App = function () {
                         }
                     });
                 } else {
-                    if (!temporary_store) temporary_store = tween;
-                    console.log(tween);
+                    if (!temporary_store) temporary_store = args.transition;
+                    console.log("tween call from _dd3_retrieveTransitionSettings: "+tween);
                 }
 
 
@@ -2247,15 +2241,14 @@ var initDD3App = function () {
 
                 var initialize = function (t, ease, precision) {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
-                    //console.log("V4 WARNING: each of start.dd3");
 
                     t.on("start.dd3", function (d, i) {
                         //console.log("V4 WARNING: Handling start.dd3 on on");
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
                         //var transition = this[ns][this[ns].active];
-                        console.log(t);
-                        console.log("name: " + name + " namespace: " + ns);
+                        //console.log(t);
+                        //console.log("name: " + name + " namespace: " + ns);
                         var transition = d3.active(this);//v4 this appear to be the problem
                         //console.log(transition);
                         // Needed for integration into GDO framework as it seems that constructor are different !
@@ -2305,7 +2298,7 @@ var initDD3App = function () {
                             name: name,
                             delay: transition.delay,
                             duration: transition.duration,
-                            transition: transition,
+                            transition: transition,//TODO v4: transition.tween is not an array and should be
                             precision: precision,
                             ease: ease,
                             id: _dd3_idTransition++
@@ -2349,14 +2342,18 @@ var initDD3App = function () {
 
                     t.tween = function (name, tween) {
                         if (arguments.length < 2) return tweens.get(name);
-                        //console.log(name);
-                        if (!temporary_store) temporary_store = tween;
+                          
+                        if(utils.getFnName(tween)==="anonymous"){
+                            //console.log("Defining a new tween for "+name);
+                            dd3.defineTween(name+"_std_trans", tween);
+                            tween=name+"_std_trans";    
+                        }  
 
                         if (!tween) {
                             tweens.remove(name);
                             return d3.transition.prototype.tween.call(this, name, null);
                         } else if (typeof tween !== "string") {
-                            //console.log("tween: "+tween);
+                            //console.log("tween: " + utils.getFnName(tween));
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2372,12 +2369,14 @@ var initDD3App = function () {
                     t.attrTween = function (attr, tween) {
                         var temp, trst;
                         if (arguments.length < 2) return attrTweens.get(attr);
+                        
                         //In v4, d3.transition.attr uses attrTween, which we don't need.  
                         if(utils.getFnName(tween)==="anonymous"){
-                            console.log("Calling D3 attrween");
-                            return d3.transition.prototype.attrTween.call(this, attr, tween);
+                            //console.log("Defining a new Attrtween for "+attr);
+                            dd3.defineAttrTween(attr+"_std_trans", tween);
+                            tween=attr+"_std_trans";    
                         }  
-                        //check attrFunctionNS$1
+                        //v4: check attrFunctionNS$1
 
                         //console.log("dd3 tweens doesn't exist: "+!_dd3_tweens['dd3_' + tween]);
                         if (!tween) {
@@ -2389,7 +2388,7 @@ var initDD3App = function () {
                             this.tween = temp;
                             return trst;
                         } else if (typeof tween !== "string") {
-                            console.log("attrtween: " + utils.getFnName(tween));
+                            //console.log("attrtween: " + utils.getFnName(tween));
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2411,6 +2410,12 @@ var initDD3App = function () {
                         var temp, trst;
                         if (arguments.length < 2) return styleTweens.get(style);
 
+                        if(utils.getFnName(tween)==="anonymous"){
+                            //console.log("Defining a new tween for "+style);
+                            dd3.defineTween(style+"_std_trans", tween);
+                            tween=style+"_std_trans";    
+                        }  
+
                         if (!tween) {
                             styleTweens.remove(style);
 
@@ -2421,7 +2426,8 @@ var initDD3App = function () {
 
                             return trst;
                         } else if (typeof tween !== "string") {
-                            //console.log("styletween: "+tween);
+                            //console.log("styletween: " + utils.getFnName(tween));
+                            //console.log("style: " +style);
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2467,7 +2473,6 @@ var initDD3App = function () {
             };
 
             _dd3.defineTween = function (name, func, spec) {
-                //console.log("defineTween called with name:"+name+" function: "+func+" and specification: "+spec);
                 if (arguments.length < 2) return _dd3_tweens['dd3_' + name];
                 if (!func) delete _dd3_tweens['dd3_' + name];
                 else {
@@ -2490,7 +2495,6 @@ var initDD3App = function () {
              */
             //V4 frigging ugly but it works
             _dd3.svgNode = _dd3.select_("body").append_("svg");
-            //console.log(_dd3.svgNode);
 
             _dd3.svgCanvas = _dd3.svgNode
                 .attr_("width", browser.width)
@@ -2498,8 +2502,6 @@ var initDD3App = function () {
                 .append_("g")
                 .attr_("id", "dd3_rootGroup")
                 .attr_("transform", "translate(" + [browser.margin.left - slsg.left(0), browser.margin.top - slsg.top(0)] + ")");
-
-            //console.log(_dd3.svgCanvas);
 
             /**
              *  Getter
@@ -2613,7 +2615,7 @@ dd3Server.client.updateController = function (obj) {
 
 // ===============================
 
-gdo.net.app.DD3.displayMode = 0;
+gdo.net.app.DD3.displayMode = 0;//TODO: email david about it
 
 gdo.net.app.DD3.initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
