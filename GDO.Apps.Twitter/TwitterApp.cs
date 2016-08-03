@@ -2,201 +2,141 @@
 using System.Collections.Generic;
 using GDO.Core;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
-using System.Web.UI;
+using System.Web;
+using GDO.Apps.Twitter.Core;
 using GDO.Core.Apps;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.Twitter
 {
-    [DataContract]
-    public class DataSet
-    {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
-
-        [DataMember(Name = "description")]
-        public string Description { get; set; }
-
-        [DataMember(Name = "db_col")]
-        public string DB { get; set; }
-
-        [DataMember(Name = "status")]
-        public string Status { get; set; }
-
-        [DataMember(Name = "collection_size")]
-        public long CollectionSize { get; set; }
-
-        [DataMember(Name = "tags")]
-        public List<string> Tags { get; set; }
-
-        [DataMember(Name = "type")]
-        public string Type { get; set; }
-    }
-
-    [DataContract]
-    public class Analytics
-    {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
-
-        [DataMember(Name = "description")]
-        public string Description { get; set; }
-
-        [DataMember(Name = "classification")]
-        public string Classification { get; set; }
-
-        [DataMember(Name = "type")]
-        public string Type { get; set; }
-
-        [DataMember(Name = "status")]
-        public string Status { get; set; }
-
-        [DataMember(Name = "datasetId")]
-        public string DatasetId { get; set; }
-    }
-
-    public class DataSetMeta
-    {
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string Status { get; set; }
-        public List<string> Tags { get; set; }
-    }
-
-    public class AnalyticsMeta
-    {
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string Status { get; set; }
-        public string Classification { get; set; }
-        public string Type { get; set; }
-    }
-
-    public class SubSection
-    {
-        public int Id { get; set;}
-        public int RowStart { get; set; }
-        public int RowEnd { get; set; }
-        public int ColStart { get; set; }
-        public int ColEnd { get; set; }
-        public override string ToString()
-        {
-            return "(" + ColStart + "," + RowStart + "," + ColEnd + "," + RowEnd + ")";
-        }
-    }
 
 
     public class TwitterApp : IBaseAppInstance
     {
+        
         public int Id { get; set; }
         public string AppName { get; set; }
-        public Section Section { get; set; }
+        public GDO.Core.Section Section { get; set; }
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
         public AppConfiguration Configuration { get; set; }
+        public string Name { get; set; }
 
-        private Uri _url { get; set; }
-        private HttpClient _httpClient { get; set; }
+        public RestController RestController { get; set; }
+        public PseudoCave PseudoCave { get; set;}
 
-        public String ApiAddress { get; set; }
+        public string GraphAppBasePath { get; set; }
+        public string ImageAppBasePath { get; set; }
+        public string BasePath { get; set; }
+        public string ChartingAppUrl { get; set; }
 
         public void Init()
         {
-            this.ApiAddress = (string) Configuration.Json.SelectToken("api_address");
-            _url = new Uri(ApiAddress);
-            _httpClient = new HttpClient {BaseAddress = _url};
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                "Y3BzMTVfdXNlcjpzZWNyZXQ=");
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            
-            Debug.WriteLine("Using the following address a root api: " +this.ApiAddress);
+            GraphAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
+            ImageAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+            BasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
+
+            Directory.CreateDirectory(GraphAppBasePath);
+            Directory.CreateDirectory(ImageAppBasePath);
+            Directory.CreateDirectory(BasePath);
+
+            var apiAddress = (string) Configuration.Json.SelectToken("api_address");
+            RestController = new RestController(new Uri(apiAddress));
+
+            Debug.WriteLine("Using the following address a root api: " + apiAddress);
+            PseudoCave = new PseudoCave(Cave.Nodes, Cave.Sections, Section.Id);
+        }
+        
+        public string GetPseudoCaveStatus()
+        {
+            Debug.WriteLine("Getting Twitter App Cave Status");
+            return PseudoCave.CloneCaveState(Cave.Nodes, Cave.Sections, Section.Id).SerializeJSON();
         }
 
-        public DataSetMeta[] GetDataSetMetas()
+        public string CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            return (Get<DataSet[]>("API/dataset") ?? new DataSet[0]).Select(ds => new DataSetMeta()
+            return PseudoCave.CreateSection(colStart, rowStart, colEnd, rowEnd).SerializeJSON();
+        }
+
+        public int RemoveSection(int sectionId)
+        {
+            return PseudoCave.SoftRemoveSection(sectionId);
+        }
+        
+
+        public string DeployApps(List<int> sectionIds)
+        {
+            return JsonConvert.SerializeObject(PseudoCave.DeployApps(sectionIds));
+        }
+
+        public int CloseApp(int sectionId)
+        {
+            return PseudoCave.CloseApp(sectionId);
+        }
+
+        public void ClearCave(out List<int> sectionIds, out List<int> appInstanceIds)
+        {
+            PseudoCave.ClearCave(out sectionIds, out appInstanceIds);
+        }
+
+        public void UnLoadVisualisation(int sectionId)
+        {
+            PseudoCave.Sections[sectionId].TwitterVis = new TwitterVis();
+        }
+
+        public void LoadVisualisation(int sectionId, string analyticsId, string dataSetId)
+        {
+            var analytics = RestController.GetAnalytics(dataSetId, analyticsId);
+
+            switch (analytics.Classification)
             {
-                Description = ds.Description,
-                Id = ds.Id,
-                Status = ds.Status,
-                Tags = ds.Tags
-            }).ToArray();
+                case "Graph":
+                    PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Graph;
+                    PseudoCave.Sections[sectionId].TwitterVis.AppType = "Graph";
+                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = 
+                        Download(dataSetId, analyticsId, GraphAppBasePath + analyticsId + ".graphml");
+                    break;
+                case "Analytics":
+                    PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
+                    PseudoCave.Sections[sectionId].TwitterVis.AppType = "StaticHTML";
+                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = 
+                        Download(dataSetId, analyticsId, BasePath + analyticsId + ".dat");
+                    break;
+                default:
+                    PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Unknown;
+                    break;
+            }
+
+            PseudoCave.Sections[sectionId].TwitterVis.Id = analyticsId;
+            PseudoCave.Sections[sectionId].TwitterVis.DataSetId = dataSetId;
+            PseudoCave.Sections[sectionId].TwitterVis.SubType = analytics.Type;
+
         }
 
-        public AnalyticsMeta[] GetAnalyticsMetas(string dataSetId)
+        private string Download(string dataSetId , string analyticsId, string path)
         {
-            return
-                (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).Select(
-                    an => new AnalyticsMeta()
-                    {
-                        Id = an.Id,
-                        Description = an.Description,
-                        Status = an.Status,
-                        Classification = an.Classification,
-                        Type = an.Type
-                    }).ToArray();
+            if (File.Exists(path))
+            {  // if the file already exists, delete it
+                Debug.WriteLine("File already exists will not re download");
+                return path;
+            }
+
+            var filePath  = RestController.DownloadData(dataSetId, analyticsId, path);
+            Debug.WriteLine("File downloaded to " + filePath);
+            return filePath;
         }
 
-        public DataSet GetDataSet(string id)
+        public string GetAnalytics(List<string> dataSetIds)
         {
-            return Get<DataSet>("API/dataset/" + id);
+            return JsonConvert.SerializeObject(dataSetIds.ToDictionary(dsId => dsId, ds => RestController.GetAnalyticsMetas(ds).ToArray()));
         }
 
-        public Analytics GetAnalytics(string dataSetId, string Id)
+        public string GetDataSets()
         {
-            return Get<Analytics>("API/dataset/" + dataSetId + "/analytics/" + Id);
+            return JsonConvert.SerializeObject(RestController.GetDataSetMetas().ToDictionary(ds => ds.Id, ds => ds));
         }
 
-        public T Get<T>(string url) where T : class
-        {
-            Task<T> dataSetTask = _httpClient.GetAsync(url).ContinueWith(resposeTask =>
-            {
-                HttpResponseMessage response = resposeTask.Result;
-                if (!response.IsSuccessStatusCode) return null;
-                Task<T> dataSetResponseTask = response.Content.ReadAsAsync<T>();
-                dataSetResponseTask.Wait();
-                return dataSetResponseTask.Result;
-            });
-            dataSetTask.Wait();
-            return dataSetTask.Result;
-        }
-
-        public SubSection Launch()
-        {
-            return new SubSection()
-            {
-                Id =  1,
-                ColStart = 0,
-                ColEnd = 2,
-                RowStart = 0,
-                RowEnd = 2
-            };
-        }
-
-
-        public string Name { get; set; }
-
-//        public void Init(int instanceId, string appName, Section section, AppConfiguration configuration)
-//        {
-//            this.Id = instanceId;
-//            this.AppName = appName;
-//            this.Section = section;
-//            this.Configuration = configuration;
-//        }
-
-        public void SetName(string name)
-        {
-            Name = name;
-        }
-
-        public string GetName()
-        {
-            return Name;
-        }
     }
 }
