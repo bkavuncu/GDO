@@ -106,15 +106,47 @@ $(function () {
         gdo.checkpoint(timeStep);
         var index = getClosest(timeStep, gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].timestamps);
         gdo.net.instance[instanceId].layers[layerId].setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].versions[index]);
-        //update label?
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL
+            && gdo.net.node[gdo.clientId].sectionCol == gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols - 1
+            && gdo.net.node[gdo.clientId].sectionRow == 0) {
+            //$("iframe").contents().find("#timelabel").
+        }
     }
 
     $.connection.mapsAppHub.client.receiveLabel = function (instanceId, label, sublabel) {
-        //todo
+        for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+            if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                gdo.net.instance[instanceId].configurations[i].properties.Label.Value = label;
+                gdo.net.instance[instanceId].configurations[i].properties.SubLabel.Value = sublabel;
+            }
+        }
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
+            $("iframe").contents().find("#datalabel").empty().append(label);
+        }
     }
 
     $.connection.mapsAppHub.client.receiveLabelVisibility = function (instanceId, showlabel) {
-        //todo
+        for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
+            if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value = showlabel;
+            }
+        }
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL && gdo.net.node[gdo.clientId].sectionCol == 0 && gdo.net.node[gdo.clientId].sectionRow == 0) {
+            if (showlabel) {
+                $("iframe").contents().find("#datalabel").css("visibility", "visible");
+            } else {
+                $("iframe").contents().find("#datalabel").css("visibility", "hidden");
+            }
+        }
+        if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL
+            && gdo.net.node[gdo.clientId].sectionCol == gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols - 1
+            && gdo.net.node[gdo.clientId].sectionRow == 0) {
+            if (showlabel) {
+                $("iframe").contents().find("#timelabel").css("visibility", "visible");
+            } else {
+                $("iframe").contents().find("#timelabel").css("visibility", "hidden");
+            }
+        }
     }
 
     $.connection.mapsAppHub.client.updateResolution = function (instanceId) {
