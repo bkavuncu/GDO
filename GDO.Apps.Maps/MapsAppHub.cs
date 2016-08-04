@@ -609,32 +609,38 @@ namespace GDO.Apps.Maps
                 DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
                 if (layer != null)
                 {
-                    int startTime = Utilities.CalculateTimeSpan(layer.StartTime.Values, false);
-                    int endTime = Utilities.CalculateTimeSpan(layer.EndTime.Values, false);
-                    int currentTime = Utilities.CastToInt(layer.CurrentTime.Value, 0);
-                    int timeStep = Utilities.CalculateTimeSpan(layer.TimeStep.Values, true);
-                    while (Utilities.CastToBool(layer.IsPlaying.Value, false))
+                    if (!Utilities.CastToBool(layer.IsPlaying.Value, false))
                     {
-                        if ((startTime + currentTime < endTime))
+                        layer.IsPlaying.Value = true;
+                        BroadcastLayer(instanceId, layerId);
+                        double startTime = Utilities.CalculateTimeSpan(layer.StartTime.Values, false);
+                        double endTime = Utilities.CalculateTimeSpan(layer.EndTime.Values, false);
+                        double currentTime = Utilities.CastToDouble(layer.CurrentTime.Value, 0);
+                        double timeStep = Utilities.CalculateTimeSpan(layer.TimeStep.Values, true);
+                        while (Utilities.CastToBool(layer.IsPlaying.Value, false))
                         {
-                            System.Threading.Thread.Sleep(Utilities.CastToInt(layer.WaitTime.Value, 1000));
-                            currentTime = currentTime + timeStep;
-                            layer.CurrentTime.Value = currentTime;
-                            Clients.Group("" + instanceId).receiveTimeStep(startTime + currentTime);
-                        }
-                        else
-                        {
-                            if (Utilities.CastToBool(layer.IsLooping.Value, false))
+                            if ((currentTime + startTime) < endTime)
                             {
-                                currentTime = 0;
+                                currentTime = currentTime + timeStep;
+                                layer.CurrentTime.Value = currentTime;
+                                System.Threading.Thread.Sleep(Utilities.CastToInt(layer.WaitTime.Value, 1000));
+                                Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, (currentTime + startTime));
                             }
                             else
                             {
-                                layer.IsPlaying.Value = false;
-                                Clients.Group("" + instanceId).receiveTimeStep(0);
+                                //if (Utilities.CastToBool(layer.IsLooping.Value, false))
+                                //{
+                                //    currentTime = 0;
+                                //}
+                                //else
+                                //{ 
+                                    currentTime = 0;
+                                    layer.IsPlaying.Value = false;
+                                    Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
+                                //}
                             }
-                        }
 
+                        }
                     }
                 }
             }
@@ -653,6 +659,7 @@ namespace GDO.Apps.Maps
                 if (layer != null)
                 {
                     layer.IsPlaying.Value = false;
+                    BroadcastLayer(instanceId, layerId);
                 }
             }
             catch (Exception e)
@@ -671,6 +678,8 @@ namespace GDO.Apps.Maps
                 {
                     layer.IsPlaying.Value = false;
                     layer.CurrentTime.Value = 0;
+                    BroadcastLayer(instanceId, layerId);
+                    Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
                 }
             }
             catch (Exception e)

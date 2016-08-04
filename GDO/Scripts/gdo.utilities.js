@@ -113,7 +113,7 @@ function parseTimeStamp(str) {
     var timestamp = [];
     timestamp[0] = parseInt(str.slice(0, 4));
     timestamp[1] = parseInt(str.slice(5, 7));
-    timestamp[2] = parseInt(str.slice(8, 9));
+    timestamp[2] = parseInt(str.slice(8, 10));
     timestamp[3] = parseInt(str.slice(11, 13));
     timestamp[4] = parseInt(str.slice(14, 16));
     timestamp[5] = parseInt(str.slice(17, 19));
@@ -124,7 +124,7 @@ function parseTimeStamp(str) {
 function parseDate(str) {
     //'1990-10-30 17:32:01:000'
     //'01234567890123456789012'
-    var timestamp = readTimeStamp(str);
+    var timestamp = parseTimeStamp(str);
     var date = new Date(timestamp[0], timestamp[1], timestamp[2], timestamp[3], timestamp[4], timestamp[5], timestamp[6]);
     return date;
 }

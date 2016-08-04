@@ -122,38 +122,57 @@ gdo.net.app["Maps"].createObject = function (instanceId, objectType, objectId, d
     }
     return object;
 }
+
 gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, deserializedObject) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Adding ' + objectType + ': ' + deserializedObject.Id.Value);
     if (gdo.net.app["Maps"].index[objectType] <= deserializedObject.Id.Value) {
         gdo.net.app["Maps"].index[objectType] = deserializedObject.Id.Value;
     }
     var object = {};
-    if (deserializedObject.ClassName.Value == "DynamicVectorSource") {
-        var isFirstOne = true;
-        var config = JSON.parse(unescape(deserializedObject.Config.Value));
-        if (config != null) {
-            for (var i = 0; i < config.files.length; i++) {
-                var tempProperties = jQuery.extend(true, {}, deserializedObject);
-                tempProperties.Url.Value = config.files[i].file;
-                tempProperties.Url.IsNull = false;
-                if (isFirstOne) {
-                    isFirstOne = false;
-                    object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
-                    object.properties = deserializedObject;
-                    object.sources = [];
-                    object.timestamps = [];
+    switch (deserializedObject.ClassName.Value) {
+        case "DynamicVectorSource":
+            var isFirstOne = true;
+            var config = JSON.parse(unescape(deserializedObject.Config.Value));
+            if (config != null) {
+                for (var i = 0; i < config.files.length; i++) {
+                    var tempProperties = jQuery.extend(true, {}, deserializedObject);
+                    tempProperties.Url.Value = config.files[i].file;
+                    tempProperties.Url.IsNull = false;
+                    if (isFirstOne) {
+                        isFirstOne = false;
+                        object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                        object.properties = deserializedObject;
+                        object.sources = [];
+                        object.timestamps = [];
+                    }
+                    object.sources[i] = {};
+                    object.sources[i] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                    object.sources[i].date = parseDate(config.files[i].timestamp);
+                    object.timestamps[i] = object.sources[i].date.getTime();
                 }
-                object.sources[i] = {};
-                object.sources[i] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
-                object.sources[i].date = parseDate(config.files[i].timestamp);
-                object.timestamps[i] = object.sources[i].date.getTime();
-
+                object.properties.isInitialized = true;
+                eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
             }
-            object.properties.isInitialized = true;
-            eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
-        }
-    } else {
-        object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
+            break;
+        case "DynamicVectorLayer":
+            object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
+            //var visible = object.getVisible();
+            //object.setVisible(false);
+            (function myLoop(i) {
+                setTimeout(function () {
+                    object.setSource(gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources[i]);
+                    if (--i) myLoop(i);
+                }, 70)
+            })(gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources.length);
+            object.setSource(gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources[0]);
+            //setTimeout(function () {   object.setVisible(visible);},70 * gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources.length);
+            break;
+        case "DynamicHeatmapLayer":
+
+            break;
+        default:
+            object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
+            break;
     }
     object.properties = deserializedObject;
     object.properties.isInitialized = true;

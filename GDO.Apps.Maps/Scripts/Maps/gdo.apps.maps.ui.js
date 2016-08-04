@@ -768,7 +768,7 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
             }
         }
         if (isCreate) {
-            gdo.net.app["Maps"].uploadObject(instanceId, tab, gdo.net.instance[instanceId].temp[tab], true);
+            gdo.net.app["Maps"].uploadObject(instanceId, tab, gdreo.net.instance[instanceId].temp[tab], true);
         } else {
             gdo.net.app["Maps"].uploadObject(instanceId, tab, eval("gdo.net.instance[" + instanceId + "]." + tab + "s[" + gdo.net.app["Maps"].selected[tab] + "]"), false);
         }

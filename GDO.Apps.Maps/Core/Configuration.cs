@@ -128,19 +128,6 @@ namespace GDO.Apps.Maps.Core
                 Values = new string[1],
             };
 
-            Datas = new ListParameter
-            {
-                Name = "Data",
-                Description = "List of Data Sources",
-                Priority = (int)GDO.Utility.Priorities.System,
-                IsEditable = false,
-                IsVisible = true,
-                IsProperty = false,
-                Length = 1,
-                DefaultValues = new string[1],
-                Values = new string[1],
-            };
-
             Views = new ListParameter
             {
                 Name = "Views",

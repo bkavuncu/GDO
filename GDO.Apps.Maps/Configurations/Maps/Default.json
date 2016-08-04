@@ -1,5 +1,8 @@
 {
    "$type":"GDO.Apps.Maps.Core.Map, GDO.Apps.Maps",
+    "Label":"Test",
+    "SubLabel":"Testing Stuff",
+    "ShowLabel":false,
     "Position":{
         "$type":"GDO.Apps.Maps.Core.Position, GDO.Apps.Maps",
         "TopLeft":{
@@ -31,11 +34,6 @@
       "$type":"GDO.Apps.Maps.Core.View[], GDO.Apps.Maps",
       "$values":[  
 
-      ]
-   },
-   "Datas":{
-      "$type":"GDO.Apps.Maps.Core.Data[], GDO.Apps.Maps",
-      "$values":[
       ]
    },
    "Formats":{

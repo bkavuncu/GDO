@@ -103,6 +103,16 @@
         public new int VariableType = (int)VariableTypes.Float;
     }
 
+    public class DoubleParameter : Parameter
+    {
+        public double? Value { get; set; }
+        public double? DefaultValue { get; set; }
+        public double? Increment { get; set; }
+        public new int InputType = (int)InputTypes.Float;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Float;
+    }
+
     public class ListParameter : Parameter
     {
         public string[] Values { get; set; }

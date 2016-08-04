@@ -18,7 +18,7 @@ using Style = GDO.Apps.Maps.Core.Style;
 
 namespace GDO.Apps.Maps
 {
-    public class MapsApp : IBaseAppInstanceu
+    public class MapsApp : IBaseAppInstance
     {
         public JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
@@ -38,7 +38,6 @@ namespace GDO.Apps.Maps
         public GenericDictionary<Source> Sources { get; set; }
         public GenericDictionary<Style> Styles { get; set; }
         public GenericDictionary<Format> Formats { get; set; }
-        public GenericDictionary<Data> Datas { get; set; }
         public GenericDictionary<Core.Configuration> Configurations { get; set; }
 
 
@@ -51,7 +50,6 @@ namespace GDO.Apps.Maps
             Sources = new GenericDictionary<Source>();
             Styles = new GenericDictionary<Style>();
             Formats = new GenericDictionary<Format>();
-            Datas = new GenericDictionary<Data>();
             Configurations = new GenericDictionary<Core.Configuration>();
 
             Views.Init();
@@ -59,9 +57,7 @@ namespace GDO.Apps.Maps
             Sources.Init();
             Styles.Init();
             Formats.Init();
-            Datas.Init();
             Configurations.Init();
-
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
 
             Label = Map.Label;
@@ -88,10 +84,6 @@ namespace GDO.Apps.Maps
             {
                 Views.Add((int)view.Id.Value, view);
             }
-            foreach (Data data in Map.Datas)
-            {
-                Datas.Add((int)data.Id.Value, data);
-            }
             ExtractConfigurations();
 
             Position = Map.Position;
@@ -106,7 +98,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(Label, SubLabel, ShowLabel, Position, Views.ToArray(), Datas.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(Label, SubLabel, ShowLabel, Position, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
@@ -168,14 +160,6 @@ namespace GDO.Apps.Maps
                 }
                 configuration.Formats.Values = tempFormats;
                 configuration.Formats.Length = tempFormats.Length;
-
-                string[] tempDatas = new string[tempMap.Datas.Length];
-                for (int i = 0; i < tempMap.Datas.Length; i++)
-                {
-                    tempDatas[i] = tempMap.Datas[i].Name.Value + " (" + tempMap.Datas[i].ClassName.Value + ")";
-                }
-                configuration.Datas.Values = tempDatas;
-                configuration.Datas.Length = tempDatas.Length;
 
                 string[] tempViews = new string[tempMap.Views.Length];
                 for (int i = 0; i < tempMap.Views.Length; i++)
@@ -700,77 +684,6 @@ namespace GDO.Apps.Maps
             }
         }
 
-        //Data
-
-        public int AddData<T>(Data data) where T : Data
-        {
-
-            try
-            {
-                int dataId = Datas.GetAvailableSlot();
-                data.Id.Value = dataId;
-                Datas.Add<T>(dataId, (T)data);
-                return dataId;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return -1;
-            }
-        }
-
-
-        public void UpdateData<T>(int dataId, T data) where T : Data
-        {
-            try
-            {
-                Datas.Update<T>(dataId, data);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        public string GetSerializedData(int dataId)
-        {
-            Data data = null;
-            if (Datas.Contains(dataId))
-            {
-                try
-                {
-                    data = Datas.GetValue<Data>(dataId);
-                }
-                catch (Exception e)
-                {
-                    data = null;
-                }
-            }
-            if (data != null)
-            {
-                string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(Datas.GetValue<Data>(dataId), JsonSettings);
-                return serializedData;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public bool RemoveData(int dataId)
-        {
-            try
-            {
-                Datas.Remove(dataId);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
-
         //Utilities
 
         public void SaveEmptyTemplate()
@@ -785,7 +698,6 @@ namespace GDO.Apps.Maps
         {
             string label = "";
             string sublabel = "";
-            List<Data> datas = new List<Data>();
             List<Format> formats = new List<Format>();
             List<Style> styles = new List<Style>();
             List<Source> sources = new List<Source>();
@@ -888,7 +800,7 @@ namespace GDO.Apps.Maps
             layers.Add(dynamicVectorLayer);
             layers.Add(staticVectorLayer);
 
-            Map map = new Map(label, sublabel, false, position, views.ToArray(), datas.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            Map map = new Map(label, sublabel, false, position, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
             return map;
         }
 

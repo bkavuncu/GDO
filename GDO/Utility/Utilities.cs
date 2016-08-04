@@ -172,7 +172,7 @@ namespace GDO.Utility
             }
         }
 
-        public static int CalculateTimeSpan(int?[] time, bool isDuration)
+        public static double CalculateTimeSpan(int?[] time, bool isDuration)
         {
             int[] temp = new int[7];
             for (int i = 0; i < 7; i++)
@@ -200,14 +200,14 @@ namespace GDO.Utility
 
                 for (int i = 0; i < 7; i++)
                 {
-                    total.Add(span[i]);
+                    total = total.Add(span[i]);
                 }
             }
             else
             {
-                total = new DateTime(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]) - DateTime.MinValue;
+                total = new DateTime(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]) - new DateTime(1970, 1, 1);
             }
-            return (int)total.TotalMilliseconds;
+            return total.TotalMilliseconds;
         }
 
         public static int CastToInt(int? val, int defVal)
@@ -219,6 +219,18 @@ namespace GDO.Utility
             else
             {
                 return (int) val;
+            }
+        }
+
+        public static double CastToDouble(double? val, double defVal)
+        {
+            if (val == null)
+            {
+                return defVal;
+            }
+            else
+            {
+                return (double)val;
             }
         }
 

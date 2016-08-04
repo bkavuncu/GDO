@@ -11,7 +11,7 @@ namespace GDO.Apps.Maps.Core.Layers
         public LinkParameter Source { get; set; }
         public TimeParameter StartTime { get; set; }
         public TimeParameter EndTime { get; set; }
-        public IntegerParameter CurrentTime { get; set; }
+        public DoubleParameter CurrentTime { get; set; }
         public IntegerParameter WaitTime { get; set; }
         public TimeParameter TimeStep { get; set; }
 
@@ -55,7 +55,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsProperty = false,
             };
 
-            CurrentTime = new IntegerParameter
+            CurrentTime = new DoubleParameter
             {
                 Name = "Last Animation Frame",
                 Description = "In Epoch Time from Start Time",
