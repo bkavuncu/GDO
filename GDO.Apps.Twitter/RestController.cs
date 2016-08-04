@@ -9,6 +9,11 @@ using GDO.Apps.Twitter.Core;
 
 namespace GDO.Apps.Twitter
 {
+    public class StatusMsg
+    {
+        public string Msg { get; set; }
+    }
+
     public class RestController
     {
 
@@ -50,6 +55,38 @@ namespace GDO.Apps.Twitter
                     }).ToArray();
         }
 
+        public string GetApiMessage()
+        {
+            string message = "Could not connect to API";
+            try
+            {
+                Task<StatusMsg> task = HttpClient.GetAsync("/API").ContinueWith(response =>
+                {
+
+                    if (!response.Result.IsSuccessStatusCode)
+                    {
+                        return new StatusMsg() {Msg = "Bad status code"};
+                    }
+                    Task<StatusMsg> result = response.Result.Content.ReadAsAsync<StatusMsg>();
+                    result.Wait();
+                    return result.Result;
+                });
+                task.Wait();
+                return task.Result.Msg;
+            }
+            catch (HttpRequestException rex)
+            {
+                Debug.WriteLine(rex.ToString());
+                return message;
+            }
+            catch (Exception ex)
+            {
+                // For debugging
+                Debug.WriteLine(ex.ToString());
+                return message;
+            }
+        }
+
         public DataSet GetDataSet(string id)
         {
             return Get<DataSet>("API/dataset/" + id);
@@ -60,14 +97,14 @@ namespace GDO.Apps.Twitter
             return Get<Analytics>("API/dataset/" + dataSetId + "/analytics/" + id);
         }
 
-        public string DownloadData(string dataSetId, string analyticsId, string filePath)
+        public string DownloadData(string dataSetId, string analyticsId, string filePath, string queryParams)
         {
             Debug.WriteLine("Attempting to dowload data for " + dataSetId + " " + analyticsId + " to " + filePath);
             try
             {
 
                 Task dataDownloadTask =
-                    HttpClient.GetAsync("/API/dataset/" + dataSetId + "/analytics/" + analyticsId +  "/data")
+                    HttpClient.GetAsync("/API/dataset/" + dataSetId + "/analytics/" + analyticsId +  "/data/dl?" + queryParams)
                         .ContinueWith(async responseTask =>
                         {
                             responseTask.Result.EnsureSuccessStatusCode();
@@ -103,7 +140,7 @@ namespace GDO.Apps.Twitter
         {
             Task<T> dataSetTask = HttpClient.GetAsync(url).ContinueWith(resposeTask =>
             {
-                HttpResponseMessage response = resposeTask.Result;
+                 HttpResponseMessage response = resposeTask.Result;
                 if (!response.IsSuccessStatusCode) return null;
                 Task<T> dataSetResponseTask = response.Content.ReadAsAsync<T>();
                 dataSetResponseTask.Wait();

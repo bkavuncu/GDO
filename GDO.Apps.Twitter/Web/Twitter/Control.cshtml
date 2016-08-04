@@ -115,6 +115,18 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-2">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Twitter API Status</h6>
+            </div>
+            <div class="panel-body">
+                <fieldset>
+                    <h6 id="message_from_api_server"></h6>
+                </fieldset>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-8">
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -407,7 +419,15 @@
                             gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.twitterVisSubType +
                             "</div>")
                         .css('overflow', 'hidden')
+                        .css("background", "#a7a100")
+                        .append("<div id='section_table_section_" +
+                            sectionId +
+                            "_c'> <b>&nbsp;File Path:</b> " +
+                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.filePath +
+                            "</div>")
+                        .css('overflow', 'hidden')
                         .css("background", "#a7a100");
+
                     $("#section_table_section_" + sectionId + "_i").css("background", "#b8b100");
                     $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #b8b100");
                 }

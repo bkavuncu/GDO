@@ -31,6 +31,26 @@ namespace GDO.Apps.Twitter
             Clients.Caller.receiveCaveStatus(instanceId, ta.GetPseudoCaveStatus());
         }
 
+        public void GetApiStatus(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    var ta = (TwitterApp)Cave.Apps["Twitter"].Instances[instanceId];
+                    string message = ta.RestController.GetApiMessage();
+                    //                    Clients.Caller.receiveApiStatusMessage(message);
+                    Debug.WriteLine("Status message: " + message);
+                    Clients.Caller.setAPIMessage(instanceId, message);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+                }
+            }
+        }
+
         public void GetPseudoCaveStatus(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

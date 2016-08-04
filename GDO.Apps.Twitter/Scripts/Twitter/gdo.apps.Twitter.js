@@ -8,6 +8,13 @@
         }
     }
 
+    $.connection.twitterAppHub.client.setAPIMessage = function (instanceId, message) {
+        gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.net.app["Twitter"].setAPIMessage(message);
+        }
+    }
+
     $.connection.twitterAppHub.client.receiveCaveStatus = function (instanceId, serialisedStatus) {
         gdo.consoleOut('.Twitter', 1, 'Received cave status');
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
@@ -100,6 +107,8 @@ gdo.net.app["Twitter"].initControl = function () {
     gdo.net.app["Twitter"].initialise(gdo.controlId);
     parent.gdo.net.app["Twitter"].requestDataSets();
     gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId);
+    gdo.net.app["Twitter"].server.getApiStatus(gdo.controlId);
+
 }
 
 gdo.net.app["Twitter"].updateDisplayCanvas = function (instanceId) {
@@ -163,9 +172,9 @@ gdo.net.app["Twitter"].deployApp = function (section) {
     }
 }
 gdo.net.app["Twitter"].deployStaticHTMLApp = function (sectionId, config, url) {
-    gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app');
+    gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + url + "'");
     var appInstanceId = gdo.net.server.deployBaseApp(sectionId, "StaticHTML", config);
-    gdo.net.app["StaticHTML"].server.setURL(appInstanceId, url);
+    gdo.net.app["StaticHTML"].server.setURL(1, url);
     console.log(appInstanceId);
     return appInstanceId;
 }

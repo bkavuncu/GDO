@@ -160,6 +160,10 @@ gdo.net.app["Twitter"].setMessage = function(message) {
     $("iframe").contents().find("#message_from_server").html(message);
 }
 
+gdo.net.app["Twitter"].setAPIMessage = function (message) {
+    $("iframe").contents().find("#message_from_api_server").html(message);
+}
+
 gdo.net.app["Twitter"].updateControlCanvas = function(instanceId) {
     gdo.consoleOut('.Twitter', 1, 'Updating control canvas');
     gdo.net.app["Twitter"].drawSectionTable(instanceId);

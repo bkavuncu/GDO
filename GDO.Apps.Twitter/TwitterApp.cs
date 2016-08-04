@@ -28,16 +28,21 @@ namespace GDO.Apps.Twitter
         public PseudoCave PseudoCave { get; set;}
 
         public string GraphAppBasePath { get; set; }
+        public string RelativePath { get; set; }
+        public string StaticHtmlBasePath { get; set; }
         public string ImageAppBasePath { get; set; }
         public string BasePath { get; set; }
+        
         public string ChartingAppUrl { get; set; }
 
         public void Init()
         {
             GraphAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
             ImageAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
+            StaticHtmlBasePath = HttpContext.Current.Server.MapPath("~/Web/StaticHTML/");
             BasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
-
+            RelativePath = "/Web/Twitter/data/";
+            Directory.CreateDirectory(BasePath);
             Directory.CreateDirectory(GraphAppBasePath);
             Directory.CreateDirectory(ImageAppBasePath);
             Directory.CreateDirectory(BasePath);
@@ -95,14 +100,15 @@ namespace GDO.Apps.Twitter
                 case "Graph":
                     PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Graph;
                     PseudoCave.Sections[sectionId].TwitterVis.AppType = "Graph";
-                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = 
-                        Download(dataSetId, analyticsId, GraphAppBasePath + analyticsId + ".graphml");
+                    
+                    Download(dataSetId, analyticsId, GraphAppBasePath + analyticsId + ".graphml", "type=graph");
+                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = analyticsId + ".graphml";
                     break;
                 case "Analytics":
                     PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
                     PseudoCave.Sections[sectionId].TwitterVis.AppType = "StaticHTML";
-                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = 
-                        Download(dataSetId, analyticsId, BasePath + analyticsId + ".dat");
+                    Download(dataSetId, analyticsId, BasePath + analyticsId + ".html", "type=chart");
+                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = RelativePath + analyticsId + ".html";
                     break;
                 default:
                     PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Unknown;
@@ -115,15 +121,15 @@ namespace GDO.Apps.Twitter
 
         }
 
-        private string Download(string dataSetId , string analyticsId, string path)
+        private string Download(string dataSetId , string analyticsId, string path, string queryParams)
         {
             if (File.Exists(path))
             {  // if the file already exists, delete it
-                Debug.WriteLine("File already exists will not re download");
+                Debug.WriteLine("File already exists will not re download: " + path);
                 return path;
             }
 
-            var filePath  = RestController.DownloadData(dataSetId, analyticsId, path);
+            var filePath  = RestController.DownloadData(dataSetId, analyticsId, path, queryParams);
             Debug.WriteLine("File downloaded to " + filePath);
             return filePath;
         }
