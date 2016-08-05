@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
+using System.Threading;
 using GDO.Apps.Maps.Core;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
@@ -591,6 +586,12 @@ namespace GDO.Apps.Maps
                 try
                 {
                     MapsApp maps = ((MapsApp) Cave.Apps["Maps"].Instances[instanceId]);
+                    DynamicLayer layer = maps.GetLayer<DynamicLayer>(layerId);
+                    if (layer != null)
+                    {
+                        StopLayer(instanceId, layerId);
+                        System.Threading.Thread.Sleep(200);
+                    }
                     maps.RemoveLayer(layerId);
                     BroadcastLayer(instanceId, layerId);
                 }
@@ -602,6 +603,19 @@ namespace GDO.Apps.Maps
         }
 
         public void PlayLayer(int instanceId, int layerId)
+        {
+            try
+            {
+                var thread = new Thread(() => AnimateLayer(instanceId,layerId));
+                thread.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void AnimateLayer(int instanceId, int layerId)
         {
             try
             {
@@ -628,19 +642,20 @@ namespace GDO.Apps.Maps
                             }
                             else
                             {
-                                //if (Utilities.CastToBool(layer.IsLooping.Value, false))
-                                //{
-                                //    currentTime = 0;
-                                //}
-                                //else
-                                //{ 
+                                if (Utilities.CastToBool(layer.IsLooping.Value, false))
+                                {
                                     currentTime = 0;
+                                }
+                                else
+                                {
                                     layer.IsPlaying.Value = false;
-                                    Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
-                                //}
-                            }
+                                    currentTime = 0;
 
+
+                                }
+                            }
                         }
+                        Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
                     }
                 }
             }
@@ -679,6 +694,7 @@ namespace GDO.Apps.Maps
                     layer.IsPlaying.Value = false;
                     layer.CurrentTime.Value = 0;
                     BroadcastLayer(instanceId, layerId);
+                    System.Threading.Thread.Sleep(200);
                     Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
                 }
             }

@@ -262,7 +262,7 @@ gdo.management.scenarios.addElementToUI = function (element) {
         case gdo.management.scenarios.ELEMENT_STATUS.CURRENT:
             color = '#4CBFF8';
             if (element.DefaultWait != element.Wait) {
-                icon = 'fa-spinner';
+                icon = 'fa-spinner fa-spin';
             } else {
                 icon = 'fa-pause';
             }

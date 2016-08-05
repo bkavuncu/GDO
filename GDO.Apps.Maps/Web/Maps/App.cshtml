@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="../../Scripts/Maps/ol.css" type="text/css">
     <title></title>
     <style>
@@ -24,6 +24,7 @@
             -o-user-select: none;
             user-select: none;
         }
+
         .map:-moz-full-screen {
             height: 100%;
         }
@@ -35,10 +36,11 @@
         .map:-ms-fullscreen {
             height: 100%;
         }
-        
+
         .ol-rotate {
             top: 3em;
         }
+
         .map {
             position: fixed;
             top: 0;
@@ -48,33 +50,51 @@
             border: 0 none;
             z-index: 9;
         }
-        .timelabel {
+
+        .datalabel {
             position: absolute;
             top: 140px;
             left: 140px;
-            width: 550px;
+            width: 777px;
+            height: 280px;
+            border: 0 none;
+            z-index: 1000;
+            background: #222;
+            color: #FFF;
+            font-family: helvetica;
+            font-size: 99px;
+            padding: 20px;
+            visibility: hidden;
+        }
+
+        .datasublabel {
+            position: absolute;
+            top: 390px;
+            left: 140px;
+            width: 777px;
             height: 230px;
             border: 0 none;
             z-index: 1000;
             background: #222;
-            color: #FFF;
+            color: #999;
             font-family: helvetica;
-            font-size: 210px;
+            font-size: 49px;
             padding: 20px;
             visibility: hidden;
         }
-        .datalabel {
+
+        .timelabel {
             position: absolute;
             top: 140px;
             right: 140px;
-            width: 840px;
-            height: 240px;
+            width: 777px;
+            height: 287px;
             border: 0 none;
             z-index: 1000;
             background: #222;
             color: #FFF;
             font-family: helvetica;
-            font-size: 100px;
+            font-size: 128px;
             padding: 20px;
             visibility: hidden;
         }
@@ -83,7 +103,7 @@
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-        <script>
+    <script>
             $(function () {
                 $(document).ready(function () {
                     var gdo = parent.gdo;
@@ -100,6 +120,7 @@
     </div>
     <div><div id="timelabel" class="timelabel" style="z-index: 1000"></div></div>
     <div><div id="datalabel" class="datalabel" style="z-index:1000"></div></div>
+    <div><div id="datasublabel" class="datasublabel" style="z-index:1000"></div></div>
     <script type="text/javascript" src="../../Scripts/Maps/ol3/ol.js"></script>
     <script src="../../Scripts/Maps/Cesium/Cesium.js"></script>
     <script src="../../Scripts/Maps/ol3cesium.js"></script>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using GDO.Apps.Maps.Core;
 using GDO.Apps.Maps.Core.Layers;
@@ -224,90 +225,6 @@ namespace GDO.Apps.Maps
             Map.ShowLabel = visible;
         }
 
-        //Layer
-
-        public int AddLayer<T>(Layer layer) where T : Layer
-        {
-
-            try
-            {
-                int layerId = Layers.GetAvailableSlot();
-                layer.Id.Value = layerId;
-                Layers.Add<T>(layerId, (T)layer);
-                return layerId;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return -1;
-            }
-        }
-
-        public void UpdateLayer<T>(int layerId, T layer) where T : Layer
-        {
-            try
-            {
-                Layers.Update<T>(layerId, layer);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-        
-
-        public string GetSerializedLayer(int layerId)
-        {
-            Layer layer = null;
-            if (Layers.Contains(layerId))
-            {
-                try
-                {
-                    layer = Layers.GetValue<Layer>(layerId);
-                }
-                catch (Exception e)
-                {
-                    layer = null;
-                }
-            }
-            if (layer != null)
-            {
-                string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId), JsonSettings);
-                return serializedLayer;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public bool RemoveLayer(int layerId)
-        {
-            try
-            {
-                Layers.Remove(layerId);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
-
-        public T GetLayer<T>(int layerId) where T : Layer
-        {
-            try
-            {
-                return Layers.GetValue<T>(layerId);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return null;
-            }
-        }
-
         //View
         public int AddView(View view)
         {
@@ -447,6 +364,94 @@ namespace GDO.Apps.Maps
             return MarkerPosition;
         }
 
+        //Layer
+
+        public int AddLayer<T>(Layer layer) where T : Layer
+        {
+
+            try
+            {
+                int layerId = Layers.GetAvailableSlot();
+                layer.Id.Value = layerId;
+                Layers.Add<T>(layerId, (T)layer);
+                return layerId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
+        }
+
+        public void UpdateLayer<T>(int layerId, T layer) where T : Layer
+        {
+            try
+            {
+                foreach (PropertyInfo property in typeof(T).GetProperties())
+                {
+                    property.SetValue(Layers.GetValue<T>(layerId), property.GetValue(layer, null), null);
+                }
+                //Layers.Update<T>(layerId, layer);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+
+        public string GetSerializedLayer(int layerId)
+        {
+            Layer layer = null;
+            if (Layers.Contains(layerId))
+            {
+                try
+                {
+                    layer = Layers.GetValue<Layer>(layerId);
+                }
+                catch (Exception e)
+                {
+                    layer = null;
+                }
+            }
+            if (layer != null)
+            {
+                string serializedLayer = Newtonsoft.Json.JsonConvert.SerializeObject(Layers.GetValue<Layer>(layerId), JsonSettings);
+                return serializedLayer;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveLayer(int layerId)
+        {
+            try
+            {
+                Layers.Remove(layerId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public T GetLayer<T>(int layerId) where T : Layer
+        {
+            try
+            {
+                return Layers.GetValue<T>(layerId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
         //Source
 
         public int AddSource<T>(Source source) where T : Source
@@ -470,7 +475,11 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Sources.Update<T>(sourceId, source);
+                foreach (PropertyInfo property in typeof(T).GetProperties())
+                {
+                    property.SetValue(Sources.GetValue<T>(sourceId), property.GetValue(source, null), null);
+                }
+                //Sources.Update<T>(sourceId, source);
             }
             catch (Exception e)
             {
@@ -519,31 +528,6 @@ namespace GDO.Apps.Maps
             }
         }
 
-        //Control
-
-        public int AddControl()
-        {
-
-            return -1;
-        }
-
-        public bool UpdateControl(int controlId)
-        {
-
-            return false;
-        }
-
-        public string GetSerializedControl(int controlId)
-        {
-            return "";
-        }
-
-        public bool RemoveControl(int controlId)
-        {
-
-            return false;
-        }
-
         //Style
         public int AddStyle<T>(Style style) where T : Style
         {
@@ -566,7 +550,11 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Styles.Update<T>(styleId, style);
+                foreach (PropertyInfo property in typeof(T).GetProperties())
+                {
+                    property.SetValue(Styles.GetValue<T>(styleId), property.GetValue(style, null), null);
+                }
+                //Styles.Update<T>(styleId, style);
             }
             catch (Exception e)
             {
@@ -637,7 +625,11 @@ namespace GDO.Apps.Maps
         {
             try
             {
-                Formats.Update<T>(formatId, format);
+                foreach (PropertyInfo property in typeof(T).GetProperties())
+                {
+                    property.SetValue(Formats.GetValue<T>(formatId), property.GetValue(format, null), null);
+                }
+                //Formats.Update<T>(formatId, format);
             }
             catch (Exception e)
             {

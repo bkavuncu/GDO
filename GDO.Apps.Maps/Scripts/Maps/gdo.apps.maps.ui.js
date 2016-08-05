@@ -74,30 +74,39 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
 
 
             var color = "white";
-            var icon = "";
+            var icon1 = "";
+            var color1 = "white";
+            var icon2 = "";
+            var color2 = "white";
 
             if (tab == "layer") {
                 if (arr[i].properties.isInitialized) {
                     if (arr[i].properties.Visible.Value) {
-                        icon = "fa-eye";
+                        icon2 = "fa-eye";
                         color = "white";
+                        color2 = "#4CBFF8";
                     } else {
-                        icon = "fa-eye-slash";
+                        icon2 = "fa-eye-slash";
                         color = "gray";
+                        color2 = "#2A9DD6";
                     }
-                }
-                if (arr[i].canAnimate) {
-                    icon = "fa-play";
-                    color = "white";
-                }
-                if (arr[i].isAnimating) {
-                    icon = "fa-spinner";
+                    if (arr[i].properties.IsPlaying != null && arr[i].properties.IsPlaying != "undefined") {
+                        if (arr[i].properties.IsPlaying.Value) {
+                            icon1 = "fa-spinner fa-spin";
+                            color1 = "#4CBFF8";
+                        } else if (arr[i].properties.CurrentTime.Value > 0) {
+                            icon1 = "fa-pause";
+                            color1 = "#FF8800";
+                        } else {
+                            icon1 = "fa-play";
+                            color1 = "#99D522";
+                        }
+                    }
+                } else {
+                    icon2 = " fa-plus";
                     color = "#77B200";
                 }
-            }
-            if (!arr[i].properties.isInitialized) {
-                icon = " fa-plus";
-                color = "#77B200";
+
             }
             if (gdo.net.app["Maps"].selected[tab] == arr[i].properties.Id.Value) {
                 color = "#4CBFF8";
@@ -108,8 +117,9 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
                 .css("width", "100%")
                 .append("<div class='" + tab + "_" + arr[i].properties.Id.Value + "_content table'  " + tab + "Id='" + arr[i].properties.Id.Value + "' style='color:" + color + "'>" +
                         "<div class='" + tab + "_" + arr[i].properties.Id.Value + "_id col-md-2'  " + tab + "Id='" + arr[i].properties.Id.Value + "'> &nbsp;&nbsp;" + arr[i].properties.Id.Value + "</div>" +
-                        "<div class='" + tab + "_" + arr[i].properties.Id.Value + "_name col-md-8'  " + tab + "Id='" + arr[i].properties.Id.Value + "'> " + arr[i].properties.Name.Value + "</div>" +
-                        "<div class='" + tab + "_" + arr[i].properties.Id.Value + "_icon col-md-1'  " + tab + "Id='" + arr[i].properties.Id.Value + "'><i class='fa " + icon + "'></i></div>" +
+                        "<div class='" + tab + "_" + arr[i].properties.Id.Value + "_name col-md-7'  " + tab + "Id='" + arr[i].properties.Id.Value + "'> " + arr[i].properties.Name.Value + "</div>" +
+                        "<div class='" + tab + "_" + arr[i].properties.Id.Value + "_icon1 col-md-1'  " + tab + "Id='" + arr[i].properties.Id.Value + "'><i class='fa " + icon1 + "' style='color:" + color1 + "'/></div>" +
+                        "<div class='" + tab + "_" + arr[i].properties.Id.Value + "_icon2 col-md-1'  " + tab + "Id='" + arr[i].properties.Id.Value + "'><i class='fa " + icon2 + "' style='color:" + color2 + "'/></div>" +
                     "</div>");
             $("iframe").contents().find("." + tab + "_" + arr[i].properties.Id.Value + "_content").unbind().click(function () {
                 gdo.net.app["Maps"].selected[tab] = $(this).attr(tab + "Id");
@@ -736,7 +746,7 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
             if (!properties.hasOwnProperty((key))) {
                 continue;
             } else if (key != "Id" && key != "ClassName" && key != "Type" && key != "ObjectType" && key != "$type" && property.IsVisible) {
-                if (property.ParameterType == 0 ||property.ParameterType == 4) {
+                if (property.ParameterType == 0 || property.ParameterType == 4) {
                     property.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#" + tab + c + "_property_" + key + "_value_input"), property.VariableType);
                     if (property.Value == null) {
                         property.IsNull = true;
@@ -768,7 +778,7 @@ gdo.net.app["Maps"].submitSaveButton = function (instanceId, tab, isCreate) {
             }
         }
         if (isCreate) {
-            gdo.net.app["Maps"].uploadObject(instanceId, tab, gdreo.net.instance[instanceId].temp[tab], true);
+            gdo.net.app["Maps"].uploadObject(instanceId, tab, gdo.net.instance[instanceId].temp[tab], true);
         } else {
             gdo.net.app["Maps"].uploadObject(instanceId, tab, eval("gdo.net.instance[" + instanceId + "]." + tab + "s[" + gdo.net.app["Maps"].selected[tab] + "]"), false);
         }
@@ -794,7 +804,13 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
     $("iframe").contents().find(".show-label-button")
     .unbind()
     .click(function () {
-        if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
+        if ($("iframe").contents().find(".show-label-button").is(".btn-success")) {
+            gdo.net.app["Maps"].server.setLabelVisible(instanceId, false);
+        } else {
+            gdo.net.app["Maps"].server.setLabelVisible(instanceId, true);
+        }
+
+        /*if (gdo.net.app["Maps"].selected["configuration"] >= 0) {
             var configName;
             for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
                 if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
@@ -807,7 +823,7 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                     }
                 }
             }
-        }
+        }*/
     });
 
     $("iframe").contents().find(".layer-play-button")
