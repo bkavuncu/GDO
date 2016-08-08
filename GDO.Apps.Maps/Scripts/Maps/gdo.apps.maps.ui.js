@@ -1126,8 +1126,10 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
                 var configName;
                 for (var i = 0; i < gdo.net.instance[instanceId].configurations.length; i++) {
                     if (gdo.net.instance[instanceId].configurations[i].properties.Name.Value == gdo.net.instance[instanceId].configName) {
+                        gdo.net.instance[instanceId].configurations[i].properties.Label.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#configuration_property_Label_value_input"), 3);
+                        gdo.net.instance[instanceId].configurations[i].properties.SubLabel.Value = gdo.net.app["Maps"].readValueFromInput($("iframe").contents().find("#configuration_property_SubLabel_value_input"), 3);
                         gdo.net.app["Maps"].server.updateLabel(instanceId, gdo.net.instance[instanceId].configurations[i].properties.Label.Value, gdo.net.instance[instanceId].configurations[i].properties.SubLabel.Value);
-                        gdo.net.app["Maps"].server.setLabelVisible(instanceId, gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value);
+                        //gdo.net.app["Maps"].server.setLabelVisible(instanceId, gdo.net.instance[instanceId].configurations[i].properties.ShowLabel.Value);
                     }
                 }
             }

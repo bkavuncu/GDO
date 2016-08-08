@@ -150,7 +150,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                         object.sources[i] = {};
                         object.sources[i] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
-                        object.sources[i].date = parseDate(config.files[i].timestamp);
+                        object.sources[i].date = new Date(config.files[i].timestamp);
                         object.timestamps[i] = object.sources[i].date.getTime();
                     }
                 }

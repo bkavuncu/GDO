@@ -12,9 +12,8 @@ namespace GDO.Apps.Maps.Core.Layers
         public TimeParameter StartTime { get; set; }
         public TimeParameter EndTime { get; set; }
         public DoubleParameter CurrentTime { get; set; }
-        public IntegerParameter WaitTime { get; set; }
         public TimeParameter TimeStep { get; set; }
-
+        public IntegerParameter WaitTime { get; set; }
         public BooleanParameter IsLooping { get; set; }
         public BooleanParameter IsPlaying { get; set; }
 

@@ -104,7 +104,6 @@ $(function () {
 
     $.connection.mapsAppHub.client.receiveTimeStep = function (instanceId, layerId, timeStep) {
         var index = getClosest(timeStep, gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].timestamps);
-        //gdo.checkpoint(index);
         gdo.net.instance[instanceId].layers[layerId].setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].sources[index]);
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL
             && gdo.net.node[gdo.clientId].sectionCol == gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols - 1
@@ -122,6 +121,7 @@ $(function () {
         }
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#datalabel").empty().append(label);
+            $("iframe").contents().find("#datasublabel").empty().append(sublabel);
         }
     }
 

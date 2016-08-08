@@ -655,7 +655,7 @@ namespace GDO.Apps.Maps
                                 }
                             }
                         }
-                        Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
+                        Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, (currentTime + startTime));
                     }
                 }
             }
