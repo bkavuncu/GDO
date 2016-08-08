@@ -139,10 +139,13 @@ gdo.net.app["Twitter"].uiProperties = {
 gdo.net.app["Twitter"].initialise = function(instanceId) {
     gdo.consoleOut('.Twitter', 1, 'Initialising UI Variables');
     gdo.net.instance[instanceId].control = {
+        selectedNewAnalytics : [],
+        selectedDataSet : -1,
         selectedSection: -1,
         selectedAnalytics: null,
         selectedDataSets: [],
-        analyticsDisplay: {}
+        analyticsDisplay: {},
+        selectedGraphApps: []
     }
     
 }
@@ -160,14 +163,51 @@ gdo.net.app["Twitter"].setMessage = function(message) {
     $("iframe").contents().find("#message_from_server").html(message);
 }
 
-gdo.net.app["Twitter"].setAPIMessage = function (message) {
-    $("iframe").contents().find("#message_from_api_server").html(message);
+gdo.net.app["Twitter"].setAPIMessage = function (instanceId, message) {
+    $("iframe").contents().find("#message_from_api_server").html(message.msg);
+    gdo.net.instance[instanceId].apiStatus = message.healthy;
+
+    if (!gdo.net.instance[instanceId].apiStatus) {
+        $("iframe")
+            .contents()
+            .find("#message_panel")
+            .removeClass("panel-success")
+            .addClass("panel-danger");
+        $("iframe")
+            .contents()
+            .find("#status-panel")
+            .removeClass("panel-success")
+            .addClass("panel-danger");
+        $("iframe")
+            .contents()
+            .find("#admin-panel")
+            .removeClass("panel-success")
+            .addClass("panel-danger");
+    } else {
+        $("iframe")
+           .contents()
+           .find("#message_panel")
+            .removeClass("panel-danger")
+            .addClass("panel-success");
+        $("iframe")
+            .contents()
+            .find("#status-panel")
+            .removeClass("panel-danger")
+            .addClass("panel-success");
+        $("iframe")
+            .contents()
+            .find("#admin-panel")
+            .removeClass("panel-danger")
+            .addClass("panel-success");
+    }
+
 }
 
 gdo.net.app["Twitter"].updateControlCanvas = function(instanceId) {
     gdo.consoleOut('.Twitter', 1, 'Updating control canvas');
     gdo.net.app["Twitter"].drawSectionTable(instanceId);
     gdo.net.app["Twitter"].drawButtonTable(instanceId);
+    gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
 }
 
 gdo.net.app["Twitter"].selectNodes = function(instanceId) {
@@ -234,8 +274,10 @@ gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, analyti
                 "<td><font size='3'>" + analytics[i]["Description"] + "</font></td>" +
                 "<td><font size='3'>" + analytics[i]["Status"] + "</font></td>" +
                 "</tr>");
-
-        if (analytics[i]["Type"] === "Graph") {
+        if (analytics[i]["Status"] !== "FINISHED") {
+            continue;
+        }
+        if (analytics[i]["Classification"] === "Graph") {
             $("iframe").contents().find("#items_graphs_" + listNumber).append("" +
                 "<li><a href='#' class='list-group-item'>" +
                 "<div>" + analytics[i]["Id"] + "</div>" +
@@ -263,4 +305,21 @@ gdo.net.app["Twitter"].updateDataSetTable = function(instanceId, dataSets) {
                     "</tr>");
         }
     }
+}
+
+gdo.net.app["Twitter"].updateAnalyticsOptionsTable = function(instanceId, analyticsOptions) {
+    gdo.net.instance[instanceId].data.analyticsOptions = analyticsOptions;
+    $("iframe").contents().find("#analytics_options_table tbody tr").remove();
+
+    for (var i = 0; i < analyticsOptions.length; i++) {
+        var analyticsClassification = analyticsOptions[i];
+        for (var j = 0; j < analyticsClassification.types.length; j++) {
+            $("iframe").contents().find("#analytics_options_table tbody").append("" +
+                   "<tr>" +
+                   "<td><font size='3'>" + analyticsClassification.classification + "</font></td>" +
+                   "<td><font size='3'>" + analyticsClassification.types[j].type + "</font></td>" +
+                   "</tr>");
+        }
+    }
+
 }

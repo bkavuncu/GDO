@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.Twitter.Core
 { 
@@ -66,4 +67,30 @@ namespace GDO.Apps.Twitter.Core
         public string Classification { get; set; }
         public string Type { get; set; }
     }
+
+    [DataContract]
+    public class AnalyticsOption
+    {
+        [DataMember(Name = "classification")]
+        public string Classification { get; set; }
+        [DataMember(Name = "types")]
+        public List<AnalyticsType> Types { get; set; }
+    }
+
+    [DataContract]
+    public class AnalyticsType
+    {
+        [DataMember(Name = "type")]
+        public string Type;
+    }
+
+    [DataContract]
+    public class StatusMsg
+    {
+        [DataMember(Name="msg")]
+        public string Msg { get; set; }
+        [DataMember(Name="healthy")]
+        public bool Healthy { get; set; }
+    }
+
 }

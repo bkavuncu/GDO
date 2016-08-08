@@ -28,11 +28,11 @@ namespace GDO.Apps.Twitter
         public PseudoCave PseudoCave { get; set;}
 
         public string GraphAppBasePath { get; set; }
-        public string RelativePath { get; set; }
         public string StaticHtmlBasePath { get; set; }
         public string ImageAppBasePath { get; set; }
-        public string BasePath { get; set; }
-        
+
+        public string TwitterBasePath { get; set; }
+        public string TwitterRelativePath { get; set; }
         public string ChartingAppUrl { get; set; }
 
         public void Init()
@@ -40,12 +40,13 @@ namespace GDO.Apps.Twitter
             GraphAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
             ImageAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             StaticHtmlBasePath = HttpContext.Current.Server.MapPath("~/Web/StaticHTML/");
-            BasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
-            RelativePath = "/Web/Twitter/data/";
-            Directory.CreateDirectory(BasePath);
+            TwitterBasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
+            TwitterRelativePath = "/Web/Twitter/data/";
+
+            Directory.CreateDirectory(TwitterBasePath);
             Directory.CreateDirectory(GraphAppBasePath);
             Directory.CreateDirectory(ImageAppBasePath);
-            Directory.CreateDirectory(BasePath);
+            Directory.CreateDirectory(TwitterBasePath);
 
             var apiAddress = (string) Configuration.Json.SelectToken("api_address");
             RestController = new RestController(new Uri(apiAddress));
@@ -60,30 +61,34 @@ namespace GDO.Apps.Twitter
             return PseudoCave.CloneCaveState(Cave.Nodes, Cave.Sections, Section.Id).SerializeJSON();
         }
 
-        public string CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-            return PseudoCave.CreateSection(colStart, rowStart, colEnd, rowEnd).SerializeJSON();
+            PseudoCave.CreateSection(colStart, rowStart, colEnd, rowEnd);
         }
 
-        public int RemoveSection(int sectionId)
+        public void CloseSections(List<int> sectionIds)
         {
-            return PseudoCave.SoftRemoveSection(sectionId);
+            PseudoCave.CloseSections(sectionIds);
         }
         
-
-        public string DeployApps(List<int> sectionIds)
+        public void DeployApps(List<int> sectionIds)
         {
-            return JsonConvert.SerializeObject(PseudoCave.DeployApps(sectionIds));
+            PseudoCave.DeployApps(sectionIds);
         }
 
-        public int CloseApp(int sectionId)
+        public void CloseApps(List<int> sectionIds)
         {
-            return PseudoCave.CloseApp(sectionId);
+            PseudoCave.CloseApps(sectionIds);
         }
 
-        public void ClearCave(out List<int> sectionIds, out List<int> appInstanceIds)
+        public void ConfirmLaunch(List<int> sectionIds)
         {
-            PseudoCave.ClearCave(out sectionIds, out appInstanceIds);
+            PseudoCave.ConfirmLaunch(sectionIds);
+        }
+
+        public void ClearCave()
+        {
+            PseudoCave.ClearCave();
         }
 
         public void UnLoadVisualisation(int sectionId)
@@ -93,6 +98,7 @@ namespace GDO.Apps.Twitter
 
         public void LoadVisualisation(int sectionId, string analyticsId, string dataSetId)
         {
+            PseudoCave.LoadVisualisation(sectionId);
             var analytics = RestController.GetAnalytics(dataSetId, analyticsId);
 
             switch (analytics.Classification)
@@ -107,8 +113,8 @@ namespace GDO.Apps.Twitter
                 case "Analytics":
                     PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
                     PseudoCave.Sections[sectionId].TwitterVis.AppType = "StaticHTML";
-                    Download(dataSetId, analyticsId, BasePath + analyticsId + ".html", "type=chart");
-                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = RelativePath + analyticsId + ".html";
+                    Download(dataSetId, analyticsId, TwitterBasePath + analyticsId + ".html", "type=chart");
+                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
                     break;
                 default:
                     PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Unknown;
@@ -134,6 +140,11 @@ namespace GDO.Apps.Twitter
             return filePath;
         }
 
+        public string GetApiMessage()
+        {
+            return JsonConvert.SerializeObject(RestController.GetApiMessage());
+        }
+
         public string GetAnalytics(List<string> dataSetIds)
         {
             return JsonConvert.SerializeObject(dataSetIds.ToDictionary(dsId => dsId, ds => RestController.GetAnalyticsMetas(ds).ToArray()));
@@ -144,5 +155,14 @@ namespace GDO.Apps.Twitter
             return JsonConvert.SerializeObject(RestController.GetDataSetMetas().ToDictionary(ds => ds.Id, ds => ds));
         }
 
+        public string GetAnalyticsOptions()
+        {
+            return JsonConvert.SerializeObject(RestController.GetAnalyticsOptions());
+        }
+
+        public void GetNewAnalytics(List<NewAnalyticsRequest> newAnalyticsRequests)
+        {
+            RestController.GetNewAnalytics(newAnalyticsRequests);
+        }
     }
 }

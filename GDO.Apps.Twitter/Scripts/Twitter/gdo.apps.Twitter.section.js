@@ -11,6 +11,30 @@
     }
 }
 
+gdo.net.app["Twitter"].drawEmptySectionControlTable = function (maxCol, maxRow) {
+    $("iframe").contents().find("#section_table_control").empty();
+    for (var i = 0; i < maxRow; i++) {
+        $("iframe").contents().find("#section_table_control")
+            .append("<tr id='section_control_table_row_" + i + "' row='" + i + "'/>");
+        for (var j = 0; j < maxCol; j++) {
+            $("iframe")
+                .contents()
+                .find("#section_table_control tr:last")
+                .append("<td  id='section_control_table_row_" +
+                    i +
+                    "_col_" +
+                    j +
+                    "' col='" +
+                    j +
+                    "' row='" +
+                    i +
+                    "'/>");
+//                .css('overflow', 'hidden');
+        }
+    }
+}
+
+
 gdo.net.app["Twitter"].drawButtonTable = function (instanceId) {
 
     //Create Section

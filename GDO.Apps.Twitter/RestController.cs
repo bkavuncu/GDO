@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,22 +7,18 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using GDO.Apps.Twitter.Core;
+using Newtonsoft.Json;
 
 namespace GDO.Apps.Twitter
 {
-    public class StatusMsg
-    {
-        public string Msg { get; set; }
-    }
+
 
     public class RestController
     {
-
         private HttpClient HttpClient { get; }
 
         public RestController(Uri url)
         {
-
             HttpClient = new HttpClient {BaseAddress = url};
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                 "Y3BzMTVfdXNlcjpzZWNyZXQ=");
@@ -30,6 +27,10 @@ namespace GDO.Apps.Twitter
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
         }
 
+        public List<NewAnalyticsRequest> GetNewAnalytics(List<NewAnalyticsRequest> newAnalyticsList)
+        {
+            return newAnalyticsList.Select(r => Post("API/dataset/" + r.dataset_id + "/analytics", r)).ToList();
+        }
 
         public DataSetMeta[] GetDataSetMetas()
         {
@@ -45,7 +46,8 @@ namespace GDO.Apps.Twitter
         public AnalyticsMeta[] GetAnalyticsMetas(string dataSetId)
         {
             return
-                (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).Select(an => new AnalyticsMeta()
+                (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).Select(
+                    an => new AnalyticsMeta()
                     {
                         Id = an.Id,
                         Description = an.Description,
@@ -55,35 +57,38 @@ namespace GDO.Apps.Twitter
                     }).ToArray();
         }
 
-        public string GetApiMessage()
+        public AnalyticsOption[] GetAnalyticsOptions()
         {
-            string message = "Could not connect to API";
+            return Get<AnalyticsOption[]>("API/analytics_options") ?? new AnalyticsOption[0];
+        }
+
+        public StatusMsg GetApiMessage()
+        {
+            StatusMsg defaultStatusMsg = new StatusMsg() {Msg = "Could not connect to API", Healthy = false};
             try
             {
                 Task<StatusMsg> task = HttpClient.GetAsync("/API").ContinueWith(response =>
                 {
-
-                    if (!response.Result.IsSuccessStatusCode)
+                    if (response.IsFaulted || response.IsCanceled || !response.Result.IsSuccessStatusCode)
                     {
-                        return new StatusMsg() {Msg = "Bad status code"};
+                        return new StatusMsg() {Msg = "Bad status code", Healthy = false};
                     }
                     Task<StatusMsg> result = response.Result.Content.ReadAsAsync<StatusMsg>();
                     result.Wait();
                     return result.Result;
                 });
                 task.Wait();
-                return task.Result.Msg;
+                return task.Result;
             }
             catch (HttpRequestException rex)
             {
                 Debug.WriteLine(rex.ToString());
-                return message;
+                return defaultStatusMsg;
             }
             catch (Exception ex)
             {
-                // For debugging
                 Debug.WriteLine(ex.ToString());
-                return message;
+                return defaultStatusMsg;
             }
         }
 
@@ -102,9 +107,9 @@ namespace GDO.Apps.Twitter
             Debug.WriteLine("Attempting to dowload data for " + dataSetId + " " + analyticsId + " to " + filePath);
             try
             {
-
                 Task dataDownloadTask =
-                    HttpClient.GetAsync("/API/dataset/" + dataSetId + "/analytics/" + analyticsId +  "/data/dl?" + queryParams)
+                    HttpClient.GetAsync("/API/dataset/" + dataSetId + "/analytics/" + analyticsId + "/data/dl?" +
+                                        queryParams)
                         .ContinueWith(async responseTask =>
                         {
                             responseTask.Result.EnsureSuccessStatusCode();
@@ -114,7 +119,6 @@ namespace GDO.Apps.Twitter
                             {
                                 //copy the content from response to filestream
                                 await responseTask.Result.Content.CopyToAsync(fileStream);
-
                             }
                             return filePath;
                         });
@@ -135,12 +139,29 @@ namespace GDO.Apps.Twitter
             }
         }
 
+        public T Post<T>(string url, T postValue) where T: class
+        {
+            Task <T> postTask = HttpClient.PostAsJsonAsync(url, postValue).ContinueWith(responseTask =>
+            {
+                HttpResponseMessage response = responseTask.Result;
+                if (!response.IsSuccessStatusCode) return null;
+                Task<T> dataSetResponseTask = response.Content.ReadAsAsync<T>();
+                dataSetResponseTask.Wait();
+                return dataSetResponseTask.Result;
+            });
+            postTask.Wait();
+            return postTask.Result;
+        }
 
         public T Get<T>(string url) where T : class
         {
             Task<T> dataSetTask = HttpClient.GetAsync(url).ContinueWith(resposeTask =>
             {
-                 HttpResponseMessage response = resposeTask.Result;
+                if (resposeTask.IsFaulted || resposeTask.IsCanceled)
+                {
+                    return null;
+                }
+                HttpResponseMessage response = resposeTask.Result;
                 if (!response.IsSuccessStatusCode) return null;
                 Task<T> dataSetResponseTask = response.Content.ReadAsAsync<T>();
                 dataSetResponseTask.Wait();

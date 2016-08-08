@@ -13,43 +13,28 @@ namespace GDO.Apps.Twitter.Core
         public Dictionary<int, Node> Nodes { get; set; } = new Dictionary<int, Node>();
         [JsonProperty(PropertyName = "sections")]
         public Dictionary<int, Section> Sections { get; set; } = new Dictionary<int, Section>();
-        [JsonProperty(PropertyName = "sectionSandbox")]
-        public List<Section> SectionSandbox { get; set; } = new List<Section>();
-        [JsonProperty(PropertyName = "sectionTrash")]
-        public List<Section> SectionTrash { get; set; } = new List<Section>();
+
+        [JsonProperty(PropertyName = "sectionsToCreate")]
+        public List<Section> SectionsToCreate { get; set; } = new List<Section>();
+        [JsonProperty(PropertyName = "sectionsToDispose")]
+        public List<Section> SectionsToDispose { get; set; } = new List<Section>();
+        [JsonProperty(PropertyName = "appsToDeploy")]
+        public List<Section> AppsToDeploy { get; set; } = new List<Section>();
+        [JsonProperty(PropertyName = "appsToDispose")]
+        public List<Section> AppsToDispose { get; set; } = new List<Section>();
+        [JsonProperty(PropertyName = "appsToLaunch")]
+        public List<Section> AppsToLaunch { get; set; } = new List<Section>();
+
         [JsonIgnore]
         public List<int> SectionIds { get; set; } = new List<int>();
 
         public PseudoCave CloneCaveState(ConcurrentDictionary<int, GDO.Core.Node> caveNodes,
             ConcurrentDictionary<int, GDO.Core.Section> caveSections, int sectionId)
         {
-            for (var i = 0; i < SectionSandbox.Count; ++i)
-            {
-                Section entry = SectionSandbox[i];
-                if (entry.Id >= 0) continue;
-                var candidateId = caveNodes[Cave.GetNodeId(entry.Col, entry.Row)].SectionId;
-
-                Debug.WriteLine("Found a section which hasn't been assigned an id, candidate id: " + candidateId);
-                if (candidateId < 0) continue;
-                SectionIds.Add(candidateId);
-                entry.Id = candidateId;
-                Sections[candidateId] = entry;
-                SectionSandbox.RemoveAt(i);
-                --i;
-            }
-
-            for (var i = 0; i < SectionTrash.Count; ++i)
-            {
-                Section entry = SectionTrash[i];
-                if (caveNodes[Cave.GetNodeId(entry.Col, entry.Row)].SectionId != entry.Id)
-                {
-                    Sections.Remove(entry.Id);
-                    SectionIds.Remove(entry.Id);
-                    SectionTrash.RemoveAt(i);
-                    Debug.WriteLine("Found a section that needs to be removed: " + entry.Id);
-                    --i;
-                }
-            }
+            UpdateSectionsToCreate(caveNodes);
+            UpdateSectionsToDispose(caveNodes);
+            UpdateAppsToDeploy(caveSections);
+            UpdateAppsToDispose(caveSections);
 
             foreach (var entry in caveNodes)
             {
@@ -68,24 +53,108 @@ namespace GDO.Apps.Twitter.Core
                 else if (entry.Value.SectionId > 0 && !SectionIds.Contains(entry.Value.SectionId))
                 {
                     Nodes[entry.Key].NodeContext = Node.Context.Reserved;
-                } else if (entry.Value.SectionId <= 0)
+                }
+                else if (entry.Value.SectionId <= 0)
                 {
                     Nodes[entry.Key].NodeContext = Node.Context.Free;
-                }
-                
+                }   
             }
-
-            foreach (var entry in caveSections)
-            {
-                if (!Sections.ContainsKey(entry.Key)) continue;
-                if (Sections[entry.Key].AppInstanceId == entry.Value.AppInstanceId) continue;
-                Debug.WriteLine("!!!!! Section App Id is not the same in pseudo cave: " + entry.Key);
-                Sections[entry.Key].AppInstanceId = entry.Value.AppInstanceId;
-            }
-
             return this;
+        }
 
+        public void ConfirmLaunch(List<int> sectionIds)
+        {
+            sectionIds.ForEach(sectionId => AppsToLaunch.RemoveAll(s=>sectionIds.Contains(s.Id)));
+            Debug.WriteLine("Confirming launch with " + string.Join(",", sectionIds.ToArray()));
+            Debug.WriteLine("Number of apps still to launch: " + AppsToLaunch.Count);
+        }
 
+        private void UpdateAppsToDispose(ConcurrentDictionary<int, GDO.Core.Section> caveSections)
+        {
+            for (var i = 0; i < AppsToDispose.Count; ++i)
+            {
+                Section section = AppsToDispose[i];
+                if (!caveSections.ContainsKey(section.Id) || !caveSections[section.Id].IsDeployed())
+                {
+                    Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                    {
+                        x.Value.NodeContext = Node.Context.SectionCreated;
+                        Debug.WriteLine("Setting node " + x.Value.Id + " to section created having undeployed app");
+                    });
+                    section.AppInstanceId = -1;
+                    AppsToDispose.RemoveAt(i);
+                    Debug.WriteLine("Found a section that has an app undeployed: " + section.Id);
+                    --i;
+                }
+            }
+        }
+
+        private void UpdateAppsToDeploy(ConcurrentDictionary<int, GDO.Core.Section> caveSections)
+        {
+            for (var i = 0; i < AppsToDeploy.Count; ++i)
+            {
+                Section section = AppsToDeploy[i];
+                if (caveSections[section.Id].IsDeployed())
+                {
+                    Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                    {
+                        x.Value.NodeContext = Node.Context.AppDeployed;
+                        Debug.WriteLine("Setting node " + x.Value.Id + " to app deployed");
+                    });
+                    section.AppInstanceId = caveSections[section.Id].AppInstanceId;
+                    AppsToDeploy.RemoveAt(i);
+                    AppsToLaunch.Add(section);
+                    Debug.WriteLine("Found a section that has an app deployed: " + section.Id);
+                    --i;
+                }
+            }
+        }
+
+        private void UpdateSectionsToDispose(ConcurrentDictionary<int, GDO.Core.Node> caveNodes)
+        {
+            for (var i = 0; i < SectionsToDispose.Count; ++i)
+            {
+                Section section = SectionsToDispose[i];
+                if (caveNodes[Cave.GetNodeId(section.Col, section.Row)].SectionId != section.Id)
+                {
+                    Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                    {
+                        x.Value.NodeContext = Node.Context.Free;
+                        Debug.WriteLine("Setting node " + x.Value.Id + " to Free");
+                    });
+
+                    Sections.Remove(section.Id);
+                    SectionIds.Remove(section.Id);
+                    SectionsToDispose.RemoveAt(i);
+                    Debug.WriteLine("Found a section that needs to be removed: " + section.Id);
+                    --i;
+                }
+            }
+        }
+
+        private void UpdateSectionsToCreate(ConcurrentDictionary<int, GDO.Core.Node> caveNodes)
+        {
+            for (var i = 0; i < SectionsToCreate.Count; ++i)
+            {
+                Section section = SectionsToCreate[i];
+                if (section.Id > 0) continue;
+                var candidateId = caveNodes[Cave.GetNodeId(section.Col, section.Row)].SectionId;
+
+                Debug.WriteLine("Found a section which hasn't been assigned an id, candidate id: " + candidateId);
+                if (candidateId > 0)
+                {
+                    Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                    {
+                        x.Value.NodeContext = Node.Context.SectionCreated;
+                        Debug.WriteLine("Setting node " + x.Value.Id + " to SectionCreated");
+                    });
+                    SectionIds.Add(candidateId);
+                    section.Id = candidateId;
+                    Sections[candidateId] = section;
+                    SectionsToCreate.RemoveAt(i);
+                    --i;
+                }
+            }
         }
 
         public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes, 
@@ -97,51 +166,86 @@ namespace GDO.Apps.Twitter.Core
             }
             CloneCaveState(caveNodes, caveSections, sectionId);
         }
-
-        public List<Section> DeployApps(List<int> sectionIds)
+        
+        public void ClearCave()
         {
-            return sectionIds.Count == 0 ? Sections.Select(x => x.Value).Where(s => s.CanDeploy()).ToList() :
-                Sections.Select(x => x.Value).Where(s => s.CanDeploy() && sectionIds.Contains(s.Id)).ToList();
+            CloseApps(Sections.Keys.ToList());
+            CloseSections(Sections.Keys.ToList());
         }
 
-        public int CloseApp(int sectionId)
+        public void CloseApps(List<int> sectionIds)
         {
-            int instanceId = Sections[sectionId].AppInstanceId;
-            Sections[sectionId].AppInstanceId = -1;
-            return instanceId;
-        }
-
-        public void ClearCave(out List<int> sectionIds, out List<int> appInstanceIds)
-        {
-            sectionIds = Sections.Select(x => x.Value.Id).ToList();
-            appInstanceIds = Sections.Where(x => x.Value.AppInstanceId > 0).Select(x => x.Value.AppInstanceId).ToList();
-            sectionIds.ForEach(x=>SoftRemoveSection(x));
-        }
-
-
-        public Section CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
-        {
-            var section = new Section(colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
-            Nodes.Where(x=> section.Contains(x.Value)).ToList().ForEach(x=>x.Value.NodeContext = Node.Context.Deployed);
-            SectionSandbox.Add(section);
-            return section;
-        }
-
-        public int SoftRemoveSection(int sectionId)
-        {
-            var section = Sections[sectionId];
-            Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+            sectionIds.Where(sectionId => Sections.ContainsKey(sectionId)).Select(sectionId => Sections[sectionId]).Where(section => section.IsDeployed()).ToList().ForEach(section =>
             {
-                x.Value.NodeContext = Node.Context.Free;
-                x.Value.SectionId = 0;
-                Debug.WriteLine("Setting node " + x.Value.Id + " to 0 section");
+                Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                {
+                    x.Value.NodeContext = Node.Context.AppRemovalRequested;
+                    Debug.WriteLine("Setting node " + x.Value.Id + " to AppRemovalRequested");
+                });
+                AppsToDispose.Add(section);
+            });
+        }
+
+        public void DeployApps(List<int> sectionIds) {
+
+            if (sectionIds.Count == 0)
+            {
+                Sections.Values.Where(section => section.CanDeploy()).ToList().ForEach(section =>
+                {
+                    Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                    {
+                        x.Value.NodeContext = Node.Context.AppCreationRequested;
+                        Debug.WriteLine("Setting node " + x.Value.Id + " to AppCreationRequested");
+                    });
+                    AppsToDeploy.Add(section);
+                });
+            }
+
+            sectionIds.Where(sectionId => Sections.ContainsKey(sectionId)).Select(sectionId => Sections[sectionId]).Where(section => section.CanDeploy()).ToList().ForEach(section =>
+            {
+                Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                {
+                    x.Value.NodeContext = Node.Context.AppCreationRequested;
+                    Debug.WriteLine("Setting node " + x.Value.Id + " to AppCreationRequested");
+                });
+                AppsToDeploy.Add(section);
             });
 
-            SectionTrash.Add(section);
-            
-            return sectionId;
         }
 
+        public void CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
+        {
+            var section = new Section(colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
+            Nodes.Where(x=> section.Contains(x.Value)).ToList().ForEach(x =>
+            {
+                x.Value.NodeContext = Node.Context.SectionCreationRequested;
+                Debug.WriteLine("Setting node " + x.Value.Id + " to SectionRequested");
+            });
+            SectionsToCreate.Add(section);
+        }
+
+        public void CloseSections(List<int> sectionIds)
+        {
+            sectionIds.Where(sectionId => Sections.ContainsKey(sectionId)).Select(sectionId => Sections[sectionId]).ToList().ForEach(section =>
+            {
+                Nodes.Where(x => section.Contains(x.Value)).ToList().ForEach(x =>
+                {
+                    x.Value.NodeContext = Node.Context.SectionRemovalRequested;
+                    Debug.WriteLine("Setting node " + x.Value.Id + " to SectionRemovalRequested");
+                });
+                SectionsToDispose.Add(section);
+            });
+        }
+
+        public void LoadVisualisation(int sectionId)
+        {
+            Nodes.Where(x => Sections[sectionId].Contains(x.Value)).ToList().ForEach(x =>
+            {
+                x.Value.NodeContext = Node.Context.SectionRemovalRequested;
+                Debug.WriteLine("Setting node " + x.Value.Id + " to VisualisationLoaded");
+            });
+        }
+        
         public string SerializeJSON()
         {
             return JsonConvert.SerializeObject(this);
@@ -154,8 +258,14 @@ namespace GDO.Apps.Twitter.Core
         {
             Root,
             Reserved,
+            SectionCreationRequested,
+            SectionCreated,
+            SectionRemovalRequested,
+            VisualisationLoaded,
+            AppCreationRequested,
+            AppDeployed,
+            AppRemovalRequested,
             Free,
-            Deployed,
             Default
         }
 
@@ -250,7 +360,7 @@ namespace GDO.Apps.Twitter.Core
             Row = row;
             Cols = cols;
             Rows = rows;
-            Id = -1;
+            Id = 0;//TODO
             AppInstanceId = -1;
             TwitterVis = new TwitterVis();
         }

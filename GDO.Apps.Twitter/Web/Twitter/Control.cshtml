@@ -88,6 +88,18 @@
             position: relative;
             text-align: center;
         }
+    @*        #section_table_control {*@
+        @*            width:90%;*@
+        @*        }*@
+        @*        .section_control_table_row_class {*@
+        @*            width:30%;*@
+        @*            position:relative;*@
+        @*        }*@
+        @*        .section_control_table_row_class:after{*@
+        @*            content:'';*@
+        @*            display:block;*@
+        @*            margin-top:100%;*@
+        @*        }*@
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -98,25 +110,25 @@
 <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
 <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 <script>
-    $(function() {parent.gdo.net.app["Twitter"].initControl();});
+    $(function() { parent.gdo.net.app["Twitter"].initControl(); });
 </script>
 
 <div class="wrapper" style="width: 97%">
 <div class="row">
     <div class="col-lg-2">
-        <div class="panel panel-info">
+        <div id="admin-panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
             </div>
             <div class="panel-body">
-                <button id="get_data" class="btn btn-success"><i class='fa fa-space-shuttle'></i>Get</button>
-                <button id="get_cave" class="btn btn-success"><i class='fa fa-space-shuttle'></i>Get Cave</button>
-                <button id="debug_b" class="btn btn-success"><i class='fa fa-space-shuttle'></i>Console</button>
+                <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
+                <button id="get_cave" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; Get Cave</button>
+                <button id="debug_b" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; Console</button>
             </div>
         </div>
     </div>
     <div class="col-lg-2">
-        <div class="panel panel-info">
+        <div id="status-panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Twitter API Status</h6>
             </div>
@@ -128,7 +140,7 @@
         </div>
     </div>
     <div class="col-lg-8">
-        <div class="panel panel-info">
+        <div id="message_panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>
             </div>
@@ -148,71 +160,132 @@
         <a href="#app_deployment" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;App Deployment</a>
     </li>
     <li>
-        <a href="#app_control" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;App Control</a>
+        <a href="#app_control" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;Graph App Control</a>
     </li>
 </ul>
 <div class="tab-content" style="height: 90vh">
-    <div class="tab-pane fade in active" id="dataset_control" style="height: 84vh;">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
-                    </div>
-                    <div class="panel-body">
-                        <div id="dataset_list" style="margin-top: 3px; background: transparent;">
-                            <table style="width: 100%; background: transparent; text-align: left" id="dataset_table">
-                                <thead>
-                                <tr id="data_set_table_title">
-                                    <th><font size="3"><b>Description</b></font></th>
-                                    <th><font size="3"><b>Description</b></font></th>
-                                    <th><font size="3"><b>Status</b></font></th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="panel-footer">
-                        <button id="get_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
+<div class="tab-pane fade in active" id="dataset_control" style="height: 84vh;">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
+                </div>
+                <div class="panel-body">
+                    <div id="dataset_list" style="margin-top: 3px; background: transparent;">
+                        <table style="width: 100%; background: transparent; text-align: left" id="dataset_table">
+                            <thead>
+                            <tr id="data_set_table_title">
+                                <th>
+                                    <font size="3">
+                                        <b>Description</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Description</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Status</b>
+                                    </font>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="panel panel-default" id="thumbnail_panel">
-                    <div class="panel-heading">
-                        <h5><i class='fa  fa-pie-chart'></i>&nbsp;Analytics Flat</h5>
-                    </div>
-                    <div class="panel-body">
-                        <div id="analytics_list" style="margin-top: 3px; background: transparent;">
-                            <table style="width: 100%; background: transparent; text-align: left" id="analytics_table">
-                                <thead>
-                                <tr>
-                                    <th><font size="3"><b>Classification</b></font></th>
-                                    <th><font size="3"><b>Type</b></font></th>
-                                    <th><font size="3"><b>Description</b></font></th>
-                                    <th><font size="3"><b>Status</b></font>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="panel-footer">
-                    </div>
+                <div class="panel-footer">
+                    <button id="get_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="tab-pane fade" id="app_deployment">
-        <div class="row">
-            <div class="col-lg-3" style="padding: 6px;">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_1"></span></h6>
-                        <hr style="clear: both; border: 0"/>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5><i class='fa  fa-twitter'></i>&nbsp;Analytics Options</h5>
+                </div>
+                <div class="panel-body">
+                    <div id="analytics_options_list" style="margin-top: 3px; background: transparent;">
+                        <table style="width: 100%; background: transparent; text-align: left" id="analytics_options_table">
+                            <thead>
+                            <tr id="analytics_options_table_title">
+                                <th>
+                                    <font size="3">
+                                        <b>Classification</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Type</b>
+                                    </font>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="order_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Order Analytics</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default" id="thumbnail_panel">
+                <div class="panel-heading">
+                    <h5><i class='fa  fa-pie-chart'></i>&nbsp;Analytics History</h5>
+                </div>
+                <div class="panel-body">
+                    <div id="analytics_list" style="margin-top: 3px; background: transparent;">
+                        <table style="width: 100%; background: transparent; text-align: left" id="analytics_table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <font size="3">
+                                        <b>Classification</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Type</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Description</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Status</b>
+                                    </font>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="app_deployment">
+    <div class="row">
+        <div class="col-lg-3" style="padding: 6px;">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_1"></span></h6>
+                    <hr style="clear: both; border: 0"/>
+                </div>
+                <div style="overflow: auto; height: 300px">
                     <div class="panel-body" style="height: 15.5vh;">
                         <div class="list-group list-group-root" id="analytics_deploy_list_1">
                             <a href="#items_analytics_1" class="list-group-item" data-toggle="collapse">
@@ -225,16 +298,18 @@
                             <ul class="list-group collapse in" id="items_graphs_1"></ul>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                    </div>
+                </div>
+                <div class="panel-footer">
                 </div>
             </div>
-            <div class="col-lg-3" style="padding: 6px;">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_2"></span></h6>
-                        <hr style="clear: both; border: 0"/>
-                    </div>
+        </div>
+        <div class="col-lg-3" style="padding: 6px;">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_2"></span></h6>
+                    <hr style="clear: both; border: 0"/>
+                </div>
+                <div style="overflow: auto; height: 300px">
                     <div class="panel-body" style="height: 15.5vh;">
                         <div class="list-group list-group-root" id="analytics_deploy_list_2">
                             <a href="#items_analytics_2" class="list-group-item" data-toggle="collapse">
@@ -247,62 +322,188 @@
                             <ul class="list-group collapse in" id="items_graphs_2"></ul>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                    </div>
+                </div>
+                <div class="panel-footer">
                 </div>
             </div>
-            <div class="col-lg-3" style="padding: 6px;">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_3"></span></h6>
-                        <hr style="clear: both; border: 0"/>
-                    </div>
-                    <div class="panel-body" style="height: 15.5vh;">
-                        <div class="list-group list-group-root" id="analytics_deploy_list_3">
-                            <a href="#items_analytics_3" class="list-group-item" data-toggle="collapse">
-                                <i class="fa fa-chevron-down fa-fw"></i>Analytics
-                            </a>
-                            <ul class="list-group collapse in" id="items_analytics_3"></ul>
-                            <a href="#items_graphs_3" class="list-group-item" data-toggle="collapse">
-                                <i class="fa fa-chevron-down fa-fw"></i>Graphs
-                            </a>
-                            <ul class="list-group collapse in" id="items_graphs_3"></ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+            <div id="section_table_space">
+                <br>
+            </div>
+            <div id="button_table" unselectable="on" class="unselectable" style="width: 99.5%; padding: 3px;">
+                <div class="col-lg-1 select_section_div"></div>
+                <div class="col-lg-1 create_section_button_div"></div>
+                <div class="col-lg-1 close_section_button_div"></div>
+                <div class="col-lg-1 load_vis_button_div"></div>
+                <div class="col-lg-1 un_load_vis_button_div"></div>
+                <div class="col-lg-1 deploy_app_button_div"></div>
+                <div class="col-lg-1 close_app_button_div"></div>
+                <div class="col-lg-1 deploy_all_app_button_div"></div>
+                <div class="col-lg-1 clear_cave_button_div"></div>
+            </div>
+            <div class="modal fade" id="confirm-clear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-times  fa-fw'></i>&nbsp;<font color="white">Clear Sub Sections</font></h5>
                         </div>
-                    </div>
-                    <div class="panel-footer">
+                        <div class="modal-body">
+                            Are you sure you want to close all app instances and sections associated with this Twitter App?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" class="clear_confirm_button btn btn-danger btn-ok">Confirm</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
-                <div id="section_table_space">
-                    <br>
+    </div>
+</div>
+<div class="tab-pane fade" id="app_control">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Select Graph Apps</h6>
                 </div>
-                <div id="button_table" unselectable="on" class="unselectable" style="width: 99.5%; padding: 3px;">
-                    <div class="col-lg-1 select_section_div"></div>
-                    <div class="col-lg-1 create_section_button_div"></div>
-                    <div class="col-lg-1 close_section_button_div"></div>
-                    <div class="col-lg-1 load_vis_button_div"></div>
-                    <div class="col-lg-1 un_load_vis_button_div"></div>
-                    <div class="col-lg-1 deploy_app_button_div"></div>
-                    <div class="col-lg-1 close_app_button_div"></div>
-                    <div class="col-lg-1 deploy_all_app_button_div"></div>
-                    <div class="col-lg-1 clear_cave_button_div"></div>
+                <div class="panel-body">
+                    <div class="row">
+                        <table id="section_table_control" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                    </div>
                 </div>
-                <div class="modal fade" id="confirm-clear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5><i align="center" class='fa  fa-times  fa-fw'></i>&nbsp;<font color="white">Clear Sub Sections</font></h5>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Controlling: <span id="graph_control_description"></span></h6>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div>
+                                            <button class='btn btn-default' id="">Show Time Nodes</button>
+                                        </div>
+                                        <div>
+                                            <button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button>
+                                        </div>
+                                        <div>
+                                            <span><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></span>
+                                            <span><select id="select_label" style="width: 30%" required class="input_field"></select></span>
+                                            <span>&nbsp;as labels&nbsp;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div>
+                                            <span>
+                                                <button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button>
+                                            </span>
+                                            <span>
+                                                <input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field">
+                                            </span>
+                                            <span>
+                                                &nbsp;nodes with more than&nbsp;
+                                            </span>
+                                            <span>
+                                                <input class="input_field" style="width: 10%" size="4" type="text" id="numLinks" value="5" />
+                                            </span>
+                                            <span>
+                                                &nbsp;links
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span>
+                                                <button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
+                                            </span>
+                                            <span>
+                                                <select id="select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
+                                            </span>
+                                            <span>
+                                                &nbsp;as labels&nbsp;
+                                            </span>
+                                            <span>
+                                                <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                Are you sure you want to close all app instances and sections associated with this Twitter App?
+                            <div class="row">
+@*                                <div style="border-collapse: separate; border-spacing: 1px;">*@
+                                    <div>
+                                        <span>
+                                            <button class='btn btn-default' id="startSearch">Search</button>
+                                        </span>
+                                        <span>
+                                            <input class="input_field" style="width: 60%" size="60" type="text" id="searchKeywords" />
+                                        </span>
+                                        <span>&nbsp;in&nbsp;</span>
+                                        <span>
+                                            <select id="select_SearchFields" style="width: 20%" required class="input_field"></select>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span>
+                                            <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
+                                        </span>
+                                        <span>
+                                            <select id="select_SearchLabels" style="width: 30%" required class="input_field"></select>
+                                        </span>
+
+                                        <span>&nbsp;as labels&nbsp;</span>
+                                    </div>
+                                    <div>
+                                        <span>
+                                            <button class='btn btn-default' id="hide_sublinks">Hide links</button>
+                                        </span>
+                                        <span>
+                                            <button class='btn btn-default' id="hide_search">Hide all</button>
+                                        </span>
+                                    </div>
+@*                                </div>*@
+
+
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                <button type="button" data-dismiss="modal" class="clear_confirm_button btn btn-danger btn-ok">Confirm</button>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div>
+                                    <span>
+                                        <button class='btn btn-default' id="searchUser">Find User</button>
+                                    </span>
+                                    <span>
+                                        <input class="input_field" style="width: 60%" size="60" type="text" id="userKeyword" />
+                                    </span>
+                                </div>
+                                <div>
+                                    <span>
+                                        <button class='btn btn-default' id="searchTweets">Find Tweet Containing</button>
+                                    </span>
+                                    <span>
+                                        <input class="input_field" style="width: 60%" size="60" type="text" id="tweetKeyword" />
+                                    </span> 
+                                </div>
+                                <div>
+                                    <span>
+                                        <button class='btn btn-default FLAG_OFF' id="showTimeNodes">Show Time Nodes</button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -310,17 +511,15 @@
             </div>
         </div>
     </div>
-    <div class="tab-pane fade" id="app_control">
-        App control
-    </div>
+</div>
 </div>
 </div>
 
 <script>
     var gdo = parent.gdo;
     gdo.net.app["Twitter"].drawSectionTable = function(instanceId) {
-        
-       gdo.net.app["Twitter"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows + 1);
+
+        gdo.net.app["Twitter"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows + 1);
 
         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
             var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
@@ -460,7 +659,8 @@
                     $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
                     $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");
                 }
-                $("#section_table_row_" + node.row + "_col_" + node.col).click(function() {
+                $("#section_table_row_" + node.row + "_col_" + node.col)
+                    .click(function() {
                         var id = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
                             .getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
                         if (gdo.net.instance[instanceId].control.selectedSection === id) {
@@ -473,7 +673,7 @@
                         }
                         gdo.net.app["Twitter"].updateDisplayCanvas(instanceId);
                     });
-                
+
                 if (gdo.net.instance[instanceId].control.selectedSection === sectionId) {
                     if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
                         $("#section_table_row_" + node.row + "_col_" + node.col)
@@ -486,15 +686,14 @@
                             .css("background-color", "#b8b100")
                             .css("border", "1px solid #d2ca02");
                         $("#section_table_section_" + sectionId + "_i").css("background", "#d2ca02");
-                    }
-                    else {
+                    } else {
                         $("#section_table_row_" + node.row + "_col_" + node.col)
                             .css("background-color", "#2A9FD6")
                             .css("border", "1px solid #4CBFF8");
                         $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");
                     }
                 }
-              
+
             } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
                 $("#section_table_row_" + node.row + "_col_" + node.col).hide();
             }
@@ -506,51 +705,287 @@
             }
         }
     }
+    gdo.net.app["Twitter"].drawSectionControlTable = function(instanceId) {
+        gdo.net.app["Twitter"].drawEmptySectionControlTable(gdo.net.cols, gdo.net.rows);
+        $("#graph_control_description").html(gdo.net.instance[instanceId].control.selectedGraphApps.join(", "));
+
+        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+            var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
+            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED ||
+                node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
+                continue;
+            }
+            var sectionId = node.sectionId;
+            if ((node.sectionCol === 0 && node.sectionRow === 0) &&
+                node.sectionId > 0 &&
+                gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0 &&
+                gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
+                var appInstanceId = gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId;
+                $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .attr('colspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols)
+                    .attr('rowspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].rows)
+                    .append("<div id='section_control_table_section_" +
+                        sectionId +
+                        "_a'> <b>&nbsp;Vis Type:</b> " +
+                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.twitterVisSubType +
+                        "</div>")
+                    .css("border", "1px solid #2A9FD6")
+                    .css("background", "#087DB4")
+                    .css('padding', 0)
+                    .css('overflow', 'hidden')
+                    .css("vertical-align", "top")
+                    .click(function() {
+                        var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
+                            .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
+                        var index = gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId);
+                        if (index > -1) {
+                            console.log("Add id to list " + index + " " + appInstanceId);
+                            gdo.net.instance[instanceId].control.selectedGraphApps.splice(index, 1);
+                        } else {
+                            console.log("Remove id from list " + index + " " + appInstanceId);
+                            gdo.net.instance[instanceId].control.selectedGraphApps.push(appInstanceId);
+                        }
+                        gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
+                    });
+                if (gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId) > -1) {
+                    $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                        .css("background-color", "#77B300")
+                        .css("border", "1px solid #77B300");
+                }
+                console.log(sectionId +
+                    " " +
+                    " " +
+                    appInstanceId +
+                    " " +
+                    gdo.net.instance[instanceId].control.selectedGraphApps);
+
+            }
+        }
+    }
+//    $("#dataset_table tbody")
+//        .on('click',
+//            'tr',
+//            function() {
+//                var gdo = parent.gdo;
+//                var id = $(this).find('td:first').text();
+//                var desc = $(this).find('td:nth-child(2)').text();
+//
+//                var arrayPos = gdo.net.instance[gdo .controlId].control.selectedDataSets.indexOf(id);
+//                if (arrayPos >= 0) {
+//                    gdo.consoleOut('.Twitter', 1, "Removing dataset " + desc);
+//                    gdo.net.instance[gdo.controlId].control.selectedDataSets.splice(arrayPos, 1);
+//                    $(this).removeClass("btn-success");
+//                    if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length === 0) {
+//                        $("#get_analytics").addClass("disabled").addClass("btn-default").removeClass("btn-success");
+//                    }
+//                } else if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length < 3) {
+//                    gdo.consoleOut('.Twitter', 1, "Adding dataset " + desc);
+//                    gdo.net.instance[gdo.controlId].control.selectedDataSets.push(id);
+//                    $(this).addClass("btn-success");
+//                    if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length === 1) {
+//                        $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
+//                    }
+//                } else {
+//                    gdo.net.app["Twitter"].setMessage("Trying to selected more than 3 data sets");
+//                }
+//
+    //            });
 
     $("#dataset_table tbody")
         .on('click',
             'tr',
-            function () {
+            function() {
                 var gdo = parent.gdo;
                 var id = $(this).find('td:first').text();
                 var desc = $(this).find('td:nth-child(2)').text();
 
-                var arrayPos = gdo.net.instance[gdo.controlId].control.selectedDataSets.indexOf(id);
-                if (arrayPos >= 0) {
-                    gdo.consoleOut('.Twitter', 1, "Removing dataset " + desc);
-                    gdo.net.instance[gdo.controlId].control.selectedDataSets.splice(arrayPos,1);
+                if (gdo.net.instance[gdo.controlId].control.selectedDataSet === id) {
+                    gdo.net.instance[gdo.controlId].control.selectedDataSet = -1;
+                    $("#get_analytics").addClass("disabled").addClass("btn-default").removeClass("btn-success");
                     $(this).removeClass("btn-success");
-                    if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length === 0) {
-                        $("#get_analytics").addClass("disabled").addClass("btn-default").removeClass("btn-success");
-                    }
-                } else if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length < 3) {
-                    gdo.consoleOut('.Twitter', 1, "Adding dataset " + desc);
-                    gdo.net.instance[gdo.controlId].control.selectedDataSets.push(id);
-                    $(this).addClass("btn-success");
-                    if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length === 1) {
-                        $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
-                    }
                 } else {
-                    gdo.net.app["Twitter"].setMessage("Trying to selected more than 3 data sets");
+                    gdo.net.instance[gdo.controlId].control.selectedDataSet = id;
+                    gdo.net.app["Twitter"].setMessage("Selected: " + desc);
+                    $(this)
+                        .addClass("btn-success")
+                        .siblings()
+                        .removeClass("btn-success");
+                    console.log("HereB");
                 }
-                
+                console.log("Here");
+                console.log(gdo.net.instance[gdo.controlId].control.selectedDataSet);
+                if (gdo.net.instance[gdo.controlId].control.selectedDataSet !== -1) {
+                    $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
+                }
+
+            });
+    $("#analytics_options_table tbody")
+        .on("click",
+            "tr",
+            function() {
+                var gdo = parent.gdo;
+                var classification = $(this).find('td:first').text();
+                var type = $(this).find('td:nth-child(2)').text();
+                if (!$(this).hasClass("btn-success")) {
+                    $(this).addClass("btn-success");
+                    gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.push({
+                        "classification": classification,
+                        "type": type,
+                        "dataset_id": gdo.net.instance[gdo.controlId].control.selectedDataSet
+                    });
+                    if (gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.length === 1) {
+                        $("#order_analytics")
+                            .addClass("btn-success")
+                            .removeClass("disabled")
+                            .removeClass("btn-default");
+                    }
+
+                } else {
+                    for (var i = 0; i < gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.length; ++i) {
+                        if (gdo.net.instance[gdo.controlId].control.selectedNewAnalytics[i].classification ===
+                            classification &&
+                            gdo.net.instance[gdo.controlId].control.selectedNewAnalytics[i].type === type) {
+                            gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.splice(i, 1);
+                        }
+                    }
+                    $(this).removeClass("btn-success");
+                    if (gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.length === 0) {
+                        $("#order_analytics").addClass("disabled").addClass("btn-default").removeClass("btn-success");
+                    }
+
+                }
+                console.log(gdo.net.instance[gdo.controlId].control.selectedNewAnalytics);
+            });
+    $("#order_analytics")
+        .on('click',
+            function() {
+                if (gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.length > 0) {
+                    parent.gdo.net.app["Twitter"]
+                        .requestNewAnalytics(gdo.net.instance[gdo.controlId].control.selectedNewAnalytics);
+                    gdo.net.instance[gdo.controlId].control.selectedNewAnalytics = [];
+                    $("#analytics_options_table tbody tr").removeClass("btn-success");
+                    parent.gdo.net.app["Twitter"]
+                        .requestAnalytics([gdo.net.instance[gdo.controlId].control.selectedDataSet]);
+                }
             });
 
-    $("#get_analytics").on('click',function() {
-        if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length > 0) {
-            parent.gdo.net.app["Twitter"].requestAnalytics(gdo.net.instance[gdo.controlId].control.selectedDataSets);
-        }
+    $("#get_analytics")
+        .on('click',
+            function() {
+                if (gdo.net.instance[gdo.controlId].control.selectedDataSet != -1) {
+                    parent.gdo.net.app["Twitter"]
+                        .requestAnalytics([gdo.net.instance[gdo.controlId].control.selectedDataSet]);
+                    parent.gdo.net.app["Twitter"].server.getAnalyticsOptions(gdo.controlId);
+                }
+            });
+    $("#refresh")
+        .on("click",
+            function() {
+                parent.gdo.net.app["Twitter"].requestDataSets();
+                gdo.net.app["Twitter"].server.getApiStatus(gdo.controlId);
+                parent.gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
+            });
+    $("#debug_b")
+        .on("click",
+            function() {
+                console.log(gdo.net.instance[gdo.controlId]);
+                console.log(gdo.net.app["Twitter"]);
+            });
+    $("#get_cave")
+        .on("click",
+            function() {
+                parent.gdo.net.app["Twitter"].server.getAnalyticsOptions(gdo.controlId);
+                parent.gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
+            });
+
+    //////////////////////////////////////////Graph Control
+    $("#showTimeNodes")
+        .click(function () {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Twitter"].hideTimeNodes(gdo.controlId);
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Show Time Nodes");
+            } else {
+                gdo.net.app["Twitter"].showTimeNodes(gdo.controlId);
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Time Nodes");
+            }
+        });
+    $("#searchTweets")
+    .click(function () {
+        gdo.net.app["Twitter"].searchTweets(gdo.controlId, $("#tweetKeyword").val());
     });
-    $("#get_data").on("click", function () {
-        parent.gdo.net.app["Twitter"].requestDataSets();
+    $("#searchUsers")
+    .click(function () {
+        gdo.net.app["Twitter"].searchUsers(gdo.controlId, $("#userKeyword").val());
     });
-    $("#debug_b").on("click", function () {
-        console.log(gdo.net.instance[gdo.controlId]);
-        console.log(gdo.net.app["Twitter"]);
-    });
-    $("#get_cave").on("click", function () { 
-        parent.gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId);
-    });
+
+
+
+
+    $("#toggle_links")
+        .click(function() {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Twitter"].hideLinks(gdo.controlId);
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Show Links");
+            } else {
+                gdo.net.app["Twitter"].showLinks(gdo.controlId);
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links");
+            }
+        });
+    $("#toggle_labels")
+        .click(function() {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Twitter"].hideLabels(gdo.controlId);
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-tag  fa-fw'></i>&nbsp;Show");
+                $(this).parent().siblings().show();
+            } else {
+                gdo.net.app["Twitter"].showLabels(gdo.controlId, $("#select_label").val(), $("#color_Labels").val());
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-tag  fa-fw'></i>&nbsp;Hide Labels");
+                $(this).parent().siblings().hide();
+            }
+        });
+    $("#show_mostConnectedNodes")
+        .click(function() {
+            gdo.net.app["Twitter"].renderMostConnectedNodes(gdo.controlId,
+                parseInt($("#numLinks").val()),
+                $("#color_mostConnectedNodes").val());
+        });
+    $("#toggle_mostConnectedLabels")
+        .click(function() {
+            gdo.net.app["Twitter"].renderMostConnectedLabels(gdo.controlId,
+                parseInt($("#numLinks").val()),
+                $("#select_mostConnectedLabels").val(),
+                $("#color_mostConnectedLabels").val());
+        });
+    $("#hide_mostConnected")
+        .click(function() {
+            gdo.net.app["Twitter"].hideMostConnected(gdo.controlId);
+        });
+    $("#startSearch")
+        .click(function() {
+            gdo.net.app["Twitter"].initiateSearch(gdo.controlId,
+                $("#searchKeywords").val(),
+                $("#select_SearchFields").val());
+        });
+    $("#toggle_searchLabels")
+        .click(function() {
+            gdo.net.app["Twitter"].renderSearchLabels(gdo.controlId, $("#select_SearchLabels").val());
+        });
+    $("#hide_sublinks")
+        .click(function() {
+            gdo.net.app["Twitter"].hideSublinks(gdo.controlId);
+        });
+    $("#hide_search")
+        .click(function() {
+            gdo.net.app["Twitter"].hideSearch(gdo.controlId);
+        });
 </script>
 </body>
 </html>
