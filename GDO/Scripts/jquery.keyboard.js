@@ -41,7 +41,7 @@ http://www.opensource.org/licenses/mit-license.php
 	'use strict';
 	var $keyboard = parent.$keyboard = parent.$.keyboard = $.keyboard = function (el, options) {
 	var o, base = el;
-
+		alert("x");
 	base.version = '1.25.29';
 
 	// Access to jQuery and DOM versions of element
@@ -52,6 +52,7 @@ http://www.opensource.org/licenses/mit-license.php
 	base.$el.data('keyboard', base);
 
 	base.init = function () {
+			
 		var k, position, tmp,
 			kbcss = $keyboard.css,
 			kbevents = $keyboard.events;
@@ -1829,7 +1830,7 @@ http://www.opensource.org/licenses/mit-license.php
 		if ($.isEmptyObject(o.display)) {
 			// set keyboard language
 			base.updateLanguage();
-		}
+		}alert("xxx");
 		var row, $row, currentSet,
 			kbcss = $keyboard.css,
 			sets = 0,
