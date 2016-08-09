@@ -103,22 +103,6 @@
             text-align: center;
         }
     </style>
-
-    <script type="text/javascript">
-
-        var params = [];
-        var imageIds = ["http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2824.dcm", "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2825.dcm"];
-        var imageName = "MPRAGE_ADNI_P2";
-
-        //params["images"] = imageIds;
-        //params[imageName] = { min: 10, max: 1345 };
-        params["orthogonal"] = true;
-        params["fullScreen"] = false;
-        params["mainView"] = "sagittal";
-        params["radiological"] = false;
-        params["worldSpace"] = false;
-        params["showControls"] = false;
-    </script>
 </head>
 <body unselectable="on" class="unselectable">
 
@@ -145,8 +129,8 @@
             </fieldset>
         </form>
 
-        <div style="width: 1050px; height: 800px;">
-            <div class="papaya" id="dicomImage" data-params="params">
+        <div  id="dicomImage" style="width: 1050px; height: 800px;">
+            <div class="papaya" data-params="params">
 
                 <div id="mrtopleft">
                     <p>Optimise ID</p>

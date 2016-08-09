@@ -42,13 +42,14 @@ $(function () {
     **  translationY    double
     */
     $.connection.xNATImagingAppHub.client.receiveImageUpdate =
-        function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, rotate) {
+        function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, rotate, markingCoords) {
+            console.log(markingCoords);
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 // ignore
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
-                gdo.net.app["XNATImaging"].updateImageParams(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, rotate);
+                gdo.net.app["XNATImaging"].updateImageParams(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, rotate, markingCoords);
             }
         }
 });
@@ -91,11 +92,6 @@ gdo.net.app["XNATImaging"].initClient = function (papaya, containers) {
         gdo.net.app["XNATImaging"].setupPDF(row);
 
     } else if (section == "ZOOM") {
-        $("iframe").contents().find("#main").empty();
-        $("iframe").contents().find("#main").append("<div class='heading'>");
-        $("iframe").contents().find(".heading").append("<h3>ZOOM ZOOM ZOOM</h3>");
-        $("iframe").contents().find("#main").append("</div>");
-        $("iframe").contents().find("#main").append("<p>Zoom goes here!</p>");
         gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
     }
 }
@@ -116,7 +112,7 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, container
     gdo.net.instance[instanceId].interval = null;
 
     var mode = "t1";
-    var url = "GSK131086_000001/Baseline/flair";
+    var url = "GSK131086_000001/Baseline/t1";
     gdo.net.instance[instanceId].stack = {
         currentImageIndex: 0,
         imageIds: []
@@ -233,14 +229,14 @@ gdo.net.app["XNATImaging"].setupPDF = function (row) {
 ** Initialise Client nodes on Zoom section of app
 */
 gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
-    $("iframe").contents().find("#main").empty();
+    //$("iframe").contents().find(".papaya").empty();
     //$("iframe").contents().find('#main').append("<button id='testButton' type='button'>MoveIt</button>");
-    $("iframe").contents().find("#main").append(
-        "<div id='dicomImage' update-image " +
-        "mouse-wheel-up='' mouse-wheel-down='' mouse-click='' " +
-        "class='cornerstone-enabled-image' oncontextmenu='return false' " +
-        "unselectable='off' onselectstart='return false;' onmousedown='return false;'></div>"
-    );
+    /*$("iframe").contents().find("#main").append(
+        "<div id='dicomImage' style='width: 1920px; height: 1080px;'>" + 
+            "<div class='papaya' data-params='params'>" + 
+            "</div>" + 
+        "</div>"
+    );*/
 
     gdo.net.instance[instanceId].playing = false;
     gdo.net.instance[instanceId].interval = null;
@@ -256,7 +252,10 @@ gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
         bottomRight: json.topRight,
         zoomFactor: json.zoomFactor
     }
-    gdo.net.app["XNATImaging"].initialiseCS(json.url, "zoom", gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height, instanceId, papaya);
+
+    var papaya = gdo.net.app["XNATImaging"].papaya;
+    var containers = gdo.net.app["XNATImaging"].papayaContainers;
+    gdo.net.app["XNATImaging"].initialiseCS(json.url, "zoom", gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height, instanceId, papaya, containers);
 }
 
 /*
@@ -284,7 +283,7 @@ gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, in
 
     setTimeout(function() {
         if (mode == "zoom") {
-            gdo.net.app["XNATImaging"].getZoomStack(width, height, instanceId);
+            gdo.net.app["XNATImaging"].getZoomStack(width, height, instanceId, papaya, containers);
         } else {
             gdo.consoleOut(".XNATImaging", 1, "non zoom node");
 
@@ -359,41 +358,48 @@ gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId, 
     params["mainView"] = "sagittal";
     params["radiological"] = false;
     params["worldSpace"] = false;
-    params["showControls"] = false;
-
-    papaya.Container.resetViewer(0, params);
-
-    console.log(papaya);
-    console.log(containers);
+    params["showControls"] = false; 
+    params["kioskMode"] = true;
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         // add handlers for mouse events once the image is loaded
-        gdo.net.app["XNATImaging"].setMouseHandlers(instanceId, papaya, containers);
+        params["loadingComplete"] = gdo.net.app["XNATImaging"].setMouseHandlers(instanceId, papaya, containers);
+        params["kioskMode"] = false;
     }
 
-    // load and display first image
-    //var imagePromise = gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-
-    /*imagePromise.then(function () {
-        gdo.consoleOut('.XNATImaging', 1, "Image promise loaded");
-        var viewport = cornerstone.getViewport(element);
-
-        // Temp Fix for followup image brightness
-        if (viewport.voi.windowCenter < -3500) {
-            viewport.voi.windowCenter = 26;
-            viewport.voi.windowWidth = 204;
-            cornerstone.setViewport(element, viewport);
-        }
-
-        $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
-        $("iframe").contents().find('#mrbottomleft').text("WW/WC:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-    });*/
+    papaya.Container.resetViewer(0, params);
+    console.log(containers[0].viewer);
+    console.log(params);
 }
 
 /*
 ** Sets mouse handlers for control Node
 */
 gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, containers) {
+    
+    gdo.consoleOut('.XNATImaging', 1, "Image stack finished loading");
+
+    var markingMode = true;
+    var markingCoords = [];
+
+    /*
+    **    startingIndex,
+    **    endingIndex,
+    **    slice,
+    **    view
+    */
+    var MarkerObject = function (startingIndex, endingIndex, slice, view) {
+        this.start = startingIndex;
+        this.end = endingIndex;
+        this.slice = slice;
+        this.view = view;
+    }
+
+    /*
+        $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
+        $("iframe").contents().find('#mrbottomleft').text("WW/WC:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
+    */
+
     $("iframe").contents().find("#viewSelect").on("selectmenuchange", function (event, ui) {
         var text = $("iframe").contents().find("#viewSelect option:selected").text();
         console.log(text);
@@ -415,8 +421,151 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
         gdo.net.instance[instanceId].stack.currentImageIndex = viewer.mainImage.currentSlice;
 
         gdo.net.app["XNATImaging"].initialiseSlider(instanceId, papaya, containers);
-
     });
+
+    papaya.Container.allowPropagation = true;
+    var xStart = 0;
+    var yStart = 0;
+    var xFinish = 0;
+    var yFinish = 0;
+    var startPoint;
+
+    var canvas = containers[0].viewer.canvas;
+    console.log(canvas);
+
+    var jcanvas = $(containers[0].viewer.canvas);
+    console.log(jcanvas);
+
+    var iframeMain = $("iframe");
+    var dicomdiv = $("iframe").contents().find('#dicomImage');
+    var papayadiv = $("iframe").contents().find('#papayaContainer0');
+    
+    var canvasdiv = $("iframe").contents().find('canvas');
+
+    console.log(iframeMain);
+    console.log(dicomdiv);
+    console.log(papayadiv);
+    console.log(canvasdiv);
+
+    $("iframe").contents().find('#papayaContainer0').mouseup(function (e) {
+        console.log("mouseup");
+
+        if (markingMode) {
+            console.log("markingmode mouseup");
+
+            var viewer = containers[0].viewer;
+            var canvas = viewer.canvas;
+            var papayadiv = $("iframe").contents().find('#papayaContainer0');
+            var papayaViewer = $(papayadiv).children()[1];
+            var offset = $(papayaViewer).offset();
+
+            console.log(offset);
+            xFinish = e.pageX - offset.left;
+            yFinish = e.pageY - offset.top;
+
+            console.log("(" + xStart + ", " + yStart + "), " + "(" + xFinish + ", " + yFinish + ")");
+
+            var ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.lineWidth = "4";
+            ctx.strokeStyle = "red";
+            ctx.rect(xStart, yStart, xFinish - xStart, yFinish - yStart);
+            ctx.stroke();
+
+            viewer.mainImage.repaint(viewer.mainImage.currentSlice, false, true);
+            viewer.updateCursorPosition(viewer, xFinish, yFinish);
+            var currentCoor = viewer.cursorPosition;
+            var coord = new papaya.core.Coordinate(currentCoor.x, currentCoor.y, currentCoor.z);
+
+            console.log(viewer);
+            var myMarker = new MarkerObject(startPoint, coord, viewer.mainImage.currentSlice, viewer.mainImage.sliceDirection);
+            markingCoords.push(myMarker);
+
+            xStart = 0;
+            yStart = 0;
+            xFinish = 0;
+            yFinish = 0;
+            startPoint = null;
+        }
+
+        var diffX = 0;
+        var diffY = 0;
+        var diffScale = 0;
+
+        var viewer = containers[0].viewer;
+        console.log(viewer);
+        // undefined before images load
+        var volume = viewer.screenVolumes[0];
+
+        console.log(volume.screenMin, volume.screenMax);
+
+        var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
+
+        gdo.consoleOut(".XNATImaging",
+            1,
+            volume.screenMin + ", " + volume.screenMax + ", " + diffX + ", " + diffY + ", " + diffScale);
+
+        console.log(markingCoords);
+
+        gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
+            currentImageId,
+            volume.screenMin,
+            volume.screenMax,
+            diffScale,
+            diffX,
+            diffY,
+            false,
+            markingCoords);
+        gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
+    });
+
+    $("iframe").contents().find('#papayaContainer0').mousedown(function (e) {
+           if (markingMode) {
+               console.log("mousedown");
+
+               var papayadiv = $("iframe").contents().find('#papayaContainer0');
+               var papayaViewer = $(papayadiv).children()[1];
+               var offset = $(papayaViewer).offset();
+
+               xStart = e.pageX - offset.left;
+               yStart = e.pageY - offset.top;
+               var currentCoor = containers[0].viewer.cursorPosition;
+               var coor = new papaya.core.Coordinate(currentCoor.x, currentCoor.y, currentCoor.z);
+               console.log(coor);
+               startPoint = coor;
+               /*var screenCoor = containers[0].viewer.convertCoordinateToScreen(coor);
+               xStart = screenCoor.x;
+               yStart = screenCoor.y;*/
+               /*xFinish = 0;
+               yFinish = 0;*/
+
+           }
+    });
+
+    $(jcanvas)
+       .click(function () {
+           alert("canvas mouseup4");
+       });
+
+    $(canvas)
+       .click(function () {
+           alert("canvas mouseup5");
+       });
+
+    $("iframe").contents().find('canvas')
+        .click(function() {
+            alert("Found u boy!");
+        });
+
+    $(papayadiv).find('#papayaViewer0')
+       .click(function () {
+           console.log("canvas mouseup6");
+       });
+
+    $(papayadiv).contents().find('#papayaViewer0')
+       .click(function () {
+           console.log("canvas mouseup7");
+       });
 
 /*
     // add event handlers to pan image on mouse move
@@ -460,20 +609,29 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
                 $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
             }
         });
-        $("iframe").contents().find('#dicomImage').mouseup(function () {
+    });
+
+    $("iframe").contents().find('#dicomImage').mouseup(function () {
             $("iframe").contents().find('#dicomImage').unbind('mousemove');
             $("iframe").contents().find('#dicomImage').unbind('mouseup');
 
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                var viewport = cornerstone.getViewport(element);
-                var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
-                gdo.consoleOut(".XNATImaging", 1, viewport.voi.windowWidth + ", " + viewport.voi.windowCenter + ", " + diffX + ", " + diffY + ", " + diffScale);
-                gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, currentImageId, viewport.voi.windowWidth,
-                                                                    viewport.voi.windowCenter, diffScale, diffX, diffY, false);
-                gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
-            }
-        });
+        var diffX, diffY, diffScale;
+
+        // undefined before images load
+        var volume = containers[0].viewer.screenVolumes[0];
+
+        console.log(volume.screenMin, volume.screenMax);
+        //volume.setScreenRange(volume.screenMin + 50, volume.screenMax + 50);
+
+        var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
+
+        gdo.consoleOut(".XNATImaging", 1, volume.screenMin + ", " + volume.screenMax + ", " + diffX + ", " + diffY + ", " + diffScale);
+        gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, currentImageId, volume.screenMin,
+                                                            volume.screenMax, diffScale, diffX, diffY, false);
+        gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
+        }
     });
 
     $("iframe").contents().find('#dicomImage').on('mousewheel DOMMouseScroll', function (e) {
@@ -526,6 +684,13 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
             gdo.consoleOut(".XNATImaging", 1, "Set New Image Config- image id");
         }
     });
+
+    var viewerdiv = $("iframe").contents().find('#papayaViewer0');
+
+    $(viewerdiv)
+        .click(function () {
+            console.log("i like to view u");
+        });
 }
 
 /*
@@ -533,10 +698,46 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
 */
 gdo.net.app["XNATImaging"].updateImageParams = function (
                                             instanceId, currentImageId, windowWidth, windowCenter,
-                                            scale, translationX, translationY, rotate) {
+                                            scale, translationX, translationY, rotate, markingCoords) {
+    var containers = gdo.net.app["XNATImaging"].papayaContainers;
     if (rotate) {
-        console.log(gdo.net.app["XNATImaging"].papayaContainers);
+        console.log(containers);
         gdo.net.app["XNATImaging"].papayaContainers[0].viewer.rotateViews();
+    } else {
+        var volume = containers[0].viewer.screenVolumes[0];
+        console.log(volume);
+
+        console.log(volume.screenMin, volume.screenMax);
+        volume.setScreenRange(windowWidth, windowCenter);
+
+        var drawRectangle = function (start, end) {
+            console.log("drawing...");
+            var startScreenCoord = containers[0].viewer.convertCoordinateToScreen(start);
+            var endScreenCoord = containers[0].viewer.convertCoordinateToScreen(end);
+
+            var canvas = containers[0].viewer.canvas;
+            var ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.lineWidth = "4";
+            ctx.strokeStyle = "red";
+            ctx.rect(startScreenCoord.x, startScreenCoord.y, endScreenCoord.x - startScreenCoord.x, endScreenCoord.y - startScreenCoord.y);
+            ctx.stroke();
+
+            console.log(startScreenCoord);
+            console.log(endScreenCoord.x);
+            //containers[0].viewer.mainImage.repaint(containers[0].viewer.mainImage.currentSlice, false, true);
+        }
+
+        // draw markers for given slice
+        var currentSlice = containers[0].viewer.mainImage.currentSlice;
+        var sliceDirection = containers[0].viewer.mainImage.sliceDirection;
+        for (var i = 0; i < markingCoords.length; i++) {
+            if (markingCoords[i].view == sliceDirection && markingCoords[i].slice == currentSlice) {
+                drawRectangle(markingCoords[i].start, markingCoords[i].end);
+            }
+        }
+
+        containers[0].viewer.drawViewer(false, true);
     }
 
     /*var element = $("iframe").contents().find("#dicomImage").get(0);
@@ -545,7 +746,7 @@ gdo.net.app["XNATImaging"].updateImageParams = function (
     gdo.consoleOut(".XNATImaging", 1, windowWidth + "/" + windowCenter + ", " + scale);
 
     viewport.voi.windowWidth = windowWidth;
-    viewport.voi.windowCenter = windowCenter;
+    viewport.voi.windowCenter = windowCenter*;
     // TODO: Figure out a scaling solution
     if (scale > 0) {
         viewport.scale *= scale;
@@ -569,50 +770,58 @@ gdo.net.app["XNATImaging"].updateImageParams = function (
 /*
 ** Loads in image stack using cornerstone for Client nodes in Zoom section of app
 */
-gdo.net.app["XNATImaging"].getZoomStack = function(width, height, instanceId) {
-    var element = $("iframe").contents().find('#dicomImage').get(0);
-    cornerstone.enable(element);
+gdo.net.app["XNATImaging"].getZoomStack = function (width, height, instanceId, papaya, containers) {
+    var params = [];
+    var imageIds = gdo.net.instance[instanceId].stack.imageIds;
+    var imageName = "MPRAGE_ADNI_P2";
 
-    cornerstoneTools.mouseInput.enable(element);
-    cornerstoneTools.mouseWheelInput.enable(element);
-
-    // load and display first image
-    var imagePromise = gdo.net.app["XNATImaging"].updateTheImage(instanceId);
+    params["images"] = [imageIds];
+    //params[imageName] = { min: 10, max: 1345 };
+    params["orthogonal"] = false;
+    params["fullScreen"] = true;
+    params["mainView"] = "sagittal";
+    params["radiological"] = false;
+    params["worldSpace"] = false;
+    params["showControls"] = false;
+    params["kioskMode"] = true;
 
     var canvasWidth = width * 3;
     var canvasHeight = height * 4;
 
-    // resize dicom image frame to fill screen
-    gdo.consoleOut('.XNATImaging', 1, "Resize image to " + canvasWidth + "x" + canvasHeight);
+    // resize canvas to fill screen
+    /*gdo.consoleOut('.XNATImaging', 1, "Resize image to " + canvasWidth + "x" + canvasHeight);*/
     $("iframe").contents().find('#dicomImage').width(canvasWidth).height(canvasHeight);
-    cornerstone.resize(element);
+    //cornerstone.resize(element);
 
     gdo.consoleOut(".XNATImaging", 1, "Width x Height of image: (" + width + ", " + height + ")");
     gdo.consoleOut(".XNATImaging", 1, "Canvas dimensions: (" + canvasWidth + ", " + canvasHeight + ")");
 
-    imagePromise.then(function () {
-
+    params["loadingComplete"] = function () {
         //var scaleFactorX = canvasWidth / width;
         //var scaleFactorY = canvasHeight / height;
         var offsetX = gdo.net.instance[instanceId].zoomView.topLeft[0];
         var offsetY = gdo.net.instance[instanceId].zoomView.topLeft[1];
         gdo.consoleOut(".XNATImaging", 1, "Offset image by: (" + offsetX + ", " + offsetY + ")");
 
-        var viewport = cornerstone.getViewport(element);
+        /*var viewport = cornerstone.getViewport(element);
         viewport.translation.x += (-offsetX * width)/viewport.scale;
         viewport.translation.y += (-offsetY * height)/viewport.scale;
         cornerstone.setViewport(element, viewport);
-        gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");
-        
-        var img = cornerstone.getImage(element);
+        gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");*/
+
+        var canvas = containers[0].viewer.canvas;
+        var ctx = canvas.getContext('2d');
+        ctx.transform(6, 0, 0, 8, -offsetX * width, -height * 10);
+
+
         // var ctx = img.getCanvas().getContext('2d');
         // ctx.drawImage(img, offsetX, offsetY, width/3, height/3, 0, 0, width, height);
-    });
+    };
 
-    // load entire image stack without displaying
-    /*for (var i = 1; i < gdo.net.instance[instanceId].stack.imageIds.length; i++) {
-        cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[i]);
-    }*/
+    console.log(params);
+
+    papaya.Container.resetViewer(0, params);
+    console.log(containers[0].viewer);
 }
 
 /*
@@ -796,15 +1005,16 @@ gdo.net.app["XNATImaging"].terminateControl = function () {
 }
 
 $("#button").click(function (e) {
+    var containers = gdo.net.app["XNATImaging"].papayaContainers;
     params["orthogonal"] = true;
     params["fullScreen"] = false;
     //alert("Fire!");
     //papaya.Container.resetViewer(0, params);
     //papayaContainers[0].viewer.rotateViews();
-    var volume = papayaContainers[0].viewer.screenVolumes[0].volume;
+    var volume = containers[0].viewer.screenVolumes[0].volume;
     console.log(volume);
 
-    var viewer = papayaContainers[0].viewer;
+    var viewer = containers[0].viewer;
     console.log(viewer);
 
     //viewer.windowLevelChanged(50, 50);

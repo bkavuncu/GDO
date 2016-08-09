@@ -30,21 +30,6 @@ html, body {
     padding-bottom: 36px;
 }
 
-img {
-    width: 100%;
-}
-
-#dicomImage {
-    width: 600px;
-    height: 600px;
-}
-
-#dicomTopThumb {
-}
-
-#dicomBottomThumb {
-}
-
 #mrtopleft {
     color: #efefef;
     position: absolute;

@@ -17,46 +17,33 @@
     <title>XNAT Imaging Project</title>
     <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:500,300,700,400' rel='stylesheet' type='text/css'>
-    <script type="text/javascript">
-
-        var params = [];
-        var imageIds = ["http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2824.dcm", "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2825.dcm"];
-        var imageName = "MPRAGE_ADNI_P2";
-
-        //params["images"] = imageIds;
-        //params[imageName] = { min: 10, max: 1345 };
-        params["orthogonal"] = true;
-        params["kioskMode"] = true;
-        params["mainView"] = "sagittal";
-        params["radiological"] = false;
-        params["worldSpace"] = false;
-        params["showControls"] = false;
-    </script>
 </head>
 <body>
-<div id="main" style="width: 1920px; height: 1080px;">
+<div id="main">
     <div class="heading">
         <h3> </h3>
     </div>
-    <div class="papaya" data-params="params">
+    <div id="dicomImage" style="width: 1720px; height: 900px;">
+        <div class="papaya" data-params="params">
 
-        <div id="mrtopleft">
-            <p>Optimise ID</p>
-        </div>
-        <div id="mrtopright">
-            Hospital
-        </div>
-        <div id="mrbottomright">
-            <div id="frameRate"></div>
-            <div id="zoomText">
-                <p>Zoom: 2.0x</p>
+            <div id="mrtopleft">
+                <p>Optimise ID</p>
             </div>
-            <div id="sliceText">
-                <p>Image: </p>
+            <div id="mrtopright">
+                Hospital
             </div>
-        </div>
-        <div id="mrbottomleft">
-            <p>WW/WC: </p>
+            <div id="mrbottomright">
+                <div id="frameRate"></div>
+                <div id="zoomText">
+                    <p>Zoom: 2.0x</p>
+                </div>
+                <div id="sliceText">
+                    <p>Image: </p>
+                </div>
+            </div>
+            <div id="mrbottomleft">
+                <p>WW/WC: </p>
+            </div>
         </div>
     </div>
 </div>
@@ -71,7 +58,6 @@
     $(window).load(function () {
 
             console.log("Papaya loaded");
-            console.log(params);
 
             var gdo = parent.gdo;
             gdo.net.app["XNATImaging"].initClient(papaya, papayaContainers);

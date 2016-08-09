@@ -1,0 +1,8 @@
+x Change event handlers for adjusting brightness/contrast (working)
+x Add marking rectangle using canvas
+Add zoom functionality
+Allow view switch between sagittal axial coronal directly
+x Registered image stacks remotely and converted to NIFTI format
+
+lib modification required:
+x Reapply fixes for dicom image loading (switching to NIFTI)

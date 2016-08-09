@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using GDO.Core;
 using GDO.Core.Apps;
 using Microsoft.AspNet.SignalR;
@@ -109,7 +110,8 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
-        public void SetImageConfig(int instanceId, int currentImageId, double windowWidth, double windowCenter, double scale, double translationX, double translationY, bool rotateView)
+        public void SetImageConfig(int instanceId, int currentImageId, double windowWidth, double windowCenter, 
+            double scale, double translationX, double translationY, bool rotateView, dynamic markingCoords)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -134,7 +136,8 @@ namespace GDO.Apps.XNATImaging
                                     scale, 
                                     translationX, 
                                     translationY,
-                                    rotateView
+                                    rotateView,
+                                    markingCoords
                     );
                 }
                 catch (Exception e)
