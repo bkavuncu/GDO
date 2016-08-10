@@ -25,7 +25,7 @@
                     if (row === 2 && col === 0) {
                         col += 1;
                     }
-                console.log(col + "  " + row);
+
                 sectionRequests.push({ ColStart: col, RowStart: row, ColEnd: (col + 1), RowEnd: (row + 1) });
             }
         }
