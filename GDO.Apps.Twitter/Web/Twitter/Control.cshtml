@@ -88,6 +88,16 @@
             position: relative;
             text-align: center;
         }
+                .color_field {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            padding: 0;
+            border: 0;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+        }
     @*        #section_table_control {*@
         @*            width:90%;*@
         @*        }*@
@@ -122,7 +132,7 @@
             </div>
             <div class="panel-body">
                 <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
-                <button id="get_cave" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; Get Cave</button>
+                <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; MyButton</button>
                 <button id="debug_b" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; Console</button>
             </div>
         </div>
@@ -166,7 +176,7 @@
 <div class="tab-content" style="height: 90vh">
 <div class="tab-pane fade in active" id="dataset_control" style="height: 84vh;">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-8">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
@@ -178,7 +188,7 @@
                             <tr id="data_set_table_title">
                                 <th>
                                     <font size="3">
-                                        <b>Description</b>
+                                        <b>Id</b>
                                     </font>
                                 </th>
                                 <th>
@@ -189,6 +199,26 @@
                                 <th>
                                     <font size="3">
                                         <b>Status</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Size</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Type</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>Start</b>
+                                    </font>
+                                </th>
+                                <th>
+                                    <font size="3">
+                                        <b>End</b>
                                     </font>
                                 </th>
                             </tr>
@@ -399,6 +429,9 @@
                                             <span><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></span>
                                             <span><select id="select_label" style="width: 30%" required class="input_field"></select></span>
                                             <span>&nbsp;as labels&nbsp;</span>
+                                            <span>
+                                                <input type="color" id="color_Labels" value="#ff0000" class="color_field">
+                                            </span>+
                                         </div>
                                     </div>
                                 </div>
@@ -463,7 +496,6 @@
                                         <span>
                                             <select id="select_SearchLabels" style="width: 30%" required class="input_field"></select>
                                         </span>
-
                                         <span>&nbsp;as labels&nbsp;</span>
                                     </div>
                                     <div>
@@ -472,9 +504,8 @@
                                         </span>
                                         <span>
                                             <button class='btn btn-default' id="hide_search">Hide all</button>
-                                        </span>
+                                        </span>  
                                     </div>
-@*                                </div>*@
 
 
                             </div>
@@ -893,11 +924,10 @@
                 console.log(gdo.net.instance[gdo.controlId]);
                 console.log(gdo.net.app["Twitter"]);
             });
-    $("#get_cave")
+    $("#allocate")
         .on("click",
             function() {
-                parent.gdo.net.app["Twitter"].server.getAnalyticsOptions(gdo.controlId);
-                parent.gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
+                gdo.net.app["Twitter"].autoAllocateSections(gdo.controlId);
             });
 
     //////////////////////////////////////////Graph Control

@@ -5,13 +5,17 @@
         gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["Twitter"].setMessage(message);
-        }
+        } 
     }
 
     $.connection.twitterAppHub.client.setAPIMessage = function (instanceId, message) {
         gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
+        var messageDes = JSON.parse(message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
-            gdo.net.app["Twitter"].setAPIMessage(instanceId, JSON.parse(message));
+            gdo.net.app["Twitter"].setAPIMessage(instanceId, messageDes);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
+            $("iframe").contents().find("#client_api_status_message").empty().append(messageDes.msg);
         }
     }
 
@@ -239,6 +243,10 @@ gdo.net.app["Twitter"].requestUnLoadVisualisation = function (instanceId, sectio
     gdo.net.app["Twitter"].server.unLoadVisualisation(instanceId, sectionId);
 }
 
+gdo.net.app["Twitter"].requestCreateSections = function(instanceId, sections) {
+    gdo.consoleOut('.Twitter', 1, "Requesting hub create new sections (" + sections.length + ") for instance: " + instanceId);
+    gdo.net.app["Twitter"].server.createSections(instanceId, JSON.stringify(sections));
+}
 
 gdo.net.app["Twitter"].requestCreateSection = function (instanceId, colStart, rowStart, colEnd, rowEnd) {
     gdo.consoleOut('.Twitter', 1, "Requesting hub create new section for instance: " + instanceId);

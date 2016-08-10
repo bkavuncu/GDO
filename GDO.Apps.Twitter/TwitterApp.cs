@@ -66,6 +66,14 @@ namespace GDO.Apps.Twitter
             PseudoCave.CreateSection(colStart, rowStart, colEnd, rowEnd);
         }
 
+        public void CreateSections(List<SectionRequest> sectionRequests)
+        {
+            foreach (var sR in sectionRequests)
+            {
+                CreateSection(sR.ColStart, sR.RowStart, sR.ColEnd, sR.RowEnd);
+            }
+        }
+
         public void CloseSections(List<int> sectionIds)
         {
             PseudoCave.CloseSections(sectionIds);
@@ -152,7 +160,7 @@ namespace GDO.Apps.Twitter
 
         public string GetDataSets()
         {
-            return JsonConvert.SerializeObject(RestController.GetDataSetMetas().ToDictionary(ds => ds.Id, ds => ds));
+            return JsonConvert.SerializeObject(RestController.GetDataSets().ToDictionary(ds => ds.Id, ds => ds));
         }
 
         public string GetAnalyticsOptions()
@@ -160,8 +168,12 @@ namespace GDO.Apps.Twitter
             return JsonConvert.SerializeObject(RestController.GetAnalyticsOptions());
         }
 
-        public void GetNewAnalytics(List<NewAnalyticsRequest> newAnalyticsRequests)
+        public void GetNewAnalytics(List<AnalyticsRequest> newAnalyticsRequests)
         {
+            foreach (var newAnalyticsRequest in newAnalyticsRequests)
+            {
+                newAnalyticsRequest.description = "GDORequest_" + DateTime.Now;
+            }
             RestController.GetNewAnalytics(newAnalyticsRequests);
         }
     }

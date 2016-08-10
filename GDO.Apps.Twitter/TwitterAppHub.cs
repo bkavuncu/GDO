@@ -42,6 +42,7 @@ namespace GDO.Apps.Twitter
                     string message =
                         ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetApiMessage();
                     Debug.WriteLine("Status message: " + message);
+                    Clients.Group("" + instanceId).setAPIMessage(instanceId, message);
                     Clients.Caller.setAPIMessage(instanceId, message);
                 }
                 catch (Exception e)
@@ -78,7 +79,7 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).GetNewAnalytics(
-                        JsonConvert.DeserializeObject<List<NewAnalyticsRequest>>(serialisedRequests));
+                        JsonConvert.DeserializeObject<List<AnalyticsRequest>>(serialisedRequests));
                 }
                 catch (Exception e)
                 {
@@ -136,6 +137,25 @@ namespace GDO.Apps.Twitter
                     Debug.WriteLine(msg);                  
                     ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).CreateSection(colStart, rowStart, colEnd, rowEnd);
                     Clients.Caller.setMessage(instanceId, msg);
+                    BroadcastState(instanceId, 1);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+                }
+            }
+        }
+
+        public void CreateSections(int instanceId, string serialisedSections)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Debug.WriteLine("Multiple section creation " + serialisedSections);
+                    ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).CreateSections(JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
+                    Clients.Caller.setMessage(instanceId, serialisedSections);
                     BroadcastState(instanceId, 1);
                 }
                 catch (Exception e)

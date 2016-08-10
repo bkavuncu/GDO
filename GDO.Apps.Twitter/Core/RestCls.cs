@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Twitter.Core
@@ -27,6 +29,13 @@ namespace GDO.Apps.Twitter.Core
 
         [DataMember(Name = "type")]
         public string Type { get; set; }
+
+        [DataMember(Name = "start_time")]
+        public string StartTime { get; set; }
+
+        [DataMember(Name = "end_time")]
+        public DateTime EndTime { get; set; }
+
     }
 
     [DataContract]
@@ -49,6 +58,8 @@ namespace GDO.Apps.Twitter.Core
 
         [DataMember(Name = "datasetId")]
         public string DatasetId { get; set; }
+
+        
     }
 
     public class DataSetMeta
@@ -66,6 +77,7 @@ namespace GDO.Apps.Twitter.Core
         public string Status { get; set; }
         public string Classification { get; set; }
         public string Type { get; set; }
+        public string DataSetId { get; set; }
     }
 
     [DataContract]

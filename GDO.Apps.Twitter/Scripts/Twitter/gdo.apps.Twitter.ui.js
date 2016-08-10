@@ -133,7 +133,8 @@ gdo.net.app["Twitter"].uiProperties = {
     table_width: 100,
     button_cols: 9.5,
     button_font_size: 21,
-    section_font_size:11
+    section_font_size: 11,
+    chart_aspect_ratio: 1
 }
 
 gdo.net.app["Twitter"].initialise = function(instanceId) {
@@ -299,9 +300,13 @@ gdo.net.app["Twitter"].updateDataSetTable = function(instanceId, dataSets) {
         if (dataSets.hasOwnProperty(key)) {
             $("iframe").contents().find("#dataset_table tbody").append("" +
                     "<tr>" +
-                    "<td><font size='3'>" + dataSets[key]["Id"] + "</font></td>" +
-                    "<td><font size='3'>" + dataSets[key]["Description"] + "</font></td>" +
-                    "<td><font size='3'>" + dataSets[key]["Status"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["id"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["description"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["status"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["collection_size"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["type"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["start_time"] + "</font></td>" +
+                    "<td><font size='3'>" + dataSets[key]["end_time"] + "</font></td>" +
                     "</tr>");
         }
     }

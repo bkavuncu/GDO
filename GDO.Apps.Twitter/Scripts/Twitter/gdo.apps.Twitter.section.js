@@ -1,4 +1,40 @@
-﻿gdo.net.app["Twitter"].drawEmptySectionTable = function (maxCol, maxRow) {
+﻿gdo.net.app["Twitter"].autoAllocateSections = function(instanceId){
+    var nSections = 0;
+    Object.keys(gdo.net.instance[instanceId].data.analytics).forEach(function (dataSetId, index) {
+        var n = gdo.net.instance[instanceId].data.analytics[dataSetId].length;
+        var nFinishedGraph = 0;
+        var nFinishedAnalytics = 0;
+        for (var i = 0; i < n; ++i) {
+            if (gdo.net.instance[instanceId].data.analytics[dataSetId][i]["Status"] === "FINISHED") {
+                if (gdo.net.instance[instanceId].data.analytics[dataSetId][i]["Classification"] === "Graph") {
+                    nFinishedGraph += 1;
+                } else {
+                    nFinishedAnalytics += 1;
+                }
+            }
+        }
+        nSections += n;
+        gdo.consoleOut('.Twitter', 1, 'Data set ' + dataSetId + ' has ' + nFinishedGraph + ' finished graphs and ' + nFinishedAnalytics + ' finished analytics');
+    });
+    gdo.consoleOut('.Twitter', 1, 'Total number of analytics options = ' + nSections);
+
+    if (nSections <= 14) {
+        var sectionRequests = [];
+            for (var row = 0; row <= 3; row += 2) {
+                for (var col = 0; col <= 14; col+= 2) {
+                    if (row === 2 && col === 0) {
+                        col += 1;
+                    }
+                console.log(col + "  " + row);
+                sectionRequests.push({ ColStart: col, RowStart: row, ColEnd: (col + 1), RowEnd: (row + 1) });
+            }
+        }
+        console.log(sectionRequests);
+        gdo.net.app["Twitter"].requestCreateSections(instanceId, sectionRequests);
+    }
+}
+
+gdo.net.app["Twitter"].drawEmptySectionTable = function (maxCol, maxRow) {
     $("iframe").contents().find("#section_table").empty();
     for (var i = 0; i < maxRow; i++) {
         $("iframe").contents().find("#section_table")
@@ -34,7 +70,6 @@ gdo.net.app["Twitter"].drawEmptySectionControlTable = function (maxCol, maxRow) 
     }
 }
 
-
 gdo.net.app["Twitter"].drawButtonTable = function (instanceId) {
 
     //Create Section
@@ -56,7 +91,6 @@ gdo.net.app["Twitter"].drawButtonTable = function (instanceId) {
     //Deploy All Apps
     gdo.net.app["Twitter"].drawDeployAll(instanceId);
 }
-
 
 gdo.net.app["Twitter"].drawUnLoadVisB = function (instanceId) {
     $("iframe")

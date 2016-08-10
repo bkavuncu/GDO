@@ -336,6 +336,14 @@ namespace GDO.Apps.Twitter.Core
         }
     }
 
+    public class SectionRequest
+    {
+        public int ColStart { get; set; }
+        public int RowStart { get; set; }
+        public int ColEnd { get; set; }
+        public int RowEnd { get; set; }
+    }
+
     public class Section
     {
 

@@ -135,8 +135,7 @@
     <Content Include="Scripts\Twitter\gdo.apps.Twitter.graphControl.js" />
     <Content Include="Scripts\Twitter\gdo.apps.Twitter.section.js" />
     <Content Include="Scripts\Twitter\gdo.apps.Twitter.ui.js" />
-    <Content Include="Configurations\Twitter\DSI.json" />
-    <Content Include="Configurations\Twitter\DOC.json" />
+    <Content Include="Configurations\Twitter\Localhost.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

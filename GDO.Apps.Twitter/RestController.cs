@@ -27,20 +27,14 @@ namespace GDO.Apps.Twitter
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
         }
 
-        public List<NewAnalyticsRequest> GetNewAnalytics(List<NewAnalyticsRequest> newAnalyticsList)
+        public List<AnalyticsRequest> GetNewAnalytics(List<AnalyticsRequest> newAnalyticsList)
         {
             return newAnalyticsList.Select(r => Post("API/dataset/" + r.dataset_id + "/analytics", r)).ToList();
         }
 
-        public DataSetMeta[] GetDataSetMetas()
+        public DataSet[] GetDataSets()
         {
-            return (Get<DataSet[]>("API/dataset") ?? new DataSet[0]).Select(ds => new DataSetMeta()
-            {
-                Description = ds.Description,
-                Id = ds.Id,
-                Status = ds.Status,
-                Tags = ds.Tags
-            }).ToArray();
+            return (Get<DataSet[]>("API/dataset") ?? new DataSet[0]).ToArray();
         }
 
         public AnalyticsMeta[] GetAnalyticsMetas(string dataSetId)
@@ -53,7 +47,8 @@ namespace GDO.Apps.Twitter
                         Description = an.Description,
                         Status = an.Status,
                         Classification = an.Classification,
-                        Type = an.Type
+                        Type = an.Type,
+                        DataSetId = an.DatasetId
                     }).ToArray();
         }
 
@@ -92,7 +87,7 @@ namespace GDO.Apps.Twitter
             }
         }
 
-        public DataSet GetDataSet(string id)
+        public DataSet GetDataSets(string id)
         {
             return Get<DataSet>("API/dataset/" + id);
         }
