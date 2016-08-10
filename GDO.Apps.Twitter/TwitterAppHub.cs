@@ -147,6 +147,26 @@ namespace GDO.Apps.Twitter
             }
         }
 
+        public void AutoLaunchSections(int instanceId, string serialisedSections)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+//                try
+//                {
+                    Debug.WriteLine("Multiple section creation " + serialisedSections);
+                    ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).CreateSections(JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
+                    ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).QueueApps(JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
+                    Clients.Caller.setMessage(instanceId, serialisedSections);
+                    BroadcastState(instanceId, 2);
+//                }
+//                catch (Exception e)
+//                {
+//                    Console.WriteLine(e);
+//                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+//                }
+            }
+        }
+
         public void CreateSections(int instanceId, string serialisedSections)
         {
             lock (Cave.AppLocks[instanceId])

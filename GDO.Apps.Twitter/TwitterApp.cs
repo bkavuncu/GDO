@@ -74,6 +74,17 @@ namespace GDO.Apps.Twitter
             }
         }
 
+        public void QueueApps(List<SectionRequest> sectionRequests)
+        {
+            foreach (var sectionRequest in sectionRequests)
+            {
+                Debug.WriteLine("Loading visualisation " + sectionRequest.AnalyticsId + " " + sectionRequest.DataSetId);
+                sectionRequest.TwitterVis = GetVisualisation(sectionRequest.AnalyticsId, sectionRequest.DataSetId);
+            }
+            PseudoCave.QueueApps(sectionRequests);
+        }
+
+
         public void CloseSections(List<int> sectionIds)
         {
             PseudoCave.CloseSections(sectionIds);
@@ -107,32 +118,39 @@ namespace GDO.Apps.Twitter
         public void LoadVisualisation(int sectionId, string analyticsId, string dataSetId)
         {
             PseudoCave.LoadVisualisation(sectionId);
+            PseudoCave.Sections[sectionId].TwitterVis = GetVisualisation(analyticsId, dataSetId);
+
+        }
+
+        public TwitterVis GetVisualisation(string analyticsId, string dataSetId)
+        {
+            TwitterVis twitterVis = new TwitterVis();
             var analytics = RestController.GetAnalytics(dataSetId, analyticsId);
 
             switch (analytics.Classification)
             {
                 case "Graph":
-                    PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Graph;
-                    PseudoCave.Sections[sectionId].TwitterVis.AppType = "Graph";
-                    
+                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Graph;
+                    twitterVis.AppType = "Graph";
+
                     Download(dataSetId, analyticsId, GraphAppBasePath + analyticsId + ".graphml", "type=graph");
-                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = analyticsId + ".graphml";
+                    twitterVis.FilePath = analyticsId + ".graphml";
                     break;
                 case "Analytics":
-                    PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
-                    PseudoCave.Sections[sectionId].TwitterVis.AppType = "StaticHTML";
+                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
+                    twitterVis.AppType = "StaticHTML";
                     Download(dataSetId, analyticsId, TwitterBasePath + analyticsId + ".html", "type=chart");
-                    PseudoCave.Sections[sectionId].TwitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
+                    twitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
                     break;
                 default:
-                    PseudoCave.Sections[sectionId].TwitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Unknown;
+                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Unknown;
                     break;
             }
 
-            PseudoCave.Sections[sectionId].TwitterVis.Id = analyticsId;
-            PseudoCave.Sections[sectionId].TwitterVis.DataSetId = dataSetId;
-            PseudoCave.Sections[sectionId].TwitterVis.SubType = analytics.Type;
-
+            twitterVis.Id = analyticsId;
+            twitterVis.DataSetId = dataSetId;
+            twitterVis.SubType = analytics.Type;
+            return twitterVis;
         }
 
         private string Download(string dataSetId , string analyticsId, string path, string queryParams)

@@ -4,7 +4,7 @@
     .on("click",
         'li',
         function() {
-            var id = $(this).find("div:first").text();
+            var id = $(this).find("span:first").text().trim();
             gdo.consoleOut(".Twitter", 1, "Selected analytics with id: " + id);
             gdo.net.instance[gdo.controlId].control
                 .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[1] };
@@ -24,7 +24,7 @@ $("iframe")
     .on("click",
         'li',
         function() {
-            var id = $(this).find("div:first").text();
+            var id = $(this).find("span:first").text().trim();
             gdo.consoleOut(".Twitter", 1, "Selected graph with id: " + id);
             gdo.net.instance[gdo.controlId].control
                 .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[1] };
@@ -45,7 +45,7 @@ $("iframe")
     .on("click",
         'li',
         function() {
-            var id = $(this).find("div:first").text();
+            var id = $(this).find("span:first").text().trim();
             gdo.consoleOut(".Twitter", 1, "Selected analytics with id: " + id);
             gdo.net.instance[gdo.controlId].control
                 .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[2] };
@@ -65,7 +65,7 @@ $("iframe")
     .on("click",
         'li',
         function() {
-            var id = $(this).find("div:first").text();
+            var id = $(this).find("span:first").text().trim();
             gdo.consoleOut(".Twitter", 1, "Selected graph with id: " + id);
             gdo.net.instance[gdo.controlId].control
                 .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[2] };
@@ -86,7 +86,7 @@ $("iframe")
     .on("click",
         'li',
         function() {
-            var id = $(this).find("div:first").text();
+            var id = $(this).find("span:first").text().trim();
             gdo.consoleOut(".Twitter", 1, "Selected analytics with id: " + id);
             gdo.net.instance[gdo.controlId].control
                 .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[3] };
@@ -106,7 +106,7 @@ $("iframe")
     .on("click",
         'li',
         function() {
-            var id = $(this).find("div:first").text();
+            var id = $(this).find("span:first").text().trim();
             gdo.consoleOut(".Twitter", 1, "Selected graph with id: " + id);
             gdo.net.instance[gdo.controlId].control
                 .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[3] };
@@ -255,11 +255,12 @@ gdo.net.app["Twitter"].updateAnalyticsTables = function (instanceId, analytics) 
     gdo.net.instance[instanceId].data.analytics = analytics;
     $("iframe").contents().find("#analytics_table tbody tr").remove();
     
-    Object.keys(analytics).forEach(function(aId, index) {
-        gdo.net.instance[instanceId].control.analyticsDisplay[(index + 1)] = aId;
+    Object.keys(analytics).forEach(function (dataSetId, index) {
+        gdo.consoleOut('.Twitter', 1, 'Updating analytics table for: ' + instanceId + " and data set " + dataSetId);
+        gdo.net.instance[instanceId].control.analyticsDisplay[(index + 1)] = dataSetId;
         $("iframe").contents().find("#deployTabDescription_" + (index+1))
-            .html(gdo.net.instance[instanceId].data.dataSets[aId].Description);
-        gdo.net.app["Twitter"].updateSingleAnalyticsTable((index+1), analytics[aId]);
+            .html(gdo.net.instance[instanceId].data.dataSets[dataSetId].description);
+        gdo.net.app["Twitter"].updateSingleAnalyticsTable((index+1), analytics[dataSetId]);
     });
 }
 
@@ -270,24 +271,28 @@ gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, analyti
     for (var i = 0; i < analytics.length; i++) {
         $("iframe").contents().find("#analytics_table tbody").append("" +
                 "<tr>" +
-                "<td><font size='3'>" + analytics[i]["Classification"] + "</font></td>" +
-                "<td><font size='3'>" + analytics[i]["Type"] + "</font></td>" +
-                "<td><font size='3'>" + analytics[i]["Description"] + "</font></td>" +
-                "<td><font size='3'>" + analytics[i]["Status"] + "</font></td>" +
+                "<td><font size='3'>" + analytics[i]["classification"] + "</font></td>" +
+                "<td><font size='3'>" + analytics[i]["type"] + "</font></td>" +
+                "<td><font size='3'>" + analytics[i]["description"] + "</font></td>" +
+                "<td><font size='3'>" + analytics[i]["status"] + "</font></td>" +
                 "</tr>");
-        if (analytics[i]["Status"] !== "FINISHED") {
+        if (analytics[i]["status"] !== "FINISHED") {
             continue;
         }
-        if (analytics[i]["Classification"] === "Graph") {
+        if (analytics[i]["classification"] === "Graph") {
             $("iframe").contents().find("#items_graphs_" + listNumber).append("" +
                 "<li><a href='#' class='list-group-item'>" +
-                "<div>" + analytics[i]["Id"] + "</div>" +
-                "<div>" + analytics[i]["Type"] + "</div></a>" + "</li>");
+                "<span>" + analytics[i]["id"] + "  </span>  " +
+                "<span>" + analytics[i]["type"] + "  </span>  " +
+                "<span>" + analytics[i]["description"] + "</span>" +
+                "</li>");
         } else {
             $("iframe").contents().find("#items_analytics_" + listNumber).append("" +
                 "<li><a href='#' class='list-group-item'>" +
-                    "<div>" + analytics[i]["Id"] + "</div>" +
-                    "<div>" + analytics[i]["Type"] + "</div></a>" + "</li>");
+                    "<span>Id: " + analytics[i]["id"] + "</span>" +
+                    "<span>Type: " + analytics[i]["type"] + "</span>" +
+                    "<span>:Description: " + analytics[i]["description"] + "</span></a>" +
+                    "</li>");
         }
     }
 }

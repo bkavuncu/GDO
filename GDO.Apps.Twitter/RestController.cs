@@ -37,19 +37,10 @@ namespace GDO.Apps.Twitter
             return (Get<DataSet[]>("API/dataset") ?? new DataSet[0]).ToArray();
         }
 
-        public AnalyticsMeta[] GetAnalyticsMetas(string dataSetId)
+        public Analytics[] GetAnalyticsMetas(string dataSetId)
         {
             return
-                (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).Select(
-                    an => new AnalyticsMeta()
-                    {
-                        Id = an.Id,
-                        Description = an.Description,
-                        Status = an.Status,
-                        Classification = an.Classification,
-                        Type = an.Type,
-                        DataSetId = an.DatasetId
-                    }).ToArray();
+                (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).ToArray();
         }
 
         public AnalyticsOption[] GetAnalyticsOptions()

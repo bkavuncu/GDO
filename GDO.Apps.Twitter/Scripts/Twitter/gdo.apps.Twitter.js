@@ -248,6 +248,11 @@ gdo.net.app["Twitter"].requestCreateSections = function(instanceId, sections) {
     gdo.net.app["Twitter"].server.createSections(instanceId, JSON.stringify(sections));
 }
 
+gdo.net.app["Twitter"].reqeustAutoLoadSections = function(instanceId, sections) {
+    gdo.consoleOut('.Twitter', 1, "Requesting hub auto create sections");
+    gdo.net.app["Twitter"].server.autoLaunchSections(instanceId, JSON.stringify(sections));
+}
+
 gdo.net.app["Twitter"].requestCreateSection = function (instanceId, colStart, rowStart, colEnd, rowEnd) {
     gdo.consoleOut('.Twitter', 1, "Requesting hub create new section for instance: " + instanceId);
     gdo.net.app["Twitter"].server.createSection(instanceId, colStart, rowStart, colEnd, rowEnd);

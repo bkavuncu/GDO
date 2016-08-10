@@ -11,19 +11,27 @@ namespace GDO.Apps.Twitter.Core
     {
         [JsonProperty(PropertyName = "nodes")]
         public Dictionary<int, Node> Nodes { get; set; } = new Dictionary<int, Node>();
+
         [JsonProperty(PropertyName = "sections")]
         public Dictionary<int, Section> Sections { get; set; } = new Dictionary<int, Section>();
 
         [JsonProperty(PropertyName = "sectionsToCreate")]
         public List<Section> SectionsToCreate { get; set; } = new List<Section>();
+
         [JsonProperty(PropertyName = "sectionsToDispose")]
         public List<Section> SectionsToDispose { get; set; } = new List<Section>();
+
         [JsonProperty(PropertyName = "appsToDeploy")]
         public List<Section> AppsToDeploy { get; set; } = new List<Section>();
+
         [JsonProperty(PropertyName = "appsToDispose")]
         public List<Section> AppsToDispose { get; set; } = new List<Section>();
+
         [JsonProperty(PropertyName = "appsToLaunch")]
         public List<Section> AppsToLaunch { get; set; } = new List<Section>();
+
+        [JsonProperty(PropertyName = "queuedApps")]
+        public List<SectionRequest> QueuedApps { get; set; } = new List<SectionRequest>();
 
         [JsonIgnore]
         public List<int> SectionIds { get; set; } = new List<int>();
@@ -35,6 +43,7 @@ namespace GDO.Apps.Twitter.Core
             UpdateSectionsToDispose(caveNodes);
             UpdateAppsToDeploy(caveSections);
             UpdateAppsToDispose(caveSections);
+            UpdateAppQueue();
 
             foreach (var entry in caveNodes)
             {
@@ -57,14 +66,14 @@ namespace GDO.Apps.Twitter.Core
                 else if (entry.Value.SectionId <= 0)
                 {
                     Nodes[entry.Key].NodeContext = Node.Context.Free;
-                }   
+                }
             }
             return this;
         }
 
         public void ConfirmLaunch(List<int> sectionIds)
         {
-            sectionIds.ForEach(sectionId => AppsToLaunch.RemoveAll(s=>sectionIds.Contains(s.Id)));
+            sectionIds.ForEach(sectionId => AppsToLaunch.RemoveAll(s => sectionIds.Contains(s.Id)));
             Debug.WriteLine("Confirming launch with " + string.Join(",", sectionIds.ToArray()));
             Debug.WriteLine("Number of apps still to launch: " + AppsToLaunch.Count);
         }
@@ -157,7 +166,26 @@ namespace GDO.Apps.Twitter.Core
             }
         }
 
-        public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes, 
+        public void UpdateAppQueue()
+        {
+            List<Section> availableSections;
+            for (var i = 0; i < QueuedApps.Count; ++i)
+            {
+                availableSections = Sections.Where(s => s.Value.TwitterVis.Id == null).Select(kvp => kvp.Value).ToList();
+                if (availableSections.Count > 0)
+                {
+                    availableSections[0].TwitterVis = QueuedApps[i].TwitterVis;
+                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSections[0].Id + " deploying" + QueuedApps[i].TwitterVis.FilePath);
+                    QueuedApps.RemoveAt(i);
+                    AppsToDeploy.Add(availableSections[0]);
+                    --i;
+                }
+
+            }
+        }
+    
+
+public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes, 
             ConcurrentDictionary<int, GDO.Core.Section> caveSections, int sectionId)
         {
             foreach (var entry in caveNodes)
@@ -184,6 +212,14 @@ namespace GDO.Apps.Twitter.Core
                 });
                 AppsToDispose.Add(section);
             });
+        }
+
+        public void QueueApps(List<SectionRequest> sectionRequests)
+        {
+            foreach (var sectionRequest in sectionRequests)
+            {
+                QueuedApps.Add(sectionRequest);   
+            }
         }
 
         public void DeployApps(List<int> sectionIds) {
@@ -338,10 +374,14 @@ namespace GDO.Apps.Twitter.Core
 
     public class SectionRequest
     {
+        public int SectionId { get; set; }
         public int ColStart { get; set; }
         public int RowStart { get; set; }
         public int ColEnd { get; set; }
         public int RowEnd { get; set; }
+        public string DataSetId { get; set; }
+        public string AnalyticsId { get; set; }
+        public TwitterVis TwitterVis { get; set; }
     }
 
     public class Section

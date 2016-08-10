@@ -56,29 +56,28 @@ namespace GDO.Apps.Twitter.Core
         [DataMember(Name = "status")]
         public string Status { get; set; }
 
-        [DataMember(Name = "datasetId")]
+        [DataMember(Name = "dataset_id")]
         public string DatasetId { get; set; }
-
         
     }
 
-    public class DataSetMeta
-    {
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string Status { get; set; }
-        public List<string> Tags { get; set; }
-    }
-
-    public class AnalyticsMeta
-    {
-        public string Id { get; set; }
-        public string Description { get; set; }
-        public string Status { get; set; }
-        public string Classification { get; set; }
-        public string Type { get; set; }
-        public string DataSetId { get; set; }
-    }
+//    public class DataSetMeta
+//    {
+//        public string Id { get; set; }
+//        public string Description { get; set; }
+//        public string Status { get; set; }
+//        public List<string> Tags { get; set; }
+//    }
+//
+//    public class AnalyticsMeta
+//    {
+//        public string Id { get; set; }
+//        public string Description { get; set; }
+//        public string Status { get; set; }
+//        public string Classification { get; set; }
+//        public string Type { get; set; }
+//        public string DataSetId { get; set; }
+//    }
 
     [DataContract]
     public class AnalyticsOption

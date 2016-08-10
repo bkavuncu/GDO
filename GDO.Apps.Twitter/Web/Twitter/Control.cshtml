@@ -132,7 +132,7 @@
             </div>
             <div class="panel-body">
                 <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
-                <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; MyButton</button>
+                
                 <button id="debug_b" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; Console</button>
             </div>
         </div>
@@ -309,7 +309,7 @@
 </div>
 <div class="tab-pane fade" id="app_deployment">
     <div class="row">
-        <div class="col-lg-3" style="padding: 6px;">
+        <div class="col-lg-6" style="padding: 6px;">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_1"></span></h6>
@@ -333,30 +333,45 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3" style="padding: 6px;">
+        <div class="col-lg-6" style="padding: 6px;">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_2"></span></h6>
-                    <hr style="clear: both; border: 0"/>
+                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Tools</h6>
+                    <hr style="clear: both; border: 0" />
                 </div>
                 <div style="overflow: auto; height: 300px">
                     <div class="panel-body" style="height: 15.5vh;">
-                        <div class="list-group list-group-root" id="analytics_deploy_list_2">
-                            <a href="#items_analytics_2" class="list-group-item" data-toggle="collapse">
-                                <i class="fa fa-chevron-down fa-fw"></i>Analytics
-                            </a>
-                            <ul class="list-group collapse in" id="items_analytics_2"></ul>
-                            <a href="#items_graphs_2" class="list-group-item" data-toggle="collapse">
-                                <i class="fa fa-chevron-down fa-fw"></i>Graphs
-                            </a>
-                            <ul class="list-group collapse in" id="items_graphs_2"></ul>
-                        </div>
+                        <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; AutoLaunch 2x2</button>
                     </div>
                 </div>
                 <div class="panel-footer">
                 </div>
             </div>
         </div>
+@*        <div class="col-lg-3" style="padding: 6px;">*@
+@*            <div class="panel panel-primary">*@
+@*                <div class="panel-heading">*@
+@*                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_2"></span></h6>*@
+@*                    <hr style="clear: both; border: 0"/>*@
+@*                </div>*@
+@*                <div style="overflow: auto; height: 300px">*@
+@*                    <div class="panel-body" style="height: 15.5vh;">*@
+@*                        <div class="list-group list-group-root" id="analytics_deploy_list_2">*@
+@*                            <a href="#items_analytics_2" class="list-group-item" data-toggle="collapse">*@
+@*                                <i class="fa fa-chevron-down fa-fw"></i>Analytics*@
+@*                            </a>*@
+@*                            <ul class="list-group collapse in" id="items_analytics_2"></ul>*@
+@*                            <a href="#items_graphs_2" class="list-group-item" data-toggle="collapse">*@
+@*                                <i class="fa fa-chevron-down fa-fw"></i>Graphs*@
+@*                            </a>*@
+@*                            <ul class="list-group collapse in" id="items_graphs_2"></ul>*@
+@*                        </div>*@
+@*                    </div>*@
+@*                </div>*@
+@*                <div class="panel-footer">*@
+@*                </div>*@
+@*            </div>*@
+@*        </div>*@
     </div>
     <div class="row">
         <div class="col-lg-12">
@@ -431,7 +446,7 @@
                                             <span>&nbsp;as labels&nbsp;</span>
                                             <span>
                                                 <input type="color" id="color_Labels" value="#ff0000" class="color_field">
-                                            </span>+
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
