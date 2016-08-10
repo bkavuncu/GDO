@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using GDO.Apps.Maps.Core;
+using GDO.Apps.Maps.Core.Animations;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
@@ -450,6 +451,280 @@ namespace GDO.Apps.Maps
             Clients.Group("" + instanceId).receiveMarkerPosition(instanceId, pos);
         }
 
+        //Animation
+
+        public void AddAnimation(int instanceId, string className, string serializedAnimation)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    int animationId = -1;
+                    switch (className)
+                    {
+                        case "GlobalAnimation":
+                            animationId = maps.AddAnimation<GlobalAnimation>(JsonConvert.DeserializeObject<GlobalAnimation>(serializedAnimation));
+                            break;
+                        default:
+                            break;
+                    }
+                    BroadcastAnimation(instanceId, animationId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateAnimation(int instanceId, int animationId, string className, string serializedAnimation)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    switch (className)
+                    {
+                        case "GlobalAnimation":
+                            maps.UpdateAnimation<GlobalAnimation>(animationId, JsonConvert.DeserializeObject<GlobalAnimation>(serializedAnimation));
+                            break;
+                        default:
+                            break;
+                    }
+                    BroadcastAnimation(instanceId, animationId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void PlayAnimation(int instanceId, int animationId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                foreach (Layer layer in maps.Layers.ToArray())
+                {
+                    if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
+                    {
+                        ((DynamicLayer)layer).IsPlaying.Value = false;
+                    }
+                }
+                System.Threading.Thread.Sleep(300);
+                var thread = new Thread(() => AnimateAll(instanceId, animationId));
+                thread.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void PauseAnimation(int instanceId, int animationId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                Animation animation = maps.GetAnimation<Animation>(animationId);
+                if (animation != null)
+                {
+                    animation.IsPlaying.Value = false;
+                    BroadcastAnimation(instanceId, animationId);
+                    foreach (Layer layer in maps.Layers.ToArray())
+                    {
+                        if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
+                        {
+                            ((DynamicLayer)layer).IsPlaying.Value = false;
+                            BroadcastLayer(instanceId, Utilities.CastToInt(layer.Id.Value,-1));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void StopAnimation(int instanceId, int animationId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                Animation animation = maps.GetAnimation<Animation>(animationId);
+                if (animation != null)
+                {
+                    animation.IsPlaying.Value = false;
+                    animation.CurrentTime.Value = 0;
+                    BroadcastAnimation(instanceId, animationId);
+                    List<int> layerIds = new List<int>();
+                    foreach (Layer layer in maps.Layers.ToArray())
+                    {
+                        if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
+                        {
+                            ((DynamicLayer)layer).IsPlaying.Value = false;
+                            BroadcastLayer(instanceId, Utilities.CastToInt(layer.Id.Value,-1));
+                            layerIds.Add(Utilities.CastToInt(layer.Id.Value,-1));
+                        }
+                    }
+                    System.Threading.Thread.Sleep(200);
+                    Clients.Group("" + instanceId).receiveGlobalTimeStep(instanceId, layerIds.ToArray(), 0);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void AnimateAll(int instanceId, int animationId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                Animation animation = maps.GetAnimation<Animation>(animationId);
+                if (animation != null)
+                {
+                    if (!Utilities.CastToBool(animation.IsPlaying.Value, false))
+                    {
+                        animation.IsPlaying.Value = true;
+                        BroadcastAnimation(instanceId, animationId);
+                        List<int> layerIds = new List<int>();
+                        foreach (Layer layer in maps.Layers.ToArray())
+                        {
+                            if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
+                            {
+                                ((DynamicLayer)layer).IsPlaying.Value = true;
+                                BroadcastLayer(instanceId, Utilities.CastToInt(layer.Id.Value,-1));
+                                layerIds.Add(Utilities.CastToInt(layer.Id.Value,-1));
+                            }
+                        }
+                        double startTime = Utilities.CalculateTimeSpan(animation.StartTime.Values, false);
+                        double endTime = Utilities.CalculateTimeSpan(animation.EndTime.Values, false);
+                        double currentTime = Utilities.CastToDouble(animation.CurrentTime.Value, 0);
+                        double timeStep = Utilities.CalculateTimeSpan(animation.TimeStep.Values, true);
+                        while (Utilities.CastToBool(animation.IsPlaying.Value, false))
+                        {
+                            layerIds = new List<int>();
+                            foreach (Layer layer in maps.Layers.ToArray())
+                            {
+                                if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
+                                {
+                                    if (Utilities.CastToBool(((DynamicLayer) layer).IsPlaying.Value, false))
+                                    {
+                                        layerIds.Add(Utilities.CastToInt(layer.Id.Value,-1));
+                                    }
+                                }
+                            }
+                            if ((currentTime + startTime) < endTime)
+                            {
+                                currentTime = currentTime + timeStep;
+                                animation.CurrentTime.Value = currentTime;
+                                System.Threading.Thread.Sleep(Utilities.CastToInt(animation.WaitTime.Value, 1000));
+                                Clients.Group("" + instanceId).receiveGlobalTimeStep(instanceId, layerIds, (currentTime + startTime));
+                            }
+                            else
+                            {
+                                if (Utilities.CastToBool(animation.IsLooping.Value, false))
+                                {
+                                    currentTime = 0;
+                                }
+                                else
+                                {
+                                    animation.IsPlaying.Value = false;
+                                    currentTime = 0;
+                                    animation.CurrentTime.Value = 0;
+                                    BroadcastAnimation(instanceId, animationId);
+                                    foreach (Layer layer in maps.Layers.ToArray())
+                                    {
+                                        if (layer.ClassName.Value == "DynamicVectorLayer" || layer.ClassName.Value == "DynamicHeatmapLayer")
+                                        {
+                                            ((DynamicLayer)layer).IsPlaying.Value = false;
+                                            BroadcastLayer(instanceId, Utilities.CastToInt(layer.Id.Value, -1));
+                                            layerIds.Add(Utilities.CastToInt(layer.Id.Value, -1));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Clients.Group("" + instanceId).receiveGlobalTimeStep(instanceId, layerIds, (currentTime + startTime));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void RequestAnimation(int instanceId, int animationId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    string serializedAnimation = maps.GetSerializedAnimation(animationId);
+                    if (serializedAnimation != null)
+                    {
+                        Clients.Caller.receiveAnimation(instanceId, animationId, serializedAnimation, true);
+                    }
+                    else
+                    {
+                        Clients.Caller.receiveAnimation(instanceId, animationId, "", false);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void BroadcastAnimation(int instanceId, int animationId)
+        {
+            try
+            {
+                MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                string serializedAnimation = maps.GetSerializedAnimation(animationId);
+                if (serializedAnimation != null)
+                {
+                    Clients.Group("" + instanceId).receiveAnimation(instanceId, animationId, serializedAnimation, true);
+                    Clients.Group("c" + instanceId).receiveAnimation(instanceId, animationId, serializedAnimation, true);
+                }
+                else
+                {
+                    Clients.Group("" + instanceId).receiveAnimation(instanceId, animationId, "", false);
+                    Clients.Group("c" + instanceId).receiveAnimation(instanceId, animationId, "", false);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void RemoveAnimation(int instanceId, int animationId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    MapsApp maps = ((MapsApp)Cave.Apps["Maps"].Instances[instanceId]);
+                    maps.RemoveAnimation(animationId);
+                    BroadcastAnimation(instanceId, animationId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         //Layer
 
         public void AddLayer(int instanceId, string className, string serializedLayer)
@@ -602,19 +877,6 @@ namespace GDO.Apps.Maps
             }
         }
 
-        public void PlayLayer(int instanceId, int layerId)
-        {
-            try
-            {
-                var thread = new Thread(() => AnimateLayer(instanceId,layerId));
-                thread.Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
         public void AnimateLayer(int instanceId, int layerId)
         {
             try
@@ -638,7 +900,7 @@ namespace GDO.Apps.Maps
                                 currentTime = currentTime + timeStep;
                                 layer.CurrentTime.Value = currentTime;
                                 System.Threading.Thread.Sleep(Utilities.CastToInt(layer.WaitTime.Value, 1000));
-                                Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, (currentTime + startTime));
+                                Clients.Group("" + instanceId).receiveLayerTimeStep(instanceId, layerId, (currentTime + startTime));
                             }
                             else
                             {
@@ -650,14 +912,27 @@ namespace GDO.Apps.Maps
                                 {
                                     layer.IsPlaying.Value = false;
                                     currentTime = 0;
-
-
+                                    layer.CurrentTime.Value = 0;
+                                    BroadcastLayer(instanceId, layerId);
                                 }
                             }
                         }
-                        Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, (currentTime + startTime));
+                        Clients.Group("" + instanceId).receiveLayerTimeStep(instanceId, layerId, (currentTime + startTime));
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void PlayLayer(int instanceId, int layerId)
+        {
+            try
+            {
+                var thread = new Thread(() => AnimateLayer(instanceId, layerId));
+                thread.Start();
             }
             catch (Exception e)
             {
@@ -695,7 +970,7 @@ namespace GDO.Apps.Maps
                     layer.CurrentTime.Value = 0;
                     BroadcastLayer(instanceId, layerId);
                     System.Threading.Thread.Sleep(200);
-                    Clients.Group("" + instanceId).receiveTimeStep(instanceId, layerId, 0);
+                    Clients.Group("" + instanceId).receiveLayerTimeStep(instanceId, layerId, 0);
                 }
             }
             catch (Exception e)

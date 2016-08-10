@@ -131,28 +131,36 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
     var object = {};
     switch (deserializedObject.ClassName.Value) {
         case "DynamicVectorSource":
-            var isFirstOne = true;
             var config = JSON.parse(unescape(deserializedObject.Config.Value));
             if (config != null) {
-                for (var i = 0; i < config.files.length; i++) {
-                    var tempProperties = jQuery.extend(true, {}, deserializedObject);
-                    tempProperties.Url.Value = config.files[i].file;
-                    tempProperties.Url.IsNull = false;
-                    if (isFirstOne) {
-                        isFirstOne = false;
-                        object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
-                        object.properties = deserializedObject;
-                        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                            object.sources = [];
-                            object.timestamps = [];
-                        }
+                var dummyProperties = jQuery.extend(true, {}, deserializedObject);
+                dummyProperties.Url.Value = "../../Data/Maps/dummy.json";
+                dummyProperties.Url.IsNull = false;
+                object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, dummyProperties);
+                object.properties = deserializedObject;
+
+                if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                    object.sources = [];
+                    object.timestamps = [];
+                    object.sources[0] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, dummyProperties);
+                    object.sources[0].date = new Date(config.files[0].timestamp);
+                    object.timestamps[0] = object.sources[0].date.getTime() - 1;
+                    var i;
+                    for (i = 0; i < config.files.length; i++) {
+                        var tempProperties = jQuery.extend(true, {}, deserializedObject);
+                        tempProperties.Url.Value = config.files[i].file;
+                        tempProperties.Url.IsNull = false;
+                        object.sources[i + 1] = {};
+                        object.sources[i + 1] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                        object.sources[i + 1].date = new Date(config.files[i].timestamp);
+                        object.timestamps[i + 1] = object.sources[i].date.getTime();
+                        object.sources[i + 1].loadFeatures([-10000, -10000, 10000, 10000], 1,
+                        ol.proj.get('EPSG:3857'));
                     }
-                    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-                        object.sources[i] = {};
-                        object.sources[i] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
-                        object.sources[i].date = new Date(config.files[i].timestamp);
-                        object.timestamps[i] = object.sources[i].date.getTime();
-                    }
+                    i--;
+                    object.sources[i + 2] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, dummyProperties);
+                    object.sources[i + 2].date = new Date(config.files[i].timestamp);
+                    object.timestamps[i + 2] = object.sources[i].date.getTime() + 1;
                 }
                 object.properties.isInitialized = true;
                 eval("gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "] = object;");
@@ -161,7 +169,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
         case "DynamicVectorLayer":
         case "DynamicHeatmapLayer":
             object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
-            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            /*if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 (function loop(i) {
                     setTimeout(function() {
                         object.setSource(gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources[i]);
@@ -169,7 +177,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                     }, 70);
                 })(gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources.length);
                 object.setSource(gdo.net.instance[instanceId].sources[deserializedObject.Source.Value].sources[0]);
-            }
+            }*/
             break;
         default:
             object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
@@ -211,7 +219,7 @@ gdo.net.app["Maps"].requestObject = function (instanceId, objectType, objectId) 
 }
 
 gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isNew) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading ' + objectType + ': ' + object.properties.Id + " (IsNew="+isNew+")");
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Uploading ' + objectType + ': ' + object.properties.Id + " (IsNew=" + isNew + ")");
     var properties = object.properties;
     if (objectType == 'layer') {
         if (properties.IsPlaying != null && properties.IsPlaying != "undefined") {

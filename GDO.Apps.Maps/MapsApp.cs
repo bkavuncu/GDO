@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using GDO.Apps.Maps.Core;
+using GDO.Apps.Maps.Core.Animations;
 using GDO.Apps.Maps.Core.Layers;
 using GDO.Apps.Maps.Core.Sources;
 using GDO.Apps.Maps.Core.Sources.Images;
@@ -35,6 +36,7 @@ namespace GDO.Apps.Maps
         public bool ShowLabel { get; set; }
         public Position Position { get; set; }
         public GenericDictionary<View> Views { get; set; }
+        public GenericDictionary<Animation> Animations { get; set; }
         public GenericDictionary<Layer> Layers { get; set; }
         public GenericDictionary<Source> Sources { get; set; }
         public GenericDictionary<Style> Styles { get; set; }
@@ -47,6 +49,7 @@ namespace GDO.Apps.Maps
         public void Init()
         {
             Views = new GenericDictionary<View>();
+            Animations = new GenericDictionary<Animation>();
             Layers = new GenericDictionary<Layer>();
             Sources = new GenericDictionary<Source>();
             Styles = new GenericDictionary<Style>();
@@ -54,11 +57,13 @@ namespace GDO.Apps.Maps
             Configurations = new GenericDictionary<Core.Configuration>();
 
             Views.Init();
+            Animations.Init();
             Layers.Init();
             Sources.Init();
             Styles.Init();
             Formats.Init();
             Configurations.Init();
+
             Map = Newtonsoft.Json.JsonConvert.DeserializeObject<Map>(Configuration.Json.ToString(), JsonSettings);
 
             Label = Map.Label;
@@ -81,6 +86,10 @@ namespace GDO.Apps.Maps
             {
                 Layers.Add((int)layer.Id.Value, layer);
             }
+            foreach (Animation animation in Map.Animations)
+            {
+                Animations.Add((int)animation.Id.Value, animation);
+            }
             foreach (View view in Map.Views)
             {
                 Views.Add((int)view.Id.Value, view);
@@ -99,7 +108,7 @@ namespace GDO.Apps.Maps
 
         public string GetSerializedMap()
         {
-            Map = new Map(Label, SubLabel, ShowLabel, Position, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray());
+            Map = new Map(Label, SubLabel, ShowLabel, Position, Views.ToArray(), Formats.ToArray(), Styles.ToArray(), Sources.ToArray(), Layers.ToArray(), Animations.ToArray());
             string serializedMap = Newtonsoft.Json.JsonConvert.SerializeObject(Map, JsonSettings);
             return serializedMap;
         }
@@ -129,6 +138,14 @@ namespace GDO.Apps.Maps
                 configuration.Label.Value = tempMap.Label;
                 configuration.SubLabel.Value = tempMap.SubLabel;
                 configuration.ShowLabel.Value = tempMap.ShowLabel;
+
+                string[] tempAnimations = new string[tempMap.Animations.Length];
+                for (int i = 0; i < tempMap.Animations.Length; i++)
+                {
+                    tempAnimations[i] = tempMap.Animations[i].Name.Value + " (" + tempMap.Animations[i].ClassName.Value + ")";
+                }
+                configuration.Animations.Values = tempAnimations;
+                configuration.Animations.Length = tempAnimations.Length;
 
                 string[] tempLayers = new string[tempMap.Layers.Length];
                 for (int i=0; i< tempMap.Layers.Length; i++ )
@@ -452,6 +469,95 @@ namespace GDO.Apps.Maps
             }
         }
 
+        //Animation
+
+        public int AddAnimation<T>(Animation animation) where T : Animation
+        {
+
+            try
+            {
+                int animationId = Animations.GetAvailableSlot();
+                animation.Id.Value = animationId;
+                Animations.Add<T>(animationId, (T)animation);
+                return animationId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return -1;
+            }
+        }
+
+        public void UpdateAnimation<T>(int animationId, T animation) where T : Animation
+        {
+            try
+            {
+                foreach (PropertyInfo property in typeof(T).GetProperties())
+                {
+                    property.SetValue(Animations.GetValue<T>(animationId), property.GetValue(animation, null), null);
+                }
+                //Animations.Update<T>(animationId, animation);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+
+        public string GetSerializedAnimation(int animationId)
+        {
+            Animation animation = null;
+            if (Animations.Contains(animationId))
+            {
+                try
+                {
+                    animation = Animations.GetValue<Animation>(animationId);
+                }
+                catch (Exception e)
+                {
+                    animation = null;
+                }
+            }
+
+            if (animation != null)
+            {
+                string serializedAnimation = Newtonsoft.Json.JsonConvert.SerializeObject(Animations.GetValue<Animation>(animationId), JsonSettings);
+                return serializedAnimation;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveAnimation(int animationId)
+        {
+            try
+            {
+                Animations.Remove(animationId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public T GetAnimation<T>(int animationId) where T : Animation
+        {
+            try
+            {
+                return Animations.GetValue<T>(animationId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
         //Source
 
         public int AddSource<T>(Source source) where T : Source
@@ -694,6 +800,7 @@ namespace GDO.Apps.Maps
             List<Style> styles = new List<Style>();
             List<Source> sources = new List<Source>();
             List<Layer> layers = new List<Layer>();
+            List<Animation> animations = new List<Animation>();
             List<View> views = new List<View>();
 
             //Add Position to Template
@@ -792,7 +899,15 @@ namespace GDO.Apps.Maps
             layers.Add(dynamicVectorLayer);
             layers.Add(staticVectorLayer);
 
-            Map map = new Map(label, sublabel, false, position, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray());
+            //Add Animations to Template
+
+            GlobalAnimation globalAnimation = new GlobalAnimation();
+
+            animations.Add(globalAnimation);
+
+            //Return Map
+
+            Map map = new Map(label, sublabel, false, position, views.ToArray(), formats.ToArray(), styles.ToArray(), sources.ToArray(), layers.ToArray(), animations.ToArray());
             return map;
         }
 

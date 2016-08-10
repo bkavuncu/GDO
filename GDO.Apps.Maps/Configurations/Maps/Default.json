@@ -1,62 +1,60 @@
 {
-   "$type":"GDO.Apps.Maps.Core.Map, GDO.Apps.Maps",
-    "Label":"Test",
-    "SubLabel":"Testing Stuff",
-    "ShowLabel":false,
-    "Position":{
-        "$type":"GDO.Apps.Maps.Core.Position, GDO.Apps.Maps",
-        "TopLeft":{
-            "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
-            "$values":[
-                0.0,
-                0.0
-            ]
-        },
-        "Center":{
-            "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
-            "$values":[
-                0.0,
-                0.0
-            ]
-        },
-        "BottomRight":{
-            "$type":"System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
-            "$values":[
-                0.0,
-                0.0
-            ]
-        },
-        "Resolution":77.0,
-        "Width":100,
-        "Height":100
+  "$type": "GDO.Apps.Maps.Core.Map, GDO.Apps.Maps",
+  "Label": "",
+  "SubLabel": "",
+  "ShowLabel": false,
+  "Position": {
+    "$type": "GDO.Apps.Maps.Core.Position, GDO.Apps.Maps",
+    "TopLeft": {
+      "$type": "System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+      "$values": [0.0, 0.0]
     },
-    "Views":{  
-      "$type":"GDO.Apps.Maps.Core.View[], GDO.Apps.Maps",
-      "$values":[  
+    "Center": {
+      "$type": "System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+      "$values": [0.0, 0.0]
+    },
+    "BottomRight": {
+      "$type": "System.Nullable`1[[System.Single, mscorlib]][], mscorlib",
+      "$values": [0.0, 0.0]
+    },
+    "Resolution": 77.0,
+    "Width": 100,
+    "Height": 100
+  },
+  "Views": {
+    "$type": "GDO.Apps.Maps.Core.View[], GDO.Apps.Maps",
+    "$values": [
+    
+    ]
+  },
+  "Formats": {
+    "$type": "GDO.Apps.Maps.Core.Format[], GDO.Apps.Maps",
+    "$values": [
 
-      ]
-   },
-   "Formats":{
-      "$type":"GDO.Apps.Maps.Core.Format[], GDO.Apps.Maps",
-      "$values":[
-      ]
-   },
-   "Styles":{
-      "$type":"GDO.Apps.Maps.Core.Style[], GDO.Apps.Maps",
-      "$values":[
+    ]
+  },
+  "Styles": {
+    "$type": "GDO.Apps.Maps.Core.Style[], GDO.Apps.Maps",
+    "$values": [
 
-      ]
-   },
-   "Sources":{
-      "$type":"GDO.Apps.Maps.Core.Source[], GDO.Apps.Maps",
-      "$values":[
+    ]
+  },
+  "Sources": {
+    "$type": "GDO.Apps.Maps.Core.Source[], GDO.Apps.Maps",
+    "$values": [
 
-      ]
-   },
-   "Layers":{
-      "$type":"GDO.Apps.Maps.Core.Layer[], GDO.Apps.Maps",
-      "$values":[
+    ]
+  },
+  "Layers": {
+    "$type": "GDO.Apps.Maps.Core.Layer[], GDO.Apps.Maps",
+    "$values": [
 
-      ]
-   }
+    ]
+  },
+  "Animations": {
+    "$type": "GDO.Apps.Maps.Core.Animation[], GDO.Apps.Maps",
+    "$values": [
+
+    ]
+  }
 }

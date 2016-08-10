@@ -18,8 +18,9 @@ namespace GDO.Apps.Maps.Core
         public Style[] Styles { get; set; }
         public Source[] Sources { get; set; }
         public Layer[] Layers { get; set; }
+        public Animation[] Animations { get; set; }
 
-        public Map(string label, string subLabel, bool showLabel, Position position, View[] views, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
+        public Map(string label, string subLabel, bool showLabel, Position position, View[] views, Format[] formats, Style[] styles, Source[] sources, Layer[] layers, Animation[] animations)
         {
             Label = label;
             SubLabel = subLabel;
@@ -30,6 +31,7 @@ namespace GDO.Apps.Maps.Core
             Styles = styles;
             Sources = sources;
             Layers = layers;
+            Animations = animations;
         }
     }
 }

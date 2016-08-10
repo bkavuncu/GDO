@@ -12,6 +12,7 @@ namespace GDO.Apps.Maps.Core
         public StringParameter Label { get; set; }
         public StringParameter SubLabel { get; set; }
         public BooleanParameter ShowLabel { get; set; }
+        public ListParameter Animations { get; set; }
         public ListParameter Layers { get; set; }
         public ListParameter Sources { get; set; }
         public ListParameter Styles { get; set; }
@@ -74,6 +75,19 @@ namespace GDO.Apps.Maps.Core
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
+            };
+
+            Animations = new ListParameter
+            {
+                Name = "Animations",
+                Description = "List of Animations",
+                Priority = (int)GDO.Utility.Priorities.System,
+                IsEditable = false,
+                IsVisible = true,
+                IsProperty = false,
+                Length = 1,
+                DefaultValues = new string[1],
+                Values = new string[1],
             };
 
             Layers = new ListParameter

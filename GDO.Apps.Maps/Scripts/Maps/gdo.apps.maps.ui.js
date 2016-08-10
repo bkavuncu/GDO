@@ -4,6 +4,7 @@ gdo.net.app["Maps"].HeaderHeight = 61;
 gdo.net.app["Maps"].tableHeight = 500;
 gdo.net.app["Maps"].StatusHeight = 49;
 gdo.net.app["Maps"].selected = [];
+gdo.net.app["Maps"].selected["animation"] = -1;
 gdo.net.app["Maps"].selected["layer"] = -1;
 gdo.net.app["Maps"].selected["source"] = -1;
 gdo.net.app["Maps"].selected["style"] = -1;
@@ -14,6 +15,7 @@ gdo.net.app["Maps"].selected["configuration"] = -1;
 
 gdo.net.app["Maps"].drawListTables = function (instanceId) {
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        gdo.net.app["Maps"].drawListTable(instanceId, "animation");
         gdo.net.app["Maps"].drawListTable(instanceId, "layer");
         gdo.net.app["Maps"].drawListTable(instanceId, "source");
         gdo.net.app["Maps"].drawListTable(instanceId, "style");
@@ -102,11 +104,24 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
                             color1 = "#99D522";
                         }
                     }
-                } else {
-                    icon2 = " fa-plus";
-                    color = "#77B200";
                 }
+            }
 
+            if (tab == "animation") {
+                if (arr[i].properties.isInitialized) {
+                    if (arr[i].properties.IsPlaying != null && arr[i].properties.IsPlaying != "undefined") {
+                        if (arr[i].properties.IsPlaying.Value) {
+                            icon2 = "fa-spinner fa-spin";
+                            color2 = "#4CBFF8";
+                        } else if (arr[i].properties.CurrentTime.Value > 0) {
+                            icon2 = "fa-pause";
+                            color2 = "#FF8800";
+                        } else {
+                            icon2 = "fa-play";
+                            color2 = "#99D522";
+                        }
+                    }
+                }
             }
             if (gdo.net.app["Maps"].selected[tab] == arr[i].properties.Id.Value) {
                 color = "#4CBFF8";
@@ -133,8 +148,6 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
     } else {
         gdo.net.app["Maps"].drawEmptyTable(tab);
     }
-
-    //TODO draw property table
 }
 
 gdo.net.app["Maps"].readValueFromInput = function (input, type) {
@@ -671,7 +684,7 @@ gdo.net.app["Maps"].drawSearchInput = function (instanceId) {
 }
 gdo.net.app["Maps"].extractTypes = function (instanceId) {
     var className;
-    var arr = ["layer", "source", "style", "format"];
+    var arr = ["animation", "layer", "source", "style", "format"];
     for (var i in arr) {
         if (!arr.hasOwnProperty((i))) {
             continue;
@@ -796,6 +809,7 @@ gdo.net.app["Maps"].submitRemoveButton = function (instanceId, tab) {
 
 gdo.net.app["Maps"].registerButtons = function (instanceId) {
     gdo.net.instance[instanceId].temp = [];
+    gdo.net.instance[instanceId].temp["animation"] = {};
     gdo.net.instance[instanceId].temp["layer"] = {};
     gdo.net.instance[instanceId].temp["source"] = {};
     gdo.net.instance[instanceId].temp["style"] = {};
@@ -935,6 +949,56 @@ gdo.net.app["Maps"].registerButtons = function (instanceId) {
             gdo.net.app["Maps"].drawCreateTable(instanceId, "layer", gdo.net.instance[instanceId].temp["layer"]);
             $("iframe").contents().find("#new-layer-input").modal('show');
             $(".modal-backdrop").css("display", "none");
+        });
+
+    $("iframe").contents().find("#animation-next-button")
+    .unbind()
+    .click(function () { gdo.net.app["Maps"].submitNextButton(instanceId, "animation"); });
+
+    $("iframe").contents().find("#animation-create-button")
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "animation", true); });
+
+    $("iframe").contents().find(".animation-remove-button")
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitRemoveButton(instanceId, "animation"); });
+
+    $("iframe").contents().find(".animation-save-button")
+        .unbind()
+        .click(function () { gdo.net.app["Maps"].submitSaveButton(instanceId, "animation", false); });
+
+    $("iframe").contents().find(".animation-saveas-button")
+        .unbind()
+        .click(function () {
+            gdo.net.instance[instanceId].temp["animation"] = {};
+            gdo.net.instance[instanceId].temp["animation"].properties = jQuery.extend(true, {}, gdo.net.instance[instanceId].animations[gdo.net.app["Maps"].selected["animation"]].properties);
+            gdo.net.app["Maps"].drawCreateTable(instanceId, "animation", gdo.net.instance[instanceId].temp["animation"]);
+            $("iframe").contents().find("#new-animation-input").modal('show');
+            $(".modal-backdrop").css("display", "none");
+        });
+
+    $("iframe").contents().find(".animation-play-button")
+    .unbind()
+    .click(function () {
+        if (gdo.net.app["Maps"].selected["animation"] >= 0) {
+            gdo.net.app['Maps'].server.playAnimation(instanceId, gdo.net.instance[instanceId].animations[gdo.net.app["Maps"].selected["animation"]].properties.Id.Value);
+        }
+    });
+
+    $("iframe").contents().find(".animation-pause-button")
+        .unbind()
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["animation"] >= 0) {
+                gdo.net.app['Maps'].server.pauseAnimation(instanceId, gdo.net.instance[instanceId].animations[gdo.net.app["Maps"].selected["animation"]].properties.Id.Value);
+            }
+        });
+
+    $("iframe").contents().find(".animation-stop-button")
+        .unbind()
+        .click(function () {
+            if (gdo.net.app["Maps"].selected["animation"] >= 0) {
+                gdo.net.app['Maps'].server.stopAnimation(instanceId, gdo.net.instance[instanceId].animations[gdo.net.app["Maps"].selected["animation"]].properties.Id.Value);
+            }
         });
 
     $("iframe").contents().find("#source-next-button")
