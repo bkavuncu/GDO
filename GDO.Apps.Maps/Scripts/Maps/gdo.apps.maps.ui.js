@@ -72,7 +72,7 @@ gdo.net.app["Maps"].drawListTable = function (instanceId, tab) {
     for (var i in arr) {
         if (arr.hasOwnProperty(i) && arr[i] != null && typeof arr[i] != "undefined") {
 
-            $("iframe").contents().find("." + tab + "").append("<div class='" + tab + "_" + arr[i].properties.Id.Value + " row' " + tab + "Id='" + arr[i].properties.Id.Value + "'></div>");
+            $("iframe").contents().find("." + tab + "").append("<div class='" + tab + "_" + arr[i].properties.Id.Value + " row' " + tab + "Id='" + arr[i].properties.Id.Value + "' style='margin-right:0px'></div>");
 
 
             var color = "white";
@@ -565,15 +565,17 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                     }
                 }
 
-                if (property.Priority == -1 && !property.IsEditable) {
-                    $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
-                    $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
-                } else if ((!property.IsEditable && !isCreate)) {
-                    $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
-                    $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
-                }
+
                 break;
         }
+
+    }
+    if (!property.IsEditable && !isCreate) {
+        $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
+        $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
+    } else if (property.Priority == -1 && !property.IsEditable && isCreate) {
+        $("iframe").contents().find("#" + inputDiv + "_key").css("opacity", "0.5");
+        $("iframe").contents().find("#" + inputDiv + "_value").css("opacity", "0.5").css("pointer-events", "none");
     }
 }
 

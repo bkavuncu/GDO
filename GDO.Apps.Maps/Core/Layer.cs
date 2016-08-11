@@ -54,7 +54,7 @@ namespace GDO.Apps.Maps.Core
                 PropertyName = "zIndex",
                 Description = "The z-index for layer rendering. At rendering time, the layers will be ordered, first by Z-index and then by position.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                IsEditable = true,
+                IsEditable = false,
                 IsVisible = true,
                 DefaultValue = -1,
             };

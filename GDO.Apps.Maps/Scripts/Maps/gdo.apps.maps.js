@@ -224,9 +224,9 @@ gdo.net.app["Maps"].initMap = function (instanceId) {
             pinchRotate: false,
             zoomDuration: 0
         }).extend([
-       new ol.interaction.MouseWheelZoom({ duration: 0 }),
-       new ol.interaction.PinchZoom({ duration: 0 }),
-       new ol.interaction.DragZoom({ duration: 0 })
+               new ol.interaction.MouseWheelZoom({ duration: 0 }),
+               new ol.interaction.PinchZoom({ duration: 0 }),
+               new ol.interaction.DragZoom({ duration: 0 })
         ])
     });
     /*gdo.net.instance[instanceId].positionFeature = new ol.Feature();
@@ -497,7 +497,7 @@ gdo.net.app["Maps"].calculateControlParameters = function (instanceId) {
         gdo.net.instance[instanceId].controlMaxWidth = 2500;
         gdo.net.instance[instanceId].controlMaxHeight = 1500;
     } else {
-        gdo.net.instance[instanceId].controlMaxWidth = 1000;
+        gdo.net.instance[instanceId].controlMaxWidth = 970;
         gdo.net.instance[instanceId].controlMaxHeight = 600;
     }
     gdo.net.instance[instanceId].controlRatio = gdo.net.instance[instanceId].controlMaxWidth / gdo.net.instance[instanceId].controlMaxHeight;
