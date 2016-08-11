@@ -218,6 +218,11 @@ $(function() {
         if (gdo.net.isNodeInitialized()) {
             var node = JSON.parse(serializedNode);
             gdo.net.processNode(node);
+            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                if (node.Id = parseInt(gdo.clientId)) {
+                    gdo.updateSelf();
+                }
+            }
             //gdo.updateSelf();
         }
     }
