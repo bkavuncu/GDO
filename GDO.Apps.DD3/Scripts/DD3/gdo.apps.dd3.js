@@ -1575,7 +1575,7 @@ var initDD3App = function () {
                         }
                     }
                 }
-
+                if(!rcpt) console.log("Warning! No recipients for _dd3_findRecipients")
                 return rcpt;
             };
 
@@ -2109,7 +2109,6 @@ var initDD3App = function () {
                     return [];
                 }
                     
-
                 var g = elem.parentNode,
                     containers = [],
                     clones,
@@ -2120,12 +2119,15 @@ var initDD3App = function () {
                     max = now,
                     precision = 1;
 
-
                 do {
-                    if (g.__dd3_transitions__) containers.unshift(g);//v4
+                    //INFO: add g at the beginning of containers
+                    //console.log(g);
+                    //console.log(g.__dd3_transitions__);
+                    containers.unshift(g);//v4
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
-
+                console.log(containers);
+                console.log(g);
                 var c1 = containers[0], c2;
 
                 while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
@@ -2138,7 +2140,7 @@ var initDD3App = function () {
 
                 clones = containers.map(function (c) {
                     g = c.cloneNode(c.nodeName === "g" ? false : true);
-                    //c2.appendChild(g); //V4: is erased by next line
+                    c2.appendChild(g); //V4: is erased by next line
                     c2 = g;
                     return g;
                 });
@@ -2172,6 +2174,8 @@ var initDD3App = function () {
                                     });
                                 }
                             });
+                        }else{
+                            console.log("Warning! transition info doesn't exist.");
                         }
                     });
                     var rcpt = _dd3_findRecipients(g);
@@ -2179,7 +2183,7 @@ var initDD3App = function () {
                     rcpt.forEach(function (r) { r.min = time - step; r.max = time + step; });
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
-                //c1.removeChild(clones[0]); //TODO v4: doesn't appear to be used after that.
+                c1.removeChild(clones[0]); //TODO v4: doesn't appear to be used after that.
 
                 //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
