@@ -31,7 +31,7 @@
         .axis path,
         .axis line {
           fill: none;
-          stroke: #000;
+          stroke: #FFF;
           /*stroke: #000;*/
           shape-rendering: crispEdges;
         }
@@ -58,7 +58,7 @@
 
         .background path {
         fill: none;
-        stroke: #ddd;
+        stroke: #2F4F4F;
         shape-rendering: crispEdges;
         }
 
@@ -1238,6 +1238,7 @@
                 //Parallel Coordinates Graph
                 test_bench['10'] =  function(){
                     var dim,
+                        init_dim,
                         xScale = dd3.scale.ordinal().rangePoints([0, dd3.cave.svgWidth], 1),
                         line = d3.svg.line(),
                         xAxis = d3.svg.axis().orient("left"),
@@ -1253,7 +1254,7 @@
                     svg.append("rect")
                         .attr("width", "100%")
                         .attr("height", "100%")
-                        .attr("fill", "white")
+                        .attr("fill", "black")
                         .attr("transform", "translate("+[-dd3.browser.margin.left + dd3.position('svg', 'local', 'svg', 'global').left(0), - dd3.browser.margin.top + dd3.position('svg', 'local', 'svg', 'global').top(0)]+")")
 
                 
@@ -1268,6 +1269,7 @@
                                 yScale[key]=dd3.scale.linear().domain([dim[key].min, dim[key].max]).range([dd3.cave.svgHeight, 0]);
                             }
                         }
+                        init_dim = dimensions
                         xScale.domain(dimensions);
                         //TODO: refine the filtering
                         dd3.getData('speedDating','speedDatingData', draw);
@@ -1339,7 +1341,7 @@
                                 .attr("class", "brush")
                                 .each(function(d) {
                                     d3.select(this).call(yScale[d].brush = d3.svg.brush().y(yScale[d]).on("brushstart", brushstart).on("brush", brush));
-                                    d3.select(this).classed(d.replace(" ",""),true);
+                                    d3.select(this).classed(d.replace(new RegExp(' ', 'g'), ''),true);
                                 })
                                 .selectAll("rect")
                                 .attr("x", -8)
@@ -1395,19 +1397,28 @@
                                     .duration(0)
                                     .attr("visibility", null);
 
-                        console.log('Done!');
                     }
 
                     function updateFilter(dim, min, max){
                         var brush = yScale[dim].brush;
                         brush.extent([min, max]);
-                        var rect = dd3.select("."+dim.replace(" ",""));
+                        var rect = dd3.select("."+dim.replace(new RegExp(' ', 'g'), ''));
                         brush(rect.transition());
                         brush.event(rect.transition().duration(500));
                     }
 
+                    function resetVisualization(){
+                        updateDimensions(init_dim);
+                        dimensions.forEach((dimension) => {
+                            updateFilter(dimension, dim[dimension].min, dim[dimension].max);
+                            
+                        });
+                        
+                    }
+
                     orderController.orders['updateDimensions']=updateDimensions;
                     orderController.orders['updateFilter']=updateFilter;
+                    orderController.orders['resetVisualization']=resetVisualization;
                 };
 
             });

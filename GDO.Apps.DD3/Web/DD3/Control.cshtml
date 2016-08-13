@@ -354,14 +354,6 @@
                         }
                     });
 
-                    $('#benchmark250DistributedCircles').click(function(){
-                       var nbOnOneScreen = Math.floor(250/numClients);
-                       server.sendOrder(instanceId, order("createDistributedCircles", [nbOnOneScreen, 0.9]), true);
-                       server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
-                       setTimeout();
-                        
-                    });
-
                 // == Group Transition ==
 
                     $('#createPolygon').click(function () {
@@ -718,12 +710,22 @@
                     server.sendOrder(instanceId, order("updateDimensions", [dimensions]), true);
                 });
 
+                $("#attr").click(function(e) { e.stopPropagation(); });
+                $("#min").click(function(e) { e.stopPropagation(); });
+                $("#max").click(function(e) { e.stopPropagation(); });
+
                 $('#upfilter').click(function() {
                     var attrib = $("#attr").val();
                     var min= $("#min").val();
                     var max= $("#max").val();
                     server.sendOrder(instanceId, order("updateFilter", [attrib, min, max]), true);
                 });
+
+                $('#resetviz').click(function() {
+                    server.sendOrder(instanceId, order("resetVisualization", []), true);
+                });
+
+
             }
         });
     });
@@ -840,15 +842,12 @@
                 <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
             </tr>
             <tr class="superposition distributed">
-                <td rowspan="3" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
                 <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
-                <td rowspan="3" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
             </tr>
             <tr class="superposition distributed">
                 <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
-            </tr>
-            <tr class="superposition distributed">
-                <td class="red" id="benchmark250DistributedCircles"> Benchmark 250 Distributed Circles</td>
             </tr>
             <tr class="group">
                 <td colspan="3">Group transition</td>
@@ -993,8 +992,12 @@
                 <td class="green" id="updim">Update Dimensions:  <input id="dimension_list" type="string" value="Gender,Id,Partner Id,Match,Partner Age,Partner Race,Partner's Preference of Attractiveness,Partner's Preference of Sincerity,Partner's Preference of Intelligence,Partner's Preference of Fun,Partner's Preference of Ambition,Partner's Preference of Shared Interest,Partner's decision" style="width:200px"/></td>
             </tr>
             <tr>
+                <td class="green" id="resetviz">Reset Dimensions</td>
+            </tr>
+            <tr>
                 <td class="green" id="upfilter">Update Filter: <input id="attr" type="string" value="Id" style="width:100px"/> Min: <input id="min" type="number" value="0" style="width:50px"/> Max: <input id="max" type="number" value="10" style="width:50px"/></td>
             </tr>
+            
         </table>
     </div>
 
