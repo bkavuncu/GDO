@@ -100,7 +100,7 @@ var initDD3App = function () {
             },
 
             //return name of a function
-            getFnName(fn) {
+            getFnName: function(fn) {
                 var f = typeof fn == 'function';
                 var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
                 return (!f && 'not a function') || (s && s[1] || 'anonymous');
@@ -1290,10 +1290,11 @@ var initDD3App = function () {
                         });
                     }
 
-                    if (_dd3_timeTransitionRelative)
+                    if (_dd3_timeTransitionRelative){
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
-                    else
+                    }else{
                         trst.delay(data.delay + (data.elapsed - Date.now()));
+                    }
 
 
                     if (data.ease) {
@@ -1549,6 +1550,7 @@ var initDD3App = function () {
 
             // Find all browsers which MAY need to receive the element
             var _dd3_findRecipients = function (el) {
+                //console.log("Calling _dd3_findRecipients with "+el);
                 if (!el)
                     return [];
                 // Take the bounding rectangle and find browsers at the extremities of it (topleft and bottomright are enough)
@@ -1644,15 +1646,20 @@ var initDD3App = function () {
             };
 
             var _dd3_sendElement = function (type, args, rcpts) {
+                //console.log("active test in _dd3_sendElement: "+this.__dd3_transitions__.size());
                 var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
-
+                //console.log(active);
                 // Get former recipients list saved in the __recipients__ variable to send them 'exit' message
                 formerRcpts = this.__recipients__;
                 // Get current recipients
+                //console.log(formerRcpts);
 
                 rcpt = this.__recipients__ = _dd3_findTransitionsRecipients(this);
                 // Create (enter,update,exit) selections with the recipients
                 selections = _dd3_getSelections(rcpt, formerRcpts);
+
+                //console.log(rcpt);
+                //console.log(selections);
 
                 if (rcpt.length > 0 || formerRcpts.length > 0) {
                     // Create the object to send
@@ -1666,6 +1673,7 @@ var initDD3App = function () {
             };
 
             var _dd3_sendGroup = function (type, args, rcpts) {
+                //console.log("active test in _dd3_sendGroup: "+this.__dd3_transitions__.size());
                 var active = this.__dd3_transitions__.size() > 0, rcpt, objs;
 
                 // Get current recipients
@@ -2094,9 +2102,13 @@ var initDD3App = function () {
                 return !name ? "__transition__" : "__transition_" + name + "__";
             };
 
+            //TODO V4: Apparently, transition recipients are not found.
             var _dd3_findTransitionsRecipients = function (elem) {
-                if (!elem || !elem.parentNode)
+                if (!elem || !elem.parentNode){
+                    console.log("Warning: either the element or its parent where not found.");
                     return [];
+                }
+                    
 
                 var g = elem.parentNode,
                     containers = [],
@@ -2171,6 +2183,7 @@ var initDD3App = function () {
 
                 //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
+                console.log("Recipients found: "+rcpts);
                 return rcpts;
             };
 
@@ -2244,14 +2257,17 @@ var initDD3App = function () {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
 
                     t.on("start.dd3", function (d, i) {
-                        //console.log("V4 WARNING: Handling start.dd3 on on");
+                        console.log("DD3 Transition starts");
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
                         //var transition = this[ns][this[ns].active];
                         //console.log(t);
                         //console.log("name: " + name + " namespace: " + ns);
                         var transition = d3.active(this);//v4 this appear to be the problem
-                        //console.log(transition);
+                        //console.log(this);
+                        //console.log(this[ns]);
+                        //console.log(d3.active(this));
+                        //console.log(d3.active(this[ns]));
                         // Needed for integration into GDO framework as it seems that constructor are different !
                         // And peer.js test equality with constructors to send data !
 
@@ -2297,7 +2313,7 @@ var initDD3App = function () {
                             styleTweens: styleTweenFunctions,
                             ns: ns,
                             name: name,
-                            delay: transition.delay,
+                            delay: transition.delay,//TODO v4: transition.delay doesn't exist
                             duration: transition.duration,
                             transition: transition,//TODO v4: transition.tween is not an array and should be
                             precision: precision,
@@ -2313,6 +2329,7 @@ var initDD3App = function () {
 
 
                     t.on("interrupt.dd3", function (d, i) {
+                        console.log("DD3 Transition interrupts");
                         if (_dd3_isReceived(this) || this.__unwatch__)
                             return;
                         this.__dd3_transitions__.remove(ns);
@@ -2321,6 +2338,7 @@ var initDD3App = function () {
 
 
                     t.on("end.dd3", function (d, i) {
+                        console.log("DD3 Transition ends");
                         if (_dd3_isReceived(this) || this.__unwatch__)
                             return;
                         this.__dd3_transitions__.remove(ns);
@@ -2329,7 +2347,10 @@ var initDD3App = function () {
 
                     //TODO v4: will probably fail as ease is a function not a string
                     t.ease = function (e) {
-                        if (typeof e !== "string") {
+                        if(typeof e === "function"){
+                            dd3.defineEase(utils.getFnName(e), e);
+                            e  = utils.getFnName(e);
+                        } else if (typeof e !== "string") {
                             utils.log("Custom ease functions have to be defined with dd3.defineEase", 2);
                             return this;
                         }
@@ -2382,14 +2403,12 @@ var initDD3App = function () {
                         //console.log("dd3 tweens doesn't exist: "+!_dd3_tweens['dd3_' + tween]);
                         if (!tween) {
                             attrTweens.remove(attr);
-
                             temp = this.tween;
                             this.tween = d3.transition.prototype.tween;
                             trst = d3.transition.prototype.attrTween.call(this, attr, null);
                             this.tween = temp;
                             return trst;
                         } else if (typeof tween !== "string") {
-                            //console.log("attrtween: " + utils.getFnName(tween));
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2465,7 +2484,7 @@ var initDD3App = function () {
                 return initialize(t, ease, precision);
             };
 
-            //TODO v4: will probably fail
+            //TODO v4: will probably fail -> should be good
             _dd3.defineEase = function (name, func) {
                 if (arguments.length < 2) return _dd3_eases['dd3_' + name];
                 if (!func) delete _dd3_eases['dd3_' + name];
