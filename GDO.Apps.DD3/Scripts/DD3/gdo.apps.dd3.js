@@ -1989,10 +1989,17 @@ var initDD3App = function () {
             };
 
             var _dd3_createProperties = function () {
+                console.log("Calling _dd3_createProperties on:");
+                console.log(this);
                 if (!this.__recipients__) {//v4: this doesn't appear  to be triggered
                     this.__recipients__ = [];
                     this.__dd3_transitions__ = d3.map();
                     this.setAttribute('order', getOrder(this));
+                }else{
+                    console.log(this.__recipients__);
+                    console.log(this.__dd3_transitions__);
+                    if(!temporary_store) temporary_store=this.__dd3_transitions__;
+                    console.log("Warning! Recipients have not been created in _dd3_createProperties");
                 }
 
                 if (this.nodeName === 'g')
@@ -2104,6 +2111,8 @@ var initDD3App = function () {
 
             //TODO V4: Apparently, transition recipients are not found.
             var _dd3_findTransitionsRecipients = function (elem) {
+                console.log("Calling _dd3_findTransitionsRecipients on:");
+                console.log(elem);
                 if (!elem || !elem.parentNode){
                     console.log("Warning: either the element or its parent where not found.");
                     return [];
@@ -2119,16 +2128,20 @@ var initDD3App = function () {
                     max = now,
                     precision = 1;
 
+                console.log("Entering problematic loop");
                 do {
                     //INFO: add g at the beginning of containers
-                    //console.log(g);
-                    //console.log(g.__dd3_transitions__);
+                    console.log(g);
+                    console.log(g.__dd3_transitions__);
                     containers.unshift(g);//v4
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
-                console.log(containers);
-                console.log(g);
+                console.log("Leaving problematic loop");
+
+                //console.log(containers);
+                
                 var c1 = containers[0], c2;
+                console.log(c1);
 
                 while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
                     c2 = containers.shift();
@@ -2213,7 +2226,7 @@ var initDD3App = function () {
                         }
                     });
                 } else {
-                    if (!temporary_store) temporary_store = args.transition;
+                    
                     //console.log("tween call from _dd3_retrieveTransitionSettings: "+tween);
                 }
 
