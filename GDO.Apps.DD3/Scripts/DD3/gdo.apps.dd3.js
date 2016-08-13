@@ -2139,6 +2139,8 @@ var initDD3App = function () {
             };
 
             var _dd3_findTransitionsRecipients = function (elem) {
+                //console.log('calling: ');
+                //console.log(elem);
                 if (!elem || !elem.parentNode)
                     return [];
 
@@ -2152,11 +2154,16 @@ var initDD3App = function () {
                     max = now,
                     precision = 1;
 
+                //console.log('Entering');
                 do {
+                    //console.log(g);
                     containers.unshift(g);
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
+                //console.log('Leaving');
 
                 var c1 = containers[0], c2;
+                //console.log(c1);
+                //if(c1) console.log(c1.__dd3_transitions__);
                 while (c1 && c1.__dd3_transitions__.empty()) {
                     c2 = containers.shift();
                     c1 = containers[0];
