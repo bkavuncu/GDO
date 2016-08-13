@@ -1149,7 +1149,11 @@ var initDD3App = function () {
             var _dd3_timeoutStartReceivedTransition = d3.map();
             var _dd3_timeoutEndReceivedTransition = d3.map();
 
+            //TODO v4: the selector can't find the order. Is that a problem?
             var getOrderFollower = function (g, order) {
+                console.log("get order follower for:");
+                console.log(g);
+                console.log(order);
                 var s = order.split("_");
                 var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),
                     follower,
@@ -1486,7 +1490,7 @@ var initDD3App = function () {
             //_dd3.selection.enter={};
             //_dd3.selection.enter.prototype={};
             //_dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNoOperation, d3.selection.enter.prototype.insert, 'insert');
-            //TODO v4: _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.prototype.enter.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
+            _dd3.selection.prototype.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');//warning: used to be d3.selection.prototype.enter.prototype.insert
             //PREVIOUSLY: _dd3.selection.enter.prototype.insert = _dd3_watchEnterFactory(_dd3_watchNop, d3.selection.enter.prototype.insert, 'insert');
 
             _dd3.selection.prototype.insert = _dd3_watchFactory(_dd3_watchAdd, d3.selection.prototype.insert, 'insert');
@@ -1597,7 +1601,13 @@ var initDD3App = function () {
             // Take the first array of recipients and add to the second one all those which are not already in it
             var _dd3_mergeRecipientsIn = function (a, b) {
                 var chk;
-                if (!(a instanceof Array)) console.log("V4 Error:a is a Map ");
+                /*
+                if (!(a instanceof Array)) {
+                    console.log("V4 Error:a is a Map ");
+                    console.log(a);
+                }
+                */
+
                 a.forEach(function (c) {
                     chk = b.some(function (d) {
                         if (c[0] === d[0] && c[1] === d[1]) {
@@ -1989,17 +1999,17 @@ var initDD3App = function () {
             };
 
             var _dd3_createProperties = function () {
-                console.log("Calling _dd3_createProperties on:");
-                console.log(this);
+                //console.log("Calling _dd3_createProperties on:");
+                //console.log(this);
                 if (!this.__recipients__) {//v4: this doesn't appear  to be triggered
                     this.__recipients__ = [];
                     this.__dd3_transitions__ = d3.map();
                     this.setAttribute('order', getOrder(this));
                 }else{
-                    console.log(this.__recipients__);
-                    console.log(this.__dd3_transitions__);
+                    //console.log(this.__recipients__);
+                    //console.log(this.__dd3_transitions__);
                     if(!temporary_store) temporary_store=this.__dd3_transitions__;
-                    console.log("Warning! Recipients have not been created in _dd3_createProperties");
+                    //console.log("Warning! Recipients have not been created in _dd3_createProperties");
                 }
 
                 if (this.nodeName === 'g')
@@ -2111,8 +2121,8 @@ var initDD3App = function () {
 
             //TODO V4: Apparently, transition recipients are not found.
             var _dd3_findTransitionsRecipients = function (elem) {
-                console.log("Calling _dd3_findTransitionsRecipients on:");
-                console.log(elem);
+                //console.log("Calling _dd3_findTransitionsRecipients on:");
+                //console.log(elem);
                 if (!elem || !elem.parentNode){
                     console.log("Warning: either the element or its parent where not found.");
                     return [];
@@ -2128,20 +2138,20 @@ var initDD3App = function () {
                     max = now,
                     precision = 1;
 
-                console.log("Entering problematic loop");
+                //console.log("Entering problematic loop");
                 do {
                     //INFO: add g at the beginning of containers
-                    console.log(g);
-                    console.log(g.__dd3_transitions__);
+                    //console.log(g);
+                    //console.log(g.__dd3_transitions__);
                     containers.unshift(g);//v4
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
-                console.log("Leaving problematic loop");
+                //console.log("Leaving problematic loop");
 
                 //console.log(containers);
                 
                 var c1 = containers[0], c2;
-                console.log(c1);
+                //console.log(c1);
 
                 while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
                     c2 = containers.shift();
@@ -2200,7 +2210,7 @@ var initDD3App = function () {
 
                 //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
-                console.log("Recipients found: "+rcpts);
+                //console.log("Recipients found: "+rcpts);
                 return rcpts;
             };
 
@@ -2536,7 +2546,7 @@ var initDD3App = function () {
             _dd3.svgCanvas = _dd3.svgNode
                 .attr_("width", browser.width)
                 .attr_("height", browser.height)
-                .append_("g")
+                .append("g")
                 .attr_("id", "dd3_rootGroup")
                 .attr_("transform", "translate(" + [browser.margin.left - slsg.left(0), browser.margin.top - slsg.top(0)] + ")");
 
