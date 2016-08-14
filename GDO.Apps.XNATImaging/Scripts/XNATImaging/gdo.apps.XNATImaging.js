@@ -119,7 +119,7 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, container
     }
     gdo.net.app["XNATImaging"].initialiseCS(url, mode, 900, 600, instanceId, papaya, containers);
 
-    gdo.net.app["XNATImaging"].initButtons(instanceId);
+    gdo.net.app["XNATImaging"].initButtons(instanceId, containers);
 }
 
 /*
@@ -379,22 +379,6 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
     
     gdo.consoleOut('.XNATImaging', 1, "Image stack finished loading");
 
-    var markingMode = true;
-    var markingCoords = [];
-
-    /*
-    **    startingIndex,
-    **    endingIndex,
-    **    slice,
-    **    view
-    */
-    var MarkerObject = function (startingIndex, endingIndex, slice, view) {
-        this.start = startingIndex;
-        this.end = endingIndex;
-        this.slice = slice;
-        this.view = view;
-    }
-
     /*
         $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
         $("iframe").contents().find('#mrbottomleft').text("WW/WC:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
@@ -424,11 +408,38 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
     });
 
     papaya.Container.allowPropagation = true;
-    var xStart = 0;
-    var yStart = 0;
-    var xFinish = 0;
-    var yFinish = 0;
-    var startPoint;
+
+    $("iframe").contents().find('#papayaContainer0').mouseup(function (e) {
+        console.log("mouseup");
+
+        var diffX = 0;
+        var diffY = 0;
+        var diffScale = 0;
+
+        var viewer = containers[0].viewer;
+        console.log(viewer);
+
+        var volume = viewer.screenVolumes[0];
+
+        var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
+
+        gdo.consoleOut(".XNATImaging",
+            1,
+            volume.screenMin + ", " + volume.screenMax + ", " + diffX + ", " + diffY + ", " + diffScale);
+
+        console.log(viewer.markingCoords);
+
+        gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
+            currentImageId,
+            volume.screenMin,
+            volume.screenMax,
+            diffScale,
+            diffX,
+            diffY,
+            false,
+            viewer.markingCoords);
+        gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
+    });
 
     var canvas = containers[0].viewer.canvas;
     console.log(canvas);
@@ -439,108 +450,13 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, cont
     var iframeMain = $("iframe");
     var dicomdiv = $("iframe").contents().find('#dicomImage');
     var papayadiv = $("iframe").contents().find('#papayaContainer0');
-    
+
     var canvasdiv = $("iframe").contents().find('canvas');
 
     console.log(iframeMain);
     console.log(dicomdiv);
     console.log(papayadiv);
     console.log(canvasdiv);
-
-    $("iframe").contents().find('#papayaContainer0').mouseup(function (e) {
-        console.log("mouseup");
-
-        if (markingMode) {
-            console.log("markingmode mouseup");
-
-            var viewer = containers[0].viewer;
-            var canvas = viewer.canvas;
-            var papayadiv = $("iframe").contents().find('#papayaContainer0');
-            var papayaViewer = $(papayadiv).children()[1];
-            var offset = $(papayaViewer).offset();
-
-            console.log(offset);
-            xFinish = e.pageX - offset.left;
-            yFinish = e.pageY - offset.top;
-
-            console.log("(" + xStart + ", " + yStart + "), " + "(" + xFinish + ", " + yFinish + ")");
-
-            var ctx = canvas.getContext("2d");
-            ctx.beginPath();
-            ctx.lineWidth = "4";
-            ctx.strokeStyle = "red";
-            ctx.rect(xStart, yStart, xFinish - xStart, yFinish - yStart);
-            ctx.stroke();
-
-            viewer.mainImage.repaint(viewer.mainImage.currentSlice, false, true);
-            viewer.updateCursorPosition(viewer, xFinish, yFinish);
-            var currentCoor = viewer.cursorPosition;
-            var coord = new papaya.core.Coordinate(currentCoor.x, currentCoor.y, currentCoor.z);
-
-            console.log(viewer);
-            var myMarker = new MarkerObject(startPoint, coord, viewer.mainImage.currentSlice, viewer.mainImage.sliceDirection);
-            markingCoords.push(myMarker);
-
-            xStart = 0;
-            yStart = 0;
-            xFinish = 0;
-            yFinish = 0;
-            startPoint = null;
-        }
-
-        var diffX = 0;
-        var diffY = 0;
-        var diffScale = 0;
-
-        var viewer = containers[0].viewer;
-        console.log(viewer);
-        // undefined before images load
-        var volume = viewer.screenVolumes[0];
-
-        console.log(volume.screenMin, volume.screenMax);
-
-        var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
-
-        gdo.consoleOut(".XNATImaging",
-            1,
-            volume.screenMin + ", " + volume.screenMax + ", " + diffX + ", " + diffY + ", " + diffScale);
-
-        console.log(markingCoords);
-
-        gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
-            currentImageId,
-            volume.screenMin,
-            volume.screenMax,
-            diffScale,
-            diffX,
-            diffY,
-            false,
-            markingCoords);
-        gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
-    });
-
-    $("iframe").contents().find('#papayaContainer0').mousedown(function (e) {
-           if (markingMode) {
-               console.log("mousedown");
-
-               var papayadiv = $("iframe").contents().find('#papayaContainer0');
-               var papayaViewer = $(papayadiv).children()[1];
-               var offset = $(papayaViewer).offset();
-
-               xStart = e.pageX - offset.left;
-               yStart = e.pageY - offset.top;
-               var currentCoor = containers[0].viewer.cursorPosition;
-               var coor = new papaya.core.Coordinate(currentCoor.x, currentCoor.y, currentCoor.z);
-               console.log(coor);
-               startPoint = coor;
-               /*var screenCoor = containers[0].viewer.convertCoordinateToScreen(coor);
-               xStart = screenCoor.x;
-               yStart = screenCoor.y;*/
-               /*xFinish = 0;
-               yFinish = 0;*/
-
-           }
-    });
 
     $(jcanvas)
        .click(function () {
@@ -710,34 +626,10 @@ gdo.net.app["XNATImaging"].updateImageParams = function (
         console.log(volume.screenMin, volume.screenMax);
         volume.setScreenRange(windowWidth, windowCenter);
 
-        var drawRectangle = function (start, end) {
-            console.log("drawing...");
-            var startScreenCoord = containers[0].viewer.convertCoordinateToScreen(start);
-            var endScreenCoord = containers[0].viewer.convertCoordinateToScreen(end);
+        containers[0].viewer.markingCoords = markingCoords;
 
-            var canvas = containers[0].viewer.canvas;
-            var ctx = canvas.getContext("2d");
-            ctx.beginPath();
-            ctx.lineWidth = "4";
-            ctx.strokeStyle = "red";
-            ctx.rect(startScreenCoord.x, startScreenCoord.y, endScreenCoord.x - startScreenCoord.x, endScreenCoord.y - startScreenCoord.y);
-            ctx.stroke();
+        containers[0].viewer.drawViewer(true);
 
-            console.log(startScreenCoord);
-            console.log(endScreenCoord.x);
-            //containers[0].viewer.mainImage.repaint(containers[0].viewer.mainImage.currentSlice, false, true);
-        }
-
-        // draw markers for given slice
-        var currentSlice = containers[0].viewer.mainImage.currentSlice;
-        var sliceDirection = containers[0].viewer.mainImage.sliceDirection;
-        for (var i = 0; i < markingCoords.length; i++) {
-            if (markingCoords[i].view == sliceDirection && markingCoords[i].slice == currentSlice) {
-                drawRectangle(markingCoords[i].start, markingCoords[i].end);
-            }
-        }
-
-        containers[0].viewer.drawViewer(false, true);
     }
 
     /*var element = $("iframe").contents().find("#dicomImage").get(0);
@@ -883,7 +775,7 @@ gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
 /*
 ** Sets event handlers for buttons on Control node
 */
-gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
+gdo.net.app["XNATImaging"].initButtons = function (instanceId, containers) {
 
     $("iframe").contents().find("#upNavigationButton")
        .unbind()
@@ -927,8 +819,26 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
     $("iframe").contents().find("#markerButton")
         .unbind()
         .click(function () {
-            gdo.consoleOut('.XNATImaging', 1, "Mark");
-    });
+            gdo.consoleOut('.XNATImaging', 1, "Mark button pressed");
+
+            if (containers[0].viewer.isMarkingMode) {
+                containers[0].viewer.isMarkingMode = false;
+                console.log(containers[0].viewer.isMarkingMode);
+                $("#markerButton").val("Place markers disabled");
+            } else {
+                containers[0].viewer.isMarkingMode = true;
+                console.log(containers[0].viewer.isMarkingMode);
+                $("#markerClearButton").val("Place markers enabled");
+            }
+        });
+
+
+    $("iframe").contents().find("#markerClearButton")
+        .unbind()
+        .click(function () {
+            gdo.consoleOut('.XNATImaging', 1, "Clear all markers");
+            containers[0].viewer.clearMarkers();
+        });
 }
 
 /*
@@ -1003,20 +913,3 @@ gdo.net.app["XNATImaging"].terminateClient = function () {
 gdo.net.app["XNATImaging"].terminateControl = function () {
     gdo.consoleOut('.XNATImaging', 1, 'Terminating XNATImaging App Control at Instance ' + gdo.controlId);
 }
-
-$("#button").click(function (e) {
-    var containers = gdo.net.app["XNATImaging"].papayaContainers;
-    params["orthogonal"] = true;
-    params["fullScreen"] = false;
-    //alert("Fire!");
-    //papaya.Container.resetViewer(0, params);
-    //papayaContainers[0].viewer.rotateViews();
-    var volume = containers[0].viewer.screenVolumes[0].volume;
-    console.log(volume);
-
-    var viewer = containers[0].viewer;
-    console.log(viewer);
-
-    //viewer.windowLevelChanged(50, 50);
-
-});
