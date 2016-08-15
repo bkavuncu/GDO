@@ -4894,7 +4894,7 @@ var   tau$1 = 2 * pi$1;
   var clockLast = 0;
   var clockNow = 0;
   var clockSkew = 0;
-  var clock = typeof performance === "object" ? performance : Date;
+  var clock = Date;// v4:typeof performance === "object" ? performance : Date;
   var setFrame = typeof requestAnimationFrame === "function"
           ? (clock === Date ? function(f) { requestAnimationFrame(function() { f(clock.now()); }); } : requestAnimationFrame)
           : function (f) { setTimeout(f, 17); }; 
@@ -8059,13 +8059,13 @@ var   durationWeek$1 = durationDay$1 * 7;
 
   function set$2(node, id) {
     var schedule = node.__transition;
-    if (!schedule || !(schedule = schedule[id]) || schedule.state > STARTING) throw new Error("too late");
+    if (!schedule || !(schedule = schedule[id]) || schedule.state > STARTING) throw new Error("too late in set");//v4
     return schedule;
   }
 
   function get$1(node, id) {
     var schedule = node.__transition;
-    if (!schedule || !(schedule = schedule[id])) throw new Error("too late");
+    if (!schedule || !(schedule = schedule[id])) throw new Error("too late in get");//v4
     return schedule;
   }
 
