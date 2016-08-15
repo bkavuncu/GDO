@@ -1324,7 +1324,10 @@ var initDD3App = function () {
                     if (_dd3_timeTransitionRelative) {
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
                     } else {
-                        trst.delay(data.delay + (data.elapsed - Date.now()));
+                        
+                        var tmp = data.delay + (data.elapsed - Date.now());
+                        console.log("to be executed in: "+ HTMLParagraphElement);
+                        trst.delay((tmp<=0)?0:tmp);
                     }
 
 
@@ -1341,6 +1344,8 @@ var initDD3App = function () {
                             trst.ease(data.ease);
                         }
                     }
+                    console.log("Launching transition");
+                    console.log(trst);
 
                 };
 
@@ -1786,7 +1791,7 @@ var initDD3App = function () {
                     obj.name = args.name;
                     obj.duration = args.duration;
                     obj.delay = args.delay;
-                    obj.elapsed = _dd3_timeTransitionRelative ? args.transition.time - syncTime : args.transition.time;
+                    obj.elapsed = _dd3_timeTransitionRelative ? args.time - syncTime : args.time;
                     obj.ease = args.ease;
                     obj.tweens = args.tweens;
                     obj.attrTweens = args.attrTweens;
@@ -2193,7 +2198,8 @@ var initDD3App = function () {
                         //console.log("Yep! entering a dd3 transition");
                         //console.log(v);
                         var trst = v.transition;
-                        var init_time = (trst.time)? trst.time: Date.now() ;//TODO v4: find another way to get initial time
+                        var init_time = v.time;
+                        //var init_time = (trst.time)? trst.time: Date.now() ;//TODO v4: find another way to get initial time
                         max = (init_time + v.duration + v.delay) > max ? (init_time + v.duration + v.delay) : max;
                         precision = v.precision < precision ? v.precision : precision;
                         //INFO: in v4, v.ease is a function not a string
@@ -2375,11 +2381,13 @@ var initDD3App = function () {
                             name: name,
                             delay: (typeof transition.delay === "function") ? transition.delay() : transition.delay,//TODO v4: transition.delay doesn't exist
                             duration: (typeof transition.duration === "function") ? transition.duration() : transition.duration,//v4
+                            time: (typeof transition.time === "function") ? transition.time() : transition.time,//TODO v4: transition.time doesn't exist
                             transition: transition,//TODO v4: transition.tween is not an array and should be
                             precision: precision,
                             ease: (typeof ease === "function") ? utils.getFnName(ease) : ease,//not a string anymore
                             id: _dd3_idTransition++
                         };
+                        args.elapsed=_dd3_timeTransitionRelative ? args.time - syncTime : args.time;
                         
                         _dd3_retrieveTransitionSettings(this, args);
                         
@@ -2390,7 +2398,7 @@ var initDD3App = function () {
 
                         console.log("Sending transition");
                         console.log(this);
-                        console.log(this.__dd3_transitions__);
+                        //console.log(this.__dd3_transitions__);
                         console.log(this.__dd3_transitions__.values());
                         _dd3_selection_send.call(d3.select(this), 'transitions', { 'ns': ns });
                     });
