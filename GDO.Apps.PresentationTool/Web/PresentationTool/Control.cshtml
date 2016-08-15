@@ -172,8 +172,7 @@
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script src="../../Scripts/PresentationTool/annyang.min.js"></script>
-    <script src="../../Scripts/PresentationTool/responsivevoice.js"></script>
+    <script src="../../Scripts/PresentationTool/artyom.min.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -515,59 +514,60 @@
             gdo.net.app["PresentationTool"].saveSlideFile();
         });
 
-        if (annyang) {
-     
-            var initFunction = function () {
-                responsiveVoice.speak("Hello there", "UK English Female", { rate: 0.8 });
-                responsiveVoice.speak("You could say next, previous, load and play slide to control slides", "UK English Male", { rate: 0.8 });
-            };
 
-            var nextSlideFunction = function() {
-                $("#next_slide").click();
-                $("#load_slide").click();
-            };
+        artyom.addCommands([
+            {
+                indexes: ["Hello there"],
+                action: function (i) {
+                    artyom.say("Hey there !");
+                    artyom.say("You could say following commands");
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Hello there! You could say following commands: Next, preivous, load and play", 1);
+                }
+            },
+            {
+                indexes: ["Next"],
+                action: function (i) {
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Next slide", 1);
+                    $("#next_slide").click();
+                    $("#load_slide").click();
+                }
+            },
+            {
+                indexes: ["Previous"],
+                action: function (i) {
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Preivous slide", 1);
+                    $("#previous_slide").click();
+                    $("#load_slide").click();
+                }
+            },
+            {
+                indexes: ["Load"],
+                action: function (i) {
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Load slide", 1);
+                    $("#load_slide").click();
+                }
+            },
+            {
+                indexes: ["Play"],
+                action: function (i) {
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Play slide", 1);
+                    $("#play_slide").click();
+                }
+            }
+        ]);
 
-            var previousSlideFunction = function () {
-                $("#previous_slide").click();
-                $("#load_slide").click();
-            };
+        artyom.fatality();// use this to stop any of
 
-            var loadSlideFunction = function () {
-                $("#load_slide").click();
-            };
-
-            var playSlideFunction = function () {
-                $("#play_slide").click();
-            };
-
-            // Let's define a command.
-            var commands = {
-                'hello there': initFunction,
-                'next slide': nextSlideFunction,
-                'previous slide': previousSlideFunction,
-                'load slide': loadSlideFunction,
-                'play slide': playSlideFunction,
-            };
-
-            annyang.debug();
-
-            // Add our commands to annyang
-            annyang.addCommands(commands);
-
-            annyang.addCallback('start', function () {
-                $("#message_from_server").html("Speech recognition is on!");
+        setTimeout(function () {// if you use artyom.fatality , wait 250 ms to initialize again.
+            artyom.initialize({
+                lang: "en-GB",// A lot of languages are supported. Read the docs !
+                continuous: true,// Artyom will listen forever
+                listen: true, // Start recognizing
+                debug: true, // Show everything in the console
+                speed: 1 // talk normally
             });
-
-            annyang.addCallback('end', function () {
-                $("#message_from_server").html("Speech recognition is stop!");
-            });
-
-            // Start listening.
-            annyang.start();
-
-
-        }
-
+            
+        }, 250); 
     </script>
 
     <script>

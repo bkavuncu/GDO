@@ -89,6 +89,17 @@
             //do nothing
         }
     }
+
+    $.connection.presentationToolAppHub.client.receiveVoiceInfo = function (info, type) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            if (type === 1) {
+                $("iframe").contents().find("#voice_info").empty().hide().append(info).fadeIn(1500);
+            } else if (type === 0){
+            } 
+        }
+    }
 });
 
 gdo.net.app["PresentationTool"].initClient = function () {
@@ -211,7 +222,7 @@ gdo.net.app["PresentationTool"].playCurrentSlide = function (i) {
                             setTimeout(function () {
                                 $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
                                 $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#fill_mode").click();
-                                $("iframe").contents().find("#message_from_server").html("Play Image on instance " + section.appInstanceId + 1);
+                                $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (section.appInstanceId + 1));
                             }, 1000);
                             setTimeout(function () {
                                 i++;
@@ -232,7 +243,7 @@ gdo.net.app["PresentationTool"].playCurrentSlide = function (i) {
 
                         //gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.YoutubeWall.server', 'setKeywords', [section.appInstanceId + 1, '"' + section.src + '"']);
 
-                        $("iframe").contents().find("#message_from_server").html("Play Video on instance " + section.appInstanceId + 1);
+                        $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (section.appInstanceId + 1));
                         setTimeout(function () {
                             i++;
                             gdo.net.app["PresentationTool"].playCurrentSlide(i);
@@ -270,7 +281,7 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appName === "YoutubeWall") {
             gdo.net.app["PresentationTool"].deployApp(section, "Imperial");
-        } else if (section.appName === "YoutubeWall") {
+        } else if (section.appName === "Images") {
             gdo.net.app["PresentationTool"].deployApp(section, "Default");
         }
 
