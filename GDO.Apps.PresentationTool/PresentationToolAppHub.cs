@@ -3,13 +3,13 @@ using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
-
+using GDO.Apps.PresentationTool.Core;
 using log4net;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 
 namespace GDO.Apps.PresentationTool
 {
@@ -29,32 +29,6 @@ namespace GDO.Apps.PresentationTool
         public void ExitGroup(string groupId)
         {
             Groups.Remove(Context.ConnectionId, "" + groupId);
-        }
-
-        public void RequestAppUpdate(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    List<string> sections = new List<string>(pa.Slides[pa.currentSlide].Sections.Count);
-                    foreach (KeyValuePair<int, AppSection> entry in pa.Slides[pa.currentSlide].Sections)
-                    {
-                        // do something with entry.Value or entry.Key
-                        sections.Add(GetSectionUpdate(instanceId, entry.Value.Id));
-                    }
-                    for (int i = 0; i < pa.Slides[pa.currentSlide].Sections.Count; i++)
-                    {
-                        // sections.Add(GetSectionUpdate(instanceId, pa.Slides[pa.currentSlide].Sections[i].Id));
-                    }
-                    Clients.Caller.receiveAppUpdate(sections, pa.currentSlide);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to prepare App Update ", e);
-                }
-            }
         }
 
         public void RequestAppUpdate(int instanceId, int slide)
@@ -185,14 +159,33 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void DeployResource(int instanceId, int sectionId, string src)
+        public void CloseSection(int instanceId, int sectionId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.DeployResource(sectionId, src);
+                    pa.CloseSection(sectionId);
+                    BroadcastSectionUpdate(instanceId, sectionId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to close section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void DeployResource(int instanceId, int sectionId, string src, string appName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.DeployResource(sectionId, src, appName);
                     Clients.Caller.setMessage(src);
                     BroadcastSectionUpdate(instanceId, sectionId);
                 }
@@ -218,25 +211,6 @@ namespace GDO.Apps.PresentationTool
                 catch (Exception e)
                 {
                     Log.Error("failed to create section ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-
-            }
-        }
-
-        public void CloseSection(int instanceId, int sectionId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.CloseSection(sectionId);
-                    BroadcastSectionUpdate(instanceId, sectionId);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to close section ", e);
                     Clients.Caller.setMessage(e.GetType().ToString() + e);
                 }
 
@@ -299,7 +273,7 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.CreateNewSlide();
-                    Clients.Caller.receiveSlideCreation();
+                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
                 }
                 catch (Exception e)
                 {
@@ -318,7 +292,7 @@ namespace GDO.Apps.PresentationTool
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.DeleteCurrentSlide();
                     RequestPreviousSlide(instanceId);
-                    Clients.Caller.receiveSlideCreation();
+                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
                 }
                 catch (Exception e)
                 {
@@ -345,7 +319,7 @@ namespace GDO.Apps.PresentationTool
                 }
                 catch (Exception e)
                 {
-                    Log.Error("failed to get refresh info", e);
+                    Log.Error("failed to request previous slide", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
@@ -368,11 +342,76 @@ namespace GDO.Apps.PresentationTool
                 }
                 catch (Exception e)
                 {
-                    Log.Error("failed to get refresh info", e);
+                    Log.Error("failed to request next slide", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
         }
 
+        public void RequestSlideSave(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    Clients.Caller.receiveSlideSave(JsonConvert.SerializeObject(pa.Slides));
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to save slide", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void RequestSlideOpen(int instanceId, string filename)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    List<Core.Slide> slides;
+                    using (StreamReader r = new StreamReader(pa.BasePath + "\\" + filename))
+                    {
+                        string json = r.ReadToEnd();
+                        slides = JsonConvert.DeserializeObject<List<Core.Slide>>(json);
+                    }
+                    pa.Slides.Clear();
+                    foreach (Core.Slide slide in slides)
+                    {
+                        pa.Slides.Add(slide);
+                    }
+                    Clients.Caller.setMessage("Load Successfully");
+                    Clients.Caller.receiveSlideOpen();
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to open slide", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void clearCave(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.Slides.Clear();
+                    pa.CreateNewSlide();
+                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to clear cave", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
     }
 }

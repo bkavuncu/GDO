@@ -76,7 +76,7 @@ namespace GDO.Apps.PresentationTool
             }
 
             string destPath = this.ImagesAppBasePath + "\\" + filename;
-            File.Copy(currPath, destPath);
+            File.Copy(currPath, destPath, true);
         }
 
         public void CreateNewSlide()
@@ -113,13 +113,13 @@ namespace GDO.Apps.PresentationTool
             return sectionId;
         }
 
-        public void DeployResource(int sectionId, string src)
+        public void DeployResource(int sectionId, string src, string appName)
         {
             int instanceId = Utilities.GetAvailableSlot<string>(Slides[currentSlide].Instances);
-            string appName = "Images";
             Slides[currentSlide].Instances.Add(instanceId, appName);
             Slides[currentSlide].Sections[sectionId].Src = src;
             Slides[currentSlide].Sections[sectionId].AppInstanceId = instanceId;
+            Slides[currentSlide].Sections[sectionId].AppName = appName;
             return;
         }
 
@@ -127,6 +127,7 @@ namespace GDO.Apps.PresentationTool
         {
             Slides[currentSlide].Instances.Remove(Slides[currentSlide].Sections[sectionId].AppInstanceId);
             Slides[currentSlide].Sections[sectionId].Src = null;
+            Slides[currentSlide].Sections[sectionId].AppName = null;
             return;
         }
 

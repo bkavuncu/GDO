@@ -22,6 +22,7 @@ namespace GDO.Core
         public int Rows { get; set; }
         public string Src { get; set; }
         public int AppInstanceId { get; set; }
+        public string AppName { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Section"/> class.
@@ -41,6 +42,7 @@ namespace GDO.Core
             this.NumNodes = cols * rows;
             this.Nodes = new Node[cols, rows];
             this.Src = null;
+            this.AppName = null;
             this.AppInstanceId = -1;
         }
 
@@ -58,11 +60,12 @@ namespace GDO.Core
                     check = false;
                 }
             }
-            
+
             return check;
         }
 
-        public bool IsDeployed() {
+        public bool IsDeployed()
+        {
             return Src != null;
         }
 

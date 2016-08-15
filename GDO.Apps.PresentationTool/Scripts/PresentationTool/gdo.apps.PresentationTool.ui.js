@@ -10,21 +10,34 @@
     gdo.net.app["PresentationTool"].button_cols = 9.5;
     gdo.net.app["PresentationTool"].header_cols = 11;
     gdo.net.app["PresentationTool"].cell_padding = 4;
+
     gdo.net.app["PresentationTool"].currentSlide = 0;
+    gdo.net.app["PresentationTool"].template = 0;
+    gdo.net.app["PresentationTool"].numOfPPTs = 0;
+    gdo.net.app["PresentationTool"].numOfImgs = 0;
+    gdo.net.app["PresentationTool"].allFiles = [];
+    gdo.net.app["PresentationTool"].appName = null;
+});
+//template list click
+$("iframe").contents().find('#template_list').on('click', 'li', function () {
+    gdo.net.app["PresentationTool"].template = $(this).index() + 1;
 });
 
+// url submit click 
 
-// file list
-$(function () {
-    $('.list-group-item').on('click', function () {
-        $('.fa', this)
-          .toggleClass('fa-chevron-right')
-          .toggleClass('fa-chevron-down');
-    });
+$("iframe").contents().find('#update_keyword_submit').on('click', function () {
+    gdo.net.app["PresentationTool"].selectedResource = $("iframe").contents().find('#new_keyword').val();
+    gdo.net.app["PresentationTool"].appName = "YoutubeWall";
+    gdo.updateDisplayCanvas();
 });
 
+//file list click
 $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].selectedResource = "Files/PPTs/" + $(this).text();
+    gdo.net.app["PresentationTool"].appName = "Images";
+    $("iframe").contents().find('#img_preview')
+        .empty()
+        .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
     gdo.updateDisplayCanvas();
 }).on('blur', 'li', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
@@ -33,8 +46,14 @@ $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
     gdo.updateDisplayCanvas();
 
 });
+
+//file list click
 $("iframe").contents().find('#item_images').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].selectedResource = "Files/Images/" + $(this).text();
+    gdo.net.app["PresentationTool"].appName = "Images";
+    $("iframe").contents().find('#img_preview')
+        .empty()
+        .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
     gdo.updateDisplayCanvas();
 }).on('blur', 'li', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
@@ -80,17 +99,13 @@ gdo.net.app["PresentationTool"].initialize = function (num) {
         node.isValid = true;
     }
 
-    for (var i = 0; i < num; i++) {
-        if (i > 0) {
-            var node = gdo.net.app["PresentationTool"].node[i];
-            if (!node.isValid)
-                continue;
-        }
+    for (var i = 0; i <= num; i++) {
         gdo.net.app["PresentationTool"].section[i] = {};
         gdo.net.app["PresentationTool"].section[i].id = i;
         gdo.net.app["PresentationTool"].section[i].isSelected = false;
         gdo.net.app["PresentationTool"].section[i].exists = true;
         gdo.net.app["PresentationTool"].section[i].src = null;
+        gdo.net.app["PresentationTool"].section[i].appName = null;
         gdo.net.app["PresentationTool"].section[i].appInstanceId = -1;
     }
 }
@@ -123,8 +138,8 @@ gdo.net.app["PresentationTool"].selectNodes = function () {
     gdo.net.app["PresentationTool"].rowEnd = -1;
     for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
         var node = gdo.net.app["PresentationTool"].node[i];
-        //if (!node.isValid)
-        //  continue;
+        if (!node.isValid)
+            continue;
         if (node.isSelected) {
             gdo.net.app["PresentationTool"].isStarted = true;
             if (node.col <= gdo.net.app["PresentationTool"].colStart) {
@@ -349,7 +364,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
         .click(function () {
             if (gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection] != null) {
                 if (gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].src === null && gdo.net.app["PresentationTool"].selectedResource !== null) {
-                    gdo.net.app["PresentationTool"].server.deployResource(gdo.controlId, gdo.net.app["PresentationTool"].selectedSection, gdo.net.app["PresentationTool"].selectedResource);
+                    gdo.net.app["PresentationTool"].server.deployResource(gdo.controlId, gdo.net.app["PresentationTool"].selectedSection, gdo.net.app["PresentationTool"].selectedResource, gdo.net.app["PresentationTool"].appName);
                     gdo.net.app["PresentationTool"].selectedResource = null;
                 }
             }
@@ -418,25 +433,22 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
             .addClass("btn-default")
             .removeClass("btn-warning");
     }
-    /**
-    $(".clear_cave_button_div")
+
+    $("iframe").contents().find(".clear_cave_button_div")
         .empty()
-        .append("<button type='button'  class='clear_cave_button btn btn-danger btn-lg btn-block' data-toggle='modal' data-target='#confirm-clear'><i class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Clear Cave</button>")
+        .append("<button type='button'  class='clear_cave_button btn btn-danger btn-lg btn-block' data-toggle='modal' data-target='#confirm-clear'><i class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Clear All</button>")
         .css("height", "100%")
-        .css("width", (gdo.management.table_width / gdo.management.button_cols) + "%")
+        .css("width", (gdo.net.app["PresentationTool"].table_width / gdo.net.app["PresentationTool"].button_cols) + "%")
         .css('padding', 1)
         .attr("align", "center");
-    $(".clear_confirm_button")
+    $("iframe").contents().find(".clear_cave_button_div")
         .unbind()
         .click(function () {
-            gdo.consoleOut('.NET', 1, 'Clearing States');
-            gdo.net.server.clearCave();
-            gdo.management.sections.selectedSection = -1;
-            gdo.management.apps.selectedFile = null;
-            gdo.management.apps.selectedConfiguration = null;
-            gdo.management.apps.selectedInstance = -1;
+            gdo.consoleOut('.PresentationTool', 1, 'Clearing All');
+            gdo.net.app["PresentationTool"].currentSlide = 0;
+            gdo.net.app["PresentationTool"].template = 0;
+            gdo.net.app["PresentationTool"].appName = null;
+            gdo.net.app["PresentationTool"].server.clearCave(gdo.controlId);
             gdo.updateDisplayCanvas();
-        });
-    **/
-
+        }); 
 }
