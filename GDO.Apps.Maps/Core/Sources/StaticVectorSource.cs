@@ -11,7 +11,7 @@ namespace GDO.Apps.Maps.Core.Sources
     {
         public LinkParameter Format { get; set; }
         public FunctionParameter Loader { get; set; }
-        public LinkDatalistParameter Url { get; set; }
+        public FileInputParameter Url { get; set; }
         public DatalistParameter Strategy { get; set; }
         public BooleanParameter UseSpatialIndex { get; set; }
         public BooleanParameter WrapX { get; set; }
@@ -44,17 +44,14 @@ namespace GDO.Apps.Maps.Core.Sources
                 IsVisible = true,
             };
 
-            Url = new LinkDatalistParameter
+            Url = new FileInputParameter
             {
                 Name = "Url",
                 PropertyName = "url",
-                Description = "Setting this option instructs the source to use an XHR loader (see ol.featureloader.xhr). Use a string and an ol.loadingstrategy.all for a one-off download of all features from the given URL. Use a ol.FeatureUrlFunction to generate the url with other loading strategies. Requires format to be set as well. When default XHR feature loader is provided, the features will be transformed from the data projection to the view projection during parsing. If your remote data source does not advertise its projection properly, this transformation will be incorrect. For some formats, the default projection (usually EPSG:4326) can be overridden by setting the defaultDataProjection constructor option on the format.",
+                Description = "Relative path of the data file (can be an url). Setting this option instructs the source to use an XHR loader. Use a string and an ol.loadingstrategy.all for a one-off download of all features from the given URL. Use a ol.FeatureUrlFunction to generate the url with other loading strategies. Requires format to be set as well. When default XHR feature loader is provided, the features will be transformed from the data projection to the view projection during parsing. If your remote data source does not advertise its projection properly, this transformation will be incorrect. For some formats, the default projection (usually EPSG:4326) can be overridden by setting the defaultDataProjection constructor option on the format.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "datas",
-                LinkedProperty = "Url",
-                ClassTypes = new string[2] { "LocalFile", "RemoteFile" },
             };
 
             Strategy = new DatalistParameter

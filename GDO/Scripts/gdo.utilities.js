@@ -94,17 +94,72 @@ function getUrlVars() {
 
 function timeStamp() {
     var now = new Date();
-    var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+    var date = [now.getDate(), now.getMonth() + 1, now.getFullYear()];
     var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
     var suffix = (time[0] < 12) ? "AM" : "PM";
     time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
     time[0] = time[0] || 12;
-    for (var i = 1; i < 3; i++) {
+    for (var i = 0; i < 3; i++) {
         if (time[i] < 10) {
             time[i] = "0" + time[i];
         }
+        if (date[i] < 10) {
+            date[i] = "0" + date[i];
+        }
     }
     return date.join("/") + " " + time.join(":") + " " + suffix;
+}
+
+function timeStamp(ms) {
+    var now = new Date(ms);
+    var date = [now.getDate(), now.getMonth() + 1, now.getFullYear()];
+    var time = [now.getHours(), now.getMinutes(), now.getSeconds()];
+    var suffix = (time[0] < 12) ? "AM" : "PM";
+    time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
+    time[0] = time[0] || 12;
+    for (var i = 0; i < 3; i++) {
+        if (time[i] < 10) {
+            time[i] = "0" + time[i];
+        }
+        if (date[i] < 10) {
+            date[i] = "0" + date[i];
+        }
+    }
+    return date.join("/") + " " + time.join(":") + " " + suffix;
+}
+
+function parseTimeStamp(str) {
+    //'1990-10-30 17:32:01:000'
+    //'01234567890123456789012'
+    var timestamp = [];
+    timestamp[0] = parseInt(str.slice(0, 4));
+    timestamp[1] = parseInt(str.slice(5, 7));
+    timestamp[2] = parseInt(str.slice(8, 10));
+    timestamp[3] = parseInt(str.slice(11, 13));
+    timestamp[4] = parseInt(str.slice(14, 16));
+    timestamp[5] = parseInt(str.slice(17, 19));
+    timestamp[6] = parseInt(str.slice(20, 23));
+    return timestamp;
+}
+
+function parseDate(str) {
+    //'1990-10-30 17:32:01:000'
+    //'01234567890123456789012'
+    var timestamp = parseTimeStamp(str);
+    var date = new Date(timestamp[0], timestamp[1], timestamp[2], timestamp[3], timestamp[4], timestamp[5], timestamp[6]);
+    return date;
+}
+
+function getClosest(number, array) {
+    var current = array[0];
+    var index = 0;
+    for (var i = 0; i <array.length; i++) {
+        if (Math.abs(number - array[i]) < Math.abs(number - current)) {
+            current = array[i];
+            index = i;
+        }
+    }
+    return index;
 }
 
 var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;

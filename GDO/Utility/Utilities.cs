@@ -171,6 +171,90 @@ namespace GDO.Utility
                 return image;
             }
         }
+
+        public static double CalculateTimeSpan(int?[] time, bool isDuration)
+        {
+            int[] temp = new int[7];
+            for (int i = 0; i < 7; i++)
+            {
+                if (time[i] == null)
+                {
+                    temp[i] = 0;
+                }
+                else
+                {
+                    temp[i] = (int)time[i];
+                }
+            }
+            TimeSpan total = TimeSpan.Zero;
+            if (isDuration)
+            {
+                TimeSpan[] span = new TimeSpan[7];
+                span[0] = TimeSpan.FromDays(temp[0]*365);
+                span[1] = TimeSpan.FromDays(temp[1]*12);
+                span[2] = TimeSpan.FromDays(temp[2]);
+                span[3] = TimeSpan.FromHours(temp[3]);
+                span[4] = TimeSpan.FromMinutes(temp[4]);
+                span[5] = TimeSpan.FromSeconds(temp[5]);
+                span[6] = TimeSpan.FromMilliseconds(temp[6]);
+
+                for (int i = 0; i < 7; i++)
+                {
+                    total = total.Add(span[i]);
+                }
+            }
+            else
+            {
+                total = new DateTime(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]) - new DateTime(1970, 1, 1);
+            }
+            return total.TotalMilliseconds;
+        }
+
+        public static int CastToInt(int? val, int defVal)
+        {
+            if (val == null)
+            {
+                return defVal;
+            }
+            else
+            {
+                return (int) val;
+            }
+        }
+
+        public static double CastToDouble(double? val, double defVal)
+        {
+            if (val == null)
+            {
+                return defVal;
+            }
+            else
+            {
+                return (double)val;
+            }
+        }
+
+        public static bool CastToBool(bool? val, bool defVal)
+        {
+            if (val == null)
+            {
+                return defVal;
+            }
+            else
+            {
+                return (bool)val;
+            }
+        }
+
+        public static string Slice(string source, int start, int end)
+        {
+            if (end < 0)
+            {
+                end = source.Length + end;
+            }
+            int len = end - start;
+            return source.Substring(start, len);
+        }
     }
 
     public class GenericDictionary<TU>

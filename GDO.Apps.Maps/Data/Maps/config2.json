@@ -1,0 +1,33 @@
+{
+	"files": [{
+		"timestamp": "2016-01-01 00:00:00:000",
+		"file": "../../Data/Maps/hm01.json"
+	},{
+		"timestamp": "2016-01-02 00:00:00:000",
+		"file": "../../Data/Maps/hm02.json"
+	},{
+		"timestamp": "2016-01-03 00:00:00:000",
+		"file": "../../Data/Maps/hm03.json"
+	},{
+		"timestamp": "2016-01-04 00:00:00:000",
+		"file": "../../Data/Maps/hm04.json"
+	},{
+		"timestamp": "2016-01-05 00:00:00:000",
+		"file": "../../Data/Maps/hm06.json"
+	},{
+		"timestamp": "2016-01-07 00:00:00:000",
+		"file": "../../Data/Maps/hm07.json"
+	},{
+		"timestamp": "2016-01-08 00:00:00:000",
+		"file": "../../Data/Maps/hm08.json"
+	},{
+		"timestamp": "2016-01-09 00:00:00:000",
+		"file": "../../Data/Maps/hm09.json"
+	},{
+		"timestamp": "2016-01-10 00:00:00:000",
+		"file": "../../Data/Maps/hm10.json"
+	},{
+		"timestamp": "2016-01-11 00:00:00:000",
+		"file": "../../Data/Maps/hm11.json"
+	}]
+}

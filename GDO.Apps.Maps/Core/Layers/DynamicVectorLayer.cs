@@ -6,9 +6,8 @@ using GDO.Utility;
 
 namespace GDO.Apps.Maps.Core.Layers
 {
-    public class DynamicVectorLayer : Layer
+    public class DynamicVectorLayer : DynamicLayer
     {
-        public LinkParameter Source { get; set; }
         public LinkParameter Style { get; set; }
         public IntegerParameter RenderBuffer { get; set; }
         public BooleanParameter UpdateWhileAnimating { get; set; }
@@ -20,18 +19,6 @@ namespace GDO.Apps.Maps.Core.Layers
             ObjectType.Value = "ol.layer.Vector";
             Description.Value = "Vector data that is rendered client-side dynamically.";
 
-            Source = new LinkParameter
-            {
-                Name = "Source",
-                PropertyName = "source",
-                Description = "The source for this layer",
-                Priority = (int)GDO.Utility.Priorities.Required,
-                IsEditable = false,
-                IsVisible = true,
-                LinkedParameter = "sources",
-                ClassTypes = new string[1] { "DynamicVectorSource" } ,
-            };
-
             Style = new LinkParameter
             {
                 Name = "Style",
@@ -41,7 +28,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ClassTypes = new string[1] { "Style" } ,
+                ClassTypes = new string[1] { "Style" },
             };
 
             RenderBuffer = new IntegerParameter

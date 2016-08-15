@@ -9,7 +9,8 @@ namespace GDO.Apps.Maps.Core.Sources
 {
     public class DynamicVectorSource : Source
     {
-        public LinkParameter DataFile { get; set; }
+        public JSONParameter Config { get; set; }
+        public StringParameter Url { get; set; }
         public LinkParameter Format { get; set; }
         public FunctionParameter Loader { get; set; }
         public DatalistParameter Strategy { get; set; }
@@ -22,16 +23,25 @@ namespace GDO.Apps.Maps.Core.Sources
             ObjectType.Value = "ol.source.Vector";
             Description.Value = "Provides a source of features for vector layers. Vector features provided by this source are suitable for editing.";
 
-            DataFile = new LinkParameter
+            Config = new JSONParameter
             {
-                Name = "DataFile",
-                Description = "The dynamic data file to read data from",
-                Priority = (int)GDO.Utility.Priorities.Required,
+                Name = "Config JSON",
+                Description = "Configuration JSON",
+                Priority = (int)GDO.Utility.Priorities.Optional,
                 IsEditable = false,
                 IsVisible = true,
                 IsProperty = false,
-                LinkedParameter = "data",
-                ClassTypes = new string[1] { "DynamicFile" },
+                DefaultValue = "%7B%22files%22%3A%20%5B%7B%22timestamp%22%3A%20%221990-10-30%2017%3A32%3A01%3A000%22%7D%2C%22file%22%3A%20%22../../Data/Maps/sk0.json%22%7D%2C%7B%22timestamp%22%3A%20%221996-10-30%2017%3A32%3A01%3A000%22%7D%2C%22file%22%3A%20%22../../Data/Maps/sk1.json%22%7D%5D%7D"
+            };
+
+            Url = new StringParameter
+            {
+                Name = "Url",
+                PropertyName = "url",
+                Description = "",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                IsEditable = false,
+                IsVisible = false,
             };
 
             Format = new LinkParameter

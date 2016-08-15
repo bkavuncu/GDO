@@ -546,15 +546,16 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Animations\GlobalAnimation.cs" />
     <Compile Include="Core\Configuration.cs" />
     <Compile Include="Core\Base.cs" />
-    <Compile Include="Core\DataSources\RemoteFile.cs" />
     <Compile Include="Core\Format.cs" />
+    <Compile Include="Core\Animation.cs" />
     <Compile Include="Core\Layer.cs" />
+    <Compile Include="Core\Layers\DynamicLayer.cs" />
     <Compile Include="Core\Layers\DynamicHeatmapLayer.cs" />
     <Compile Include="Core\Layers\StaticHeatmapLayer.cs" />
     <Compile Include="Core\Layers\ImageLayer.cs" />
-    <Compile Include="Core\DataSources\LocalFile.cs" />
     <Compile Include="Core\Layers\TileLayer.cs" />
     <Compile Include="Core\Layers\StaticVectorLayer.cs" />
     <Compile Include="Core\Layers\DynamicVectorLayer.cs" />
@@ -599,7 +600,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Animation\" />
     <Folder Include="Web\Maps\Images\" />
   </ItemGroup>
   <ItemGroup>

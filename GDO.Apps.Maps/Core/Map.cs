@@ -9,24 +9,29 @@ namespace GDO.Apps.Maps.Core
 {
     public class Map
     {
+        public string Label { get; set; }
+        public string SubLabel { get; set; }
+        public bool ShowLabel { get; set; }
         public Position Position { get; set; }
         public View[] Views { get; set; }
-        public Data[] Datas { get; set; }
         public Format[] Formats { get; set; }
         public Style[] Styles { get; set; }
         public Source[] Sources { get; set; }
         public Layer[] Layers { get; set; }
+        public Animation[] Animations { get; set; }
 
-
-        public Map(Position position, View[] views,  Data[] datas, Format[] formats, Style[] styles, Source[] sources, Layer[] layers)
+        public Map(string label, string subLabel, bool showLabel, Position position, View[] views, Format[] formats, Style[] styles, Source[] sources, Layer[] layers, Animation[] animations)
         {
+            Label = label;
+            SubLabel = subLabel;
+            ShowLabel = showLabel;
             Position = position;
             Views = views;
-            Datas = datas;
             Formats = formats;
             Styles = styles;
             Sources = sources;
             Layers = layers;
+            Animations = animations;
         }
     }
 }

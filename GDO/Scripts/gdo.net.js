@@ -35,7 +35,7 @@ gdo.net.keyboardOptions.tex = {
         // input & preview
         // "label-default" for a darker background
         // "light" for white text
-        input: 'form-control input-sm dark',
+        input: 'form-control',
         // keyboard container
         container: 'center-block well',
         // default state
@@ -68,7 +68,7 @@ gdo.net.keyboardOptions.num = {
         // input & preview
         // "label-default" for a darker background
         // "light" for white text
-        input: 'form-control input-sm dark',
+        input: 'form-control ',
         // keyboard container
         container: 'center-block well',
         // default state
@@ -218,6 +218,11 @@ $(function() {
         if (gdo.net.isNodeInitialized()) {
             var node = JSON.parse(serializedNode);
             gdo.net.processNode(node);
+            if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+                if (node.Id = parseInt(gdo.clientId)) {
+                    gdo.updateSelf();
+                }
+            }
             //gdo.updateSelf();
         }
     }

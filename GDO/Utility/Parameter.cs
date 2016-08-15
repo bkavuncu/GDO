@@ -29,7 +29,6 @@
         JSON = 3,
         Object = 4,
         Global = 5,
-        Time = 6,
     }
 
     public enum VariableTypes
@@ -99,6 +98,16 @@
         public float? Value { get; set; }
         public float? DefaultValue { get; set; }
         public float? Increment { get; set; }
+        public new int InputType = (int)InputTypes.Float;
+        public new int ParameterType = (int)ParameterTypes.Variable;
+        public new int VariableType = (int)VariableTypes.Float;
+    }
+
+    public class DoubleParameter : Parameter
+    {
+        public double? Value { get; set; }
+        public double? DefaultValue { get; set; }
+        public double? Increment { get; set; }
         public new int InputType = (int)InputTypes.Float;
         public new int ParameterType = (int)ParameterTypes.Variable;
         public new int VariableType = (int)VariableTypes.Float;
@@ -237,15 +246,12 @@
 
     public class TimeParameter : Parameter
     {
-        public int? Year { get; set; }
-        public int? Month { get; set; }
-        public int? Day { get; set; }
-        public int? Hour { get; set; }
-        public int? Minute { get; set; }
-        public int? Second { get; set; }
-
+        public int?[] Values = new int?[7]; //0 - Year, 1 - Month, 2 - Day, 3 - Hour, 4 - Minute, 5 - Seconds, 6 - Milliseconds
+        public int?[] DefaultValues = new int?[7];
+        public int Length = 7;
+        public bool IsDuration = false;
         public new int InputType = (int)InputTypes.Time;
-        public new int ParameterType = (int)ParameterTypes.Time;
+        public new int ParameterType = (int)ParameterTypes.Array;
         public new int VariableType = (int)VariableTypes.Integer;
     }
 
