@@ -1256,7 +1256,6 @@ var initDD3App = function () {
 
             var _dd3_propertyHandler = function (data) {
                 var obj = d3.select("#" + data.sendId);
-
                 if (!obj.empty()) {
                     var args = typeof data.property !== "undefined" ? [data.property, data.value] : [data.value];
                     obj[data.function].apply(obj, args)
@@ -1267,7 +1266,9 @@ var initDD3App = function () {
 
             var _dd3_transitionHandler = function (data) {
                 
+            
                 var launchTransition = function (data) {
+                    
                     console.log("Launching transition");
                     console.log(data);
                     var obj = d3.select("#" + data.sendId);
@@ -1324,10 +1325,10 @@ var initDD3App = function () {
                     if (_dd3_timeTransitionRelative) {
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
                     } else {
-                        
+
                         var tmp = data.delay + (data.elapsed - Date.now());
-                        console.log("to be executed in: "+ HTMLParagraphElement);
-                        trst.delay((tmp<=0)?0:tmp);
+                        console.log("to be executed in: " + HTMLParagraphElement);
+                        trst.delay((tmp <= 0) ? 0 : tmp);
                     }
 
 
@@ -1350,6 +1351,7 @@ var initDD3App = function () {
                 };
 
                 launchTransition(data);
+
                 /*
                 if (data.min < Date.now())
                     launchTransition(data);
@@ -2191,7 +2193,7 @@ var initDD3App = function () {
                 transitionsInfos = containers.map(function (c) {
                     //console.log("Yep! entering a transition infos");
                     //console.log(c);
-                    
+
                     //console.log(c.__dd3_transitions__);
                     //console.log(c.__dd3_transitions__.values());
                     return c.__dd3_transitions__.values().map(function (v) {
@@ -2247,7 +2249,7 @@ var initDD3App = function () {
                         console.log(step);
                         */
                         r.min = time - step;
-                        r.max = time + step; 
+                        r.max = time + step;
                     });
                     _dd3_mergeRecipientsIn(rcpt, rcpts);
                 });
@@ -2387,11 +2389,11 @@ var initDD3App = function () {
                             ease: (typeof ease === "function") ? utils.getFnName(ease) : ease,//not a string anymore
                             id: _dd3_idTransition++
                         };
-                        args.elapsed=_dd3_timeTransitionRelative ? args.time - syncTime : args.time;
-                        
+                        args.elapsed = _dd3_timeTransitionRelative ? args.time - syncTime : args.time;
+
                         _dd3_retrieveTransitionSettings(this, args);
-                        
-                        
+
+
                         //console.log(ns);
                         //console.log(args);
                         this.__dd3_transitions__.set(ns, args);//TODO: v4 should be populated
