@@ -56,9 +56,10 @@
         font: 10px sans-serif;
         }
 
+        /*#2F4F4F;*/
         .background path {
         fill: none;
-        stroke: #2F4F4F;
+        stroke: #192a2a;
         shape-rendering: crispEdges;
         }
 
@@ -458,7 +459,7 @@
                         triggered=false;
                         circleGroupDistributed.selectAll(".c")
                             .transition()
-                            .duration(10000)
+                            .duration(5000)
                             .precision(0.05)
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
