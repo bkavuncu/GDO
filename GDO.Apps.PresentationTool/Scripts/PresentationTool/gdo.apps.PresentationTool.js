@@ -158,6 +158,33 @@ gdo.net.app["PresentationTool"].openSlideFile = function (filename) {
     gdo.net.app["PresentationTool"].server.requestSlideOpen(gdo.controlId, filename);
 }
 
+gdo.net.app["PresentationTool"].rotateImage = function (sectionId) {
+    gdo.consoleOut('.PresentationTool', 1, 'Rotate image on section' + (sectionId));
+    var section = gdo.net.app["PresentationTool"].section[sectionId];
+    if (section.appName !== "Images") return;
+    var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (sectionId);
+   
+    $("iframe").contents().find("#hidden_app_control").css({ "display": "block", "visibility": "hidden" });
+    $("iframe").contents().find("body").css({ "overflow": "auto"});
+    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
+
+    $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
+        $(this).contents().find("iframe").on('load', function () {
+            $(this).contents().find("#thumbnail_control > img").on('load', function () {
+                setTimeout(function () {
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
+                }, 1000);
+                $("iframe").contents().find("#hidden_app_control").css({ "display": "none", "visibility": "hidden" });
+                $("iframe").contents().find("body").css({ "overflow": "hidden", "heigth": "100%" });
+                $("iframe").contents().find("#hidden_app_iframe").unbind();
+            });   
+        });
+    });
+
+}
+
+
 gdo.net.app["PresentationTool"].loadTemplate = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Load template ' + gdo.net.app["PresentationTool"].template);
     gdo.net.app["PresentationTool"].server.clearCave(gdo.controlId);
@@ -203,54 +230,52 @@ gdo.net.app["PresentationTool"].playCurrentSlide = function (i) {
 
     if (i == numOfSections) {
         $("iframe").contents().find("#hidden_app_control").css({ "display": "none", "visibility": "hidden" });
-        $("iframe").contents().find("body").css({ "overflow": "auto", "heigth": "100%" });
+        $("iframe").contents().find("body").css({ "overflow": "auto"});
+        $("iframe").contents().find("#hidden_app_iframe").unbind();
         return;
     };
 
     var section = gdo.net.app["PresentationTool"].section[i];
     if (section != null && section.src !== null) {
 
-            var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (section.appInstanceId + 1);
-            $("iframe").contents().find("body").css({ "overflow": "hidden", "heigth": "1080px" });
-            $("iframe").contents().find("#hidden_app_control").css({ "display": "block", "visibility": "hidden" });
-            $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
+        var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (section.appInstanceId + 1);
+        $("iframe").contents().find("body").css({ "overflow": "hidden"});
+        $("iframe").contents().find("#hidden_app_control").css({ "display": "block", "visibility": "hidden" });
+        $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
 
-            $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
-                $(this).contents().find("iframe").on('load', function () {
-                    if (section.appName === "Images") {
-                        $(this).contents().find("#thumbnail_control > img").on('load', function () {
-                            setTimeout(function () {
-                                $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
-                                $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#fill_mode").click();
-                                $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (section.appInstanceId + 1));
-                            }, 1000);
-                            setTimeout(function () {
-                                i++;
-                                gdo.net.app["PresentationTool"].playCurrentSlide(i);
-                            }, 1500);
-                        });
-                    } else if (section.appName === "YoutubeWall") {
+        $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
+            $(this).contents().find("iframe").on('load', function () {
+                if (section.appName === "Images") {
+                    $(this).contents().find("#thumbnail_control > img").on('load', function () {
                         setTimeout(function () {
-                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#search_mode").click();
+                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
+                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#fit_mode").click();
+                            $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (section.appInstanceId + 1));
                         }, 1000);
-                        setTimeout(function () {
-                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(section.src);
-                        }, 1000);
-                        setTimeout(function () {
-                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#update_keyword_submit").click();
-                        }, 1000);
-
-
-                        //gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.YoutubeWall.server', 'setKeywords', [section.appInstanceId + 1, '"' + section.src + '"']);
-
-                        $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (section.appInstanceId + 1));
                         setTimeout(function () {
                             i++;
                             gdo.net.app["PresentationTool"].playCurrentSlide(i);
                         }, 1500);
-                    }
-                });
+                    });
+                } else if (section.appName === "YoutubeWall") {
+                    setTimeout(function () {
+                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#search_mode").click();
+                    }, 1000);
+                    setTimeout(function () {
+                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(section.src);
+                    }, 1000);
+                    setTimeout(function () {
+                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#update_keyword_submit").click();
+                    }, 1000);
+
+                    $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (section.appInstanceId + 1));
+                    setTimeout(function () {
+                        i++;
+                        gdo.net.app["PresentationTool"].playCurrentSlide(i);
+                    }, 1500);
+                }
             });
+        });
         
     } else {
         i++;

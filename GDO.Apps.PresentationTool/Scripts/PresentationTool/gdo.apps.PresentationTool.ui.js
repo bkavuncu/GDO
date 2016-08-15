@@ -21,17 +21,21 @@
 //template list click
 $("iframe").contents().find('#template_list').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].template = $(this).index() + 1;
-});
+})
 
-// url submit click 
-
+// keywords submit click 
 $("iframe").contents().find('#update_keyword_submit').on('click', function () {
     gdo.net.app["PresentationTool"].selectedResource = $("iframe").contents().find('#new_keyword').val();
     gdo.net.app["PresentationTool"].appName = "YoutubeWall";
     gdo.updateDisplayCanvas();
+}).on('blur', function (e) {
+    if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
+        return;
+    gdo.net.app["PresentationTool"].selectedResource = null;
+    gdo.updateDisplayCanvas();
 });
 
-//file list click
+//file ppt list click
 $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].selectedResource = "Files/PPTs/" + $(this).text();
     gdo.net.app["PresentationTool"].appName = "Images";
@@ -39,7 +43,7 @@ $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
         .empty()
         .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
     gdo.updateDisplayCanvas();
-}).on('blur', 'li', function (e) {
+}).on('blur', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
         return;
     gdo.net.app["PresentationTool"].selectedResource = null;
@@ -47,7 +51,7 @@ $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
 
 });
 
-//file list click
+//file image list click
 $("iframe").contents().find('#item_images').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].selectedResource = "Files/Images/" + $(this).text();
     gdo.net.app["PresentationTool"].appName = "Images";
@@ -55,12 +59,11 @@ $("iframe").contents().find('#item_images').on('click', 'li', function () {
         .empty()
         .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
     gdo.updateDisplayCanvas();
-}).on('blur', 'li', function (e) {
+}).on('blur', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
         return;
     gdo.net.app["PresentationTool"].selectedResource = null;
     gdo.updateDisplayCanvas();
-
 });
 
 gdo.updateDisplayCanvas = function () {

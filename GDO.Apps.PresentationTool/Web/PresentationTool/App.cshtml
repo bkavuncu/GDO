@@ -22,11 +22,13 @@
             });
         });
     </script>
-    <div id="wrapper" style="background-color:#000;width:97vw;height:97vh;vertical-align: middle;" align="center">
+    <div id="wrapper" style="background-color:#000;width:97vw;height:97vh;">
 
-        <div style="display: table; width:100%;height: 100%; overflow: hidden;">
+        <div style="width:100%;height: 100%; overflow: hidden; position:relative">
             <span class="fa fa-microphone" style="color:white; margin-left:80px; margin-top: 80px; font-size:48px;" id="img_microphone"></span>
-            <div id="voice_info" style="display: table-cell; font-size: 12vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;">Say 'Hello there' to start voice control</div>
+            <div style="display: table; width:100%;height: 100%; overflow: hidden; text-align:center;  z-index: 10; top: 0; left: 0; position:absolute;">
+                <div id="voice_info" style="display: table-cell; font-size: 12vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;">Say 'Hello there' to start voice control</div>
+            </div>       
         </div>
     </div>
 

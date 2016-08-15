@@ -173,6 +173,7 @@
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
     <script src="../../Scripts/PresentationTool/artyom.min.js"></script>
+    <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -225,49 +226,13 @@
                         <div id="img_preview" class="panel-body" style="height: 35.5vh;overflow: hidden">
                         </div>
                         <div class="panel-footer">           
-                                <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
-                                    <fieldset>
-                                        <table style="border-collapse: separate; border-spacing: 4px 0;background-color:transparent;">
-                                            <tr>
-                                                <td>
-                                                    <div>
-                                                        <button id="previous_slide" class="btn btn-primary presentation_button"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <button id="next_slide" class="btn btn-primary presentation_button"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <button id="new_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <button id="delete_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Delete</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <button id="save_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Save</button>
-                                                        <a id="slide_link"></a>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <span id="open_slide" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Open<input type="file" name="file" class="upload" id="upload_slide"/></span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </fieldset>     
-                                </form>
+                            <button id="previous_slide" class="btn btn-primary"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</button>
+                            <button id="next_slide" class="btn btn-primary"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</button>
+                            <button id="new_slide" class="btn btn-primary"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</button>
+                            <button id="delete_slide" class="btn btn-primary"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</button>
                         </div>
                     </div>
                 </div>
-
 
                 <div class="col-lg-4" style="padding: 6px;">
                     <div class="panel panel-primary">
@@ -283,7 +248,7 @@
                                 <table style="border-collapse: separate; border-spacing: 4px 0;background-color:transparent;">
                                     <tr>
                                         <td>
-                                            <div style="background-color: transparent;" id="update_keyword_label"><h6>  Channel:</h6></div>
+                                            <div style="background-color: transparent;" id="update_keyword_label"><h6>  Keywords:</h6></div>
                                         </td>
                                         <td>
                                             <div class="input_field_div"><input type="text" class="input_field" id="new_keyword" size="50" value="google" onfocus="this.value=''"></div>
@@ -295,27 +260,6 @@
                                     </tr>
                                 </table>
                             </fieldset>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-2" style="padding: 6px;">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h6 id="Templates" style="text-align:left;float:left;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Templates</h6>
-                            <hr style="clear:both; border: 0" />
-                        </div>
-                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
-                            <ul id="template_list" class="list-unstyled">
-                                <li><a href="#template_one" name="1" class="list-group-item">Template 1</a></li>
-                                <li><a href="#template_two" name="2" class="list-group-item">Template 2</a></li>
-                                <li><a href="#template_three" name="3" class="list-group-item">Template 3</a></li>
-                            </ul>
-                        </div>
-                        <div class="panel-footer">
-                            <button id="load_template" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Choose</button>
-                            <button id="load_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Load</button>
-                            <button id="play_slide" class="btn btn-primary presentation_button"><i class='fa  fa-plus fa-fw'></i>&nbsp;Play</button>
                         </div>
                     </div>
                 </div>
@@ -362,6 +306,57 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-lg-1" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 id="Templates" style="text-align:left;float:left;">&nbsp;Templates</h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <ul id="template_list" class="list-unstyled">
+                                <li><a href="#template_one" name="1" class="list-group-item">Template 1</a></li>
+                                <li><a href="#template_two" name="2" class="list-group-item">Template 2</a></li>
+                                <li><a href="#template_three" name="3" class="list-group-item">Template 3</a></li>
+                            </ul>
+                        </div>
+                        <div class="panel-footer">
+                            <button id="load_template" class="btn btn-primary"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</button>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-1" style="padding: 6px;">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h6 id="Templates" style="text-align:left;float:left;"><i class='fa  fa-gear fa-fw'></i>&nbsp;Control</h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
+                                <div>
+                                    <span id="load_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</span>
+                                </div>   
+                                <div>
+                                    <span id="play_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Play</span>
+                                </div>                               
+                                <div>
+                                    <span id="open_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Open<input type="file" name="file" class="upload" id="upload_slide" /></span>
+                                </div>         
+                                <div>
+                                    <button id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</button>
+                                    <a id="slide_link"></a>
+                                </div>
+                                  
+                            </form>
+                        </div>
+                        <div class="panel-footer text-center">
+                            <button id="voice_control" class="btn btn-warning btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-microphone fa-fw'></i>&nbsp;Voice</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="col-lg-12">
                 <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 100%; height: 28vh; border-collapse: separate; border-spacing: 2px; text-align:center"></table>
@@ -377,7 +372,7 @@
                     <div class="col-lg-1 clear_cave_button_div"></div>
                 </div>
 
-                <div id="hidden_app_control" style="display: none; visibility: hidden; width: 1920px; height: 1000px">
+                <div id="hidden_app_control" style="width: 100%; height: 1000px">
                     <iframe id="hidden_app_iframe" style="width:100%;height:100%;border:0; border:none;"></iframe>
                 </div>
 
@@ -514,60 +509,102 @@
             gdo.net.app["PresentationTool"].saveSlideFile();
         });
 
-
+        var voice_control = 1;
+        var curr_section = 0;
+        var database = [];
+        var length = 65;
+        for (var i = 0; i < 65; i++) {
+            database.push(i);
+        }
         artyom.addCommands([
             {
                 indexes: ["Hello there"],
                 action: function (i) {
                     artyom.say("Hey there !");
                     artyom.say("You could say following commands");
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Hello there! You could say following commands: Next, preivous, load and play", 1);
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Hey there! You could say following commands: Next, preivous, load and play", 1);
+                 
                 }
             },
             {
-                indexes: ["Next"],
+                indexes: ["Next page"],
                 action: function (i) {
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Next slide", 1);
+                    artyom.say("Next page");
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Loading next page", 1);
                     $("#next_slide").click();
                     $("#load_slide").click();
                 }
             },
             {
-                indexes: ["Previous"],
+                indexes: ["Previous page"],
                 action: function (i) {
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Preivous slide", 1);
+                    artyom.say("Previous page");
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Loading previous page", 1);
                     $("#previous_slide").click();
                     $("#load_slide").click();
                 }
             },
             {
-                indexes: ["Load"],
+                indexes: ["Load page"],
                 action: function (i) {
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Load slide", 1);
+                    artyom.say("Load page");
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Loading current page", 1);
                     $("#load_slide").click();
                 }
             },
             {
-                indexes: ["Play"],
+                indexes: ["Play current page"],
                 action: function (i) {
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Play slide", 1);
+                    artyom.say("Play current page");
+                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Playing current page", 1);
                     $("#play_slide").click();
                 }
+            },
+
+            {
+                indexes: ["Section *"],
+                smart: true,
+                action: function (i, wildcard, sentence) {
+                    if (database.indexOf(parseInt(wildcard.trim()))) {
+                        curr_section = parseInt(wildcard.trim());
+                        gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Section " + curr_section, 1);
+                    }
+                }
+            },
+
+            {
+                indexes: ["Rotate Image"],
+                action: function (i) {
+                    if (curr_section !== 0) {
+                        gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Rotate Image on Section " + curr_section, 1);
+                        gdo.net.app["PresentationTool"].rotateImage(curr_section);
+                    }
+                }
             }
+
         ]);
-
-        artyom.fatality();// use this to stop any of
-
-        setTimeout(function () {// if you use artyom.fatality , wait 250 ms to initialize again.
-            artyom.initialize({
-                lang: "en-GB",// A lot of languages are supported. Read the docs !
-                continuous: true,// Artyom will listen forever
-                listen: true, // Start recognizing
-                debug: true, // Show everything in the console
-                speed: 1 // talk normally
-            });
-            
-        }, 250); 
+        $("#voice_control").click(function () {
+            if (voice_control === 0) {
+                artyom.clearGarbageCollection();
+                artyom.fatality();// use this to stop any of
+                voice_control = 1 - voice_control;
+                $(this).removeClass("btn-primary").addClass("btn-warning");
+            } else {
+                artyom.fatality();// use this to stop any of
+                setTimeout(function () {// if you use artyom.fatality , wait 250 ms to initialize again.
+                    artyom.initialize({
+                        lang: "en-GB",// A lot of languages are supported. Read the docs !
+                        continuous: true,// Artyom will listen forever
+                        listen: true, // Start recognizing
+                        debug: true, // Show everything in the console
+                        speed: 1 // talk normally
+                    });
+                    voice_control = 1 - voice_control;
+                }, 250);
+                $(this).removeClass("btn-warning").addClass("btn-primary");
+            }
+        });
+      
     </script>
 
     <script>
