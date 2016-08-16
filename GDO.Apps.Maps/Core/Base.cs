@@ -22,7 +22,10 @@ namespace GDO.Apps.Maps.Core
         public StringParameter ClassName { get; set; }
 
         [JsonProperty(Order = -2)]
-        public IntegerParameter Type { get; set; }
+        public StringParameter Description { get; set; }
+
+        [JsonProperty(Order = -2)]
+        public StringParameter ObjectType { get; set; }
 
         public Base()
         {
@@ -30,40 +33,51 @@ namespace GDO.Apps.Maps.Core
             {
                 Name = "Id",
                 Description = "Id",
-                Priority = (int) GDO.Utility.Priorities.Required,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.Integer,
+                Priority = (int) GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
+                IsProperty = false,
             };
 
             Name = new StringParameter
             {
                 Name = "Name",
-                Description = "Name of the Parameter",
-                Priority = (int) GDO.Utility.Priorities.Required,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.String,
+                Description = "Name",
+                Priority = (int) GDO.Utility.Priorities.System,
                 IsEditable = true,
                 IsVisible = true,
+                IsProperty = false,
             };
 
             ClassName = new StringParameter
             {
                 Name = "Class Name",
                 Description = "Name of the Class",
-                Priority = (int) GDO.Utility.Priorities.Required,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.String,
+                Priority = (int) GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = true,
+                IsProperty = false,
             };
 
-            Type = new IntegerParameter
+            Description = new StringParameter
             {
-                Name = "Type",
-                Description = "Type",
-                Priority = (int) GDO.Utility.Priorities.Required,
-                VisualisationType = (int) GDO.Utility.VisualisationTypes.Integer,
+                Name = "Description",
+                Description = "Description of the Object",
+                Priority = (int)GDO.Utility.Priorities.System,
                 IsEditable = false,
                 IsVisible = false,
+                IsProperty = false,
+                InputType = (int)InputTypes.TextArea,
+        };
+
+            ObjectType = new StringParameter
+            {
+                Name = "Type",
+                Description = "Type of JS Object",
+                Priority = (int) GDO.Utility.Priorities.System,
+                IsEditable = false,
+                IsVisible = false,
+                IsProperty = false,
             };
         }
     }

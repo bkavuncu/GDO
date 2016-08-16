@@ -5,21 +5,28 @@ using System.Web;
 
 namespace GDO.Apps.Maps.Core
 {
-    public class Position
+    public class Position : ICloneable
     {
-        public double [] TopLeft { get; set; }
-        public double [] Center { get; set; }
-        public double [] BottomRight { get; set; }
-        public double Resolution { get; set; }
-        public int Zoom { get; set; }
+        public float?[] TopLeft { get; set; }
+        public float?[] Center { get; set; }
+        public float?[] BottomRight { get; set; }
+        public float? Resolution { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
 
-        public Position(double[] topLeft, double[] center, double[] bottomRight, double resolution, int zoom)
+        public Position(float?[] topLeft, float?[] center, float?[] bottomRight, float? resolution, int? width, int? height)
         {
             TopLeft = topLeft;
             Center = center;
             BottomRight = bottomRight;
             Resolution = resolution;
-            Zoom = zoom;
+            Width = width;
+            Height = height;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

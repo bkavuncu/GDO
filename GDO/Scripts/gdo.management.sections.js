@@ -215,19 +215,23 @@ gdo.management.sections.drawAdvancedSectionTable = function () {
         if (sectionId == 0) {
             $("#advanced_section_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
             $("#advanced_section_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='advanced_section_node_" + node.id + "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" + node.id + "</b></font></div>")
-                    .append("</br>")
-                    .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-                    //.css("height", (gdo.management.table_height / gdo.net.rows) + "")
-                    .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
-                    .css("border", "1px solid #333")
-                    .css('overflow', 'hidden')
-                    .css("background", "#222")
-                    .css({ fontSize: gdo.management.section_font_size })
-                    .css('padding', 0)
+                .empty()
+                .unbind()
+                .css("vertical-align", "top")
+                .append("<div id='advanced_section_node_" +
+                    node.id +
+                    "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
+                    node.id +
+                    "</b></font></div>")
+                .append("</br>")
+                .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
+                //.css("height", (gdo.management.table_height / gdo.net.rows) + "")
+                .css("width", (gdo.management.table_width / gdo.net.cols) + "%")
+                .css("border", "1px solid #333")
+                .css('overflow', 'hidden')
+                .css("background", "#222")
+                .css({ fontSize: gdo.management.section_font_size })
+                .css('padding', 0);
 
         } else if ((node.sectionCol == 0 && node.sectionRow == 0) && node.sectionId > 0) {
             $("#advanced_section_row_" + node.row + "_col_" + node.col)
@@ -300,10 +304,7 @@ gdo.management.sections.drawAdvancedSectionTable = function () {
                             $("#advanced_section_row_" + node.row + "_col_" + node.col).css("background-color", "#990000").css("border", "1px solid #CC0000");
                             $("#advanced_section_section_" + sectionId + "_i").css("background", "#CC0000");
                         }
-                } else {
-
                 }
-
             }
             if (gdo.net.section[sectionId].health >= 4) {
                 $("#advanced_section_section_" + sectionId + '_h').css("background", "#559100");
@@ -350,8 +351,6 @@ gdo.management.sections.drawButtonTable = function () {
                 }
             }
             gdo.consoleOut('.MANAGEMENT', 1, 'Requested Creation of Section at (' + gdo.management.colStart + ',' + gdo.management.rowStart + '),(' + gdo.management.colEnd + ',' + gdo.management.rowEnd + ')');
-        } else {
-
         }
     });
     if (gdo.management.isStarted) {
@@ -593,15 +592,15 @@ gdo.management.sections.drawButtonTable = function () {
             if (gdo.net.section[gdo.management.sections.selectedSection].appInstanceId > -1) {
                 gdo.management.apps.selectedApp = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].appName;
                 gdo.management.apps.selectedConfiguration = gdo.net.instance[gdo.net.section[gdo.management.sections.selectedSection].appInstanceId].configName;
-                gdo.net.server.updateConsoleInstance(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
+                gdo.net.server.updateConsole(gdo.net.section[gdo.management.sections.selectedSection].appInstanceId);
                 gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console' + gdo.management.sections.selectedSection);
                 //gdo.updateDisplayCanvas();
             } else {
-                gdo.net.server.updateConsoleInstance(-1);
+                gdo.net.server.updateConsole(-1);
                 gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
             }
         } else {
-            gdo.net.server.updateConsoleInstance(-1);
+            gdo.net.server.updateConsole(-1);
             gdo.consoleOut('.MANAGEMENT', 1, 'Sending Control of the App at Section to Console: -1');
         }
     });

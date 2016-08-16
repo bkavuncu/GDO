@@ -20,7 +20,7 @@ $(function () {
     var globalZoomed;
 
     // flag to indicate if all nodes should have the same size. If so, 'normalRadius' is the value to be used.
-    var allNodesSameSize = true;
+    var allNodesSameSize = false;
 
     // set size of nodes and links
     var zoomedRadius = 5;
@@ -330,6 +330,35 @@ $(function () {
     }
 
 
+    $.connection.graphAppHub.client.setNodeSize = function(nodeSize) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            normalRadius = nodeSize;
+            allNodesSameSize = true;
+            document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("nodes").childNodes.forEach(function (node) {
+                node.setAttribute("r", normalRadius);
+            });
+        }
+    }
+
+    $.connection.graphAppHub.client.setNodesOriginalSize = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            allNodesSameSize = false;
+            var nodesDom = document.body.getElementsByTagName('iframe')[0].contentDocument.getElementById("nodes");
+            //Remove previous nodes
+            while (nodesDom.firstChild) {
+                nodesDom.removeChild(nodesDom.firstChild);
+            }
+            //Add nodes with their proper size
+            nodes.forEach(function (node) {
+                nodesDom.append("circle")
+                    .attr("r", Math.ceil(node.Size))
+                    .attr("cx", node.Pos.X)
+                    .attr("cy", node.Pos.Y)
+                    .attr("fill", "rgb(" + node.R + "," + node.G + "," + node.B + ")");
+            });
+        }
+    }
+
     $.connection.graphAppHub.client.hideNodes = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
@@ -351,12 +380,13 @@ $(function () {
             nodes.forEach(function (node) {
                 var inc = Math.round(rgbIncrement * node.NumLinks); //multiply rgbIncrement by no. of links each node has
 
-                var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size);
+                var radius = allNodesSameSize ? normalRadius : Math.ceil(node.Size); 
 
                 nodesDom.append("circle")
                     .attr("r", radius) // radius
                     .attr("cx", node.Pos.X)
                     .attr("cy", node.Pos.Y)
+                    //.attr("fill", "rgb(" + node.R + "," + node.G + "," + node.B + ")");
                     .attr("fill", "rgb(" + (currentColor.r + inc) + "," + (currentColor.g + inc) + "," + (currentColor.b + inc) + ")");   // Nodes: any colour scheme
             });
         }

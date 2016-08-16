@@ -9,19 +9,20 @@ namespace GDO.Apps.Maps.Core.Styles
 {
     public class FillStyle : Core.Style
     {
-        public StringParameter Color { get; set; }
+        public ColorParameter Color { get; set; }
 
         public FillStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Fill;
+            ObjectType.Value = "ol.style.Fill";
+            Description.Value = "Set fill style for vector features.";
 
-            Color = new StringParameter
+            Color = new ColorParameter
             {
                 Name = "Color",
+                PropertyName = "color",
                 Description = "Color",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Color,
                 IsEditable = true,
                 IsVisible = true
             };

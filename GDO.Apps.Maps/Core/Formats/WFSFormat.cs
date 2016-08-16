@@ -9,30 +9,20 @@ namespace GDO.Apps.Maps.Core.Formats
 {
     public class WFSFormat : Format
     {
-        public IntegerArrayParameter GMLVersion { get; set; }
         public StringParameter SchemaLocation { get; set; }
 
         public WFSFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.WFS;
+            ObjectType.Value = "ol.format.WFS";
+            Description.Value = "Feature format for reading and writing data in the WFS format. By default, supports WFS version 1.1.0. You can pass a GML format as option if you want to read a WFS that contains GML2 (WFS 1.0.0).";
 
-            GMLVersion = new IntegerArrayParameter
-            {
-                Name = "GML Version",
-                Description = "GML Version",
-                Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
-                DefaultValues = new int[3] { 1, 2, 3 },
-                IsEditable = false,
-                IsVisible = true
-            };
             SchemaLocation = new StringParameter
             {
                 Name = "Schema Location",
+                PropertyName = "schemaLocation",
                 Description = "Optional schemaLocation to use for serialization, this will override the default.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 IsEditable = false,
                 IsVisible = true
             };

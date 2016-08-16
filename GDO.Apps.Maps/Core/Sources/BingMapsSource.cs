@@ -12,20 +12,21 @@ namespace GDO.Apps.Maps.Core.Sources
     {
         public StringParameter Culture { get; set; }
         public StringParameter Key { get; set; }
-        public StringArrayParameter ImagerySet { get; set; }
-        public NullableIntegerParameter MaxZoom { get; set; }
+        public DatalistParameter ImagerySet { get; set; }
+        public IntegerParameter MaxZoom { get; set; }
 
         public BingMapsSource()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)SourceTypes.BingMaps;
+            ObjectType.Value = "ol.source.BingMaps";
+            Description.Value = "Layer source for Bing Maps tile data.";
 
             Culture = new StringParameter
             {
                 Name = "Culture",
+                PropertyName = "culture",
                 Description = "Culture code",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValue = "en-us"
@@ -33,32 +34,35 @@ namespace GDO.Apps.Maps.Core.Sources
             Key = new StringParameter
             {
                 Name = "Key",
+                PropertyName = "key",
                 Description = "Bing Maps API key",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.String,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValue = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM"
+                DefaultValue = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM",
+                Value = "At9BTvhQUqgpvpeiuc9SpgclVtgX9uM1fjsB-YQWkP3a9ZdxeZQBW99j5K3oEsbM",
+                IsNull = false,
             };
-            ImagerySet = new StringArrayParameter
+            ImagerySet = new DatalistParameter
             {
                 Name = "Imagery Set",
+                PropertyName = "imagerySet",
                 Description = "Type of imagery",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
                 DefaultValues = new string[5] { "Road", "Aerial", "AerialWithLabels", "collinsBart", "ordnanceSurvey" },
                 DefaultValue = "Road"
             };
-            MaxZoom = new NullableIntegerParameter
+            MaxZoom = new IntegerParameter
             {
                 Name = "Max Zoom",
+                PropertyName = "maxZoom",
                 Description = "Max zoom. Default is what's advertized by the BingMaps service.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true,
+                Increment = 1,
             };
         }
     }

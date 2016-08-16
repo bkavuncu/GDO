@@ -25,6 +25,13 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard-dark.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/gdo.management.css" rel="stylesheet">
+    <link href="../../CSS/jquery-ui.min.css" rel="stylesheet">
+    <link href="../../CSS/rangeslider.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../Scripts/Maps/ol.css" type="text/css">
     <style>
         body {
             color: #FFF;
@@ -36,6 +43,15 @@
             -webkit-user-select: none;
             -o-user-select: none;
             user-select: none;
+        }
+
+        .modal-backdrop {
+            opacity: 0.0 !important;
+        }
+
+        .disable {
+            pointer-events: none;
+            opacity: 0.7;
         }
 
         .thumb {
@@ -84,7 +100,6 @@
 
         .input_field {
             width: 100%;
-            height: 40px;
             border: 1px solid #222;
             background: #333;
             color: #FFF;
@@ -107,10 +122,22 @@
         .ol-rotate {
             top: 3em;
         }
+        /* override Bootstrap excessive button padding */
+        button.ui-keyboard-button.btn {
+            padding: 1px 6px;
+        }
+        /* Bootswatch Darkly input is too bright */
+        .ui-keyboard-input.light, .ui-keyboard-preview.light {
+            color: #282828;
+            background: #ddd;
+        }
+
+        .ui-keyboard-input.dark, .ui-keyboard-preview.dark {
+            color: #ddd;
+            background: #282828;
+        }
 
         .map {
-            width: 100%;
-            height: 350px;
             border: 0 none;
         }
     </style>
@@ -122,6 +149,12 @@
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Scripts/jquery.keyboard.js"></script>
+    <script src="../../Scripts/enscroll-0.6.1.min.js"></script>
+    <script src='../../Scripts/colors.js'></script>
+    <script src='../../Scripts/jquery-colorpicker.js'></script>
+    <script src="../../Scripts/jquery-ui.min.js"></script>
+    <script src="../../Scripts/rangeslider.js"></script>
     <script>
         function getUrlVar(variable) {
             /// <summary>
@@ -146,12 +179,47 @@
         $(function () {
             $(document).ready(function () {
                 var gdo = parent.gdo;
+                if (gdo.net.consoleMode) {
+                    $("#map").css("zoom", 0.5);
+                }
                 gdo.controlId = parseInt(getUrlVar("controlId"));
                 gdo.net.app["Maps"].initControl(gdo.controlId);
+                $('[data-toggle="tooltip"]').tooltip();
+                $(".panel-body").enscroll({
+                    showOnHover: false,
+                    verticalTrackClass: 'track4',
+                    verticalHandleClass: 'handle4'
+                }).css("width", "100%").css("height", "70vh").css("padding-right", "5px");
+                if (gdo.net.consoleMode) {
+                    $("#layer_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#source_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#style_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#format_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#data_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#configuration_name_input").keyboard(gdo.net.keyboardOptions.tex);
+                    $("#map_input_div").keyboard(gdo.net.keyboardOptions.tex);
+                }
             });
         });
     </script>
-    <div id="wrapper" style="width:97%">
+    <div id="wrapper" style="width: 97%">
+        @{
+            var path = "";
+            var filename = "";
+            if (IsPost)
+            {
+
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null)
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    //foldername
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Data/Maps/"));
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/Data/Maps/") + filename;
+                    file.SaveAs(path);
+                }
+            }
+        }
         <div class="row">
             <div class="col-lg-12">
 
@@ -160,26 +228,30 @@
                     <li class="active">
                         <a href="#home" data-toggle="tab"><i class="fa fa-map-marker fa-fw"></i>&nbsp;&nbsp;Map</a>
                     </li>
+
                     <li>
-                        <a href="#layers" data-toggle="tab"><i class="fa fa-align-justify  fa-fw"></i>&nbsp;&nbsp;Layers</a>
+                        <a href="#layer" data-toggle="tab"><i class="fa fa-align-justify  fa-fw"></i>&nbsp;&nbsp;Layer</a>
                     </li>
                     <li>
-                        <a href="#sources" data-toggle="tab"><i class="fa fa-database  fa-fw"></i>&nbsp;&nbsp;Sources</a>
+                        <a href="#source" data-toggle="tab"><i class="fa fa-database  fa-fw"></i>&nbsp;&nbsp;Source</a>
                     </li>
                     <li>
-                        <a href="#styles" data-toggle="tab"><i class="fa fa-photo fa-fw"></i>&nbsp;&nbsp;Styles</a>
+                        <a href="#style" data-toggle="tab"><i class="fa fa-photo fa-fw"></i>&nbsp;&nbsp;Style</a>
                     </li>
                     <li>
-                        <a href="#formats" data-toggle="tab"><i class="fa fa-file-text fa-fw"></i>&nbsp;&nbsp;Formats</a>
+                        <a href="#format" data-toggle="tab"><i class="fa fa-file-text fa-fw"></i>&nbsp;&nbsp;Format</a>
                     </li>
                     <li>
                         <a href="#animation" data-toggle="tab"><i class="fa fa-play fa-fw "></i>&nbsp;&nbsp;Animation</a>
                     </li>
                     <li>
-                        <a href="#data" data-toggle="tab"><i class="fa fa-arrow-circle-down fa-fw"></i>&nbsp;&nbsp;Data Import</a>
+                        <a href="#view" data-toggle="tab"><i class="fa  fa-eye fa-fw"></i>&nbsp;&nbsp;View</a>
                     </li>
                     <li>
-                        <a href="#configuration" data-toggle="tab"><i class="fa fa-cog fa-fw"></i>&nbsp;&nbsp;Configurations</a>
+                        <a href="#configuration" data-toggle="tab"><i class="fa fa-cog fa-fw"></i>&nbsp;&nbsp;Configuration</a>
+                    </li>
+                    <li>
+                        <a href="#geojson" data-toggle="tab"><i class="fa fa-edit fa-fw"></i>&nbsp;&nbsp;Editor</a>
                     </li>
                 </ul>
 
@@ -188,7 +260,7 @@
                     <div class="tab-pane fade in active" id="home" style="height: 84vh;">
                         <h4>Map</h4>
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-4">
                                 <div id="map_left_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-align-justify fa-fw'></i>&nbsp;Layers</h6>
@@ -202,22 +274,25 @@
                                         <button type='button' class='btn btn-danger layer-stop-button' style=""><i class='fa  fa-stop  '></i></button>
                                         <button type='button' class='btn btn-primary layer-up-button' style=""><i class='fa  fa-arrow-up '></i></button>
                                         <button type='button' class='btn btn-primary layer-down-button' style=""><i class='fa  fa-arrow-down '></i></button>
+                                        <button type='button' class='btn btn-success layer-add-button' data-toggle='modal' data-target='#new-layer' style=""><i class='fa  fa-plus '></i></button>
+                                        <button type='button' class='btn btn-danger layer-remove-button' style=""><i class='fa  fa-minus '></i></button>
                                         <button type='button' class='btn btn-info layer-visible-button' style=""><i class='fa  fa-eye  '></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-9">
-                                <div id="map_panel" class="panel panel-default" style="height: 100%">
-                                    <div class="panel-heading">
+                            <div class="col-lg-8">
+                                <div id="map_panel" class="" style="height: 100%">
+                                    <div class="" style="background:#3C3C3C; height:60px; border: 1px solid #292929; padding:11px">
                                         <div class="row">
-                                            <div class="col-lg-7"><h6><i class='fa  fa-map-marker fa-fw'></i>&nbsp;Map</h6></div>
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa  fa-map-marker fa-fw'></i>&nbsp;Map</h6>
+                                            </div>
                                             <div class="col-lg-5" style="text-align: right">
-                                                <button type='button' class='btn btn-primary view-load-button' style=""><i class='fa  fa-upload  '></i>&nbsp;&nbsp;Load View</button>
-                                                <button type='button' class='btn btn-success view-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save View</button>
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="panel-body" style="height: 70vh">
+                                    <div class="" style="height: 70vh; background:#222222;border: 1px solid #292929; padding:11px; overflow:hidden">
                                         <div class="container-fluid">
                                             <div class="row-fluid">
                                                 <div class="span12">
@@ -226,7 +301,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                    <div class="" style="vertical-align: bottom; text-align: center;background:#3C3C3C;height:60px;border: 1px solid #292929; padding:11px">
                                         <div class="row" style="margin-left: 4px; margin-right: 4px;">
                                             <div class="col-lg-5 form-group" id="map_input_div"></div>
                                             <div class="col-lg-2" id="map_submit_div"></div>
@@ -235,14 +310,56 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="layers">
-                        <h4>Layers</h4>
+                    <div class="tab-pane fade" id="animation">
+                        <h4>Animation</h4>
                         <div class="row">
-                            <div class="col-lg-3">
-                                <div id="layers_list_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-4">
+                                <div id="animation_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-play fa-fw'></i>&nbsp;&nbsp;Animations</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.5%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="animation"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center">
+                                        <button type='button' class='btn btn-success animation-add-button' data-toggle='modal' data-target='#new-animation' style=""><i class='fa  fa-plus '></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger animation-remove-button' style=""><i class='fa  fa-minus '></i>&nbsp;&nbsp;Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div id="animation_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="animation_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="animation_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right">
+                                        <button type='button' class='btn btn-success animation-play-button' style=""><i class='fa  fa-play  '></i>&nbsp;&nbsp;Play</button>
+                                        <button type='button' class='btn btn-warning animation-pause-button' style=""><i class='fa  fa-pause  '></i>&nbsp;&nbsp;Pause</button>
+                                        <button type='button' class='btn btn-danger animation-stop-button' style=""><i class='fa  fa-stop  '></i>&nbsp;&nbsp;Stop</button>
+                                        <button type='button' class='btn btn-primary animation-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                        <button type='button' class='btn btn-primary animation-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="layer">
+                        <h4>Layer</h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div id="layer_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-align-justify fa-fw'></i>&nbsp;&nbsp;Layers</h6>
                                     </div>
@@ -250,68 +367,86 @@
                                         <div class="layer"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: center">
-                                        <button type='button' class='btn btn-success layer-add-button' data-toggle='modal' data-target='#new-layer' style=""><i class='fa  fa-plus '></i></button>
-                                        <button type='button' class='btn btn-danger layer-remove-button' style=""><i class='fa  fa-minus '></i></button>
+                                        <button type='button' class='btn btn-success layer-play-button' style=""><i class='fa  fa-play  '></i></button>
+                                        <button type='button' class='btn btn-warning layer-pause-button' style=""><i class='fa  fa-pause  '></i></button>
+                                        <button type='button' class='btn btn-danger layer-stop-button' style=""><i class='fa  fa-stop  '></i></button>
                                         <button type='button' class='btn btn-primary layer-up-button' style=""><i class='fa  fa-arrow-up '></i></button>
                                         <button type='button' class='btn btn-primary layer-down-button' style=""><i class='fa  fa-arrow-down '></i></button>
+                                        <button type='button' class='btn btn-success layer-add-button' data-toggle='modal' data-target='#new-layer' style=""><i class='fa  fa-plus '></i></button>
+                                        <button type='button' class='btn btn-danger layer-remove-button' style=""><i class='fa  fa-minus '></i></button>
                                         <button type='button' class='btn btn-info layer-visible-button' style=""><i class='fa  fa-eye  '></i></button>
 
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-9">
-                                <div id="layers_edit_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-8">
+                                <div id="layer_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="layer_label"></font></h6>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="layer_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div id="layer_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right">
-
-                                        <button type='button' class='btn btn-primary layer-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Layer</button>
+                                        <button type='button' class='btn btn-primary layer-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                        <button type='button' class='btn btn-primary layer-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="sources">
-                        <h4>Sources</h4>
+                    <div class="tab-pane fade" id="source">
+                        <h4>Source</h4>
                         <div class="row">
-                            <div class="col-lg-3">
-                                <div id="sources_list_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-4">
+                                <div id="source_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-database fa-fw'></i>&nbsp;&nbsp;Sources</h6>
                                     </div>
-                                    <div class="panel-body" id="source" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div class="source"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
-                                        <button type='button' class='btn btn-success source-add-button' data-toggle='modal' data-target='#new-source' style=""><i class='fa  fa-plus '></i></button>
-                                        <button type='button' class='btn btn-danger source-remove-button' style=""><i class='fa  fa-minus '></i></button>
+                                        <button type='button' class='btn btn-success source-add-button' data-toggle='modal' data-target='#new-source' style=""><i class='fa  fa-plus '></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger source-remove-button' style=""><i class='fa  fa-minus '></i>&nbsp;&nbsp;Remove</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-9">
-                                <div id="sources_edit_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-8">
+                                <div id="source_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="source_label"></font></h6>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="source_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div id="source_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
-                                        <button type='button' class='btn btn-primary source-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Source</button>
+                                        <button type='button' class='btn btn-primary source-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                        <button type='button' class='btn btn-primary source-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="styles">
-                        <h4>Styles</h4>
+                    <div class="tab-pane fade" id="style">
+                        <h4>Style</h4>
                         <div class="row">
-                            <div class="col-lg-3">
-                                <div id="styles_list_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-4">
+                                <div id="style_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
                                         <h6><i class='fa fa-image fa-fw'></i>&nbsp;&nbsp;Styles</h6>
                                     </div>
@@ -319,72 +454,210 @@
                                         <div class="style"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
-                                        <button type='button' class='btn btn-success style-add-button' data-toggle='modal' data-target='#new-style' style=""><i class='fa  fa-plus '></i></button>
-                                        <button type='button' class='btn btn-danger style-remove-button' style=""><i class='fa  fa-minus '></i></button>
+                                        <button type='button' class='btn btn-success style-add-button' data-toggle='modal' data-target='#new-style' style=""><i class='fa  fa-plus '></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger style-remove-button' style=""><i class='fa  fa-minus '></i>&nbsp;&nbsp;Remove</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-9">
-                                <div id="styles_edit_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-8">
+                                <div id="style_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="style_label"></font></h6>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="style_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div id="style_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
-                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Style</button>
+                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                        <button type='button' class='btn btn-primary style-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="formats">
-                        <h4>Formats</h4>
+                    <div class="tab-pane fade" id="format">
+                        <h4>Format</h4>
                         <div class="row">
-                            <div class="col-lg-3">
-                                <div id="formats_list_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-4">
+                                <div id="format_list_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-image fa-fw'></i>&nbsp;&nbsp;Formats</h6>
+                                        <h6><i class='fa fa-file-text fa-fw'></i>&nbsp;&nbsp;Formats</h6>
                                     </div>
-                                    <div class="panel-body" id="format" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div class="format"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
-                                        <button type='button' class='btn btn-success style-add-button' data-toggle='modal' data-target='#new-format' style=""><i class='fa  fa-plus '></i></button>
-                                        <button type='button' class='btn btn-danger style-remove-button' style=""><i class='fa  fa-minus '></i></button>
+                                        <button type='button' class='btn btn-success format-add-button' data-toggle='modal' data-target='#new-format' style="">&nbsp;&nbsp;<i class='fa  fa-plus '></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger format-remove-button' style=""><i class='fa  fa-minus '></i>&nbsp;&nbsp;Remove</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-9">
-                                <div id="formats_edit_panel" class="panel panel-default" style="height: 100%">
+                            <div class="col-lg-8">
+                                <div id="format_edit_panel" class="panel panel-default" style="height: 100%">
                                     <div class="panel-heading">
-                                        <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="format_label"></font></h6>
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="format_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
                                         <div id="format_properties"></div>
                                     </div>
                                     <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
-                                        <button type='button' class='btn btn-primary style-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save Format</button>
+                                        <button type='button' class='btn btn-primary format-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                        <button type='button' class='btn btn-primary format-saveas-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save As</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="data">
-                        <h4>Data Import</h4>
-                        <p>TBD</p>
-                    </div>
-                    <div class="tab-pane fade" id="animation">
-                        <h4>Animation</h4>
-                        <p>TBD</p>
+                    <div class="tab-pane fade" id="view">
+                        <h4>View</h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div id="view_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-eye fa-fw'></i>&nbsp;&nbsp;Views</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="view"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                        <button type='button' class='btn btn-success view-add-button' data-toggle='modal' data-target='#new-view' style=""><i class='fa  fa-plus '></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger view-remove-button' style=""><i class='fa  fa-minus '></i>&nbsp;&nbsp;Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div id="view_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="view_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="view_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
+                                        <button type='button' class='btn btn-success view-set-current-button' style=""><i class='fa  fa-upload'></i>&nbsp;&nbsp;Set View as Current Position</button>
+                                        <button type='button' class='btn btn-danger view-save-current-button' style=""><i class='fa  fa-download  '></i>&nbsp;&nbsp;Save Current Position to View</button>
+                                        <button type='button' class='btn btn-primary view-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save View</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="configuration">
-                        <h4>Animation</h4>
-                        <p>TBD</p>
+                        <h4>Configuration</h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div id="configuration_list_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <h6><i class='fa fa-cog fa-fw'></i>&nbsp;&nbsp;Configurations</h6>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div class="configuration"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: center;">
+                                        <button type='button' class='btn btn-success configuration-add-button' data-toggle='modal' data-target='#new-configuration' style=""><i class='fa  fa-plus '></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        <button type='button' class='btn btn-danger configuration-remove-button' style=""><i class='fa  fa-minus '></i>&nbsp;&nbsp;Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div id="configuration_edit_panel" class="panel panel-default" style="height: 100%">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h6><i class='fa fa-pencil fa-fw'></i>&nbsp;&nbsp;<font id="configuration_label"></font></h6>
+                                            </div>
+                                            <div class="col-lg-5" style="text-align: right">
+                                                <button type='button' class='btn btn-primary show-label-button' style=""><i class='fa  fa-info'></i>&nbsp;&nbsp;Label</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0; padding: 0; font-size: 16px; width: 99.7%; height: 70vh; overflow: auto; border: 1px solid #333;">
+                                        <div id="configuration_properties"></div>
+                                    </div>
+                                    <div class="panel-footer" style="vertical-align: bottom; text-align: right;">
+                                        <button type='button' class='btn btn-success configuration-update-button' style=""><i class='fa  fa-upload  '></i>&nbsp;&nbsp;Update</button>
+                                        <button type='button' class='btn btn-success configuration-load-button' style=""><i class='fa  fa-download  '></i>&nbsp;&nbsp;Load</button>
+                                        <button type='button' class='btn btn-danger configuration-save-button' style=""><i class='fa  fa-save  '></i>&nbsp;&nbsp;Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="geojson">
+                        <h4>Editor</h4>
+                        <div id="edit_frame" style="border: 0 none; display: block; width: 100%; height: 77vh">
+                            <iframe id="edit_frame_content" src="../../Scripts/Maps/geojson/index.html"></iframe>
+                        </div>
                     </div>
                 </div>
-
+            </div>
+            <div class="modal fade" id="new-animation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Animation</font></h5>
+                        </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-6">
+                                    <label for="animation_name_input">Name:</label>
+                                    <input type='text' id='animation_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <br></br>
+                                    <label for="animation_description">Description:</label>
+                                    <div id='animation_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="animation_types_input">Selected animation:</label>
+                                    <input type='text' id="animation_types_input" class="input_field form-control" style="background: #333; color: #FFF; height: 4vh; pointer-events: none"></input>
+                                    <br></br>
+                                    <label for="animation_types">Animation:</label>
+                                    <div id="animation_types" class="input_field form-control" style="background: #333; color: #FFF; height: 30vh;"></div>
+                                </div>
+                            </row>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="animation-next-button" data-toggle='modal' data-target='#new-animation-input' class="btn btn-primary btn-ok">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="new-animation-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width: 61vw;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Animation</font></h5>
+                        </div>
+                        <div class="modal-body">
+                            <div id="animation_create_properties"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="animation-create-button" class="btn btn-success btn-ok">Create</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal fade" id="new-layer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -392,19 +665,26 @@
                         <div class="modal-header">
                             <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Layer</font></h5>
                         </div>
-                        <div class="modal-body">
-
-                            <div class="input_field_div form-group">
-                                <label for="layer_name_input">Please enter a name for your layer:</label>
-                                <input type='text' id='layer_name_input' class="input_field form-control" style='background: #222; width: 100%; height: 28px;' maxlength='70'></input>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label for="layer_types">Please select the type of your layer</label>
-                                <select class="form-control" id="layer_types" style="background: #333; color: #FFF;"></select>
-                            </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-6">
+                                    <label for="layer_name_input">Name:</label>
+                                    <input type='text' id='layer_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <br></br>
+                                    <label for="layer_description">Description:</label>
+                                    <div id='layer_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="layer_types_input">Selected Layer:</label>
+                                    <input type='text' id="layer_types_input" class="input_field form-control" style="background: #333; color: #FFF; height: 4vh; pointer-events: none"></input>
+                                    <br></br>
+                                    <label for="layer_types">Layers:</label>
+                                    <div id="layer_types" class="input_field form-control" style="background: #333; color: #FFF; height: 30vh;"></div>
+                                </div>
+                            </row>
                         </div>
                         <div class="modal-footer">
+                            <br></br>
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
                             <button type="button" data-dismiss="modal" id="layer-next-button" data-toggle='modal' data-target='#new-layer-input' class="btn btn-primary btn-ok">Next</button>
                         </div>
@@ -412,7 +692,7 @@
                 </div>
             </div>
             <div class="modal fade" id="new-layer-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog" style="width: 61vw;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Layer</font></h5>
@@ -433,17 +713,23 @@
                         <div class="modal-header">
                             <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Source</font></h5>
                         </div>
-                        <div class="modal-body">
-
-                            <div class="input_field_div form-group">
-                                <label for="source_name_input">Please enter a name for your source:</label>
-                                <input type='text' id='source_name_input' class="input_field form-control" style='background: #222; width: 100%; height: 28px;' maxlength='70'></input>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label for="source_types">Please select the type of your source:</label>
-                                <select class="form-control" id="source_types" style="background: #333; color: #FFF;"></select>
-                            </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-6">
+                                    <label for="source_name_input">Name:</label>
+                                    <input type='text' id='source_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <br></br>
+                                    <label for="source_description">Description:</label>
+                                    <div id='source_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="source_types_input">Selected Source:</label>
+                                    <input type='text' id="source_types_input" class="input_field form-control" style="background: #333; color: #FFF; height: 4vh; pointer-events: none"></input>
+                                    <br></br>
+                                    <label for="source_types">Sources:</label>
+                                    <div id="source_types" class="input_field form-control" style="background: #333; color: #FFF; height: 30vh;"></div>
+                                </div>
+                            </row>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
@@ -453,7 +739,7 @@
                 </div>
             </div>
             <div class="modal fade" id="new-source-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog" style="width: 61vw;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Source</font></h5>
@@ -474,17 +760,39 @@
                         <div class="modal-header">
                             <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Style</font></h5>
                         </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-6">
+                                    <label for="style_name_input">Name:</label>
+                                    <input type='text' id='style_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <br></br>
+                                    <label for="style_description">Description:</label>
+                                    <div id='style_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="style_types_input">Selected Style:</label>
+                                    <input type='text' id="style_types_input" class="input_field form-control" style="background: #333; color: #FFF; height: 4vh; pointer-events: none"></input>
+                                    <br></br>
+                                    <label for="style_types">Styles:</label>
+                                    <div id="style_types" class="input_field form-control" style="background: #333; color: #FFF; height: 30vh;"></div>
+                                </div>
+                            </row>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="style-next-button" data-toggle='modal' data-target='#new-style-input' class="btn btn-primary btn-ok">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="new-style-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width: 61vw;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Style</font></h5>
+                        </div>
                         <div class="modal-body">
-
-                            <div class="input_field_div form-group">
-                                <label for="style_name_input">Please enter a name for your style:</label>
-                                <input type='text' id='style_name_input' class="input_field form-control" style='background: #222; width: 100%; height: 28px;' maxlength='70'></input>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label for="style_types">Please select the type of your style:</label>
-                                <select class="form-control" id="style_types" style="background: #333; color: #FFF;"></select>
-                            </div>
+                            <div id="style_create_properties"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
@@ -499,17 +807,39 @@
                         <div class="modal-header">
                             <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Format</font></h5>
                         </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-6">
+                                    <label for="format_name_input">Name:</label>
+                                    <input type='text' id='format_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <br></br>
+                                    <label for="format_description">Description:</label>
+                                    <div id='format_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="format_types_input">Selected Format:</label>
+                                    <input type='text' id="format_types_input" class="input_field form-control" style="background: #333; color: #FFF; height: 4vh; pointer-events: none"></input>
+                                    <br></br>
+                                    <label for="format_types">Formats:</label>
+                                    <div id="format_types" class="input_field form-control" style="background: #333; color: #FFF; height: 30vh;"></div>
+                                </div>
+                            </row>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="format-next-button" data-toggle='modal' data-target='#new-format-input' class="btn btn-primary btn-ok">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="new-format-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width: 61vw;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Create New Format</font></h5>
+                        </div>
                         <div class="modal-body">
-
-                            <div class="input_field_div form-group">
-                                <label for="format_name_input">Please enter a name for your format:</label>
-                                <input type='text' id='format_name_input' class="input_field form-control" style='background: #222; width: 100%; height: 28px;' maxlength='70'></input>
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label for="format_types">Please select the type of your format:</label>
-                                <select class="form-control" id="format_types" style="background: #333; color: #FFF;"></select>
-                            </div>
+                            <div id="format_create_properties"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
@@ -518,11 +848,94 @@
                     </div>
                 </div>
             </div>
-
-            <script type="text/javascript" src="../../Scripts/Maps/ol3/ol.js"></script>
+            <div class="modal fade" id="new-view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-save   fa-fw'></i>&nbsp;<font color="white">Save Position as a New View</font></h5>
+                        </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-12">
+                                    <label for="format_name_input">Name:</label>
+                                    <input type='text' id='view_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <input type='text' id='view_types_input' style='display: none' value="View"></input>
+                                    <br></br>
+                                    <label for="view_description">Description:</label>
+                                    <div id='view_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'>A view is the coordinates and extent of the map</div>
+                                </div>
+                            </row>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="view-next-button" data-toggle='modal' data-target='#new-view-input' class="btn btn-primary btn-ok">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="new-view-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width: 61vw;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Save Position as a New View</font></h5>
+                        </div>
+                        <div class="modal-body">
+                            <div id="view_create_properties"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="view-create-button" class="btn btn-success btn-ok">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="new-configuration" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-save   fa-fw'></i>&nbsp;<font color="white">Save Current Configuration as a New Configuration</font></h5>
+                        </div>
+                        <div class="modal-body" style="height: 45vh;">
+                            <row>
+                                <div class="col-md-12">
+                                    <label for="format_name_input">Name:</label>
+                                    <input type='text' id='configuration_name_input' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 4vh;'></input>
+                                    <input type='text' id='configuration_types_input' style='display: none' value="Configuration"></input>
+                                    <br></br>
+                                    <label for="configuration_description">Description:</label>
+                                    <div id='configuration_description' class="input_field form-control" style='background: #333; color: #FFF; width: 100%; height: 30vh; pointer-events: none'>Configuration is the meta data file for all your layers, sources, ..etc which is used when creating an app (Data files are not included)</div>
+                                </div>
+                            </row>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="configuration-next-button" data-toggle='modal' data-target='#new-configuration-input' class="btn btn-primary btn-ok">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="new-configuration-input" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width: 61vw;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5><i align="center" class='fa  fa-file   fa-fw'></i>&nbsp;<font color="white">Save Current Configuration as a New Configuration</font></h5>
+                        </div>
+                        <div class="modal-body">
+                            <div id="configuration_create_properties"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" data-dismiss="modal" id="configuration-create-button" class="btn btn-success btn-ok">Create</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript" src="../../Scripts/Maps/ol3/ol-debug.js"></script>
             <script src="../../Scripts/Maps/Cesium/Cesium.js"></script>
             <script src="../../Scripts/Maps/ol3cesium.js"></script>
+
         </div>
     </div>
+    <iframe name="dummy" style="display:none;"></iframe>
 </body>
 </html>

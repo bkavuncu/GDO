@@ -21,12 +21,13 @@ namespace GDO.Apps.HelloWorld {
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new HelloWorldApp().GetType();
 
-        public void JoinGroup(int instanceId) {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+        public void JoinGroup(string groupId)
+        {
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-
-        public void ExitGroup(int instanceId) {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+        public void ExitGroup(string groupId)
+        {
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         /// <summary>

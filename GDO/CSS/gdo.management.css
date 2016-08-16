@@ -75,7 +75,7 @@
             display: block;
         }
 
-        .btn:focus {outline: none;box-shadow: none;border:1px solid transparent;}
+        .btn:focus {outline: none;box-shadow: none;border:0px solid transparent;}
         .ui-autocomplete {
         position: absolute;
         top: 100%;
@@ -131,3 +131,9 @@
         background-color: #0088cc !important;
         color: #FFF!important;
         border: none !important;}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

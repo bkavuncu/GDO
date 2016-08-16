@@ -11,7 +11,8 @@ namespace GDO.Apps.Maps.Core.Formats
         public OSMXMLFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.OSMXML;
+            ObjectType.Value = "ol.format.OSMXML";
+            Description.Value = "Feature format for reading data in the OSMXML format.";
         }
     }
 }

@@ -50,6 +50,8 @@ gdo.net.module["EyeTracking"].initControl = function () {
             .css("height", gdo.net.module["EyeTracking"].mapRadius / 5)
             .css("top", (gdo.net.module["EyeTracking"].mapRadius / 10) * 9)
             .css("left", (gdo.net.module["EyeTracking"].mapRadius / 10) * 9);
+
+
         var plotColor;
         switch (i) {
             case 1:
