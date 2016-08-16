@@ -609,37 +609,34 @@
                         dim = d
                         var extent = dim.gdp.max - dim.gdp.min, coef = 0.2, c = 0;
                         var yDomain = [0, +dim.gdp.max + coef * extent + c];
-                        console.log(dim);
-                        console.log(dim.length);
                         xDomain = d3.range(dim.length);
-                        console.log(xDomain[0]);
-                        xDomain[0]=0;
+
 
                         // Setup x
-                        xRange = dd3.scaleBand().range([0, dd3.cave.svgWidth]);//.padding(0.2);
-                        xAxis = d3.axisBottom(xRange);
+                        xRange = dd3.scaleBand().range([0, dd3.cave.svgWidth]).padding(0.2);
+                        
 
                         // Setup y
                         yScale = dd3.scaleLinear().range([dd3.cave.svgHeight, 0]);
-                        yAxis = d3.axisLeft(yScale);
+                        
 
-                        console.log(xDomain);
                         xRange.domain(xDomain);
                         yScale.domain(yDomain);
-
-                        console.log(xDomain);
-                        console.log(xRange);
 
                         dd3.getBarData('bar', 'barData', draw, xRange, ['gdp']);
                     });
 
                     var draw = function (barData) {
-                        console.log(barData);
                         barData.forEach(function (d) { xDomain[d.order] = d.country; });
-                        console.log(xDomain);
                         xRange.domain(xDomain);
 
                         //  PLOT X AXIS
+                        //TODO v4: axis doesn't show anymore'
+                        xAxis = d3.axisBottom(xRange);
+                        yAxis = d3.axisLeft(yScale);
+                        console.log(xAxis.scale());
+                        console.log(xAxis.tickArguments());
+
                         svg.append("g")
                           .unwatch()
                           .attr("class", "x axis")
@@ -651,6 +648,9 @@
                           .attr("y", -6)
                           .style("text-anchor", "middle")
                           .text("Countries");
+
+                        
+                        //svg.select(".axis").call(d3.axisBottom(x));
 
                         //  PLOT Y AXIS
                         svg.append("g")
@@ -674,10 +674,8 @@
                           .enter()
                           .append('rect')
                           .attr('x', function (d) { 
-                              //console.log(d.country);
                               return xRange(d.country); })
                           .attr('y', function (d) {
-                              //console.log(d.country);
                               return (yScale(d.gdp));
                           })
                           .attr('width', xRange.bandwidth())

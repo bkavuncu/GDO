@@ -907,9 +907,14 @@ var initDD3App = function () {
 
                 orientation = orientation || "bottom";
 
-                var r = scale.range(),
+
+                var r=[],
                     toGlobal = slsg[orientation === "bottom" || orientation === "top" ? 'left' : 'top'],
                     limits = limit || {};
+                
+                for ( var ky in scale.domain()){
+                    r.push(scale(ky));
+                }
 
                 data[pr(dataId)] = data[pr(dataId)] || {};
                 data[pr(dataId)][pr(dataName)] = data[pr(dataId)][pr(dataName)] || {};
@@ -922,14 +927,9 @@ var initDD3App = function () {
                     orientation === "left" && browser.column === 0 ||
                     orientation === "right" && browser.column === cave.column - 1) {
 
-                    console.log("Bandwidth: "+scale.bandwidth());
-                    console.log(r);
                     limits.min = limits.min || d3.bisect(r, toGlobal(0) - scale.bandwidth() / 2);
                     limits.max = limits.max || d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.bandwidth() / 2);
-                    console.log(toGlobal(0));
-                    console.log(toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']));
-                    console.log(d3.bisect(r, toGlobal(0) - scale.bandwidth() / 2));
-                    console.log(d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.bandwidth() / 2));
+
 
                     var request = {
                         dataId: dataId,
@@ -1272,35 +1272,56 @@ var initDD3App = function () {
 
             var _dd3_transitionHandler = function (data) {
                 
-            
+                /*
+                var obj = d3.select("#" + data.sendId);
+                obj.interrupt(data.name);
+                var new_t = dd3.transition(data.name);
+
+                utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
+
+                console.log("Setting the object initial attributes: "+data.start.attr);
+                console.log("Setting the object initial styles: "+data.start.style);
+                console.log("Setting the transition final attributes: "+data.end.attr);
+                console.log("Setting the transition final styles: "+data.end.style);
+                console.log("Setting the transition duration: "+data.duration);
+                console.log("Setting the transition tweens: "+data.tweens);
+                console.log("Setting the transition attrtweens: "+data.attrTweens);
+                console.log("Setting the transition styletweens: "+data.styleTweens);
+                console.log("Setting the transition delay: "+data.delay);
+                console.log("Setting the transition ease: "+data.ease);
+                */
+                //TODO v4: reread to handle all edge cases
                 var launchTransition = function (data) {
-                    
                     console.log("Launching transition");
                     console.log(data);
                     var obj = d3.select("#" + data.sendId);
-                    //console.log(obj);
                     obj.interrupt(data.name);
+                    
                     var trst = _dd3_hook_selection_transition.call(obj, data.name);
+                    //var trst = dd3.transition(data.name);
+
                     //console.log("Transition Object: ");
                     //console.log(trst);
                     //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
                     //console.log("Current Time: "+Date.now());
+                    
                     utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
 
-
+                    
                     for (var a in data.start.attr) {
                         if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
                     }
+                    
                     obj.style_(data.start.style);
-
+                    
                     trst.attr(data.end.attr);
-
+                    
                     for (var b in data.end.style) {
                         if (data.end.style[b]) trst.style(a, data.end.style[b]);
-                    }
+                    }   
                     //trst.style(data.end.style);
                     trst.duration(data.duration);
-
+                    
                     if (data.tweens) {
                         data.tweens.forEach(function (o) {//v4
                             if (_dd3_tweens[o.value]) {
@@ -1309,7 +1330,11 @@ var initDD3App = function () {
                         });
                     }
 
-                    //TODO v4: check this passes
+                    console.log(data.attrTweens);
+                    console.log(_dd3_tweens["dd3_r_std_trans"]);
+                    console.log(_dd3_tweens["dd3_cx_std_trans"]);
+                    console.log(_dd3_tweens["dd3_cy_std_trans"]);
+                    /*TODO v4: this seems to delay
                     if (data.attrTweens) {
                         data.attrTweens.forEach(function (o) {
                             if (_dd3_tweens[o.value]) {
@@ -1317,8 +1342,7 @@ var initDD3App = function () {
                             }
                         });
                     }
-
-
+                    */
                     if (data.styleTweens) {
                         data.styleTweens.forEach(function (o) {
                             var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
@@ -1327,23 +1351,25 @@ var initDD3App = function () {
                             }
                         });
                     }
+                    
 
+                    
                     if (_dd3_timeTransitionRelative) {
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
                     } else {
-
                         var tmp = data.delay + (data.elapsed - Date.now());
-                        console.log("to be executed in: " + HTMLParagraphElement);
-                        trst.delay((tmp <= 0) ? 0 : tmp);
+                        console.log("to be executed in: " + tmp);
+                        //trst.delay((tmp <= 0) ? 0 : tmp);
+                        trst.delay(tmp);
                     }
-
+                    
 
                     if (data.ease) {
                         if (typeof data.ease === "string" && _dd3_eases[data.ease]) {
                             trst.ease(_dd3_eases[data.ease]);
                         } else if (typeof data.ease === "string" && _dd3_eases["dd3_" + data.ease]) {
                             trst.ease(_dd3_eases["dd3_" + data.ease]);
-                        } else if (typeof data.ease === "string") {
+                        } else if (typeof data.ease === "string" && d3[data.ease]) {
                             trst.ease(d3[data.ease]);
                         } else if (typeof data.ease === "function" && _dd3_eases[utils.getFnName(data.ease)]) {//v4
                             trst.ease(_dd3_eases[utils.getFnName(data.ease)]);//v4
@@ -1352,9 +1378,11 @@ var initDD3App = function () {
                         }
                     }
                     console.log("Launching transition");
-                    console.log(trst);
+                    
+                    //obj.transition(trst);
 
                 };
+
 
                 launchTransition(data);
 
@@ -2153,7 +2181,7 @@ var initDD3App = function () {
                 return !name ? "__transition__" : "__transition_" + name + "__";
             };
 
-            //TODO V4: Apparently, transition recipients are not found.
+            
             var _dd3_findTransitionsRecipients = function (elem) {
 
                 if (!elem || !elem.parentNode) {
@@ -2235,7 +2263,13 @@ var initDD3App = function () {
                                 //console.log(obj);
                                 var a = (time - obj.time) / obj.duration;
                                 if (a >= 0 && a <= 1) {
-                                    var t = d3[obj.ease](a);//V4: why not a function directly 
+                                    var t;
+                                    if(_dd3_eases[obj.ease] ){
+                                        t = _dd3_eases[obj.ease](a);
+                                    }else{
+                                        t = d3[obj.ease](a);//V4: why not a function directly
+                                    }
+                                     
                                     if (!(obj.tweened instanceof Array)) console.log("V4 Error: obj.tweened  is a Map ");
                                     obj.tweened.forEach(function (f) {
                                         f.call(clones[i], t);
@@ -2274,6 +2308,7 @@ var initDD3App = function () {
                     properties = [],
                     startValues = [],
                     endValues = [];
+                console.log(elem)
 
                 //TODO v4: find how to call tween.each
 
@@ -2336,9 +2371,28 @@ var initDD3App = function () {
                         //console.log('Yep! transition starting');
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
+                        //console.log(d);
+                        //console.log(i);
+                        //console.log(t);
+                        //console.log(this);
+
+                        //console.log(this.__transition);
+                        /*var transition;
+                        for(var k in this.__transition){
+                            if(this.__transition[i]){
+                                transition=this.__transition[i];
+                                break;
+                            }
+                        }*/
+                        console.log(transition);
+                        //console.log(this[ns]);
+
                         //var transition = this[ns][this[ns].active];
 
-                        var transition = d3.active(this);//v4 this appear to be the problem
+                        var transition = d3.active(this);//v4 this appear to be the problem. It returns the transition
+                        //var transition = this.__transition[2];
+
+                        //if(!transition) return; // V4: not sure this is optimal
                         //console.log("Starting new transition");
                         //console.log(transition);
 
@@ -2390,7 +2444,7 @@ var initDD3App = function () {
                             delay: (typeof transition.delay === "function") ? transition.delay() : transition.delay,//TODO v4: transition.delay doesn't exist
                             duration: (typeof transition.duration === "function") ? transition.duration() : transition.duration,//v4
                             time: (typeof transition.time === "function") ? transition.time() : transition.time,//TODO v4: transition.time doesn't exist
-                            transition: transition,//TODO v4: transition.tween is not an array and should be
+                            transition: transition,
                             precision: precision,
                             ease: (typeof ease === "function") ? utils.getFnName(ease) : ease,//not a string anymore
                             id: _dd3_idTransition++
@@ -2429,7 +2483,6 @@ var initDD3App = function () {
                         _dd3_selection_send.call(d3.select(this), 'endTransition', { name: name });
                     });
 
-                    //TODO v4: will probably fail as ease is a function not a string
                     t.ease = function (e) {
                         if (typeof e === "function") {
                             dd3.defineEase(utils.getFnName(e), e);
@@ -2448,9 +2501,7 @@ var initDD3App = function () {
 
                     t.tween = function (name, tween) {
                         if (arguments.length < 2) return tweens.get(name);
-
                         if (utils.getFnName(tween) === "anonymous") {
-
                             dd3.defineTween(name + "_std_trans", tween);
                             tween = name + "_std_trans";
                         }
@@ -2459,7 +2510,6 @@ var initDD3App = function () {
                             tweens.remove(name);
                             return d3.transition.prototype.tween.call(this, name, null);
                         } else if (typeof tween !== "string") {
-
                             utils.log("The tween function should be provided as a string\nCustom tween functions have to be defined with dd3.defineTween", 2);
                             return this;
                         } else if (!_dd3_tweens['dd3_' + tween]) {
@@ -2471,8 +2521,16 @@ var initDD3App = function () {
                         return d3.transition.prototype.tween.call(this, name, _dd3_tweens['dd3_' + tween]);
                     };
 
+                    //TODO V4: overwrite the attr function
+                    t.attr = function (name, value){
+                        if (arguments.length < 2) {
+                            return  
+                        }
+                    };
+
                     //TODO v4: doesn't work
                     t.attrTween = function (attr, tween) {
+                        
                         var temp, trst;
                         if (arguments.length < 2) return attrTweens.get(attr);
 
