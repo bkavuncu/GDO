@@ -136,14 +136,11 @@ namespace GDO.Apps.Twitter
                     Download(dataSetId, analyticsId, GraphAppBasePath + analyticsId + ".graphml", "type=graph");
                     twitterVis.FilePath = analyticsId + ".graphml";
                     break;
-                case "Analytics":
+                default:
                     twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
                     twitterVis.AppType = "StaticHTML";
                     Download(dataSetId, analyticsId, TwitterBasePath + analyticsId + ".html", "type=chart");
                     twitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
-                    break;
-                default:
-                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Unknown;
                     break;
             }
 
@@ -156,7 +153,7 @@ namespace GDO.Apps.Twitter
         private string Download(string dataSetId , string analyticsId, string path, string queryParams)
         {
             if (File.Exists(path))
-            {  // if the file already exists, delete it
+            {  // if the file already exists,don't redownload
                 Debug.WriteLine("File already exists will not re download: " + path);
                 return path;
             }
@@ -173,12 +170,12 @@ namespace GDO.Apps.Twitter
 
         public string GetAnalytics(List<string> dataSetIds)
         {
-            return JsonConvert.SerializeObject(dataSetIds.ToDictionary(dsId => dsId, ds => RestController.GetAnalyticsMetas(ds).ToArray()));
+            return JsonConvert.SerializeObject(dataSetIds.ToDictionary(dsId => dsId, ds => RestController.GetAnalyticsList(ds)));
         }
 
         public string GetDataSets()
         {
-            return JsonConvert.SerializeObject(RestController.GetDataSets().ToDictionary(ds => ds.Id, ds => ds));
+            return JsonConvert.SerializeObject(RestController.GetDataSetList().ToDictionary(ds => ds.Id, ds => ds));
         }
 
         public string GetAnalyticsOptions()

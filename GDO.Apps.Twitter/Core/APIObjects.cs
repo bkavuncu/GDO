@@ -5,7 +5,15 @@ using System.Security.Policy;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Twitter.Core
-{ 
+{
+    public class AnalyticsRequest
+    {
+        public string classification { get; set; }
+        public string type { get; set; }
+        public string dataset_id { get; set; }
+        public string description { get; set; }
+    }
+
     [DataContract]
     public class DataSet
     {
@@ -60,24 +68,6 @@ namespace GDO.Apps.Twitter.Core
         public string DatasetId { get; set; }
         
     }
-
-//    public class DataSetMeta
-//    {
-//        public string Id { get; set; }
-//        public string Description { get; set; }
-//        public string Status { get; set; }
-//        public List<string> Tags { get; set; }
-//    }
-//
-//    public class AnalyticsMeta
-//    {
-//        public string Id { get; set; }
-//        public string Description { get; set; }
-//        public string Status { get; set; }
-//        public string Classification { get; set; }
-//        public string Type { get; set; }
-//        public string DataSetId { get; set; }
-//    }
 
     [DataContract]
     public class AnalyticsOption

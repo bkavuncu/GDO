@@ -70,9 +70,11 @@ gdo.net.app["Twitter"].initControl = function () {
 
     gdo.controlId = getUrlVar("controlId");
     gdo.consoleOut('.Twitter', 1, 'Initializing Twitter App Control at Instance ' + gdo.controlId);
+    gdo.loadScript("sectionTables", "Twitter", gdo.SCRIPT_TYPE.APP);
     gdo.loadScript("ui", "Twitter", gdo.SCRIPT_TYPE.APP);
-    gdo.loadScript("section", "Twitter", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("sectionButtons", "Twitter", gdo.SCRIPT_TYPE.APP);
     gdo.loadScript("graphControl", "Twitter", gdo.SCRIPT_TYPE.APP);
+    
    
     //app["Twitter"]
     //.data contains information on the data sets and anytics
@@ -170,8 +172,6 @@ gdo.net.app["Twitter"].launchApps = function(instanceId, sections) {
     if (sections.length > 0) {
         gdo.net.app["Twitter"].server.confirmLaunch(instanceId, sections.map(function (section) { return section.id; }));
     }
-
-
 }
 
 gdo.net.app["Twitter"].launchApp = function (section) {

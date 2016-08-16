@@ -56,7 +56,7 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Graph is now ready for zooming."); */
 
                     Clients.Caller.setMessage("Requesting fields...");
-                    Clients.Caller.setFields(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray());
+                    Clients.Caller.setFields(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
                     Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)

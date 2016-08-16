@@ -176,7 +176,7 @@
 <div class="tab-content" style="height: 90vh">
 <div class="tab-pane fade in active" id="dataset_control" style="height: 84vh;">
     <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-11">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
@@ -318,14 +318,14 @@
                 <div style="overflow: auto; height: 300px">
                     <div class="panel-body" style="height: 15.5vh;">
                         <div class="list-group list-group-root" id="analytics_deploy_list_1">
-                            <a href="#items_analytics_1" class="list-group-item" data-toggle="collapse">
-                                <i class="fa fa-chevron-down fa-fw"></i>Analytics
-                            </a>
-                            <ul class="list-group collapse in" id="items_analytics_1"></ul>
-                            <a href="#items_graphs_1" class="list-group-item" data-toggle="collapse">
-                                <i class="fa fa-chevron-down fa-fw"></i>Graphs
-                            </a>
-                            <ul class="list-group collapse in" id="items_graphs_1"></ul>
+@*                            <a href="#items_analytics_1" class="list-group-item" data-toggle="collapse">*@
+@*                                <i class="fa fa-chevron-down fa-fw"></i>Analytics*@
+@*                            </a>*@
+@*                            <ul class="list-group collapse in" id="items_analytics_1"></ul>*@
+@*                            <a href="#items_graphs_1" class="list-group-item" data-toggle="collapse">*@
+@*                                <i class="fa fa-chevron-down fa-fw"></i>Graphs*@
+@*                            </a>*@
+@*                            <ul class="list-group collapse in" id="items_graphs_1"></ul>*@
                         </div>
                     </div>
                 </div>
@@ -341,37 +341,13 @@
                 </div>
                 <div style="overflow: auto; height: 300px">
                     <div class="panel-body" style="height: 15.5vh;">
-                        <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; AutoLaunch 2x2</button>
+                        <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; AutoLaunch Charts 2x2</button>
                     </div>
                 </div>
                 <div class="panel-footer">
                 </div>
             </div>
         </div>
-@*        <div class="col-lg-3" style="padding: 6px;">*@
-@*            <div class="panel panel-primary">*@
-@*                <div class="panel-heading">*@
-@*                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_2"></span></h6>*@
-@*                    <hr style="clear: both; border: 0"/>*@
-@*                </div>*@
-@*                <div style="overflow: auto; height: 300px">*@
-@*                    <div class="panel-body" style="height: 15.5vh;">*@
-@*                        <div class="list-group list-group-root" id="analytics_deploy_list_2">*@
-@*                            <a href="#items_analytics_2" class="list-group-item" data-toggle="collapse">*@
-@*                                <i class="fa fa-chevron-down fa-fw"></i>Analytics*@
-@*                            </a>*@
-@*                            <ul class="list-group collapse in" id="items_analytics_2"></ul>*@
-@*                            <a href="#items_graphs_2" class="list-group-item" data-toggle="collapse">*@
-@*                                <i class="fa fa-chevron-down fa-fw"></i>Graphs*@
-@*                            </a>*@
-@*                            <ul class="list-group collapse in" id="items_graphs_2"></ul>*@
-@*                        </div>*@
-@*                    </div>*@
-@*                </div>*@
-@*                <div class="panel-footer">*@
-@*                </div>*@
-@*            </div>*@
-@*        </div>*@
     </div>
     <div class="row">
         <div class="col-lg-12">
@@ -435,14 +411,11 @@
                                 <div class="col-lg-6">
                                     <div class="row">
                                         <div>
-                                            <button class='btn btn-default' id="">Show Time Nodes</button>
-                                        </div>
-                                        <div>
                                             <button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button>
                                         </div>
                                         <div>
                                             <span><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></span>
-                                            <span><select id="select_label" style="width: 30%" required class="input_field"></select></span>
+                                            <span><select id="gc_select_label" style="width: 30%" required class="input_field"></select></span>
                                             <span>&nbsp;as labels&nbsp;</span>
                                             <span>
                                                 <input type="color" id="color_Labels" value="#ff0000" class="color_field">
@@ -474,7 +447,7 @@
                                                 <button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
                                             </span>
                                             <span>
-                                                <select id="select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
+                                                <select id="gc_select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
                                             </span>
                                             <span>
                                                 &nbsp;as labels&nbsp;
@@ -501,7 +474,7 @@
                                         </span>
                                         <span>&nbsp;in&nbsp;</span>
                                         <span>
-                                            <select id="select_SearchFields" style="width: 20%" required class="input_field"></select>
+                                            <select id="gc_select_SearchFields" style="width: 20%" required class="input_field"></select>
                                         </span>
                                     </div>
                                     <div>
@@ -509,7 +482,7 @@
                                             <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
                                         </span>
                                         <span>
-                                            <select id="select_SearchLabels" style="width: 30%" required class="input_field"></select>
+                                            <select id="gc_select_SearchLabels" style="width: 30%" required class="input_field"></select>
                                         </span>
                                         <span>&nbsp;as labels&nbsp;</span>
                                     </div>
@@ -564,7 +537,6 @@
 <script>
     var gdo = parent.gdo;
     gdo.net.app["Twitter"].drawSectionTable = function(instanceId) {
-
         gdo.net.app["Twitter"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows + 1);
 
         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
@@ -581,15 +553,15 @@
                     .css("vertical-align", "top")
                     .append("<div id='section_table_node_" +
                         node.id +
-                        "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
+                        "_i' style='text-align:center;background:#740202;'> <font size='4px'><b>" +
                         node.id +
                         "</b></font></div>")
                     .append("</br>")
                     .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
                     .css("width", (gdo.net.app["Twitter"].uiProperties.table_width / gdo.net.cols) + "%")
-                    .css("border", "1px solid #333")
+                    .css("border", "1px solid #8c0606")
                     .css('overflow', 'hidden')
-                    .css("background", "#FF0000")
+                    .css("background", "#c70000")
                     .css({ fontSize: gdo.net.app["Twitter"].uiProperties.section_font_size })
                     .css('padding', 0);
                 continue;
@@ -751,94 +723,150 @@
             }
         }
     }
-    gdo.net.app["Twitter"].drawSectionControlTable = function(instanceId) {
+
+    gdo.net.app["Twitter"].drawSectionControlTable = function (instanceId) {
         gdo.net.app["Twitter"].drawEmptySectionControlTable(gdo.net.cols, gdo.net.rows);
         $("#graph_control_description").html(gdo.net.instance[instanceId].control.selectedGraphApps.join(", "));
 
         for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
             var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
-            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED ||
-                node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
+            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED) {
+                //Node is assigned to another app
+                continue;
+            } else if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
+                //Node is part of the root section
+                $("#section_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
+                $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .css("vertical-align", "top")
+                    .append("<div id='section_control_table_node_" +
+                        node.id +
+                        "_i' style='text-align:center;background:#740202;'> <font size='4px'><b>" +
+                        node.id +
+                        "</b></font></div>")
+                    .append("</br>")
+                    .css("border", "1px solid #8c0606")
+                    .css('overflow', 'hidden')
+                    .css("background", "#c70000")
+                    .css('padding', 0);
                 continue;
             }
             var sectionId = node.sectionId;
-            if ((node.sectionCol === 0 && node.sectionRow === 0) &&
-                node.sectionId > 0 &&
-                gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0 &&
-                gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
-                var appInstanceId = gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId;
+            $("#section_control_table_row_" + gdo.net.rows).css("height", 0);
+            if (sectionId === 0) {
+                $("#section_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
+                $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .css("vertical-align", "top")
+                    .append("<div id='section_control_table_node_" +
+                        node.id +
+                        "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
+                        node.id +
+                        "</b></font></div>")
+                    .append("</br>")
+                    .css("border", "1px solid #333")
+                    .css("background", "#222")
+                    .css('padding', 0)
+                    .click(function () {
+                    });
+
+            } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
                 $("#section_control_table_row_" + node.row + "_col_" + node.col)
                     .empty()
                     .unbind()
                     .attr('colspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols)
                     .attr('rowspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].rows)
-                    .append("<div id='section_control_table_section_" +
-                        sectionId +
-                        "_a'> <b>&nbsp;Vis Type:</b> " +
-                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.twitterVisSubType +
-                        "</div>")
                     .css("border", "1px solid #2A9FD6")
                     .css("background", "#087DB4")
                     .css('padding', 0)
                     .css('overflow', 'hidden')
                     .css("vertical-align", "top")
-                    .click(function() {
-                        var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
-                            .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
-                        var index = gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId);
-                        if (index > -1) {
-                            console.log("Add id to list " + index + " " + appInstanceId);
-                            gdo.net.instance[instanceId].control.selectedGraphApps.splice(index, 1);
-                        } else {
-                            console.log("Remove id from list " + index + " " + appInstanceId);
-                            gdo.net.instance[instanceId].control.selectedGraphApps.push(appInstanceId);
-                        }
-                        gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
-                    });
-                if (gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId) > -1) {
-                    $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                        .css("background-color", "#77B300")
-                        .css("border", "1px solid #77B300");
+                    .append("<div id='section_control_table_section_" +
+                        sectionId +
+                        "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" +
+                        sectionId +
+                        "</b></font></div>");
+                //Deployed
+                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
+                    $("#section_control_table_section_" + sectionId + "_i")
+                        .empty()
+                        .append("<font size='4px'><b> I" +
+                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
+                            "</b></font>");
+                    if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
+                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                            .css('overflow', 'hidden')
+                            .append("<div id='section_control_table_section_" +
+                                sectionId +
+                                "_a'> <b>&nbsp;App:</b> " +
+                                gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
+                                    .appInstanceId]
+                                .appName +
+                                "</div>")
+                            .css('overflow', 'hidden')
+                            .css("background", "#559100");
+                        $("#section_control_table_section_" + sectionId + "_i").css("background", "#77B300");
+                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                            .css("border", "1px solid #77B300");
+                    } else {
+                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                            .css('overflow', 'hidden')
+                            .append("<div id='section_control_table_section_" +
+                                sectionId +
+                                "_a'> <b>&nbsp;App:</b> " +
+                                gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
+                                    .appInstanceId]
+                                .appName +
+                                "</div>")
+                            .css('overflow', 'hidden')
+                            .css("background", "#f98111");
+                        $("#section_control_table_section_" + sectionId + "_i").css("background", "#d56c0a");
+                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                            .css("border", "1px solid #d56c0a");
+                    }
+                    
                 }
-                console.log(sectionId +
-                    " " +
-                    " " +
-                    appInstanceId +
-                    " " +
-                    gdo.net.instance[instanceId].control.selectedGraphApps);
+                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
+                $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                    .click(function () {
+                        var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
+                                .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
+                        
+                            var index = gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId);
+                            if (index > -1) {
+                                gdo.net.instance[instanceId].control.selectedGraphApps.splice(index, 1);
+                                gdo.net.app["Twitter"].updateGraphFields(instanceId);
+                            } else {
+                                if (gdo.net.instance[appInstanceId].graphFieldsLoaded) {
+                                    gdo.net.instance[instanceId].control.selectedGraphApps.push(appInstanceId);
+                                    gdo.net.app["Twitter"].updateGraphFields(instanceId);
+                                } else {
+                                    gdo.net.app["Twitter"]
+                                        .setMessage("Trying to control:" +
+                                            appInstanceId +
+                                            " before fields have been processed, please wait");
+                                }
+                            }
+                            gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
+                    
+                    });
+                }
 
+                if (gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) > -1) {
+                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                            .css("background-color", "#95078a")
+                            .css("border", "1px solid #ce0ad6");
+                        $("#section_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
+                }
+            } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
+                $("#section_control_table_row_" + node.row + "_col_" + node.col).hide();
             }
         }
     }
-//    $("#dataset_table tbody")
-//        .on('click',
-//            'tr',
-//            function() {
-//                var gdo = parent.gdo;
-//                var id = $(this).find('td:first').text();
-//                var desc = $(this).find('td:nth-child(2)').text();
-//
-//                var arrayPos = gdo.net.instance[gdo .controlId].control.selectedDataSets.indexOf(id);
-//                if (arrayPos >= 0) {
-//                    gdo.consoleOut('.Twitter', 1, "Removing dataset " + desc);
-//                    gdo.net.instance[gdo.controlId].control.selectedDataSets.splice(arrayPos, 1);
-//                    $(this).removeClass("btn-success");
-//                    if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length === 0) {
-//                        $("#get_analytics").addClass("disabled").addClass("btn-default").removeClass("btn-success");
-//                    }
-//                } else if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length < 3) {
-//                    gdo.consoleOut('.Twitter', 1, "Adding dataset " + desc);
-//                    gdo.net.instance[gdo.controlId].control.selectedDataSets.push(id);
-//                    $(this).addClass("btn-success");
-//                    if (gdo.net.instance[gdo.controlId].control.selectedDataSets.length === 1) {
-//                        $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
-//                    }
-//                } else {
-//                    gdo.net.app["Twitter"].setMessage("Trying to selected more than 3 data sets");
-//                }
-//
-    //            });
 
+     
     $("#dataset_table tbody")
         .on('click',
             'tr',
@@ -860,8 +888,6 @@
                         .removeClass("btn-success");
                     console.log("HereB");
                 }
-                console.log("Here");
-                console.log(gdo.net.instance[gdo.controlId].control.selectedDataSet);
                 if (gdo.net.instance[gdo.controlId].control.selectedDataSet !== -1) {
                     $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
                 }
@@ -902,7 +928,6 @@
                     }
 
                 }
-                console.log(gdo.net.instance[gdo.controlId].control.selectedNewAnalytics);
             });
     $("#order_analytics")
         .on('click',
@@ -938,6 +963,7 @@
             function() {
                 console.log(gdo.net.instance[gdo.controlId]);
                 console.log(gdo.net.app["Twitter"]);
+                console.log(gdo.net);
             });
     $("#allocate")
         .on("click",
@@ -990,7 +1016,7 @@
                 $(this).html("<i class='fa  fa-tag  fa-fw'></i>&nbsp;Show");
                 $(this).parent().siblings().show();
             } else {
-                gdo.net.app["Twitter"].showLabels(gdo.controlId, $("#select_label").val(), $("#color_Labels").val());
+                gdo.net.app["Twitter"].showLabels(gdo.controlId, $("#gc_select_label").val(), $("#color_Labels").val());
                 $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
                 $(this).html("<i class='fa  fa-tag  fa-fw'></i>&nbsp;Hide Labels");
                 $(this).parent().siblings().hide();
@@ -1006,7 +1032,7 @@
         .click(function() {
             gdo.net.app["Twitter"].renderMostConnectedLabels(gdo.controlId,
                 parseInt($("#numLinks").val()),
-                $("#select_mostConnectedLabels").val(),
+                $("#gc_select_mostConnectedLabels").val(),
                 $("#color_mostConnectedLabels").val());
         });
     $("#hide_mostConnected")
@@ -1017,11 +1043,11 @@
         .click(function() {
             gdo.net.app["Twitter"].initiateSearch(gdo.controlId,
                 $("#searchKeywords").val(),
-                $("#select_SearchFields").val());
+                $("#gc_select_SearchFields").val());
         });
     $("#toggle_searchLabels")
         .click(function() {
-            gdo.net.app["Twitter"].renderSearchLabels(gdo.controlId, $("#select_SearchLabels").val());
+            gdo.net.app["Twitter"].renderSearchLabels(gdo.controlId, $("#gc_select_SearchLabels").val());
         });
     $("#hide_sublinks")
         .click(function() {
