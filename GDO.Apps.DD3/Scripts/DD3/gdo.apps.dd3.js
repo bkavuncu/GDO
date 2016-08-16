@@ -922,8 +922,14 @@ var initDD3App = function () {
                     orientation === "left" && browser.column === 0 ||
                     orientation === "right" && browser.column === cave.column - 1) {
 
+                    console.log("Bandwidth: "+scale.bandwidth());
+                    console.log(r);
                     limits.min = limits.min || d3.bisect(r, toGlobal(0) - scale.bandwidth() / 2);
                     limits.max = limits.max || d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.bandwidth() / 2);
+                    console.log(toGlobal(0));
+                    console.log(toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']));
+                    console.log(d3.bisect(r, toGlobal(0) - scale.bandwidth() / 2));
+                    console.log(d3.bisect(r, toGlobal(browser[orientation === "bottom" || orientation === "top" ? 'svgWidth' : 'svgHeight']) - scale.bandwidth() / 2));
 
                     var request = {
                         dataId: dataId,
