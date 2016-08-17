@@ -154,7 +154,7 @@ namespace GDO.Apps.Twitter
         {
             if (!ReplaceExisting && File.Exists(path))
             {  // if the file already exists,don't redownload
-                Debug.WriteLine("File already exists will not re download: " + path);
+                Debug.WriteLine("File already exists and redownload set to "  + ReplaceExisting + " -  will not re download: " + path);
                 return path;
             }
 
