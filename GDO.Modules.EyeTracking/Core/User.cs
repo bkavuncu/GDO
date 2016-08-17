@@ -291,6 +291,7 @@ namespace GDO.Modules.EyeTracking.Core
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return null;
             }
         }
@@ -347,8 +348,8 @@ namespace GDO.Modules.EyeTracking.Core
                 }
                 return overallLocationData;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
                 LocationData overallLocationData = new LocationData {
                     Angle = 0,
                     Distance = 0
@@ -424,6 +425,7 @@ namespace GDO.Modules.EyeTracking.Core
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return null;
             }
         }
