@@ -281,7 +281,7 @@ namespace GDO.Apps.PresentationTool
                 if (pa.ContainsSection(sectionId))
                 {
                     AppSection section;
-                    pa.Slides[pa.currentSlide].Sections.TryGetValue(sectionId, out section);
+                    pa.Slides[pa.CurrentSlide].Sections.TryGetValue(sectionId, out section);
                     return JsonConvert.SerializeObject(section);
                 }
                 else
@@ -305,7 +305,7 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.CreateNewSlide();
-                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
+                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
                 }
                 catch (Exception e)
                 {
@@ -324,7 +324,7 @@ namespace GDO.Apps.PresentationTool
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.DeleteCurrentSlide();
                     RequestPreviousSlide(instanceId);
-                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
+                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
                 }
                 catch (Exception e)
                 {
@@ -341,13 +341,13 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    if (pa.currentSlide <= 0)
+                    if (pa.CurrentSlide <= 0)
                     {
                         Clients.Caller.setMessage("Already at first slide!");
                         return;
                     }
-                    pa.currentSlide--;
-                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
+                    pa.CurrentSlide--;
+                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
                 }
                 catch (Exception e)
                 {
@@ -364,13 +364,13 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    if (pa.currentSlide + 1 >= pa.Slides.Count)
+                    if (pa.CurrentSlide + 1 >= pa.Slides.Count)
                     {
                         Clients.Caller.setMessage("Already at last slide!");
                         return;
                     }
-                    pa.currentSlide++;
-                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
+                    pa.CurrentSlide++;
+                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
                 }
                 catch (Exception e)
                 {
@@ -427,7 +427,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void clearCave(int instanceId)
+        public void ClearCave(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -436,7 +436,7 @@ namespace GDO.Apps.PresentationTool
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.Slides.Clear();
                     pa.CreateNewSlide();
-                    Clients.Caller.receiveSlideUpdate(pa.currentSlide);
+                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
                 }
                 catch (Exception e)
                 {
@@ -446,7 +446,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void updateVoiceInfo(int instanceId, string info, int type)
+        public void UpdateVoiceInfo(int instanceId, string info, int type)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -458,6 +458,41 @@ namespace GDO.Apps.PresentationTool
                 catch (Exception e)
                 {
                     Log.Error("failed to update voice information", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void ChangeVoiceControlStatus(int instanceId) 
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.VoiceControlStatus = 1 - pa.VoiceControlStatus;
+                    Clients.Caller.changeVoiceControlStatus(pa.VoiceControlStatus);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to update voice control status", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void RestoreVoiceControlStatus(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    Clients.Caller.receiveVoiceControlStatus(pa.VoiceControlStatus);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to restore voice control status", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }

@@ -26,7 +26,8 @@ namespace GDO.Apps.PresentationTool
         public string ImagesAppBasePath { get; set; }
         public string FileName { get; set; }
         public int PPTPageCount { get; set; }
-        public int currentSlide { get; set; }
+        public int CurrentSlide { get; set; }
+        public int VoiceControlStatus { get; set; }
         public List<Slide> Slides { get; set; }
         public Dictionary<string, List<string>> FileNames { get; set; }
 
@@ -35,10 +36,12 @@ namespace GDO.Apps.PresentationTool
             this.BasePath = HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files");
             this.ImagesAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             this.FileName = "";
-            this.currentSlide = -1;
             Directory.CreateDirectory(this.BasePath + "/PPTs");
             Directory.CreateDirectory(this.BasePath + "/Images");
             Directory.CreateDirectory(this.ImagesAppBasePath);
+
+            this.CurrentSlide = -1;
+            VoiceControlStatus = 0;
 
             FileNames = new Dictionary<string, List<string>>();
             Slides = new List<Slide>();
@@ -85,23 +88,23 @@ namespace GDO.Apps.PresentationTool
             Dictionary<int, string> Instances = new Dictionary<int, string>();
             Slide slide = new Slide(Sections, Instances);
             Slides.Add(slide);
-            currentSlide = Slides.Count - 1;
+            CurrentSlide = Slides.Count - 1;
             CreateSection(0, 0, Section.Cols - 1, Section.Rows - 1);
         }
 
         public void DeleteCurrentSlide()
         {
-            if (currentSlide == 0) return;
-            Slide slide = Slides[currentSlide];
+            if (CurrentSlide == 0) return;
+            Slide slide = Slides[CurrentSlide];
             Slides.Remove(slide);
         }
 
         public int CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
 
-            int sectionId = Utilities.GetAvailableSlot<AppSection>(Slides[currentSlide].Sections);
+            int sectionId = Utilities.GetAvailableSlot<AppSection>(Slides[CurrentSlide].Sections);
             AppSection appSection = new AppSection(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
-            Slides[currentSlide].Sections.Add(sectionId, appSection);
+            Slides[CurrentSlide].Sections.Add(sectionId, appSection);
             for (int i = 0; i < appSection.NumNodes; i++)
             {
                 appSection.Width += Cave.NodeWidth;
@@ -115,32 +118,32 @@ namespace GDO.Apps.PresentationTool
 
         public void DeployResource(int sectionId, string src, string appName)
         {
-            int instanceId = Utilities.GetAvailableSlot<string>(Slides[currentSlide].Instances);
-            Slides[currentSlide].Instances.Add(instanceId, appName);
-            Slides[currentSlide].Sections[sectionId].Src = src;
-            Slides[currentSlide].Sections[sectionId].AppInstanceId = instanceId;
-            Slides[currentSlide].Sections[sectionId].AppName = appName;
+            int instanceId = Utilities.GetAvailableSlot<string>(Slides[CurrentSlide].Instances);
+            Slides[CurrentSlide].Instances.Add(instanceId, appName);
+            Slides[CurrentSlide].Sections[sectionId].Src = src;
+            Slides[CurrentSlide].Sections[sectionId].AppInstanceId = instanceId;
+            Slides[CurrentSlide].Sections[sectionId].AppName = appName;
             return;
         }
 
         public void UnDelpoyResource(int sectionId)
         {
-            Slides[currentSlide].Instances.Remove(Slides[currentSlide].Sections[sectionId].AppInstanceId);
-            Slides[currentSlide].Sections[sectionId].Src = null;
-            Slides[currentSlide].Sections[sectionId].AppName = null;
+            Slides[CurrentSlide].Instances.Remove(Slides[CurrentSlide].Sections[sectionId].AppInstanceId);
+            Slides[CurrentSlide].Sections[sectionId].Src = null;
+            Slides[CurrentSlide].Sections[sectionId].AppName = null;
             return;
         }
 
         public void CloseSection(int sectionId)
         {
-            Slides[currentSlide].Sections[sectionId].Nodes = null;
-            Slides[currentSlide].Sections.Remove(sectionId);
+            Slides[CurrentSlide].Sections[sectionId].Nodes = null;
+            Slides[CurrentSlide].Sections.Remove(sectionId);
             return;
         }
 
         public bool ContainsSection(int sectionId)
         {
-            return Slides[currentSlide].Sections.ContainsKey(sectionId);
+            return Slides[CurrentSlide].Sections.ContainsKey(sectionId);
         }
     }
 }

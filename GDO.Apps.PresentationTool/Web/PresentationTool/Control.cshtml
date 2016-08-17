@@ -508,8 +508,8 @@
             var gdo = parent.gdo;
             gdo.net.app["PresentationTool"].saveSlideFile();
         });
-
-        var voice_control = 1;
+        var gdo = parent.gdo;
+        gdo.net.app["PresentationTool"].artyom = artyom;
         var curr_section = 0;
         var database = [];
         var length = 65;
@@ -584,25 +584,7 @@
 
         ]);
         $("#voice_control").click(function () {
-            if (voice_control === 0) {
-                artyom.clearGarbageCollection();
-                artyom.fatality();// use this to stop any of
-                voice_control = 1 - voice_control;
-                $(this).removeClass("btn-primary").addClass("btn-warning");
-            } else {
-                artyom.fatality();// use this to stop any of
-                setTimeout(function () {// if you use artyom.fatality , wait 250 ms to initialize again.
-                    artyom.initialize({
-                        lang: "en-GB",// A lot of languages are supported. Read the docs !
-                        continuous: true,// Artyom will listen forever
-                        listen: true, // Start recognizing
-                        debug: true, // Show everything in the console
-                        speed: 1 // talk normally
-                    });
-                    voice_control = 1 - voice_control;
-                }, 250);
-                $(this).removeClass("btn-warning").addClass("btn-primary");
-            }
+            gdo.net.app["PresentationTool"].server.changeVoiceControlStatus(gdo.controlId);
         });
       
     </script>
