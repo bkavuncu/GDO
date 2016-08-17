@@ -111,6 +111,38 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
+        /**
+        public void ProcessImage(int instanceId, int imageInstanceId, string filename)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
+                    string[] database = { };
+                    if (File.Exists(database_path))
+                    {
+                        database = File.ReadAllLines(database_path);
+                        foreach(string s in database)
+                        {
+                            if (s.Split('|')[0].Equals(filename))
+                            {
+                                Clients.Caller.setMessage(s.Split('|')[0]);
+                                Clients.Caller.processImage(imageInstanceId, false, s.Split('|')[1]);
+                            }
+                        }
+                    }
+                    Clients.Caller.processImage(imageInstanceId, true, filename);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to process image ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+            }
+        }
+        **/
         public void UpdateFileList(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

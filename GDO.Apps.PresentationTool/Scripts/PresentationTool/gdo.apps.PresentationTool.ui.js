@@ -412,7 +412,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
             if (gdo.net.app["PresentationTool"].selectedSection > -1) {
                 if (gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].src !== null) {
                     gdo.net.app["PresentationTool"].server.unDeployResource(gdo.controlId, gdo.net.app["PresentationTool"].selectedSection);
-                    gdo.consoleOut('.PresentationToll', 1, 'Requested Disposal of App' + gdo.net.app["PresentationTool"].selectedSection);
+                    gdo.consoleOut('.PresentationTool', 1, 'Requested Disposal of App' + gdo.net.app["PresentationTool"].selectedSection);
                     gdo.net.app["PresentationTool"].selectedSection = -1;
                 }
             }
@@ -454,4 +454,41 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
             gdo.net.app["PresentationTool"].server.clearCave(gdo.controlId);
             gdo.updateDisplayCanvas();
         }); 
+}
+
+gdo.net.app["PresentationTool"].processSection = function (exists, id, serializedSection) {
+    if (exists) {
+        var section = JSON.parse(serializedSection);
+        gdo.net.app["PresentationTool"].section[id].id = id;
+        gdo.net.app["PresentationTool"].section[id].exists = true;
+        gdo.net.app["PresentationTool"].section[id].col = section.Col;
+        gdo.net.app["PresentationTool"].section[id].row = section.Row;
+        gdo.net.app["PresentationTool"].section[id].cols = section.Cols;
+        gdo.net.app["PresentationTool"].section[id].rows = section.Rows;
+        gdo.net.app["PresentationTool"].section[id].width = section.Width;
+        gdo.net.app["PresentationTool"].section[id].src = section.Src;
+        gdo.net.app["PresentationTool"].section[id].appName = section.AppName;
+        gdo.net.app["PresentationTool"].section[id].appInstanceId = section.AppInstanceId;
+
+        for (var i = 0; i < section.Cols; i++) {
+            for (var j = 0; j < section.Rows; j++) {
+                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(section.Col + i, section.Row + j)].sectionId = id;
+                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(section.Col + i, section.Row + j)].sectionCol = i;
+                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(section.Col + i, section.Row + j)].sectionRow = j;
+                gdo.consoleOut('.PresentationTool', 3, 'Updating Node : (id:' + gdo.net.getNodeId(section.Col + i, section.Row + j) + '),(col,row:' + (section.Col + i) + ',' + (section.Row + j) + ')');
+            }
+        }
+    } else {
+        gdo.net.app["PresentationTool"].section[id].id = id;
+        gdo.net.app["PresentationTool"].section[id].exists = false;
+        gdo.net.app["PresentationTool"].section[id].src = null;
+        gdo.net.app["PresentationTool"].section[id].appName = null;
+        gdo.net.app["PresentationTool"].section[id].appInstanceId = -1;
+        for (var i = 0; i < gdo.net.app["PresentationTool"].section[id].cols; i++) {
+            for (var j = 0; j < gdo.net.app["PresentationTool"].section[id].rows; j++) {
+                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[id].col + i, gdo.net.app["PresentationTool"].section[id].row + j)].sectionId = 0;
+                gdo.consoleOut('.PresentationTool', 3, 'Updating Node : (id:' + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[id].col + i, gdo.net.app["PresentationTool"].section[id].row + j) + '),(col,row:' + gdo.net.app["PresentationTool"].section[id].col + i + ',' + gdo.net.app["PresentationTool"].section[id].row + j + ')');
+            }
+        }
+    }
 }

@@ -117,6 +117,7 @@ gdo.net.app["PresentationTool"].initControl = function () {
     gdo.net.app["PresentationTool"].drawButtonTable();
     gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId, 0);
     gdo.net.app["PresentationTool"].server.updateFileList(gdo.controlId);
+    gdo.net.app["PresentationTool"].timeoutInterval = 200;
 }
 
 
@@ -174,7 +175,7 @@ gdo.net.app["PresentationTool"].rotateImage = function (sectionId) {
                 setTimeout(function () {
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
-                }, 1000);
+                }, 200);
                 $("iframe").contents().find("#hidden_app_control").css({ "display": "none", "visibility": "hidden" });
                 $("iframe").contents().find("body").css({ "overflow": "hidden", "heigth": "100%" });
                 $("iframe").contents().find("#hidden_app_iframe").unbind();
@@ -184,7 +185,6 @@ gdo.net.app["PresentationTool"].rotateImage = function (sectionId) {
 
 }
 
-
 gdo.net.app["PresentationTool"].loadTemplate = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Load template ' + gdo.net.app["PresentationTool"].template);
     gdo.net.app["PresentationTool"].server.clearCave(gdo.controlId);
@@ -192,32 +192,46 @@ gdo.net.app["PresentationTool"].loadTemplate = function () {
     switch (gdo.net.app["PresentationTool"].template) {
         case 1:
             var slides = length / 4 + 1;
-            var count = 0;
-            for (var i = 0; i < slides; i++) {
+            var sectionCount = 0, deployCount = 0;
+            for (var i = 0; i < slides; i++) {       
                 for (var j = 0; j < 5; j++) {
-                    if (count === length) break;
-                    gdo.net.app["PresentationTool"].server.createSection(gdo.controlId, j * 3, 0, j * 3 + 2, 3);
-                    gdo.net.app["PresentationTool"].server.deployResource(gdo.controlId, j + 1, gdo.net.app["PresentationTool"].allFiles[count], "Images");
-                    count++;
+                    if (sectionCount === length) break;
+                    var start = gdo.net.time.getTime() + gdo.net.app["PresentationTool"].timeoutInterval * (j + 1);
+                    gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.PresentationTool.server', 'createSection', [gdo.controlId, j * 3, 0, j * 3 + 2, 3], start - gdo.net.time.getTime());
+                    sectionCount++;
                 }
-                if (count == length) break;
-                gdo.net.app["PresentationTool"].server.requestCreateNewSlide(gdo.controlId);
+                for (var j = 0; j < 5; j++) {
+                    if (deployCount === length) break;
+                    var start = gdo.net.time.getTime() + gdo.net.app["PresentationTool"].timeoutInterval * (j + 1) + gdo.net.app["PresentationTool"].timeoutInterval * 5;
+                    gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.PresentationTool.server', 'deployResource', [gdo.controlId, j + 1, '"' + gdo.net.app["PresentationTool"].allFiles[deployCount] + '"', '"' + "Images" + '"'], start - gdo.net.time.getTime());
+                    deployCount++;
+                }
+                if (deployCount == length) break;
+                var start = gdo.net.time.getTime() + gdo.net.app["PresentationTool"].timeoutInterval * 5 * 2;
+                gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.PresentationTool.server', 'requestCreateNewSlide', [gdo.controlId], start - gdo.net.time.getTime());
             }
             break;
         case 2:
             var slides = (length / 16) + 1;
-            var count = 0;
+            var sectionCount = 0, deployCount = 0;
             for (var i = 0; i < slides; i++) {
                 for (var j = 0; j < 15; j++) {
-                    if (count === length) break;
+                    if (sectionCount === length) break;
                     var m = (j % 2 == 0) ? j : j - 1;
                     var n = (j % 2 == 0) ? 0 : 2;
-                    gdo.net.app["PresentationTool"].server.createSection(gdo.controlId, m, n, m + 1, n + 1);
-                    gdo.net.app["PresentationTool"].server.deployResource(gdo.controlId, j + 1, gdo.net.app["PresentationTool"].allFiles[count], "Images");
-                    count++;
+                    var start = gdo.net.time.getTime() + gdo.net.app["PresentationTool"].timeoutInterval * (j + 1);
+                    gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.PresentationTool.server', 'createSection', [gdo.controlId, m, n, m + 1, n + 1], start - gdo.net.time.getTime());
+                    sectionCount++;
                 }
-                if (count == length) break;
-                gdo.net.app["PresentationTool"].server.requestCreateNewSlide(gdo.controlId);
+                for (var j = 0; j < 15; j++) {
+                    if (deployCount === length) break;
+                    var start = gdo.net.time.getTime() + gdo.net.app["PresentationTool"].timeoutInterval * (j + 1) + 15 * gdo.net.app["PresentationTool"].timeoutInterval;
+                    gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.PresentationTool.server', 'deployResource', [gdo.controlId, j + 1, '"' + gdo.net.app["PresentationTool"].allFiles[deployCount] + '"', '"' + "Images" + '"'], start - gdo.net.time.getTime());
+                    deployCount++;
+                }
+                if (deployCount == length) break;
+                var start = gdo.net.time.getTime() + 15 * 2 * gdo.net.app["PresentationTool"].timeoutInterval;
+                gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.PresentationTool.server', 'requestCreateNewSlide', [gdo.controlId], start - gdo.net.time.getTime());
             }
             break;
 
@@ -249,30 +263,30 @@ gdo.net.app["PresentationTool"].playCurrentSlide = function (i) {
                     $(this).contents().find("#thumbnail_control > img").on('load', function () {
                         setTimeout(function () {
                             $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
-                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#fit_mode").click();
+                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#fill_mode").click();
                             $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (section.appInstanceId + 1));
-                        }, 1000);
+                        }, 200);
                         setTimeout(function () {
                             i++;
                             gdo.net.app["PresentationTool"].playCurrentSlide(i);
-                        }, 1500);
+                        }, 400);
                     });
                 } else if (section.appName === "YoutubeWall") {
                     setTimeout(function () {
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#search_mode").click();
-                    }, 1000);
+                    }, 200);
                     setTimeout(function () {
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(section.src);
-                    }, 1000);
+                    }, 400);
                     setTimeout(function () {
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#update_keyword_submit").click();
-                    }, 1000);
+                    }, 600);
 
                     $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (section.appInstanceId + 1));
                     setTimeout(function () {
                         i++;
                         gdo.net.app["PresentationTool"].playCurrentSlide(i);
-                    }, 1500);
+                    }, 800);
                 }
             });
         });
@@ -288,15 +302,13 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Load current slide ' + gdo.net.app["PresentationTool"].currentSlide);
     $("iframe").contents().find("#message_from_server").html('Load current slide ' + gdo.net.app["PresentationTool"].currentSlide);
     // undeploy apps
-    var length = gdo.net.section.length;
-    for (var i = 1; i < length; i++) {
-        var section = gdo.net.section[i];
-        if (section != null && section.appInstanceId >= 0 && section.appInstanceId !== gdo.controlId) {
-            gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'closeApp', [section.appInstanceId]);
-            gdo.consoleOut('.PresentationTool', 1, 'Undeploy app with instance id' + section.appInstanceId);
-        }
-        if (section != null && section.id > 0 && section.appInstanceId !== gdo.controlId) {
-            gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'closeSection', [section.id]);
+    var length = gdo.net.instance.length;
+    for (var i = 0; i < length; i++) {
+        var instance = gdo.net.instance[i];
+        if (instance != null && instance.exists && instance.appName !== "PresentationTool") {
+            gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'closeApp', [instance.id]);
+            gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'closeSection', [instance.sectionId]);
+            gdo.consoleOut('.PresentationTool', 1, 'Undeploy app with instance id' + instance.id + ' and close section ' + instance.sectionId);
         }
     }
 
@@ -304,31 +316,32 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
     var numOfSections = gdo.net.app["PresentationTool"].section.length;
     for (var i = 1; i < numOfSections; i++) {
         var section = gdo.net.app["PresentationTool"].section[i];
+        var start = gdo.net.time.getTime() + gdo.net.app["PresentationTool"].timeoutInterval * (i);
         if (section.appName === "YoutubeWall") {
-            gdo.net.app["PresentationTool"].deployApp(section, "Imperial");
+            gdo.net.app["PresentationTool"].deployApp(section, "Imperial", start);
         } else if (section.appName === "Images") {
-            gdo.net.app["PresentationTool"].deployApp(section, "Default");
+            gdo.net.app["PresentationTool"].deployApp(section, "Default", start);
         }
 
     }
 }
 
-gdo.net.app["PresentationTool"].deployApp = function (section, config) {
+gdo.net.app["PresentationTool"].deployApp = function (section, config, start) {
     if (section != null && section.id > 0 && section.src != null) {
         // section start from 2
-        gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'createSection', [section.col, section.row, section.col + section.cols - 1, section.row + section.rows - 1]);
-        gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'deployBaseApp', [section.id + 1, '"' + section.appName + '"', '"' + config + '"']);
-        gdo.consoleOut('.PresentationTool', 1, 'Deploy app on section' + (section.id + 1));
+        gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'createSection', [section.col, section.row, section.col + section.cols - 1, section.row + section.rows - 1], start - gdo.net.time.getTime());
+        gdo.net.app["PresentationTool"].excuteElement('gdo.net.server', 'deployBaseApp', [section.id + 1, '"' + section.appName + '"', '"' + config + '"'], start + gdo.net.app["PresentationTool"].timeoutInterval - gdo.net.time.getTime());
+        gdo.consoleOut('.PresentationTool', 1, 'Deploy app on section ' + (section.id + 1));
         if (section.appName === "Images") {
             // instance id start from 1
-            gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.Images.server', 'processImage', [section.appInstanceId + 1, '"' + section.src.replace(/^.*[\\\/]/, '') + '"']);
+            gdo.net.app["PresentationTool"].excuteElement('gdo.net.app.Images.server', 'processImage', [section.appInstanceId + 1, '"' + section.src.replace(/^.*[\\\/]/, '') + '"'], start + gdo.net.app["PresentationTool"].timeoutInterval * 2 - gdo.net.time.getTime());
         } else if (section.appName === "YoutubeWall") {
 
         }
     }
 }
 
-gdo.net.app["PresentationTool"].excuteElement = function (mod, func, params) {
+gdo.net.app["PresentationTool"].excuteElement = function (mod, func, params, timeout) {
     var element = {};
     element.Mod = mod;
     element.Func = func;
@@ -336,46 +349,11 @@ gdo.net.app["PresentationTool"].excuteElement = function (mod, func, params) {
 
     gdo.consoleOut(".PresentationTool", 1, "Executing: " + element.Mod + "." + element.Func + "(" + element.Params + ");");
     try {
-        var res = eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
-        gdo.consoleOut(".PresentationTool", 1, "Result: " + res);
+        setTimeout(function () {
+            var res = eval(element.Mod + "." + element.Func + "(" + element.Params + ");");
+            gdo.consoleOut(".PresentationTool", 1, "Result: " + res);
+        }, timeout);
     } catch (e) {
 
-    }
-}
-
-gdo.net.app["PresentationTool"].processSection = function (exists, id, serializedSection) {
-    if (exists) {
-        var section = JSON.parse(serializedSection);
-        gdo.net.app["PresentationTool"].section[id].id = id;
-        gdo.net.app["PresentationTool"].section[id].exists = true;
-        gdo.net.app["PresentationTool"].section[id].col = section.Col;
-        gdo.net.app["PresentationTool"].section[id].row = section.Row;
-        gdo.net.app["PresentationTool"].section[id].cols = section.Cols;
-        gdo.net.app["PresentationTool"].section[id].rows = section.Rows;
-        gdo.net.app["PresentationTool"].section[id].width = section.Width;
-        gdo.net.app["PresentationTool"].section[id].src = section.Src;
-        gdo.net.app["PresentationTool"].section[id].appName = section.AppName;
-        gdo.net.app["PresentationTool"].section[id].appInstanceId = section.AppInstanceId;
-
-        for (var i = 0; i < section.Cols; i++) {
-            for (var j = 0; j < section.Rows; j++) {
-                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(section.Col + i, section.Row + j)].sectionId = id;
-                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(section.Col + i, section.Row + j)].sectionCol = i;
-                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(section.Col + i, section.Row + j)].sectionRow = j;
-                gdo.consoleOut('.PresentationTool', 3, 'Updating Node : (id:' + gdo.net.getNodeId(section.Col + i, section.Row + j) + '),(col,row:' + (section.Col + i) + ',' + (section.Row + j) + ')');
-            }
-        }
-    } else {
-        gdo.net.app["PresentationTool"].section[id].id = id;
-        gdo.net.app["PresentationTool"].section[id].exists = false;
-        gdo.net.app["PresentationTool"].section[id].src = null;
-        gdo.net.app["PresentationTool"].section[id].appName = null;
-        gdo.net.app["PresentationTool"].section[id].appInstanceId = -1;
-        for (var i = 0; i < gdo.net.app["PresentationTool"].section[id].cols; i++) {
-            for (var j = 0; j < gdo.net.app["PresentationTool"].section[id].rows; j++) {
-                gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[id].col + i, gdo.net.app["PresentationTool"].section[id].row + j)].sectionId = 0;
-                gdo.consoleOut('.PresentationTool', 3, 'Updating Node : (id:' + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[id].col + i, gdo.net.app["PresentationTool"].section[id].row + j) + '),(col,row:' + gdo.net.app["PresentationTool"].section[id].col + i + ',' + gdo.net.app["PresentationTool"].section[id].row + j + ')');
-            }
-        }
     }
 }
