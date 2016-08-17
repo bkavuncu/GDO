@@ -1330,19 +1330,22 @@ var initDD3App = function () {
                         });
                     }
 
-                    console.log(data.attrTweens);
-                    console.log(_dd3_tweens["dd3_r_std_trans"]);
-                    console.log(_dd3_tweens["dd3_cx_std_trans"]);
-                    console.log(_dd3_tweens["dd3_cy_std_trans"]);
-                    /*TODO v4: this seems to delay
+                    //TODO v4: this seems to delay
+                
                     if (data.attrTweens) {
                         data.attrTweens.forEach(function (o) {
-                            if (_dd3_tweens[o.value]) {
+                            console.log(o);
+                            console.log(_dd3_tweens["dd3_"+o.key+"_std_end_value"]);
+                            
+                            if(_dd3_tweens["dd3_"+o.key+"_std_end_value"]){
+                                trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_end_value"]);
+                            } else if (_dd3_tweens[o.value]) {
                                 trst.attrTween(o.key, _dd3_tweens[o.value]);
                             }
+
                         });
                     }
-                    */
+                    
                     if (data.styleTweens) {
                         data.styleTweens.forEach(function (o) {
                             var args = typeof o.value[1] !== "undefined" ? [o.key, _dd3_tweens[o.value[0]], o.value[1]] : [o.key, _dd3_tweens[o.value[0]]];
@@ -2368,14 +2371,8 @@ var initDD3App = function () {
                     var tweens = d3.map(), attrTweens = d3.map(), styleTweens = d3.map();
 
                     t.on("start.dd3", function (d, i) {
-                        //console.log('Yep! transition starting');
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
-                        //console.log(d);
-                        //console.log(i);
-                        //console.log(t);
-                        //console.log(this);
-
                         //console.log(this.__transition);
                         /*var transition;
                         for(var k in this.__transition){
@@ -2523,24 +2520,30 @@ var initDD3App = function () {
 
                     //TODO V4: overwrite the attr function
                     t.attr = function (name, value){
-                        if (arguments.length < 2) {
-                            return  
-                        }
+
+                        if (value){
+                            _dd3_tweens["dd3_"+name+"_std_end_value"] = value;
+                            console.log("calling attr function");
+                            console.log(_dd3_tweens);
+                        } 
+
+                        return d3.transition.prototype.attr.call(this, name, value);
+
                     };
 
                     //TODO v4: doesn't work
                     t.attrTween = function (attr, tween) {
-                        
                         var temp, trst;
-                        if (arguments.length < 2) return attrTweens.get(attr);
 
                         //In v4, d3.transition.attr uses attrTween, which we don't need.  
-                        if (utils.getFnName(tween) === "anonymous") {
-
-                            dd3.defineAttrTween(attr + "_std_trans", tween);
+                        if (typeof tween === "function" && utils.getFnName(tween) === "anonymous") {
+                            dd3.defineTween(attr + "_std_trans", tween);
                             tween = attr + "_std_trans";
                         }
                         //v4: check attrFunctionNS$1
+
+                        
+                        if (arguments.length < 2) return attrTweens.get(attr);
 
 
                         if (!tween) {
