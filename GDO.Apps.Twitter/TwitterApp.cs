@@ -34,7 +34,7 @@ namespace GDO.Apps.Twitter
         public string TwitterBasePath { get; set; }
         public string TwitterRelativePath { get; set; }
         public string ChartingAppUrl { get; set; }
-
+        public bool ReplaceExisting { get; set; }
         public void Init()
         {
             GraphAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
@@ -138,7 +138,7 @@ namespace GDO.Apps.Twitter
                     break;
                 default:
                     twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
-                    twitterVis.AppType = "StaticHTML";
+                    twitterVis.AppType = "ResponsiveHTML";
                     Download(dataSetId, analyticsId, TwitterBasePath + analyticsId + ".html", "type=chart");
                     twitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
                     break;
@@ -152,7 +152,7 @@ namespace GDO.Apps.Twitter
 
         private string Download(string dataSetId , string analyticsId, string path, string queryParams)
         {
-            if (File.Exists(path))
+            if (!ReplaceExisting && File.Exists(path))
             {  // if the file already exists,don't redownload
                 Debug.WriteLine("File already exists will not re download: " + path);
                 return path;

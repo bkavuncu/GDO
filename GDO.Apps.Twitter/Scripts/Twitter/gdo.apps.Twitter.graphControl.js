@@ -131,3 +131,18 @@ gdo.net.app["Twitter"].hideSearch = function (instanceId)
     }
 }
 
+gdo.net.app["Twitter"].setAllNodesSize = function (instanceId, nodeSize) {
+    for (var i = 0; i < gdo.net.instance[instanceId].control.selectedGraphApps.length; ++i) {
+        var id = gdo.net.instance[instanceId].control.selectedGraphApps[i];
+        gdo.consoleOut('.Twitter', 1, 'Instance ' + instanceId + " controlling " + id + ": Set all node size:" + nodeSize);
+        gdo.net.app["Graph"].server.setAllNodesSize(id, nodeSize);
+    }
+}
+
+gdo.net.app["Twitter"].setOriginalSize = function (instanceId) {
+    for (var i = 0; i < gdo.net.instance[instanceId].control.selectedGraphApps.length; ++i) {
+        var id = gdo.net.instance[instanceId].control.selectedGraphApps[i];
+        gdo.consoleOut('.Twitter', 1, 'Instance ' + instanceId + " controlling " + id + ": Set original node size");
+        gdo.net.app["Graph"].server.setOriginalSize(id);
+    }
+}

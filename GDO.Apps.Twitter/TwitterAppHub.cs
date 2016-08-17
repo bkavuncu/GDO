@@ -32,6 +32,26 @@ namespace GDO.Apps.Twitter
             Clients.Caller.receiveCaveStatus(instanceId, ta.GetPseudoCaveStatus(), refresh);
         }
 
+        public void ToggleRedownloadFiles(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    bool toggle = ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).ReplaceExisting;
+                    ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).ReplaceExisting = !toggle;
+                    Debug.WriteLine("Set redownload files to: " + !toggle);
+                    Clients.Caller.setMessage(instanceId, "Set redownload files to: " + !toggle);
+                    Clients.Caller.setRedownloadButton(instanceId, !toggle);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+                }
+            }
+        }
+
         public void GetApiStatus(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

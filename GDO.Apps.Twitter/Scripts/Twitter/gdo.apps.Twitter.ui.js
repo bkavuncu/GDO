@@ -82,6 +82,25 @@ gdo.net.app["Twitter"].resetControlVariables = function(instanceId) {
     gdo.net.instance[instanceId].control.rowEnd = -1;
 }
 
+gdo.net.app["Twitter"].setRedownloadButton = function(instanceId, state) {
+    if (state) {
+        $("iframe")
+            .contents()
+            .find("#redownload")
+            .removeClass("btn-danger")
+            .addClass("btn-success")
+            .html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Don't Redownload");
+    } else {
+        $("iframe").contents().find("#redownload")
+            .removeClass("btn-success")
+            .addClass("btn-danger")
+            .html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Redownload");
+    }
+    
+
+    
+};
+
 gdo.net.app["Twitter"].setMessage = function(message) {
     $("iframe").contents().find("#message_from_server").html(message);
 }

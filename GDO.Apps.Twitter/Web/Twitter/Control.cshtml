@@ -125,19 +125,19 @@
 
 <div class="wrapper" style="width: 97%">
 <div class="row">
-    <div class="col-lg-2">
+    <div class="col-lg-3">
         <div id="admin-panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
             </div>
             <div class="panel-body">
                 <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
-                
-                <button id="debug_b" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; Console</button>
+                <button id="debug_b" class="btn btn-success"><i class='fa fa-television'></i>&nbsp; PrintState</button>
+                <button id="redownload" class="btn btn-danger"><i class='fa fa-download '></i>&nbsp; Redownload</button>
             </div>
         </div>
     </div>
-    <div class="col-lg-2">
+    <div class="col-lg-3">
         <div id="status-panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Twitter API Status</h6>
@@ -149,7 +149,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-8">
+    <div class="col-lg-6">
         <div id="message_panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>
@@ -420,6 +420,11 @@
                                             <span>
                                                 <input type="color" id="color_Labels" value="#ff0000" class="color_field">
                                             </span>
+                                        </div>
+                                        <div>
+                                            <span><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></span>
+                                            <span>&nbsp;Default size: &nbsp;</span>
+                                            <span><input size="2" style="width:10%" class="input_field" type="text" id="allNodeSize" value="3" /></span>
                                         </div>
                                     </div>
                                 </div>
@@ -965,6 +970,11 @@
                 console.log(gdo.net.app["Twitter"]);
                 console.log(gdo.net);
             });
+    $("#redownload")
+    .on("click",
+        function () {
+            gdo.net.app["Twitter"].server.toggleRedownloadFiles(gdo.controlId);
+        });
     $("#allocate")
         .on("click",
             function() {
@@ -993,6 +1003,17 @@
         gdo.net.app["Twitter"].searchUsers(gdo.controlId, $("#userKeyword").val());
     });
 
+    $("#toggle_nodeSize").click(function () {
+        if ($(this).hasClass("FLAG_ON")) {
+            gdo.net.app["Twitter"].setAllNodesSize(gdo.controlId, parseInt($("#allNodeSize").val()));
+            $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+            $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Original size");
+        } else {
+            gdo.net.app["Twitter"].setOriginalSize(gdo.controlId);
+            $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+            $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size");
+        }
+    });
 
 
 

@@ -46,6 +46,13 @@
             gdo.net.app["Twitter"].updateAnalyticsOptionsTable(instanceId, JSON.parse(analyticsOptions));
         }
     }
+
+    $.connection.twitterAppHub.client.setRedownloadButton = function (instanceId, state) {
+        gdo.consoleOut('.Twitter', 1, 'Received state of redownload button: ' + state);
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.net.app["Twitter"].setRedownloadButton(instanceId, state);
+        }
+    }
 });
 
 
@@ -184,7 +191,7 @@ gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
         case "Images":
             gdo.net.app["Twitter"].startImageApp(section.appInstanceId, "Default", section.twitterVis.filePath);
             break;
-        case "StaticHTML":
+        case "ResponsiveHTML":
             gdo.net.app["Twitter"].startStaticHTMLApp(section.appInstanceId, "Default", section.twitterVis.filePath);
             break;
         default:
@@ -194,7 +201,7 @@ gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
 }
 gdo.net.app["Twitter"].startStaticHTMLApp = function (appInstanceId, config, url) {
     gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + url + "' at instance " + appInstanceId);
-    gdo.net.app["StaticHTML"].server.setURL(appInstanceId, url);
+    gdo.net.app["ResponsiveHTML"].server.setURL(appInstanceId, url);
     return appInstanceId;
 }
 gdo.net.app["Twitter"].startImageApp = function (appInstanceId, config, path) {
