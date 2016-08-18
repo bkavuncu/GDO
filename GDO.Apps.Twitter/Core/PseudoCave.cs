@@ -350,6 +350,9 @@ public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes,
         [JsonProperty(PropertyName = "dataSetId")]
         public string DataSetId { get; set; }
 
+        [JsonProperty(PropertyName = "config")]
+        public string Config { get; set; }
+
         [JsonProperty(PropertyName = "twitterVisType")]
         public TwitterVisTypes TwitterVisType { get; set; }
 

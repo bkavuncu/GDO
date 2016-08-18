@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.ResponsiveHTML", "GDO.Apps.ResponsiveHTML\GDO.Apps.ResponsiveHTML.csproj", "{3AD96253-0745-4E94-9443-F95BEADF0E0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Globe", "GDO.Apps.Globe\GDO.Apps.Globe.csproj", "{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -197,6 +199,10 @@ Global
 		{3AD96253-0745-4E94-9443-F95BEADF0E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AD96253-0745-4E94-9443-F95BEADF0E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AD96253-0745-4E94-9443-F95BEADF0E0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

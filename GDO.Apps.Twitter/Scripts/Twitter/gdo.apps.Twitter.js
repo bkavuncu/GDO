@@ -168,7 +168,7 @@ gdo.net.app["Twitter"].deployApps = function (sections) {
     });
 }
 gdo.net.app["Twitter"].deployApp = function(section) {
-    gdo.net.server.deployBaseApp(section.id, section.twitterVis.appType, "Default");
+    gdo.net.server.deployBaseApp(section.id, section.twitterVis.appType, section.twitterVis.config);
 }
 
 gdo.net.app["Twitter"].launchApps = function(instanceId, sections) {
@@ -186,29 +186,29 @@ gdo.net.app["Twitter"].launchApp = function (section) {
 gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
     switch (section.twitterVis.appType) {
         case "Graph":
-            gdo.net.app["Twitter"].startGraphApp(section.appInstanceId, "Default", section.twitterVis.filePath);
+            gdo.net.app["Twitter"].startGraphApp(section.appInstanceId, section.twitterVis.filePath);
             break;
         case "Images":
-            gdo.net.app["Twitter"].startImageApp(section.appInstanceId, "Default", section.twitterVis.filePath);
+            gdo.net.app["Twitter"].startImageApp(section.appInstanceId, section.twitterVis.filePath);
             break;
-        case "ResponsiveHTML":
-            gdo.net.app["Twitter"].startStaticHTMLApp(section.appInstanceId, "Default", section.twitterVis.filePath);
+        case "StaticHTML":
+            gdo.net.app["Twitter"].startStaticHTMLApp(section.appInstanceId, section.twitterVis.filePath);
             break;
         default:
             gdo.consoleOut('.Twitter', 2, 'App is an unknown type could not be deployed');
             break;
     }
 }
-gdo.net.app["Twitter"].startStaticHTMLApp = function (appInstanceId, config, url) {
+gdo.net.app["Twitter"].startStaticHTMLApp = function (appInstanceId, url) {
     gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + url + "' at instance " + appInstanceId);
-    gdo.net.app["ResponsiveHTML"].server.setURL(appInstanceId, url);
+    gdo.net.app["StaticHTML"].server.setURL(appInstanceId, url);
     return appInstanceId;
 }
-gdo.net.app["Twitter"].startImageApp = function (appInstanceId, config, path) {
+gdo.net.app["Twitter"].startImageApp = function (appInstanceId, path) {
     gdo.consoleOut('.Twitter', 1, "Requesting server start Image app at instance " + appInstanceId);
     gdo.net.app["Images"].server.processImage(appInstanceId, path);
 }
-gdo.net.app["Twitter"].startGraphApp = function (appInstanceId, config, path) {
+gdo.net.app["Twitter"].startGraphApp = function (appInstanceId, path) {
     gdo.consoleOut('.Twitter', 1, 'Requesting server start Graph app at instance ' + appInstanceId);
     gdo.net.app["Graph"].server.initiateProcessing(appInstanceId, path);
 }

@@ -132,13 +132,14 @@ namespace GDO.Apps.Twitter
                 case "Graph":
                     twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Graph;
                     twitterVis.AppType = "Graph";
-
+                    twitterVis.Config = "Default";
                     Download(dataSetId, analyticsId, GraphAppBasePath + analyticsId + ".graphml", "type=graph");
                     twitterVis.FilePath = analyticsId + ".graphml";
                     break;
                 default:
                     twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Analytics;
-                    twitterVis.AppType = "ResponsiveHTML";
+                    twitterVis.AppType = "StaticHTML";
+                    twitterVis.Config = "Responsive";
                     Download(dataSetId, analyticsId, TwitterBasePath + analyticsId + ".html", "type=chart");
                     twitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
                     break;

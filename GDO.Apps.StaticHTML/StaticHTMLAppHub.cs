@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using GDO.Apps.StaticHTML;
 using GDO.Core;
 using GDO.Core.Apps;
@@ -27,13 +28,16 @@ namespace GDO.Apps.StaticHTML
 
         public void SetURL(int instanceId, string url)
         {
+            Debug.WriteLine("Setting URL");
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).SetURL(url);
-                    Clients.Group("" + instanceId).receiveURL(instanceId, url);
-                    Clients.Caller.receiveURL(instanceId, url);
+                    Clients.Group("" + instanceId).receiveURL(instanceId, url,
+                        ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).ResponsiveMode);
+                    Clients.Caller.receiveURL(instanceId, url,
+                        ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).ResponsiveMode);
                 }
                 catch (Exception e)
                 {
@@ -44,11 +48,13 @@ namespace GDO.Apps.StaticHTML
 
         public void RequestURL(int instanceId)
         {
+            Debug.WriteLine("URL Requested");
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.receiveURL(instanceId, ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).GetURL());
+                    Clients.Caller.receiveURL(instanceId, ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).GetURL(),
+                        ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).ResponsiveMode);
                 }
                 catch (Exception e)
                 {
