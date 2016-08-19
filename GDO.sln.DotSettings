@@ -1,9 +1,20 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=deflate_002Ejs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=intro_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=jquery_002Dcolorpicker_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=jquery_002Ekeyboard_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=ol3cesium_002Ddebug_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=olcesium_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=ol_002Ecss/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=outro_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=peer_002Ejs/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=tree_002Ejquery_002Ejs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=_002Abootstrap_002Ecss/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=03582490_002DFE29_002D4CBB_002DAFF5_002D98A51EC07E59_002Fd_003AScripts_002Fd_003AMaps_002Fd_003Ageojson/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=03582490_002DFE29_002D4CBB_002DAFF5_002D98A51EC07E59_002Fd_003AScripts_002Fd_003AMaps_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=03582490_002DFE29_002D4CBB_002DAFF5_002D98A51EC07E59_002Fd_003AScripts_002Fd_003AMaps_002Ff_003Aol3cesium_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=157EAF14_002D7710_002D448E_002D8260_002D6708F0917B7B_002Fd_003AWeb_002Fd_003ABitcoin_002Fd_003Adata/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=38B42F4F_002D045A_002D4A62_002DAA46_002D063EA1BF7A9A_002Fd_003AScripts_002Fd_003ACity_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4A27F694_002D1D9A_002D420A_002DA3A6_002D62521EAA047E_002Fd_003ABootstrap/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4A27F694_002D1D9A_002D420A_002DA3A6_002D62521EAA047E_002Fd_003ACSS_002Ff_003Ajquery_002Dui_002Ecss/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4A27F694_002D1D9A_002D420A_002DA3A6_002D62521EAA047E_002Fd_003ACSS_002Ff_003Ajquery_002Dui_002Emin_002Ecss/@EntryIndexedValue">ExplicitlyExcluded</s:String>
@@ -16,6 +27,17 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4A27F694_002D1D9A_002D420A_002DA3A6_002D62521EAA047E_002Fd_003AScripts_002Ff_003Ajquery_002D2_002E1_002E4_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4A27F694_002D1D9A_002D420A_002DA3A6_002D62521EAA047E_002Fd_003AScripts_002Ff_003Ajquery_002Dui_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4A27F694_002D1D9A_002D420A_002DA3A6_002D62521EAA047E_002Fd_003AScripts_002Ff_003Apeer_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4E0EC509_002DB2BE_002D459A_002D92CE_002D5EFB978679DC_002Fd_003AScripts_002Fd_003AUKTravel_002Fd_003ACesium/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=4E0EC509_002DB2BE_002D459A_002D92CE_002D5EFB978679DC_002Fd_003AScripts_002Fd_003AUKTravel_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=6233F7A3_002D4E1E_002D4566_002DADB7_002D41C313508BFC_002Fd_003AScripts_002Fd_003ALondonCycles_002Fd_003ACesium/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=6233F7A3_002D4E1E_002D4566_002DADB7_002D41C313508BFC_002Fd_003AScripts_002Fd_003ALondonCycles_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=6233F7A3_002D4E1E_002D4566_002DADB7_002D41C313508BFC_002Fd_003AScripts_002Fd_003ALondonCycles_002Ff_003Aol3cesium_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=741AE1F3_002D3877_002D425A_002DBB95_002DDAC0F1586B74_002Fd_003AScripts_002Fd_003AGigaImages_002Fd_003AOpenSeaDragon/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A7A00D99_002D5A23_002D40F7_002D8ABC_002DA0B6B215282D_002Fd_003AScripts_002Fd_003ABasicMaps_002Fd_003ACesium/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A7A00D99_002D5A23_002D40F7_002D8ABC_002DA0B6B215282D_002Fd_003AScripts_002Fd_003ABasicMaps_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A7A00D99_002D5A23_002D40F7_002D8ABC_002DA0B6B215282D_002Fd_003AScripts_002Fd_003ABasicMaps_002Ff_003Aol_002Ecss/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=CA9584C6_002D6400_002D4EEF_002DBA2C_002D30E619F90D13_002Fd_003AScripts_002Fd_003ALeeds_002Fd_003ACesium/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=CA9584C6_002D6400_002D4EEF_002DBA2C_002D30E619F90D13_002Fd_003AScripts_002Fd_003ALeeds_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=ID/@EntryIndexedValue">ID</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=JSON/@EntryIndexedValue">JSON</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=P/@EntryIndexedValue">P</s:String>
