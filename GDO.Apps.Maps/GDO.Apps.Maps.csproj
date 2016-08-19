@@ -583,6 +583,7 @@
     <Compile Include="Core\Styles\ImageStyle.cs" />
     <Compile Include="Core\Styles\RegularShapeStyle.cs" />
     <Compile Include="Core\Styles\StrokeStyle.cs" />
+    <Compile Include="Core\Styles\GeoJSONStyle.cs" />
     <Compile Include="Core\Styles\Style.cs" />
     <Compile Include="Core\Styles\TextStyle.cs" />
     <Compile Include="Core\Data.cs" />

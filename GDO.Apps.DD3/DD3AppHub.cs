@@ -20,15 +20,15 @@ namespace GDO.Apps.DD3
         private readonly object _locker = new Object();
         public static DD3AppHub self;
 
-        public string Name { get; set; }
-        public int P2PMode { get; set; }
-        public Type InstanceType { get; set; }
+        public string Name { get; set; } = "DD3";
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
+        public Type InstanceType { get; set; } = new DD3App().GetType();
 
         public DD3AppHub () {
             self = this;
-            this.Name = "DD3";
-            this.P2PMode = (int) Cave.P2PModes.None;
-            this.InstanceType = new DD3App().GetType();
+            //this.Name = "DD3";
+            //this.P2PMode = (int) Cave.P2PModes.None;
+            //this.InstanceType = new DD3App().GetType();
         }
 
         // == APP ==

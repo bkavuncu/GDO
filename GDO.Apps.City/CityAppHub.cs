@@ -15,11 +15,11 @@ using Microsoft.SqlServer.Server;
 namespace GDO.Apps.City
 {
     [Export(typeof (IAppHub))]
-    public class CityAppHub : Hub, IAdvancedAppHub
+    public class CityAppHub : Hub, ICompositeAppHub
     {
         public string Name { get; set; } = "City";
         public int P2PMode { get; set; } = (int) Cave.P2PModes.None;
-        public List<string> SupportedApps { get; set; } = new List<string>(new string[] {"Maps"});
+        public List<string> SupportedApps { get; set; } = new List<string>(new string[] {"Maps, StaticHTML"});
         public Type InstanceType { get; set; } = new CityApp().GetType();
 
         public void JoinGroup(string groupId)

@@ -991,18 +991,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Scenarios\Element.cs" />
-    <Compile Include="Core\Apps\IAdvancedAppHub.cs" />
+    <Compile Include="Core\Apps\ICompositeAppHub.cs" />
     <Compile Include="Core\Modules\IModuleHub.cs" />
     <Compile Include="Core\Apps\IBaseAppHub.cs" />
     <Compile Include="Core\Apps\IBaseAppInstance.cs" />
-    <Compile Include="Core\Apps\AdvancedApp.cs" />
+    <Compile Include="Core\Apps\CompositeApp.cs" />
     <Compile Include="Core\CaveHub.cs" />
     <Compile Include="Core\Apps\AppConfiguration.cs" />
     <Compile Include="Core\Apps\App.cs" />
     <Compile Include="Core\Scenarios\Loop.cs" />
     <Compile Include="Core\States\State.cs" />
     <Compile Include="Core\Apps\IAppHub.cs" />
-    <Compile Include="Core\Apps\IAdvancedAppInstance.cs" />
+    <Compile Include="Core\Apps\ICompositeAppInstance.cs" />
     <Compile Include="Core\Apps\IAppInstance.cs" />
     <Compile Include="Core\Modules\IModule.cs" />
     <Compile Include="Core\Node.cs" />
