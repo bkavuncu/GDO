@@ -172,6 +172,9 @@
     <li>
         <a href="#app_control" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;Graph App Control</a>
     </li>
+    <li>
+        <a href="#chart_control" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;Control</a>
+    </li>
 </ul>
 <div class="tab-content" style="height: 90vh">
 <div class="tab-pane fade in active" id="dataset_control" style="height: 84vh;">
@@ -424,7 +427,7 @@
                                         <div>
                                             <span><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></span>
                                             <span>&nbsp;Default size: &nbsp;</span>
-                                            <span><input size="2" style="width:10%" class="input_field" type="text" id="allNodeSize" value="3" /></span>
+                                            <span><input size="2" style="width: 10%" class="input_field" type="text" id="allNodeSize" value="3" /></span>
                                         </div>
                                     </div>
                                 </div>
@@ -469,36 +472,36 @@
                                 </div>
                             </div>
                             <div class="row">
-@*                                <div style="border-collapse: separate; border-spacing: 1px;">*@
-                                    <div>
-                                        <span>
+                                @*                                <div style="border-collapse: separate; border-spacing: 1px;">*@
+                                <div>
+                                    <span>
                                             <button class='btn btn-default' id="startSearch">Search</button>
                                         </span>
-                                        <span>
+                                    <span>
                                             <input class="input_field" style="width: 60%" size="60" type="text" id="searchKeywords" />
                                         </span>
-                                        <span>&nbsp;in&nbsp;</span>
-                                        <span>
+                                    <span>&nbsp;in&nbsp;</span>
+                                    <span>
                                             <select id="gc_select_SearchFields" style="width: 20%" required class="input_field"></select>
                                         </span>
-                                    </div>
-                                    <div>
-                                        <span>
+                                </div>
+                                <div>
+                                    <span>
                                             <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
                                         </span>
-                                        <span>
+                                    <span>
                                             <select id="gc_select_SearchLabels" style="width: 30%" required class="input_field"></select>
                                         </span>
-                                        <span>&nbsp;as labels&nbsp;</span>
-                                    </div>
-                                    <div>
-                                        <span>
+                                    <span>&nbsp;as labels&nbsp;</span>
+                                </div>
+                                <div>
+                                    <span>
                                             <button class='btn btn-default' id="hide_sublinks">Hide links</button>
                                         </span>
-                                        <span>
+                                    <span>
                                             <button class='btn btn-default' id="hide_search">Hide all</button>
                                         </span>  
-                                    </div>
+                                </div>
 
 
                             </div>
@@ -534,6 +537,11 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="chart_control">
+    <div id="wrapper" style="border: 0 none; display: block; width: 100%; height: 61vh; background:white">
+        <iframe id="html_frame" src="http://www.bing.com" allowtransparency="true" frameborder="0" style="border: 0 none; display: block;width: 100%; height: 61vh"></iframe>
     </div>
 </div>
 </div>

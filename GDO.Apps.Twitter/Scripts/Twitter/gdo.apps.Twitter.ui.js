@@ -208,7 +208,7 @@ gdo.net.app["Twitter"].updateGraphFields = function(instanceId) {
         var fields = gdo.net.instance[selectedGraphApps[0]].graphFields.filter(function(n) {
             var foundInAll = true;
             for (var i = 1; i < selectedGraphApps.length; ++i) {
-                foundInAll = gdo.net.instance[i].graphFields.indexOf(n) !== -1;
+                foundInAll = gdo.net.instance[selectedGraphApps[i]].graphFields.indexOf(n) !== -1;
             }
             return foundInAll;
         });
