@@ -80,6 +80,15 @@
             //do nothing
         }
     }
+
+    $.connection.imagesAppHub.client.zoomImage = function (ratio) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.Images', 1, 'Instance - ' + gdo.controlId + ": Zooming Image with ratio: " + ratio);
+            $("iframe")[0].contentWindow.zoomImage(ratio);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing
+        }
+    }
 });
 
 //gdo.net.app["Images"].display_mode = 0;

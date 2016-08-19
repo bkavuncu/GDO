@@ -170,6 +170,7 @@
     <Content Include="Configurations\PresentationTool\Default.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\PresentationTool\artyom.min.js" />
+    <Content Include="Scripts\PresentationTool\cropper.min.css" />
     <Content Include="Scripts\PresentationTool\cropper.min.js" />
     <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />

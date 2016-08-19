@@ -27,6 +27,8 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../Scripts/PresentationTool/cropper.min.css" rel="stylesheet" />
+
     <style>
         .unselectable {
             -moz-user-select: -moz-none;
@@ -174,6 +176,7 @@
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
     <script src="../../Scripts/PresentationTool/artyom.min.js"></script>
     <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
+    <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -223,13 +226,15 @@
                             <h6 id="message_from_server" style="text-align:right;float:right;">Message</h6>
                             <hr style="clear:both; border: 0" />
                         </div>
-                        <div id="img_preview" class="panel-body" style="height: 35.5vh;overflow: hidden">
+
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <div id="img_preview" style="width:100%;height:100%;">
+                            </div>
                         </div>
-                        <div class="panel-footer">           
-                            <button id="previous_slide" class="btn btn-primary"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</button>
-                            <button id="next_slide" class="btn btn-primary"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</button>
-                            <button id="new_slide" class="btn btn-primary"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</button>
-                            <button id="delete_slide" class="btn btn-primary"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</button>
+                        <div class="panel-footer">     
+                            <button id="img_restore" class="btn btn-primary"><i class='fa  fa-refresh fa-fw'></i>&nbsp;Restore</button>
+                            <button id="img_rotate" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Rotate</button>      
+                            <button id="img_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
                         </div>
                     </div>
                 </div>
@@ -284,25 +289,24 @@
                             </div>
                         </div>
                         <div class="panel-footer">
-
-                            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
-                                <fieldset>
-                                    <table style="border-collapse: separate; border-spacing: 4px 0;background-color:transparent;">
-                                        <tr>
-                                            <td>
+                            <table style="border-collapse: separate; border-spacing: 4px 0;background-color:transparent;">
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
                                                 <div>
-                                                    <span id="choose_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Choose File <input type="file" name="file" class="upload" id="upload_file"></span>
+                                                    <span id="submit_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Submit<input type="file" name="file" class="upload" id="upload_file"></span>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <span id="submit_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;">&nbsp;Submit<input id="submit" name="submit" type="submit" /></span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </fieldset>
-                            </form>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <button id="manage_file" class="btn btn-primary btn-file btn-block" data-toggle='modal' data-target='#file_management' style="text-align:left;border-color:transparent;"><i class='fa  fa-files-o fa-fw'></i>&nbsp;Manage</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -333,7 +337,7 @@
                             <h6 id="Templates" style="text-align:left;float:left;"><i class='fa  fa-gear fa-fw'></i>&nbsp;Control</h6>
                             <hr style="clear:both; border: 0" />
                         </div>
-                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">           
                             <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
                                 <div>
                                     <span id="load_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</span>
@@ -348,11 +352,24 @@
                                     <button id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</button>
                                     <a id="slide_link"></a>
                                 </div>
+
+                                <div>
+                                    <button id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</button>
+                                </div>
+                                <div>
+                                    <button id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</button>
+                                </div>
+                                <div>
+                                    <button id="new_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</button>
+                                </div>
+                                <div>
+                                    <button id="delete_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</button>
+                                </div>
                                   
                             </form>
                         </div>
                         <div class="panel-footer text-center">
-                            <button id="voice_control" class="btn btn-warning btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-microphone fa-fw'></i>&nbsp;Voice</button>
+                            <button id="voice_control" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-microphone fa-fw'></i>&nbsp;Voice</button>
                         </div>
                     </div>
                 </div>
@@ -371,69 +388,54 @@
                     <div class="col-lg-1 close_app_button_div"></div>
                     <div class="col-lg-1 clear_cave_button_div"></div>
                 </div>
+                
+                <iframe id="hidden_app_iframe" onload="this.width = window.parent.window.innerWidth; this.height = window.parent.window.innerHeight;" style="visibility:hidden; border:0; border:none;"></iframe>
 
-                <div id="hidden_app_control" style="width: 100%; height: 1000px">
-                    <iframe id="hidden_app_iframe" style="width:100%;height:100%;border:0; border:none;"></iframe>
-                </div>
 
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="file_management" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5><i align="center" class='fa  fa-files-o  fa-fw'></i>&nbsp;<font color="white">File Management</font></h5>
+                </div>
+                <div class="modal-body">
+                    <font color="white">Select file to be deleted</font>
+                    <br>
+                    &nbsp;
+                    <br />
+                    <div id="file_list_management">
+                        <select multiple class="form-control" id="file_selection" style="border-color:black">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" data-dismiss="modal" id="delete_file" class="btn btn-primary btn-ok">Delete</button>            
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
 
-        $(document).ready(function() {
-            $('#submit_image_form').on('submit', function (e) {
-                e.preventDefault();
-                if ($.trim($("#upload_file").val()) === "") {
-                    $("#message_from_server").html("Please choose a file to upload!");
-                    return false;
-                }
-
-                var formData = new FormData();
-                formData.append('file', $('#upload_file')[0].files[0]);
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        var filename = $('#upload_file').val().split('\\').pop();
-                        var gdo = parent.gdo;
-                        gdo.consoleOut('.PresentationTool', 1, "Uploaded " + filename);
-                        var extension = filename.split(".").pop().toLowerCase();
-                        if (extension === "pptx" || extension === "ppt") {
-                            gdo.net.app["PresentationTool"].server.uploadPPT(gdo.controlId, filename);
-                        } else if (extension === "png" || extension === "jpg") {
-                            gdo.net.app["PresentationTool"].server.uploadImage(gdo.controlId, filename);
-                        }
-                    },
-                    error: function(jXHR, textStatus, errorThrown) {
-                        $("#message_from_server").html("Something wrong!");
-                    }
-                });
-            });
-            $('#submit_slide_form').submit(function (e) {
-                e.preventDefault();
-            });
-        });
-
+        // file list
         $("#file_list").enscroll({
             showOnHover: false,
             verticalTrackClass: 'track4',
             verticalHandleClass: 'handle4'
         }).css({ "padding-right": "0px", "width": "99.5%" });
-
-
-        // file list
-        $(function () {
-            $('.list-group-item').on('click', function () {
-                $('.fa', this)
-                  .toggleClass('fa-chevron-right')
-                  .toggleClass('fa-chevron-down');
-            });
+        $('.list-group-item').on('click', function () {
+            $('.fa', this)
+              .toggleClass('fa-chevron-right')
+              .toggleClass('fa-chevron-down');
         });
 
+
+        // Slide upload
         $('#upload_slide').change(function () {
             var slidename = $('#upload_slide').val().split('\\').pop();
             $("#file_name").html(slidename);
@@ -464,11 +466,47 @@
             });
         });
 
+        // File upload
         $('#upload_file').change(function() {
             var filename = $('#upload_file').val().split('\\').pop();
             $("#file_name").html(filename);
-        });
+            if ($.trim($("#upload_file").val()) === "") {
+                $("#message_from_server").html("Please choose a file to upload!");
+                return false;
+            }
+            var filename = $('#upload_file').val().split('\\').pop();
+            var extension = filename.split(".").pop().toLowerCase();
+            if (!(extension === "pptx" || extension === "ppt" || extension === "png" || extension === "jpg")) {
+                $("#message_from_server").html("Please upload correct file format!");
+                return false;
+            }
 
+            var formData = new FormData();
+            formData.append('file', $('#upload_file')[0].files[0]);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    var filename = $('#upload_file').val().split('\\').pop();
+                    var gdo = parent.gdo;
+                    gdo.consoleOut('.PresentationTool', 1, "Uploaded " + filename);
+                    var extension = filename.split(".").pop().toLowerCase();
+                    if (extension === "pptx" || extension === "ppt") {
+                        gdo.net.app["PresentationTool"].server.uploadPPT(gdo.controlId, filename);
+                    } else if (extension === "png" || extension === "jpg") {
+                        gdo.net.app["PresentationTool"].server.uploadImage(gdo.controlId, filename);
+                    }
+                },
+                error: function (jXHR, textStatus, errorThrown) {
+                    $("#message_from_server").html("Something wrong!");
+                }
+            });
+        });
+        
+        // Button click listener
         $("#previous_slide").click(function () {
             var gdo = parent.gdo;
             gdo.net.app["PresentationTool"].previousSlide();
@@ -496,7 +534,7 @@
 
         $("#play_slide").click(function () {
             var gdo = parent.gdo;
-            gdo.net.app["PresentationTool"].playCurrentSlide(1);
+            gdo.net.app["PresentationTool"].playCurrentSlide();
         });
 
         $("#load_template").click(function () {
@@ -508,6 +546,22 @@
             var gdo = parent.gdo;
             gdo.net.app["PresentationTool"].saveSlideFile();
         });
+
+        $("#manage_file").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].updateFileManagementList();
+        });
+
+        $("#delete_file").click(function () {
+            var gdo = parent.gdo;
+            var files = []
+            $('#file_selection :selected').each(function (i, selected) {
+                files[i] = $(selected).text();
+            });
+            gdo.net.app["PresentationTool"].server.requestDeleteFiles(gdo.controlId, files);
+        });
+
+        // Voice control
         var gdo = parent.gdo;
         gdo.net.app["PresentationTool"].artyom = artyom;
         var curr_section = 0;
@@ -585,6 +639,84 @@
         ]);
         $("#voice_control").click(function () {
             gdo.net.app["PresentationTool"].server.changeVoiceControlStatus(gdo.controlId);
+        });
+
+        // Image control
+        var gdo = parent.gdo;
+        gdo.net.app["PresentationTool"].img_control_status = 0;
+        gdo.net.app["PresentationTool"].img_control_enable = 0;
+
+        $("#img_control").click(function () {
+            if (gdo.net.app["PresentationTool"].img_control_enable === 0) return;
+
+            gdo.net.app["PresentationTool"].img_control_status = 1 - gdo.net.app["PresentationTool"].img_control_status;
+            if (gdo.net.app["PresentationTool"].img_control_status === 0) {
+                $('#img_preview > img').cropper('destroy');
+                $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
+                return;
+            }
+            $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-success");
+
+            var left = 0;
+            var top = 0;
+
+            $('#img_preview > img').cropper({
+                autoCrop:false,
+                strict: false,
+                guides: false,
+                highlight: false,
+                dragCrop: false,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
+                dragMode: 'move',
+                built: function () {
+                    $(this).cropper('clear');
+                    left = $(this).cropper('getCanvasData').left;
+                    top = $(this).cropper('getCanvasData').top;
+                }
+            });
+            
+
+            $('#img_preview > img').on('cropmove.cropper', function (e) {
+                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
+                if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
+                    var x = $(this).cropper('getCanvasData').left - left;
+                    var y = $(this).cropper('getCanvasData').top - top;
+                    gdo.net.app["Images"].server.requestMoveImage(instanceId, x, y);
+                    left = $(this).cropper('getCanvasData').left;
+                    top = $(this).cropper('getCanvasData').top;
+                }
+            });
+
+            $('#img_preview > img').on('zoom.cropper', function (e) {
+                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
+                if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
+                    console.log(e.oldRatio);
+                    if (e.ratio > e.oldRatio) {
+                        gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.1);
+                    } else {
+                        gdo.net.app["Images"].server.requestZoomImage(instanceId, -0.1);
+                    }
+                }
+            });
+        });
+
+        $("#img_rotate").click(function () {
+            if (gdo.net.app["PresentationTool"].img_control_status === 1 && gdo.net.app["PresentationTool"].img_control_enable === 1) {
+                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
+                if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
+                    gdo.net.app["PresentationTool"].rotateImage(instanceId);
+                }
+            }
+        });
+
+        $("#img_restore").click(function () {
+            if (gdo.net.app["PresentationTool"].img_control_status === 1 && gdo.net.app["PresentationTool"].img_control_enable === 1) {
+                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
+                $("#img_control").click();
+                $("#img_control").click();
+                gdo.net.app["PresentationTool"].playInstance(instanceId);
+            }
         });
       
     </script>
@@ -677,11 +809,26 @@
                            if (gdo.net.app["PresentationTool"].selectedSection == id) {
                                gdo.net.app["PresentationTool"].selectedSection = -1;
 
+                               // image control disable
+                               $('#img_preview')
+                                    .empty();
+                               $("#img_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
+                               gdo.net.app["PresentationTool"].img_control_enable = 0
+                               gdo.net.app["PresentationTool"].img_control_status = 0;
                            } else {
                                for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                                    gdo.net.app["PresentationTool"].node[i].isSelected = false;
                                }
-                               gdo.net.app["PresentationTool"].selectedSection = id;
+                               gdo.net.app["PresentationTool"].selectedSection = id;            
+                               // image control enable
+                               if (gdo.net.app["PresentationTool"].section[id].src !== null) {
+                                   $('#img_preview')
+                                       .empty()
+                                       .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].section[id].src + "'/>");
+                               }
+                               $("#img_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
+                               gdo.net.app["PresentationTool"].img_control_status = 0;
+                               gdo.net.app["PresentationTool"].img_control_enable = 1;
                                //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
                            }
                            gdo.updateDisplayCanvas();
@@ -691,6 +838,7 @@
                         if (gdo.net.app["PresentationTool"].section[sectionId].src !== null) {
                             $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
                             $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
+                            gdo.net.app["PresentationTool"].img_control_enable = 1;
                         } else {
                             $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#2A9FD6").css("border", "1px solid #4CBFF8");
                             $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");

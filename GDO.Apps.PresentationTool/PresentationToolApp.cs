@@ -82,6 +82,15 @@ namespace GDO.Apps.PresentationTool
             File.Copy(currPath, destPath, true);
         }
 
+        public void deleteFiles(string[] files)
+        {
+            foreach (string s in files)
+            {
+                string path = this.BasePath + s;
+                File.Delete(path);
+            }
+        }
+
         public void CreateNewSlide()
         {
             Dictionary<int, AppSection> Sections = new Dictionary<int, AppSection>();
@@ -90,6 +99,7 @@ namespace GDO.Apps.PresentationTool
             Slides.Add(slide);
             CurrentSlide = Slides.Count - 1;
             CreateSection(0, 0, Section.Cols - 1, Section.Rows - 1);
+            DeployResource(0, null, null);
         }
 
         public void DeleteCurrentSlide()
@@ -120,7 +130,7 @@ namespace GDO.Apps.PresentationTool
         {
             int instanceId = Utilities.GetAvailableSlot<string>(Slides[CurrentSlide].Instances);
             Slides[CurrentSlide].Instances.Add(instanceId, appName);
-            Slides[CurrentSlide].Sections[sectionId].Src = src;
+            Slides[CurrentSlide].Sections[sectionId].Src = "Files" + src;
             Slides[CurrentSlide].Sections[sectionId].AppInstanceId = instanceId;
             Slides[CurrentSlide].Sections[sectionId].AppName = appName;
             return;

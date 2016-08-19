@@ -552,5 +552,77 @@ namespace GDO.Apps.Images
                 }
             }
         }
+
+        public void RequestRotateImage(int instanceId, int degree)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting rotate image with degree: " + degree);
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ia.ThumbNailImage.imageData.rotate += degree;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                    Clients.Caller.setMessage("Requested rotate image Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void RequestMoveImage(int instanceId, float x, float y)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting move image with x: " + x + " and y: " + y);
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ia.ThumbNailImage.canvasData.left += x;
+                        ia.ThumbNailImage.canvasData.top += y;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                    Clients.Caller.setMessage("Requested move image Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+
+        public void RequestZoomImage(int instanceId, float ratio)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Requesting zoom image with ratio " + ratio);
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ia.ThumbNailImage.imageData.width *= (1 + ratio);
+                        ia.ThumbNailImage.imageData.height *= (1 + ratio);
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                    Clients.Caller.setMessage("Requested zoom image Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
     }
 }

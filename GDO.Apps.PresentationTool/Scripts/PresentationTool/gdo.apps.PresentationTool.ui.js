@@ -37,27 +37,26 @@ $("iframe").contents().find('#update_keyword_submit').on('click', function () {
 
 //file ppt list click
 $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
-    gdo.net.app["PresentationTool"].selectedResource = "Files/PPTs/" + $(this).text();
+    gdo.net.app["PresentationTool"].selectedResource = "/PPTs/" + $(this).text();
     gdo.net.app["PresentationTool"].appName = "Images";
     $("iframe").contents().find('#img_preview')
         .empty()
-        .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
+        .append("<img style= 'height: 100%; width: 100%' src='Files/" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
     gdo.updateDisplayCanvas();
 }).on('blur', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
         return;
     gdo.net.app["PresentationTool"].selectedResource = null;
     gdo.updateDisplayCanvas();
-
 });
 
 //file image list click
 $("iframe").contents().find('#item_images').on('click', 'li', function () {
-    gdo.net.app["PresentationTool"].selectedResource = "Files/Images/" + $(this).text();
+    gdo.net.app["PresentationTool"].selectedResource = "/Images/" + $(this).text();
     gdo.net.app["PresentationTool"].appName = "Images";
     $("iframe").contents().find('#img_preview')
         .empty()
-        .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
+        .append("<img style= 'height: 100%; width: 100%' src='Files/" + gdo.net.app["PresentationTool"].selectedResource + "'/>");
     gdo.updateDisplayCanvas();
 }).on('blur', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')
@@ -373,13 +372,13 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
             }
         });
     if (gdo.net.app["PresentationTool"].selectedSection > -1) {
-        if (gdo.net.app["PresentationTool"].selectedResource !== null) {
+        if (gdo.net.app["PresentationTool"].selectedResource !== null && gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].src === null) {
             $("iframe").contents().find(".deploy_app_button")
                 .removeClass("disabled")
                 .removeClass("btn-default")
                 .removeClass("btn-danger")
                 .addClass("btn-success");
-        } else if (gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].srPath == null) {
+        } else if (gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].src === null) {
             $("iframe").contents().find(".deploy_app_button")
                 .removeClass("btn-default")
                 .removeClass("btn-success")
@@ -400,6 +399,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
             .removeClass("btn-danger");
     }
 
+    // close app
     $("iframe").contents().find(".close_app_button_div")
         .empty()
         .append("<button type='button' class='close_app_button btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Close App</button>")
@@ -452,6 +452,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
             gdo.net.app["PresentationTool"].template = 0;
             gdo.net.app["PresentationTool"].appName = null;
             gdo.net.app["PresentationTool"].server.clearCave(gdo.controlId);
+            gdo.net.app["PresentationTool"].clearAllOtherApp();
             gdo.updateDisplayCanvas();
         }); 
 }

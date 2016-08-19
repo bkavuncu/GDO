@@ -497,5 +497,24 @@ namespace GDO.Apps.PresentationTool
                 }
             }
         }
+
+        public void RequestDeleteFiles(int instanceId, String[]files)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    Clients.Caller.setMessage("Deleting Files");
+                    pa.deleteFiles(files);
+                    UpdateFileList(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to restore voice control status", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
     }
 }
