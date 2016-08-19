@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using GDO.Apps.Twitter.Core;
 using GDO.Core.Apps;
+using log4net;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.Twitter
@@ -15,7 +16,7 @@ namespace GDO.Apps.Twitter
 
     public class TwitterApp : IBaseAppInstance
     {
-        
+        private static readonly ILog Log = LogManager.GetLogger(typeof(TwitterApp));
         public int Id { get; set; }
         public string AppName { get; set; }
         public GDO.Core.Section Section { get; set; }
@@ -43,11 +44,18 @@ namespace GDO.Apps.Twitter
             TwitterBasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
             TwitterRelativePath = "/Web/Twitter/data/";
 
-            Directory.CreateDirectory(TwitterBasePath);
-            Directory.CreateDirectory(GraphAppBasePath);
-            Directory.CreateDirectory(ImageAppBasePath);
-            Directory.CreateDirectory(TwitterBasePath);
-
+            try
+            {
+                Directory.CreateDirectory(TwitterBasePath);
+                Directory.CreateDirectory(GraphAppBasePath);
+                Directory.CreateDirectory(ImageAppBasePath);
+                Directory.CreateDirectory(TwitterBasePath);
+            }
+            catch (Exception e)
+            {
+                Log.Error("failed to launch the Twitter App", e);
+                return;
+            }
             var apiAddress = (string) Configuration.Json.SelectToken("api_address");
             RestController = new RestController(new Uri(apiAddress));
 

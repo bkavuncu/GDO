@@ -6,24 +6,133 @@
 
 <html style="overflow: hidden">
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width"/>
     <title></title>
+    <style>
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: black;
+        }
+
+        #earth_div {
+            position: absolute;
+            top: 0;
+            width: 1920px;
+            height: 1080px;
+            @*            right: 0;*@
+            @*            bottom: 0;*@
+            left: 0;
+            -moz-transform: translate(0px, 0px);
+            -moz-transform-origin: 0 0;
+            -o-transform: translate(0px, 0px);
+            -o-transform-origin: 0 0;
+            -webkit-transform: translate(0px, 0px);
+            -webkit-transform-origin: 0 0;
+        }
+
+        #wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0 none;
+            z-index: 9;
+            overflow: hidden;
+        }
+    </style>
+    <script src="http://www.webglearth.com/v2/api.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script>
-        $(function () {          
-            $(document).ready(function () {
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script>
+    $(function () {
+        var gdo = parent.gdo;
+        console.log(parent);
+        $(document)
+            .ready(function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Globe"].initClient();
             });
-        });
-    </script>
-    <div id="wrapper" style="background-color:#000;width:97vw;height:97vh;text-align:center; vertical-align: middle;" align="center">
-        <div style="display: table; width:100%;height: 100%; overflow: hidden; text-align:center;">
-            <div id="hello_text" style="display: table-cell; font-size: 35vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;"></div>
-        </div>
-    </div>
+    });
+    var earth;
+    var K = WE
+    function intializeGlobe(instanceId) {
+        var gdo = parent.gdo;
+        if (gdo.net.instance[instanceId].mode == "L") {
+
+            K = L;
+        }
+
+            earth = new K.map('earth_div');
+            K.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(earth);
+            earth.setView([51.505, 0], 6); 
+    };
+
+    function zoom(i) {
+        if (i > 0) {
+            earth.zoomIn(i);
+        } else if (i < 0) {
+            earth.zoomOut(-i);
+        }
+    }
+
+    function pan(x, y) {
+        var center = earth.getCenter();
+        if (gdo.net.instance[instanceId].mode == "L") {
+            center['lat'] += x;
+            center['lng'] += y;
+        } else {
+            center[0] += y;
+            center[1] += x;
+        }
+        earth.panTo(center, { duration: 1 });
+    }
+
+    function tilt(i) {
+        var cTilt = earth.getTilt();
+        console.log(cTilt);
+        earth.setTilt(cTilt + i);
+    }
+
+    function updatePosition(lat, lng, zoom) {
+//        var center = L.latLng(lat, lng);
+//        console.log(center);
+        earth.setView([lat,lng], zoom);
+    }
+
+    function addMarkers(instanceId, markers) {
+        var gdo = parent.gdo;
+        gdo.net.instance[instanceId].markers = {};
+        for (var i = 0; i < markers.length; ++i) {
+            var m = K.marker([markers[i].coordinate.latitude, markers[i].coordinate.longitude]).addTo(earth);
+            m.bindPopup(markers[i].htmlLabel,
+            {
+                maxWidth: gdo.net.app["Globe"].markerProperties["maxWidth"],
+                closeButton: false
+            });
+            gdo.net.instance[instanceId].markers[markers[i].id] = m;
+        }
+    }
+
+
+</script>
+<div id="wrapper">
+    <div id="earth_div"></div>
+</div>
+
 </body>
 </html>

@@ -148,6 +148,7 @@
     <Content Include="Web\Globe\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobeApp.cs" />
     <Compile Include="GlobeAppHub.cs" />

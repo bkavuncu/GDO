@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
 using GDO.Core;
 using GDO.Core.Apps;
 using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.Globe
@@ -24,14 +28,40 @@ namespace GDO.Apps.Globe
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
-        public void SetName(int instanceId, string name)
+        public void BroadcastMarkerUpdates(int instanceId, List<Marker> markers)
+        {
+            Clients.Caller.setMessage(instanceId, "Server broadcasting update for " + markers.Count + " markers");
+            string serialisedMarkers = JsonConvert.SerializeObject(markers);
+            Clients.Group("" + instanceId).receiveMarkerVisibility(instanceId, serialisedMarkers);
+            Clients.Caller.receiveMarkerVisibility(instanceId, serialisedMarkers);
+        }
+
+        public void GetInit(int instanceId)
+        {
+            try
+            {
+                string markers =
+                    JsonConvert.SerializeObject(
+                        ((GlobeApp) Cave.Apps["Globe"].Instances[instanceId]).GlobeMarkers.Select(d => d.Value).ToList());
+                Clients.Caller.receiveMarkers(instanceId, markers);
+                Clients.Group("" + instanceId).receiveMarkers(instanceId, markers);
+                BroadcastMarkerUpdates(instanceId,
+                    ((GlobeApp) Cave.Apps["Globe"].Instances[instanceId]).GlobeMarkers.Select(d => d.Value).ToList()
+                );
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        public void SetScalingMode(int instanceId, int mode)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).SetName(name);
-                    Clients.Group("" + instanceId).receiveName(instanceId, name);
+                    Clients.Group("" + instanceId).setScalingMode(instanceId, mode);
                 }
                 catch (Exception e)
                 {
@@ -40,13 +70,18 @@ namespace GDO.Apps.Globe
             }
         }
 
-        public void RequestName(int instanceId)
+        public void SetMarkerVisibility(int instanceId, string markerId, bool isVisible)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Clients.Caller.receiveName(instanceId, ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).GetName());
+                    Debug.WriteLine(isVisible);
+                    BroadcastMarkerUpdates(instanceId, new List<Marker>()
+                    {
+                        ((GlobeApp) Cave.Apps["Globe"].Instances[instanceId])
+                        .SetMarkerState(markerId,isVisible)
+                    });
                 }
                 catch (Exception e)
                 {
@@ -54,5 +89,122 @@ namespace GDO.Apps.Globe
                 }
             }
         }
+        
+        public void ShowAll(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    BroadcastMarkerUpdates(instanceId,
+                        ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).ShowAll());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void HideAll(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    BroadcastMarkerUpdates(instanceId,
+                        ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).HideAll());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void ProcessMarkers(int instanceId, string fileId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage(instanceId, "Getting markers from file: " + fileId);
+                    string markers = ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).ProcessMarkers(instanceId, fileId);
+                    Clients.Group("" + instanceId).receiveMarkers(instanceId, markers);
+                    Clients.Caller.receiveMarkers(instanceId, markers);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void Pan(int instanceId, int x, int y)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).Pan(x,y);
+                    Clients.Group("" + instanceId).pan(instanceId, x, y);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void Zoom(int instanceId, int i)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).Zoom(i);
+                    Clients.Group("" + instanceId).zoom(instanceId, i);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void Tilt(int instanceId, int i)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).Tilt(i);
+                    Clients.Group("" + instanceId).tilt(instanceId, i);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void UpdateState(int instanceId, float lat, float lng, float zoom)
+        {
+            Debug.WriteLine("Received viewpoint state: " + lat + " " + lng + " " + zoom);
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ((GlobeApp)Cave.Apps["Globe"].Instances[instanceId]).UpdateState(lat, lng, zoom);
+                    Clients.Group("" + instanceId).receiveState(instanceId, lat, lng, zoom);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+
     }
 }

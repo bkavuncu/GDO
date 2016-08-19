@@ -27,9 +27,7 @@
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <style>
-        body {
-            color: #FFF;
-        }
+        body { color: #FFF; }
 
         .unselectable {
             -moz-user-select: -moz-none;
@@ -90,48 +88,390 @@
             position: relative;
             text-align: center;
         }
+        #earth_div {
+            height: 500px;
+        }
+
     </style>
+    <script src="http://www.webglearth.com/v2/api.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 </head>
 <body unselectable="on" class="unselectable">
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
-    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
-    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script>
-        $(function () {
-            var gdo = parent.gdo;
-            gdo.net.app["Globe"].initControl();
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+<script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+<script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script>
+    $(function() {
+        var gdo = parent.gdo;
+        gdo.net.app["Globe"].initControl();
+        $("#pan_up").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Panning Up");
+            pan(0, 1);
+            gdo.net.app["Globe"].server.pan(gdo.controlId, 0, 1);
         });
-    </script>
-    <div class="wrapper" style="width:97%">
+        $("#pan_down").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Panning Down");
+            pan(0, -1);
+            gdo.net.app["Globe"].server.pan(gdo.controlId, 0, -1);
+        });
+        $("#pan_left").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Panning Left");
+            pan(-1, 0);
+            gdo.net.app["Globe"].server.pan(gdo.controlId, -1, 0);
+        });
+        $("#pan_right").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Panning Right");
+            pan(1, 0);
+            gdo.net.app["Globe"].server.pan(gdo.controlId, 1, 0);
+        });
+        $("#zoom_in").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Zooming In");
+            zoom(1);
+            gdo.net.app["Globe"].server.zoom(gdo.controlId, 1);
+        });
+        $("#zoom_out").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Zooming out");
+            zoom(-1);
+            gdo.net.app["Globe"].server.zoom(gdo.controlId, -1);
+        });
+        $("#tilt_up").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Tilting up");
+            tilt(1);
+            gdo.net.app["Globe"].server.tilt(gdo.controlId, 1);
+        });
+        $("#tilt_down").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Tilting down");
+            tilt(-1);
+            gdo.net.app["Globe"].server.tilt(gdo.controlId, -1);
+        });
+        $("#debug").click(function () {
+            console.log(gdo.net.instance[gdo.controlId]);
+        });
+        $("#markers").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Requesting markers");
+            gdo.net.app["Globe"].server.processMarkers(gdo.controlId, "Empty");
+        });
+        $("#hide_all").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Hiding all markers");
+            gdo.net.app["Globe"].server.hideAll(gdo.controlId);
+        });
+        $("#show_all").click(function () {
+            gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Showing all markers");
+            gdo.net.app["Globe"].server.showAll(gdo.controlId);
+
+        });
+        $("#broadcast")
+            .click(function() {
+                var center = earth.getCenter();
+                var zoom = earth.getZoom();
+                console.log(center, zoom);
+                var lat;
+                var lng;
+                if (gdo.net.instance[instanceId].mode == "L") {
+                    lat = center['lat'];
+                    lng = center['lng'];
+                } else {
+                    lat = center[0];
+                    lng = center[1];
+                }
+                gdo.net.app["Globe"].broadcastState(gdo.controlId, lat, lng, zoom);
+            });
+
+        $("#marker_digit_button").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["Globe"].server.processMarkers(gdo.controlId, $("#marker_digit").val());
+        });
+        $("#mode0").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["Globe"].server.setScalingMode(gdo.controlId, 0);
+        });
+        $("#mode1").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["Globe"].server.setScalingMode(gdo.controlId, 1);
+        });
+        $("#mode2").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["Globe"].server.setScalingMode(gdo.controlId, 2);
+        });
+        earth.on('move', function (e) {
+            var center = earth.getCenter();
+            var zoom = earth.getZoom();
+            console.log(center, zoom);
+            var lat;
+            var lng;
+            if (gdo.net.instance[gdo.controlId].mode == "L") {
+                lat = center['lat'];
+                lng = center['lng'];
+            } else {
+                lat = center[0];
+                lng = center[1];
+            }
+            gdo.net.app["Globe"].broadcastState(gdo.controlId, lat, lng, zoom);
+        });
+    });
+    var earth;
+    var K = WE;
+    function intializeGlobe(instanceId) {
+        var gdo = parent.gdo;
+        if (gdo.net.instance[instanceId].mode == "L") {
+
+            K = L;
+        }
+        
+        earth = new K.map('earth_div');
+        K.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(earth);
+        earth.setView([51.505, 0], 6);
+    };
+
+    function zoom(i) {
+        if (i > 0) {
+            earth.zoomIn(i);
+        } else if (i < 0) {
+            earth.zoomOut(-i);
+        }
+    }
+
+    function pan(x, y) {
+        var center = earth.getCenter();
+        if (gdo.net.instance[instanceId].mode == "L") {
+            center['lat'] += x;
+            center['lng'] += y;
+        } else {
+            center[0] += y;
+            center[1] += x;
+        }
+        earth.panTo(center, { duration: 1 });
+    }
+
+    function tilt(i) {
+        var tilt = earth.getTilt();
+        earth.setTilt(tilt + i);
+    }
+
+    function addMarkers(instanceId, markers) {
+        var gdo = parent.gdo;
+        gdo.net.instance[instanceId].markers = {};
+        for (var i = 0; i < markers.length; ++i) {
+            var m = K.marker([markers[i].coordinate.latitude, markers[i].coordinate.longitude]).addTo(earth);
+            m.bindPopup(markers[i].htmlLabel,
+            {
+                maxWidth: gdo.net.app["Globe"].markerProperties["maxWidth"],
+                closeButton: false
+            });
+            m.idx = markers[i].id;
+            m.isVisible = false;
+            m.on("click",
+                function (e) {
+                    var id = e.target.idx;
+                    gdo.consoleOut('.Globe', 1, 'Clicked marker ' + id);
+                    var isVisible = gdo.net.instance[instanceId].markers[id].isVisible;
+                    gdo.net.app["Globe"].server.setMarkerVisibility(gdo.controlId, id, !isVisible);
+                });
+            gdo.net.instance[instanceId].markers[markers[i].id] = m;
+        }
+    }
+
+
+</script>
+<div class="wrapper" style="width: 97%">
+    @{
+        var path = "";
+        var filename = "";
+        if (IsPost)
+        {
+
+            HttpPostedFileBase file = Request.Files[0];
+            if (file != null && !file.FileName.IsEmpty())   //need to add this check, because it tried to save empty file in subsequent button clicks
+            {
+                filename = Path.GetFileName(file.FileName);
+                //foldername
+                Directory.CreateDirectory(HttpContext.Current.Server.MapPath("~/Web/Globe/markers"));
+                path = HttpContext.Current.Server.MapPath("~/Web/Globe/markers/") + filename;
+                if (File.Exists(path))
+                {  // if the file already exists, delete it
+                    File.Delete(path);
+                }
+                file.SaveAs(path);
+            }
+        }
+    }
+    <div>
         <div class="row">
             <div class="col-lg-3">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h6><i class='fa  fa-comment-o  fa-fw'></i>&nbsp;Say Hello</h6>
+                        <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Marker File</h6>
                     </div>
                     <div class="panel-body">
-                        <table style="border-collapse: separate; border-spacing: 3px;background-color:transparent;">
-                            <tr>
-                                <td>
-                                    <div style="background-color:transparent"><h6>To:</h6></div>
-                                </td>
-                                <td>
-                                    <div class="input_field_div"><input type="text" class="input_field" id="hello_input"></div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="panel-footer">
                         <fieldset>
-                            <button id="hello_submit" class="btn btn-success btn-circle btn-xl center-block format_button "><i class='fa  fa-check fa-fw'></i></button>
+                            <form id="submit_markers_form" action="" method="post" enctype="multipart/form-data">
+                                <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                    <tr>
+                                        <td>
+                                            <div style="background-color: transparent">
+                                                <span class="btn btn-primary btn-file btn-block" style="border-color: transparent;"><i class='fa  fa-file-picture-o fa-fw'></i>&nbsp;Choose File <input type="file" name="Graph" class="upload" id="select_graph"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input id="submit_markers" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Process"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
                         </fieldset>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Find Processed Marker Files</h6>
+                    </div>
+                    <div class="panel-body">
+                        <fieldset>
+                            <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                <tr>
+                                    <td>
+                                        <div style="background-color: transparent"><h6>Previous Marker:</h6>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="input_field_div">
+                                            <select class="input_field" id="marker_digit">
+                                                @{
+                                                    string markerfolder = System.Web.HttpContext.Current.Server.MapPath("~/Web/Globe/markers");
+                                                    string[] files = Directory.GetFiles(markerfolder);
+                                                }
+                                                @foreach (var s in files)
+                                                {
+                                                    <option value="@s.Split('\\').Last()">@s.Split('\\').Last()</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type='button' id="marker_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div id="admin-panel" class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
+                    </div>
+                    <div class="panel-body">
+                        <button type='button' id="debug" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Debug</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div id="message_panel" class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>
+                    </div>
+                    <div class="panel-body">
+                        <fieldset>
+                            <h6 id="message_from_server"></h6>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                            <tr>
+                                <td>
+                                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                        <tr>
+                                            <td></td>
+                                            <td><button id="pan_up" class="btn btn-success"><i class='fa fa-arrow-up'></i>&nbsp;</button></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><button id="pan_left" class="btn btn-success"><i class='fa fa-arrow-left'></i>&nbsp;</button></td>
+                                            <td></td>
+                                            <td><button id="pan_right" class="btn btn-success"><i class='fa fa-arrow-right'></i>&nbsp;</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td><button id="pan_down" class="btn btn-success"><i class='fa fa-arrow-down'></i>&nbsp;</button></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                        <tr>
+                                            <td><button id="zoom_in" class="btn btn-success"><i class='fa fa-search-plus'></i>&nbsp;</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><button id="zoom_out" class="btn btn-success"><i class='fa fa-search-minus'></i>&nbsp;</button></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                                        <tr>
+                                            <td><button id="tilt_down" class="btn btn-success"><i class='fa fa-undo'></i>&nbsp;</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><button id="tilt_up" class="btn btn-success"><i class='fa fa-repeat'></i>&nbsp;</button></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <button id="broadcast" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp;BROADCAST</button>
+                <button id="markers" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Process</button>
+                <button id="hide_all" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Hide All Tweets</button>
+                <button id="show_all" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Show All Tweets</button>
+                <span>&nbsp; Number of markers: <span id="numberMarkers">0</span></span>
+                <button id="mode0" class='btn btn-danger btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Eau Natural</button>
+                <button id="mode1" class='btn btn-danger btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Scale Mode</button>
+                <button id="mode2" class='btn btn-danger btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Translate Mode</button>
+                
+
+            </div>
+        </div>
+        <div>
+            <div class="col-lg-12">
+                <div id="earth_div"></div>
+            </div>
         </div>
     </div>
+    @if (path != "")
+    {
+        <script>
+            $(function () {
+                $(document).ready(function () {
+                    var gdo = parent.gdo;
+                    gdo.consoleOut('.Globe', 1, 'Instance ' + gdo.controlId + ": Uploaded marker file " + "@filename");
+                    gdo.net.app["Globe"].server.processMarkers(gdo.controlId, "@filename");
+                });
+            });
+        </script>
+    }
+
+</div>
 </body>
 </html>

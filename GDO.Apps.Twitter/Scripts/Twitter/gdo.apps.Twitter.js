@@ -13,8 +13,10 @@
         var messageDes = JSON.parse(message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["Twitter"].setAPIMessage(instanceId, messageDes);
+//            console.log(gdo.net.instance[instanceId])
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
+//            console.log(gdo.net.instance[instanceId])
             $("iframe").contents().find("#client_api_status_message").empty().append(messageDes.msg);
         }
     }
