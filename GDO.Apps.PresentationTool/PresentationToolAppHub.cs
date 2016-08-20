@@ -446,7 +446,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void UpdateVoiceInfo(int instanceId, string info, int type)
+        public void requestVoiceInfo(int instanceId, string info, int type)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -454,6 +454,30 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     Clients.Group("" + instanceId).receiveVoiceInfo(info, type);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to update voice information", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void UpdateVoiceInfo(int instanceId, int col, int row, string info, int type)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    if (col == 0 && row == 0)
+                    {
+                        Clients.Caller.setVoiceInfo(info, type, true);
+                    } else
+                    {
+                        Clients.Caller.setVoiceInfo(info, type, false);
+                    }
+
                 }
                 catch (Exception e)
                 {

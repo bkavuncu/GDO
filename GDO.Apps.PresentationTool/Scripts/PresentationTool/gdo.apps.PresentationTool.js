@@ -91,12 +91,23 @@
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            if (type === 1) {
-                $("iframe").contents().find("#voice_info").empty().hide().append(info).fadeIn(1500);
-            } else if (type === 0){
-            } 
+            gdo.consoleOut('.PresentationTool', 1, 'Requesting update voice info from section: ' + gdo.net.node[gdo.clientId].sectionCol + ', ' + gdo.net.node[gdo.clientId].sectionRow);
+            gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.net.node[gdo.clientId].appInstanceId,
+                                                          gdo.net.node[gdo.clientId].sectionCol,
+                                                          gdo.net.node[gdo.clientId].sectionRow,
+                                                          info, type);
         }
     }
+
+    $.connection.presentationToolAppHub.client.setVoiceInfo = function (info, type, firstChild) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.PresentationTool', 1, 'Set voice control information: ' + info + firstChild);
+            $("iframe")[0].contentWindow.setVoiceInfo(info, type, firstChild);
+        }
+    }
+
     $.connection.presentationToolAppHub.client.changeVoiceControlStatus = function (currentStatus) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (currentStatus === 0) {
@@ -491,6 +502,8 @@ gdo.net.app["PresentationTool"].initControl = function () {
     gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId, 0);
     gdo.net.app["PresentationTool"].server.updateFileList(gdo.controlId);
     gdo.net.app["PresentationTool"].server.restoreVoiceControlStatus(gdo.controlId);
+    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Say 'Hello there' to start voice control", 1);
+
 }
 
 gdo.net.app["PresentationTool"].terminateClient = function () {

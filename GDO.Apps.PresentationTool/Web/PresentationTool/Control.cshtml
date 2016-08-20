@@ -349,21 +349,21 @@
                                     <span id="open_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Open<input type="file" name="file" class="upload" id="upload_slide" /></span>
                                 </div>         
                                 <div>
-                                    <button id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</button>
+                                    <span id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</span>
                                     <a id="slide_link"></a>
                                 </div>
 
                                 <div>
-                                    <button id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</button>
+                                    <span id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</span>
                                 </div>
                                 <div>
-                                    <button id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</button>
+                                    <span id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</span>
                                 </div>
                                 <div>
-                                    <button id="new_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</button>
+                                    <span id="new_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</span>
                                 </div>
                                 <div>
-                                    <button id="delete_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</button>
+                                    <span id="delete_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</span>
                                 </div>
                                   
                             </form>
@@ -576,7 +576,7 @@
                 action: function (i) {
                     artyom.say("Hey there !");
                     artyom.say("You could say following commands");
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Hey there! You could say following commands: Next, preivous, load and play", 1);
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Hey there! You could say following commands: Next, previous, load and play", 1);
                  
                 }
             },
@@ -584,7 +584,7 @@
                 indexes: ["Next page"],
                 action: function (i) {
                     artyom.say("Next page");
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Loading next page", 1);
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Loading next page", 1);
                     $("#next_slide").click();
                     $("#load_slide").click();
                 }
@@ -593,7 +593,7 @@
                 indexes: ["Previous page"],
                 action: function (i) {
                     artyom.say("Previous page");
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Loading previous page", 1);
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Loading previous page", 1);
                     $("#previous_slide").click();
                     $("#load_slide").click();
                 }
@@ -602,7 +602,7 @@
                 indexes: ["Load page"],
                 action: function (i) {
                     artyom.say("Load page");
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Loading current page", 1);
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Loading current page", 1);
                     $("#load_slide").click();
                 }
             },
@@ -610,7 +610,7 @@
                 indexes: ["Play current page"],
                 action: function (i) {
                     artyom.say("Play current page");
-                    gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Playing current page", 1);
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing current page", 1);
                     $("#play_slide").click();
                 }
             },
@@ -621,7 +621,7 @@
                 action: function (i, wildcard, sentence) {
                     if (database.indexOf(parseInt(wildcard.trim()))) {
                         curr_section = parseInt(wildcard.trim());
-                        gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Section " + curr_section, 1);
+                        gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Section " + curr_section, 1);
                     }
                 }
             },
@@ -630,7 +630,7 @@
                 indexes: ["Rotate Image"],
                 action: function (i) {
                     if (curr_section !== 0) {
-                        gdo.net.app["PresentationTool"].server.updateVoiceInfo(gdo.controlId, "Rotate Image on Section " + curr_section, 1);
+                        gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Rotate Image on Section " + curr_section, 1);
                         gdo.net.app["PresentationTool"].rotateImage(curr_section);
                     }
                 }
