@@ -541,7 +541,11 @@
 </div>
 <div class="tab-pane fade" id="chart_control">
     <div id="wrapper" style="border: 0 none; display: block; width: 100%; height: 61vh; background:white">
-        <iframe id="html_frame" src="http://www.bing.com" allowtransparency="true" frameborder="0" style="border: 0 none; display: block;width: 100%; height: 61vh"></iframe>
+@**@
+@*        <div class="iframe_wrapper">*@
+@*                        *@
+@*        </div>*@
+        <button id="test" class="btn btn-danger"><i class='fa fa-download '></i>&nbsp; test</button>
     </div>
 </div>
 </div>
@@ -879,7 +883,61 @@
         }
     }
 
-     
+//    $("#test")
+//            .on('click',
+//                function (e) {
+//                    console.log("pageX:" +
+//                   e.pageX +
+//                   " pageY: " +
+//                   e.pageY +
+//                   " screenX: " +
+//                   e.screenX +
+//                   " screenY: " +
+//                   e.screenY +
+//                   " clientX: " +
+//                   e.clientX +
+//                   " clientY: " +
+//                   e.clientY +
+//                   " offsetX: " +
+//                   e.offsetX +
+//                   " offsetY: " +
+//                   e.offsetY);
+//                    
+//                });
+//
+//    $(document)
+//        .ready(function() {
+//            $("div.iframe_wrapper")
+//                .mousemove(function(e) {
+//                    console.log(e);
+//                });
+//        });
+    
+//    $("#sub_app_control_frame").contents().find("body")
+//        .on('click',
+//            function (e) {
+//                console.log("pageX:" +
+//                    e.pageX +
+//                    " pageY: " +
+//                    e.pageY +
+//                    " screenX: " +
+//                    e.screenX +
+//                    " screenY: " +
+//                    e.screenY +
+//                    " clientX: " +
+//                    e.clientX +
+//                    " clientY: " +
+//                    e.clientY + 
+//                    " offsetX: "+ 
+//                    e.offsetX + 
+//                    " offsetY: "+
+//                    e.offsetY);
+//
+//            });
+
+
+
+
     $("#dataset_table tbody")
         .on('click',
             'tr',
