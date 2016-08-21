@@ -342,10 +342,7 @@
                             <hr style="clear:both; border: 0" />
                         </div>
                         <div class="panel-body" style="height: 35.5vh;overflow: hidden">           
-                            <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
-                                <div>
-                                    <span id="load_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</span>
-                                </div>   
+                            <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data"> 
                                 <div>
                                     <span id="play_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Play</span>
                                 </div>                               
@@ -538,7 +535,7 @@
 
         $("#play_slide").click(function () {
             var gdo = parent.gdo;
-            gdo.net.app["PresentationTool"].playCurrentSlide();
+            gdo.net.app["PresentationTool"].loadCurrentSlide();
         });
 
         $("#load_template").click(function () {
@@ -587,33 +584,29 @@
             {
                 indexes: ["Next page"],
                 action: function (i) {
-                    artyom.say("Next page");
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Loading next page", 1);
+                    //artyom.say("Playing next page");
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing next page", 1);
                     $("#next_slide").click();
-                    $("#load_slide").click();
+                    setTimeout(function () {
+                        $("#play_slide").click();
+                    }, 1000);
                 }
             },
             {
                 indexes: ["Previous page"],
                 action: function (i) {
-                    artyom.say("Previous page");
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Loading previous page", 1);
+                    //artyom.say("Playing previous page");
+                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing previous page", 1);
                     $("#previous_slide").click();
-                    $("#load_slide").click();
-                }
-            },
-            {
-                indexes: ["Load page"],
-                action: function (i) {
-                    artyom.say("Load page");
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Loading current page", 1);
-                    $("#load_slide").click();
+                    setTimeout(function () {
+                        $("#play_slide").click();
+                    }, 1000);
                 }
             },
             {
                 indexes: ["Play current page"],
                 action: function (i) {
-                    artyom.say("Play current page");
+                    //artyom.say("Playing previous page");
                     gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing current page", 1);
                     $("#play_slide").click();
                 }
@@ -663,8 +656,8 @@
             }
             $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-success");
 
-            var left = 0;
-            var top = 0;
+            var left = 0.00;
+            var top = 0.00;
 
             $('#img_preview > img').cropper({
                 autoCrop:false,
@@ -685,9 +678,7 @@
             $('#img_preview > img').on('cropmove.cropper', function (e) {
                 var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
                 if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
-                    var x = $(this).cropper('getCanvasData').left - left;
-                    var y = $(this).cropper('getCanvasData').top - top;
-                    gdo.net.app["Images"].server.requestMoveImage(instanceId, x, y);
+                    gdo.net.app["Images"].server.requestMoveImage(instanceId, $(this).cropper('getCanvasData').left - left, $(this).cropper('getCanvasData').top - top);
                     left = $(this).cropper('getCanvasData').left;
                     top = $(this).cropper('getCanvasData').top;
                 }
@@ -696,11 +687,10 @@
             $('#img_preview > img').on('zoom.cropper', function (e) {
                 var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
                 if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
-                    console.log(e.oldRatio);
                     if (e.ratio > e.oldRatio) {
-                        gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.1);
+                        gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.05);
                     } else {
-                        gdo.net.app["Images"].server.requestZoomImage(instanceId, -0.1);
+                        gdo.net.app["Images"].server.requestZoomImage(instanceId, -0.05);
                     }
                 }
             });

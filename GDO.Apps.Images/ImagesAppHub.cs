@@ -224,7 +224,7 @@ namespace GDO.Apps.Images
             {
                 Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
                 //Clients.Caller.receiveImageName(imageName, imageNameDigit);
-                Clients.Caller.reloadIFrame();
+                Clients.Caller.reloadIFrame(instanceId);
             }
             catch (Exception e)
             {
@@ -576,7 +576,7 @@ namespace GDO.Apps.Images
             }
         }
 
-        public void RequestMoveImage(int instanceId, float x, float y)
+        public void RequestMoveImage(int instanceId, double x, double y)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -600,8 +600,27 @@ namespace GDO.Apps.Images
             }
         }
 
+        public void RequestZoomImage(int instanceId, double ratio)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ratio = (ratio < 0) ? ratio = 1 / (1 - ratio) : 1 + ratio;
+                    ratio = ia.ThumbNailImage.imageData.width * ratio / ia.ThumbNailImage.imageData.naturalWidth;
+                    RequestZoomToImage(instanceId, ratio);
+                    Clients.Caller.setMessage("Requested zoom image Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
 
-        public void RequestZoomImage(int instanceId, float ratio)
+        public void RequestZoomToImage(int instanceId, double ratio)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -611,8 +630,12 @@ namespace GDO.Apps.Images
                     ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
                     if (ia.ThumbNailImage != null)
                     {
-                        ia.ThumbNailImage.imageData.width *= (1 + ratio);
-                        ia.ThumbNailImage.imageData.height *= (1 + ratio);
+                        double newWidth = ia.ThumbNailImage.imageData.naturalWidth * ratio;
+                        double newHeight = ia.ThumbNailImage.imageData.naturalHeight * ratio;
+                        ia.ThumbNailImage.canvasData.left -= (newWidth - ia.ThumbNailImage.imageData.width) / 2;
+                        ia.ThumbNailImage.canvasData.top -= (newHeight - ia.ThumbNailImage.imageData.height) / 2;
+                        ia.ThumbNailImage.imageData.width = newWidth;
+                        ia.ThumbNailImage.imageData.height = newHeight;
                         SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
                     }
                     Clients.Caller.setMessage("Requested zoom image Success!");

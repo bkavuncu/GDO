@@ -253,9 +253,9 @@ gdo.net.app["PresentationTool"].rotateImage = function (instanceId) {
                 setTimeout(function () {
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
+                    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
+                    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', '');
                 }, 200);
-                $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
-                $("iframe").contents().find("#hidden_app_iframe").attr('src', '');
             });   
         });
     });
@@ -290,6 +290,8 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
             gdo.net.app["PresentationTool"].deployApp(section, "Default");
         }
     }
+    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool', 'playCurrentSlide', [], 0, false);
+
     gdo.net.app["PresentationTool"].readyToExcute();
     gdo.net.app["PresentationTool"].executeElement(gdo.net.app["PresentationTool"].Elements[gdo.net.app["PresentationTool"].CurrentElement]);
 }
@@ -308,6 +310,17 @@ gdo.net.app["PresentationTool"].deployApp = function (section, config) {
     }
 }
 
+gdo.net.app["PresentationTool"].zoomImage = function (instanceId, i) {
+    if (i == 36) {
+        //gdo.net.app["Images"].server.requestZoomToImage(instanceId, 1);
+        return;
+    }
+    gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.05);
+    setTimeout(function () {
+        gdo.net.app["PresentationTool"].zoomImage(instanceId, ++i);
+    }, 5);
+}
+
 // Play specific instance
 gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
     var instance = gdo.net.instance[instanceId];
@@ -324,6 +337,8 @@ gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#fill_mode").click();
                         $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (instanceId));
+                        gdo.net.app["Images"].server.requestZoomToImage(instanceId, 0.1);
+                        gdo.net.app["PresentationTool"].zoomImage(instanceId, 0);
                     }, 200);
                 });
             } else if (instance.appName === "YoutubeWall") {
@@ -366,7 +381,7 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
 
     if (i == numOfSections) {
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none"});
-        $("iframe").contents().find("#hidden_app_iframe").attr('src', '');
+        $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', '');
         return;
     };
 
@@ -375,7 +390,7 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
 
         var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (section.appInstanceId);
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
-        $("iframe").contents().find("#hidden_app_iframe").attr('src', appPage);
+        $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
 
         $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
             $(this).contents().find("iframe").on('load', function () {
