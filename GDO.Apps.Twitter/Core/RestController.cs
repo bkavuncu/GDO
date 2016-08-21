@@ -65,14 +65,13 @@ namespace GDO.Apps.Twitter.Core
             return Get<AnalyticsData>(url) ?? new AnalyticsData();
         }
 
-        public string DownloadData(string dataSetId, string analyticsId, string filePath, string queryParams)
+        public string DownloadData(string url, string filePath)
         {
-            Debug.WriteLine("Attempting to dowload data for " + dataSetId + " " + analyticsId + " to " + filePath);
+            Debug.WriteLine("Attempting to dowload data from " + url);
             try
             {
                 Task dataDownloadTask =
-                    HttpClient.GetAsync("/API/dataset/" + dataSetId + "/analytics/" + analyticsId + "/data/dl?" +
-                                        queryParams)
+                    HttpClient.GetAsync(url)
                         .ContinueWith(async responseTask =>
                         {
                             responseTask.Result.EnsureSuccessStatusCode();

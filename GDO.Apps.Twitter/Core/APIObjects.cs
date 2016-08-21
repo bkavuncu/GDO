@@ -83,7 +83,7 @@ namespace GDO.Apps.Twitter.Core
         public string PreferedApp { get; set; }
 
         [DataMember(Name = "prefered_url")]
-        public string Classification { get; set; }
+        public string PreferedUrl { get; set; }
 
         [DataMember(Name = "urls")]
         public Dictionary<string, string> Urls{get; set; }
