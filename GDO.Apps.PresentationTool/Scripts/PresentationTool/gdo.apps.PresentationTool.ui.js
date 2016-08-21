@@ -24,9 +24,9 @@ $("iframe").contents().find('#template_list').on('click', 'li', function () {
 })
 
 // keywords submit click 
-$("iframe").contents().find('#update_keyword_submit').on('click', function () {
-    gdo.net.app["PresentationTool"].selectedResource = $("iframe").contents().find('#new_keyword').val();
-    gdo.net.app["PresentationTool"].appName = "YoutubeWall";
+$("iframe").contents().find('#update_url_submit').on('click', function () {
+    gdo.net.app["PresentationTool"].selectedResource = $("iframe").contents().find('#new_url').val();
+    gdo.net.app["PresentationTool"].appName = "Youtube";
     gdo.updateDisplayCanvas();
 }).on('blur', function (e) {
     if ($(e.relatedTarget).attr('id') == 'deploy-app-button')

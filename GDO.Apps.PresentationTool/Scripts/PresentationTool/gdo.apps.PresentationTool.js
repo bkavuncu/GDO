@@ -255,7 +255,7 @@ gdo.net.app["PresentationTool"].rotateImage = function (instanceId) {
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
                 }, 200);
                 $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
-                $("iframe").contents().find("#hidden_app_iframe").unbind();
+                $("iframe").contents().find("#hidden_app_iframe").attr('src', '');
             });   
         });
     });
@@ -284,6 +284,8 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appName === "YoutubeWall") {
             gdo.net.app["PresentationTool"].deployApp(section, "Imperial");
+        } else if (section.appName === "Youtube") {
+            gdo.net.app["PresentationTool"].deployApp(section, "Default");
         } else if (section.appName === "Images") {
             gdo.net.app["PresentationTool"].deployApp(section, "Default");
         }
@@ -300,7 +302,7 @@ gdo.net.app["PresentationTool"].deployApp = function (section, config) {
         if (section.appName === "Images") {
             // Real instance id start from 1
             gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'processImage', [section.appInstanceId, '"' + section.src.replace(/^.*[\\\/]/, '') + '"'], 0, false);
-        } else if (section.appName === "YoutubeWall") {
+        } else if (section.appName === "Youtube") {
 
         }
     }
@@ -327,10 +329,28 @@ gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
             } else if (instance.appName === "YoutubeWall") {
                 setTimeout(function () {
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#search_mode").click();
-                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(section.src);
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(gdo.net.app["PresentationTool"].section[instance.id].src);
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#update_keyword_submit").click();
                     $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (instanceId));
                 }, 200);
+            } else if (instance.appName === "Youtube") {
+                setTimeout(function () {
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#url_input").val(gdo.net.app["PresentationTool"].section[instance.id].src);
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#url_submit").click();
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#youtube_title").bind('DOMSubtreeModified', function () {
+                        $("iframe").contents().find("#youtube_title").text($("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#youtube_title").text());
+                    });
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#youtube_duration").bind('DOMSubtreeModified', function () {
+                        $("iframe").contents().find("#youtube_duration").text($("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#youtube_duration").text());
+                    });
+                    $("iframe").contents().find("#video_play").click(function () {
+                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#playButton").click();
+                    });
+                    $("iframe").contents().find("#video_pause").click(function () {
+                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#pauseButton").click();
+                    });
+                    $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (instanceId));
+                }, 1000);
             }
         });
     });
@@ -346,7 +366,7 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
 
     if (i == numOfSections) {
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none"});
-        $("iframe").contents().find("#hidden_app_iframe").unbind();
+        $("iframe").contents().find("#hidden_app_iframe").attr('src', '');
         return;
     };
 
@@ -355,7 +375,7 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
 
         var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (section.appInstanceId);
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
-        $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
+        $("iframe").contents().find("#hidden_app_iframe").attr('src', appPage);
 
         $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
             $(this).contents().find("iframe").on('load', function () {
@@ -503,7 +523,6 @@ gdo.net.app["PresentationTool"].initControl = function () {
     gdo.net.app["PresentationTool"].server.updateFileList(gdo.controlId);
     gdo.net.app["PresentationTool"].server.restoreVoiceControlStatus(gdo.controlId);
     gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Say 'Hello there' to start voice control", 1);
-
 }
 
 gdo.net.app["PresentationTool"].terminateClient = function () {

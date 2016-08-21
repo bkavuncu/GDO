@@ -130,7 +130,13 @@ namespace GDO.Apps.PresentationTool
         {
             int instanceId = Utilities.GetAvailableSlot<string>(Slides[CurrentSlide].Instances);
             Slides[CurrentSlide].Instances.Add(instanceId, appName);
-            Slides[CurrentSlide].Sections[sectionId].Src = "Files" + src;
+            if (appName == "Images")
+            {
+                Slides[CurrentSlide].Sections[sectionId].Src = "Files" + src;
+            } else
+            {
+                Slides[CurrentSlide].Sections[sectionId].Src = src;
+            }
             Slides[CurrentSlide].Sections[sectionId].AppInstanceId = instanceId;
             Slides[CurrentSlide].Sections[sectionId].AppName = appName;
             return;
