@@ -44,6 +44,9 @@ namespace GDO.Apps.Twitter.Core
         [DataMember(Name = "end_time")]
         public DateTime EndTime { get; set; }
 
+        [DataMember(Name = "uri_analytics")]
+        public string UriAnalytics { get; set; }
+
     }
 
     [DataContract]
@@ -66,7 +69,25 @@ namespace GDO.Apps.Twitter.Core
 
         [DataMember(Name = "dataset_id")]
         public string DatasetId { get; set; }
+
+        [DataMember(Name = "uri_data")]
+        public string UriData { get; set; }
+
+    }
+
+    [DataContract]
+    public class AnalyticsData
+    {
         
+        [DataMember(Name = "prefered_app")]
+        public string PreferedApp { get; set; }
+
+        [DataMember(Name = "prefered_url")]
+        public string Classification { get; set; }
+
+        [DataMember(Name = "urls")]
+        public Dictionary<string, string> Urls{get; set; }
+
     }
 
     [DataContract]

@@ -45,10 +45,9 @@ namespace GDO.Apps.Twitter.Core
             return (Get<DataSet[]>("API/dataset") ?? new DataSet[0]).ToArray();
         }
 
-        public Dictionary<string, List<Analytics>> GetAnalyticsList(string dataSetId)
+        public List<Analytics> GetAnalyticsList(string dataSetId)
         {
-            var dataSetAnalyticses= (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).ToList();
-            return dataSetAnalyticses.GroupBy(o => o.Classification).ToDictionary(g => g.Key, g => g.ToList());
+            return (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).ToList(); 
         }
 
         public Analytics GetAnalytics(string dataSetId, string id)
@@ -59,6 +58,11 @@ namespace GDO.Apps.Twitter.Core
         public AnalyticsOption[] GetAnalyticsOptions()
         {
             return Get<AnalyticsOption[]>("API/analytics_options") ?? new AnalyticsOption[0].ToArray();
+        }
+
+        public AnalyticsData GetAnalyticsMetaData(string url)
+        {
+            return Get<AnalyticsData>(url) ?? new AnalyticsData();
         }
 
         public string DownloadData(string dataSetId, string analyticsId, string filePath, string queryParams)
