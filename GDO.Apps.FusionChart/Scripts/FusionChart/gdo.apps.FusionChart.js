@@ -39,11 +39,11 @@
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting debug mode " + showDebug);
             if (showDebug) {
-                $("iframe").contents().find('#chart-container').css("z-index", "-1");
+                $("iframe").contents().find('#wrapper').css("z-index", "-1");
                 $("iframe").parent().parent().siblings(".overlay").css("z-index", "8");
                 gdo.net.instance[instanceId].debug = true;
             } else {
-                $("iframe").contents().find('#chart-container').css("z-index", "1");
+                $("iframe").contents().find('#wrapper').css("z-index", "1");
                 $("iframe").parent().parent().siblings(".overlay").css("z-index", "999");
                 gdo.net.instance[instanceId].debug = false;
             }
