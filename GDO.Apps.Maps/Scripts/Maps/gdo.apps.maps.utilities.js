@@ -103,8 +103,8 @@ gdo.net.app["Maps"].prepareProperty = function (instanceId, object, paramType, v
     }
 }
 
-gdo.net.app["Maps"].createObject = function (instanceId, objectType, objectId, deserializedObject) {
-    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Creating ' + objectType + ': ' + deserializedObject.Id.Value);
+gdo.net.app["Maps"].createObject = function (instanceId, deserializedObject) {
+    gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Creating ' + deserializedObject.ObjectType.Value + ': ' + deserializedObject.Id.Value);
     var object = {};
     var properties = [];
     var options = {};
@@ -139,13 +139,13 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                 var dummyProperties = jQuery.extend(true, {}, deserializedObject);
                 dummyProperties.Url.Value = "../../Data/Maps/dummy.json";
                 dummyProperties.Url.IsNull = false;
-                object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, dummyProperties);
+                object = gdo.net.app["Maps"].createObject(instanceId, dummyProperties);
                 object.properties = deserializedObject;
 
                 if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                     object.sources = [];
                     object.timestamps = [];
-                    object.sources[0] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, dummyProperties);
+                    object.sources[0] = gdo.net.app["Maps"].createObject(instanceId, dummyProperties);
                     object.sources[0].date = new Date(config.files[0].timestamp);
                     object.timestamps[0] = object.sources[0].date.getTime() - 1;
                     var i;
@@ -154,14 +154,14 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
                         tempProperties.Url.Value = config.files[i].file;
                         tempProperties.Url.IsNull = false;
                         object.sources[i + 1] = {};
-                        object.sources[i + 1] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, tempProperties);
+                        object.sources[i + 1] = gdo.net.app["Maps"].createObject(instanceId, tempProperties);
                         object.sources[i + 1].date = new Date(config.files[i].timestamp);
                         object.timestamps[i + 1] = object.sources[i].date.getTime();
                         object.sources[i + 1].object.loadFeatures([-10000, -10000, 10000, 10000], 1,
                         ol.proj.get('EPSG:3857'));
                     }
                     i--;
-                    object.sources[i + 2] = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, dummyProperties);
+                    object.sources[i + 2] = gdo.net.app["Maps"].createObject(instanceId, dummyProperties);
                     object.sources[i + 2].date = new Date(config.files[i].timestamp);
                     object.timestamps[i + 2] = object.sources[i].date.getTime() + 1;
                 }
@@ -187,50 +187,95 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
             eval("object.object = function(feature) {" +
                     "var temp;" +
                     "var properties = feature.getProperties();" +
+                    "var extractStyle = false;" +
+                    "for(var key in properties){" +
+                        "if (properties.hasOwnProperty(key)){" +
+                            "if(key.indexOf('_')>=0){" +
+                                "extractStyle = true;" +
+                            "}" +
+                        "}" +
+                    "}" +
                     "switch(feature.getGeometry().getType()) {" +
                         "case 'Point':" +
                             "if(" + deserializedObject.PointStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PointStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PointStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PointStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PointStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                             "break;" +
                         "case 'MultiPoint':" +
                             "if(" + deserializedObject.MultiPointStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPointStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPointStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPointStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPointStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                             "break;" +
                         "case 'Circle':" +
                             "if(" + deserializedObject.CircleStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.CircleStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.CircleStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.CircleStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.CircleStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                             "break;" +
                         "case 'LineString':" +
                             "if(" + deserializedObject.LineStringStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.LineStringStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.LineStringStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.LineStringStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.LineStringStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                             "break;" +
                         "case 'MultiLineString':" +
                             "if(" + deserializedObject.MultiLineStringStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiLineStringStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiLineStringStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiLineStringStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiLineStringStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                             "break;" +
                         "case 'Polygon':" +
                             "if(" + deserializedObject.PolygonStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PolygonStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PolygonStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PolygonStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.PolygonStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                            "break;" +
                         "case 'MultiPolygon':" +
                             "if(" + deserializedObject.MultiPolygonStyle.Value + ">0){" +
-                                "temp = jQuery.extend(true, {}, gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPolygonStyle.Value + "].object)" +
+                                "if(extractStyle){" +
+                                    //"temp = gdo.net.app['Maps'].createObject(" + instanceId + ", gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPolygonStyle.Value + "].properties).object;" +
+                                    "temp = jQuery.extend(true,{},gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPolygonStyle.Value + "].object);" +
+                                "}else{" +
+                                    "temp = gdo.net.instance[" + instanceId + "].styles[" + deserializedObject.MultiPolygonStyle.Value + "].object;" +
+                                "}" +
                             "}" +
                            "break;" +
                     "}" +
-                    "if(temp != null){" +
+                    "if(extractStyle){" +
                         "for(var key in properties){" +
                             "if (properties.hasOwnProperty(key)){" +
                                 "var index = key.indexOf('_');" +
                                 "if(index > 0){" +
                                     "var func = key.slice(index+1,100);" +
                                     "var obj = 'temp.' + key.slice(0,index) + '_';" +
+                                    "eval(obj+' = jQuery.extend(true, {}, '+obj+');');" +
+                                    //"var obj = jQuery.extend(true, {}, eval(obj));"+
                                     "var value = eval('properties.'+key);" +
                                     "eval(obj+'.set' + upperCaseFirstLetter(func)+'(\"'+value+'\");');" +
                                 "}" +
@@ -242,7 +287,7 @@ gdo.net.app["Maps"].addObject = function (instanceId, objectType, objectId, dese
             object.properties = deserializedObject;
             break;
         default:
-            object = gdo.net.app["Maps"].createObject(instanceId, objectType, objectId, deserializedObject);
+            object = gdo.net.app["Maps"].createObject(instanceId, deserializedObject);
             break;
     }
     object.properties = deserializedObject;
