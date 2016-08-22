@@ -14,12 +14,14 @@ namespace GDO.Apps.Twitter.Core
     public class RestController
     {
         private HttpClient HttpClient { get; }
+        private StatusMsg StatusMsg { get; set; }
+        public Dictionary<string, DataSet> DataSets { get; set; }
+        public Dictionary<string, Dictionary<string, Analytics>> Analytics { get; set; }
 
-        public RestController(Uri url)
+        public RestController(Uri url, string authentication = "Y3BzMTVfdXNlcjpzZWNyZXQ=")
         {
             HttpClient = new HttpClient {BaseAddress = url};
-            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                "Y3BzMTVfdXNlcjpzZWNyZXQ=");
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authentication);
             HttpClient.DefaultRequestHeaders.Accept.Clear();
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
@@ -27,47 +29,54 @@ namespace GDO.Apps.Twitter.Core
 
         public StatusMsg GetApiMessage()
         {
-            return Get<StatusMsg>("/API") ?? new StatusMsg() { Msg = "Could not connect to API", Healthy = false };
+            StatusMsg =  Get<StatusMsg>("/API") ?? new StatusMsg() { Msg = "Could not connect to API", Healthy = false };
+            Debug.WriteLine("Using base paths: " + StatusMsg.DataSetUrl + " " + StatusMsg.AnalysisOptionsUrl);
+            return StatusMsg;
         }
 
         public List<AnalyticsRequest> GetNewAnalytics(List<AnalyticsRequest> newAnalyticsList)
         {
-            return newAnalyticsList.Select(r => Post("API/dataset/" + r.dataset_id + "/analytics", r)).ToList();
+            return newAnalyticsList.Select(r => Post(DataSets[r.dataset_id].UriAnalytics, r)).ToList();
         }
 
         public DataSet GetDataSet(string id)
         {
-            return Get<DataSet>("API/dataset/" + id) ?? new DataSet();
+            return Get<DataSet>(StatusMsg.DataSetUrl +"/" + id) ?? new DataSet();
         }
 
-        public DataSet[] GetDataSetList()
+        public Dictionary<string, DataSet> GetDataSetList()
         {
-            return (Get<DataSet[]>("API/dataset") ?? new DataSet[0]).ToArray();
-        }
-
-        public List<Analytics> GetAnalyticsList(string dataSetId)
-        {
-            return (Get<Analytics[]>("API/dataset/" + dataSetId + "/analytics") ?? new Analytics[0]).ToList(); 
+            DataSets = (Get<DataSet[]>(StatusMsg.DataSetUrl) ?? new DataSet[0]).ToDictionary(ds => ds.Id, ds => ds);
+            return DataSets;
         }
 
         public Analytics GetAnalytics(string dataSetId, string id)
         {
-            return Get<Analytics>("API/dataset/" + dataSetId + "/analytics/" + id) ?? new Analytics();
+            return Get<Analytics>(DataSets[dataSetId].UriAnalytics + "/" + id) ?? new Analytics();
+        }
+
+        public Dictionary<string, Dictionary<string, Analytics>> GetAnalyticsList(List<string> dataSetIds)
+        {
+            Dictionary<string, List<Analytics>> analytics = dataSetIds.ToDictionary(dsId => dsId,
+                                                 dsId => Get<Analytics[]>(DataSets[dsId].UriAnalytics).ToList());
+
+            Analytics = analytics.ToDictionary(a => a.Key, a => a.Value.ToDictionary(b => b.Id, b => b));
+            return Analytics;
         }
 
         public AnalyticsOption[] GetAnalyticsOptions()
         {
-            return Get<AnalyticsOption[]>("API/analytics_options") ?? new AnalyticsOption[0].ToArray();
+            return Get<AnalyticsOption[]>(StatusMsg.AnalysisOptionsUrl) ?? new AnalyticsOption[0].ToArray();
         }
 
-        public AnalyticsData GetAnalyticsMetaData(string url)
+        public AnalyticsData GetAnalyticsData(string url)
         {
             return Get<AnalyticsData>(url) ?? new AnalyticsData();
         }
 
         public string DownloadData(string url, string filePath)
         {
-            Debug.WriteLine("Attempting to dowload data from " + url);
+            Debug.WriteLine("Download request to " + url + " " + filePath);
             try
             {
                 Task dataDownloadTask =
@@ -102,6 +111,7 @@ namespace GDO.Apps.Twitter.Core
 
         public T Post<T>(string url, T postValue) where T : class
         {
+            Debug.WriteLine("Post request to " + url);
             try
             {
                 Task<T> postTask = HttpClient.PostAsJsonAsync(url, postValue).ContinueWith(responseTask =>
@@ -133,6 +143,7 @@ namespace GDO.Apps.Twitter.Core
 
         public T Get<T>(string url) where T : class
         {
+            Debug.WriteLine("Get request to " + url);
             try
             {
                 Task<T> dataSetTask = HttpClient.GetAsync(url).ContinueWith(resposeTask =>

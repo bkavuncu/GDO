@@ -13,7 +13,8 @@
         var messageDes = JSON.parse(message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["Twitter"].setAPIMessage(instanceId, messageDes);
-//            console.log(gdo.net.instance[instanceId])
+            gdo.consoleOut('.Twitter', 1, 'Using data set endpoint : ' + messageDes.uri_data_set);
+            gdo.consoleOut('.Twitter', 1, 'Using analytics options endpoint : ' + messageDes.uri_analysis_options);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
 //            console.log(gdo.net.instance[instanceId])
@@ -112,9 +113,6 @@ gdo.net.app["Twitter"].updateDisplayCanvas = function (instanceId) {
 gdo.net.app["Twitter"].processCaveStatus = function (instanceId, status, refreshN) {
     gdo.consoleOut('.Twitter', 1, 'Processing cave status');
     gdo.net.instance[instanceId].caveStatus = status;
-
-    console.log(gdo.net.instance[instanceId].caveStatus);
-
     gdo.consoleOut('.Twitter', 1, "Checking if sections need to be created");
     gdo.net.app["Twitter"].createSections(status.sectionsToCreate);
     gdo.consoleOut('.Twitter', 1, "Checking if apps need to be deployed");
@@ -188,31 +186,23 @@ gdo.net.app["Twitter"].launchApp = function (section) {
 gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
     switch (section.twitterVis.appType) {
         case "Graph":
-            gdo.net.app["Twitter"].startGraphApp(section.appInstanceId, section.twitterVis.filePath);
+            gdo.consoleOut('.Twitter', 1, 'Requesting server start Graph app with path  = ' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
+            gdo.net.app["Graph"].server.initiateProcessing(section.appInstanceId, section.twitterVis.filePath);
             break;
         case "Images":
-            gdo.net.app["Twitter"].startImageApp(section.appInstanceId, section.twitterVis.filePath);
-            break;
+            gdo.consoleOut('.Twitter', 1, "Requesting server start Image app at instance " + section.appInstanceId);
+            gdo.net.app["Images"].server.processImage(section.appInstanceId, section.twitterVis.filePath);
         case "StaticHTML":
-            gdo.net.app["Twitter"].startStaticHTMLApp(section.appInstanceId, section.twitterVis.filePath);
+            gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
+            gdo.net.app["StaticHTML"].server.setURL(section.appInstanceId, section.twitterVis.filePath);
             break;
+        case "FusionChart":
+            gdo.consoleOut('.Twitter', 1, 'Requesting server start FusionChart app with path = "' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
+            gdo.net.app["FusionChart"].server.processFile(section.appInstanceId, section.twitterVis.filePath);
         default:
             gdo.consoleOut('.Twitter', 2, 'App is an unknown type could not be deployed');
             break;
     }
-}
-gdo.net.app["Twitter"].startStaticHTMLApp = function (appInstanceId, url) {
-    gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + url + "' at instance " + appInstanceId);
-    gdo.net.app["StaticHTML"].server.setURL(appInstanceId, url);
-    return appInstanceId;
-}
-gdo.net.app["Twitter"].startImageApp = function (appInstanceId, path) {
-    gdo.consoleOut('.Twitter', 1, "Requesting server start Image app at instance " + appInstanceId);
-    gdo.net.app["Images"].server.processImage(appInstanceId, path);
-}
-gdo.net.app["Twitter"].startGraphApp = function (appInstanceId, path) {
-    gdo.consoleOut('.Twitter', 1, 'Requesting server start Graph app at instance ' + appInstanceId);
-    gdo.net.app["Graph"].server.initiateProcessing(appInstanceId, path);
 }
 
 gdo.net.app["Twitter"].closeApp = function(section) {
@@ -223,14 +213,9 @@ gdo.net.app["Twitter"].closeApp = function(section) {
 gdo.net.app["Twitter"].closeApps = function (sections) {
     sections.forEach(function(section) {
         gdo.net.app["Twitter"].closeApp(section);
-    })
+    });
 };
 
-//
-//gdo.net.app["Twitter"].clearCave = function (instanceId, sectionIds, appInstanceIds) {
-//    gdo.net.app["Twitter"].closeApps(appInstanceIds);
-//    gdo.net.app["Twitter"].closeSections(sectionIds);
-//}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Functions Calling Twitter Hub

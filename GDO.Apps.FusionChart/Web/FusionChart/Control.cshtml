@@ -227,10 +227,13 @@
                 <div class="panel-body">
                     <span><input size="2" style="width: 10%" class="input_field" type="text" id="x_c" value="186" /></span>
                     <span><input size="2" style="width: 10%" class="input_field" type="text" id="y_c" value="1315" /></span>
-                    <button id="sendMouseEvent" class="btn btn-warning">Send</button>
-                    <button id="toggleDebugMode" class="FLAG_OFF btn btn-warning">Show Debug Mode</button>
-                    <button id="toggleMouseMove" class="FLAG_OFF btn btn-warning">On Mouse Move</button>
-                    <button id="reRender" class="btn btn-danger">ReRender</button>
+                    <div class="btn-group">
+                        <button id="sendMouseEvent" class="btn btn-warning">Send</button>
+                        <button id="toggleDebugMode" class="FLAG_OFF btn btn-warning">Show Debug Mode</button>
+                        <button id="toggleMouseMove" class="FLAG_OFF btn btn-warning">On Mouse Move</button>
+                        <button id="reRender" class="btn btn-danger">ReRender</button>
+                        <button id="debug" class="btn btn-warning">Debug</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -332,6 +335,16 @@
         var gdo = parent.gdo;
         gdo.net.app["FusionChart"].sendMouseEvent(e);
     }
+    
+
+    $("#debug")
+    .click(function () {
+        var gdo = parent.gdo;
+        console.log(gdo.net.instance[gdo.controlId]);
+            console.log(gdo.net.app["FusionChart"]);
+            gdo.net.app["FusionChart"].server.printState(gdo.controlId);
+    });
+
 
     $("#reRender")
         .click(function() {

@@ -1,45 +1,4 @@
-﻿//$("iframe")
-//    .contents()
-//    .find("#items_analytics_1")
-//    .on("click",
-//        'li',
-//        function() {
-//            var id = $(this).find("span:first").text().trim();
-//            gdo.consoleOut(".Twitter", 1, "Selected analytics with id: " + id);
-//            gdo.net.instance[gdo.controlId].control
-//                .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[1] };
-//            gdo.net.app["Twitter"].updateControlCanvas(gdo.controlId);
-//        })
-//    .on("blur",
-//        "li",
-//        function(e) {
-//            if ($(e.relatedTarget).attr("id") === "load-vis-button")
-//                return;
-//            gdo.net.instance[gdo.controlId].control.selectedAnalytics = null;
-//            gdo.net.app["Twitter"].updateControlCanvas(gdo.controlId);
-//        });
-//$("iframe")
-//    .contents()
-//    .find("#items_graphs_1")
-//    .on("click",
-//        'li',
-//        function() {
-//            var id = $(this).find("span:first").text().trim();
-//            gdo.consoleOut(".Twitter", 1, "Selected graph with id: " + id);
-//            gdo.net.instance[gdo.controlId].control
-//                .selectedAnalytics = { id: id, dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[1] };
-//            gdo.net.app["Twitter"].updateControlCanvas(gdo.controlId);
-//        })
-//    .on("blur",
-//        "li",
-//        function(e) {
-//            if ($(e.relatedTarget).attr("id") === "load-vis-button")
-//                return;
-//            gdo.net.instance[gdo.controlId].control.selectedAnalytics = null;
-//            gdo.net.app["Twitter"].updateControlCanvas(gdo.controlId);
-//        });
-
-$(function() {
+﻿$(function() {
     $("iframe")
         .contents()
         .find('.list-group-item')
@@ -68,7 +27,8 @@ gdo.net.app["Twitter"].initialise = function(instanceId) {
         selectedAnalytics: null,
         selectedDataSets: [],
         analyticsDisplay: {},
-        selectedGraphApps: []
+        selectedGraphApps: [],
+        selectedApp:null
     }
 
 }
@@ -150,6 +110,7 @@ gdo.net.app["Twitter"].updateControlCanvas = function(instanceId) {
     gdo.net.app["Twitter"].drawSectionTable(instanceId);
     gdo.net.app["Twitter"].drawButtonTable(instanceId);
     gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
+    gdo.net.app["Twitter"].drawAppControlTable(instanceId);
 }
 
 gdo.net.app["Twitter"].selectNodes = function(instanceId) {

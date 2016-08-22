@@ -2,7 +2,7 @@
     gdo.consoleOut('.FusionChart', 1, 'Loaded FusionChart JS');
    
     $.connection.fusionChartAppHub.client.receiveMouseEvent = function (instanceId, serialisedMouseEvent) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Mouse Event");
             gdo.net.app["FusionChart"].processMouseEvent(instanceId, JSON.parse(serialisedMouseEvent));
@@ -15,7 +15,7 @@
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": No data loaded yet");
             return;
         }
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
             gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData));
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -25,7 +25,7 @@
     }
 
     $.connection.fusionChartAppHub.client.reRender = function (instanceId) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");
             gdo.net.instance[instanceId].chart.render();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
@@ -35,7 +35,7 @@
     }
 
     $.connection.fusionChartAppHub.client.setDebugMode = function (instanceId, showDebug) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting debug mode " + showDebug);
             if (showDebug) {
@@ -47,6 +47,14 @@
                 $("iframe").parent().parent().siblings(".overlay").css("z-index", "999");
                 gdo.net.instance[instanceId].debug = false;
             }
+        }
+    }
+
+    $.connection.fusionChartAppHub.client.printState = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            console.log(gdo.net.app["FusionChart"]);
+            console.log(gdo.net.instance[instanceId]);
         }
     }
 });
@@ -112,7 +120,7 @@ gdo.net.app["FusionChart"].ternminateControl = function () {
 }
 
 gdo.net.app["FusionChart"].processMouseEvent = function (instanceId, mouseEvent) {
-
+    console.log(mouseEvent);
     mouseEvent["clientX"] = mouseEvent["scaledX"] - (gdo.net.node[gdo.clientId].sectionCol * gdo.net.app["FusionChart"].screenWidth);
     mouseEvent["clientY"] = mouseEvent["scaledY"] - (gdo.net.node[gdo.clientId].sectionRow * gdo.net.app["FusionChart"].screenHeight);
 
@@ -199,19 +207,16 @@ gdo.net.app["FusionChart"].sendMouseEvent = function (e) {
     console.log("clientX" + e.clientX + " clientY" + e.clientY + " screenX:" + e.screenX + " screenY:" + e.screenY +
         "offsetX: " + e.offsetX + " offsetY: " + e.offsetY + " pageX: " + e.pageX + " pageY: " + e.pageY
         + "type: " + e.type + " width: " + rect.width + " height: "  + rect.height);
-
     
-
     var jsonEvent = JSON.stringify({
-        "x": e.pageX - e.currentTarget.offsetLeft,
-        "y": e.pageY - e.currentTarget.offsetTop,
+        "x": (e.pageX - $("iframe").contents().find("#chart-container").offset().left),
+        "y": (e.pageY - $("iframe").contents().find("#chart-container").offset().top),
         "eventType": e.type,
         "controlWidth": rect.width,
         "controlHeight": rect.height,
         "serialisedPath" : jsonPath
     });
 
-//    gdo.consoleOut('.FusionChart', 1, 'Send Mouse Event ' + gdo.controlId + ":" + jsonEvent);
     gdo.net.app["FusionChart"].server.sendMouseEvent(gdo.controlId, jsonEvent);
 }
 

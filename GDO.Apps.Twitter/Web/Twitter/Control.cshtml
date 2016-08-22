@@ -125,19 +125,21 @@
 
 <div class="wrapper" style="width: 97%">
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-3">
         <div id="admin-panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
             </div>
             <div class="panel-body">
-                <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
-                <button id="debug_b" class="btn btn-success"><i class='fa fa-television'></i>&nbsp; PrintState</button>
-                <button id="redownload" class="btn btn-danger"><i class='fa fa-download '></i>&nbsp; Redownload</button>
+                <div class="btn-group">
+                    <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
+                    <button id="debug_b" class="btn btn-success"><i class='fa fa-television'></i>&nbsp; PrintState</button>
+                    <button id="redownload" class="btn btn-danger"><i class='fa fa-download '></i>&nbsp; Redownload</button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-2">
+    <div class="col-lg-3">
         <div id="status-panel" class="panel panel-danger">
             <div class="panel-heading">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Twitter API Status</h6>
@@ -232,6 +234,18 @@
                 </div>
                 <div class="panel-footer">
                     <button id="get_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-lg-1" style="height: 100%">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                </div>
+                <div class="panel-body">
+                </div>
+                <div class="panel-footer">
                 </div>
             </div>
         </div>
@@ -540,17 +554,32 @@
     </div>
 </div>
 <div class="tab-pane fade" id="chart_control">
-<<<<<<< HEAD
-    <div id="wrapper" style="position:relative; border: 0 none; display: block; width: 770px; height: 460px; background:white; overflow:hidden">
-        <iframe id="html_frame" src="http://www.bing.com" allowtransparency="true" frameborder="0" style="transform:scale(0.5) translateX(-310px) translateY(-90px); transform-origin:0px 0px; position: absolute; border: 0 none; display: block;width: 1920px; height: 1080px"></iframe>
-=======
-    <div id="wrapper" style="border: 0 none; display: block; width: 100%; height: 61vh; background:white">
-@**@
-@*        <div class="iframe_wrapper">*@
-@*                        *@
-@*        </div>*@
-        <button id="test" class="btn btn-danger"><i class='fa fa-download '></i>&nbsp; test</button>
->>>>>>> TwitterFEClick
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Controlling: <span id="app_control_description"></span></h6>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <table id="app_control_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    App Control
+                </div>
+                <div class="panel-body">
+                    <div id="wrapper" style="position: relative; border: 0 none; display: block; width: 770px; height: 460px; background: white; overflow: hidden">
+                        <iframe id="app_control_frame" src="" allowtransparency="true" frameborder="0" style="transform: scale(0.5) translateX(-310px) translateY(-90px); transform-origin: 0px 0px; position: absolute; border: 0 none; display: block; width: 1920px; height: 1080px"></iframe>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
     </div>
 </div>
 </div>
@@ -645,13 +674,7 @@
                 //Prepared
                 if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.id != null) {
                     $("#section_table_row_" + node.row + "_col_" + node.col)
-                        .append("</br>")
                         .css('overflow', 'hidden')
-                        .append("<div id='section_table_section_" +
-                            sectionId +
-                            "_a'> <b>&nbsp;Vis Class:</b> " +
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.twitterVisType +
-                            "</div>")
                         .append("<div id='section_table_section_" +
                             sectionId +
                             "_c'> <b>&nbsp;Vis Type:</b> " +
@@ -680,19 +703,12 @@
                             gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
                             "</b></font>");
                     $("#section_table_row_" + node.row + "_col_" + node.col)
-                        .append("</br>")
                         .css('overflow', 'hidden')
                         .append("<div id='section_table_section_" +
                             sectionId +
                             "_a'> <b>&nbsp;App:</b> " +
                             gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId]
                             .appName +
-                            "</div>")
-                        .append("<div id='section_table_section_" +
-                            sectionId +
-                            "_c'> <b>&nbsp;Config:</b> " +
-                            gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId]
-                            .configName +
                             "</div>")
                         .css('overflow', 'hidden')
                         .css("background", "#559100");
@@ -888,58 +904,122 @@
         }
     }
 
-//    $("#test")
-//            .on('click',
-//                function (e) {
-//                    console.log("pageX:" +
-//                   e.pageX +
-//                   " pageY: " +
-//                   e.pageY +
-//                   " screenX: " +
-//                   e.screenX +
-//                   " screenY: " +
-//                   e.screenY +
-//                   " clientX: " +
-//                   e.clientX +
-//                   " clientY: " +
-//                   e.clientY +
-//                   " offsetX: " +
-//                   e.offsetX +
-//                   " offsetY: " +
-//                   e.offsetY);
-//                    
-//                });
-//
-//    $(document)
-//        .ready(function() {
-//            $("div.iframe_wrapper")
-//                .mousemove(function(e) {
-//                    console.log(e);
-//                });
-//        });
-    
-//    $("#sub_app_control_frame").contents().find("body")
-//        .on('click',
-//            function (e) {
-//                console.log("pageX:" +
-//                    e.pageX +
-//                    " pageY: " +
-//                    e.pageY +
-//                    " screenX: " +
-//                    e.screenX +
-//                    " screenY: " +
-//                    e.screenY +
-//                    " clientX: " +
-//                    e.clientX +
-//                    " clientY: " +
-//                    e.clientY + 
-//                    " offsetX: "+ 
-//                    e.offsetX + 
-//                    " offsetY: "+
-//                    e.offsetY);
-//
-//            });
+    gdo.net.app["Twitter"].drawAppControlTable = function (instanceId) {
+        console.log("Drawing App Control Table");
+        gdo.net.app["Twitter"].drawEmptyAppControlTable(gdo.net.cols, gdo.net.rows);
+        $("#app_control_description").html(gdo.net.instance[instanceId].control.selectedApp);
+        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
+            var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
+            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED) {
+                //Node is assigned to another app
+                continue;
+            } else if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
+                //Node is part of the root section
+                $("#app_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
+                $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .css("vertical-align", "top")
+                    .append("<div id='app_control_table_node_" +
+                        node.id +
+                        "_i' style='text-align:center;background:#740202;'> <font size='4px'><b>" +
+                        node.id +
+                        "</b></font></div>")
+                    .append("</br>")
+                    .css("border", "1px solid #8c0606")
+                    .css('overflow', 'hidden')
+                    .css("background", "#c70000")
+                    .css('padding', 0);
+                continue;
+            }
+            var sectionId = node.sectionId;
+            $("#app_control_table_row_" + gdo.net.rows).css("height", 0);
+            if (sectionId === 0) {
+                $("#app_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
+                $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .css("vertical-align", "top")
+                    .append("<div id='app_control_table_node_" +
+                        node.id +
+                        "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
+                        node.id +
+                        "</b></font></div>")
+                    .append("</br>")
+                    .css("border", "1px solid #333")
+                    .css("background", "#222")
+                    .css('padding', 0)
+                    .click(function () {
+                    });
 
+            } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
+                $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                    .empty()
+                    .unbind()
+                    .attr('colspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols)
+                    .attr('rowspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].rows)
+                    .css("border", "1px solid #2A9FD6")
+                    .css("background", "#087DB4")
+                    .css('padding', 0)
+                    .css('overflow', 'hidden')
+                    .css("vertical-align", "top")
+                    .append("<div id='app_control_table_section_" +
+                        sectionId +
+                        "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" +
+                        sectionId +
+                        "</b></font></div>");
+                //Deployed
+                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
+                    $("#app_control_table_section_" + sectionId + "_i")
+                        .empty()
+                        .append("<font size='4px'><b> I" +
+                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
+                            "</b></font>");
+                        $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                            .css('overflow', 'hidden')
+                            .append("<div id='app_control_table_section_" +
+                                sectionId +
+                                "_a'> <b>&nbsp;App:</b> " +
+                                gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
+                                    .appInstanceId]
+                                .appName +
+                                "</div>")
+                            .css('overflow', 'hidden')
+                            .css("background", "#559100");
+                        $("#app_control_table_section_" + sectionId + "_i").css("background", "#77B300");
+                        $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                            .css("border", "1px solid #77B300");
+                   }
+                    $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                        .click(function () {
+                            var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
+                                    .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
+
+                            
+                            if (gdo.net.instance[instanceId].control.selectedApp == appInstanceId) {
+                                gdo.net.instance[instanceId].control.selectedApp = null;
+                                $("#app_control_frame").attr("src", "");
+                            } else {
+                                gdo.net.instance[instanceId].control.selectedApp = appInstanceId;
+                                $("#app_control_frame")
+                                    .attr("src", window.location.origin + "/Web/Instances.cshtml?id=" + appInstanceId);
+                            }
+                            console.log(gdo.net.instance[instanceId].control.selectedApp);
+                            gdo.net.app["Twitter"].drawAppControlTable(instanceId);
+
+                        });
+                
+                if (gdo.net.instance[instanceId].control.selectedApp == gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) {
+                    $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                        .css("background-color", "#95078a")
+                        .css("border", "1px solid #ce0ad6");
+                    $("#app_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
+                }
+            } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
+                $("#section_control_table_row_" + node.row + "_col_" + node.col).hide();
+            }
+        }
+    }
 
 
 

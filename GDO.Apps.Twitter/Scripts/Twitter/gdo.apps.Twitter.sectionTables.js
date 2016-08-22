@@ -89,3 +89,20 @@ gdo.net.app["Twitter"].drawEmptySectionControlTable = function (maxCol, maxRow) 
     }
 }
 
+gdo.net.app["Twitter"].drawEmptyAppControlTable = function (maxCol, maxRow) {
+    $("iframe").contents().find("#app_control_table").empty();
+    for (var i = 0; i < maxRow; i++) {
+        $("iframe").contents().find("#app_control_table")
+            .append("<tr id='app_control_table_row_" + i + "' row='" + i + "'/>");
+        for (var j = 0; j < maxCol; j++) {
+            $("iframe")
+                .contents()
+                .find("#app_control_table tr:last")
+                .append("<td  id='app_control_table_row_" + i + "_col_" + j + "' col='" + j + "' row='" + i + "'/>")
+                .css('overflow', 'hidden');
+        }
+    }
+}
+
+
+

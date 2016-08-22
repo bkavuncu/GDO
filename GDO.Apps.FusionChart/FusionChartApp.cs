@@ -1,14 +1,11 @@
 ﻿using System;
 using GDO.Core;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
 using System.Web;
 using GDO.Core.Apps;
 using log4net;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.FusionChart
 {
@@ -67,6 +64,9 @@ namespace GDO.Apps.FusionChart
         public string ProcessMouseEvent(string serialisedMouseEvent)
         {
             MouseEvent mouseEvent = JsonConvert.DeserializeObject<MouseEvent>(serialisedMouseEvent);
+            Debug.WriteLine("Mouse event: x" + mouseEvent.x + " y:" + mouseEvent.y +
+                            " SectionWidth" + Section.Width + " SectionHeight" + Section.Height + " ControlWidth: " +
+                            mouseEvent.controlWidth + " ControlHeight: " + mouseEvent.controlHeight);
             mouseEvent.scaledX = mouseEvent.x*Section.Width/ mouseEvent.controlWidth;
             mouseEvent.scaledY = mouseEvent.y*Section.Height / mouseEvent.controlHeight;
             return JsonConvert.SerializeObject(mouseEvent);

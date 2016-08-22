@@ -337,13 +337,6 @@ public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes,
 
     public class TwitterVis
     {
-        public enum TwitterVisTypes
-        {
-            Graph,
-            HTML,
-            Unknown,
-            Chart
-        }
 
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
@@ -354,9 +347,6 @@ public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes,
         [JsonProperty(PropertyName = "config")]
         public string Config { get; set; }
 
-        [JsonProperty(PropertyName = "twitterVisType")]
-        public TwitterVisTypes TwitterVisType { get; set; }
-
         [JsonProperty(PropertyName = "twitterVisSubType")]
         public string  SubType { get; set; }
 
@@ -366,13 +356,12 @@ public PseudoCave(ConcurrentDictionary<int, GDO.Core.Node> caveNodes,
         [JsonProperty(PropertyName = "filePath")]
         public string FilePath { get; set; }
         
-        public TwitterVis(string AppType)
+        public TwitterVis(string appType = null)
         {
             Id = null;
             DataSetId = null;
-            AppType = AppType;
+            AppType = appType;
             FilePath = null;
-            TwitterVisType = TwitterVisTypes.Unknown;
         }
     }
 

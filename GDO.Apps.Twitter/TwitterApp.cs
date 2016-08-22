@@ -4,6 +4,7 @@ using GDO.Core;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using GDO.Apps.Twitter.Core;
 using GDO.Core.Apps;
@@ -37,16 +38,21 @@ namespace GDO.Apps.Twitter
         public string TwitterRelativePath { get; set; }
         
         public bool ReplaceExisting { get; set; }
-        public Dictionary<string, DataSet> DataSets { get; set; }
-        public Dictionary<string, Dictionary<string,Analytics>> Analytics { get; set; }
-
+        
         public void Init()
         {
             GraphAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
             ImageAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             StaticHtmlBasePath = HttpContext.Current.Server.MapPath("~/Web/StaticHTML/");
             TwitterBasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
+            FusionChartAppBasePath = HttpContext.Current.Server.MapPath("~/Web/FusionChart/data/");
             TwitterRelativePath = "/Web/Twitter/data/";
+
+            Debug.WriteLine("Using graph path : " + GraphAppBasePath);
+            Debug.WriteLine("Using graph path : " + ImageAppBasePath);
+            Debug.WriteLine("Using graph path : " + StaticHtmlBasePath);
+            Debug.WriteLine("Using graph path : " + TwitterBasePath);
+            Debug.WriteLine("Using graph path : " + FusionChartAppBasePath);
 
             try
             {
@@ -54,6 +60,7 @@ namespace GDO.Apps.Twitter
                 Directory.CreateDirectory(GraphAppBasePath);
                 Directory.CreateDirectory(ImageAppBasePath);
                 Directory.CreateDirectory(TwitterBasePath);
+                Directory.CreateDirectory(FusionChartAppBasePath);
             }
             catch (Exception e)
             {
@@ -142,26 +149,24 @@ namespace GDO.Apps.Twitter
 
         public TwitterVis GetVisualisation(string analyticsId, string dataSetId)
         {
-            Analytics analytics = Analytics[dataSetId][dataSetId];
-            AnalyticsData analyticsData = RestController.GetAnalyticsMetaData(analytics.UriData);
+            Analytics analytics = RestController.Analytics[dataSetId][analyticsId];
+            AnalyticsData analyticsData = RestController.GetAnalyticsData(analytics.UriData);
             string url = analyticsData.Urls[analyticsData.PreferedUrl];
 
-            TwitterVis twitterVis = new TwitterVis(analyticsData.PreferedApp;);
+            TwitterVis twitterVis = new TwitterVis(analyticsData.PreferedApp);
             switch (twitterVis.AppType) {
                 case "Graph":
-                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Graph;
                     twitterVis.Config = "Default";
                     twitterVis.FilePath = Download(url, GraphAppBasePath + analyticsId + ".graphml");
                     break;
                 case "FusionChart":
-                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.Chart;
                     twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, ChartAppBasePath + analyticsId + ".json");
+                    twitterVis.FilePath = Download(url, FusionChartAppBasePath + analyticsId + ".json");
                     break;
                 default:
-                    twitterVis.TwitterVisType = TwitterVis.TwitterVisTypes.HTML;
                     twitterVis.Config = "Responsive";
-                    twitterVis.FilePath = Download(url, TwitterRelativePath + analyticsId + ".html");
+                    Download(url, TwitterBasePath + analyticsId + ".html");
+                    twitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
                     break;
             }
 
@@ -189,23 +194,22 @@ namespace GDO.Apps.Twitter
             return JsonConvert.SerializeObject(RestController.GetApiMessage());
         }
 
-        public string GetAnalytics(List<string> dataSetIds)
-        {
-            Dictionary<string, List<Analytics>> analytics = dataSetIds.ToDictionary(dsId => dsId, ds => RestController.GetAnalyticsList(ds));
-            Analytics = analytics.ToDictionary(a => a.Key, a => a.Value.ToDictionary(b => b.Id, b => b));
-            return JsonConvert.SerializeObject(analytics.ToDictionary(a => a.Key,
-                    a => a.Value.GroupBy(o => o.Classification).ToDictionary(g => g.Key, g => g.ToList())));
-        }
-
         public string GetDataSets()
         {
-            DataSets = RestController.GetDataSetList().ToDictionary(ds => ds.Id, ds => ds);
-            return JsonConvert.SerializeObject(DataSets);
+            return JsonConvert.SerializeObject(RestController.GetDataSetList());
         }
 
         public string GetAnalyticsOptions()
         {
             return JsonConvert.SerializeObject(RestController.GetAnalyticsOptions());
+        }
+
+        public string GetAnalytics(List<string> dataSetIds)
+        {
+            Dictionary<string, Dictionary<string, List<Analytics>>> groupedByClass =
+                RestController.GetAnalyticsList(dataSetIds).ToDictionary(a => a.Key,
+                    a => a.Value.Values.GroupBy(o => o.Classification).ToDictionary(g => g.Key, g => g.ToList()));
+            return JsonConvert.SerializeObject(groupedByClass);
         }
 
         public void GetNewAnalytics(List<AnalyticsRequest> newAnalyticsRequests)

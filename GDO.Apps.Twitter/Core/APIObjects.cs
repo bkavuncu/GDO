@@ -113,6 +113,18 @@ namespace GDO.Apps.Twitter.Core
         public string Msg { get; set; }
         [DataMember(Name="healthy")]
         public bool Healthy { get; set; }
+
+        [DataMember(Name = "uri_analysis_options")]
+        public string AnalysisOptionsUrl { get; set; }
+        [DataMember(Name = "uri_data_service")]
+        public string DataServiceUrl { get; set; }
+        [DataMember(Name = "uri_data_set")]
+        public string DataSetUrl { get; set; }
+        [DataMember(Name = "uri_twitter_consumer")]
+        public string TwitterConsumerUrl { get; set; }
+
+
+
     }
 
 }
