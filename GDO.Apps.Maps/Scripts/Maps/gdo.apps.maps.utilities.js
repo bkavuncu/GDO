@@ -357,7 +357,7 @@ gdo.net.app["Maps"].uploadObject = function (instanceId, objectType, object, isN
 gdo.net.app["Maps"].removeObject = function (instanceId, objectType, objectId) {
     gdo.consoleOut('.Maps', 1, 'Instance ' + instanceId + ': Removing ' + objectType + ': ' + objectId);
     if ('layer' == objectType) {
-        eval("gdo.net.instance[" + instanceId + "].map.removeLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "])");
+        eval("gdo.net.instance[" + instanceId + "].map.removeLayer(gdo.net.instance[" + instanceId + "]." + objectType + "s[" + objectId + "].object)");
     }
 
     //eval("gdo.net.instance[" + instanceId + "]." + objectType + "s.splice(" + objectId + ",1);");

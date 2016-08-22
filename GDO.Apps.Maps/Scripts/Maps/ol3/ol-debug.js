@@ -59109,8 +59109,8 @@ ol.renderer.canvas.Map.prototype.renderFrame = function(frameState) {
     layerState = layerStatesArray[i];
     layer = layerState.layer;
     layerRenderer = this.getLayerRenderer(layer);
-    goog.asserts.assertInstanceof(layerRenderer, ol.renderer.canvas.Layer,
-        'layerRenderer is an instance of ol.renderer.canvas.Layer');
+    //goog.asserts.assertInstanceof(layerRenderer, ol.renderer.canvas.Layer,
+        //'layerRenderer is an instance of ol.renderer.canvas.Layer');
     if (!ol.layer.Layer.visibleAtResolution(layerState, viewResolution) ||
         layerState.sourceState != ol.source.State.READY) {
       continue;
@@ -74270,7 +74270,7 @@ goog.require('ol.geom.Geometry');
 goog.require('ol.geom.GeometryLayout');
 goog.require('ol.geom.LineString');
 goog.require('ol.geom.LinearRing');
-goog.require('ol.geom.Circle');
+//goog.require('ol.geom.Circle');
 goog.require('ol.geom.MultiLineString');
 goog.require('ol.geom.MultiPoint');
 goog.require('ol.geom.MultiPolygon');
