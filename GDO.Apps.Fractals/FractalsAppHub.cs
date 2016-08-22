@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using GDO.Core;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
-using System.Threading;
 using GDO.Core.Apps;
+// ReSharper disable UnassignedField.Global
+// ReSharper disable UnusedMember.Global - this is due to SignalR 
 
 namespace GDO.Apps.Fractals
 {
@@ -25,17 +25,17 @@ namespace GDO.Apps.Fractals
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
-        public JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All};
+        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All};
 
         public void SendParams(int instanceId)
         {
             try
             {
-                FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                if (!FA.Sync)
+                FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                if (!fa.Sync)
                 {
-                    string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                    Clients.Group("" + instanceId).updateParams(instanceId, Json, FA.Sync);
+                    string json = JsonConvert.SerializeObject(fa, _jsonSettings);
+                    Clients.Group("" + instanceId).updateParams(instanceId, json, fa.Sync);
                 }
 
             }
@@ -51,8 +51,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.JoystickInit(this, instanceId);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.JoystickInit(this, instanceId);
                 }
                 catch (Exception e)
                 {
@@ -67,8 +67,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.JoystickUpdateParamsRot(angle, magnitude);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.JoystickUpdateParamsRot(angle, magnitude);
                 }
                 catch (Exception e)
                 {
@@ -83,8 +83,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.JoystickUpdateParamsMove(angle, magnitude);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.JoystickUpdateParamsMove(angle, magnitude);
                 }
                 catch (Exception e)
                 {
@@ -99,8 +99,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.JoystickTerminate();
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.JoystickTerminate();
                 }
                 catch (Exception e)
                 {
@@ -115,8 +115,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.HeightSliderUpdateParamsMove(val);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.HeightSliderUpdateParamsMove(val);
                 }
                 catch (Exception e)
                 {
@@ -161,8 +161,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.MaxSteps = maxSteps;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.MaxSteps = maxSteps;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -178,8 +178,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Detail = detail;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Detail = detail;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -195,8 +195,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Fog = fog;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Fog = fog;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -206,8 +206,14 @@ namespace GDO.Apps.Fractals
             }
         }
 
+        /// <summary>
+        /// This is the parameters object sent from the javascript to the server via the control panel 
+        /// </summary>
+        // ReSharper disable once ClassNeverInstantiated.Global
+        // ReSharper disable once MemberCanBePrivate.Global
         public class Params
         {
+            // ReSharper disable InconsistentNaming
                 public double xRot;
                 public double yRot;
                 public double yHeight;
@@ -236,6 +242,7 @@ namespace GDO.Apps.Fractals
                 public double threshold;
                 public int modToggle;
                 public int fractal;
+            // ReSharper restore InconsistentNaming
         }
 
         public void FractalSelect(int instanceId, string json, string fractal)
@@ -244,35 +251,35 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    Params p = Newtonsoft.Json.JsonConvert.DeserializeObject<Params>(json, JsonSettings);
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.XRot = (float) p.xRot;
-                    FA.YRot = (float) p.yRot;
-                    FA.XTrans = (float) p.xTrans;
-                    FA.YTrans = (float) p.yTrans;
-                    FA.ZTrans = (float) p.zTrans;
-                    FA.MaxSteps = p.maxSteps;
-                    FA.Detail = (float) p.detail;
-                    FA.Fog = (float) p.fog;
-                    FA.Ambience = (float) p.ambience;
-                    FA.LightIntensity = (float) p.lightIntensity;
-                    FA.LightSize = (float) p.lightSize;
-                    FA.LightX = (float) p.lightX;
-                    FA.LightY = (float) p.lightY;
-                    FA.LightZ = (float) p.lightZ;
-                    FA.Iterations = p.iterations;
-                    FA.Power = (float)p.power;
-                    FA.R = (float) p.red;
-                    FA.G = (float) p.green;
-                    FA.B = (float) p.blue;
-                    FA.Scale = (float) p.scale;
-                    FA.Cx = (float) p.cx;
-                    FA.Cy = (float) p.cy;
-                    FA.Cz = (float) p.cz;
-                    FA.Cw = (float) p.cw;
-                    FA.Threshold = (float) p.threshold;
-                    FA.Mod = p.modToggle;
-                    FA.Fractal = p.fractal;
+                    Params p = JsonConvert.DeserializeObject<Params>(json, _jsonSettings);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.XRot = (float) p.xRot;
+                    fa.YRot = (float) p.yRot;
+                    fa.XTrans = (float) p.xTrans;
+                    fa.YTrans = (float) p.yTrans;
+                    fa.ZTrans = (float) p.zTrans;
+                    fa.MaxSteps = p.maxSteps;
+                    fa.Detail = (float) p.detail;
+                    fa.Fog = (float) p.fog;
+                    fa.Ambience = (float) p.ambience;
+                    fa.LightIntensity = (float) p.lightIntensity;
+                    fa.LightSize = (float) p.lightSize;
+                    fa.LightX = (float) p.lightX;
+                    fa.LightY = (float) p.lightY;
+                    fa.LightZ = (float) p.lightZ;
+                    fa.Iterations = p.iterations;
+                    fa.Power = (float)p.power;
+                    fa.R = (float) p.red;
+                    fa.G = (float) p.green;
+                    fa.B = (float) p.blue;
+                    fa.Scale = (float) p.scale;
+                    fa.Cx = (float) p.cx;
+                    fa.Cy = (float) p.cy;
+                    fa.Cz = (float) p.cz;
+                    fa.Cw = (float) p.cw;
+                    fa.Threshold = (float) p.threshold;
+                    fa.Mod = p.modToggle;
+                    fa.Fractal = p.fractal;
                     
 
                     SendParams(instanceId);
@@ -290,8 +297,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Iterations = iterations;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Iterations = iterations;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -307,8 +314,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Power = power;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Power = power;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -324,8 +331,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Scale = scale;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Scale = scale;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -341,11 +348,11 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Cx = cx;
-                    FA.Cy = cy;
-                    FA.Cz = cz;
-                    FA.Cw = cw;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Cx = cx;
+                    fa.Cy = cy;
+                    fa.Cz = cz;
+                    fa.Cw = cw;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -361,8 +368,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Threshold = thresh;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Threshold = thresh;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -378,10 +385,10 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.R = r/255.0f;
-                    FA.G = g/255.0f;
-                    FA.B = b/255.0f;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.R = r/255.0f;
+                    fa.G = g/255.0f;
+                    fa.B = b/255.0f;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -397,8 +404,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Ambience = ambience;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Ambience = ambience;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -414,8 +421,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.LightIntensity = li;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.LightIntensity = li;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -431,8 +438,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.LightSize = size;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.LightSize = size;
                     SendParams(instanceId);
                 }
                 catch (Exception e)
@@ -448,8 +455,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.JoystickUpdateParamsLight(angle, magnitude);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.JoystickUpdateParamsLight(angle, magnitude);
                 }
                 catch (Exception e)
                 {
@@ -464,8 +471,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.HeightSliderUpdateParamsLight(val);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.HeightSliderUpdateParamsLight(val);
                 }
                 catch (Exception e)
                 {
@@ -480,8 +487,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.SyncTime = val;
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.SyncTime = val;
                 }
                 catch (Exception e)
                 {
@@ -497,8 +504,8 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.ToggleMod();
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.ToggleMod();
                     SendParams(instanceId);
                     
                 }
@@ -515,10 +522,10 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    FA.Sync = !FA.Sync;
-                    string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
-                    Clients.Group("" + instanceId).updateParams(instanceId, Json, FA.Sync);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    fa.Sync = !fa.Sync;
+                    string json = JsonConvert.SerializeObject(fa, _jsonSettings);
+                    Clients.Group("" + instanceId).updateParams(instanceId, json, fa.Sync);
                 }
                 catch (Exception e)
                 {
@@ -534,7 +541,7 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
 
                     byte[] frequencyData = new byte[16];
                     frequencyData[0] = f0;
@@ -554,33 +561,33 @@ namespace GDO.Apps.Fractals
                     frequencyData[14] = f14;
                     frequencyData[15] = f15;
 
-                    FA.Freqs[clientId - 1] = frequencyData;
+                    fa.Freqs[clientId - 1] = frequencyData;
 
                     // Ack frames
-                    if (FA.RenderedFrameNodesAcked[clientId-1] == 0)
+                    if (fa.RenderedFrameNodesAcked[clientId-1] == 0)
                     {
-                        FA.RenderedFrameNodesAcked[clientId-1] = 1;
+                        fa.RenderedFrameNodesAcked[clientId-1] = 1;
                     }
 
                     // Sum acks
                     int sum = 0;
                     for (int i = 0; i < 64; i++)
                     {
-                        sum += FA.RenderedFrameNodesAcked[i];
+                        sum += fa.RenderedFrameNodesAcked[i];
                     }
 
-                    if (sum >= FA.Section.NumNodes)
+                    if (sum >= fa.Section.NumNodes)
                     {
 
                         int[] avgFreqs = new int[frequencyData.Length];
                         for (int i = 0; i < 64; i++)
                         {
-                            if (FA.Freqs[i] != null)
+                            if (fa.Freqs[i] != null)
                             {
                                 for (int j = 0; j < frequencyData.Length; j++)
                                 {
 
-                                    avgFreqs[j] += FA.Freqs[i][j];
+                                    avgFreqs[j] += fa.Freqs[i][j];
                                 }
                             }
                             
@@ -588,14 +595,14 @@ namespace GDO.Apps.Fractals
 
                         for (int i = 0; i < avgFreqs.Length; i++)
                         {
-                            avgFreqs[i] /= (byte) FA.Section.NumNodes;
+                            avgFreqs[i] /= (byte) fa.Section.NumNodes;
                         }
 
-                        FA.CurrentFrame = (FA.CurrentFrame + 1) % 2;
+                        fa.CurrentFrame = (fa.CurrentFrame + 1) % 2;
 
-                        string Json = Newtonsoft.Json.JsonConvert.SerializeObject(FA, JsonSettings);
+                        string json = JsonConvert.SerializeObject(fa, _jsonSettings);
 
-                        Clients.Group("" + instanceId).swapFrame(instanceId, Json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + FA.SyncTime, avgFreqs[0], avgFreqs[1], avgFreqs[2], avgFreqs[3], avgFreqs[4], avgFreqs[5], avgFreqs[6], avgFreqs[7], avgFreqs[8], avgFreqs[9], avgFreqs[10], avgFreqs[11], avgFreqs[12], avgFreqs[13], avgFreqs[14], avgFreqs[15]);
+                        Clients.Group("" + instanceId).swapFrame(instanceId, json, (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds + fa.SyncTime, avgFreqs[0], avgFreqs[1], avgFreqs[2], avgFreqs[3], avgFreqs[4], avgFreqs[5], avgFreqs[6], avgFreqs[7], avgFreqs[8], avgFreqs[9], avgFreqs[10], avgFreqs[11], avgFreqs[12], avgFreqs[13], avgFreqs[14], avgFreqs[15]);
                     }
                     
 
@@ -614,36 +621,36 @@ namespace GDO.Apps.Fractals
             {
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
 
                         // Ack frames
-                        if (FA.SwapFrameNodesAcked[clientId-1] == 0)
+                        if (fa.SwapFrameNodesAcked[clientId-1] == 0)
                         {
-                            FA.SwapFrameNodesAcked[clientId-1] = 1;
+                            fa.SwapFrameNodesAcked[clientId-1] = 1;
                         }
 
                         // Sum acks
                         int sum = 0;
                         for (int i = 0; i < 64; i++)
                         {
-                            sum += FA.SwapFrameNodesAcked[i];
+                            sum += fa.SwapFrameNodesAcked[i];
                         }
 
-                        if (sum >= FA.Section.NumNodes)
+                        if (sum >= fa.Section.NumNodes)
                         {
                             
                             // Reset acks
                             for (int i = 0; i < 64; i++)
                             {
-                                FA.SwapFrameNodesAcked[i] = 0;
+                                fa.SwapFrameNodesAcked[i] = 0;
                             }
 
                             for (int i = 0; i < 64; i++)
                             {
-                                FA.RenderedFrameNodesAcked[i] = 0;
+                                fa.RenderedFrameNodesAcked[i] = 0;
                             }                 
 
-                            Clients.Group("" + instanceId).renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
+                            Clients.Group("" + instanceId).renderNextFrame(instanceId, fa.CurrentFrame, fa.Sync);
                         }
                     
                 }
@@ -659,8 +666,8 @@ namespace GDO.Apps.Fractals
             if (instanceId == -1) return;
                 try
                 {
-                    FractalsApp FA = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
-                    Clients.Caller.renderNextFrame(instanceId, FA.CurrentFrame, FA.Sync);
+                    FractalsApp fa = ((FractalsApp)Cave.Apps["Fractals"].Instances[instanceId]);
+                    Clients.Caller.renderNextFrame(instanceId, fa.CurrentFrame, fa.Sync);
 
                 }
                 catch (Exception e)

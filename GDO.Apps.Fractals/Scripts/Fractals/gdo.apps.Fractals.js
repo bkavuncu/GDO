@@ -102,7 +102,7 @@ $(function () {
 
                 gdo.net.app["Fractals"].setParameters(params);
 
-                var n = gdo.net.time.getTime()
+                var n = gdo.net.time.getTime();
 
                 var timeout = timeToRender - n;
 
@@ -160,7 +160,7 @@ $(function () {
 
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
-                var n = gdo.net.time.getTime()
+                var n = gdo.net.time.getTime();
                 
                 gdo.net.app["Fractals"].audioPlaying = false;
                 gdo.net.app["Fractals"].audio.pause();
