@@ -1,6 +1,8 @@
 ﻿gdo.net.app["Spreadsheets"].registerInstance = function (instanceId, section) {
+    var confName = this.gdo.net.instance[this.instanceId].configName;
+    var conf = this.gdo.net.app["Spreadsheets"].config[configName];
 	$.ajax({
-		url: "http://146.169.45.194/SheetServer/Operations/RegisterInstance",
+		url: conf.serverAddress + "Operations/RegisterInstance",
 		method: "POST",
 		data: { instanceId: instanceId, section: section },
 		success: function (message) {
