@@ -90,6 +90,19 @@
             position: relative;
             text-align: center;
         }
+
+        
+        .input_field_sole {
+            width: 20%;
+            height: 40px;
+            border: 1px solid #333;
+            background: #333;
+            color: #FFF;
+            padding: 0px;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+        }
           
     @*          #chart-container {*@
         @*            position: absolute;*@
@@ -129,8 +142,12 @@
 
     function processChartData(data, instanceId) {
         var gdo = parent.gdo;
+        if (gdo.net.instance[instanceId].chart == undefined) {
+            $("#setChartType").removeClass("btn-warning").addClass("btn-success").removeClass("disabled");
+        }
         gdo.net.instance[instanceId].chart = new FusionCharts(data);
         gdo.net.instance[instanceId].chart.render();
+        
     };
 
 </script>
@@ -225,30 +242,34 @@
                     <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
                 </div>
                 <div class="panel-body">
-                    <span><input size="2" style="width: 10%" class="input_field" type="text" id="x_c" value="186" /></span>
-                    <span><input size="2" style="width: 10%" class="input_field" type="text" id="y_c" value="1315" /></span>
-                    <div class="btn-group">
-                        <button id="sendMouseEvent" class="btn btn-warning">Send</button>
-                        <button id="toggleDebugMode" class="FLAG_OFF btn btn-warning">Show Debug Mode</button>
-                        <button id="toggleMouseMove" class="FLAG_OFF btn btn-warning">On Mouse Move</button>
-                        <button id="reRender" class="btn btn-danger">ReRender</button>
-                        <button id="debug" class="btn btn-warning">Debug</button>
+                    
+                        <select class="input_field_sole" id="chartType">
+                            <option value="msline">msline</option>
+                            <option value="line">line</option>
+                            <option value="zoomline">zoomline</option>
+                            <option value="area2d">area2d</option>
+                            <option value="pie2d">pie2d</option>
+                            <option value="doughnut2d">doughnut2d</option>
+                            <option value="doughnut3d">doughnut3d</option>
+                            <option value="bar2d">bar2d</option>
+                            <option value="column2d">column2d</option>
+                            <option value="scatter">scatter</option>
+                            <option value="zoomscatter">zoomscatter</option>
+                            <option value="scrollline2d">scrollline2d</option>
+                            <option value="scrollarea2d">scrollarea2d</option>
+                        </select>
+                    
+                        <div class="btn-group">
+
+                            <button id="setChartType" class="btn btn-warning disabled">Set Chart Type</button>
+                            <button id="toggleDebugMode" class="FLAG_OFF btn btn-warning">Show Debug Mode</button>
+                            <button id="toggleMouseMove" class="FLAG_OFF btn btn-warning">On Mouse Move</button>
+                            <button id="reRender" class="btn btn-danger">ReRender</button>
+                            <button id="debug" class="btn btn-warning">Debug</button>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
-        @*    <div class="col-lg-4">*@
-        @*        <div id="message_panel" class="panel panel-danger">*@
-        @*            <div class="panel-heading">*@
-        @*                <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>*@
-        @*            </div>*@
-        @*            <div class="panel-body">*@
-        @*                <fieldset>*@
-        @*                    <h6 id="message_from_server"></h6>*@
-        @*                </fieldset>*@
-        @*            </div>*@
-        @*        </div>*@
-        @*    </div>*@
     </div>
 
     <div class="row">
@@ -264,15 +285,14 @@
                     </div>
                     </div>
                 </div>
-                <div class="panel-body" style="position:relative">
+                <div class="panel-body">
                     
-                    <div style="position: relative; overflow: auto; border: 0 none; display: block; width: 100%; height: 61vh;">
-                        <div id="blocker" style="position:absolute; top: 0; left: 0;background-color:aliceblue; opacity:0.1; z-index:1"></div>
+@*                    <div style="position: relative; overflow: auto; border: 0 none; display: block; width: 100%; height: 61vh;">*@
+@*                        <div id="blocker" style="position:absolute; top: 0; left: 0;background-color:aliceblue; opacity:0.1; z-index:1"></div>*@
                             <div id="chart-container">
-                            
                             FusionCharts XT will load here!
                         </div>
-                    </div>
+@*                    </div>*@
                 </div>
             </div>
         </div>
@@ -294,10 +314,24 @@
     }
 </div>
 <script>
+    $("#setChartType").click(function () {
+        var gdo = parent.gdo;
+        
+        if (gdo.net.instance[gdo.controlId].chart != undefined) {
+            gdo.consoleOut('.FusionChart',
+                1,
+                'Instance - ' + gdo.controlId + ": Requesting Chart Type: " + $("#chartType").val());
+            gdo.net.instance[gdo.controlId].chart.chartType($("#chartType").val());
+            gdo.net.app["FusionChart"].server.broadcastChartType(gdo.controlId, $("#chartType").val());
+        } else {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + gdo.controlId + ": Chart Data not Set");
+        }
+            
+    });
     $("#file_digit_button").click(function () {
-            var gdo = parent.gdo;
-            gdo.net.app["FusionChart"].server.processFile(gdo.controlId, $("#file_digit").val());
-        });
+        var gdo = parent.gdo;
+        gdo.net.app["FusionChart"].server.processFile(gdo.controlId, $("#file_digit").val());
+    });
     $("#sendMouseEvent")
         .click(function() {
             var gdo = parent.gdo;

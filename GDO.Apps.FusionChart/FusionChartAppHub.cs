@@ -23,6 +23,21 @@ namespace GDO.Apps.FusionChart
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public void BroadcastChartType(int instanceId, string chartType)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).receiveChartType(instanceId, chartType);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void PrintState(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

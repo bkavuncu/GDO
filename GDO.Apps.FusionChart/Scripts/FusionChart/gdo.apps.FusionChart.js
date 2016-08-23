@@ -17,7 +17,10 @@
         }
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
-            gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData));
+            var chartData = JSON.parse(serialisedChartData);
+            gdo.net.app["FusionChart"].processChartData(instanceId, chartData);
+            $("iframe").contents().find('#chartType').val(chartData.chartType);
+
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
             gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData));
@@ -31,6 +34,16 @@
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");
             gdo.net.instance[instanceId].chart.render();
+        }
+    }
+
+    $.connection.fusionChartAppHub.client.receiveChartType = function (instanceId, chartType) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart typr: " + chartType);
+            gdo.net.instance[instanceId].chart.chartType(chartType);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart typr: " + chartType);
+            gdo.net.instance[instanceId].chart.chartType(chartType);
         }
     }
 
@@ -62,11 +75,13 @@
 
 gdo.net.app["FusionChart"].processChartData = function (instanceId, chartData) {
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Type: " + chartData.chartType);
+    gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Width: " + gdo.net.section[gdo.net.instance[instanceId].sectionId].width);
+    gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Height: " + gdo.net.section[gdo.net.instance[instanceId].sectionId].height);
     $("iframe")[0].contentWindow.processChartData({
         type: chartData.chartType,
         renderAt: 'chart-container',
-        width: "100%",
-        height: "100%",
+        width:  gdo.net.section[gdo.net.instance[instanceId].sectionId].width,
+        height: gdo.net.section[gdo.net.instance[instanceId].sectionId].height,
         dataFormat: 'json',
         dataSource: chartData.dataSource
     }, instanceId);
@@ -85,14 +100,14 @@ gdo.net.app["FusionChart"].initControl = function () {
 
     var width = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
     var height = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;
+
     var transform = "scale(" + 1920.0 / width + ")";
     var origin = "0px 0px";
-    
-    $("iframe")
-        .contents()
-        .find("#blocker")
-        .css("width", 1920.0 + "px")
-        .css("height", height * 1920.0 / width + "px");
+//    $("iframe")
+//        .contents()
+//        .find("#blocker")
+//        .css("width", 1920.0 + "px")
+//        .css("height", height * 1920.0 / width + "px");
     $("iframe")
         .contents()
         .find("#chart-container")
@@ -105,7 +120,7 @@ gdo.net.app["FusionChart"].initControl = function () {
         .css("-webkit-transform-origin", origin)
         .css("width", width + "px")
         .css("height", height + "px");
-//            .css("absolute", "fixed");
+
     gdo.net.app["FusionChart"].server.getChartData(gdo.controlId);
 }
 
@@ -243,26 +258,21 @@ gdo.net.app["FusionChart"].setupHTMLTransform = function (instanceId) {
 
         var xOffset = -gdo.net.node[gdo.clientId].sectionCol * screenWidth;
         var yOffset = -gdo.net.node[gdo.clientId].sectionRow * screenHeight;
-        var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
-        var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
 
         gdo.consoleOut('.FusionChart', 0, 'Node settings ScreenWidth: ' + screenWidth + " ScreenHeight: " + screenHeight +
-            " xOffset: " + xOffset + " yOffset: " + yOffset + " width: " + width + " height: " + height);
+            " xOffset: " + xOffset + " yOffset: " + yOffset);
+
         var origin = "0% 0%";
         var transform = "translate(" + xOffset + "px," + yOffset + "px)";
 
-        $("iframe")
-            .contents()
-            .find("#chart-container")
-            .css("zoom", 1)
-                .css("-moz-transform", transform)
-                .css("-moz-transform-origin", origin)
-                .css("-o-transform", transform)
-                .css("-o-transform-origin", origin)
-                .css("-webkit-transform", transform)
-                .css("-webkit-transform-origin", origin)
-                .css("width", width + "px")
-                .css("height", height + "px")
-                .css("absolute", "fixed");
+    $("iframe")
+        .contents()
+        .find("#chart-container")
+        .css("-moz-transform", transform)
+        .css("-moz-transform-origin", origin)
+        .css("-o-transform", transform)
+        .css("-o-transform-origin", origin)
+        .css("-webkit-transform", transform)
+        .css("-webkit-transform-origin", origin);
 
 }
