@@ -33,7 +33,6 @@ namespace GDO.Apps.XNATImaging
         public void Init()
         {
             InitConfigurations();
-            ZoomConfigurations();
         }
 
         public void Init(int instanceId, string appName, Section section, AppConfiguration configuration)
@@ -65,7 +64,7 @@ namespace GDO.Apps.XNATImaging
             TranslationY = translationY;
         }
 
-        public void ZoomConfigurations()
+        public void BuildZoomConfigurations()
         {
             ZoomConfigJson = new string[ZoomConfiguration.GetLength(0), ZoomConfiguration.GetLength(1)];
             for (int i = 0; i < ZoomConfiguration.GetLength(0); i++)
@@ -105,9 +104,7 @@ namespace GDO.Apps.XNATImaging
         public void InitConfigurations()
         {
             Debug.WriteLine(Configuration.Name);
-            Debug.WriteLine(Configuration.Json);
-            dynamic json = Configuration.Json;
-            //ZoomConfiguration = json.zoomConfiguration;
+            //Debug.WriteLine(Configuration.Json);
         }
     }
 }

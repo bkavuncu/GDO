@@ -10,9 +10,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css" />
+    <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css"/>
+    <link rel="stylesheet" href="../../Scripts/XNATImaging/css/main.css"/>
+
     <script src="../../Scripts/XNATImaging/papaya.js"></script>
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
 
     <title>XNAT Imaging Project</title>
     <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,13 +23,10 @@
 </head>
 <body>
 <div id="main">
-    <div class="heading">
-        <h3> </h3>
-    </div>
-    <div id="dicomImage" style="width: 1720px; height: 900px;">
+    <div id="dicomImage" style="width: 1920px; height: 1080px;">
         <div class="papaya" data-params="params">
 
-            <div id="mrtopleft">
+            @*<div id="mrtopleft">
                 <p>Optimise ID</p>
             </div>
             <div id="mrtopright">
@@ -43,16 +43,10 @@
             </div>
             <div id="mrbottomleft">
                 <p>WW/WC: </p>
-            </div>
+            </div>*@
         </div>
     </div>
 </div>
-
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-
-<   <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
-    <script src="../../Scripts/XNATImaging/underscore.js"></script>
 
 <script>
     $(window).load(function () {

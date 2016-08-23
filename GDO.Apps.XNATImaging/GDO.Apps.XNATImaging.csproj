@@ -164,12 +164,13 @@
     <Content Include="Scripts\XNATImaging\css\bootstrap.css.map" />
     <Content Include="Scripts\XNATImaging\css\bootstrap.min.css.map" />
     <Content Include="Scripts\XNATImaging\css\papaya.css" />
-    <Content Include="Scripts\XNATImaging\dicomParser.js" />
+    <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.events.js" />
+    <Content Include="Scripts\XNATImaging\images\redmarker.png" />
     <Content Include="Scripts\XNATImaging\papaya.js" />
-    <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.mpr.js" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001_msmetrix_report-2.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001_140926_msmetrix_report-3.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001_150925_msmetrix_report-3.pdf" />
+    <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.utility.js" />
+    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\GSK131086_000001_msmetrix_report-2.pdf" />
+    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\GSK131086_000001_140926_msmetrix_report-3.pdf" />
+    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\GSK131086_000001_150925_msmetrix_report-3.pdf" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Baseline\t1\Ad201713-MR-2-2678.dcm" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Baseline\t1\Ad201713-MR-2-2679.dcm" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Baseline\t1\Ad201713-MR-2-2680.dcm" />
@@ -881,6 +882,9 @@
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Baseline\t1\20140926_121929Ad201713-MR-2-2837MPRAGEADNIP2AD201713s002a1001.nii.gz" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Followup\t1\coregistered_followup_6DOF.nii.gz" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\Followup\flair\coregistered_to_baseline_T1.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\Nifty\baseline_t1.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\Nifty\coregistered_followup_6DOF.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\Nifty\coregistered_to_baseline_T1.nii.gz" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -901,8 +905,6 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-    <Content Include="Scripts\XNATImaging\app.js" />
-    <Content Include="Scripts\XNATImaging\underscore.js" />
     <Content Include="todo.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -17,11 +17,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css"/>
+    <link rel="stylesheet" type="text/ctabless" href="../../Scripts/XNATImaging/css/main.css"/> 
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/XNATImaging/papaya.js"></script>
     
-
     <!-- JqueryUI stylesheet -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <!-- Bootstrap Core CSS -->
@@ -39,7 +42,7 @@
 
     <link href="../../Scripts/XNATImaging/css/main.css" rel="stylesheet" />
     <style>
-        body {
+        /*body {
             color: #FFF;
         }
 
@@ -101,55 +104,47 @@
             display: inline-block;
             position: relative;
             text-align: center;
-        }
+        }*/
     </style>
 </head>
 <body unselectable="on" class="unselectable">
 
-    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <script src="../../Scripts/XNATImaging/underscore.js"></script>
-    <script src="../../Scripts/XNATImaging/dicomParser.js"></script>
-
-
-
     <div class="wrapper container" style="width: 97%">
-        <h1>Controls</h1>
+        <h2>Controls</h2>
 
         <form action="#">
-
             <fieldset>
                 <label for="view">Select a view</label>
                 <select name="view" id="viewSelect">
                     <option selected="selected">Sagittal</option>
-                    <option>Axial</option>
                     <option>Coronal</option>
+                    <option>Axial</option>
                 </select>
             </fieldset>
         </form>
 
-        <div  id="dicomImage" style="width: 950px; height: 700px;">
-            <div class="papaya" data-params="params">
+        <div id="markers-contain" class="ui-widget">
+            <h3>Existing markers:</h3>
+            <table id="markerTable" class="ui-widget ui-widget-content">
+                <thead>
+                    <tr class="ui-widget-header ">
+                        <th>Coordinates (x, y, z)</th>
+                        <th>Label</th>
+                        <th>Orientation</th>
+                        <th>Slice</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-                <div id="mrtopleft">
-                    <p>Optimise ID</p>
-                </div>
-                <div id="mrtopright">
-                    Hospital
-                </div>
-                <div id="mrbottomright">
-                    <div id="frameRate"></div>
-                    <div id="zoomText">
-                        <p>Zoom: 2.0x</p>
-                    </div>
-                    <div id="sliceText">
-                        <p>Image: </p>
-                    </div>
-                </div>
-                <div id="mrbottomleft">
-                    <p>WW/WC: </p>
-                </div>
+        <div id="dicomImage" style="width: 900px; height: 700px;"> <!--1000x750 for tablets-->
+            <div class="papaya" data-params="params"></div>
+        </div>
+
+        <div class="row">
+            <div>
+                <input type="range" id="slice-range">
             </div>
         </div>
         <div class="row">
@@ -157,18 +152,28 @@
                 <div class="controls">
                     <input id="upNavigationButton" type="button" class="btn btn-default" value="Up"/>
                     <input id="downNavigationButton" type="button" class="btn btn-default" value="Down"/>
-                    <input id="playButton" type="button" class="btn btn-success" value="Play"/>
+                    <input id="playButton" type="button" class="btn btn-primary" value="Play"/>
                     <input id="resetButton" type="button" class="btn btn-warning" value="Reset"/>
-                    <input id="labelButton" type="button" class="btn btn-primary" value="Add Label"/>
-                    <input id="markerButton" type="button" class="btn btn-primary" value="Place markers disabled"/>
-                    <input id="markerClearButton" type="button" class="btn btn-primary" value="Clear all markers"/>
+                    <input id="rectangleMarkerButton" type="button" class="btn btn-default" value="Place markers disabled"/>
+                    <input id="markerClearButton" type="button" class="btn btn-danger" value="Clear all markers"/>
                 </div>
             </div>
-        </div>
+        </div>  
         <div class="row">
-            <div class="col-md-8">
-                <input type="range" id="slice-range">
+            <div class="col-md-4" style="width: 150px;">
+                <h3>PDF scroller</h3>
+                <input type="range" id="pdf-scroller">
             </div>
+        </div>
+        <div id="dialog-form" title="Add label">
+            <form>
+                <fieldset>
+                    <input type="text" name="label" id="labelInput" value="" class="text ui-widget-content ui-corner-all">
+
+                    <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                    <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+                </fieldset>
+            </form>
         </div>
     </div>
 
@@ -206,14 +211,9 @@
     </script>
 
     <script>
-        $('#markerButton')
-            .click(function() {
-                papayaContainers[0].viewer.rotateViews();
-            });
-
-        $('#highlightButton')
+        $('#labelButton')
             .click(function () {
-                
+                $("#dialog-form").dialog("open");
             });
     </script>
 </body>

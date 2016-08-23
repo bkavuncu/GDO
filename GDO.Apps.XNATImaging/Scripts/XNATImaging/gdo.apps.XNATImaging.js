@@ -2,14 +2,6 @@
 
 $(function () {
     gdo.consoleOut('.XNATImaging', 1, 'Loaded XNATImaging JS');
-    $.connection.xNATImagingAppHub.client.receiveName = function (instanceId, name) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Name : " + name);
-            $("iframe").contents().find("#hello_text").empty().append("Hello " + name);
-        }
-    }
 
     $.connection.xNATImagingAppHub.client.receiveControl = function (instanceId, controlName) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
@@ -20,13 +12,15 @@ $(function () {
         }
     }
 
-    $.connection.xNATImagingAppHub.client.receiveConfig = function (instanceId, config) {
+    $.connection.xNATImagingAppHub.client.receiveConfig = function (instanceId, json) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Config? nah");
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Control config : ");
+            gdo.consoleOut('.XNATImaging', 1, JSON.stringify(json));
+            gdo.net.app["XNATImaging"].setupControl(instanceId, json);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Config : ");
-            gdo.consoleOut('.XNATImaging', 1, JSON.stringify(config));
-            gdo.net.app["XNATImaging"].initZoom(instanceId, config);
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received screen config ");
+            gdo.consoleOut('.XNATImaging', 1, JSON.stringify(json));
+            gdo.net.app["XNATImaging"].setupClient(instanceId, json);
         }
     }
 
@@ -42,57 +36,62 @@ $(function () {
     **  translationY    double
     */
     $.connection.xNATImagingAppHub.client.receiveImageUpdate =
-        function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, rotate, markingCoords) {
+        function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, view, currentCoord, markingCoords) {
             console.log(markingCoords);
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 // ignore
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
-                gdo.net.app["XNATImaging"].updateImageParams(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, rotate, markingCoords);
+                gdo.net.app["XNATImaging"].updateImageParams(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, view, currentCoord, markingCoords);
             }
         }
 });
-
-/* 
-**  Determine app section based on column
-*/
-gdo.net.app["XNATImaging"].getSection = function(col) {
-    if (col < 2) {
-        return "MRI";
-    } else if (col == 2) {
-        return "PDF";
-    } else if (col < 6) {
-        return "ZOOM";
-    }
-};
 
 /*
 ** Entry point for Client nodes
 */
 gdo.net.app["XNATImaging"].initClient = function (papaya, containers) {
     var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
-    gdo.loadScript('mpr', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('utility', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
 
     gdo.net.app["XNATImaging"].papaya = papaya;
     gdo.net.app["XNATImaging"].papayaContainers = containers;
+    gdo.net.instance[instanceId].playing = false;
+    gdo.net.instance[instanceId].interval = null;
+
+    console.log(gdo.net.app["XNATImaging"].instances[instanceId].config);
 
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Client at Node ' + gdo.clientId);
 
+    console.log(containers[0].viewer.initialized);
+    console.log(containers[0].viewer);
+    gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
+}
+
+gdo.net.app["XNATImaging"].setupClient = function (instanceId, appConfig) {
     var row = gdo.net.node[gdo.clientId].row;
     var col = gdo.net.node[gdo.clientId].col;
-    var section = gdo.net.app["XNATImaging"].getSection(col);
+    //var url = appConfig.controlUrl;
 
-    gdo.consoleOut('.XNATImaging', 1, 'Part of section: ' + section);
+    gdo.net.app["XNATImaging"].appConfig = appConfig;
+    gdo.net.app["XNATImaging"].screenConfig = appConfig.screens.config;
+    gdo.net.app["XNATImaging"].patientName = appConfig.patientName;
 
-    if (section == "MRI") {
-        gdo.net.app["XNATImaging"].setupMRI(instanceId, row, col, papaya, containers);
+    var screenConfig = appConfig.screens.config;
+    var mode = screenConfig.mode;
 
-    } else if (section == "PDF") {
-        gdo.net.app["XNATImaging"].setupPDF(row);
+    if (mode == "mri") {
+        gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, screenConfig.url, gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height);
 
-    } else if (section == "ZOOM") {
-        gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
+    } else if (mode == "pdf") {
+        gdo.net.app["XNATImaging"].setupPDF();
+
+    } else if (mode == "zoom") {
+        gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, screenConfig.url, gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height);
+
+    } else if (mode == "text" || mode == "title" || mode == "subheading") {
+        gdo.net.app["XNATImaging"].setupText(mode);
     }
 }
 
@@ -100,129 +99,238 @@ gdo.net.app["XNATImaging"].initClient = function (papaya, containers) {
 ** Entry point for Control node
 */
 gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, containers) {
-    gdo.loadScript('mpr', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('utility', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript('events', 'XNATImaging', gdo.SCRIPT_TYPE.APP);
 
-    gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
+    gdo.net.app["XNATImaging"].papaya = papaya;
+    gdo.net.app["XNATImaging"].papayaContainers = containers;
 
     $("iframe").contents().find("#viewSelect").selectmenu();
 
-    
-
     gdo.net.instance[instanceId].playing = false;
     gdo.net.instance[instanceId].interval = null;
-
-    var mode = "t1";
-    var url = "GSK131086_000001/Baseline/t1";
     gdo.net.instance[instanceId].stack = {
         currentImageIndex: 0,
-        imageIds: []
+        imageUrl: ""
     }
-    gdo.net.app["XNATImaging"].initialiseCS(url, mode, 900, 600, instanceId, papaya, containers);
 
-    gdo.net.app["XNATImaging"].initButtons(instanceId, containers);
+    gdo.net.app["XNATImaging"].server.requestConfig(instanceId, 0);
+}
+
+gdo.net.app["XNATImaging"].setupControl = function(instanceId, appConfig) {
+    gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Control at Instance ' + instanceId);
+
+    var mode = "control";
+    var url = appConfig.controlUrl;
+    gdo.net.app["XNATImaging"].appConfig = appConfig;
+    gdo.net.app["XNATImaging"].patientName = appConfig.patientName;
+
+    gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, url, 1000, 750);
+    gdo.net.app["XNATImaging"].initButtons(instanceId);
+}
+
+gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, width, height) {
+
+    var papaya = gdo.net.app["XNATImaging"].papaya;
+    var containers = gdo.net.app["XNATImaging"].papayaContainers;
+    var appConfig = gdo.net.app["XNATImaging"].appConfig;
+
+    var baseUrl = appConfig.host + appConfig.mriUrl;
+    //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
+    //"http://localhost:12332/Scripts/XNATImaging/Scans/";
+
+    gdo.net.app["XNATImaging"].imageUrl = baseUrl + url;
+    gdo.consoleOut(".XNATImaging", 1, mode);
+
+    var params = [];
+    var imageUrl = gdo.net.app["XNATImaging"].imageUrl;
+    var imageName = "baseline_t1";
+
+    params["images"] = [imageUrl];
+    //params[imageName] = { min: 10, max: 1345 };
+    params["worldSpace"] = false;
+    params["radiological"] = false;
+    params["padAllImages"] = true;
+    params["smoothDisplay"] = false;
+    params["mainView"] = appConfig.defaultOrientation;
+    params["showControls"] = false;
+    params["fullScreen"] = false;
+    params["kioskMode"] = true;
+        
+    switch (mode) {
+        case "control":
+            // add handlers for mouse events once the image is loaded
+            papaya.Container.allowPropagation = true;
+            params["kioskMode"] = false;
+            params["orthogonal"] = true;
+            params["loadingComplete"] = gdo.net.app["XNATImaging"].setMouseHandlers(instanceId);
+            break;
+        case "zoom":
+            params["fullScreen"] = true;
+            params["orthogonalTall"] = false;
+            params["smoothDisplay"] = true;
+            params["zoom"] = true;
+            params["zoomCanvasDim"] = appConfig.screens.config.zoomCanvasDim;
+            params["loadingComplete"] = gdo.net.app["XNATImaging"].setupZoomCanvas();
+            containers[0].preferences.showCrosshairs = "No";
+        case "mri":
+            params["orthogonal"] = appConfig.screens.config.orthogonal ? true : false;
+            break;
+        default:
+            console.log("No accepted mode found in config");
+    }
+
+    console.log(params);
+    papaya.Container.resetViewer(0, params);
+        
+    
 }
 
 /*
-** Initialise Client nodes on MRI section of app
+** Resize papaya for zoom canvas
 */
-gdo.net.app["XNATImaging"].setupMRI = function (instanceId, row, col, papaya, containers) {
-    
-    if (row == 0) {
-        $("iframe").contents().find("#main").empty();
-        $("iframe").contents().find("#main").append("<div class='heading'>");
-        if (col == 0) {
-            $("iframe").contents().find(".heading").append("<h1>Multiple Sclerosis Imaging</h1>");
-            $("iframe").contents().find(".heading").append("<h2>Baseline</h2>");
-        } else {
-            $("iframe").contents().find(".heading").append("<h2>Followup</h2>");
-        }
-        $("iframe").contents().find("#main").append("</div>");
+gdo.net.app["XNATImaging"].setupZoomCanvas = function () {
 
-    } else {
+    var papaya = gdo.net.app["XNATImaging"].papaya;
+    var containers = gdo.net.app["XNATImaging"].papayaContainers;
+    var appConfig = gdo.net.app["XNATImaging"].appConfig;
 
-        var url;
-        var mode;
+    //papayaContainers[0].viewer.resizeViewer([4347, 3788]);
+    var canvasWidth = appConfig.screens.config.zoomCanvasDim[0];
+    var canvasHeight = appConfig.screens.config.zoomCanvasDim[1];
+    var offsetX = appConfig.screens.config.zoomOffset[0];
+    var offsetY = appConfig.screens.config.zoomOffset[1];
+    var displayWidth = appConfig.screens.config.displaySize[0];
+    var displayHeight = appConfig.screens.config.displaySize[1];
 
-        switch (row) {
-            case 1:
-                mode = "flair";
-                if (col == 0) {
-                    $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
-                    $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
-                    url = "GSK131086_000001/Baseline/flair";
-                } else {
-                    url = "GSK131086_000001/Followup/flair";
-                }
-                break;
-            case 2:
-                mode = "t1";
-                if (col == 0) {
-                    $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
-                    $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
-                    url = "GSK131086_000001/Baseline/t1";
-                } else {
-                    url = "GSK131086_000001/Followup/t1";
-                }
-                break;
-            case 3:
-                mode = "ajax";
-                if (col == 0) {
-                    $("iframe").contents().find(".heading h3").text(mode.toUpperCase());
-                    $("iframe").contents().find(".heading h3").css({ "padding-bottom": 0 });
-                    url = "GSK131086_000001/Baseline/t1";
-                } else {
-                    url = "GSK131086_000001/Baseline/t1";
-                }
-                break;
-        }
-
-        gdo.net.instance[instanceId].playing = false;
-        gdo.net.instance[instanceId].interval = null;
-
-        gdo.net.instance[instanceId].stack = {
-            currentImageIndex: 0,
-            imageIds: []
-        }
-        gdo.net.app["XNATImaging"].initialiseCS(url, mode, 1300, 900, instanceId, papaya, containers);
+    if (appConfig.screens.config.orthogonal) {
+        canvasHeight = canvasWidth / 1.5;
     }
+
+    var dicomDiv = $("iframe").contents().find('#dicomImage');
+    // resize container div to match child divs and canvas
+    dicomDiv.width(canvasWidth).height(canvasHeight);
+
+    var iframe = $("iframe")[0];
+    console.log(iframe);
+    console.log($(iframe));
+
+    
+    // if orthogonal height = width / 1.5
+    // else height/width ~ 1
+
+    setTimeout(function () {  // setTimeout necessary in Chrome
+        iframe.contentWindow.scrollTo((canvasWidth / displayWidth) * offsetX, (canvasHeight / displayHeight) * offsetY);
+    }, 2000);
+
+    gdo.consoleOut(".XNATImaging", 1, "Width x Height of display: (" + gdo.net.node[gdo.clientId].width + " x " + gdo.net.node[gdo.clientId].height + ")");
+    gdo.consoleOut(".XNATImaging", 1, "Canvas dimensions: (" + canvasWidth + " x " + canvasHeight + ")");
+    gdo.consoleOut(".XNATImaging", 1, "Offset image by: (" + offsetX + ", " + offsetY + ")");
+        //var scaleFactorX = canvasWidth / width;
+        //var scaleFactorY = canvasHeight / height;
+        
+
+        /*var viewport = cornerstone.getViewport(element);
+        viewport.translation.x += (-offsetX * width)/viewport.scale;
+        viewport.translation.y += (-offsetY * height)/viewport.scale;
+        cornerstone.setViewport(element, viewport);
+        gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");*/
+
+        /*var canvas = containers[0].viewer.canvas;
+        var ctx = canvas.getContext('2d');
+        ctx.transform(6, 0, 0, 8, -offsetX * width, -height * 10);
+
+        // var ctx = img.getCanvas().getContext('2d');
+        // ctx.drawImage(img, offsetX, offsetY, width/3, height/3, 0, 0, width, height);*/
+}
+
+gdo.net.app["XNATImaging"].sendImageParam = function (instanceId) {
+    var containers = gdo.net.app["XNATImaging"].papayaContainers;
+    var viewer = containers[0].viewer;
+    var volume = viewer.screenVolumes[0];
+    var diffX = 0;
+    var diffY = 0;
+    var diffScale = 0;
+    var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
+
+    gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
+        viewer.mainImage.currentSlice,
+        volume.screenMin,
+        volume.screenMax,
+        diffScale,
+        diffX,
+        diffY,
+        viewText,
+        viewer.currentCoord,
+        viewer.markingCoords);
+    gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
+}
+
+/*
+** Update image parameters using data received from server
+*/
+gdo.net.app["XNATImaging"].updateImageParams = function (
+                                            instanceId, currentImageId, windowWidth, windowCenter,
+                                            scale, translationX, translationY, view, currentCoord, markingCoords) {
+    
+    var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+    var volume = viewer.screenVolumes[0];
+    console.log(volume);
+
+    if (volume.screenMin )
+    console.log(volume.screenMin, volume.screenMax);
+    volume.setScreenRange(windowWidth, windowCenter);
+
+    viewer.markingCoords = markingCoords;
+    viewer.drawMarkers();
+
+    console.log(currentCoord);
+    console.log(viewer.currentCoord);
+
+    // TODO: test conditional
+    //if (viewer.currentCoord.x != currentCoord.x || viewer.currentCoord.y != currentCoord.y || viewer.currentCoord.z != currentCoord.z {
+    console.log(currentCoord);
+    viewer.gotoCoordinate(currentCoord);
+    //}
+
+    if (gdo.net.app["XNATImaging"].getSliceDirection(view) != viewer.mainImage.sliceDirection) {
+        viewer.rotateToView(view);
+    }
+
+}
+
+
+gdo.net.app["XNATImaging"].setupText = function (mode) {
+    var screenConfig = gdo.net.app["XNATImaging"].appConfig.screens.config;
+
+    $("iframe").contents().find("#main").empty();
+    $("iframe").contents().find("#main").append("<div class='heading'>");
+    if (mode == "title") {
+        $("iframe").contents().find(".heading").append("<h1>" + screenConfig.text + "</h1>");
+    } else if (mode == "subheading") {
+        $("iframe").contents().find(".heading").append("<h2>" + screenConfig.text + "</h2>");
+    } else {
+        $("iframe").contents().find(".heading").append("<h3>" + screenConfig.text.toUpperCase() + "</h3>");
+    }
+    $("iframe").contents().find("#main").append("</div>");
 }
 
 /*
 ** Initialise Client nodes on PDF section of app
 */
-gdo.net.app["XNATImaging"].setupPDF = function (row) {
-    // hardcoded pdf urls based on screen row
-    switch (row) {
-        case 1:
-            $("iframe").contents().find("#main")
-            .html(
-                "<object data='../../Scripts/XNATImaging/pdf/GSK131086_000001_140926_msmetrix_report-3.pdf#zoom=150&amp;#toolbar=0' type='application/pdf' width='100%' height='1080px'>" +
-                "<embed src='../../Scripts/XNATImaging/pdf/GSK131086_000001_140926_msmetrix_report-3.pdf#zoom=150&amp;#toolbar=0' type='application/pdf' />" +
-                "</object>"
-            );
-            break;
-        case 2:
-            $("iframe").contents().find("#main")
-            .html(
-                "<object data='../../Scripts/XNATImaging/pdf/GSK131086_000001_msmetrix_report-2.pdf#zoom=150&amp;#toolbar=0' type='application/pdf' width='100%' height='1080px'>" +
-                "<embed src='../../Scripts/XNATImaging/pdf/GSK131086_000001_msmetrix_report-2.pdf#zoom=150&amp;#toolbar=0' type='application/pdf' />" +
-                "</object>"
-            );
-            break;
-        case 3:
-            $("iframe").contents().find("#main")
-            .html(
-                "<object data='../../Scripts/XNATImaging/pdf/GSK131086_000001_150925_msmetrix_report-3.pdf#zoom=150&amp;#toolbar=0' type='application/pdf' width='100%' height='1080px'>" +
-                "<embed src='../../Scripts/XNATImaging/pdf/GSK131086_000001_150925_msmetrix_report-3.pdf#zoom=150&amp;#toolbar=0' type='application/pdf' />" +
-                "</object>"
-            );
-            break;
-        default:
-            $("iframe").contents().find("#main").empty();
-            $("iframe").contents().find("#main").append("<div class='heading'>");
-            $("iframe").contents().find(".heading").append("<h1>Reports</h1>");
-            $("iframe").contents().find("#main").append("</div>");
-    }
+gdo.net.app["XNATImaging"].setupPDF = function () {
+
+    $("iframe").contents().find("#main").empty();
+
+    var appConfig = gdo.net.app["XNATImaging"].appConfig;
+    var screenConfig = appConfig.screens.config;
+
+    $("iframe").contents().find("#main")
+    .html(
+        "<object data='" + appConfig.pdfUrl + appConfig.patientName + "/" + appConfig.patientName + screenConfig.url + "#zoom=" + screenConfig.zoomFactor + "&amp;#toolbar=0' type='application/pdf' width='100%' height='1080px'>" +
+        "<embed src='" + appConfig.pdfUrl + appConfig.patientName + "/" + appConfig.patientName + screenConfig.url + "#zoom=" + screenConfig.zoomFactor + "&amp;#toolbar=0' type='application/pdf' />" +
+        "</object>"
+    );
 }
 
 /*
@@ -238,13 +346,6 @@ gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
         "</div>"
     );*/
 
-    gdo.net.instance[instanceId].playing = false;
-    gdo.net.instance[instanceId].interval = null;
-
-    gdo.net.instance[instanceId].stack = {
-        currentImageIndex: 0,
-        imageIds: []
-    }
     gdo.net.instance[instanceId].zoomView = {
         zoomId: json.id,
         url: json.url,
@@ -253,493 +354,9 @@ gdo.net.app["XNATImaging"].initZoom = function (instanceId, json) {
         zoomFactor: json.zoomFactor
     }
 
-    var papaya = gdo.net.app["XNATImaging"].papaya;
-    var containers = gdo.net.app["XNATImaging"].papayaContainers;
-    gdo.net.app["XNATImaging"].initialiseCS(json.url, "zoom", gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height, instanceId, papaya, containers);
+    gdo.net.app["XNATImaging"].initializePapaya(instanceId, "zoom", json.url, gdo.net.node[gdo.clientId].width, gdo.net.node[gdo.clientId].height);
 }
 
-/*
-** Gathers ImageIds Array from DICOM data source
-*/
-gdo.net.app["XNATImaging"].initialiseCS = function (url, mode, width, height, instanceId, papaya, containers) {
-
-    // TODO: Scans to lowercase scans
-    var baseUrl = "http://localhost:12332/Scripts/XNATImaging/Scans/";
-        //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
-        //"http://localhost:12332/Scripts/XNATImaging/Scans/";
-    $.ajax({
-        url: baseUrl + url,
-        success: function(data) {
-            //List all png or jpg or gif file names in the page
-            $(data).find('a:contains("dcm")')
-                .each(function() {
-                    var filename = this.href.replace(window.location.host, "").replace("http:///", "");
-                    gdo.net.instance[instanceId].stack.imageIds.push("http://localhost:12332/" + filename);
-                    //"http://dsigdotesting.doc.ic.ac.uk/"
-                    //console.log(filename);
-                });
-        }
-    });
-
-    setTimeout(function() {
-        if (mode == "zoom") {
-            gdo.net.app["XNATImaging"].getZoomStack(width, height, instanceId, papaya, containers);
-        } else {
-            gdo.consoleOut(".XNATImaging", 1, "non zoom node");
-
-            gdo.net.app["XNATImaging"].getImageStack(width, height, instanceId, papaya, containers);
-
-            var url = "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2678.dcm";
-            $.when( gdo.net.app["XNATImaging"].getImageProperties(url) ).then(
-                function (data) {
-                    //console.log(data.url + ":" + data.orientation);
-                }
-            );
-            //console.log(currentImageLoaded);
-        }
-    }, 1000);
-    gdo.consoleOut('.XNATImaging', 1, "Loaded Image Stack");
-}
-
-gdo.net.app["XNATImaging"].initialiseSlider = function (instanceId, papaya, containers) {
-    // Initialize range input
-    var slider = $("iframe").contents().find('#slice-range').get(0);
-    gdo.consoleOut(".XNATImaging", 1, "Initialised slider");
-    // Set minimum and maximum value
-    slider.min = 0;
-    slider.step = 1;
-
-    var max = 255;
-    var currentOrientation = gdo.net.app["XNATImaging"].getCurrentOrientation(instanceId, papaya, containers);
-    if (currentOrientation == "Axial") {
-        max = containers[0].viewer.volume.header.imageDimensions.zDim;
-    } else if (currentOrientation == "Coronal") {
-        max = containers[0].viewer.volume.header.imageDimensions.yDim;
-    } else if (currentOrientation == "Sagittal") {
-        max = containers[0].viewer.volume.header.imageDimensions.xDim;
-    } else {
-        max = gdo.net.instance[instanceId].imageIds.length - 1;
-    }
-
-    slider.max = max;
-    gdo.consoleOut(".XNATImaging", 1, "Initialised slider with range 0-" + slider.max);
-    // Set current value
-    //slider.value = gdo.net.instance[instanceId].stack.currentImageIndex;
-    slider.value = containers[0].viewer.mainImage.currentSlice;
-    gdo.consoleOut(".XNATImaging", 1, "Initialised slider to current index " + slider.value);
-}
-
-gdo.net.app["XNATImaging"].getCurrentOrientation = function(instanceId, papaya, containers) {
-    var viewer = containers[0].viewer;
-    var mainImage = viewer.mainImage;
-
-    if (mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_AXIAL) {
-        return "Axial";
-    } else if (mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_CORONAL) {
-        return "Coronal";
-    } else if (mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_SAGITTAL) {
-        return "Sagittal";
-    }
-}
-
-/*
-** Loads in image stack using cornerstone for Client and Control nodes
-*/
-gdo.net.app["XNATImaging"].getImageStack = function (width, height, instanceId, papaya, containers) {
-    var params = [];
-    var imageIds = gdo.net.instance[instanceId].stack.imageIds;
-    //var imageIds = ["http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2724.dcm", "http://localhost:12332/Scripts/XNATImaging/Scans/GSK131086_000001/Baseline/t1/Ad201713-MR-2-2725.dcm"];
-    var imageName = "MPRAGE_ADNI_P2";
-
-    params["images"] = [imageIds];
-    //params[imageName] = { min: 10, max: 1345 };
-    params["orthogonal"] = true;
-    params["fullScreen"] = false;
-    params["mainView"] = "sagittal";
-    params["radiological"] = false;
-    params["worldSpace"] = false;
-    params["showControls"] = false; 
-    params["kioskMode"] = true;
-
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        // add handlers for mouse events once the image is loaded
-        params["loadingComplete"] = gdo.net.app["XNATImaging"].setMouseHandlers(instanceId, papaya, containers);
-        params["kioskMode"] = false;
-    }
-
-    papaya.Container.resetViewer(0, params);
-    console.log(containers[0].viewer);
-    console.log(params);
-}
-
-/*
-** Sets mouse handlers for control Node
-*/
-gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId, papaya, containers) {
-    
-    gdo.consoleOut('.XNATImaging', 1, "Image stack finished loading");
-
-    /*
-        $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
-        $("iframe").contents().find('#mrbottomleft').text("WW/WC:" + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-    */
-
-    $("iframe").contents().find("#viewSelect").on("selectmenuchange", function (event, ui) {
-        var text = $("iframe").contents().find("#viewSelect option:selected").text();
-        console.log(text);
-        var viewer = containers[0].viewer;
-        console.log(viewer);
-        switch (text) {
-            case 'Sagittal':
-            case 'Axial':
-            case 'Coronal':
-            default:
-                containers[0].viewer.rotateViews();
-                gdo.net.app["XNATImaging"].initialiseSlider(instanceId, papaya, containers);
-
-                gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, 1, 0,
-                                                                    0, 0, 0, 0, true);
-                gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
-        }
-
-        gdo.net.instance[instanceId].stack.currentImageIndex = viewer.mainImage.currentSlice;
-
-        gdo.net.app["XNATImaging"].initialiseSlider(instanceId, papaya, containers);
-    });
-
-    papaya.Container.allowPropagation = true;
-
-    $("iframe").contents().find('#papayaContainer0').mouseup(function (e) {
-        console.log("mouseup");
-
-        var diffX = 0;
-        var diffY = 0;
-        var diffScale = 0;
-
-        var viewer = containers[0].viewer;
-        console.log(viewer);
-
-        var volume = viewer.screenVolumes[0];
-
-        var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
-
-        gdo.consoleOut(".XNATImaging",
-            1,
-            volume.screenMin + ", " + volume.screenMax + ", " + diffX + ", " + diffY + ", " + diffScale);
-
-        console.log(viewer.markingCoords);
-
-        gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
-            currentImageId,
-            volume.screenMin,
-            volume.screenMax,
-            diffScale,
-            diffX,
-            diffY,
-            false,
-            viewer.markingCoords);
-        gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
-    });
-
-    var canvas = containers[0].viewer.canvas;
-    console.log(canvas);
-
-    var jcanvas = $(containers[0].viewer.canvas);
-    console.log(jcanvas);
-
-    var iframeMain = $("iframe");
-    var dicomdiv = $("iframe").contents().find('#dicomImage');
-    var papayadiv = $("iframe").contents().find('#papayaContainer0');
-
-    var canvasdiv = $("iframe").contents().find('canvas');
-
-    console.log(iframeMain);
-    console.log(dicomdiv);
-    console.log(papayadiv);
-    console.log(canvasdiv);
-
-    $(jcanvas)
-       .click(function () {
-           alert("canvas mouseup4");
-       });
-
-    $(canvas)
-       .click(function () {
-           alert("canvas mouseup5");
-       });
-
-    $("iframe").contents().find('canvas')
-        .click(function() {
-            alert("Found u boy!");
-        });
-
-    $(papayadiv).find('#papayaViewer0')
-       .click(function () {
-           console.log("canvas mouseup6");
-       });
-
-    $(papayadiv).contents().find('#papayaViewer0')
-       .click(function () {
-           console.log("canvas mouseup7");
-       });
-
-/*
-    // add event handlers to pan image on mouse move
-    $("iframe").contents().find('#dicomImage').mousedown(function (e) {
-        var lastX = e.pageX;
-        var lastY = e.pageY;
-        var mouseButton = e.which;
-        var diffX = 0.0;
-        var diffY = 0.0;
-        var diffScale = 0.0;
-        $("iframe").contents().find('#dicomImage').mousemove(function(e) {
-            var deltaX = e.pageX - lastX,
-                deltaY = e.pageY - lastY;
-            lastX = e.pageX;
-            lastY = e.pageY;
-            if (mouseButton == 1) {
-                var viewport = cornerstone.getViewport(element);
-                viewport.voi.windowWidth += (deltaX / viewport.scale);
-                viewport.voi.windowCenter += (deltaY / viewport.scale);
-                cornerstone.setViewport(element, viewport);
-                $("iframe")
-                    .contents()
-                    .find('#mrbottomleft')
-                    .text("WW/WL:" +
-                        Math.round(viewport.voi.windowWidth) +
-                        "/" +
-                        Math.round(viewport.voi.windowCenter));
-            } else if (mouseButton == 2) {
-                var viewport = cornerstone.getViewport(element);
-                diffX = (deltaX / viewport.scale);
-                diffY = (deltaY / viewport.scale);
-                viewport.translation.x += diffX;
-                viewport.translation.y += diffY;
-                cornerstone.setViewport(element, viewport);
-            } else if (mouseButton == 3) {
-                var viewport = cornerstone.getViewport(element);
-                var oldScale = viewport.scale;
-                viewport.scale += (deltaY / 100);
-                cornerstone.setViewport(element, viewport);
-                diffScale = viewport.scale / oldScale;
-                $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
-            }
-        });
-    });
-
-    $("iframe").contents().find('#dicomImage').mouseup(function () {
-            $("iframe").contents().find('#dicomImage').unbind('mousemove');
-            $("iframe").contents().find('#dicomImage').unbind('mouseup');
-
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-
-        var diffX, diffY, diffScale;
-
-        // undefined before images load
-        var volume = containers[0].viewer.screenVolumes[0];
-
-        console.log(volume.screenMin, volume.screenMax);
-        //volume.setScreenRange(volume.screenMin + 50, volume.screenMax + 50);
-
-        var currentImageId = gdo.net.instance[instanceId].stack.currentImageIndex;
-
-        gdo.consoleOut(".XNATImaging", 1, volume.screenMin + ", " + volume.screenMax + ", " + diffX + ", " + diffY + ", " + diffScale);
-        gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, currentImageId, volume.screenMin,
-                                                            volume.screenMax, diffScale, diffX, diffY, false);
-        gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
-        }
-    });
-
-    $("iframe").contents().find('#dicomImage').on('mousewheel DOMMouseScroll', function (e) {
-        // Firefox e.originalEvent.detail > 0 scroll back, < 0 scroll forward
-        // chrome/safari e.originalEvent.wheelDelta < 0 scroll back, > 0 scroll forward
-        if (e.originalEvent.wheelDelta < 0 || e.originalEvent.detail > 0) {
-            gdo.net.app["XNATImaging"].navigateDown(instanceId);
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Down');
-                gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#downNavigationButton').text());
-            }
-        } else if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Up');
-                gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#upNavigationButton').text());
-            }
-            gdo.net.app["XNATImaging"].navigateUp(instanceId);
-        }
-        //prevent page fom scrolling
-        return false;
-    });*/
-
-    // Bind the range slider events
-    $("iframe").contents().find('#slice-range').on("input", function (event) {
-        //gdo.consoleOut(".XNATImaging", 1, "slider input event");
-        var currentImageIndex = gdo.net.instance[instanceId].stack.currentImageIndex;
-        // Get the range input value
-        var newImageIndex = parseInt(event.currentTarget.value, 10);
-
-        // Switch images, if necessary
-        if (newImageIndex !== currentImageIndex) {
-
-            gdo.consoleOut(".XNATImaging", 1, "Updating image using slider to " + newImageIndex);
-            gdo.net.instance[instanceId].stack.currentImageIndex = newImageIndex;
-
-            var viewer = containers[0].viewer;
-            var mainImage = viewer.mainImage;
-
-            if (mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_AXIAL) {
-                viewer.currentCoord.z = newImageIndex;
-            } else if (mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_CORONAL) {
-                viewer.currentCoord.y = newImageIndex;
-            } else if (mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_SAGITTAL) {
-                viewer.currentCoord.x = newImageIndex;
-            }
-
-            viewer.gotoCoordinate(viewer.currentCoord);
-
-            gdo.net.app["XNATImaging"].server.setImageConfig(instanceId, newImageIndex, 0, 0, 0, 0, 0, false);
-            gdo.consoleOut(".XNATImaging", 1, "Set New Image Config- image id");
-        }
-    });
-
-    var viewerdiv = $("iframe").contents().find('#papayaViewer0');
-
-    $(viewerdiv)
-        .click(function () {
-            console.log("i like to view u");
-        });
-}
-
-/*
-** Update DICOM image using data received from server
-*/
-gdo.net.app["XNATImaging"].updateImageParams = function (
-                                            instanceId, currentImageId, windowWidth, windowCenter,
-                                            scale, translationX, translationY, rotate, markingCoords) {
-    var containers = gdo.net.app["XNATImaging"].papayaContainers;
-    if (rotate) {
-        console.log(containers);
-        gdo.net.app["XNATImaging"].papayaContainers[0].viewer.rotateViews();
-    } else {
-        var volume = containers[0].viewer.screenVolumes[0];
-        console.log(volume);
-
-        console.log(volume.screenMin, volume.screenMax);
-        volume.setScreenRange(windowWidth, windowCenter);
-
-        containers[0].viewer.markingCoords = markingCoords;
-
-        containers[0].viewer.drawViewer(true);
-
-    }
-
-    /*var element = $("iframe").contents().find("#dicomImage").get(0);
-    var viewport = cornerstone.getViewport(element);
-
-    gdo.consoleOut(".XNATImaging", 1, windowWidth + "/" + windowCenter + ", " + scale);
-
-    viewport.voi.windowWidth = windowWidth;
-    viewport.voi.windowCenter = windowCenter*;
-    // TODO: Figure out a scaling solution
-    if (scale > 0) {
-        viewport.scale *= scale;
-    }
-
-    // TODO: needs to be compatible with both MRI and ZOOM sections
-    viewport.translation.x += translationX;
-    viewport.translation.y += translationY;
-
-    if (currentImageId != gdo.net.instance[instanceId].stack.currentImageIndex) {
-        gdo.net.instance[instanceId].stack.currentImageIndex = currentImageId;
-        gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    }
-
-    $("iframe").contents().find('#mrbottomleft').text("WW/WL:" + Math.round(windowWidth) + "/" + Math.round(windowCenter));
-    $("iframe").contents().find('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2) + "x");
-
-    cornerstone.setViewport(element, viewport);*/
-}
-
-/*
-** Loads in image stack using cornerstone for Client nodes in Zoom section of app
-*/
-gdo.net.app["XNATImaging"].getZoomStack = function (width, height, instanceId, papaya, containers) {
-    var params = [];
-    var imageIds = gdo.net.instance[instanceId].stack.imageIds;
-    var imageName = "MPRAGE_ADNI_P2";
-
-    params["images"] = [imageIds];
-    //params[imageName] = { min: 10, max: 1345 };
-    params["orthogonal"] = false;
-    params["fullScreen"] = true;
-    params["mainView"] = "sagittal";
-    params["radiological"] = false;
-    params["worldSpace"] = false;
-    params["showControls"] = false;
-    params["kioskMode"] = true;
-
-    var canvasWidth = width * 3;
-    var canvasHeight = height * 4;
-
-    // resize canvas to fill screen
-    /*gdo.consoleOut('.XNATImaging', 1, "Resize image to " + canvasWidth + "x" + canvasHeight);*/
-    $("iframe").contents().find('#dicomImage').width(canvasWidth).height(canvasHeight);
-    //cornerstone.resize(element);
-
-    gdo.consoleOut(".XNATImaging", 1, "Width x Height of image: (" + width + ", " + height + ")");
-    gdo.consoleOut(".XNATImaging", 1, "Canvas dimensions: (" + canvasWidth + ", " + canvasHeight + ")");
-
-    params["loadingComplete"] = function () {
-        //var scaleFactorX = canvasWidth / width;
-        //var scaleFactorY = canvasHeight / height;
-        var offsetX = gdo.net.instance[instanceId].zoomView.topLeft[0];
-        var offsetY = gdo.net.instance[instanceId].zoomView.topLeft[1];
-        gdo.consoleOut(".XNATImaging", 1, "Offset image by: (" + offsetX + ", " + offsetY + ")");
-
-        /*var viewport = cornerstone.getViewport(element);
-        viewport.translation.x += (-offsetX * width)/viewport.scale;
-        viewport.translation.y += (-offsetY * height)/viewport.scale;
-        cornerstone.setViewport(element, viewport);
-        gdo.consoleOut(".XNATImaging", 1, "Scale of image: (" + viewport.scale + ")");*/
-
-        var canvas = containers[0].viewer.canvas;
-        var ctx = canvas.getContext('2d');
-        ctx.transform(6, 0, 0, 8, -offsetX * width, -height * 10);
-
-
-        // var ctx = img.getCanvas().getContext('2d');
-        // ctx.drawImage(img, offsetX, offsetY, width/3, height/3, 0, 0, width, height);
-    };
-
-    console.log(params);
-
-    papaya.Container.resetViewer(0, params);
-    console.log(containers[0].viewer);
-}
-
-/*
-** Updates currently displayed image of stack using cornerstone
-*/
-gdo.net.app["XNATImaging"].updateTheImage = function (instanceId) {
-    var currentImgIdx = gdo.net.instance[instanceId].stack.currentImageIndex;
-    var element = $("iframe").contents().find('#dicomImage').get(0);
-    var viewport = cornerstone.getViewport(element);
-
-    // Update the slider value
-    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-        var slider = $("iframe").contents().find('#slice-range').get(0);
-        if (slider.value != currentImgIdx) {
-            gdo.consoleOut(".XNATImaging", 1, "Updating slider");
-            slider.value = currentImgIdx;
-        }
-    }
-
-    return cornerstone.loadAndCacheImage(gdo.net.instance[instanceId].stack.imageIds[currentImgIdx]).then(function (image) {
-        $("iframe").contents().find("#mrtopleft").text("Image: " + (currentImgIdx + 1));
-
-        cornerstone.displayImage(element, image, viewport);
-        gdo.consoleOut('.XNATImaging', 1, "Image " + currentImgIdx + " loaded and displaying");
-    });
-};
 
 /*
 ** Calls control functions based on received input from Control node
@@ -773,92 +390,17 @@ gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
 }
 
 /*
-** Sets event handlers for buttons on Control node
-*/
-gdo.net.app["XNATImaging"].initButtons = function (instanceId, containers) {
-
-    $("iframe").contents().find("#upNavigationButton")
-       .unbind()
-       .click(function () {
-           gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Up');
-           gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#upNavigationButton').text());
-           gdo.net.app["XNATImaging"].navigateUp(instanceId);
-       });
-
-    $("iframe").contents().find("#downNavigationButton")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Down');
-        gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#downNavigationButton').text());
-        gdo.net.app["XNATImaging"].navigateDown(instanceId);
-    });
-
-    $("iframe").contents().find("#resetButton")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Reset');
-        gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#resetButton').text());
-        gdo.net.app["XNATImaging"].resetView(instanceId);
-    });
-
-    $("iframe").contents().find("#playButton")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Play');
-        gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#playButton').text());
-
-        gdo.net.app["XNATImaging"].playAll(instanceId);
-    });
-
-    $("iframe").contents().find("#highlightButton")
-        .unbind()
-        .click(function () {
-            gdo.consoleOut('.XNATImaging', 1, "Highlight");
-    });
-
-    $("iframe").contents().find("#markerButton")
-        .unbind()
-        .click(function () {
-            gdo.consoleOut('.XNATImaging', 1, "Mark button pressed");
-
-            if (containers[0].viewer.isMarkingMode) {
-                containers[0].viewer.isMarkingMode = false;
-                console.log(containers[0].viewer.isMarkingMode);
-                $("#markerButton").val("Place markers disabled");
-            } else {
-                containers[0].viewer.isMarkingMode = true;
-                console.log(containers[0].viewer.isMarkingMode);
-                $("#markerClearButton").val("Place markers enabled");
-            }
-        });
-
-
-    $("iframe").contents().find("#markerClearButton")
-        .unbind()
-        .click(function () {
-            gdo.consoleOut('.XNATImaging', 1, "Clear all markers");
-            containers[0].viewer.clearMarkers();
-        });
-}
-
-/*
 ** Method to handle scrolling up the image stack
 */
 gdo.net.app["XNATImaging"].navigateUp = function (instanceId) {
-    if (gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
-        gdo.net.instance[instanceId].stack.currentImageIndex++;
-        gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    }
+
 }
 
 /*
 ** Method to handle scrolling down the image stack
 */
 gdo.net.app["XNATImaging"].navigateDown = function (instanceId) {
-    if (gdo.net.instance[instanceId].stack.currentImageIndex > 0) {
-        gdo.net.instance[instanceId].stack.currentImageIndex--;
-        gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-    }
+
 }
 
 /*
@@ -886,7 +428,7 @@ gdo.net.app["XNATImaging"].pause = function(instanceId) {
 ** Method to handle stack play event
 */
 gdo.net.app["XNATImaging"].playAll = function (instanceId) {
-    if (gdo.net.instance[instanceId].playing == false && gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
+    /*if (gdo.net.instance[instanceId].playing == false && gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
         gdo.net.instance[instanceId].playing = true;
         $('iframe').contents().find('#playButton').text("Pause");
         gdo.net.instance[instanceId].interval = setInterval(function () {
@@ -903,7 +445,7 @@ gdo.net.app["XNATImaging"].playAll = function (instanceId) {
     } else if (gdo.net.instance[instanceId].playing == true || gdo.net.instance[instanceId].stack.currentImageIndex >= gdo.net.instance[instanceId].stack.imageIds.length) {
         gdo.net.app["XNATImaging"].pause(instanceId);
     }
-    console.log("Playing: " + gdo.net.instance[instanceId].playing);
+    console.log("Playing: " + gdo.net.instance[instanceId].playing);*/
 }
 
 gdo.net.app["XNATImaging"].terminateClient = function () {

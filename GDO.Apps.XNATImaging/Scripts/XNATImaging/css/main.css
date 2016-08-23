@@ -1,9 +1,13 @@
 html, body {
-    background: #081628;
+    background-color: #264164;
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
     width: 100%;
+}
+
+.heading {
+    background-color: #264164;
 }
 
 .heading h1 {
@@ -15,8 +19,8 @@ html, body {
 
 .heading h2 {
     color: #2578A6;
-    font-size: 36px;
-    line-height: 40px;
+    font-size: 40px;
+    line-height: 48px;
     margin-left: 50px;
     position: absolute;
     bottom: 50px;
@@ -24,50 +28,34 @@ html, body {
 
 .heading h3 {
     color: darkcyan;
-    font-size: 24px;
-    line-height: 36px;
+    font-size: 40px;
+    line-height: 48px;
     margin-left: 30px;
     padding-bottom: 36px;
 }
 
-#mrtopleft {
-    color: #efefef;
-    position: absolute;
-    top: 23px;
-    left: 30px;
-}
-
-#mrtopright {
-    color: #efefef;
-    position: absolute;
-    top: 23px;
-    right: 10px;
-}
-
-#mrbottomleft {
-    color: #efefef;
-    position: absolute;
-    bottom: 20px;
-    left: 30px;
-}
-
-#mrbottomright {
-    color: #efefef;
-    position: absolute;
-    bottom: 20px;
-    right: 10px;
-}
-
 .controls {
-    position: absolute;
     bottom: -70px;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 10px;
 }
 
 #viewSelect {
     margin-top: 30px;
     margin-bottom: 40px;
     width: 200px;
+    height: 50px;
+}
+
+#slice-range {
+    margin: 0 10px 15px 15px;
+    width: 900px;
+    height: 25px;
+    padding: 8px 0;
+}
+
+h3 {
+    font-size: 1.2em; margin: .6em 0;
 }

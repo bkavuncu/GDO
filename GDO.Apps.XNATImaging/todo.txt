@@ -1,8 +1,39 @@
-x Change event handlers for adjusting brightness/contrast (working)
-x Add marking rectangle using canvas
-Add zoom functionality
-Allow view switch between sagittal axial coronal directly
+
+Add PDF scroll and zoom
+
+remove crosshairs from clients
+switch to local view with rotations and padding
+fix play reset controls
+remove up/down controls
+remove add label button; replace with edit labels in table directly
+
+x change css cursor when marking
+x rearrange marker table columns
+x buff label text size & visibility
+x add marking list
+x replace hardcoding
+x fix touchscreen events (untested)
+x add global screen config file
+x request config file at start up
+x Fix slider initialising to 100
+x Ensure build works on GDO (fix publishing)
+x Add coordinate change syncing
+x Switch to NIFTI
+x Change event handlers for adjusting brightness/contrast
 x Registered image stacks remotely and converted to NIFTI format
 
+
 lib modification required:
-x Reapply fixes for dicom image loading (switching to NIFTI)
+
+x Add zoom functionality into papaya
+x add text labels when marking
+x Allow view switch between sagittal axial coronal directly
+x Reapply fixes for dicom image loading (switching to NIFTI next)
+x Add marking rectangle using canvas (built into papaya)
+
+bug fixes:
+
+fix zoom canvas offsets
+fix background color to blue/black
+
+Fix NIFTI world view cropping issue (local view with rotations an option, padAllImages param too)
