@@ -1,6 +1,8 @@
 ﻿gdo.net.app["Spreadsheets"].clearModel = function (id) {
+    var confName = this.gdo.net.instance[this.instanceId].configName;
+    var conf = this.gdo.net.app["Spreadsheets"].config[configName];
 	$.ajax({
-	    url: "http://146.169.45.194/SheetServer/Operations/ClearModel",
+	    url: conf.serverAddress + "Operations/ClearModel",
         method: "POST",
 	    data: {instanceId:id},
 		success: function(message) {

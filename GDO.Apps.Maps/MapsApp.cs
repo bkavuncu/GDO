@@ -286,6 +286,7 @@ namespace GDO.Apps.Maps
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     view = null;
                 }
             }
@@ -430,6 +431,7 @@ namespace GDO.Apps.Maps
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     layer = null;
                 }
             }
@@ -518,6 +520,7 @@ namespace GDO.Apps.Maps
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     animation = null;
                 }
             }
@@ -607,6 +610,7 @@ namespace GDO.Apps.Maps
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     source = null;
                 }
             }
@@ -681,6 +685,7 @@ namespace GDO.Apps.Maps
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     style = null;
                 }
             }
@@ -756,6 +761,7 @@ namespace GDO.Apps.Maps
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     format = null;
                 }
             }
