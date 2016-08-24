@@ -43,33 +43,33 @@
             overflow: hidden;
         }
 
-        .btn-file input[type=file] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            cursor: inherit;
-            display: block;
-        }
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
 
-        .btn-file input[type=submit] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            cursor: inherit;
-            display: block;
-        }
+            .btn-file input[type=submit] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
 
         input[readonly] {
             background-color: #555 !important;
@@ -101,14 +101,14 @@
             border-left-width: 1px;
         }
 
-        .track4.dragging,
-        .track4:hover {
-            background: #333; /* No RGBA support */
-        }
+            .track4.dragging,
+            .track4:hover {
+                background: #333; /* No RGBA support */
+            }
 
-        .track4:active {
-            background: #222; /* No RGBA support */
-        }
+            .track4:active {
+                background: #222; /* No RGBA support */
+            }
 
         .handle4 {
             width: 20px;
@@ -116,14 +116,14 @@
             background: #444; /* No RGBA support */
         }
 
-        .handle4:hover {
-            background: #555; /* No RGBA support */
-        }
+            .handle4:hover {
+                background: #555; /* No RGBA support */
+            }
 
-        .dragging .handle4,
-        .handle4:active {
-            background: #444; /* No RGBA support */
-        }
+            .dragging .handle4,
+            .handle4:active {
+                background: #444; /* No RGBA support */
+            }
 
         .list-group.list-group-root {
             padding: 0;
@@ -133,21 +133,22 @@
             height: 100%;
         }
 
-        .list-group.list-group-root .list-group {
-            margin-bottom: 0;
-        }
+            .list-group.list-group-root .list-group {
+                margin-bottom: 0;
+            }
 
-        .list-group.list-group-root > .list-group > .list-group-item {
-            padding-left: 30px;
-        }
+            .list-group.list-group-root > .list-group > .list-group-item {
+                padding-left: 30px;
+            }
 
-        .list-group.list-group-root > .list-group > .list-group > .list-group-item {
-            padding-left: 45px;
-        }
+            .list-group.list-group-root > .list-group > .list-group > .list-group-item {
+                padding-left: 45px;
+            }
 
         .list-group-item .fa {
             margin-right: 5px;
         }
+
         .input_field_div {
             margin: 0px;
             padding: 0px;
@@ -168,9 +169,9 @@
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
@@ -231,10 +232,10 @@
                             <div id="img_preview" style="width:100%;height:100%;">
                             </div>
                         </div>
-                        <div class="panel-footer">    
-                            <button id="img_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button> 
+                        <div class="panel-footer">
+                            <button id="img_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
                             <button id="img_restore" class="btn btn-primary"><i class='fa  fa-refresh fa-fw'></i>&nbsp;Restore</button>
-                            <button id="img_rotate" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Rotate</button>      
+                            <button id="img_rotate" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Rotate</button>
                         </div>
                     </div>
                 </div>
@@ -341,14 +342,14 @@
                             <h6 id="Templates" style="text-align:left;float:left;"><i class='fa  fa-gear fa-fw'></i>&nbsp;Control</h6>
                             <hr style="clear:both; border: 0" />
                         </div>
-                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">           
-                            <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data"> 
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
                                 <div>
                                     <span id="play_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Play</span>
-                                </div>                               
+                                </div>
                                 <div>
                                     <span id="open_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Open<input type="file" name="file" class="upload" id="upload_slide" /></span>
-                                </div>         
+                                </div>
                                 <div>
                                     <span id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</span>
                                     <a id="slide_link"></a>
@@ -366,7 +367,7 @@
                                 <div>
                                     <span id="delete_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</span>
                                 </div>
-                                  
+
                             </form>
                         </div>
                         <div class="panel-footer text-center">
@@ -389,7 +390,7 @@
                     <div class="col-lg-1 close_app_button_div"></div>
                     <div class="col-lg-1 clear_cave_button_div"></div>
                 </div>
-                
+
                 <iframe id="hidden_app_iframe" onload="this.width = window.parent.window.innerWidth; this.height = window.parent.window.innerHeight;" style="visibility:hidden; border:0; border:none;"></iframe>
 
 
@@ -409,13 +410,12 @@
                     &nbsp;
                     <br />
                     <div id="file_list_management">
-                        <select multiple class="form-control" id="file_selection" style="border-color:black">
-                        </select>
+                        <select multiple class="form-control" id="file_selection" style="border-color:black"></select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" data-dismiss="modal" id="delete_file" class="btn btn-primary btn-ok">Delete</button>            
+                    <button type="button" data-dismiss="modal" id="delete_file" class="btn btn-primary btn-ok">Delete</button>
                 </div>
             </div>
         </div>
@@ -506,7 +506,7 @@
                 }
             });
         });
-        
+
         // Button click listener
         $("#previous_slide").click(function () {
             var gdo = parent.gdo;
@@ -578,7 +578,7 @@
                     artyom.say("Hey there !");
                     artyom.say("You could say following commands");
                     gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Hey there! You could say following commands: Next, previous, load and play", 1);
-                 
+
                 }
             },
             {
@@ -673,7 +673,7 @@
                     left = $(this).cropper('getCanvasData').left;
                     top = $(this).cropper('getCanvasData').top;
                 }
-            });        
+            });
 
             $('#img_preview > img').on('cropmove.cropper', function (e) {
                 var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
@@ -713,7 +713,7 @@
                 gdo.net.app["PresentationTool"].playInstance(instanceId);
             }
         });
-      
+
 
         // Video control
         gdo.net.app["PresentationTool"].video_control_status = 0;
@@ -734,7 +734,7 @@
                 var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
                 gdo.net.app["PresentationTool"].playInstance(instanceId);
             }
-                
+
         });
 
 
@@ -812,7 +812,7 @@
                                 .append("<font size='4px'><b> S" + sectionId + "</b></font>")
                                 .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.app["PresentationTool"].section[sectionId].appName + "</div>");
                         }
-                       
+
                         $("#section_table_row_" + node.row + "_col_" + node.col)
                             .append("</br>")
                             .css('overflow', 'hidden')
@@ -842,7 +842,7 @@
                                for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                                    gdo.net.app["PresentationTool"].node[i].isSelected = false;
                                }
-                               gdo.net.app["PresentationTool"].selectedSection = id;                                
+                               gdo.net.app["PresentationTool"].selectedSection = id;
                                //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
                                // image control enable
                                if (gdo.net.app["PresentationTool"].section[id].src !== null && gdo.net.app["PresentationTool"].section[id].appName === "Images") {

@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
-using GDO.Apps.PresentationTool.Core;
 using log4net;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
@@ -111,8 +110,8 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        /**
-        public void ProcessImage(int instanceId, int imageInstanceId, string filename)
+       
+        public void DeleteImageFolder(int instanceId, string filename)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -124,16 +123,24 @@ namespace GDO.Apps.PresentationTool
                     if (File.Exists(database_path))
                     {
                         database = File.ReadAllLines(database_path);
-                        foreach(string s in database)
+                        string tempFile = Path.GetTempFileName();
+                        using (var sw = new StreamWriter(tempFile))
                         {
-                            if (s.Split('|')[0].Equals(filename))
+                            foreach (string s in database)
                             {
-                                Clients.Caller.setMessage(s.Split('|')[0]);
-                                Clients.Caller.processImage(imageInstanceId, false, s.Split('|')[1]);
+                                if (s.Split('|')[0].Equals(filename))
+                                {
+                                    Directory.Delete(pa.ImagesAppBasePath + s.Split('|')[1], false);
+                                    Clients.Caller.setMessage("Delete " + s.Split('|')[0] + " Success!");
+                                } else
+                                {
+                                    sw.WriteLine(s);
+                                }
                             }
                         }
-                    }
-                    Clients.Caller.processImage(imageInstanceId, true, filename);
+                        File.Delete(database_path);
+                        File.Move(tempFile, database_path);
+                    } 
                 }
                 catch (Exception e)
                 {
@@ -142,7 +149,7 @@ namespace GDO.Apps.PresentationTool
                 }
             }
         }
-        **/
+       
         public void UpdateFileList(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -329,7 +336,8 @@ namespace GDO.Apps.PresentationTool
                     if (col == 0 && row == 0)
                     {
                         Clients.Caller.setVoiceInfo(info, type, true);
-                    } else
+                    }
+                    else
                     {
                         Clients.Caller.setVoiceInfo(info, type, false);
                     }
@@ -343,7 +351,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void ChangeVoiceControlStatus(int instanceId) 
+        public void ChangeVoiceControlStatus(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -378,7 +386,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void RequestDeleteFiles(int instanceId, String[]files)
+        public void RequestDeleteFiles(int instanceId, String[] files)
         {
             lock (Cave.AppLocks[instanceId])
             {

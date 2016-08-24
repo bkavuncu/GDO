@@ -1,11 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-<<<<<<< HEAD
 VisualStudioVersion = 14.0.25123.0
-=======
-VisualStudioVersion = 14.0.25420.1
->>>>>>> aaaea26bfabd5205874cbbaec3c689ad756ab0ca
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO", "GDO\GDO.csproj", "{4A27F694-1D9A-420A-A3A6-62521EAA047E}"
 EndProject
@@ -65,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.RayMarching", "GDO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Apps.UKTravel\GDO.Apps.UKTravel.csproj", "{4E0EC509-B2BE-459A-92CE-5EFB978679DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.PresentationTool", "GDO.Apps.PresentationTool\GDO.Apps.PresentationTool.csproj", "{EEB622FC-A0AD-48F4-A6DB-6E181235590E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.PresentationTool", "GDO.Apps.PresentationTool\GDO.Apps.PresentationTool.csproj", "{C03F8665-F46C-41AF-8BBA-6F704E4B1515}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -185,10 +181,10 @@ Global
 		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E0EC509-B2BE-459A-92CE-5EFB978679DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEB622FC-A0AD-48F4-A6DB-6E181235590E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEB622FC-A0AD-48F4-A6DB-6E181235590E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEB622FC-A0AD-48F4-A6DB-6E181235590E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEB622FC-A0AD-48F4-A6DB-6E181235590E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C03F8665-F46C-41AF-8BBA-6F704E4B1515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C03F8665-F46C-41AF-8BBA-6F704E4B1515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C03F8665-F46C-41AF-8BBA-6F704E4B1515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C03F8665-F46C-41AF-8BBA-6F704E4B1515}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

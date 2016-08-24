@@ -83,7 +83,7 @@ namespace GDO.Apps.PresentationTool
         }
 
         public void deleteFiles(string[] files)
-        {
+        {         
             foreach (string s in files)
             {
                 string path = this.BasePath + s;
@@ -133,7 +133,8 @@ namespace GDO.Apps.PresentationTool
             if (appName == "Images")
             {
                 Slides[CurrentSlide].Sections[sectionId].Src = "Files" + src;
-            } else
+            }
+            else
             {
                 Slides[CurrentSlide].Sections[sectionId].Src = src;
             }
