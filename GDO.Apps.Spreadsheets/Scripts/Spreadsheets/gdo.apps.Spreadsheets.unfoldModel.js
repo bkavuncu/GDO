@@ -1,6 +1,9 @@
-﻿var stepPrecedents = function(id) {
+﻿var confName = this.gdo.net.instance[this.instanceId].configName;
+var conf = this.gdo.net.app["Spreadsheets"].config[configName];
+
+var stepPrecedents = function (id) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/StepPrecedents",
+        url: conf.serverAddress + "Operations/StepPrecedents",
         method: "POST",
         data: { instanceId: id },
         success: function(response) {
@@ -16,7 +19,7 @@
 
 var startPrecedentTracing = function (id, selectedOutput) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/StartPrecedentTracing",
+        url: conf.serverAddress + "Operations/StartPrecedentTracing",
         method: "POST",
         data: { instanceId: id, output: selectedOutput},
         success: function (response) {
@@ -42,7 +45,7 @@ var generateSelector = function (response) {
 
 var setupTracePrecedent = function (id) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/GetInputsAndOutputs",
+        url: conf.serverAddress + "Operations/GetInputsAndOutputs",
         method: "GET",
         data: { instanceId: id },
         success: function(response) {
@@ -102,7 +105,7 @@ var drawCanvas = function (packing) {
 
 var getViewInfo = function(id, packHeuristic, count) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/GetViewInfo",
+        url: conf.serverAddress + "Operations/GetViewInfo",
         method: "POST",
         data: { instanceId: id, packHeuristic : packHeuristic},
         success: function (response) {
@@ -143,7 +146,7 @@ var setupPackingForm = function (id) {
 gdo.net.app["Spreadsheets"].unfoldModel = function (id, model, config) {
     $('iframe').contents().find('#unfold_model_message').empty();
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/UnfoldModel",
+        url: conf.serverAddress + "Operations/UnfoldModel",
         method: "POST",
         data: { instanceId: id, model: model, config:config},
         success: function (response) {

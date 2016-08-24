@@ -17,7 +17,7 @@ gdo.net.app["Spreadsheets"].createFormulaTree = function (response) {
     var svg = div.append("svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
-      .append("g")
+        .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var root = response.tree;

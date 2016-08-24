@@ -1,6 +1,7 @@
 ﻿using System;
 using GDO.Core;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using GDO.Core.Apps;
@@ -18,10 +19,13 @@ namespace GDO.Apps.StaticHTML
         public bool IntegrationMode { get; set; }
         public IAdvancedAppInstance ParentApp { get; set; }
 
+        public bool ResponsiveMode { get; set; }
         public string URL { get; set; }
         public void Init()
         {
-            URL = (string)Configuration.Json.SelectToken("url");;
+            URL = (string)Configuration.Json.SelectToken("url");
+            ResponsiveMode = (bool)(Configuration.Json.SelectToken("responsiveMode") ?? false);
+            Debug.WriteLine("Using responsive mode? " + ResponsiveMode);
         }
 
         public void SetURL(string url)

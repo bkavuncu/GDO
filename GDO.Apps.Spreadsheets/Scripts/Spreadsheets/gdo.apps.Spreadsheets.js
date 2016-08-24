@@ -88,6 +88,8 @@ var setEventHandlers = function (message, section) {
 
 var uploadFiles = function (spreadSheet, config) {
     gdo.net.app["Spreadsheets"].server.setName(gdo.controlId, spreadSheet.name + " <br /> " + config.name);
+    var confName = this.gdo.net.instance[this.instanceId].configName;
+    var conf = this.gdo.net.app["Spreadsheets"].config[configName];
     gdo.consoleOut(".Spreadsheets", 1, "Set Name, now calling FileAdded on Server");
     $("iframe").contents().find("#file_upload_form").unbind("submit").submit(function (event) {
         event.preventDefault();
@@ -96,7 +98,7 @@ var uploadFiles = function (spreadSheet, config) {
         formData.append("files", config);
         gdo.consoleOut(".Spreadsheets", 1, "Submitting form to Spreadsheet Server");
         $.ajax({
-            url: "http://146.169.45.194/SheetServer/File/Upload",
+            url: conf.serverAddress + "File/Upload",
             type: "POST",
             data: formData,
             success: function (message) {

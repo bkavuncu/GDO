@@ -193,13 +193,22 @@ gdo.net.app["PresentationTool"].clearAllOtherApp = function () {
 // Load Template
 gdo.net.app["PresentationTool"].loadTemplate = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Load template ' + gdo.net.app["PresentationTool"].template);
-    gdo.net.app["PresentationTool"].server.clearCave(gdo.controlId);
-    gdo.net.app["PresentationTool"].clearAllOtherApp();
 
-    var length = gdo.net.app["PresentationTool"].allFiles.length;
+    gdo.net.app["PresentationTool"].initialElements();
+    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'clearCave', [gdo.controlId], 0, false);
+    // undeploy apps
+    var length = gdo.net.instance.length;
+    for (var i = 0; i < length; i++) {
+        var instance = gdo.net.instance[i];
+        if (instance != null && instance.exists && instance.appName !== "PresentationTool") {
+            gdo.net.app["PresentationTool"].addElement('gdo.net.server', 'closeApp', [instance.id], 0, false);
+            gdo.net.app["PresentationTool"].addElement('gdo.net.server', 'closeSection', [instance.sectionId], 0, false);
+        }
+    }
+
+    length = gdo.net.app["PresentationTool"].allFiles.length;
     switch (gdo.net.app["PresentationTool"].template) {
         case 1:
-            gdo.net.app["PresentationTool"].initialElements();
             var slides = length / 4 + 1;
             var count = 0;
             for (var i = 0; i < slides; i++) {
@@ -224,7 +233,7 @@ gdo.net.app["PresentationTool"].loadTemplate = function () {
                     if (count === length) break;
                     var m = (j % 2 == 0) ? j : j - 1;
                     var n = (j % 2 == 0) ? 0 : 2;
-                    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'createSection', [gdo.controlId, m, n, m + 1, n + 1], 0, false);
+                    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'createSection', [gdo.controlId, m, n, m + 1, n + 1], 0.1, false);
                     gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'deployResource', [gdo.controlId, j + 1, '"' + gdo.net.app["PresentationTool"].allFiles[count] + '"', '"' + "Images" + '"'], 0, false);
                     count++;
                 }

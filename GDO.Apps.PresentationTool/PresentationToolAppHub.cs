@@ -172,131 +172,6 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void CreateSection(int instanceId, int colStart, int rowStart, int colEnd, int rowEnd)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    int sectionId = pa.CreateSection(colStart, rowStart, colEnd, rowEnd);
-                    BroadcastSectionUpdate(instanceId, sectionId);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to create section ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-
-            }
-        }
-
-        public void CloseSection(int instanceId, int sectionId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.CloseSection(sectionId);
-                    BroadcastSectionUpdate(instanceId, sectionId);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to close section ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-
-            }
-        }
-
-        public void DeployResource(int instanceId, int sectionId, string src, string appName)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.DeployResource(sectionId, src, appName);
-                    Clients.Caller.setMessage(src);
-                    BroadcastSectionUpdate(instanceId, sectionId);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to create section ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-
-            }
-        }
-
-        public void UnDeployResource(int instanceId, int sectionId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.UnDelpoyResource(sectionId);
-                    BroadcastSectionUpdate(instanceId, sectionId);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to create section ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-
-            }
-        }
-
-        private bool BroadcastSectionUpdate(int instanceId, int sectionId)
-        {
-            try
-            {
-                PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                string serializedSection = GetSectionUpdate(instanceId, sectionId);
-                if (pa.ContainsSection(sectionId) && serializedSection != null)
-                {
-                    Clients.Caller.receiveSectionUpdate(true, sectionId, serializedSection);
-                    return true;
-                }
-                else
-                {
-                    Clients.Caller.receiveSectionUpdate(false, sectionId, "");
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
-
-        private string GetSectionUpdate(int instanceId, int sectionId)
-        {
-            try
-            {
-                PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                if (pa.ContainsSection(sectionId))
-                {
-                    AppSection section;
-                    pa.Slides[pa.CurrentSlide].Sections.TryGetValue(sectionId, out section);
-                    return JsonConvert.SerializeObject(section);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Log.Error("failed to GetSectionUpdate", e);
-                return null;
-            }
-        }
-
         public void RequestCreateNewSlide(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -427,25 +302,6 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void ClearCave(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.Slides.Clear();
-                    pa.CreateNewSlide();
-                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to clear cave", e);
-                    Clients.Caller.setMessage(e.GetType().ToString());
-                }
-            }
-        }
-
         public void requestVoiceInfo(int instanceId, string info, int type)
         {
             lock (Cave.AppLocks[instanceId])
@@ -538,6 +394,150 @@ namespace GDO.Apps.PresentationTool
                     Log.Error("failed to restore voice control status", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
+            }
+        }
+
+        public void CreateSection(int instanceId, int colStart, int rowStart, int colEnd, int rowEnd)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    int sectionId = pa.CreateSection(colStart, rowStart, colEnd, rowEnd);
+                    BroadcastSectionUpdate(instanceId, sectionId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void CloseSection(int instanceId, int sectionId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.CloseSection(sectionId);
+                    BroadcastSectionUpdate(instanceId, sectionId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to close section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void DeployResource(int instanceId, int sectionId, string src, string appName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.DeployResource(sectionId, src, appName);
+                    Clients.Caller.setMessage(src);
+                    BroadcastSectionUpdate(instanceId, sectionId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void UnDeployResource(int instanceId, int sectionId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.UnDelpoyResource(sectionId);
+                    BroadcastSectionUpdate(instanceId, sectionId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void ClearCave(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.Slides.Clear();
+                    pa.CreateNewSlide();
+                    Clients.Caller.receiveSlideUpdate(pa.CurrentSlide);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to clear cave", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        private bool BroadcastSectionUpdate(int instanceId, int sectionId)
+        {
+            try
+            {
+                PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                string serializedSection = GetSectionUpdate(instanceId, sectionId);
+                if (pa.ContainsSection(sectionId) && serializedSection != null)
+                {
+                    Clients.Caller.receiveSectionUpdate(true, sectionId, serializedSection);
+                    return true;
+                }
+                else
+                {
+                    Clients.Caller.receiveSectionUpdate(false, sectionId, "");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        private string GetSectionUpdate(int instanceId, int sectionId)
+        {
+            try
+            {
+                PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                if (pa.ContainsSection(sectionId))
+                {
+                    AppSection section;
+                    pa.Slides[pa.CurrentSlide].Sections.TryGetValue(sectionId, out section);
+                    return JsonConvert.SerializeObject(section);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Log.Error("failed to GetSectionUpdate", e);
+                return null;
             }
         }
     }

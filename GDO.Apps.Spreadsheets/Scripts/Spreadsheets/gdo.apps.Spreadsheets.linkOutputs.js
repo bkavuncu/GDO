@@ -1,6 +1,9 @@
-﻿var obtainFormulae = function(id, attemptNo) {
+﻿var confName = this.gdo.net.instance[this.instanceId].configName;
+var conf = this.gdo.net.app["Spreadsheets"].config[configName];
+
+var obtainFormulae = function (id, attemptNo) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/CheckFormulae",
+        url: conf.serverAddress + "Operations/CheckFormulae",
         method: "GET",
         data: { instanceId: id },
         success : function(response) {
@@ -17,7 +20,7 @@
 
 gdo.net.app["Spreadsheets"].linkOutputs = function (id, model, config, section) {
     $.ajax({
-        url: "http://146.169.45.194/SheetServer/Operations/SetupLinkOutputs",
+        url: conf.serverAddress + "Operations/SetupLinkOutputs",
         method: "POST",
         data: { instanceId: id, model: model, config: config },
         success: function (response) {

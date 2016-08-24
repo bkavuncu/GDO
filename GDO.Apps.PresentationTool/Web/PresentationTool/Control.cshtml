@@ -865,6 +865,8 @@
                         if (gdo.net.app["PresentationTool"].section[sectionId].src !== null) {
                             $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
                             $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
+                            gdo.net.app["PresentationTool"].img_control_enable = 1;
+                            gdo.net.app["PresentationTool"].video_control_enable = 1;
                         } else {
                             $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#2A9FD6").css("border", "1px solid #4CBFF8");
                             $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");
