@@ -369,7 +369,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to BroadcastAppConfigurations", e);
                 }
             }
         }
@@ -395,7 +395,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to UseAppConfiguration", e);
                 }
             }
         }
@@ -414,7 +414,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to LoadAppConfiguration", e);
                 }
             }
         }
@@ -433,7 +433,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to UnloadAppConfiguration", e);
                 }
             }
         }
