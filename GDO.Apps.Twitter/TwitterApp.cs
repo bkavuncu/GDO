@@ -149,7 +149,17 @@ namespace GDO.Apps.Twitter
 
         public TwitterVis GetVisualisation(string analyticsId, string dataSetId)
         {
-            Analytics analytics = RestController.Analytics[dataSetId][analyticsId];
+            Analytics analytics;
+            if (RestController.Analytics != null && RestController.Analytics.ContainsKey(dataSetId))
+            {
+                analytics = RestController.Analytics[dataSetId][analyticsId];
+            }
+            else
+            {
+                Debug.WriteLine("Not cached analytics so going to get");
+                analytics = RestController.GetAnalytics(dataSetId, analyticsId, false);
+            }
+
             AnalyticsData analyticsData = RestController.GetAnalyticsData(analytics.UriData);
             string url = analyticsData.Urls[analyticsData.PreferedUrl];
 
@@ -157,7 +167,9 @@ namespace GDO.Apps.Twitter
             switch (twitterVis.AppType) {
                 case "Graph":
                     twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, GraphAppBasePath + analyticsId + ".graphml");
+                    string fileName = analyticsId + ".graphml";
+                    Download(url, GraphAppBasePath + fileName);
+                    twitterVis.FilePath = fileName;
                     break;
                 case "FusionChart":
                     twitterVis.Config = "Default";
@@ -189,9 +201,14 @@ namespace GDO.Apps.Twitter
             return filePath;
         }
 
-        public string GetApiMessage()
+        public StatusMsg GetApiMessage()
         {
-            return JsonConvert.SerializeObject(RestController.GetApiMessage());
+            return RestController.GetApiMessage();
+        }
+
+        public string GetSlides()
+        {
+            return JsonConvert.SerializeObject(RestController.GetSlides().ToDictionary(s=>s.id, s=>s));
         }
 
         public string GetDataSets()

@@ -39,6 +39,7 @@ namespace GDO.Apps.FusionChart
 
         public bool ProcessFile(string fileName)
         {
+            Debug.WriteLine(fileName);
             string filePath = Path.Combine(ChartBasePath, fileName);
             Debug.WriteLine("Using file path: " + filePath);
 

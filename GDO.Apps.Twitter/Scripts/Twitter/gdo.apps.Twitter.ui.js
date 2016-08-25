@@ -18,21 +18,6 @@ gdo.net.app["Twitter"].uiProperties = {
     chart_aspect_ratio: 1
 }
 
-gdo.net.app["Twitter"].initialise = function(instanceId) {
-    gdo.consoleOut('.Twitter', 1, 'Initialising UI Variables');
-    gdo.net.instance[instanceId].control = {
-        selectedNewAnalytics: [],
-        selectedDataSet: -1,
-        selectedSection: -1,
-        selectedAnalytics: null,
-        selectedDataSets: [],
-        analyticsDisplay: {},
-        selectedGraphApps: [],
-        selectedApp:null
-    }
-
-}
-
 gdo.net.app["Twitter"].resetControlVariables = function(instanceId) {
     gdo.net.instance[instanceId].control.isRectangle = true;
     gdo.net.instance[instanceId].control.isStarted = false;
@@ -201,6 +186,32 @@ gdo.net.app["Twitter"].updateAnalyticsTables = function(instanceId, analytics) {
                 .html(gdo.net.instance[instanceId].data.dataSets[dataSetId].description);
             gdo.net.app["Twitter"].updateSingleAnalyticsTable((index + 1), analytics[dataSetId]);
         });
+}
+
+gdo.net.app["Twitter"].updateSlideTable = function(instanceId, slides) {
+    gdo.consoleOut('.Twitter', 1, 'Updating slide tables for instance: ' + instanceId);
+    gdo.net.instance[instanceId].data.slides = slides;
+    $("iframe").contents().find("#slide_table tbody tr").remove();
+    for (var key in slides) {
+        if (slides.hasOwnProperty(key)) {
+            $("iframe")
+                .contents()
+                .find("#slide_table tbody")
+                .append("" +
+                    "<tr>" +
+                    "<td><font size='3'>" +
+                    slides[key]["id"] +
+                    "</font></td>" +
+                    "<td><font size='3'>" +
+                    slides[key]["description"] +
+                    "</font></td>" +
+                    "<td><font size='3'>" +
+                    slides[key]["sections"].length +
+                    "</font></td>");
+        }
+    }
+
+
 }
 
 gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, dataSetanalytics) {

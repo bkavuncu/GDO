@@ -351,17 +351,52 @@
             </div>
         </div>
         <div class="col-lg-6" style="padding: 6px;">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Tools</h6>
-                    <hr style="clear: both; border: 0" />
-                </div>
-                <div style="overflow: auto; height: 300px">
-                    <div class="panel-body" style="height: 15.5vh;">
-                        <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; AutoLaunch Charts 2x2</button>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; AutoLaunch Charts 2x2</button>
+                        </div>
                     </div>
                 </div>
-                <div class="panel-footer">
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Slides</h6>
+                            <hr style="clear: both; border: 0" />
+                        </div>
+                        <div style="overflow: auto; height: 190px">
+                            <div class="panel-body" style="height: 15.5vh;">
+                                <table style="width: 100%; background: transparent; text-align: left" id="slide_table">
+                                    <thead>
+                                        <tr id="slide_table_table_title">
+                                            <th>
+                                                <font size="3">
+                                                    <b>Id</b>
+                                                </font>
+                                            </th>
+                                            <th>
+                                                <font size="3">
+                                                    <b>Description</b>
+                                                </font>
+                                            </th>
+                                            <th>
+                                                <font size="3">
+                                                    <b>Number of Sections</b>
+                                                </font>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button id="launch_slide" class="btn btn-success disabled"><i class='fa fa-space-shuttle'></i>&nbsp; Launch Slide</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1016,7 +1051,7 @@
                     $("#app_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
                 }
             } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
-                $("#section_control_table_row_" + node.row + "_col_" + node.col).hide();
+                $("#app_control_table_row_" + node.row + "_col_" + node.col).hide();
             }
         }
     }
@@ -1049,6 +1084,35 @@
                 }
 
             });
+
+    $("#slide_table tbody")
+        .on('click',
+            'tr',
+            function () {
+                var gdo = parent.gdo;
+                var id = $(this).find('td:first').text();
+                var desc = $(this).find('td:nth-child(1)').text();
+
+                if (gdo.net.instance[gdo.controlId].control.selectedSlide === id) {
+                    gdo.net.instance[gdo.controlId].control.selectedSlide = -1;
+                    $("#launch_slide").addClass("disabled").addClass("btn-default").removeClass("btn-success");
+                    $(this).removeClass("btn-success");
+                } else {
+                    gdo.net.instance[gdo.controlId].control.selectedSlide = id;
+                    gdo.net.app["Twitter"].setMessage("Selected: " + desc);
+                    $(this)
+                        .addClass("btn-success")
+                        .siblings()
+                        .removeClass("btn-success");
+                }
+                if (gdo.net.instance[gdo.controlId].control.selectedSlide !== -1) {
+                    $("#launch_slide").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
+                }
+
+            });
+
+
+
     $("#analytics_options_table tbody")
         .on("click",
             "tr",
@@ -1107,12 +1171,21 @@
                     parent.gdo.net.app["Twitter"].server.getAnalyticsOptions(gdo.controlId);
                 }
             });
+
+    $("#launch_slide")
+     .on('click',
+         function () {
+             if (gdo.net.instance[gdo.controlId].control.selectedSlide != -1) {
+                 parent.gdo.net.app["Twitter"]
+                     .launchSlide(gdo.controlId, gdo.net.instance[gdo.controlId].control.selectedSlide);
+             }
+         });
     $("#refresh")
         .on("click",
-            function() {
-                parent.gdo.net.app["Twitter"].requestDataSets();
-                gdo.net.app["Twitter"].server.getApiStatus(gdo.controlId);
-                parent.gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
+            function () {
+                var gdo = parent.gdo;
+                gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
+                gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
             });
     $("#debug_b")
         .on("click",

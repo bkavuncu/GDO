@@ -52,23 +52,47 @@ namespace GDO.Apps.Twitter
             }
         }
 
-        public void GetApiStatus(int instanceId)
+        public void InitApiConnection(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    string message =
-                        ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetApiMessage();
-                    Debug.WriteLine("Status message: " + message);
-                    Clients.Group("" + instanceId).setAPIMessage(instanceId, message);
-                    Clients.Caller.setAPIMessage(instanceId, message);
+                    if (GetApiStatus(instanceId))
+                    {
+                        GetDataSets(instanceId);
+                        GetSlides(instanceId);
+                    };
+                    
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     Clients.Caller.setMessage(instanceId, e.GetType().ToString());
                 }
+            }
+        }
+
+
+        public bool GetApiStatus(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    var message  = ((TwitterApp) Cave.Apps["Twitter"].Instances[instanceId]).GetApiMessage();
+                    var serialisedMessage = JsonConvert.SerializeObject(message);
+                    Debug.WriteLine("Status message: " + message);
+                    Clients.Group("" + instanceId).setAPIMessage(instanceId, serialisedMessage);
+                    Clients.Caller.setAPIMessage(instanceId, serialisedMessage);
+                    return message.Healthy;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+                }
+                return false;
             }
         }
 
@@ -352,6 +376,24 @@ namespace GDO.Apps.Twitter
                     string serialisedDataSets = ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).GetDataSets();
                     Clients.Caller.setMessage(instanceId, "Updated data set list");
                     Clients.Caller.updateDataSets(instanceId, serialisedDataSets);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+                }
+            }
+        }
+
+        public void GetSlides(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    string serialisedSlides = ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).GetSlides();
+                    Clients.Caller.setMessage(instanceId, "Updated slide list");
+                    Clients.Caller.updateSlides(instanceId, serialisedSlides);
                 }
                 catch (Exception e)
                 {

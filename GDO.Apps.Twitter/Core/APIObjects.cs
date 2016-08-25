@@ -122,7 +122,37 @@ namespace GDO.Apps.Twitter.Core
         public string DataSetUrl { get; set; }
         [DataMember(Name = "uri_twitter_consumer")]
         public string TwitterConsumerUrl { get; set; }
+        [DataMember(Name = "uri_slides")]
+        public string SlideUrl { get; set; }
 
+    }
+
+    [DataContract]
+    public class Slide
+    {
+        [DataMember(Name = "description")]
+        public string Description { get; set; }
+        [DataMember(Name = "id")]
+        public string id { get; set; }
+        [DataMember(Name = "sections")]
+        public List<SlideSection> Sections { get; set; }
+    }
+
+    [DataContract]
+    public class SlideSection
+    {
+        [DataMember(Name="rowStart")]
+        public int RowStart { get; set; }
+        [DataMember(Name = "rowEnd")]
+        public int RowEnd { get; set; }
+        [DataMember(Name = "colStart")]
+        public int ColStart { get; set; }
+        [DataMember(Name = "colEnd")]
+        public int ColEnd { get; set; }
+        [DataMember(Name = "dataSetId")]
+        public string DataSetId { get; set; }
+        [DataMember(Name = "analyticsId")]
+        public string AnalyticsId { get; set; }
 
 
     }

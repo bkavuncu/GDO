@@ -17,7 +17,7 @@ namespace GDO.Apps.Twitter.Core
         private StatusMsg StatusMsg { get; set; }
         public Dictionary<string, DataSet> DataSets { get; set; }
         public Dictionary<string, Dictionary<string, Analytics>> Analytics { get; set; }
-
+        public string CurrentDataSet { get; set; }
         public RestController(Uri url, string authentication = "Y3BzMTVfdXNlcjpzZWNyZXQ=")
         {
             HttpClient = new HttpClient {BaseAddress = url};
@@ -39,6 +39,11 @@ namespace GDO.Apps.Twitter.Core
             return newAnalyticsList.Select(r => Post(DataSets[r.dataset_id].UriAnalytics, r)).ToList();
         }
 
+        public List<Slide> GetSlides()
+        {
+            return (Get<Slide[]>(StatusMsg.SlideUrl) ?? new Slide[0]).ToList();
+        }
+
         public DataSet GetDataSet(string id)
         {
             return Get<DataSet>(StatusMsg.DataSetUrl +"/" + id) ?? new DataSet();
@@ -50,9 +55,16 @@ namespace GDO.Apps.Twitter.Core
             return DataSets;
         }
 
-        public Analytics GetAnalytics(string dataSetId, string id)
+        public Analytics GetAnalytics(string dataSetId, string id, bool useCache = true)
         {
-            return Get<Analytics>(DataSets[dataSetId].UriAnalytics + "/" + id) ?? new Analytics();
+            if (useCache)
+            {
+                return Get<Analytics>(DataSets[dataSetId].UriAnalytics + "/" + id) ?? new Analytics();
+            }
+            else
+            {
+                return Get<Analytics>(GetDataSet(dataSetId).UriAnalytics + "/" + id) ?? new Analytics();
+            }
         }
 
         public Dictionary<string, Dictionary<string, Analytics>> GetAnalyticsList(List<string> dataSetIds)
@@ -61,6 +73,7 @@ namespace GDO.Apps.Twitter.Core
                                                  dsId => Get<Analytics[]>(DataSets[dsId].UriAnalytics).ToList());
 
             Analytics = analytics.ToDictionary(a => a.Key, a => a.Value.ToDictionary(b => b.Id, b => b));
+            CurrentDataSet = dataSetIds[0];
             return Analytics;
         }
 

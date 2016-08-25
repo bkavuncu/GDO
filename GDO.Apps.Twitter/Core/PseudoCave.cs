@@ -168,18 +168,26 @@ namespace GDO.Apps.Twitter.Core
 
         public void UpdateAppQueue()
         {
-            List<Section> availableSections;
+            
             for (var i = 0; i < QueuedApps.Count; ++i)
             {
-                availableSections = Sections.Where(s => s.Value.TwitterVis.Id == null).Select(kvp => kvp.Value).ToList();
-                if (availableSections.Count > 0)
+                var availableSection = Sections.Where(s=> s.Value.TwitterVis.Id == null && s.Value.Col == QueuedApps[i].ColStart && s.Value.Row == QueuedApps[i].RowStart).Select(e=>e.Value).FirstOrDefault();
+                if (availableSection != null)
                 {
-                    availableSections[0].TwitterVis = QueuedApps[i].TwitterVis;
-                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSections[0].Id + " deploying" + QueuedApps[i].TwitterVis.FilePath);
+                    availableSection.TwitterVis = QueuedApps[i].TwitterVis;
+                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSection.Id + " deploying" + QueuedApps[i].TwitterVis.FilePath);
                     QueuedApps.RemoveAt(i);
-                    AppsToDeploy.Add(availableSections[0]);
+                    AppsToDeploy.Add(availableSection);
                     --i;
                 }
+                //                if (availableSections.Count > 0)
+                //                {
+                //                    availableSections[0].TwitterVis = QueuedApps[i].TwitterVis;
+                //                    Debug.WriteLine("Found a section that can be autodeployed to: " + availableSections[0].Id + " deploying" + QueuedApps[i].TwitterVis.FilePath);
+                //                    QueuedApps.RemoveAt(i);
+                //                    AppsToDeploy.Add(availableSections[0]);
+                //                    --i;
+                //                }
 
             }
         }

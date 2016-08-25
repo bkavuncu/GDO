@@ -103,11 +103,11 @@ gdo.net.app["FusionChart"].initControl = function () {
 
     var transform = "scale(" + 1920.0 / width + ")";
     var origin = "0px 0px";
-//    $("iframe")
-//        .contents()
-//        .find("#blocker")
-//        .css("width", 1920.0 + "px")
-//        .css("height", height * 1920.0 / width + "px");
+    $("iframe")
+        .contents()
+        .find("#blocker")
+        .css("width", 1920.0 + "px")
+        .css("height", height * 1920.0 / width + "px");
     $("iframe")
         .contents()
         .find("#chart-container")
@@ -135,7 +135,7 @@ gdo.net.app["FusionChart"].ternminateControl = function () {
 }
 
 gdo.net.app["FusionChart"].processMouseEvent = function (instanceId, mouseEvent) {
-    console.log(mouseEvent);
+    
     mouseEvent["clientX"] = mouseEvent["scaledX"] - (gdo.net.node[gdo.clientId].sectionCol * gdo.net.app["FusionChart"].screenWidth);
     mouseEvent["clientY"] = mouseEvent["scaledY"] - (gdo.net.node[gdo.clientId].sectionRow * gdo.net.app["FusionChart"].screenHeight);
 
@@ -157,7 +157,13 @@ gdo.net.app["FusionChart"].get_object_from_dom = function(domPath, instanceId) {
         console.log(domPath);
     }
     for(var j = 0; j < domPath.length; ++j){
-        if(domPath[j]["attr"].id != undefined) {
+        if (domPath[j]["index"] >= 0) {
+            root = root.children().eq(domPath[j]["index"]);
+            if (gdo.net.instance[instanceId].debug) {
+                console.log("Using index to find obj: " + domPath[j]["index"]);
+                console.log(root);
+            }
+        }else if(domPath[j]["attr"].id != undefined) {
             root = root.children("#" + domPath[j]["attr"].id);
             if (gdo.net.instance[instanceId].debug) {
                 console.log("Using id to find obj: " + domPath[j]["attr"].id);
@@ -172,7 +178,7 @@ gdo.net.app["FusionChart"].get_object_from_dom = function(domPath, instanceId) {
             }
         } else {
             var query = domPath[j]["nodeName"];
-            for(var p in domPath[j]["attr"]){
+            for (var p in domPath[j]["attr"]) {
                 if (domPath[j]["attr"].hasOwnProperty(p)) {
                     query += "[" + p + "='" + domPath[j]["attr"][p] + "']";
                 }
@@ -185,6 +191,7 @@ gdo.net.app["FusionChart"].get_object_from_dom = function(domPath, instanceId) {
         }
     }
     if (gdo.net.instance[instanceId].debug) {
+        console.log("====================================");
         console.log("Found");
         console.log(root);
     }
@@ -194,7 +201,6 @@ gdo.net.app["FusionChart"].get_object_from_dom = function(domPath, instanceId) {
 }
 
 gdo.net.app["FusionChart"].sendMouseEvent = function (e) {
-
     var oe = e.originalEvent;
     var elementPath;
     for (var i = oe.path.length - 1; i >= 0; i--) {
@@ -212,6 +218,13 @@ gdo.net.app["FusionChart"].sendMouseEvent = function (e) {
             }
         }
         c["nodeName"] = elementPath[j].nodeName;
+        if (j > 0) {
+            var i = 0;
+            var child = elementPath[j];
+            while ((child = child.previousSibling) != null)
+                i++;
+            c["index"] = i;
+        }
         pathAttributes.push(c);
     }
 

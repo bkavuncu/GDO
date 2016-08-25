@@ -17,7 +17,6 @@
             gdo.consoleOut('.Twitter', 1, 'Using analytics options endpoint : ' + messageDes.uri_analysis_options);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
-//            console.log(gdo.net.instance[instanceId])
             $("iframe").contents().find("#client_api_status_message").empty().append(messageDes.msg);
         }
     }
@@ -36,6 +35,13 @@
         }
     }
 
+    $.connection.twitterAppHub.client.updateSlides = function (instanceId, slides) {
+        gdo.consoleOut('.Twitter', 1, 'Received new slides');
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.net.app["Twitter"].updateSlideTable(instanceId, JSON.parse(slides));
+        }
+    }
+  
     $.connection.twitterAppHub.client.updateAnalytics = function (instanceId, analytics) {
         gdo.consoleOut('.Twitter', 1, 'Received new analytics');
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
@@ -94,12 +100,19 @@ gdo.net.app["Twitter"].initControl = function () {
 
     gdo.net.instance[gdo.controlId].data = {}
     gdo.net.instance[gdo.controlId].caveStatus = {}
-    gdo.net.app["Twitter"].initialise(gdo.controlId);
-    gdo.net.app["Twitter"].server.getApiStatus(gdo.controlId);
-    parent.gdo.net.app["Twitter"].requestDataSets();
+    gdo.net.instance[gdo.controlId].control = {
+        selectedNewAnalytics: [],
+        selectedDataSet: -1,
+        selectedSection: -1,
+        selectedAnalytics: null,
+        selectedDataSets: [],
+        analyticsDisplay: {},
+        selectedGraphApps: [],
+        selectedApp: null,
+        selectedSlide: -1
+    }
     gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, 0);
-    
-
+    gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
 }
 
 gdo.net.app["Twitter"].updateDisplayCanvas = function (instanceId) {
@@ -124,7 +137,6 @@ gdo.net.app["Twitter"].processCaveStatus = function (instanceId, status, refresh
     gdo.consoleOut('.Twitter', 1, "Checking if apps need to be launched");
     gdo.net.app["Twitter"].launchApps(instanceId, status.appsToLaunch);
     
-
     gdo.net.app["Twitter"].updateDisplayCanvas(instanceId);
 
     if (refreshN > 0) {

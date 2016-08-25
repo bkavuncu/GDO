@@ -61,6 +61,56 @@
     }
 }
 
+gdo.net.app["Twitter"].sectionIsFree = function(instanceId, colStart, colEnd, rowStart, rowEnd){
+    for (var c = colStart; c <=colEnd; ++c) {
+        for (var r = rowStart; r <= rowEnd; ++r) {
+            if (gdo.net.instance[instanceId].caveStatus.nodes[gdo.net.getNodeId(c, r)].nodeContext !=
+                gdo.net.app["Twitter"].NodeContext.FREE) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+gdo.net.app["Twitter"].launchSlide = function (instanceId, slideId) {
+    gdo.consoleOut('.Twitter', 1, "Attempting to launch slide " + slideId);
+    var slide = gdo.net.instance[instanceId].data.slides[slideId];
+    console.log(slide);
+    var sectionRequests = [];
+    for (var i = 0; i < slide.sections.length; ++i) {
+        if(!gdo.net.app["Twitter"].sectionIsFree(instanceId, slide.sections[i].colStart, slide.sections[i].colEnd,
+            slide.sections[i].rowStart, slide.sections[i].rowEnd)) {
+            
+            var msg = 'Slide section with coordinates: ' +
+                slide.sections[i].colStart +
+                " " +
+                slide.sections[i].colEnd +
+                " " +
+                slide.sections[i].rowStart +
+                " " +
+                slide.sections[i].rowEnd +
+                " could not be started as node is already allocated";
+            gdo.consoleOut('.Twitter', 1, msg);
+            gdo.net.app["Twitter"].setMessage(msg);
+            continue;
+        }
+        sectionRequests.push({
+            ColStart: slide.sections[i].colStart,
+            RowStart: slide.sections[i].rowStart,
+            ColEnd: slide.sections[i].colEnd,
+            RowEnd: slide.sections[i].rowEnd,
+            DataSetId: slide.sections[i].dataSetId,
+            AnalyticsId: slide.sections[i].analyticsId
+        });
+    }
+
+    console.log(sectionRequests);
+    if (sectionRequests.length > 0) {
+        gdo.net.app["Twitter"].reqeustAutoLoadSections(instanceId, sectionRequests);
+    }
+}
+
 gdo.net.app["Twitter"].drawEmptySectionTable = function (maxCol, maxRow) {
     $("iframe").contents().find("#section_table").empty();
     for (var i = 0; i < maxRow; i++) {
