@@ -88,10 +88,10 @@ $(function () {
         gdo.net.app["Youtube"].refresh(instanceId);
 
     }
-    $.connection.youtubeAppHub.client.playVideo = function (instanceId,time) {
+    $.connection.youtubeAppHub.client.playVideo = function (instanceId, time) {
         gdo.consoleOut('.Youtube', 0, "Play Command Received " + time);
-       // if (gdo.net.instance[instanceId].youtubePlayer.getPlayerState() == 3) {
-            //gdo.net.app["Youtube"].server.seekTo(instanceId, gdo.net.instance[instanceId].youtubePlayer.getCurrentTime(), true);
+        // if (gdo.net.instance[instanceId].youtubePlayer.getPlayerState() == 3) {
+        //gdo.net.app["Youtube"].server.seekTo(instanceId, gdo.net.instance[instanceId].youtubePlayer.getCurrentTime(), true);
         //    gdo.net.instance[instanceId].youtubePlayer.playVideo();
         //} else {
         gdo.net.setTimeout(function () { gdo.net.instance[instanceId].youtubePlayer.playVideo(); }, time);
@@ -139,16 +139,17 @@ $(function () {
 });
 
 gdo.net.app["Youtube"].refresh = function (instanceId) {
+    gdo.checkpoint(instanceId);
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
         var scale;
         if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > 1) {
             scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
         } else {
-            scale = "scale(1.01)";
+            scale = "scale(1.001)";
         }
         var dscale;
         if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > 1) {
-            dscale = "scale(" + (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + 0.01) + ")";
+            dscale = "scale(" + (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 0.001) + ")";
         } else {
             dscale = "scale(1.00)";
         }
@@ -157,13 +158,13 @@ gdo.net.app["Youtube"].refresh = function (instanceId) {
             .css("-moz-transform", dscale)
             .css("-o-transform", dscale)
             .css("-webkit-transform", dscale);
-        setTimeout(function() {
+        setTimeout(function () {
             $("iframe").contents().find("#youtube_player")
                 .css("zoom", 1)
                 .css("-moz-transform", scale)
                 .css("-o-transform", scale)
                 .css("-webkit-transform", scale);
-        }, 70);
+        }, 1000);
     }
 }
 
@@ -194,7 +195,7 @@ gdo.net.app["Youtube"].initControl = function (controlId) {
         var amount = gdo.net.instance[gdo.controlId].youtubePlayer.getCurrentTime() + gdo.net.instance[gdo.controlId].youtubePlayer.getDuration() / 100;
         //gdo.consoleOut('.Youtube', 0, "Sending Forward Command with " + amount);
         gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 350);
-        setTimeout(function () {gdo.net.app["Youtube"].server.seekTo(gdo.controlId, amount, true, gdo.net.time.getTime() + 350);}, 700);
+        setTimeout(function () { gdo.net.app["Youtube"].server.seekTo(gdo.controlId, amount, true, gdo.net.time.getTime() + 350); }, 700);
     });
 
     $("iframe").contents().find("#pauseButton").unbind().click(function () {
@@ -254,13 +255,13 @@ gdo.net.app["Youtube"].updateTitle = function (instanceId) {
                 if ($("iframe").contents().find("#youtube_player").is(":visible")) {
                     $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getCurrentTime()) + "/" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getDuration()) + " seconds</h6>");
                 } else {
-                    $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;Buffering "+parseInt((gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() * 100) / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal())+"%</h6>");
+                    $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;Buffering " + parseInt((gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() * 100) / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal()) + "%</h6>");
                 }
                 $("iframe").contents().find("#youtube_title").empty().append("<h6><i class='fa  fa-youtube  fa-fw'></i>&nbsp;" + gdo.net.instance[instanceId].youtubePlayer.getVideoData().title + "</h6>");
-               
+
             }
         } catch (err) {
-            
+
         }
         gdo.net.app["Youtube"].updateTitle(instanceId);
     }, 700);
@@ -302,7 +303,7 @@ gdo.net.app["Youtube"].stateChange = function (event) {
         default:
             //
             break;
-    } 
+    }
 }
 
 gdo.net.app["Youtube"].terminateClient = function () {
@@ -313,8 +314,7 @@ gdo.net.app["Youtube"].ternminateControl = function () {
     gdo.consoleOut('.Youtube', 1, 'Terminating Youtube App Control at Instance ' + gdo.controlId);
 }
 
-gdo.net.app["Youtube"].playVideo = function ()
-{
+gdo.net.app["Youtube"].playVideo = function () {
     var instanceId;
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         instanceId = gdo.controlId;
