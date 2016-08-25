@@ -1,5 +1,5 @@
 ﻿gdo.net.app["Spreadsheets"].clearServer = function (id) {
-    var confName = this.gdo.net.instance[this.instanceId].configName;
+    var configName = this.gdo.net.instance[this.instanceId].configName;
     var conf = this.gdo.net.app["Spreadsheets"].config[configName];
     $.ajax({
         url: conf.serverAddress + "Operations/ClearServer",

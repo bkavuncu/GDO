@@ -1,5 +1,5 @@
 ﻿gdo.net.app["Spreadsheets"].runAnalysis = function (id, model, config, section) {
-    var confName = this.gdo.net.instance[this.instanceId].configName;
+    var configName = this.gdo.net.instance[this.instanceId].configName;
     var conf = this.gdo.net.app["Spreadsheets"].config[configName];
     gdo.consoleOut(".Spreadsheets", 1, "RunAnalysis[" + id + "] : model:" + JSON.stringify(model) + " config: " + JSON.stringify(config));
     $.ajax({

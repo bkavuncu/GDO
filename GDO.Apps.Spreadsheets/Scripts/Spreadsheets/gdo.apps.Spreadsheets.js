@@ -18,6 +18,8 @@ gdo.net.app["Spreadsheets"].initClient = function () {
 };
 
 var loadModules = function () {
+    this.instanceId = gdo.net.node[gdo.clientId].appInstanceId;// this is a shortcut which is depended upon by LoadModules
+
     gdo.loadScript("viewModel", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
     gdo.loadScript("clearModel", "Spreadsheets", gdo.SCRIPT_TYPE.APP);
     gdo.loadScript("clearServer", "Spreadsheets", gdo.SCRIPT_TYPE.APP);

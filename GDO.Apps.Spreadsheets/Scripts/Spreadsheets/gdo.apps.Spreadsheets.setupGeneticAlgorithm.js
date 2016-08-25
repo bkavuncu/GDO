@@ -1,4 +1,4 @@
-﻿var confName = this.gdo.net.instance[this.instanceId].configName;
+﻿var configName = this.gdo.net.instance[this.instanceId].configName;
 var conf = this.gdo.net.app["Spreadsheets"].config[configName];
 
 var viewSheet = function (id, sheet) {
