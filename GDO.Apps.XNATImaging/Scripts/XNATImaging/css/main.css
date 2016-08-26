@@ -6,36 +6,39 @@ html, body {
     width: 100%;
 }
 
+body {
+    background-color: #264164;
+}
+
 .heading {
     background-color: #264164;
 }
 
 .heading h1 {
     color: #ececec;
-    font-size: 60px;
-    line-height: 70px;
+    font-size: 160px;
+    line-height: 180px;
     margin: 100px 30px 200px;
 }
 
 .heading h2 {
     color: #2578A6;
-    font-size: 40px;
-    line-height: 48px;
-    margin-left: 50px;
+    font-size: 96px;
+    line-height: 110px;
+    margin-left: 60px;
     position: absolute;
     bottom: 50px;
 }
 
 .heading h3 {
     color: darkcyan;
-    font-size: 40px;
-    line-height: 48px;
-    margin-left: 30px;
-    padding-bottom: 36px;
+    font-size: 96px;
+    line-height: 110px;
+    margin-top: 50px;
+    margin-left: 160px;
 }
 
 .controls {
-    bottom: -70px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -58,4 +61,9 @@ html, body {
 
 h3 {
     font-size: 1.2em; margin: .6em 0;
+}
+
+input.btn {
+    height: 40px;
+    font-size: 20px;
 }

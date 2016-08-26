@@ -20,10 +20,6 @@
     <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css"/>
     <link rel="stylesheet" type="text/ctabless" href="../../Scripts/XNATImaging/css/main.css"/> 
 
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="../../Scripts/XNATImaging/papaya.js"></script>
     
     <!-- JqueryUI stylesheet -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -105,7 +101,12 @@
             position: relative;
             text-align: center;
         }*/
-    </style>
+        </style>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/XNATImaging/papaya.js"></script>
 </head>
 <body unselectable="on" class="unselectable">
 
@@ -138,7 +139,7 @@
             </table>
         </div>
 
-        <div id="dicomImage" style="width: 900px; height: 700px;"> <!--1000x750 for tablets-->
+        <div id="dicomImage" style="width: 1200px; height: 1000px;"> <!--1000x750 for tablets-->
             <div class="papaya" data-params="params"></div>
         </div>
 
@@ -159,12 +160,6 @@
                 </div>
             </div>
         </div>  
-        <div class="row">
-            <div class="col-md-4" style="width: 150px;">
-                <h3>PDF scroller</h3>
-                <input type="range" id="pdf-scroller">
-            </div>
-        </div>
         <div id="dialog-form" title="Add label">
             <form>
                 <fieldset>
