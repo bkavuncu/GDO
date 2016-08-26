@@ -39,10 +39,12 @@ gdo.net.app["Fractals"].initWebgl = function(id, locations, completeInit) {
     );
 
     // Shader local variables
+    // ReSharper disable JoinDeclarationAndInitializerJs
     var shaderScript;
     var shaderSource;
     var vertexShader;
     var fragmentShader;
+    // ReSharper restore JoinDeclarationAndInitializerJs
 
     // Compile vertex shader
     shaderScript = $("iframe").contents().find("#2d-vertex-shader")[0];
@@ -180,7 +182,7 @@ gdo.net.app["Fractals"].loadFile = function (url, data, callback, errorCallback)
         if (request.readyState == 4) {
             // If we got HTTP status 200 (OK)
             if (request.status == 200) {
-                callback(request.responseText, data)
+                callback(request.responseText, data);
             } else { // Failed
                 alert(request.status);
                 errorCallback(url);
@@ -263,7 +265,7 @@ gdo.net.app["Fractals"].renderSync = function (locations, gl, program) {
 
 
 gdo.net.app["Fractals"].audioPlaying = false;
-gdo.net.app["Fractals"].freqs;
+gdo.net.app["Fractals"].freqs;//TODO this is weird
 
 gdo.net.app["Fractals"].applyAudioAdjustments = function () {
     if (gdo.net.app["Fractals"].audioPlaying) {

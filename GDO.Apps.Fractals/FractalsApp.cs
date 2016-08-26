@@ -1,23 +1,22 @@
 ﻿using System;
 using GDO.Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Threading;
 using GDO.Core.Apps;
+using Microsoft.AspNet.SignalR;
+// ReSharper disable NotAccessedField.Global TODO turn this off - this app needs to use the Param objects more clearly
 
 namespace GDO.Apps.Fractals
 {
+    // ReSharper disable  InconsistentNaming
     public class FractalsApp : IBaseAppInstance
     {
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
 
         public float XRot;
         public float YRot;
@@ -25,7 +24,8 @@ namespace GDO.Apps.Fractals
         public float YTrans;
         public float ZTrans;
 
-        private Object Lock;
+        private object Lock;
+        
         private bool JoystickRunning;
 
         private float RotAngle;
@@ -201,12 +201,12 @@ namespace GDO.Apps.Fractals
 
                     if (MoveJoystickUpdate)
                     {
-                        float Forward = -(float)(5 * Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
-                        float Strafe  = (float)(5 * Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
+                        float forward = -(float)(5 * Sensitivity * MoveMagnitude * Math.Cos(MoveAngle));
+                        float strafe  = (float)(5 * Sensitivity * MoveMagnitude * Math.Sin(MoveAngle));
 
-                        MoveDeltaX = (float) ((-Forward * Math.Sin(XRot) * Math.Cos(YRot)) + (Strafe * Math.Cos(XRot) * Math.Cos(YRot)));
-                        MoveDeltaY = (float) (-Forward * Math.Sin(YRot));
-                        MoveDeltaZ = (float) ((Forward * Math.Cos(XRot) * Math.Cos(YRot)) + (Strafe * Math.Sin(XRot) * Math.Cos(YRot)));
+                        MoveDeltaX = (float) ((-forward * Math.Sin(XRot) * Math.Cos(YRot)) + (strafe * Math.Cos(XRot) * Math.Cos(YRot)));
+                        MoveDeltaY = (float) (-forward * Math.Sin(YRot));
+                        MoveDeltaZ = (float) ((forward * Math.Cos(XRot) * Math.Cos(YRot)) + (strafe * Math.Sin(XRot) * Math.Cos(YRot)));
 
                         MoveJoystickUpdate = false;
                     }

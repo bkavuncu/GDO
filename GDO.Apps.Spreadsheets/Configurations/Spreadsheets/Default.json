@@ -1,6 +1,4 @@
 ﻿{
-    "id": 1,
-    "name": "A green door",
-    "price": 12.50,
-    "tags": ["home", "green"]
+    "serverAddress" : "http://146.169.32.111/SheetServer/",
+    "name" :  "Default"
 }

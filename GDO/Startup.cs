@@ -103,12 +103,12 @@ namespace GDO
             {
                 if (caveapp is IBaseAppHub)
                 {
-                    Cave.RegisterApp(caveapp.Name, caveapp.P2PMode, caveapp.InstanceType, false, null);
+                    Cave.RegisterApp(caveapp.Name, caveapp, caveapp.InstanceType,  false, null, caveapp.P2PMode);
                     assemblies.Add(caveapp.GetType().Assembly);
                 }
-                else if (caveapp is IAdvancedAppHub)
+                else if (caveapp is ICompositeAppHub)
                 {
-                    Cave.RegisterApp(caveapp.Name, -1, caveapp.InstanceType, true, ((IAdvancedAppHub)caveapp).SupportedApps);
+                    Cave.RegisterApp(caveapp.Name, caveapp,  caveapp.InstanceType, true, ((ICompositeAppHub)caveapp).SupportedApps, caveapp.P2PMode);
                     assemblies.Add(caveapp.GetType().Assembly);
                 }
                 else

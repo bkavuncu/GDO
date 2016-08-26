@@ -14,18 +14,19 @@ namespace GDO.Apps.StaticHTML
     {
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
 
         public bool ResponsiveMode { get; set; }
         public string URL { get; set; }
         public void Init()
         {
             URL = (string)Configuration.Json.SelectToken("url");
-            ResponsiveMode = (bool) (Configuration.Json.SelectToken("responsiveMode") ?? false);
-            Debug.WriteLine("Using responsive mode: " + ResponsiveMode);
+            ResponsiveMode = (bool)(Configuration.Json.SelectToken("responsiveMode") ?? false);
+            Debug.WriteLine("Using responsive mode? " + ResponsiveMode);
         }
 
         public void SetURL(string url)

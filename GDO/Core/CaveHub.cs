@@ -219,12 +219,27 @@ namespace GDO.Core
             }
         }
 
-
-        public int DeployAdvancedApp(List<int> instanceIds, string appName, string configName)
+        public int DeployChildApp(int sectionId, string appName, string configName, int parentId)
         {
             lock (Cave.ServerLock)
             {
-                int instanceId = Cave.CreateAdvancedAppInstance(instanceIds, appName, configName);
+                int instanceId = Cave.CreateChildAppInstance(sectionId, appName, configName, true, parentId);
+                Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
+                if (instanceId >= 0)
+                {
+                    string serializedInstance = GetInstanceUpdate(instanceId);
+                    BroadcastAppUpdate(true, instanceId, serializedInstance);
+                }
+                return instanceId;
+            }
+        }
+
+
+        public int DeployCompositeApp(List<int> instanceIds, string appName, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                int instanceId = Cave.CreateCompositeAppInstance(instanceIds, appName, configName);
                 if (instanceId >= 0)
                 {
                     //Do more
@@ -252,9 +267,9 @@ namespace GDO.Core
                         int sectionId = ((IBaseAppInstance)Cave.Apps[appName].Instances[instanceId]).Section.Id;
                         Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     }
-                    else if (Cave.Apps[appName].Instances[instanceId] is IAdvancedAppInstance)
+                    else if (Cave.Apps[appName].Instances[instanceId] is ICompositeAppInstance)
                     {
-                        List<int> integratedInstances = ((IAdvancedAppInstance)Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        List<int> integratedInstances = ((ICompositeAppInstance)Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
                         //todo this is unfinished - var not used
                     }
                     if (Cave.DisposeAppInstance(appName, instanceId))
@@ -354,7 +369,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to BroadcastAppConfigurations", e);
                 }
             }
         }
@@ -380,7 +395,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to UseAppConfiguration", e);
                 }
             }
         }
@@ -399,7 +414,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to LoadAppConfiguration", e);
                 }
             }
         }
@@ -418,7 +433,7 @@ namespace GDO.Core
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error("failed to UnloadAppConfiguration", e);
                 }
             }
         }
@@ -812,7 +827,7 @@ namespace GDO.Core
                 State caveState = Cave.States[id];
                 ClearCave();
                 
-                //TODO Advanced apps
+                //TODO Composite apps
                 foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),

@@ -1,17 +1,14 @@
 ﻿$(function() {
     gdo.consoleOut('.StaticHTML', 1, 'Loaded StaticHTML JS');
-    $.connection.staticHTMLAppHub.client.receiveURL = function(instanceId, url, responsiveMode) {
+    $.connection.staticHTMLAppHub.client.receiveURL = function (instanceId, url, responsiveMode) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.StaticHTML', 1, 'Instance - ' + instanceId + ": Received URL : " + url);
-            $("iframe")
-                .contents()
-                .find("#html_frame")
+            gdo.consoleOut('.StaticHTML', 1, 'Instance - ' + instanceId + ": Received URL : " + url + " with responsive mode set " + responsiveMode);
+            $("iframe").contents().find("#html_frame")
                 .attr("src", url);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.StaticHTML',
                 1,
-                'Instance - ' + instanceId + ": Received URL : " + url + " responsive mode: " + responsiveMode);
-
+                'Instance - ' + instanceId + ": Received URL : " + url + " with responsive mode set " + responsiveMode);
             $("iframe")
                 .contents()
                 .find("#wrapper")
@@ -25,66 +22,73 @@
                     "px");
 
             if (!responsiveMode) {
-
-                var s;
+                var scale;
+                var dscale;
+                var offsetX;
+                var offsetY;
+                var origin;
+                var width;
+                var height;
                 if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > 1) {
-                    var scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
+                    scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
+                    dscale = "scale(" + (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 0.001) + ")";
                 } else {
-                    var scale = "scale(1.01)";
+                    scale = "scale(1.001)";
+                    dscale = "scale(1.00)";
                 }
 
                 if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols >
                     gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) {
 
-                    var offsetX = gdo.net.node[gdo.clientId].sectionCol *
-                    (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
-                    var offsetY = gdo.net.node[gdo.clientId].sectionRow *
-                    (100 /
-                    (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows +
-                        (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols -
-                            gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) -
-                        1));
-                    var origin = offsetX + "% " + offsetY + "%";
-                    var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
-                        gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
-                    var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height /
-                        gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
+                    offsetX = gdo.net.node[gdo.clientId].sectionCol *
+                   (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
+                    offsetY = gdo.net.node[gdo.clientId].sectionRow *
+                   (100 /
+                   (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows +
+                       (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols -
+                           gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) -
+                       1));
+                    origin = offsetX + "% " + offsetY + "%";
+                    width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
+                       gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+                    height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height /
+                       gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
 
                 } else if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols <
                     gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) {
 
                     if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols == 1) {
-                        var offsetX = gdo.net.node[gdo.clientId].sectionCol *
-                        (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols));
-                        var offsetY = 100 *
-                            gdo.net.node[gdo.clientId].sectionRow *
-                            (100 /
-                            (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows *
-                            (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols)));
+                        offsetX = gdo.net.node[gdo.clientId].sectionCol *
+                       (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols));
+                        offsetY = 100 *
+                           gdo.net.node[gdo.clientId].sectionRow *
+                           (100 /
+                           (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows *
+                           (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols)));
                     } else {
-                        var offsetX = gdo.net.node[gdo.clientId].sectionCol *
-                        (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
-                        var offsetY = gdo.net.node[gdo.clientId].sectionRow *
-                        (100 /
-                        (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows *
-                        (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1)));
+                        offsetX = gdo.net.node[gdo.clientId].sectionCol *
+                       (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
+                        offsetY = gdo.net.node[gdo.clientId].sectionRow *
+                       (100 /
+                       (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows *
+                       (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1)));
                     }
-                    var origin = offsetX + "% " + offsetY + "%";
-                    var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
-                        gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
-                    var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
+                    origin = offsetX + "% " + offsetY + "%";
+                    width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
+                       gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+                    height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
 
                 } else {
 
-                    var offsetX = gdo.net.node[gdo.clientId].sectionCol *
-                    (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
-                    var offsetY = gdo.net.node[gdo.clientId].sectionRow *
-                    (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows - 1));
-                    var origin = offsetX + "% " + offsetY + "%";
-                    var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
-                        gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
-                    var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height /
-                        gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
+                    offsetX = gdo.net.node[gdo.clientId].sectionCol *
+                   (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
+                    offsetY = gdo.net.node[gdo.clientId].sectionRow *
+                   (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows - 1));
+                    origin = offsetX + "% " + offsetY + "%";
+                    width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
+                       gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+                    height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height /
+                       gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
                 }
                 gdo.consoleOut('.StaticHTML', 4, origin);
                 $("iframe")
@@ -92,17 +96,34 @@
                     .find("#html_frame")
                     .attr("src", url)
                     .css("zoom", 1)
-                    .css("-moz-transform", scale)
+                    .css("-moz-transform", dscale)
                     .css("-moz-transform-origin", origin)
-                    .css("-o-transform", scale)
+                    .css("-o-transform", dscale)
                     .css("-o-transform-origin", origin)
-                    .css("-webkit-transform", scale)
+                    .css("-webkit-transform", dscale)
                     .css("-webkit-transform-origin", origin)
                     .css("width", width + "px")
                     .css("height", height + "px");
+                setTimeout(function () {
+                    $("iframe")
+                       .contents()
+                       .find("#html_frame")
+                       .css("zoom", 1)
+                       .css("-moz-transform", dscale)
+                       .css("-o-transform", dscale)
+                       .css("-webkit-transform", dscale);
+                    setTimeout(function () {
+                        $("iframe")
+                            .contents()
+                            .find("#html_frame")
+                            .css("zoom", 1)
+                            .css("-moz-transform", scale)
+                            .css("-o-transform", scale)
+                            .css("-webkit-transform", scale);
+                    }, 700);
+                }, 700);
 
             } else {
-
                 var screenWidth = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
                     gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
                 var screenHeight = gdo.net.section[gdo.net.instance[instanceId].sectionId].height /
@@ -113,20 +134,9 @@
                 var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
                 var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
 
-                gdo.consoleOut('.StaticHTML',
-                    0,
-                    'ScreenWidth: ' +
-                    screenWidth +
-                    " ScreenHeight: " +
-                    screenHeight +
-                    " xOffset: " +
-                    xOffset +
-                    " yOffset: " +
-                    yOffset +
-                    " width: " +
-                    width +
-                    " height: " +
-                    height);
+                gdo.consoleOut('.StaticHTML', 0, 'ScreenWidth: ' + screenWidth + " ScreenHeight: " +
+                    screenHeight + " xOffset: " + xOffset + " yOffset: " + yOffset + " width: " +
+                    width + " height: " + height);
 
                 var origin = "0% 0%";
                 var transform = "translate(" + xOffset + "px," + yOffset + "px)";
@@ -153,15 +163,10 @@
     }
 });
 
-
-    gdo.net.app["StaticHTML"].initClient = function() {
-        gdo.consoleOut('.StaticHTML', 1, 'Initializing StaticHTML App Client at Node ' + gdo.clientId);
-        setTimeout(function() {
-                gdo.net.app["StaticHTML"].server.requestURL(gdo.net.node[gdo.clientId]
-                    .appInstanceId);
-            },
-            700);
-    }
+gdo.net.app["StaticHTML"].initClient = function () {
+    gdo.consoleOut('.StaticHTML', 1, 'Initializing StaticHTML App Client at Node ' + gdo.clientId);
+    setTimeout(function () { gdo.net.app["StaticHTML"].server.requestURL(gdo.net.node[gdo.clientId].appInstanceId); }, 700);
+}
 
     gdo.net.app["StaticHTML"].initControl = function(controlId) {
         gdo.net.app["StaticHTML"].server.requestURL(controlId);
@@ -183,6 +188,6 @@
         gdo.consoleOut('.StaticHTML', 1, 'Terminating StaticHTML App Client at Node ' + clientId);
     }
 
-    gdo.net.app["StaticHTML"].ternminateControl = function() {
-        gdo.consoleOut('.StaticHTML', 1, 'Terminating StaticHTML App Control at Instance ' + gdo.controlId);
-    }
+gdo.net.app["StaticHTML"].ternminateControl = function () {
+    gdo.consoleOut('.StaticHTML', 1, 'Terminating StaticHTML App Control at Instance ' + gdo.controlId);
+}

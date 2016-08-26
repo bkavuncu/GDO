@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
+using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.BasicMaps
 {
@@ -12,10 +13,11 @@ namespace GDO.Apps.BasicMaps
     {
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
         public MapPosition Position { get; set; }
         public string[] MarkerPosition { get; set; }
         public int MaxLayers { get; set; } = 50;

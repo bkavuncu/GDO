@@ -178,21 +178,21 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
         if (isCreate) {
             if (property.Priority == 0 || property.Priority == -1) {
                 $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
-                            "<div id='" + inputDiv + "_key' class='col-md-5'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                            "<div id='" + inputDiv + "_key' class='col-md-5'><font color='white'>&nbsp;&nbsp;" + property.Name + "</font></div>").popover();
 
             } else if (property.Priority == 1) {
                 $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
-                "<div id='" + inputDiv + "_key' class='col-md-5'><font color='gray'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                "<div id='" + inputDiv + "_key' class='col-md-5'><font color='gray'>&nbsp;&nbsp;" + property.Name + "</font></div>").popover();
 
             }
         } else {
             if (property.Priority == 0 || property.Priority == -1) {
                 $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
-                            "<div id='" + inputDiv + "_key' class='col-md-5'><font color='#4CBFF8'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                            "<div id='" + inputDiv + "_key' class='col-md-5'><font color='#4CBFF8'>&nbsp;&nbsp;" + property.Name + "</font></div>").popover();
 
             } else if (property.Priority == 1) {
                 $("iframe").contents().find("#" + inputDiv).attr('data-toggle', 'popover').attr('data-placement', 'left').attr('data-html', 'true').attr('data-trigger', 'hover').attr('data-content', property.Description).append(
-                "<div id='" + inputDiv + "_key' class='col-md-5'><font color='white'>&nbsp;&nbsp;" + key + "</font></div>").popover();
+                "<div id='" + inputDiv + "_key' class='col-md-5'><font color='white'>&nbsp;&nbsp;" + property.Name + "</font></div>").popover();
 
             }
         }
@@ -410,7 +410,7 @@ gdo.net.app["Maps"].drawInputField = function (instanceId, property, key, inputD
                 }
                 var collection = eval("gdo.net.instance[instanceId]." + property.LinkedParameter);
                 for (var key in collection) {
-                    if (collection.hasOwnProperty(key)) {
+                    if (collection.hasOwnProperty(key) && collection[key] != null) {
                         for (var i = 0; i < property.ClassTypes.$values.length; i++) {
                             if (collection[key].properties.ClassName.Value == property.ClassTypes.$values[i]) {
                                 if (value == collection[key].properties.Id.Value && value >= 0) {

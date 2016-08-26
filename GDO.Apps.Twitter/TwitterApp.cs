@@ -20,9 +20,10 @@ namespace GDO.Apps.Twitter
         private static readonly ILog Log = LogManager.GetLogger(typeof(TwitterApp));
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public GDO.Core.Section Section { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
         public AppConfiguration Configuration { get; set; }
         public string Name { get; set; }
 

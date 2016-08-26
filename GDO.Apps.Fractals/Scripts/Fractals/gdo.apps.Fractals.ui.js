@@ -5,19 +5,19 @@
 
     var size = parseInt($("iframe").contents().find(id).css("width"));
 
-    var orig_x;
-    var orig_x_point;
+    var origX;
+    var origXPoint;
 
-    var orig_y;
-    var orig_y_point;
+    var origY;
+    var origYPoint;
 
     function down(event) {
         var ele = $("iframe").contents().find(id);
 
         $("iframe").contents().find(id).stop();
 
-        var clientX;
-        var clientY;
+        var clientX =0;
+        var clientY =0;
 
         if (event.type == "touchstart") {
             for (var i = 0; i < event.originalEvent.touches.length; i++) {
@@ -31,11 +31,11 @@
             clientY = event.clientY;
         }
 
-        orig_x = parseInt(ele.css("left"));
-        orig_x_point = clientX;
+        origX = parseInt(ele.css("left"));
+        origXPoint = clientX;
 
-        orig_y = parseInt(ele.css("top"));
-        orig_y_point = clientY;
+        origY = parseInt(ele.css("top"));
+        origYPoint = clientY;
 
         $("iframe").contents().find(id).off("mousedown", down);
         $("iframe").contents().find(id).off("touchstart", down);
@@ -49,8 +49,8 @@
     };
 
     function move(event) {
-        var clientX;
-        var clientY;
+        var clientX =0;
+        var clientY =0;
 
         if (event.type == "touchmove") {
             for (var i = 0; i < event.originalEvent.touches.length; i++) {
@@ -64,8 +64,8 @@
             clientY = event.clientY;
         }
 
-        var x = clientX - orig_x_point;
-        var y = clientY - orig_y_point;
+        var x = clientX - origXPoint;
+        var y = clientY - origYPoint;
 
         var magnitude = Math.abs(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
         var theta = Math.atan2(x, y);
@@ -78,8 +78,8 @@
             magnitude /= (size / 2.0);
         }
 
-        var left = orig_x + x;
-        var top = orig_y + y;
+        var left = origX + x;
+        var top = origY + y;
 
         receiveParams(gdo.controlId, theta, magnitude);
         $("iframe").contents().find(id).css("left", left + "px");
@@ -136,7 +136,7 @@ $("iframe").contents().find("#audio_stop").on("click", function () {
 $("iframe").contents().find("#max_steps_number").empty().append($("iframe").contents().find("#max_steps_range").val());
 
 $("iframe").contents().find("#max_steps_range").on("input", function () {
-    val = $("iframe").contents().find("#max_steps_range").val();
+    var val = $("iframe").contents().find("#max_steps_range").val();
     $("iframe").contents().find("#max_steps_number").empty().append(val);
     gdo.net.app["Fractals"].server.maxSteps(gdo.controlId, val);
 });
@@ -144,7 +144,7 @@ $("iframe").contents().find("#max_steps_range").on("input", function () {
 $("iframe").contents().find("#detail_number").empty().append(Math.round(Math.pow(10, $("iframe").contents().find("#detail_range").val()) * 100000) / 100000);
 
 $("iframe").contents().find("#detail_range").on("input", function () {
-    val = $("iframe").contents().find("#detail_range").val();
+    var val = $("iframe").contents().find("#detail_range").val();
     $("iframe").contents().find("#detail_number").empty().append(Math.round(Math.pow(10, val) * 100000) / 100000);
     gdo.net.app["Fractals"].server.detail(gdo.controlId, val);
 });
@@ -152,7 +152,7 @@ $("iframe").contents().find("#detail_range").on("input", function () {
 $("iframe").contents().find("#fog_number").empty().append($("iframe").contents().find("#fog_range").val());
 
 $("iframe").contents().find("#fog_range").on("input", function () {
-    val = $("iframe").contents().find("#fog_range").val();
+    var val = $("iframe").contents().find("#fog_range").val();
     $("iframe").contents().find("#fog_number").empty().append(val);
     gdo.net.app["Fractals"].server.fog(gdo.controlId, val);
 });
@@ -162,25 +162,25 @@ $("iframe").contents().find("#green_colour_number").empty().append($("iframe").c
 $("iframe").contents().find("#blue_colour_number").empty().append($("iframe").contents().find("#blue_colour_range").val());
 
 $("iframe").contents().find("#red_colour_range").on("input", function () {
-    red = $("iframe").contents().find("#red_colour_range").val();
-    green = $("iframe").contents().find("#green_colour_range").val();
-    blue = $("iframe").contents().find("#blue_colour_range").val();
+    var red = $("iframe").contents().find("#red_colour_range").val();
+    var green = $("iframe").contents().find("#green_colour_range").val();
+    var blue = $("iframe").contents().find("#blue_colour_range").val();
     $("iframe").contents().find("#red_colour_number").empty().append(red);
     $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
     gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
 });
 $("iframe").contents().find("#green_colour_range").on("input", function () {
-    red = $("iframe").contents().find("#red_colour_range").val();
-    green = $("iframe").contents().find("#green_colour_range").val();
-    blue = $("iframe").contents().find("#blue_colour_range").val();
+    var red = $("iframe").contents().find("#red_colour_range").val();
+    var green = $("iframe").contents().find("#green_colour_range").val();
+    var blue = $("iframe").contents().find("#blue_colour_range").val();
     $("iframe").contents().find("#green_colour_number").empty().append(green);
     $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
     gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
 });
 $("iframe").contents().find("#blue_colour_range").on("input", function () {
-    red = $("iframe").contents().find("#red_colour_range").val();
-    green = $("iframe").contents().find("#green_colour_range").val();
-    blue = $("iframe").contents().find("#blue_colour_range").val();
+    var red = $("iframe").contents().find("#red_colour_range").val();
+    var green = $("iframe").contents().find("#green_colour_range").val();
+    var blue = $("iframe").contents().find("#blue_colour_range").val();
     $("iframe").contents().find("#blue_colour_number").empty().append(blue);
     $("iframe").contents().find("#colour_box").css("background-color", "rgb(" + red + "," + green + "," + blue + ")");
     gdo.net.app["Fractals"].server.colour(gdo.controlId, red, green, blue);
@@ -309,7 +309,7 @@ gdo.net.app["Fractals"].resetUI = function (p) {
 $("iframe").contents().find("#iterations_number").empty().append($("iframe").contents().find("#iterations_range").val());
 
 $("iframe").contents().find("#iterations_range").on("input", function () {
-    val = $("iframe").contents().find("#iterations_range").val();
+   var val = $("iframe").contents().find("#iterations_range").val();
     $("iframe").contents().find("#iterations_number").empty().append(val);
     gdo.net.app["Fractals"].server.iterations(gdo.controlId, val);
 });
@@ -317,7 +317,7 @@ $("iframe").contents().find("#iterations_range").on("input", function () {
 $("iframe").contents().find("#power_number").empty().append($("iframe").contents().find("#power_range").val());
 
 $("iframe").contents().find("#power_range").on("input", function () {
-    val = $("iframe").contents().find("#power_range").val();
+    var val = $("iframe").contents().find("#power_range").val();
     $("iframe").contents().find("#power_number").empty().append(val);
     gdo.net.app["Fractals"].server.power(gdo.controlId, val);
 });
@@ -325,7 +325,7 @@ $("iframe").contents().find("#power_range").on("input", function () {
 $("iframe").contents().find("#scale_number").empty().append($("iframe").contents().find("#scale_range").val());
 
 $("iframe").contents().find("#scale_range").on("input", function () {
-    val = $("iframe").contents().find("#scale_range").val();
+    var val = $("iframe").contents().find("#scale_range").val();
     $("iframe").contents().find("#scale_number").empty().append(val);
     gdo.net.app["Fractals"].server.scale(gdo.controlId, val);
 });
@@ -336,34 +336,34 @@ $("iframe").contents().find("#c_z_number").empty().append($("iframe").contents()
 $("iframe").contents().find("#c_w_number").empty().append($("iframe").contents().find("#c_w_range").val());
 
 $("iframe").contents().find("#c_x_range").on("input", function () {
-    cx = $("iframe").contents().find("#c_x_range").val();
-    cy = $("iframe").contents().find("#c_y_range").val();
-    cz = $("iframe").contents().find("#c_z_range").val();
-    cw = $("iframe").contents().find("#c_w_range").val();
+    var cx = $("iframe").contents().find("#c_x_range").val();
+    var cy = $("iframe").contents().find("#c_y_range").val();
+    var cz = $("iframe").contents().find("#c_z_range").val();
+    var cw = $("iframe").contents().find("#c_w_range").val();
     $("iframe").contents().find("#c_x_number").empty().append(cx);
     gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
 });
 $("iframe").contents().find("#c_y_range").on("input", function () {
-    cx = $("iframe").contents().find("#c_x_range").val();
-    cy = $("iframe").contents().find("#c_y_range").val();
-    cz = $("iframe").contents().find("#c_z_range").val();
-    cw = $("iframe").contents().find("#c_w_range").val();
+    var cx = $("iframe").contents().find("#c_x_range").val();
+    var cy = $("iframe").contents().find("#c_y_range").val();
+    var cz = $("iframe").contents().find("#c_z_range").val();
+    var cw = $("iframe").contents().find("#c_w_range").val();
     $("iframe").contents().find("#c_y_number").empty().append(cy);
     gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
 });
 $("iframe").contents().find("#c_z_range").on("input", function () {
-    cx = $("iframe").contents().find("#c_x_range").val();
-    cy = $("iframe").contents().find("#c_y_range").val();
-    cz = $("iframe").contents().find("#c_z_range").val();
-    cw = $("iframe").contents().find("#c_w_range").val();
+    var cx = $("iframe").contents().find("#c_x_range").val();
+    var cy = $("iframe").contents().find("#c_y_range").val();
+    var cz = $("iframe").contents().find("#c_z_range").val();
+    var cw = $("iframe").contents().find("#c_w_range").val();
     $("iframe").contents().find("#c_z_number").empty().append(cz);
     gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
 });
 $("iframe").contents().find("#c_w_range").on("input", function () {
-    cx = $("iframe").contents().find("#c_x_range").val();
-    cy = $("iframe").contents().find("#c_y_range").val();
-    cz = $("iframe").contents().find("#c_z_range").val();
-    cw = $("iframe").contents().find("#c_w_range").val();
+    var cx = $("iframe").contents().find("#c_x_range").val();
+    var cy = $("iframe").contents().find("#c_y_range").val();
+    var cz = $("iframe").contents().find("#c_z_range").val();
+    var cw = $("iframe").contents().find("#c_w_range").val();
     $("iframe").contents().find("#c_w_number").empty().append(cw);
     gdo.net.app["Fractals"].server.juliaConstant(gdo.controlId, cx, cy, cz, cw);
 });
@@ -371,7 +371,7 @@ $("iframe").contents().find("#c_w_range").on("input", function () {
 $("iframe").contents().find("#threshold_number").empty().append($("iframe").contents().find("#threshold_range").val());
 
 $("iframe").contents().find("#threshold_range").on("input", function () {
-    val = $("iframe").contents().find("#threshold_range").val();
+    var val = $("iframe").contents().find("#threshold_range").val();
     $("iframe").contents().find("#threshold_number").empty().append(val);
     gdo.net.app["Fractals"].server.threshold(gdo.controlId, val);
 });
@@ -379,7 +379,7 @@ $("iframe").contents().find("#threshold_range").on("input", function () {
 $("iframe").contents().find("#ambience_number").empty().append($("iframe").contents().find("#ambience_range").val());
 
 $("iframe").contents().find("#ambience_range").on("input", function () {
-    val = $("iframe").contents().find("#ambience_range").val();
+    var val = $("iframe").contents().find("#ambience_range").val();
     $("iframe").contents().find("#ambience_number").empty().append(val);
     gdo.net.app["Fractals"].server.ambience(gdo.controlId, val);
 });
@@ -387,7 +387,7 @@ $("iframe").contents().find("#ambience_range").on("input", function () {
 $("iframe").contents().find("#light_intensity_number").empty().append($("iframe").contents().find("#light_intensity_range").val());
 
 $("iframe").contents().find("#light_intensity_range").on("input", function () {
-    val = $("iframe").contents().find("#light_intensity_range").val();
+    var val = $("iframe").contents().find("#light_intensity_range").val();
     $("iframe").contents().find("#light_intensity_number").empty().append(val);
     gdo.net.app["Fractals"].server.lightIntensity(gdo.controlId, val);
 });
@@ -395,7 +395,7 @@ $("iframe").contents().find("#light_intensity_range").on("input", function () {
 $("iframe").contents().find("#light_size_number").empty().append($("iframe").contents().find("#light_size_range").val());
 
 $("iframe").contents().find("#light_size_range").on("input", function () {
-    val = $("iframe").contents().find("#light_size_range").val();
+    var val = $("iframe").contents().find("#light_size_range").val();
     $("iframe").contents().find("#light_size_number").empty().append(val);
     gdo.net.app["Fractals"].server.lightSize(gdo.controlId, val);
 });
@@ -419,7 +419,7 @@ $("iframe").contents().find("#sync_toggle")
 $("iframe").contents().find("#sync_time_number").empty().append($("iframe").contents().find("#sync_time_range").val());
 
 $("iframe").contents().find("#sync_time_range").on("input", function () {
-    val = $("iframe").contents().find("#sync_time_range").val();
+    var val = $("iframe").contents().find("#sync_time_range").val();
     $("iframe").contents().find("#sync_time_number").empty().append(val);
     gdo.net.app["Fractals"].server.syncTime(gdo.controlId, val);
 });

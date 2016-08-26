@@ -1246,6 +1246,9 @@ namespace GDO.Apps.Maps
                         case "TextStyle":
                             styleId = maps.AddStyle<TextStyle>(JsonConvert.DeserializeObject<TextStyle>(serializedStyle));
                             break;
+                        case "GeoJSONStyle":
+                            styleId = maps.AddStyle<GeoJSONStyle>(JsonConvert.DeserializeObject<GeoJSONStyle>(serializedStyle));
+                            break;
                         case "Style":
                             styleId = maps.AddStyle<GDO.Apps.Maps.Core.Styles.Style>(JsonConvert.DeserializeObject<GDO.Apps.Maps.Core.Styles.Style>(serializedStyle));
                             break;
@@ -1293,6 +1296,9 @@ namespace GDO.Apps.Maps
                             break;
                         case "TextStyle":
                             maps.UpdateStyle<TextStyle>(styleId, JsonConvert.DeserializeObject<TextStyle>(serializedStyle));
+                            break;
+                        case "GeoJSONStyle":
+                            maps.UpdateStyle<GeoJSONStyle>(styleId, JsonConvert.DeserializeObject<GeoJSONStyle>(serializedStyle));
                             break;
                         default:
                             break;

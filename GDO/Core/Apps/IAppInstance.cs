@@ -1,4 +1,7 @@
-﻿namespace GDO.Core.Apps
+﻿using Microsoft.AspNet.SignalR;
+using Newtonsoft.Json;
+
+namespace GDO.Core.Apps
 {
     /// <summary>
     /// App Instance Interface
@@ -7,7 +10,10 @@
     {
         int Id { get; set; }
         string AppName { get; set; }
+        [JsonIgnore]
+        App App { get; set; }
         AppConfiguration Configuration { get; set; }
+        //IHubContext HubContext { get; set; }
         void Init();
     }
 }
