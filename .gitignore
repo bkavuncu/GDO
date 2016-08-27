@@ -191,5 +191,7 @@ FakesAssemblies/
 # Visual Studio 6 build log
 *.plg
 
+GDO.Apps.XNATImaging/Scripts/XNATImaging/scans
+
 # Visual Studio 6 workspace options file
 *.opt
