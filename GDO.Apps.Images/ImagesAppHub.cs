@@ -11,6 +11,7 @@ using GDO.Core;
 using GDO.Core.Apps;
 
 using Newtonsoft.Json;
+using System.Threading;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Scripts.imagetiles.js", "application/x-javascript")]
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Configurations.sample.js", "application/json")]

@@ -8,7 +8,6 @@ namespace GDO.Apps.PresentationTool.Core
 {
     public class Slide
     {
-        public int Page { get; set; }
         public Dictionary<int, AppSection> Sections { get; set; }
         public Dictionary<int, string> Instances { get; set; }
 

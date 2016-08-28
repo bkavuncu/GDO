@@ -9,6 +9,7 @@ using Microsoft.Office.Interop.PowerPoint;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Drawing;
 
 namespace GDO.Apps.PresentationTool
 {
@@ -42,7 +43,7 @@ namespace GDO.Apps.PresentationTool
                     {
                         sections.Add(GetSectionUpdate(instanceId, pa.Slides[slide].Sections[i].Id));
                     }
-                    Clients.Caller.receiveAppUpdate(sections, slide);
+                    Clients.Caller.receiveAppUpdate(sections, slide, pa.Slides.Count);
                 }
                 catch (Exception e)
                 {
@@ -72,9 +73,13 @@ namespace GDO.Apps.PresentationTool
                         Clients.Caller.setMessage("Processing presentation file: " + i.ToString() + "/" + pa.PPTPageCount.ToString());
                         string extension = System.IO.Path.GetExtension(filename);
                         string result = filename.Substring(0, filename.Length - extension.Length);
-                        string imagepath = pa.BasePath + "\\PPTs" + "\\" + result + i + ".png";
+                        string imagepath = pa.BasePath + "\\PPTs\\Origin" + "\\" + result  + i + ".png";
                         pptFile.Slides[i + 1].Export(imagepath, "png", width, height);
-                        pa.copyFileToImagesFolder("ppt", result + i + ".png");
+                        File.Copy(imagepath, pa.ImagesAppBasePath + "\\" + result + i + ".png", true);
+                        string newPath = pa.BasePath + "\\PPTs" + "\\" + result + i + ".png";
+                        Bitmap preview = pa.ResizeImage(imagepath, width / 10, height / 10);
+                        preview.Save(newPath);
+                        preview.Dispose();
                     }
 
                     UpdateFileList(instanceId);
@@ -97,9 +102,22 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    Clients.Caller.setMessage("Uploading" + filename);
+                    Clients.Caller.setMessage("Uploading " + filename);
+ 
+                    string imagepath = pa.BasePath + "\\Images" + "\\" + filename;
+                    string newPath = pa.BasePath + "\\Images\\Origin" + "\\" + filename;
+                    if (!File.Exists(newPath))
+                    {
+                        File.Move(imagepath, newPath);
+                    }
+   
+                    File.Copy(newPath, pa.ImagesAppBasePath + "\\" + filename, true);
+
+                    Image image = Image.FromFile(newPath);
+                    Bitmap preview = pa.ResizeImage(newPath, image.Width / 10, image.Height / 10);
+                    preview.Save(imagepath);
+                    preview.Dispose();
                     UpdateFileList(instanceId);
-                    pa.copyFileToImagesFolder("image", filename);
                     Clients.Caller.setMessage("Success!");
                 }
                 catch (Exception e)
@@ -110,7 +128,29 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-       
+        public void UpdateProcessedImages(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
+                    string[] database = { };
+                    if (File.Exists(database_path))
+                    {
+                        database = File.ReadAllLines(database_path);
+                        Clients.Caller.receiveProcessedImages(database);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to process image ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+            }
+        }
+
         public void DeleteImageFolder(int instanceId, string filename)
         {
             lock (Cave.AppLocks[instanceId])
@@ -179,6 +219,37 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
+
+        public void RequestProcessSlides(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+
+                    List<List<string>> slides = new List<List<string>>(pa.Slides.Count);
+                    for (int i = 0; i < pa.Slides.Count; i ++)
+                    {
+                        List<string> sections = new List<string>(pa.Slides[i].Sections.Count);
+        
+                        for (int j = 0; j < pa.Slides[i].Sections.Count; j++)
+                        {
+                            sections.Add(JsonConvert.SerializeObject(pa.Slides[i].Sections[j]));
+                        }
+                        slides.Add(sections);
+                    }
+
+                    Clients.Caller.receiveAllSlides(slides);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to request process slides", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
         public void RequestCreateNewSlide(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -216,6 +287,26 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
+        public void RequestSlideTable(int instanceId, int slideIndex)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    Clients.Caller.setMessage("Requesting show Slide " + slideIndex);
+                    if (slideIndex < 0 || slideIndex >= pa.Slides.Count) return;
+                    pa.CurrentSlide = slideIndex;
+                    Clients.Caller.receiveSlideUpdate(slideIndex);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to request previous slide", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
         public void RequestPreviousSlide(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -238,6 +329,7 @@ namespace GDO.Apps.PresentationTool
                 }
             }
         }
+        
 
         public void RequestNextSlide(int instanceId)
         {
@@ -413,6 +505,11 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     int sectionId = pa.CreateSection(colStart, rowStart, colEnd, rowEnd);
+                    if (sectionId == -1)
+                    {
+                        Clients.Caller.setMessage("Cannot create section, please check nodes status!");
+                        return;
+                    }
                     BroadcastSectionUpdate(instanceId, sectionId);
                 }
                 catch (Exception e)
@@ -450,7 +547,12 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.DeployResource(sectionId, src, appName);
+                    int result = pa.DeployResource(sectionId, src, appName);
+                    if (result == -1)
+                    {
+                        Clients.Caller.setMessage("Cannot deploy resource, please check nodes status!");
+                        return;
+                    }
                     Clients.Caller.setMessage(src);
                     BroadcastSectionUpdate(instanceId, sectionId);
                 }
@@ -472,6 +574,25 @@ namespace GDO.Apps.PresentationTool
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.UnDelpoyResource(sectionId);
                     BroadcastSectionUpdate(instanceId, sectionId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void UpdateSectionInfo(int instanceId, int sectionId, int realSectionId, int realInstanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.Slides[pa.CurrentSlide].Sections[sectionId].RealSectionId = realSectionId;
+                    pa.Slides[pa.CurrentSlide].Sections[sectionId].RealInstanceId = realInstanceId;
                 }
                 catch (Exception e)
                 {

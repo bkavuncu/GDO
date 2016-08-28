@@ -5,6 +5,10 @@ using GDO.Core.Apps;
 using System.Collections.Generic;
 using GDO.Utility;
 using GDO.Apps.PresentationTool.Core;
+using System.Linq;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace GDO.Apps.PresentationTool
 {
@@ -37,7 +41,9 @@ namespace GDO.Apps.PresentationTool
             this.ImagesAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
             this.FileName = "";
             Directory.CreateDirectory(this.BasePath + "/PPTs");
+            Directory.CreateDirectory(this.BasePath + "/PPTs/Origin");
             Directory.CreateDirectory(this.BasePath + "/Images");
+            Directory.CreateDirectory(this.BasePath + "/Images/Origin");
             Directory.CreateDirectory(this.ImagesAppBasePath);
 
             this.CurrentSlide = -1;
@@ -49,13 +55,39 @@ namespace GDO.Apps.PresentationTool
             CreateNewSlide();
         }
 
+        public Bitmap ResizeImage(string imagePath, int width, int height)
+        {
+            Image image = Image.FromFile(imagePath);
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                graphics.InterpolationMode = InterpolationMode.Low;
+                graphics.SmoothingMode = SmoothingMode.HighSpeed;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+            image.Dispose();
+            return destImage;
+        }
+
         public void GetAllFileNames()
         {
             this.FileNames.Clear();
             foreach (string d in Directory.GetDirectories(this.BasePath))
             {
                 List<string> fs = new List<string>();
-                foreach (string f in Directory.GetFiles(d))
+                foreach (string f in (Directory.GetFiles(d).OrderBy(f => new FileInfo(f).CreationTime)))
                 {
                     string extension = Path.GetExtension(f);
                     if (extension.Equals(".pptx") || extension.Equals(".ppt"))
@@ -66,28 +98,13 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        public void copyFileToImagesFolder(string type, string filename)
-        {
-            string currPath = "";
-            if (type.Equals("ppt"))
-            {
-                currPath = this.BasePath + "\\PPTs" + "\\" + filename;
-            }
-            else if (type.Equals("image"))
-            {
-                currPath = this.BasePath + "\\Images" + "\\" + filename;
-            }
-
-            string destPath = this.ImagesAppBasePath + "\\" + filename;
-            File.Copy(currPath, destPath, true);
-        }
-
         public void deleteFiles(string[] files)
         {         
             foreach (string s in files)
             {
                 string path = this.BasePath + s;
-                File.Delete(path);
+                File.Delete(path);             
+                File.Delete(this.BasePath + "/PPTs/Origin/" + Path.GetFileName(s));
             }
         }
 
@@ -98,8 +115,9 @@ namespace GDO.Apps.PresentationTool
             Slide slide = new Slide(Sections, Instances);
             Slides.Add(slide);
             CurrentSlide = Slides.Count - 1;
-            CreateSection(0, 0, Section.Cols - 1, Section.Rows - 1);
-            DeployResource(0, null, null);
+            CreateSection(0, 0, Cave.Cols - 1, Cave.Rows - 1);
+            CreateSection(Section.Col, Section.Row, Section.Col + Section.Cols - 1, Section.Row + Section.Rows - 1);
+            DeployResource(1, null, "PresentationTool");
         }
 
         public void DeleteCurrentSlide()
@@ -111,7 +129,6 @@ namespace GDO.Apps.PresentationTool
 
         public int CreateSection(int colStart, int rowStart, int colEnd, int rowEnd)
         {
-
             int sectionId = Utilities.GetAvailableSlot<AppSection>(Slides[CurrentSlide].Sections);
             AppSection appSection = new AppSection(sectionId, colStart, rowStart, colEnd - colStart + 1, rowEnd - rowStart + 1);
             Slides[CurrentSlide].Sections.Add(sectionId, appSection);
@@ -126,8 +143,10 @@ namespace GDO.Apps.PresentationTool
             return sectionId;
         }
 
-        public void DeployResource(int sectionId, string src, string appName)
+        public int DeployResource(int sectionId, string src, string appName)
         {
+            if (!Slides[CurrentSlide].Sections.ContainsKey(sectionId))
+                return -1;
             int instanceId = Utilities.GetAvailableSlot<string>(Slides[CurrentSlide].Instances);
             Slides[CurrentSlide].Instances.Add(instanceId, appName);
             if (appName == "Images")
@@ -140,7 +159,7 @@ namespace GDO.Apps.PresentationTool
             }
             Slides[CurrentSlide].Sections[sectionId].AppInstanceId = instanceId;
             Slides[CurrentSlide].Sections[sectionId].AppName = appName;
-            return;
+            return 1;
         }
 
         public void UnDelpoyResource(int sectionId)
@@ -148,6 +167,7 @@ namespace GDO.Apps.PresentationTool
             Slides[CurrentSlide].Instances.Remove(Slides[CurrentSlide].Sections[sectionId].AppInstanceId);
             Slides[CurrentSlide].Sections[sectionId].Src = null;
             Slides[CurrentSlide].Sections[sectionId].AppName = null;
+            Slides[CurrentSlide].Sections[sectionId].AppInstanceId = -1;
             return;
         }
 

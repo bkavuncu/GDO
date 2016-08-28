@@ -23,7 +23,8 @@ namespace GDO.Core
         public string Src { get; set; }
         public int AppInstanceId { get; set; }
         public string AppName { get; set; }
-
+        public int RealSectionId { get; set; }
+        public int RealInstanceId { get; set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="Section"/> class.
         /// </summary>
@@ -44,6 +45,8 @@ namespace GDO.Core
             this.Src = null;
             this.AppName = null;
             this.AppInstanceId = -1;
+            this.RealSectionId = -1;
+            this.RealInstanceId = -1;
         }
 
         /// <summary>

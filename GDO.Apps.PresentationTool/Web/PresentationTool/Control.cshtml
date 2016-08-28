@@ -223,7 +223,7 @@
                 <div class="col-lg-4" style="padding: 6px;">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h6 id="current_slide" style="text-align:left;float:left;"><i class='fa  fa-play-circle fa-fw'></i><b>&nbsp;Slide: 0</b></h6>
+                            <h6 id="current_slide" style="text-align:left;float:left;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Image</h6>
                             <h6 id="message_from_server" style="text-align:right;float:right;">Message</h6>
                             <hr style="clear:both; border: 0" />
                         </div>
@@ -269,7 +269,7 @@
                         <div class="panel-footer">
                             <button id="video_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
                             <button id="video_play" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Play</button>
-                            <button id="video_pause" class="btn btn-primary"><i class='fa  fa-refresh fa-fw'></i>&nbsp;Pause</button>
+                            <button id="video_pause" class="btn btn-primary"><i class='fa  fa-pause fa-fw'></i>&nbsp;Pause</button>
                         </div>
                     </div>
                 </div>
@@ -344,22 +344,28 @@
                         </div>
                         <div class="panel-body" style="height: 35.5vh;overflow: hidden">
                             <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
+                                <!--
+                                <div>
+                                    <span id="load_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</span>
+                                </div>
+                                -->
                                 <div>
                                     <span id="play_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Play</span>
                                 </div>
+
+                                <div>
+                                    <span id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;Next</span>
+                                </div>
+                                <div>
+                                    <span id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;Previous</span>
+                                </div>
+
                                 <div>
                                     <span id="open_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Open<input type="file" name="file" class="upload" id="upload_slide" /></span>
                                 </div>
                                 <div>
                                     <span id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</span>
                                     <a id="slide_link"></a>
-                                </div>
-
-                                <div>
-                                    <span id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</span>
-                                </div>
-                                <div>
-                                    <span id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</span>
                                 </div>
                                 <div>
                                     <span id="new_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</span>
@@ -378,7 +384,14 @@
 
             </div>
             <div class="col-lg-12">
-                <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 100%; height: 28vh; border-collapse: separate; border-spacing: 2px; text-align:center"></table>
+                <ul class="nav nav-pills" id="slide_tab" style="padding: 6px;">
+                    <li class="active"><a href="#slide_table" data-toggle="tab"><b>0</b></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="slide_table">
+                        <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 100%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                    </div>
+                </div>
                 <div id="section_table_space">
                     <br>
                 </div>
@@ -627,8 +640,8 @@
                 indexes: ["Rotate Image"],
                 action: function (i) {
                     if (curr_section !== 0) {
-                        gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Rotate Image on Section " + curr_section, 1);
-                        gdo.net.app["PresentationTool"].rotateImage(curr_section);
+                        gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Rotate Image on Section " + (curr_section + 1), 1);
+                        gdo.net.app["PresentationTool"].rotateImage(gdo.net.app["PresentationTool"].section[curr_section + 1].realInstanceId);
                     }
                 }
             }
@@ -638,17 +651,10 @@
             gdo.net.app["PresentationTool"].server.changeVoiceControlStatus(gdo.controlId);
         });
 
-        // Image control
-        var gdo = parent.gdo;
-        gdo.net.app["PresentationTool"].img_control_status = 0;
-        gdo.net.app["PresentationTool"].img_control_enable = 0;
-
-        $("#img_control").click(function () {
+        $("#img_control").unbind().click(function () {
             if (gdo.net.app["PresentationTool"].img_control_enable === 0) return;
-            if (gdo.net.app["PresentationTool"].selectedSection === -1 || gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appName !== "Images")
-                return;
-
             gdo.net.app["PresentationTool"].img_control_status = 1 - gdo.net.app["PresentationTool"].img_control_status;
+
             if (gdo.net.app["PresentationTool"].img_control_status === 0) {
                 $('#img_preview > img').cropper('destroy');
                 $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
@@ -656,11 +662,12 @@
             }
             $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-success");
 
+            // Image control
             var left = 0.00;
             var top = 0.00;
 
             $('#img_preview > img').cropper({
-                autoCrop:false,
+                autoCrop: false,
                 strict: false,
                 guides: false,
                 highlight: false,
@@ -677,8 +684,9 @@
 
             $('#img_preview > img').on('cropmove.cropper', function (e) {
                 var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
+                var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
                 if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
-                    gdo.net.app["Images"].server.requestMoveImage(instanceId, $(this).cropper('getCanvasData').left - left, $(this).cropper('getCanvasData').top - top);
+                    gdo.net.app["Images"].server.requestMoveImage(realInstanceId, $(this).cropper('getCanvasData').left - left, $(this).cropper('getCanvasData').top - top);
                     left = $(this).cropper('getCanvasData').left;
                     top = $(this).cropper('getCanvasData').top;
                 }
@@ -686,55 +694,15 @@
 
             $('#img_preview > img').on('zoom.cropper', function (e) {
                 var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
+                var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
                 if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
                     if (e.ratio > e.oldRatio) {
-                        gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.05);
+                        gdo.net.app["Images"].server.requestZoomImage(realInstanceId, 0.05);
                     } else {
-                        gdo.net.app["Images"].server.requestZoomImage(instanceId, -0.05);
+                        gdo.net.app["Images"].server.requestZoomImage(realInstanceId, -0.05);
                     }
                 }
             });
-        });
-
-        $("#img_rotate").click(function () {
-            if (gdo.net.app["PresentationTool"].img_control_status === 1 && gdo.net.app["PresentationTool"].img_control_enable === 1) {
-                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
-                    gdo.net.app["PresentationTool"].rotateImage(instanceId);
-                }
-            }
-        });
-
-        $("#img_restore").click(function () {
-            if (gdo.net.app["PresentationTool"].img_control_status === 1 && gdo.net.app["PresentationTool"].img_control_enable === 1) {
-                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                $("#img_control").click();
-                $("#img_control").click();
-                gdo.net.app["PresentationTool"].playInstance(instanceId);
-            }
-        });
-
-
-        // Video control
-        gdo.net.app["PresentationTool"].video_control_status = 0;
-        gdo.net.app["PresentationTool"].video_control_enable = 0;
-
-        $("#video_control").click(function () {
-            if (gdo.net.app["PresentationTool"].video_control_enable === 0) return;
-            if (gdo.net.app["PresentationTool"].selectedSection === -1 || gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appName !== "Youtube")
-                return;
-            gdo.net.app["PresentationTool"].video_control_status = 1 - gdo.net.app["PresentationTool"].video_control_status;
-            if (gdo.net.app["PresentationTool"].video_control_status === 0) {
-                $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
-                $("#hidden_app_iframe").attr('src', '');
-                return;
-            }
-            $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-success");
-            if (gdo.net.app["PresentationTool"].video_control_status === 1 && gdo.net.app["PresentationTool"].video_control_enable === 1) {
-                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                gdo.net.app["PresentationTool"].playInstance(instanceId);
-            }
-
         });
 
 
@@ -751,8 +719,8 @@
             gdo.net.app["PresentationTool"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
             for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                 var node = gdo.net.app["PresentationTool"].node[i];
-                if (!node.isValid)
-                  continue;
+                //if (!node.isValid)
+                  //continue;
                 $("#section_table_row_" + gdo.net.rows).css("height", 0);
                 var sectionId = node.sectionId;
                 if (sectionId == 0) {
@@ -763,7 +731,7 @@
                             .css("vertical-align", "top")
                             .append("<div id='section_table_node_" + node.id + "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" + node.id + "</b></font></div>")
                             .append("</br>")
-                            .append(node.col + " , " + node.row)
+                            .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
                             //.css("height", (gdo.net.app["PresentationTool"].table_height / gdo.net.rows) + "")
                             .css("width", (gdo.net.app["PresentationTool"].table_width / gdo.net.cols) + "%")
                             .css("border", "1px solid #333")
@@ -798,26 +766,42 @@
                         .css('padding', 0)
                         .css('overflow', 'hidden')
                         .css("vertical-align", "top")
-                        .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#5A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>")
-                        .append("<div style='height:5px'></div>");
-                    if (gdo.net.app["PresentationTool"].section[sectionId].src !== null) {
-                        if (gdo.net.app["PresentationTool"].section[sectionId].appName === "Images") {
-                            $("#section_table_section_" + sectionId + "_i")
-                                .empty()
-                                .append("<font size='4px'><b> S" + sectionId + "</b></font>")
-                                .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].section[sectionId].src + "'/>");
-                        } else if (gdo.net.app["PresentationTool"].section[sectionId].appName === "Youtube") {
-                            $("#section_table_section_" + sectionId + "_i")
-                                .empty()
-                                .append("<font size='4px'><b> S" + sectionId + "</b></font>")
-                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.app["PresentationTool"].section[sectionId].appName + "</div>");
+                        .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#5A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>");
+                     
+                    if (gdo.net.app["PresentationTool"].section[sectionId].appName !== "Images") {
+                        $("#section_table_row_" + node.row + "_col_" + node.col).append("<div style='height:5px'></div>");
+                        if (gdo.net.app["PresentationTool"].section[sectionId].cols == 1 && gdo.net.app["PresentationTool"].section[sectionId].rows == 1) {
+                            $("#section_table_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[sectionId].col, gdo.net.app["PresentationTool"].section[sectionId].row) + "");
+                        } else {
+                            $("#section_table_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[sectionId].col, gdo.net.app["PresentationTool"].section[sectionId].row + gdo.net.app["PresentationTool"].section[sectionId].rows - 1) + " to <b>N</b>" + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[sectionId].col + gdo.net.app["PresentationTool"].section[sectionId].cols - 1, gdo.net.app["PresentationTool"].section[sectionId].row) + "");
                         }
+                    }
 
-                        $("#section_table_row_" + node.row + "_col_" + node.col)
-                            .append("</br>")
-                            .css('overflow', 'hidden')
-                            .css('overflow', 'hidden')
-                            .css("background", "#559100");
+                    if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId >= 0) {
+
+                        $("#section_table_section_" + sectionId + "_i")
+                            .empty()
+                            .append("<font size='4px'><b> S" + sectionId + ", I" + gdo.net.app["PresentationTool"].section[sectionId].appInstanceId + "</b></font>");
+
+                        if (gdo.net.app["PresentationTool"].section[sectionId].appName === "Images") {  
+                            $("#section_table_row_" + node.row + "_col_" + node.col)
+                                .append("<img style= '' width='100%' src='" + gdo.net.app["PresentationTool"].section[sectionId].src + "'/>")
+                                .css('overflow', 'hidden')
+                                .css("background", "#559100");
+                        } else if (gdo.net.app["PresentationTool"].section[sectionId].appName === "Youtube") {
+                            $("#section_table_row_" + node.row + "_col_" + node.col)
+                                .append("</br>")
+                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.app["PresentationTool"].section[sectionId].appName + "</div>")
+                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;Src:</b> " + gdo.net.app["PresentationTool"].section[sectionId].src + "</div>")
+                                .css('overflow', 'hidden')
+                                .css("background", "#559100");
+                        } else {
+                            $("#section_table_row_" + node.row + "_col_" + node.col)
+                                .append("</br>")
+                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.app["PresentationTool"].section[sectionId].appName + "</div>")
+                                .css('overflow', 'hidden')
+                                .css("background", "#559100");
+                        }
                         $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
                         $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");
                     }
@@ -825,48 +809,24 @@
                        .css({ fontSize: gdo.net.app["PresentationTool"].section_font_size })
                        .click(function () {
                            var id = gdo.net.app["PresentationTool"].node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
+                           if (gdo.net.app["PresentationTool"].section[id] === gdo.controlId) return;
                            if (gdo.net.app["PresentationTool"].selectedSection == id) {
                                gdo.net.app["PresentationTool"].selectedSection = -1;
-                               // image control disable
-                               if (gdo.net.app["PresentationTool"].section[id].src !== null && gdo.net.app["PresentationTool"].section[id].appName === "Images") {
-                                   $('#img_preview').empty();
-                                   $("#img_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
-                                   gdo.net.app["PresentationTool"].img_control_enable = 0
-                                   gdo.net.app["PresentationTool"].img_control_status = 0;
-                               } else if (gdo.net.app["PresentationTool"].section[id].src !== null && gdo.net.app["PresentationTool"].section[id].appName === "Youtube") {
-                                   $("#video_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
-                                   gdo.net.app["PresentationTool"].video_control_status = 0
-                                   gdo.net.app["PresentationTool"].video_control_enable = 0;
-                               }
                            } else {
                                for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
                                    gdo.net.app["PresentationTool"].node[i].isSelected = false;
                                }
                                gdo.net.app["PresentationTool"].selectedSection = id;
                                //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
-                               // image control enable
-                               if (gdo.net.app["PresentationTool"].section[id].src !== null && gdo.net.app["PresentationTool"].section[id].appName === "Images") {
-                                   $('#img_preview')
-                                       .empty()
-                                       .append("<img style= 'height: 100%; width: 100%' src='" + gdo.net.app["PresentationTool"].section[id].src + "'/>");
-                                   $("#img_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
-                                   gdo.net.app["PresentationTool"].img_control_status = 0;
-                                   gdo.net.app["PresentationTool"].img_control_enable = 1;
-                               } else if (gdo.net.app["PresentationTool"].section[id].src !== null && gdo.net.app["PresentationTool"].section[id].appName === "Youtube") {
-                                   $("#video_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
-                                   gdo.net.app["PresentationTool"].video_control_status = 0;
-                                   gdo.net.app["PresentationTool"].video_control_enable = 1;
-                               }
                            }
                            gdo.updateDisplayCanvas();
                        });
 
                     if (gdo.net.app["PresentationTool"].selectedSection == sectionId) {
-                        if (gdo.net.app["PresentationTool"].section[sectionId].src !== null) {
+                        if (gdo.net.app["PresentationTool"].section[sectionId] === gdo.controlId) return;
+                        if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId >= 0) {
                             $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
                             $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
-                            gdo.net.app["PresentationTool"].img_control_enable = 1;
-                            gdo.net.app["PresentationTool"].video_control_enable = 1;
                         } else {
                             $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#2A9FD6").css("border", "1px solid #4CBFF8");
                             $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");

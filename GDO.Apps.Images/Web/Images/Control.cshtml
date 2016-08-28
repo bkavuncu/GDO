@@ -158,7 +158,7 @@
                     setThumbNailDisplayMode(0);
                 }
             });
-
+            
             $("#fill_mode").click(function() {
                 var gdo = parent.gdo;
                 if (gdo.net.app["Images"].control_status == 1 &&　$('#thumbnail_control > img').attr("src") != "") {
@@ -167,6 +167,17 @@
                     //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
                     //gdo.net.app["Images"].setDisplayModeSelect();
                     setThumbNailDisplayMode(1);
+                }
+            });
+
+            $("#center_mode").click(function () {
+                var gdo = parent.gdo;
+                if (gdo.net.app["Images"].control_status == 1 && $('#thumbnail_control > img').attr("src") != "") {
+                    //gdo.net.app["Images"].display_mode = 1 - gdo.net.app["Images"].display_mode;
+                    gdo.consoleOut('.Images', 1, 'Control: ' + gdo.controlId + ', Update display mode: FILL MODE');
+                    //gdo.net.app["Images"].server.setDisplayMode(gdo.controlId, gdo.net.app["Images"].display_mode);
+                    //gdo.net.app["Images"].setDisplayModeSelect();
+                    setThumbNailDisplayMode(2);
                 }
             });
 
@@ -238,12 +249,14 @@
                 $("#rotate_control").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
                 $("#fit_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
                 $("#fill_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
+                $("#center_mode").removeClass("btn-primary").addClass("disabled").addClass("btn-default");
             } else if (gdo.net.app["Images"].control_status == 1) {
                 $("#thumbnail_panel").addClass("panel-success").removeClass("panel-default");
                 $("#active_control").removeClass("btn-success").addClass("btn-danger");
                 $("#rotate_control").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
                 $("#fit_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
                 $("#fill_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
+                $("#center_mode").addClass("btn-primary").removeClass("disabled").removeClass("btn-default");
             }
             updateThumbNailImageInfo($('#thumbnail_control > img'));
         }
@@ -371,6 +384,31 @@
                         top: cropboxData.top,
                         width: cropboxData.width
                     });
+                } else if (display_mode == 2) {
+                    if (scalewidth < scaleheight) {
+                        $("#thumbnail_control > img").cropper('setCanvasData', {
+                            left: cropboxData.left,
+                            top: cropboxData.top,
+                            width: cropboxData.width
+                        });
+                        var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
+                        var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
+                        $("#thumbnail_control > img").cropper('setCanvasData', {
+                            top: cropboxData.top + (cropboxData.height - canvasData.height) / 2,
+                        });
+                    } else {
+                        $("#thumbnail_control > img").cropper('setCanvasData', {
+                            left: cropboxData.left,
+                            top: cropboxData.top,
+                            height: cropboxData.height
+                        });
+                        var cropboxData = $("#thumbnail_control > img").cropper('getCropBoxData');
+                        var canvasData = $("#thumbnail_control > img").cropper('getCanvasData');
+                        $("#thumbnail_control > img").cropper('setCanvasData', {
+                            left: cropboxData.left + (cropboxData.width - canvasData.width) / 2,
+                        });
+                    }
+
                 } else {
                     $("#thumbnail_control > img").cropper('setCanvasData', {
                         left: cropboxData.left,
@@ -511,6 +549,9 @@
                                                     </td>
                                                     <td>
                                                         <button type='button' id="fill_mode" style="border-color:transparent;" class='btn btn-default disabled btn-block'><i class='fa  fa-arrows fa-fw'></i>&nbsp;Fill</button>
+                                                    </td>
+                                                    <td>
+                                                        <button type='button' id="center_mode" style="border-color:transparent;" class='btn btn-default disabled btn-block'><i class='fa  fa-align-center fa-fw'></i>&nbsp;Center</button>
                                                     </td>
                                                     <td>
                                                         <button type='button' id="rotate_control" style="border-color:transparent;" class='btn btn-default disabled btn-block'><i class='fa  fa-rotate-right fa-fw'></i>&nbsp;Rotate</button>
