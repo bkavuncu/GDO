@@ -191,7 +191,7 @@ var initDD3App = function () {
                     var obj = {};
 
                     if (request._keys !== null) {
-                        if (!(request._keys instanceof Array)) console.log("V4 Error: request._keys is a Map ");
+                        if (!(request._keys instanceof Array)) utils.log("V4 Error: request._keys is a Map and handled as an array",4);
                         request._keys.forEach(function (k) {
                             obj[k] = d[k];
                         });
@@ -356,7 +356,7 @@ var initDD3App = function () {
                     return false;
                 }
 
-                if (!(callbackListener[newState] instanceof Array)) console.log("V4 Error: callbackListener[newState]  is a Map ");
+                if (!(callbackListener[newState] instanceof Array)) utils.log("V4 Error: callbackListener[newState]  is a Map and handled as an array",4);
                 callbackListener[newState].forEach(function (f) { f(); });
                 return true;
             };
@@ -1216,7 +1216,7 @@ var initDD3App = function () {
                     return;
                 }
 
-                if (!(data.containers instanceof Array)) console.log("V4 Error: data.containers is a Map ");
+                if (!(data.containers instanceof Array)) utils.log("V4 Error: data.containers is a Map and handled as an array",4);
                 data.containers.forEach(function (o) {
                     g2 = g1.select_("#" + o.id);
                     if (g2.empty()) {
@@ -1228,7 +1228,7 @@ var initDD3App = function () {
                     }
                     //g1 = g2.empty() ? (c = true, g1.insert_('g', function () { return getOrderFollower(g1, o.order); })) : g2;
                     g1.attr_(o);//TODO v4: does this actually work
-                    if (!g1) console.log('Warning!!! attr_ in _dd3_shapeHandler has failed');
+                    if (!g1) utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
                     if (o.transition)
                         peer.receive(o.transition);
                 });
@@ -1272,38 +1272,16 @@ var initDD3App = function () {
 
             var _dd3_transitionHandler = function (data) {
                 
-                /*
-                var obj = d3.select("#" + data.sendId);
-                obj.interrupt(data.name);
-                var new_t = dd3.transition(data.name);
-
-                utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
-
-                console.log("Setting the object initial attributes: "+data.start.attr);
-                console.log("Setting the object initial styles: "+data.start.style);
-                console.log("Setting the transition final attributes: "+data.end.attr);
-                console.log("Setting the transition final styles: "+data.end.style);
-                console.log("Setting the transition duration: "+data.duration);
-                console.log("Setting the transition tweens: "+data.tweens);
-                console.log("Setting the transition attrtweens: "+data.attrTweens);
-                console.log("Setting the transition styletweens: "+data.styleTweens);
-                console.log("Setting the transition delay: "+data.delay);
-                console.log("Setting the transition ease: "+data.ease);
-                */
                 //TODO v4: reread to handle all edge cases
                 var launchTransition = function (data) {
-                    console.log("Launching transition");
-                    console.log(data);
+
                     var obj = d3.select("#" + data.sendId);
                     obj.interrupt(data.name);
                     
                     var trst = _dd3_hook_selection_transition.call(obj, data.name);
                     //var trst = dd3.transition(data.name);
 
-                    //console.log("Transition Object: ");
-                    //console.log(trst);
                     //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
-                    //console.log("Current Time: "+Date.now());
                     
                     utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
 
@@ -1313,6 +1291,8 @@ var initDD3App = function () {
                     }
                     
                     obj.style_(data.start.style);
+
+                    console.log("Launching Transition");
                     
                     trst.attr(data.end.attr);
                     
@@ -1320,6 +1300,7 @@ var initDD3App = function () {
                         if (data.end.style[b]) trst.style(a, data.end.style[b]);
                     }   
                     //trst.style(data.end.style);
+
                     trst.duration(data.duration);
                     
                     if (data.tweens) {
@@ -1334,12 +1315,12 @@ var initDD3App = function () {
                 
                     if (data.attrTweens) {
                         data.attrTweens.forEach(function (o) {
-                            console.log(o);
-                            console.log(_dd3_tweens["dd3_"+o.key+"_std_end_value"]);
-                            
-                            if(_dd3_tweens["dd3_"+o.key+"_std_end_value"]){
-                                trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_end_value"]);
-                            } else if (_dd3_tweens[o.value]) {
+                            if(_dd3_tweens["dd3_"+o.key+"_std_value"]){
+                                console.log("transition at "+o.key+" "+_dd3_tweens["dd3_"+o.key+"_std_value"]);
+                                trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_value"]);
+                            } else if(_dd3_tweens["dd3_"+o.key+"_std_function"]){
+                                trst.attr(o.key, _dd3_tweens["dd3_"+o.key+"_std_function"]);
+                            }else if (_dd3_tweens[o.value]) {
                                 trst.attrTween(o.key, _dd3_tweens[o.value]);
                             }
 
@@ -1361,9 +1342,8 @@ var initDD3App = function () {
                         trst.delay(data.delay + (syncTime + data.elapsed - Date.now()));
                     } else {
                         var tmp = data.delay + (data.elapsed - Date.now());
-                        console.log("to be executed in: " + tmp);
-                        //trst.delay((tmp <= 0) ? 0 : tmp);
-                        trst.delay(tmp);
+                        trst.delay((tmp <= 0) ? 0 : tmp);
+                        trst.delay(-tmp);
                     }
                     
 
@@ -1377,12 +1357,10 @@ var initDD3App = function () {
                         } else if (typeof data.ease === "function" && _dd3_eases[utils.getFnName(data.ease)]) {//v4
                             trst.ease(_dd3_eases[utils.getFnName(data.ease)]);//v4
                         } else {
-                            trst.ease(data.ease);
+                            utils.log("Warning! ease not found");
+                            trst.ease(d3.easeLinear);//TODO v4: change the parsing of the easing
                         }
                     }
-                    console.log("Launching transition");
-                    
-                    //obj.transition(trst);
 
                 };
 
@@ -1612,7 +1590,7 @@ var initDD3App = function () {
                     return r;
                 };
 
-                if (!(ns instanceof Array)) console.log("V4 Error: ns is a Map ");
+                if (!(ns instanceof Array)) utils.log("V4 Error: ns is a Map and handled as an array",4);
                 ns.forEach(function (d) {
                     if ((i = contain(os, d)) >= 0) {
                         os[i].min = d.min;
@@ -1841,7 +1819,7 @@ var initDD3App = function () {
 
                     //TODO v4: it seems oe of the thing we send is a function
 
-                    if (!(args.properties instanceof Array)) console.log("V4 Error: args.properties  is a Map ");
+                    if (!(args.properties instanceof Array)) utils.log("V4 Error: args.properties  is a Map  and handled as an array",4);
                     args.properties.forEach(function (p, i) {
                         var d = p.split('.');
                         if (d[0] !== "tween") {
@@ -1856,8 +1834,6 @@ var initDD3App = function () {
                         obj.max = rcpt.max;
                     });
                     //*/
-                    console.log("Transition Object created");
-                    console.log(obj);
                 };
 
                 var createEndTransitionsObject = function (obj, elem, remove) {
@@ -1992,7 +1968,7 @@ var initDD3App = function () {
                         };
 
 
-                    if (!(selections instanceof Array)) console.log("V4 Error: selections  is a Map ");
+                    if (!(selections instanceof Array)) utils.log("V4 Error: selections  is a Map and handled as an array",4);
                     selections.forEach(function (s, i) {
                         if (isElem) {
                             formatElem(s, i, elem, type, selections, args, active, objs, obj);
@@ -2008,10 +1984,10 @@ var initDD3App = function () {
 
             var _dd3_dataSender = function (objs, selections) {
                 // Allow to do something special for each selection (enter, update, exit) of recipients
-                if (!(selections instanceof Array)) console.log("V4 Error: selections  is a Map ");
+                if (!(selections instanceof Array)) utils.log("V4 Error: selections  is a Map and handled as an array",4);
                 selections.forEach(function (s, i) {
                     if (objs[i]) {
-                        if (!(s instanceof Array)) console.log("V4 Error: s  is a Map ");
+                        if (!(s instanceof Array)) utils.log("V4 Error: s is a Map and handled as an array",4);
                         s.forEach(function (d) {
                             var obj = objs[i];
                             if (obj.onSend.length > 0) {
@@ -2226,16 +2202,8 @@ var initDD3App = function () {
                 });
 
                 //TODO v4: is it because too many elements in containers
-                //console.log("Length of containers: "+containers.length);
                 transitionsInfos = containers.map(function (c) {
-                    //console.log("Yep! entering a transition infos");
-                    //console.log(c);
-
-                    //console.log(c.__dd3_transitions__);
-                    //console.log(c.__dd3_transitions__.values());
                     return c.__dd3_transitions__.values().map(function (v) {
-                        //console.log("Yep! entering a dd3 transition");
-                        //console.log(v);
                         var trst = v.transition;
                         var init_time = v.time;
                         //var init_time = (trst.time)? trst.time: Date.now() ;//TODO v4: find another way to get initial time
@@ -2253,17 +2221,16 @@ var initDD3App = function () {
 
                 // ! Doesn't take in account order of the transitions !
                 var step = precision * (max - now);
-                //console.log(step);
+                
                 //TODO v4: fixing the  other mistake oof no dd3 transitions would be better
                 var range = d3.range(now, max, step);
                 range.push(max);
 
                 range.forEach(function (time) {
-                    if (!(transitionsInfos instanceof Array)) console.log("V4 Error: transitionsInfos is a Map ");
+                    if (!(transitionsInfos instanceof Array)) utild.log("V4 Error: transitionsInfos is a Map and handled as an array",4);
                     transitionsInfos.forEach(function (c, i) {
                         if (c) {
                             c.forEach(function (obj) {
-                                //console.log(obj);
                                 var a = (time - obj.time) / obj.duration;
                                 if (a >= 0 && a <= 1) {
                                     var t;
@@ -2273,24 +2240,19 @@ var initDD3App = function () {
                                         t = d3[obj.ease](a);//V4: why not a function directly
                                     }
                                      
-                                    if (!(obj.tweened instanceof Array)) console.log("V4 Error: obj.tweened  is a Map ");
+                                    if (!(obj.tweened instanceof Array)) utils.log("V4 Error: obj.tweened  is a Map and handled as an array",4);
                                     obj.tweened.forEach(function (f) {
                                         f.call(clones[i], t);
                                     });
                                 }
                             });
                         } else {
-                            console.log("Warning! transition info doesn't exist.");
+                            utils.log("Warning! transition info doesn't exist",4);
                         }
                     });
                     var rcpt = _dd3_findRecipients(g);
-                    if (!(rcpt instanceof Array)) console.log("V4 Error: rcpt  is a Map ");
+                    if (!(rcpt instanceof Array)) utils.log("V4 Error: rcpt  is a Map and handled as an array",4);
                     rcpt.forEach(function (r) {
-                        /*
-                        console.log("setting min and max for "+r);
-                        console.log(time);
-                        console.log(step);
-                        */
                         r.min = time - step;
                         r.max = time + step;
                     });
@@ -2311,12 +2273,10 @@ var initDD3App = function () {
                     properties = [],
                     startValues = [],
                     endValues = [];
-                console.log(elem)
 
                 //TODO v4: find how to call tween.each
 
                 if (tween.each) {
-                    console.log("tween.each appears to exist sometimes");
                     tween.each(function (key, value) {
                         var type = value.type;
                         value = value.call(elem, args.data, args.index);
@@ -2331,7 +2291,7 @@ var initDD3App = function () {
                 group.appendChild(node);
 
                 var d3_node = d3.select(node);
-                if (!(tweened instanceof Array)) console.log("V4 Error: tweened  is a Map ");
+                if (!(tweened instanceof Array)) utils.log("V4 Error: tweened  is a Map and handled as an array",4);
                 tweened.forEach(function (f, j) {
                     var ps = properties[j].split('.'),
                         p0 = ps[0],
@@ -2373,7 +2333,7 @@ var initDD3App = function () {
                     t.on("start.dd3", function (d, i) {
                         if (!this.parentNode || _dd3_isReceived(this) || this.__unwatch__)
                             return;
-                        //console.log(this.__transition);
+
                         /*var transition;
                         for(var k in this.__transition){
                             if(this.__transition[i]){
@@ -2381,23 +2341,20 @@ var initDD3App = function () {
                                 break;
                             }
                         }*/
-                        console.log(transition);
-                        //console.log(this[ns]);
 
                         //var transition = this[ns][this[ns].active];
 
                         var transition = d3.active(this);//v4 this appear to be the problem. It returns the transition
                         //var transition = this.__transition[2];
+                        if(!transition) transition = this.__transition[2];
 
                         //if(!transition) return; // V4: not sure this is optimal
-                        //console.log("Starting new transition");
-                        //console.log(transition);
 
                         // Needed for integration into GDO framework as it seems that constructor are different !
                         // And peer.js test equality with constructors to send data !
 
                         var tweenFunctions = [].slice.call(tweens.entries());
-                        if (!(tweenFunctions instanceof Array)) console.log("V4 Error: tweenFunctions  is a Map ");
+                        if (!(tweenFunctions instanceof Array)) utils.log("V4 Error: tweenFunctions  is a Map  and handled as an array",4);
                         tweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2408,7 +2365,7 @@ var initDD3App = function () {
                         });
 
                         var attrTweenFunctions = [].slice.call(attrTweens.entries());
-                        if (!(attrTweenFunctions instanceof Array)) console.log("V4 Error: attrTweenFunctions  is a Map ");
+                        if (!(attrTweenFunctions instanceof Array)) utils.log("V4 Error: attrTweenFunctions  is a Map and handled as an array",4);
                         attrTweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2419,7 +2376,7 @@ var initDD3App = function () {
                         });
 
                         var styleTweenFunctions = [].slice.call(styleTweens.entries());
-                        if (!(styleTweenFunctions instanceof Array)) console.log("V4 Error: styleTweenFunctions  is a Map ");
+                        if (!(styleTweenFunctions instanceof Array)) utils.log("V4 Error: styleTweenFunctions  is a Map and handled as an array",4);
                         styleTweenFunctions.forEach(function (d) {
                             Object.defineProperty(d, 'constructor', {
                                 enumerable: false,
@@ -2450,15 +2407,8 @@ var initDD3App = function () {
 
                         _dd3_retrieveTransitionSettings(this, args);
 
-
-                        //console.log(ns);
-                        //console.log(args);
                         this.__dd3_transitions__.set(ns, args);//TODO: v4 should be populated
 
-                        console.log("Sending transition");
-                        console.log(this);
-                        //console.log(this.__dd3_transitions__);
-                        console.log(this.__dd3_transitions__.values());
                         _dd3_selection_send.call(d3.select(this), 'transitions', { 'ns': ns });
                     });
 
@@ -2521,11 +2471,11 @@ var initDD3App = function () {
                     //TODO V4: overwrite the attr function
                     t.attr = function (name, value){
 
-                        if (value){
-                            _dd3_tweens["dd3_"+name+"_std_end_value"] = value;
-                            console.log("calling attr function");
-                            console.log(_dd3_tweens);
-                        } 
+                        if (typeof value === "function"){
+                            _dd3_tweens["dd3_"+name+"_std_function"] = value;
+                        }else{
+                            _dd3_tweens["dd3_"+name+"_std_value"] = value;
+                        }
 
                         return d3.transition.prototype.attr.call(this, name, value);
 

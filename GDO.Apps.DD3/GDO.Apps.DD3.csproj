@@ -158,6 +158,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\PublishProfiles\dd3_only.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
