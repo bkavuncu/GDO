@@ -560,14 +560,12 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    Clients.Caller.setMessage("Requesting rotate image with degree: " + degree);
                     ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
                     if (ia.ThumbNailImage != null)
                     {
                         ia.ThumbNailImage.imageData.rotate += degree;
                         SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
                     }
-                    Clients.Caller.setMessage("Requested rotate image Success!");
                 }
                 catch (Exception e)
                 {
@@ -583,7 +581,6 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    Clients.Caller.setMessage("Requesting move image with x: " + x + " and y: " + y);
                     ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
                     if (ia.ThumbNailImage != null)
                     {
@@ -591,7 +588,6 @@ namespace GDO.Apps.Images
                         ia.ThumbNailImage.canvasData.top += y;
                         SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
                     }
-                    Clients.Caller.setMessage("Requested move image Success!");
                 }
                 catch (Exception e)
                 {
@@ -611,7 +607,6 @@ namespace GDO.Apps.Images
                     ratio = (ratio < 0) ? ratio = 1 / (1 - ratio) : 1 + ratio;
                     ratio = ia.ThumbNailImage.imageData.width * ratio / ia.ThumbNailImage.imageData.naturalWidth;
                     RequestZoomToImage(instanceId, ratio);
-                    Clients.Caller.setMessage("Requested zoom image Success!");
                 }
                 catch (Exception e)
                 {
@@ -627,7 +622,6 @@ namespace GDO.Apps.Images
             {
                 try
                 {
-                    Clients.Caller.setMessage("Requesting zoom image with ratio " + ratio);
                     ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
                     if (ia.ThumbNailImage != null)
                     {
@@ -639,7 +633,6 @@ namespace GDO.Apps.Images
                         ia.ThumbNailImage.imageData.height = newHeight;
                         SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
                     }
-                    Clients.Caller.setMessage("Requested zoom image Success!");
                 }
                 catch (Exception e)
                 {

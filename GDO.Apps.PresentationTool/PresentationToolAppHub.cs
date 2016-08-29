@@ -220,27 +220,30 @@ namespace GDO.Apps.PresentationTool
         }
 
 
-        public void RequestProcessSlides(int instanceId)
+        public void RequestImagesToBePlayed(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-
-                    List<List<string>> slides = new List<List<string>>(pa.Slides.Count);
+                    List<List<string>> imagesList = new List<List<string>>(pa.Slides.Count);
+       
                     for (int i = 0; i < pa.Slides.Count; i ++)
                     {
-                        List<string> sections = new List<string>(pa.Slides[i].Sections.Count);
-        
+                        List<string> images = new List<string>(pa.Slides[i].Sections.Count);
                         for (int j = 0; j < pa.Slides[i].Sections.Count; j++)
                         {
-                            sections.Add(JsonConvert.SerializeObject(pa.Slides[i].Sections[j]));
+                            if (pa.Slides[i].Sections[j].AppName == "Images")
+                            {
+                                images.Add(pa.Slides[i].Sections[j].Src);
+                                //allImages.Add(pa.Slides[i].Sections[j].Src); 
+                            }
                         }
-                        slides.Add(sections);
+                        imagesList.Add(images);
                     }
 
-                    Clients.Caller.receiveAllSlides(slides);
+                    Clients.Caller.receiveAllImagesToBePlayed(imagesList);
                 }
                 catch (Exception e)
                 {
@@ -409,6 +412,25 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     Clients.Group("" + instanceId).receiveVoiceInfo(info, type);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to update voice information", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        public void swapSrc(int instanceId, int sectionId1, int sectionId2)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    string temp = pa.Slides[pa.CurrentSlide].Sections[sectionId1].Src;
+                    pa.Slides[pa.CurrentSlide].Sections[sectionId1].Src = pa.Slides[pa.CurrentSlide].Sections[sectionId2].Src;
+                    pa.Slides[pa.CurrentSlide].Sections[sectionId2].Src = temp;
                 }
                 catch (Exception e)
                 {

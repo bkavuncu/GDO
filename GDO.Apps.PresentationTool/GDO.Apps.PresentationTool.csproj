@@ -169,6 +169,7 @@
     <Content Include="Scripts\PresentationTool\cropper.min.js" />
     <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.js" />
     <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.ui.js" />
+    <Content Include="Scripts\PresentationTool\jquery.ui.touch-punch.min.js" />
     <Content Include="Scripts\PresentationTool\mo.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

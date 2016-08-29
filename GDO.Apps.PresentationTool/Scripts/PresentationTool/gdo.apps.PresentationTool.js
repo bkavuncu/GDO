@@ -148,17 +148,220 @@
 
         }
     }
+
+    $.connection.presentationToolAppHub.client.receiveAllImagesToBePlayed = function (Images) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.net.app["PresentationTool"].imagesToBePlayed = [];
+            for (var i = 0; i < Images.length; i++) {
+                for (var j = 0; j < Images[i].length; j++) {
+                    gdo.net.app["PresentationTool"].imagesToBePlayed.push(Images[i][j]);
+                }
+            }
+    
+            for (var i = 0; i < gdo.net.app["PresentationTool"].currentSlide; i++) {
+                gdo.net.app["PresentationTool"].currentPlayingImage += Images[i].length;
+            }
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+        }
+    }  
 });
+
+// Roate and zoom
+gdo.net.app["PresentationTool"].rotateImage = function (instanceId) {
+    gdo.consoleOut('.PresentationTool', 1, 'Rotate image on instance' + (instanceId));
+    var instance = gdo.net.instance[instanceId];
+    if (instance === null || !instance.exists) return;
+    var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (instanceId);
+
+    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
+    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
+
+    $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
+        $(this).contents().find("iframe").on('load', function () {
+            $(this).contents().find("#thumbnail_control > img").on('load', function () {
+                setTimeout(function () {
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
+                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
+                    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
+                    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', '');
+                }, 200);
+            });
+        });
+    });
+
+}
+
+gdo.net.app["PresentationTool"].zoomImage = function (instanceId, i) {
+    var instance = gdo.net.instance[instanceId];
+    if (instance === null || !instance.exists) return;
+    if (i == 36) {
+        //gdo.net.app["Images"].server.requestZoomToImage(instanceId, 1);
+        return;
+    }
+    gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.05);
+    setTimeout(function () {
+        gdo.net.app["PresentationTool"].zoomImage(instanceId, ++i);
+    }, 2);
+}
+
+gdo.net.app["PresentationTool"].dispearImage = function (instanceId, direction, speed, width, section, lastImagesApp) {
+    var instance = gdo.net.instance[instanceId];
+    if (instance === null || !instance.exists) return;
+    if (width < 0) {
+        var processed = false;
+        var digits = "";
+
+        for (var j = 0 ; j < gdo.net.app["PresentationTool"].processedImages.length; j++) {
+            var s = gdo.net.app["PresentationTool"].processedImages[j];
+            var filename = s.split("|")[0];
+            if (filename === section.src.replace(/^.*[\\\/]/, '')) {
+                processed = true;
+                digits = s.split("|")[1];
+                break;
+            }
+        }
+        if (processed) {
+            gdo.net.app["Images"].server.findDigits(instanceId, digits);
+        } else {
+            gdo.net.app["Images"].server.processImage(instanceId, section.src.replace(/^.*[\\\/]/, ''));
+        }
+        if (lastImagesApp) {
+            setTimeout(function () {
+                gdo.updateDisplayCanvas();
+                gdo.net.app["PresentationTool"].server.updateProcessedImages(gdo.controlId);
+                gdo.net.app["PresentationTool"].playNextApp(1);
+            }, 500);
+        }
+        return;
+    }
+    gdo.net.app["Images"].server.requestMoveImage(instanceId, direction * speed, 0);
+    setTimeout(function () {
+        width = width - speed;
+        gdo.net.app["PresentationTool"].dispearImage(instanceId, direction, speed, width, section, lastImagesApp);
+    }, 5);
+}
+
+// swap
+gdo.net.app["PresentationTool"].swapSrc = function (sections, i) {
+
+    if (i == sections.length) {
+        gdo.net.app["PresentationTool"].server.updateProcessedImages(gdo.controlId);
+        return;
+    }
+
+
+    var processed = false;
+    var digits = "";
+
+    for (var j = 0 ; j < gdo.net.app["PresentationTool"].processedImages.length; j++) {
+        var s = gdo.net.app["PresentationTool"].processedImages[j];
+        var filename = s.split("|")[0];
+        if (filename === sections[i].src.replace(/^.*[\\\/]/, '')) {
+            processed = true;
+            digits = s.split("|")[1];
+            break;
+        }
+    }
+
+    if (processed) {
+        gdo.net.app["Images"].server.findDigits(sections[i].realInstanceId, digits);
+    } else {
+        gdo.net.app["Images"].server.processImage(sections[i].realInstanceId, sections[i].src.replace(/^.*[\\\/]/, ''));
+    }
+
+    setTimeout(function () {
+        var instance = gdo.net.instance[sections[i].realInstanceId];
+        if (instance === null || !instance.exists) return;
+        var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (sections[i].realInstanceId);
+        $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
+        $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
+
+        $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
+            $(this).contents().find("iframe").on('load', function () {
+                if (instance.appName === "Images") {
+                    $(this).contents().find("#thumbnail_control > img").on('load', function () {
+                        setTimeout(function () {
+                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
+                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#center_mode").click();
+                            $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (sections[i].realInstanceId));
+                            gdo.net.app["PresentationTool"].swapSrc(sections, ++i);
+                        }, 200);
+                    });
+                }
+            });
+        });
+    }, 1000);
+}
 
 // Button control
 gdo.net.app["PresentationTool"].previousSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Previous slide');
-    gdo.net.app["PresentationTool"].server.requestPreviousSlide(gdo.controlId);
+    var numOfImagesApp = 0;
+    var numOfSections = gdo.net.app["PresentationTool"].section.length;
+    for (var i = 2; i < numOfSections; i++) {
+        var section = gdo.net.app["PresentationTool"].section[i];
+        if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
+            if (section.appName !== "Images") continue;
+            numOfImagesApp++;
+        }
+    }
+    if (gdo.net.app["PresentationTool"].currentPlayingImage <= 0) {
+        $("iframe").contents().find("#message_from_server").html("Cannot play previous slides");
+        return;
+    }
+    gdo.net.app["PresentationTool"].currentPlayingImage--;
+    $("iframe").contents().find("#message_from_server").html(gdo.net.app["PresentationTool"].currentPlayingImage);
+    var index = gdo.net.app["PresentationTool"].currentPlayingImage;
+    var k = 0;
+    for (var i = 2; i < numOfSections; i++) {
+        var section = gdo.net.app["PresentationTool"].section[i];
+        if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
+            if (section.appName !== "Images") continue;
+            numOfImagesApp--;
+            section.src = gdo.net.app["PresentationTool"].imagesToBePlayed[index];
+            gdo.net.app["PresentationTool"].dispearImage(section.realInstanceId, 1, 25, gdo.net.app["PresentationTool"].imagesWidth[k], section, numOfImagesApp === 0);
+            k++;
+            index++;
+        }
+    }
 }
 
 gdo.net.app["PresentationTool"].nextSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Next slide');
-    gdo.net.app["PresentationTool"].server.requestNextSlide(gdo.controlId);
+    // Check if can play
+    var numOfImagesApp = 0;
+    var numOfSections = gdo.net.app["PresentationTool"].section.length;
+    for (var i = 2; i < numOfSections; i++) {
+        var section = gdo.net.app["PresentationTool"].section[i];
+        if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
+            if (section.appName !== "Images") continue;
+            numOfImagesApp++;
+        }
+    }
+    if ((gdo.net.app["PresentationTool"].imagesToBePlayed.length - gdo.net.app["PresentationTool"].currentPlayingImage - 1) < numOfImagesApp) {
+        $("iframe").contents().find("#message_from_server").html("Cannot play next slides");
+        return;
+    }
+    if (gdo.net.app["PresentationTool"].currentPlayingImage + 1 >= gdo.net.app["PresentationTool"].imagesToBePlayed.length) {
+        $("iframe").contents().find("#message_from_server").html("Cannot play next slides");
+        return;
+    }
+    gdo.net.app["PresentationTool"].currentPlayingImage++;
+    $("iframe").contents().find("#message_from_server").html(gdo.net.app["PresentationTool"].currentPlayingImage);
+    var index = gdo.net.app["PresentationTool"].currentPlayingImage;
+    var k = 0;
+    for (var i = 2; i < numOfSections; i++) {
+        var section = gdo.net.app["PresentationTool"].section[i];
+        if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
+            if (section.appName !== "Images") continue;
+            numOfImagesApp--;
+            section.src = gdo.net.app["PresentationTool"].imagesToBePlayed[index];
+            gdo.net.app["PresentationTool"].dispearImage(section.realInstanceId, -1, 25, gdo.net.app["PresentationTool"].imagesWidth[k], section, numOfImagesApp === 0);
+            k++;
+            index++;
+        }
+    }
 }
 
 gdo.net.app["PresentationTool"].createNewSlide = function () {
@@ -280,6 +483,8 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Load current slide ' + gdo.net.app["PresentationTool"].currentSlide);
     $("iframe").contents().find("#message_from_server").html('Load current slide ' + gdo.net.app["PresentationTool"].currentSlide);
 
+    // update currentPlayingImage
+
     // Check section 
     gdo.net.app["PresentationTool"].initialElements();
 
@@ -295,14 +500,11 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
         var section = gdo.net.app["PresentationTool"].section[node.sectionId];
         if (parentNode.appInstanceId < 0 && section.appInstanceId > 0
             || parentNode.appInstanceId > 0 && section.appInstanceId < 0) {
-
-            console.log("x");
             reDeploy = true;
             break;
         }
         if (parentSection.appInstanceId > 0) {
             if (gdo.net.instance[parentSection.appInstanceId].appName != section.appName) {
-                console.log("d");
                 reDeploy = true;
                 break;
             }
@@ -352,7 +554,6 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
                 for (var j = 0 ; j < gdo.net.app["PresentationTool"].processedImages.length; j++) {
                     var s = gdo.net.app["PresentationTool"].processedImages[j];
                     var filename = s.split("|")[0];
-                    console.log(filename);
                     if (filename === section.src.replace(/^.*[\\\/]/, '')) {
                         processed = true;
                         digits = s.split("|")[1];
@@ -365,15 +566,17 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
                 }
                
                 if (processed) {
-                    gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'findDigits', [section.realInstanceId, '"' + digits + '"'], 0.5, false);
+                    gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'findDigits', [section.realInstanceId, '"' + digits + '"'], 0.1, false);
                 } else {
-                    gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'processImage', [section.realInstanceId, '"' + section.src.replace(/^.*[\\\/]/, '') + '"'], 0.5, false);
+                    gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'processImage', [section.realInstanceId, '"' + section.src.replace(/^.*[\\\/]/, '') + '"'], 0.2, false);
                 }
             }
         }
     }
+
+    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'requestImagesToBePlayed', [gdo.controlId], 0.1, false);
     gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'updateProcessedImages', [gdo.controlId], 0.1, false);
-    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool', 'playCurrentSlide', [], 0.1, false);
+    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool', 'playCurrentSlide', [], 0, false);
 
     gdo.net.app["PresentationTool"].readyToExcute();
     gdo.net.app["PresentationTool"].executeElement(gdo.net.app["PresentationTool"].Elements[gdo.net.app["PresentationTool"].CurrentElement]);
@@ -395,11 +598,6 @@ gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#center_mode").click();
                         $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (instanceId));
-                        //gdo.net.app["Images"].server.requestZoomToImage(instanceId, 0.1);
-                        //gdo.net.app["PresentationTool"].zoomImage(instanceId, 0);
-                        var width = parseInt($("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#cropbox_data_width").html());
-                        console.log(width);
-                        gdo.net.app["PresentationTool"].dispearImage(instanceId, -1, 8, width);
 
                     }, 200);
                 });
@@ -461,6 +659,8 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
                         setTimeout(function () {
                             $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
                             $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#center_mode").click();
+                            var width = parseInt($("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#cropbox_data_width").html());
+                            gdo.net.app["PresentationTool"].imagesWidth.push(width);
                             $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (section.realInstanceId));
                             gdo.net.app["PresentationTool"].playNextApp(++i);
                         }, 200);
@@ -487,56 +687,7 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
 
 }
 
-// Roate and zoom
-gdo.net.app["PresentationTool"].rotateImage = function (instanceId) {
-    gdo.consoleOut('.PresentationTool', 1, 'Rotate image on instance' + (instanceId));
-    var instance = gdo.net.instance[instanceId];
-    if (instance === null || !instance.exists) return;
-    var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (instanceId);
 
-    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
-    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
-
-    $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
-        $(this).contents().find("iframe").on('load', function () {
-            $(this).contents().find("#thumbnail_control > img").on('load', function () {
-                setTimeout(function () {
-                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
-                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
-                    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
-                    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', '');
-                }, 200);
-            });
-        });
-    });
-
-}
-
-gdo.net.app["PresentationTool"].zoomImage = function (instanceId, i) {
-    var instance = gdo.net.instance[instanceId];
-    if (instance === null || !instance.exists) return;
-    if (i == 36) {
-        //gdo.net.app["Images"].server.requestZoomToImage(instanceId, 1);
-        return;
-    }
-    gdo.net.app["Images"].server.requestZoomImage(instanceId, 0.05);
-    setTimeout(function () {
-        gdo.net.app["PresentationTool"].zoomImage(instanceId, ++i);
-    }, 2);
-}
-
-gdo.net.app["PresentationTool"].dispearImage = function (instanceId, direction, speed, width) {
-    var instance = gdo.net.instance[instanceId];
-    if (instance === null || !instance.exists) return;
-    if (width < 0) {
-        return;
-    }
-    gdo.net.app["Images"].server.requestMoveImage(instanceId, direction * speed, 0);
-    setTimeout(function () {
-        width = width - speed;
-        gdo.net.app["PresentationTool"].dispearImage(instanceId, direction, speed, width);
-    }, 5);
-}
 
 // Excute elements
 gdo.net.app["PresentationTool"].initialElements = function () {
@@ -652,6 +803,8 @@ gdo.net.app["PresentationTool"].updateSlideTab = function (currentSlide, totalSl
 
     $("iframe").contents().find('#slide_tab a').click(function (e) {
         e.preventDefault();
+        if (gdo.net.app["PresentationTool"].isPlaying === 1)
+            return false;
         gdo.net.app["PresentationTool"].server.requestSlideTable(gdo.controlId, parseInt($(e.target).text()));
     });
 }
