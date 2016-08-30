@@ -1,5 +1,6 @@
-﻿var configName = this.gdo.net.instance[this.instanceId].configName;
-var conf = this.gdo.net.app["Spreadsheets"].config[configName];
+﻿var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+var configName = gdo.net.instance[instanceId].configName;
+var conf = gdo.net.app["Spreadsheets"].config[configName];
 
 var stepPrecedents = function (id) {
     $.ajax({
