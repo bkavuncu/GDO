@@ -90,7 +90,7 @@ var setEventHandlers = function (message, section) {
 
 var uploadFiles = function (spreadSheet, config) {
     gdo.net.app["Spreadsheets"].server.setName(gdo.controlId, spreadSheet.name + " <br /> " + config.name);
-    var confName = this.gdo.net.instance[this.instanceId].configName;
+    var configName = this.gdo.net.instance[this.instanceId].configName;
     var conf = this.gdo.net.app["Spreadsheets"].config[configName];
     gdo.consoleOut(".Spreadsheets", 1, "Set Name, now calling FileAdded on Server");
     $("iframe").contents().find("#file_upload_form").unbind("submit").submit(function (event) {

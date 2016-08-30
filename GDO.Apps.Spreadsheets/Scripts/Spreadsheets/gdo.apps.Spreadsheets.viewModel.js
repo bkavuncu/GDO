@@ -67,7 +67,7 @@ var createSection = function (id, section) {
         method: "GET",
         success: function (response) {
             if (response.success) {
-                names = response.message;
+               var  names = response.message;
                 $('iframe').contents().find('#view_model_message').html("Successfully obtained data.");
                 createGrid(id, names, section);
             } else {
