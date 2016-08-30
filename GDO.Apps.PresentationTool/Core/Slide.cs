@@ -21,5 +21,11 @@ namespace GDO.Apps.PresentationTool.Core
         {
             return JsonConvert.SerializeObject(this);
         }
+
+        public Slide ShallowCopy()
+        {
+            return (Slide)this.MemberwiseClone();
+        }
+
     }
 }

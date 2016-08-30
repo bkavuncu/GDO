@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
+using GDO.Apps.PresentationTool.Core;
 
 namespace GDO.Apps.PresentationTool
 {
@@ -31,19 +32,32 @@ namespace GDO.Apps.PresentationTool
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
-        public void RequestAppUpdate(int instanceId, int slide)
+        public void RequestAppUpdate(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    List<string> sections = new List<string>(pa.Slides[slide].Sections.Count);
-                    for (int i = 0; i < pa.Slides[slide].Sections.Count; i++)
+                    if (pa.isPlaying == 0)
                     {
-                        sections.Add(GetSectionUpdate(instanceId, pa.Slides[slide].Sections[i].Id));
+                        List<string> sections = new List<string>(pa.Slides[pa.CurrentSlide].Sections.Count);
+                        foreach (KeyValuePair<int, AppSection> kvp in pa.Slides[pa.CurrentSlide].Sections)
+                        {
+                            sections.Add(GetSectionUpdate(instanceId, kvp.Value.Id, pa.CurrentSlide));
+                        }
+
+                        Clients.Caller.receiveAppUpdate(sections, pa.CurrentSlide, pa.Slides.Count, pa.isPlaying, pa.CurrentPlayingIndex, pa.ImagesWidth);
+                    } else
+                    {
+                        List<string> sections = new List<string>(pa.TempSlides[pa.CurrentSlide].Sections.Count);
+                        foreach (KeyValuePair<int, AppSection> kvp in pa.TempSlides[pa.CurrentSlide].Sections)
+                        {
+                            sections.Add(JsonConvert.SerializeObject(kvp.Value));
+                        }
+                        Clients.Caller.receiveAppUpdate(sections, pa.CurrentSlide, pa.TempSlides.Count, pa.isPlaying, pa.CurrentPlayingIndex, pa.ImagesWidth);
                     }
-                    Clients.Caller.receiveAppUpdate(sections, slide, pa.Slides.Count);
+
                 }
                 catch (Exception e)
                 {
@@ -219,35 +233,123 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-
-        public void RequestImagesToBePlayed(int instanceId)
+        public void changePlayingStatus(int instanceId, int status)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    List<List<string>> imagesList = new List<List<string>>(pa.Slides.Count);
-       
-                    for (int i = 0; i < pa.Slides.Count; i ++)
-                    {
-                        List<string> images = new List<string>(pa.Slides[i].Sections.Count);
-                        for (int j = 0; j < pa.Slides[i].Sections.Count; j++)
-                        {
-                            if (pa.Slides[i].Sections[j].AppName == "Images")
-                            {
-                                images.Add(pa.Slides[i].Sections[j].Src);
-                                //allImages.Add(pa.Slides[i].Sections[j].Src); 
-                            }
-                        }
-                        imagesList.Add(images);
-                    }
-
-                    Clients.Caller.receiveAllImagesToBePlayed(imagesList);
+                    pa.isPlaying = status;
                 }
                 catch (Exception e)
                 {
-                    Log.Error("failed to request process slides", e);
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+        public void changePlayingIndex(int instanceId, int index)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.CurrentPlayingIndex = index;
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+
+        public void updateImagesWidth(int instanceId, int[]width)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.ImagesWidth.Clear();
+                    for (int i = 0; i < width.Length; i++)
+                    {
+                        pa.ImagesWidth.Add(width[i]);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+        public void requestSectionList(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    Clients.Caller.receiveSectionList(pa.SectionList);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to create section ", e);
+                    Clients.Caller.setMessage(e.GetType().ToString() + e);
+                }
+
+            }
+        }
+
+
+        public void RequestAllSections(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.TempSlides.Clear();
+                    pa.SectionList.Clear();
+
+                    for (int i = 0; i < pa.Slides.Count; i++)
+                    {
+                        List<string> section = new List<string>(pa.Slides[i].Sections.Count);
+
+
+                        Dictionary<int, AppSection> Sections = new Dictionary<int, AppSection>();
+                        Dictionary<int, string> Instances = new Dictionary<int, string>();
+                        Core.Slide slide = new Core.Slide(Sections, Instances);
+                        pa.TempSlides.Add(slide);
+
+                        foreach (KeyValuePair<int, string> kvp in pa.Slides[i].Instances)
+                        {
+                            Instances.Add(kvp.Key, kvp.Value);
+                        }
+
+                        foreach (KeyValuePair<int, AppSection> kvp in pa.Slides[i].Sections)
+                        {
+                            Sections.Add(kvp.Key, kvp.Value.ShallowCopy());
+                            if (kvp.Value.AppInstanceId > 0)
+                            {
+                                section.Add(GetSectionUpdate(instanceId, kvp.Value.Id, i));
+                            }
+                        }
+                        pa.SectionList.Add(section);
+                    }
+                    Clients.Caller.receiveAllSections(pa.SectionList);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to request all source", e);
                     Clients.Caller.setMessage(e.GetType().ToString());
                 }
             }
@@ -421,6 +523,29 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
+
+        public void changeSection(int instanceId, int id, string src, string appName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    if (pa.isPlaying == 1)
+                    {
+                        pa.TempSlides[pa.CurrentSlide].Sections[id].Src = src;
+                        pa.TempSlides[pa.CurrentSlide].Sections[id].AppName = appName;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to update voice information", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
         public void swapSrc(int instanceId, int sectionId1, int sectionId2)
         {
             lock (Cave.AppLocks[instanceId])
@@ -428,9 +553,18 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    string temp = pa.Slides[pa.CurrentSlide].Sections[sectionId1].Src;
-                    pa.Slides[pa.CurrentSlide].Sections[sectionId1].Src = pa.Slides[pa.CurrentSlide].Sections[sectionId2].Src;
-                    pa.Slides[pa.CurrentSlide].Sections[sectionId2].Src = temp;
+                    if (pa.isPlaying == 1)
+                    {
+                        string temp = pa.TempSlides[pa.CurrentSlide].Sections[sectionId1].Src;
+                        pa.TempSlides[pa.CurrentSlide].Sections[sectionId1].Src = pa.TempSlides[pa.CurrentSlide].Sections[sectionId2].Src;
+                        pa.TempSlides[pa.CurrentSlide].Sections[sectionId2].Src = temp;
+                    } else
+                    {
+                        string temp = pa.Slides[pa.CurrentSlide].Sections[sectionId1].Src;
+                        pa.Slides[pa.CurrentSlide].Sections[sectionId1].Src = pa.Slides[pa.CurrentSlide].Sections[sectionId2].Src;
+                        pa.Slides[pa.CurrentSlide].Sections[sectionId2].Src = temp;
+                    }
+
                 }
                 catch (Exception e)
                 {
@@ -649,8 +783,8 @@ namespace GDO.Apps.PresentationTool
             try
             {
                 PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                string serializedSection = GetSectionUpdate(instanceId, sectionId);
-                if (pa.ContainsSection(sectionId) && serializedSection != null)
+                string serializedSection = GetSectionUpdate(instanceId, sectionId, pa.CurrentSlide);
+                if (pa.ContainsSection(sectionId, pa.CurrentSlide) && serializedSection != null)
                 {
                     Clients.Caller.receiveSectionUpdate(true, sectionId, serializedSection);
                     return true;
@@ -668,15 +802,15 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        private string GetSectionUpdate(int instanceId, int sectionId)
+        private string GetSectionUpdate(int instanceId, int sectionId, int slide)
         {
             try
             {
                 PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                if (pa.ContainsSection(sectionId))
+                if (pa.ContainsSection(sectionId, slide))
                 {
                     AppSection section;
-                    pa.Slides[pa.CurrentSlide].Sections.TryGetValue(sectionId, out section);
+                    pa.Slides[slide].Sections.TryGetValue(sectionId, out section);
                     return JsonConvert.SerializeObject(section);
                 }
                 else

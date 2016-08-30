@@ -9,17 +9,21 @@
         }
     }
 
-    $.connection.presentationToolAppHub.client.receiveAppUpdate = function (sections, currentSlide, totalSlide) {
+    $.connection.presentationToolAppHub.client.receiveAppUpdate = function (sections, currentSlide, totalSlide, isPlaying, currentPlayingIndex, imagesWidth) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             for (var i = 0; i < sections.length; i++) {
                 if (sections[i] != null) {
                     var section = JSON.parse(sections[i]);
-                    gdo.net.app["PresentationTool"].processSection(true, section.Id, sections[i]);
+                    gdo.net.app["PresentationTool"].processSection(gdo.net.app["PresentationTool"].isPlaying, true, section.Id, sections[i]);
                 }
             }
             gdo.net.app["PresentationTool"].currentSlide = currentSlide;
             gdo.net.app["PresentationTool"].totalSlide = totalSlide;
             gdo.net.app["PresentationTool"].updateSlideTab(currentSlide, totalSlide);
+            gdo.net.app["PresentationTool"].isPlaying = isPlaying;
+            gdo.net.app["PresentationTool"].currentPlayingIndex = currentPlayingIndex;
+            gdo.net.app["PresentationTool"].imagesWidth = imagesWidth;
+            console.log(gdo.net.app["PresentationTool"].currentPlayingIndex);
             gdo.updateDisplayCanvas();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //do nothing
@@ -28,7 +32,7 @@
 
     $.connection.presentationToolAppHub.client.receiveSectionUpdate = function (status, id, serializedSection) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.net.app["PresentationTool"].processSection(status, id, serializedSection);
+            gdo.net.app["PresentationTool"].processSection(gdo.net.app["PresentationTool"].isPlaying, status, id, serializedSection);
             gdo.updateDisplayCanvas();
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //do nothing
@@ -60,7 +64,7 @@
     $.connection.presentationToolAppHub.client.receiveSlideUpdate = function (currentSlide) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.net.app["PresentationTool"].initialize(64);
-            gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId, currentSlide);
+            gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId);
             gdo.net.app["PresentationTool"].server.updateFileList(gdo.controlId);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //do nothing
@@ -79,7 +83,7 @@
     $.connection.presentationToolAppHub.client.receiveSlideOpen = function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.net.app["PresentationTool"].initialize(64);
-            gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId, 0);
+            gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId);
             gdo.net.app["PresentationTool"].server.updateFileList(gdo.controlId);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             //do nothing
@@ -149,22 +153,38 @@
         }
     }
 
-    $.connection.presentationToolAppHub.client.receiveAllImagesToBePlayed = function (Images) {
+    $.connection.presentationToolAppHub.client.receiveAllSections = function (sections) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.net.app["PresentationTool"].imagesToBePlayed = [];
-            for (var i = 0; i < Images.length; i++) {
-                for (var j = 0; j < Images[i].length; j++) {
-                    gdo.net.app["PresentationTool"].imagesToBePlayed.push(Images[i][j]);
+            gdo.net.app["PresentationTool"].currentSlideSection = [];
+            for (var i = 0; i < sections.length; i++) {
+                for (var j = 0; j < sections[i].length; j++) {
+                    gdo.net.app["PresentationTool"].currentSlideSection.push(sections[i][j]);
                 }
             }
-    
+            console.log(gdo.net.app["PresentationTool"].currentSlideSection);
             for (var i = 0; i < gdo.net.app["PresentationTool"].currentSlide; i++) {
-                gdo.net.app["PresentationTool"].currentPlayingImage += Images[i].length;
+                gdo.net.app["PresentationTool"].currentPlayingIndex += sections[i].length;
+            }
+
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+
+        }
+    }
+
+    $.connection.presentationToolAppHub.client.receiveSectionList = function (sections) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.net.app["PresentationTool"].currentSlideSection = [];
+            for (var i = 0; i < sections.length; i++) {
+                for (var j = 0; j < sections[i].length; j++) {
+                    gdo.net.app["PresentationTool"].currentSlideSection.push(sections[i][j]);
+                }
             }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
 
         }
-    }  
+    }
+    
+
 });
 
 // Roate and zoom
@@ -205,40 +225,25 @@ gdo.net.app["PresentationTool"].zoomImage = function (instanceId, i) {
     }, 2);
 }
 
-gdo.net.app["PresentationTool"].dispearImage = function (instanceId, direction, speed, width, section, lastImagesApp) {
+gdo.net.app["PresentationTool"].dispearSlide = function (instanceId, direction, speed, width, isImagesApp, lastApp) {
     var instance = gdo.net.instance[instanceId];
     if (instance === null || !instance.exists) return;
-    if (width < 0) {
-        var processed = false;
-        var digits = "";
-
-        for (var j = 0 ; j < gdo.net.app["PresentationTool"].processedImages.length; j++) {
-            var s = gdo.net.app["PresentationTool"].processedImages[j];
-            var filename = s.split("|")[0];
-            if (filename === section.src.replace(/^.*[\\\/]/, '')) {
-                processed = true;
-                digits = s.split("|")[1];
-                break;
-            }
-        }
-        if (processed) {
-            gdo.net.app["Images"].server.findDigits(instanceId, digits);
-        } else {
-            gdo.net.app["Images"].server.processImage(instanceId, section.src.replace(/^.*[\\\/]/, ''));
-        }
-        if (lastImagesApp) {
+    if (width <= 0) {
+        if (lastApp) {
             setTimeout(function () {
                 gdo.updateDisplayCanvas();
-                gdo.net.app["PresentationTool"].server.updateProcessedImages(gdo.controlId);
-                gdo.net.app["PresentationTool"].playNextApp(1);
-            }, 500);
+                gdo.net.app["PresentationTool"].loadCurrentSlide(false);
+            }, 1000);
         }
         return;
     }
-    gdo.net.app["Images"].server.requestMoveImage(instanceId, direction * speed, 0);
+
+    if (isImagesApp) {
+        gdo.net.app["Images"].server.requestMoveImage(instanceId, direction * speed, 0);
+    }
     setTimeout(function () {
         width = width - speed;
-        gdo.net.app["PresentationTool"].dispearImage(instanceId, direction, speed, width, section, lastImagesApp);
+        gdo.net.app["PresentationTool"].dispearSlide(instanceId, direction, speed, width, isImagesApp, lastApp);
     }, 5);
 }
 
@@ -297,32 +302,35 @@ gdo.net.app["PresentationTool"].swapSrc = function (sections, i) {
 // Button control
 gdo.net.app["PresentationTool"].previousSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Previous slide');
-    var numOfImagesApp = 0;
+    var numOfApps = 0;
     var numOfSections = gdo.net.app["PresentationTool"].section.length;
     for (var i = 2; i < numOfSections; i++) {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
-            if (section.appName !== "Images") continue;
-            numOfImagesApp++;
+            numOfApps++;
         }
     }
-    if (gdo.net.app["PresentationTool"].currentPlayingImage <= 0) {
+    $("iframe").contents().find("#currentPlayingIndex").html(gdo.net.app["PresentationTool"].currentPlayingIndex);
+    if (gdo.net.app["PresentationTool"].currentPlayingIndex <= 0) {
         $("iframe").contents().find("#message_from_server").html("Cannot play previous slides");
         return;
     }
-    gdo.net.app["PresentationTool"].currentPlayingImage--;
-    $("iframe").contents().find("#message_from_server").html(gdo.net.app["PresentationTool"].currentPlayingImage);
-    var index = gdo.net.app["PresentationTool"].currentPlayingImage;
+    gdo.net.app["PresentationTool"].currentPlayingIndex--;
+    gdo.net.app["PresentationTool"].server.changePlayingIndex(gdo.controlId, gdo.net.app["PresentationTool"].currentPlayingIndex);
+    var index = gdo.net.app["PresentationTool"].currentPlayingIndex;
     var k = 0;
     for (var i = 2; i < numOfSections; i++) {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
-            if (section.appName !== "Images") continue;
-            numOfImagesApp--;
-            section.src = gdo.net.app["PresentationTool"].imagesToBePlayed[index];
-            gdo.net.app["PresentationTool"].dispearImage(section.realInstanceId, 1, 25, gdo.net.app["PresentationTool"].imagesWidth[k], section, numOfImagesApp === 0);
+            numOfApps--;
+            var width = (section.appName === "Images" && gdo.net.app["PresentationTool"].imagesWidth[k] !== null
+                && typeof gdo.net.app["PresentationTool"].imagesWidth[k] !== 'undefined') ? gdo.net.app["PresentationTool"].imagesWidth[k] : 0;
+            gdo.net.app["PresentationTool"].dispearSlide(section.realInstanceId, 1, 25, width, section.appName === "Images", numOfApps === 0);
+            var targetSection = JSON.parse(gdo.net.app["PresentationTool"].currentSlideSection[index]);
+            gdo.net.app["PresentationTool"].server.changeSection(gdo.controlId, section.id, targetSection.Src, targetSection.AppName);
+            gdo.net.app["PresentationTool"].processSection(gdo.net.app["PresentationTool"].isPlaying, true, section.id, gdo.net.app["PresentationTool"].currentSlideSection[index]);
             k++;
-            index++;
+            index++;;
         }
     }
 }
@@ -330,34 +338,38 @@ gdo.net.app["PresentationTool"].previousSlide = function () {
 gdo.net.app["PresentationTool"].nextSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Next slide');
     // Check if can play
-    var numOfImagesApp = 0;
+    var numOfApps = 0;
     var numOfSections = gdo.net.app["PresentationTool"].section.length;
     for (var i = 2; i < numOfSections; i++) {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
-            if (section.appName !== "Images") continue;
-            numOfImagesApp++;
+            numOfApps++;
         }
     }
-    if ((gdo.net.app["PresentationTool"].imagesToBePlayed.length - gdo.net.app["PresentationTool"].currentPlayingImage - 1) < numOfImagesApp) {
+    $("iframe").contents().find("#currentPlayingIndex").html(gdo.net.app["PresentationTool"].currentPlayingIndex);
+    if ((gdo.net.app["PresentationTool"].currentSlideSection.length - gdo.net.app["PresentationTool"].currentPlayingIndex - 1) < numOfApps) {
         $("iframe").contents().find("#message_from_server").html("Cannot play next slides");
         return;
     }
-    if (gdo.net.app["PresentationTool"].currentPlayingImage + 1 >= gdo.net.app["PresentationTool"].imagesToBePlayed.length) {
+    if (gdo.net.app["PresentationTool"].currentPlayingIndex + 1 >= gdo.net.app["PresentationTool"].currentSlideSection.length) {
         $("iframe").contents().find("#message_from_server").html("Cannot play next slides");
         return;
     }
-    gdo.net.app["PresentationTool"].currentPlayingImage++;
-    $("iframe").contents().find("#message_from_server").html(gdo.net.app["PresentationTool"].currentPlayingImage);
-    var index = gdo.net.app["PresentationTool"].currentPlayingImage;
+
+    gdo.net.app["PresentationTool"].currentPlayingIndex++;
+    gdo.net.app["PresentationTool"].server.changePlayingIndex(gdo.controlId, gdo.net.app["PresentationTool"].currentPlayingIndex);
+    var index = gdo.net.app["PresentationTool"].currentPlayingIndex;
+
     var k = 0;
     for (var i = 2; i < numOfSections; i++) {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
-            if (section.appName !== "Images") continue;
-            numOfImagesApp--;
-            section.src = gdo.net.app["PresentationTool"].imagesToBePlayed[index];
-            gdo.net.app["PresentationTool"].dispearImage(section.realInstanceId, -1, 25, gdo.net.app["PresentationTool"].imagesWidth[k], section, numOfImagesApp === 0);
+            numOfApps--;
+            var width = (section.appName === "Images") ? gdo.net.app["PresentationTool"].imagesWidth[k] : 0;
+            gdo.net.app["PresentationTool"].dispearSlide(section.realInstanceId, -1, 25, width, section.appName === "Images", numOfApps === 0);
+            var targetSection = JSON.parse(gdo.net.app["PresentationTool"].currentSlideSection[index]);
+            gdo.net.app["PresentationTool"].server.changeSection(gdo.controlId, section.id, targetSection.Src, targetSection.AppName);
+            gdo.net.app["PresentationTool"].processSection(gdo.net.app["PresentationTool"].isPlaying, true, section.id, gdo.net.app["PresentationTool"].currentSlideSection[index]);
             k++;
             index++;
         }
@@ -479,11 +491,9 @@ gdo.net.app["PresentationTool"].loadTemplate = function () {
 }
 
 // Play control
-gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
+gdo.net.app["PresentationTool"].loadCurrentSlide = function (firstPlay) {
     gdo.consoleOut('.PresentationTool', 1, 'Load current slide ' + gdo.net.app["PresentationTool"].currentSlide);
     $("iframe").contents().find("#message_from_server").html('Load current slide ' + gdo.net.app["PresentationTool"].currentSlide);
-
-    // update currentPlayingImage
 
     // Check section 
     gdo.net.app["PresentationTool"].initialElements();
@@ -573,10 +583,11 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function () {
             }
         }
     }
-
-    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'requestImagesToBePlayed', [gdo.controlId], 0.1, false);
-    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'updateProcessedImages', [gdo.controlId], 0.1, false);
+    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'updateProcessedImages', [gdo.controlId], 0, false);
     gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool', 'playCurrentSlide', [], 0, false);
+    if (firstPlay) {
+        gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'requestAllSections', [gdo.controlId], 0, false);
+    }
 
     gdo.net.app["PresentationTool"].readyToExcute();
     gdo.net.app["PresentationTool"].executeElement(gdo.net.app["PresentationTool"].Elements[gdo.net.app["PresentationTool"].CurrentElement]);
@@ -619,9 +630,11 @@ gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
                         $("iframe").contents().find("#youtube_duration").text($("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#youtube_duration").text());
                     });
                     $("iframe").contents().find("#video_play").click(function () {
+                        if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#playButton").click();
                     });
                     $("iframe").contents().find("#video_pause").click(function () {
+                        if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
                         $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#pauseButton").click();
                     });
                     $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (instanceId));
@@ -632,6 +645,7 @@ gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
 }
 
 gdo.net.app["PresentationTool"].playCurrentSlide = function () {
+    gdo.net.app["PresentationTool"].imagesWidth = [];
     gdo.net.app["PresentationTool"].playNextApp(1);
 }
 
@@ -642,11 +656,12 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
     if (i == numOfSections) {
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
         $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', '');
+        gdo.net.app["PresentationTool"].server.updateImagesWidth(gdo.controlId, gdo.net.app["PresentationTool"].imagesWidth);
         return;
     };
 
     var section = gdo.net.app["PresentationTool"].section[i];
-    if (section != null && section.src !== null) {
+    if (section != null && section.src !== null && section.appName === "Images") {
 
         var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (section.realInstanceId);
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
@@ -665,18 +680,6 @@ gdo.net.app["PresentationTool"].playNextApp = function (i) {
                             gdo.net.app["PresentationTool"].playNextApp(++i);
                         }, 200);
                     });
-                } else if (section.appName === "YoutubeWall") {
-                    setTimeout(function () {
-                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#search_mode").click();
-                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(section.src);
-                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#update_keyword_submit").click();
-                        $("iframe").contents().find("#message_from_server").html("Play Video on instance " + (section.realInstanceId));
-                        gdo.net.app["PresentationTool"].playNextApp(++i);
-                    }, 200);
-                } else if (section.appName === "Youtube") {
-                    setTimeout(function () {
-                        gdo.net.app["PresentationTool"].playNextApp(++i);
-                    }, 200);
                 }
             });
         });
@@ -822,10 +825,8 @@ gdo.net.app["PresentationTool"].initControl = function () {
     gdo.loadScript('cropper.min', 'PresentationTool', gdo.SCRIPT_TYPE.EXTERNAL);
     // draw ui
     gdo.net.app["PresentationTool"].initialize(64);
-    gdo.net.app["PresentationTool"].drawSectionTable();
-    gdo.net.app["PresentationTool"].drawButtonTable();
-    gdo.net.app["PresentationTool"].updateSlideTab();
-    gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId, 0);
+    gdo.net.app["PresentationTool"].server.requestSectionList(gdo.controlId);
+    gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId);
     gdo.net.app["PresentationTool"].server.updateFileList(gdo.controlId);
     gdo.net.app["PresentationTool"].server.updateProcessedImages(gdo.controlId);
     gdo.net.app["PresentationTool"].server.restoreVoiceControlStatus(gdo.controlId);

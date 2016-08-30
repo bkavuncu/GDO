@@ -9,6 +9,7 @@ using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GDO.Apps.PresentationTool
 {
@@ -31,8 +32,13 @@ namespace GDO.Apps.PresentationTool
         public string FileName { get; set; }
         public int PPTPageCount { get; set; }
         public int CurrentSlide { get; set; }
+        public int CurrentPlayingIndex { get; set; }
+        public int isPlaying { get; set; }
         public int VoiceControlStatus { get; set; }
+        public List<int> ImagesWidth { get; set; }
+        public List<List<string>> SectionList { get; set; }
         public List<Slide> Slides { get; set; }
+        public List<Slide> TempSlides { get; set; }
         public Dictionary<string, List<string>> FileNames { get; set; }
 
         public void Init()
@@ -46,11 +52,16 @@ namespace GDO.Apps.PresentationTool
             Directory.CreateDirectory(this.BasePath + "/Images/Origin");
             Directory.CreateDirectory(this.ImagesAppBasePath);
 
+            CurrentPlayingIndex = 0;
             this.CurrentSlide = -1;
+            this.isPlaying = 0;
             VoiceControlStatus = 0;
 
             FileNames = new Dictionary<string, List<string>>();
             Slides = new List<Slide>();
+            TempSlides = new List<Slide>();
+            ImagesWidth = new List<int>();
+            SectionList = new List<List<string>>();
             // app sections
             CreateNewSlide();
         }
@@ -178,9 +189,20 @@ namespace GDO.Apps.PresentationTool
             return;
         }
 
-        public bool ContainsSection(int sectionId)
+        public bool ContainsSection(int sectionId, int slide)
         {
-            return Slides[CurrentSlide].Sections.ContainsKey(sectionId);
+            return Slides[slide].Sections.ContainsKey(sectionId);
+        }
+
+        public T DeepClone<T>(T obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+                return (T)formatter.Deserialize(ms);
+            }
         }
     }
 }

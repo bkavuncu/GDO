@@ -23,10 +23,9 @@
     gdo.net.app["PresentationTool"].video_control_status = 0;
     gdo.net.app["PresentationTool"].video_control_enable = 0;
     gdo.net.app["PresentationTool"].processedImages = [];
-    gdo.net.app["PresentationTool"].allImagesToBePlayed = [];
-    gdo.net.app["PresentationTool"].imagesToBePlayed = [];
     gdo.net.app["PresentationTool"].isPlaying = 0;
-    gdo.net.app["PresentationTool"].currentPlayingImage = 0;
+    gdo.net.app["PresentationTool"].currentSlideSection = [];
+    gdo.net.app["PresentationTool"].currentPlayingIndex = 0;
     gdo.net.app["PresentationTool"].imagesWidth = [];
 });
 //template list click
@@ -486,6 +485,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
 
 
     $("iframe").contents().find("#img_rotate").unbind().click(function () {
+        if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
         if (gdo.net.app["PresentationTool"].img_control_status === 1 && gdo.net.app["PresentationTool"].img_control_enable === 1) {
             var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
             var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
@@ -496,6 +496,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
     });
 
     $("iframe").contents().find("#img_restore").unbind().click(function () {
+        if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
         if (gdo.net.app["PresentationTool"].img_control_status === 1 && gdo.net.app["PresentationTool"].img_control_enable === 1) {
             var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
             var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
@@ -515,6 +516,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
         $("iframe").contents().find("#video_control").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
     }
     $("iframe").contents().find("#video_control").unbind().click(function () {
+        if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
         if (gdo.net.app["PresentationTool"].video_control_enable === 0) return;
         gdo.net.app["PresentationTool"].video_control_status = 1 - gdo.net.app["PresentationTool"].video_control_status;
         if (gdo.net.app["PresentationTool"].video_control_status === 0) {
@@ -533,8 +535,8 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
     // Playbutton
     if (gdo.net.app["PresentationTool"].isPlaying === 0) {
         gdo.net.app["PresentationTool"].imagesWidth = [];
-        gdo.net.app["PresentationTool"].imagesToBePlayed = [];
-        gdo.net.app["PresentationTool"].currentPlayingImage = 0;
+        gdo.net.app["PresentationTool"].currentSlideSection = [];
+        gdo.net.app["PresentationTool"].currentPlayingIndex = 0;
         $("iframe").contents().find("#play_slide").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
         $("iframe").contents().find("#next_slide").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
         $("iframe").contents().find("#previous_slide").removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
@@ -546,21 +548,27 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
 
 }
 
-gdo.net.app["PresentationTool"].processSection = function (exists, id, serializedSection) {
+gdo.net.app["PresentationTool"].processSection = function (isPlaying, exists, id, serializedSection) {
     if (exists) {
         var section = JSON.parse(serializedSection);
         gdo.net.app["PresentationTool"].section[id].id = id;
         gdo.net.app["PresentationTool"].section[id].exists = true;
+
+        gdo.net.app["PresentationTool"].section[id].src = section.Src;
+        gdo.net.app["PresentationTool"].section[id].appName = section.AppName;
+
+        if (isPlaying) return;
+
         gdo.net.app["PresentationTool"].section[id].col = section.Col;
         gdo.net.app["PresentationTool"].section[id].row = section.Row;
         gdo.net.app["PresentationTool"].section[id].cols = section.Cols;
         gdo.net.app["PresentationTool"].section[id].rows = section.Rows;
         gdo.net.app["PresentationTool"].section[id].width = section.Width;
-        gdo.net.app["PresentationTool"].section[id].src = section.Src;
-        gdo.net.app["PresentationTool"].section[id].appName = section.AppName;
         gdo.net.app["PresentationTool"].section[id].appInstanceId = section.AppInstanceId;
         gdo.net.app["PresentationTool"].section[id].realSectionId = section.RealSectionId;
         gdo.net.app["PresentationTool"].section[id].realInstanceId = section.RealInstanceId;
+
+
 
         for (var i = 0; i < section.Cols; i++) {
             for (var j = 0; j < section.Rows; j++) {

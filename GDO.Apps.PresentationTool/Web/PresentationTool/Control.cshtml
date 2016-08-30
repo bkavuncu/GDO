@@ -341,7 +341,7 @@
                 <div class="col-lg-1" style="padding: 6px;">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h6 id="Templates" style="text-align:left;float:left;"><i class='fa  fa-gear fa-fw'></i>&nbsp;Control</h6>
+                            <h6 id="currentPlayingIndex" style="text-align:left;float:left;">&nbsp;0</h6>
                             <hr style="clear:both; border: 0" />
                         </div>
                         <div class="panel-body" style="height: 35.5vh;overflow: hidden">
@@ -356,10 +356,10 @@
                                 </div>
 
                                 <div>
-                                    <span id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;Next</span>
+                                    <span id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</span>
                                 </div>
                                 <div>
-                                    <span id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;Previous</span>
+                                    <span id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</span>
                                 </div>
 
                                 <div>
@@ -557,9 +557,11 @@
             gdo.net.app["PresentationTool"].isPlaying = 1 - gdo.net.app["PresentationTool"].isPlaying;
             gdo.updateDisplayCanvas();
             if (gdo.net.app["PresentationTool"].isPlaying === 1) {
-                gdo.net.app["PresentationTool"].loadCurrentSlide();
+                gdo.net.app["PresentationTool"].server.changePlayingStatus(gdo.controlId, gdo.net.app["PresentationTool"].isPlaying);
+                gdo.net.app["PresentationTool"].loadCurrentSlide(true);
             } else {
-                gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId, gdo.net.app["PresentationTool"].currentSlide);
+                gdo.net.app["PresentationTool"].server.changePlayingStatus(gdo.controlId, gdo.net.app["PresentationTool"].isPlaying);
+                gdo.net.app["PresentationTool"].server.requestAppUpdate(gdo.controlId);
             }
         });
 
@@ -664,6 +666,7 @@
         });
 
         $("#img_control").click(function () {
+            if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
             if (gdo.net.app["PresentationTool"].img_control_enable === 0) return;
             gdo.net.app["PresentationTool"].img_control_status = 1 - gdo.net.app["PresentationTool"].img_control_status;
 
@@ -780,7 +783,8 @@
                         .css("vertical-align", "top")
                         .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#5A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>");
 
-                    if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId > 0) {
+                    if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId > 0 && gdo.net.app["PresentationTool"].section[sectionId].appName === "Images") {
+
                         $("#section_table_row_" + node.row + "_col_" + node.col).droppable({
                             drop: function (event, ui) {
 
@@ -796,6 +800,7 @@
                                     }      
                                 } else {
                                     if (draggableId != droppableId) {
+                                        //gdo.net.app["PresentationTool"].server.swapSrc(gdo.controlId, draggableId, droppableId);
                                         var sections = [gdo.net.app["PresentationTool"].section[droppableId], gdo.net.app["PresentationTool"].section[draggableId]];
                                         gdo.net.app["PresentationTool"].swapSrc(sections, 0);
                                     }

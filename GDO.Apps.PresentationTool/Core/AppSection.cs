@@ -116,5 +116,10 @@ namespace GDO.Core
             this.NodeMap = GetNodeMap();
             return JsonConvert.SerializeObject(this);
         }
+
+        public AppSection ShallowCopy()
+        {
+            return (AppSection)this.MemberwiseClone();
+        }
     }
 }
