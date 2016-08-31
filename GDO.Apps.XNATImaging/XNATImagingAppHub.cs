@@ -85,60 +85,8 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
-        public void RequestConfig(int instanceId, int nodeId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    AppConfiguration appConfig = Cave.Apps["XNATImaging"].Configurations["Default"];
-                    Debug.WriteLine(nodeId);
-                    if (appConfig != null)
-                    {
-                        Debug.WriteLine(appConfig.Name);
-                        //Debug.WriteLine(appConfig.Json);
-                        var jsonString = appConfig.Json.ToString();
-                        dynamic config = JObject.Parse(jsonString);
-
-                        if (nodeId == 0)
-                        {
-                            Debug.WriteLine("Delete screen configs");
-                            config.screens.Replace(
-                                JObject.FromObject(new {}));
-                        }
-                        else
-                        {
-                            foreach (var screen in config.screens)
-                            {
-
-                                int row = screen.row;
-                                int col = screen.col;
-                                if (row == Cave.Nodes[nodeId].Row && col == Cave.Nodes[nodeId].Col)
-                                {
-                                    // send config
-                                    Debug.WriteLine("Delete screen configs");
-                                    config.screens.Replace(
-                                        JObject.FromObject(screen));
-                                }
-
-                            }
-                        }
-
-                        var jsonStr = config.ToString();
-                        var jsonStri = appConfig.Json.ToString();
-                        Clients.Caller.receiveConfig(instanceId, config);
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-            }
-        }
-
-        public void SetImageConfig(int instanceId, int currentImageId, double windowWidth, double windowCenter, 
-            double scale, double translationX, double translationY, string rotateView, dynamic currentCoord, dynamic markingCoords)
+        public void SetImageConfig(int instanceId, double windowWidth, double windowCenter, 
+            string rotateView, dynamic currentCoord, dynamic markingCoords)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -147,26 +95,63 @@ namespace GDO.Apps.XNATImaging
                     Debug.WriteLine("Updating Image Config- server");
                     
                     ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).SetImage(
-                                    currentImageId, 
+                                    currentCoord, 
                                     windowWidth, 
-                                    windowCenter,
-                                    scale, 
-                                    translationX, 
-                                    translationY
+                                    windowCenter
                     );
 
                     Clients.Group("" + instanceId).receiveImageUpdate(
                                     instanceId, 
-                                    currentImageId, 
                                     windowWidth, 
-                                    windowCenter, 
-                                    scale, 
-                                    translationX, 
-                                    translationY,
+                                    windowCenter,
                                     rotateView,
                                     currentCoord,
                                     markingCoords
                     );
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        public void RequestScreenSwitch(int instanceId, string url, string modality)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    AppConfiguration appConfig = Cave.Apps["XNATImaging"].Configurations["Default"];
+                    if (appConfig != null)
+                    {
+                        Debug.WriteLine(appConfig.Name);
+                        //Debug.WriteLine(appConfig.Json);
+                        var jsonString = appConfig.Json.ToString();
+                        dynamic config = JObject.Parse(jsonString);
+
+                        foreach (var screen in config.screens)
+                        {
+
+                            int row = screen.row;
+                            int col = screen.col;
+                            if (screen.mode == "zoom" && screen.switchable)
+                            {
+                                screen.url = url;
+
+                                // send config
+                                Debug.WriteLine("Delete screen configs");
+                                config.screens.Replace(
+                                    JObject.FromObject(screen));
+                            }
+
+                        }
+
+                        var jsonStr = config.ToString();
+                        var jsonStri = appConfig.Json.ToString();
+                        Clients.Group("" + instanceId).receiveScreenSwitch(instanceId);
+                    }
+
                 }
                 catch (Exception e)
                 {

@@ -139,7 +139,11 @@
             </table>
         </div>
 
-        <div id="dicomImage" style="width: 1200px; height: 1000px;"> <!--1000x750 for tablets-->
+        <div id="switchScreensContainer">
+
+        </div>
+
+        <div id="dicomImage" style="width: 60%; height: 66%;"> <!--1000x750 for tablets-->
             <div class="papaya" data-params="params"></div>
         </div>
 
@@ -151,8 +155,6 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="controls">
-                    <input id="upNavigationButton" type="button" class="btn btn-default" value="Up"/>
-                    <input id="downNavigationButton" type="button" class="btn btn-default" value="Down"/>
                     <input id="playButton" type="button" class="btn btn-primary" value="Play"/>
                     <input id="resetButton" type="button" class="btn btn-warning" value="Reset"/>
                     <input id="rectangleMarkerButton" type="button" class="btn btn-default" value="Place markers disabled"/>
@@ -160,16 +162,15 @@
                 </div>
             </div>
         </div>  
-        <div id="dialog-form" title="Add label">
-            <form>
-                <fieldset>
-                    <input type="text" name="label" id="labelInput" value="" class="text ui-widget-content ui-corner-all">
-
-                    <!-- Allow form submission with keyboard without duplicating the dialog button -->
-                    <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-                </fieldset>
-            </form>
-        </div>
+    </div>
+    <div id="dialog-form" title="Add label">
+        <form>
+            <fieldset>
+                <input type="text" name="label" id="labelInput" value="" class="text ui-widget-content ui-corner-all">
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
     </div>
 
     <script>

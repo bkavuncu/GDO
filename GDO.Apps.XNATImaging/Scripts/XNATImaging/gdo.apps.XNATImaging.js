@@ -24,26 +24,38 @@ $(function () {
         }
     }
 
+    $.connection.xNATImagingAppHub.client.receiveScreenSwitch = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received screen switch : ");
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received screen switch ");
+            
+            if (gdo.net.app["XNATImaging"].appConfig != null && gdo.net.app["XNATImaging"].appConfig.screens != null) {
+                if (gdo.net.app["XNATImaging"].appConfig.screens.config.switchable) {
+                    gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
+                }
+            }
+        }
+    }
+
     /* 
     ** SignalR receive method to update image parameters based on control input
     **  Update image parameters:
     **  instanceId      int
     **  windowWidth     int
     **  windowCenter    int
-    **  currentImageId  int
-    **  scale           double
-    **  translationX    double
-    **  translationY    double
+    **  currentCoord    obj
+    **  markingCoords   obj
     */
     $.connection.xNATImagingAppHub.client.receiveImageUpdate =
-        function (instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, view, currentCoord, markingCoords) {
+        function (instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords) {
             console.log(markingCoords);
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 // ignore
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
-                gdo.net.app["XNATImaging"].updateImageParams(instanceId, currentImageId, windowWidth, windowCenter, scale, translationX, translationY, view, currentCoord, markingCoords);
+                gdo.net.app["XNATImaging"].updateImageParams(instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords);
             }
         }
 });
@@ -63,10 +75,6 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, container
 
     gdo.net.instance[instanceId].playing = false;
     gdo.net.instance[instanceId].interval = null;
-    gdo.net.instance[instanceId].stack = {
-        currentImageIndex: 0,
-        imageUrl: ""
-    }
 
     gdo.net.app["XNATImaging"].server.requestConfig(instanceId, 0);
 }
@@ -168,7 +176,7 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, w
     var appConfig = gdo.net.app["XNATImaging"].appConfig;
     var screenConfig = appConfig.screens.config;
 
-    var baseUrl = appConfig.host + appConfig.mriUrl + appConfig.patientName + "/";
+    var baseUrl = appConfig.localHost + appConfig.mriUrl + appConfig.patientName + "/";
     //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
     //"http://localhost:12332/Scripts/XNATImaging/Scans/";
 
@@ -181,7 +189,7 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, w
     var imageName = url;
     var imageIds = [imageUrl];
 
-    params["worldSpace"] = true;
+    params["worldSpace"] = appConfig.worldSpace;
     params["smoothDisplay"] = true;
     params["luts"] = [
         { "name": "GMBlue", "data": [[0, 0.21, 0.34, 0.4], [1, 0.21, 0.34, 0.4]] },
@@ -209,7 +217,6 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, w
     //params[imageName] = { minPercent: 0.1 };
     params["mainView"] = appConfig.defaultOrientation;
     params["radiological"] = false;
-    params["padAllImages"] = false;
     params["showControls"] = false;
     params["fullScreen"] = false;
     params["kioskMode"] = true;
@@ -254,7 +261,6 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
 
     containers[0].preferences.showCrosshairs = "No";
 
-
     var offsetX = appConfig.screens.config.zoomOffset[0];
     var offsetY = appConfig.screens.config.zoomOffset[1];
     var displayWidth = appConfig.screens.config.displaySize[0];
@@ -270,18 +276,16 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     if (gdo.net.node[gdo.clientId].height * displayHeight > canvasHeight) {
         heightDifference = gdo.net.node[gdo.clientId].height * displayHeight - canvasHeight;
         console.log(heightDifference);
-        $("iframe").contents().find("#dicomImage").append(
-                "<div style='height: " + heightDifference + "px; width: " + gdo.net.node[gdo.clientId].width + "px; marginBottom: " + heightDifference + "px'><p>.</p></div>"
-            );
+        $("iframe").contents().find("#dicomImage").css("margin", heightDifference + "px");
     }
 
     var dicomDiv = $("iframe").contents().find('#dicomImage');
     // resize container div to match child divs and canvas
     dicomDiv.width(canvasWidth).height(canvasHeight + heightDifference);
 
-    $("iframe").contents().find('#main').height(canvasHeight + heightDifference);
+    /*$("iframe").contents().find('#main').height(canvasHeight + heightDifference);
     $("iframe").contents().find('body').height(canvasHeight + heightDifference);
-    $("iframe").contents().find('html').height(canvasHeight + heightDifference);
+    $("iframe").contents().find('html').height(canvasHeight + heightDifference);*/
 
     var iframe = $("iframe")[0];
     console.log(iframe);
@@ -301,18 +305,11 @@ gdo.net.app["XNATImaging"].sendImageParam = function (instanceId) {
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var viewer = containers[0].viewer;
     var volume = viewer.screenVolumes[0];
-    var diffX = 0;
-    var diffY = 0;
-    var diffScale = 0;
     var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
 
     gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
-        viewer.mainImage.currentSlice,
         volume.screenMin,
         volume.screenMax,
-        diffScale,
-        diffX,
-        diffY,
         viewText,
         viewer.currentCoord,
         viewer.markingCoords);
@@ -322,9 +319,7 @@ gdo.net.app["XNATImaging"].sendImageParam = function (instanceId) {
 /*
 ** Update image parameters using data received from server
 */
-gdo.net.app["XNATImaging"].updateImageParams = function (
-                                            instanceId, currentImageId, windowWidth, windowCenter,
-                                            scale, translationX, translationY, view, currentCoord, markingCoords) {
+gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords) {
 
     var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
     var volume = viewer.screenVolumes[0];
@@ -358,14 +353,6 @@ gdo.net.app["XNATImaging"].updateImageParams = function (
 gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
     
     switch(controlName) {
-        case 'Up':
-            gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Up');
-            gdo.net.app["XNATImaging"].navigateUp(instanceId);
-            break;
-        case 'Down':
-            gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Down');
-            gdo.net.app["XNATImaging"].navigateDown(instanceId);
-            break;
         case 'Reset View':
             gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Reset');
             gdo.net.app["XNATImaging"].resetView(instanceId);
@@ -384,26 +371,10 @@ gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
 }
 
 /*
-** Method to handle scrolling up the image stack
-*/
-gdo.net.app["XNATImaging"].navigateUp = function (instanceId) {
-
-}
-
-/*
-** Method to handle scrolling down the image stack
-*/
-gdo.net.app["XNATImaging"].navigateDown = function (instanceId) {
-
-}
-
-/*
 ** Resets to top of image stack
 ** TODO: May consider resetting image param values to defaults here as well
 */
 gdo.net.app["XNATImaging"].resetView = function(instanceId) {
-    gdo.net.instance[instanceId].stack.currentImageIndex = 0;
-    gdo.net.app["XNATImaging"].updateTheImage(instanceId);
     gdo.net.app["XNATImaging"].pause(instanceId);
 }
 
@@ -411,7 +382,7 @@ gdo.net.app["XNATImaging"].resetView = function(instanceId) {
 ** Method to handle pausing the stack playAll() function
 */
 gdo.net.app["XNATImaging"].pause = function(instanceId) {
-    clearInterval(gdo.net.instance[instanceId].interval);
+    clearInterval(gdo.net.app["XNATImaging"].interval);
     $('iframe').contents().find('#playButton').text("Play");
     gdo.net.instance[instanceId].playing = false;
 }
