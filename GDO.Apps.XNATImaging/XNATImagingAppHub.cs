@@ -57,33 +57,7 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
-        public void SetControl(int instanceId, string controlName)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    Debug.WriteLine("Setting new control - server");
-
-                    /*dynamic variableJson = Utilities.LoadJsonFile("Configurations/XNATImaging/Zoom.json");
-                    ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration = new AppConfiguration("Zoom", variableJson);
-                    Debug.WriteLine(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration.Name);
-
-                    List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
-                    Debug.WriteLine(configurations.Count);
-                    for (int i = 0; i < configurations.Count; i++)
-                    {
-                        Debug.WriteLine(i + ". " + configurations[i]);
-                    }
-                    */
-                   Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-            }
-        }
+        
 
         public void SetImageConfig(int instanceId, double windowWidth, double windowCenter, 
             string rotateView, dynamic currentCoord, dynamic markingCoords)
@@ -115,6 +89,61 @@ namespace GDO.Apps.XNATImaging
                 }
             }
         }
+
+
+
+        public void RequestConfig(int instanceId, int nodeId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    AppConfiguration appConfig = Cave.Apps["XNATImaging"].Configurations["Default"];
+                    Debug.WriteLine(nodeId);
+                    if (appConfig != null)
+                    {
+                        Debug.WriteLine(appConfig.Name);
+                        //Debug.WriteLine(appConfig.Json);
+                        var jsonString = appConfig.Json.ToString();
+                        dynamic config = JObject.Parse(jsonString);
+
+                        if (nodeId == 0)
+                        {
+                            Debug.WriteLine("Delete screen configs");
+                            config.screens.Replace(
+                                JObject.FromObject(new { }));
+                        }
+                        else
+                        {
+                            foreach (var screen in config.screens)
+                            {
+
+                                int row = screen.row;
+                                int col = screen.col;
+                                if (row == Cave.Nodes[nodeId].Row && col == Cave.Nodes[nodeId].Col)
+                                {
+                                    // send config
+                                    Debug.WriteLine("Replaced screen config");
+                                    config.screens.Replace(
+                                        JObject.FromObject(screen));
+                                }
+                            }
+                        }
+
+                        var jsonStr = config.ToString();
+                        var jsonStri = appConfig.Json.ToString();
+                        Clients.Caller.receiveConfig(instanceId, config);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
 
         public void RequestScreenSwitch(int instanceId, string url, string modality)
         {
@@ -152,6 +181,35 @@ namespace GDO.Apps.XNATImaging
                         Clients.Group("" + instanceId).receiveScreenSwitch(instanceId);
                     }
 
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+
+        public void SetControl(int instanceId, string controlName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Debug.WriteLine("Setting new control - server");
+
+                    /*dynamic variableJson = Utilities.LoadJsonFile("Configurations/XNATImaging/Zoom.json");
+                    ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration = new AppConfiguration("Zoom", variableJson);
+                    Debug.WriteLine(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration.Name);
+
+                    List<string> configurations = Cave.Apps["XNATImaging"].GetConfigurationList();
+                    Debug.WriteLine(configurations.Count);
+                    for (int i = 0; i < configurations.Count; i++)
+                    {
+                        Debug.WriteLine(i + ". " + configurations[i]);
+                    }
+                    */
+                    Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
                 }
                 catch (Exception e)
                 {

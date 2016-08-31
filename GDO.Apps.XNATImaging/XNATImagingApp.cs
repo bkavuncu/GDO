@@ -391,7 +391,7 @@ namespace GDO.Apps.XNATImaging
             Debug.WriteLine(Configuration.Name);
             //Debug.WriteLine(Configuration.Json);
             //Debug.WriteLine(GenerateBlankConfigurationFile());
-            //Debug.WriteLine(GenerateDefaultConfigurationFile(DefaultTextStrings, DefaultMriUrls, DefaultZoomUrls, DefaultPdfUrls));
+            Debug.WriteLine(GenerateDefaultConfigurationFile(DefaultTextStrings, DefaultMriUrls, DefaultZoomUrls, DefaultPdfUrls));
         }
     }
 }
