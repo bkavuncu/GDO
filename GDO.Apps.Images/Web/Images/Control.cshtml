@@ -314,6 +314,7 @@
                 data.canvasData.top = canvasData.top;
                 data.canvasData.width = canvasData.width;
                 data.canvasData.height = canvasData.height;
+                console.log(data);
                 gdo.net.app["Images"].server.setThumbNailImageInfo(gdo.controlId, JSON.stringify(data));
                 $("#canvas_data_width").html(data.canvasData.width);
                 $("#canvas_data_height").html(data.canvasData.height);
@@ -570,6 +571,7 @@
                     var gdo = parent.gdo;
                     gdo.consoleOut('.Images', 1, 'Instance ' + gdo.controlId + ": Uploaded Image " + "@filename");
                     gdo.net.app["Images"].server.processImage(gdo.controlId, "@filename");
+//                    gdo.net.app["Images"].server.processAndLaunch(gdo.controlId, "@filename");
                     //gdo.net.app["Images"].server.requestImageName(gdo.controlId);
                 });
 

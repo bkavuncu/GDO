@@ -87,27 +87,34 @@ namespace GDO.Apps.Twitter.Core
             return Get<AnalyticsData>(url) ?? new AnalyticsData();
         }
 
-        public string DownloadData(string url, string filePath)
+        public string DownloadData(string url, string dirPath)
         {
-            Debug.WriteLine("Download request to " + url + " " + filePath);
+            Debug.WriteLine("Download request to " + url + " " + dirPath);
+            string fileName = "";
             try
             {
+
                 Task dataDownloadTask =
                     HttpClient.GetAsync(url)
                         .ContinueWith(async responseTask =>
                         {
+                            var cdh =
+                                ContentDispositionHeaderValue.Parse(
+                                    responseTask.Result.Content.Headers.GetValues("Content-Disposition")
+                                        .FirstOrDefault());
+                            fileName = cdh.FileName; 
                             responseTask.Result.EnsureSuccessStatusCode();
                             using (
-                                FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write,
+                                FileStream fileStream = new FileStream(Path.Combine(dirPath, fileName), FileMode.Create, FileAccess.Write,
                                     FileShare.None))
                             {
                                 await responseTask.Result.Content.CopyToAsync(fileStream);
                             }
-                            return filePath;
+                            return cdh.FileName;
                         });
 
                 dataDownloadTask.Wait();
-                return filePath;
+                return fileName;
             }
             catch (HttpRequestException rex)
             {

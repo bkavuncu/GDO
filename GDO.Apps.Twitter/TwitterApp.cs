@@ -37,7 +37,7 @@ namespace GDO.Apps.Twitter
 
         public string TwitterBasePath { get; set; }
         public string TwitterRelativePath { get; set; }
-        
+        public Dictionary<string,string> DownloadCache { get; set; } = new Dictionary<string, string>();
         public bool ReplaceExisting { get; set; }
         
         public void Init()
@@ -165,21 +165,23 @@ namespace GDO.Apps.Twitter
             string url = analyticsData.Urls[analyticsData.PreferedUrl];
 
             TwitterVis twitterVis = new TwitterVis(analyticsData.PreferedApp);
+//            string fileName;
             switch (twitterVis.AppType) {
                 case "Graph":
                     twitterVis.Config = "Default";
-                    string fileName = analyticsId + ".graphml";
-                    Download(url, GraphAppBasePath + fileName);
-                    twitterVis.FilePath = fileName;
+                    twitterVis.FilePath = Download(url, GraphAppBasePath);
                     break;
                 case "FusionChart":
                     twitterVis.Config = "Default";
-                    twitterVis.FilePath = Download(url, FusionChartAppBasePath + analyticsId + ".json");
+                    twitterVis.FilePath = Download(url, FusionChartAppBasePath);
+                    break;
+                case "Images":
+                    twitterVis.Config = "Default";
+                    twitterVis.FilePath = Download(url, ImageAppBasePath);
                     break;
                 default:
                     twitterVis.Config = "Responsive";
-                    Download(url, TwitterBasePath + analyticsId + ".html");
-                    twitterVis.FilePath = TwitterRelativePath + analyticsId + ".html";
+                    twitterVis.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
                     break;
             }
 
@@ -191,15 +193,22 @@ namespace GDO.Apps.Twitter
 
         private string Download(string url, string path)
         {
-            if (!ReplaceExisting && File.Exists(path))
-            {  // if the file already exists,don't redownload
-                Debug.WriteLine("File already exists and redownload set to "  + ReplaceExisting + " -  will not re download: " + path);
-                return path;
+            if (!ReplaceExisting && DownloadCache.ContainsKey(url))
+            {
+                string existingFile = DownloadCache[url];
+                if (File.Exists(Path.Combine(path, existingFile)))
+                {
+                    // if the file already exists,don't redownload
+                    Debug.WriteLine("File already exists and redownload set to " + ReplaceExisting +
+                                    " -  will not re download: " + Path.Combine(path, existingFile));
+                    return existingFile;
+                }
             }
 
-            var filePath  = RestController.DownloadData(url, path);
-            Debug.WriteLine("File downloaded to " + filePath);
-            return filePath;
+            var fileName  = RestController.DownloadData(url, path);
+            DownloadCache[url] = fileName;
+            Debug.WriteLine("File name " + fileName);
+            return fileName;
         }
 
         public StatusMsg GetApiMessage()
