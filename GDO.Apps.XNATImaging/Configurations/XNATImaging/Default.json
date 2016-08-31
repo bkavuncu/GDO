@@ -9,7 +9,7 @@
   "mriUrlList": [ ],
   "pdfUrl": "../../Scripts/XNATImaging/pdf/",
   "defaultOrientation": "sagittal",
-  "worldSpace":  false,
+  "worldSpace":  true,
   "screens": [
     {
       "col": 0,

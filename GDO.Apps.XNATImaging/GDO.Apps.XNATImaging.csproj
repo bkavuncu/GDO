@@ -229,6 +229,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\XNATImaging\" />
+    <Folder Include="Scripts\XNATImaging\pdf\GSK131086_000002\" />
+    <Folder Include="Scripts\XNATImaging\pdf\GSK131086_000003\" />
+    <Folder Include="Scripts\XNATImaging\scans\GSK131086_000002\" />
+    <Folder Include="Scripts\XNATImaging\scans\GSK131086_000003\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">

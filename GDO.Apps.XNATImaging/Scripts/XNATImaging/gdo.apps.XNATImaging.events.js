@@ -13,6 +13,7 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
     console.log(containers[0].viewer.initialized);
     gdo.net.app["XNATImaging"].initializeSlider();
 
+    // orientation change event
     $("iframe").contents().find("#viewSelect").on("selectmenuchange", function (event, ui) {
         var viewer = containers[0].viewer;
         var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
@@ -74,7 +75,6 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
     });
 }
 
-
 gdo.net.app["XNATImaging"].initializeSlider = function() {
     // Initialize slider input range
     gdo.consoleOut(".XNATImaging", 1, "Initialised slider");
@@ -87,7 +87,7 @@ gdo.net.app["XNATImaging"].initializeSlider = function() {
     slider.min = 0;
     slider.step = 1;
 
-    var max = 255;
+    var max = 160;
     var currentOrientation = "";
     if (viewer.initialized) {
         console.log(viewer);
@@ -100,16 +100,16 @@ gdo.net.app["XNATImaging"].initializeSlider = function() {
     } else if (currentOrientation == "Sagittal") {
         max = viewer.volume.header.imageDimensions.xDim;
     }
-
     slider.max = max;
-    gdo.consoleOut(".XNATImaging", 1, "Initialised slider with range 0-" + slider.max);
+
     // Set current value
     if (viewer.initialized) {
         slider.value = viewer.mainImage.currentSlice;
     } else {
         slider.value = slider.max / 2;
+        gdo.consoleOut(".XNATImaging", 1, "Initialised slider with range 0-" + slider.max);
+        gdo.consoleOut(".XNATImaging", 1, "Initialised slider to current index " + slider.value);
     }
-    gdo.consoleOut(".XNATImaging", 1, "Initialised slider to current index " + slider.value);
 }
 
 
@@ -123,17 +123,12 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
     $("iframe").contents().find("#resetButton")
     .unbind()
     .click(function () {
-        gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Reset');
-        gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#resetButton').text());
         gdo.net.app["XNATImaging"].resetView(instanceId);
     });
 
     $("iframe").contents().find("#playButton")
     .unbind()
     .click(function () {
-        gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Play');
-        gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#playButton').text());
-
         gdo.net.app["XNATImaging"].playAll(instanceId);
     });
 
@@ -171,6 +166,12 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
         });
 
     var rowCounter = 0;
+    appConfig.mriUrlList.sort(function (a, b) {
+        if (a.modality < b.modality) return -1;
+        if (a.modality > b.modality) return 1;
+        return 0;
+    });
+
     for (var i = 0; i < appConfig.mriUrlList.length; i++) {
         if (rowCounter % 2 == 0) {
             console.log("new row");
@@ -187,7 +188,6 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
         }
         rowCounter++;
     }
-
 
     $("iframe").contents().find("#switchScreenContainer input.btn")
         .unbind()
@@ -207,6 +207,73 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
 
     });
 
+    /*
+    ** Method to handle stack play event
+    */
+    gdo.net.app["XNATImaging"].playAll = function (instanceId) {
+        var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
 
+        if (gdo.net.app["XNATImaging"].playing == false) {
+            gdo.net.app["XNATImaging"].playing = true;
+            $('iframe').contents().find('#playButton').val("Pause");
+            gdo.net.app["XNATImaging"].interval = setInterval(function () {
+                if (gdo.net.app["XNATImaging"].playing && !gdo.net.app["XNATImaging"].lastSlice()) {
+                    gdo.net.app["XNATImaging"].incrementSlider(instanceId);
 
+                } else {
+                    clearInterval(gdo.net.app["XNATImaging"].interval);
+                    gdo.net.app["XNATImaging"].playing = false;
+                    $('iframe').contents().find('#playButton').val("Play");
+                }
+            }, 300);
+
+        } else {
+            gdo.net.app["XNATImaging"].pause(instanceId);
+        }
+    }
+
+    /*
+    ** Increments slider by 1
+    */
+    gdo.net.app["XNATImaging"].incrementSlider = function (instanceId) {
+        var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+
+        var orientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
+        console.log(orientation);
+        if (orientation == "Sagittal") {
+            viewer.incrementSagittal(false, 1);
+        } else if (orientation == "Coronal") {
+            viewer.incrementCoronal(false, 1);
+        } else if (orientation == "Axial") {
+            viewer.incrementAxial(false, 1);
+        }
+
+        gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+        gdo.net.app["XNATImaging"].initializeSlider();
+    }
+}
+
+/*
+** Resets to top of image stack
+** TODO: May consider resetting image param values to defaults here as well
+*/
+gdo.net.app["XNATImaging"].resetView = function (instanceId) {
+    var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+
+    var center = new papaya.core.Coordinate(Math.floor(viewer.volume.header.imageDimensions.xDim / 2),
+                    Math.floor(viewer.volume.header.imageDimensions.yDim / 2),
+                    Math.floor(viewer.volume.header.imageDimensions.zDim / 2));
+    viewer.gotoCoordinate(center);
+    gdo.net.app["XNATImaging"].pause(instanceId);
+    gdo.net.app["XNATImaging"].initializeSlider();
+}
+
+/*
+** Method to handle pausing the stack playAll() function
+*/
+gdo.net.app["XNATImaging"].pause = function (instanceId) {
+    clearInterval(gdo.net.app["XNATImaging"].interval);
+    $('iframe').contents().find('#playButton').val("Play");
+    gdo.net.app["XNATImaging"].playing = false;
+    gdo.net.app["XNATImaging"].sendImageParam(instanceId);
 }

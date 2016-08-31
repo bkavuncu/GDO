@@ -71,11 +71,10 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, container
 
     gdo.net.app["XNATImaging"].papaya = papaya;
     gdo.net.app["XNATImaging"].papayaContainers = containers;
+    gdo.net.app["XNATImaging"].playing = false;
+    gdo.net.app["XNATImaging"].interval = null;
 
     $("iframe").contents().find("#viewSelect").selectmenu();
-
-    gdo.net.instance[instanceId].playing = false;
-    gdo.net.instance[instanceId].interval = null;
 
     gdo.net.app["XNATImaging"].server.requestConfig(instanceId, 0);
 }
@@ -104,8 +103,6 @@ gdo.net.app["XNATImaging"].initClient = function (papaya, containers, pdfjs) {
     gdo.net.app["XNATImaging"].papaya = papaya;
     gdo.net.app["XNATImaging"].papayaContainers = containers;
     gdo.net.app["XNATImaging"].pdfjs = pdfjs;
-    gdo.net.app["XNATImaging"].playing = false;
-    gdo.net.app["XNATImaging"].interval = null;
 
     console.log(gdo.net.app["XNATImaging"].instances[instanceId].config);
 
@@ -345,9 +342,6 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     $("iframe").contents().find('html').height(canvasHeight + heightDifference);*/
 
     var iframe = $("iframe")[0];
-    console.log(iframe);
-    console.log($(iframe));
-
     setTimeout(function () {  // setTimeout necessary in Chrome
         iframe.contentWindow.scrollTo(gdo.net.node[gdo.clientId].width * offsetX, gdo.net.node[gdo.clientId].height * offsetY);
     }, 2000);
@@ -358,6 +352,9 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
 
 }
 
+/*
+** Broadcasts updated image parameters to all client nodes
+*/
 gdo.net.app["XNATImaging"].sendImageParam = function (instanceId) {
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var viewer = containers[0].viewer;
@@ -401,73 +398,6 @@ gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth
     if (gdo.net.app["XNATImaging"].getSliceDirection(view) != viewer.mainImage.sliceDirection) {
         viewer.rotateToView(view);
     }
-
-}
-
-/*
-** Calls control functions based on received input from Control node
-*/
-gdo.net.app["XNATImaging"].clientControl = function(instanceId, controlName) {
-    
-    switch(controlName) {
-        case 'Reset View':
-            gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Reset');
-            gdo.net.app["XNATImaging"].resetView(instanceId);
-            break;
-        case 'Play':
-            gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Play');
-            gdo.net.app["XNATImaging"].playAll(instanceId);
-            break;
-        case 'Pause':
-            gdo.consoleOut('.XNATImaging', 1, 'Receiving Control to Clients :' + 'Pause');
-            gdo.net.app["XNATImaging"].playAll(instanceId);
-            break;
-        default:
-            gdo.consoleOut('.XNATImaging', 1, "Not a command");
-    }
-}
-
-/*
-** Resets to top of image stack
-** TODO: May consider resetting image param values to defaults here as well
-*/
-gdo.net.app["XNATImaging"].resetView = function(instanceId) {
-    gdo.net.app["XNATImaging"].pause(instanceId);
-}
-
-/*
-** Method to handle pausing the stack playAll() function
-*/
-gdo.net.app["XNATImaging"].pause = function(instanceId) {
-    clearInterval(gdo.net.app["XNATImaging"].interval);
-    $('iframe').contents().find('#playButton').text("Play");
-    gdo.net.instance[instanceId].playing = false;
-}
-
-/*
-** TODO: Clean mess; make pausing work on client in sync
-** TODO: Need to implement synchronization algorithm for coregistered MRI image stacks
-** Method to handle stack play event
-*/
-gdo.net.app["XNATImaging"].playAll = function (instanceId) {
-    /*if (gdo.net.instance[instanceId].playing == false && gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1) {
-        gdo.net.instance[instanceId].playing = true;
-        $('iframe').contents().find('#playButton').text("Pause");
-        gdo.net.instance[instanceId].interval = setInterval(function () {
-            if (gdo.net.instance[instanceId].stack.currentImageIndex < gdo.net.instance[instanceId].stack.imageIds.length - 1 && gdo.net.instance[instanceId].playing) {
-                
-                gdo.net.instance[instanceId].stack.currentImageIndex++;
-                gdo.net.app["XNATImaging"].updateTheImage(instanceId);
-            } else {
-                clearInterval(gdo.net.instance[instanceId].interval);
-                $('iframe').contents().find('#playButton').text("Play");
-                gdo.net.instance[instanceId].playing = false;
-            }
-        }, 300);
-    } else if (gdo.net.instance[instanceId].playing == true || gdo.net.instance[instanceId].stack.currentImageIndex >= gdo.net.instance[instanceId].stack.imageIds.length) {
-        gdo.net.app["XNATImaging"].pause(instanceId);
-    }
-    console.log("Playing: " + gdo.net.instance[instanceId].playing);*/
 }
 
 gdo.net.app["XNATImaging"].terminateClient = function () {

@@ -2,7 +2,6 @@
     var papaya = gdo.net.app["XNATImaging"].papaya;
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
 
-    console.log(containers[0].viewer);
     if (containers[0].viewer.mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_AXIAL) {
         return "Axial";
     } else if (containers[0].viewer.mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_CORONAL) {
@@ -24,4 +23,23 @@ gdo.net.app["XNATImaging"].getSliceDirection = function (orientation) {
         case "sagittal":
             return papaya.viewer.ScreenSlice.DIRECTION_SAGITTAL;
     }
+}
+
+gdo.net.app["XNATImaging"].lastSlice = function () {
+    var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+    var orientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
+    var max;
+
+    if (orientation == "Sagittal") {
+        max = viewer.volume.header.imageDimensions.xDim;
+    } else if (orientation == "Coronal") {
+        max = viewer.volume.header.imageDimensions.yDim;
+    } else if (orientation == "Axial") {
+        max = viewer.volume.header.imageDimensions.zDim;
+    }
+
+    if (viewer.mainImage.currentSlice < max - 1) {
+        return false;
+    }
+    return true;
 }
