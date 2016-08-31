@@ -3,11 +3,11 @@
   "localHost": "http://localhost:12332/",
   "testServerHost": "http://dsigdotesting.doc.ic.ac.uk/", 
   "experimentName": "GSK131086_000001",
-  "patient": "AD10713",
+  "patient": "AD201713",
   "controlUrl": "t1_baseline.nii.gz",
   "mriUrl": "Scripts/XNATImaging/Scans/",
+  "mriUrlList": [ ],
   "pdfUrl": "../../Scripts/XNATImaging/pdf/",
-  "zoomUrl": "GSK131086_000001/",
   "defaultOrientation": "sagittal",
   "worldSpace":  false,
   "screens": [
@@ -25,9 +25,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -36,7 +33,7 @@
       "col": 0,
       "row": 1,
       "config": {
-        "mode": "text",
+        "mode": "subText",
         "text": "T1",
         "url": "",
         "imageData": {
@@ -46,9 +43,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -58,7 +52,7 @@
       "col": 0,
       "row": 2,
       "config": {
-        "mode": "text",
+        "mode": "subText",
         "text": "T2/FLAIR",
         "url": "",
         "imageData": {
@@ -68,9 +62,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -80,8 +71,8 @@
       "col": 0,
       "row": 3,
       "config": {
-        "mode": "text",
-        "text": "Unregistered T2/FLAIR",
+        "mode": "",
+        "text": "",
         "url": "",
         "imageData": {
           "x": 0,
@@ -90,9 +81,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -102,7 +90,7 @@
       "col": 1,
       "row": 0,
       "config": {
-        "mode": "subheading",
+        "mode": "topText",
         "text": "Baseline",
         "url": "",
         "imageData": {
@@ -112,9 +100,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -127,6 +112,7 @@
         "mode": "mri",
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -134,9 +120,6 @@
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -149,6 +132,7 @@
         "mode": "mri",
         "url": "t2_baseline.nii.gz",
         "orthogonal": true,
+        "modality": "T2 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -156,9 +140,6 @@
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -168,8 +149,8 @@
       "col": 1,
       "row": 3,
       "config": {
-        "mode": "mri",
-        "url": "t2_baseline.nii.gz",
+        "mode": "",
+        "url": "",
         "orthogonal": true,
         "imageData": {
           "x": 0,
@@ -178,9 +159,6 @@
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -190,7 +168,7 @@
       "col": 2,
       "row": 0,
       "config": {
-        "mode": "subheading",
+        "mode": "topText",
         "text": "Followup",
         "url": "",
         "imageData": {
@@ -200,9 +178,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -215,6 +190,7 @@
         "mode": "mri",
         "url": "../Nifty/ocoregistered_followup_6DOF.nii.gz",
         "orthogonal": true,
+        "modality": "T1 Followup",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -222,9 +198,6 @@
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -237,6 +210,7 @@
         "mode": "mri",
         "url": "../Nifty/ocoregistered_to_baseline_T1.nii.gz",
         "orthogonal": true,
+        "modality": "T2 Followup",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -244,9 +218,6 @@
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -256,7 +227,7 @@
       "col": 2,
       "row": 3,
       "config": {
-        "mode": "mri",
+        "mode": "",
         "url": "",
         "orthogonal": true,
         "imageData": {
@@ -266,9 +237,6 @@
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -279,12 +247,12 @@
       "row": 0,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 0, 0 ],
         "displaySize": [ 3, 4 ],
-        "modality": "t1",
-        "timeline":  "baseline", 
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -292,9 +260,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
 
         }
@@ -305,10 +270,12 @@
       "row": 1,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 0, 1 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -316,9 +283,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -328,6 +292,7 @@
       "row": 2,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 0, 2 ],
@@ -339,9 +304,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -351,6 +313,7 @@
       "row": 3,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 0, 3 ],
@@ -362,9 +325,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -374,10 +334,12 @@
       "row": 0,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 1, 0 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -385,9 +347,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -397,10 +356,12 @@
       "row": 1,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 1, 1 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -408,9 +369,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -420,6 +378,7 @@
       "row": 2,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 1, 2 ],
@@ -431,9 +390,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -443,6 +399,7 @@
       "row": 3,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         
@@ -455,9 +412,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -467,10 +421,12 @@
       "row": 0,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 2, 0 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -478,9 +434,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -490,10 +443,12 @@
       "row": 1,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 2, 1 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "imageData": {
           "x": 0,
           "y": 0,
@@ -501,9 +456,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -513,6 +465,7 @@
       "row": 2,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 2, 2 ],
@@ -524,9 +477,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": { }
         }
       }
@@ -536,6 +486,7 @@
       "row": 3,
       "config": {
         "mode": "zoom",
+        "switchable":  true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 2, 3 ],
@@ -547,9 +498,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -572,9 +520,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -598,9 +543,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -624,9 +566,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -649,9 +588,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -674,9 +610,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -699,9 +632,6 @@
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
-          "scale": 1,
-          "translationX": 0,
-          "translationY": 0,
           "markers": {
           }
         }
@@ -712,7 +642,8 @@
       "row": 0,
       "config": {
         "mode": "title",
-        "text": "PDF Reports"
+        "text": "PDF Reports",
+        "subText": "Baseline"
       }
     },
     {
@@ -720,10 +651,10 @@
       "row": 1,
       "config": {
         "mode": "pdf",
-        "url": "_140926_msmetrix_report-3.pdf",
-        "displaySize": [ 1, 2 ],
+        "url": "140926_msmetrix_report-3.pdf",
+        "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 0 ],
-        "zoomFactor": 180
+        "scale": 3.1
       }
     },
     {
@@ -731,10 +662,29 @@
       "row": 2,
       "config": {
         "mode": "pdf",
-        "url": "_140926_msmetrix_report-3.pdf",
-        "displaySize": [ 1, 2 ],
+        "url": "140926_msmetrix_report-3.pdf",
+        "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 1 ],
-        "zoomFactor": 180
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 13,
+      "row": 3,
+      "config": {
+        "mode": "pdf",
+        "url": "140926_msmetrix_report-3.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 2 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 14,
+      "row": 0,
+      "config": {
+        "mode": "topText",
+        "text": "Followup"
       }
     },
     {
@@ -742,10 +692,10 @@
       "row": 1,
       "config": {
         "mode": "pdf",
-        "url": "_msmetrix_report-2.pdf",
-        "displaySize": [ 1, 2 ],
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 0 ],
-        "zoomFactor": 180
+        "scale": 3.1
       }
     },
     {
@@ -753,10 +703,29 @@
       "row": 2,
       "config": {
         "mode": "pdf",
-        "url": "_msmetrix_report-2.pdf",
-        "displaySize": [ 1, 2 ],
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 1 ],
-        "zoomFactor": 180
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 14,
+      "row": 3,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 2 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 15,
+      "row": 0,
+      "config": {
+        "mode": "topText",
+        "text": "Comparative"
       }
     },
     {
@@ -764,21 +733,32 @@
       "row": 1,
       "config": {
         "mode": "pdf",
-        "url": "_150925_msmetrix_report-3.pdf",
-        "displaySize": [ 1, 2 ],
+        "url": "150925_msmetrix_report-3.pdf",
+        "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 0 ],
-        "zoomFactor": 180
+        "scale": 3.1
       }
-    }, 
+    },
     {
       "col": 15,
       "row": 2,
       "config": {
         "mode": "pdf",
-        "url": "_msmetrix_report-2.pdf",
-        "displaySize": [ 1, 2 ],
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 1 ],
-        "zoomFactor": 180
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 15,
+      "row": 3,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 2 ],
+        "scale": 3.1
       }
     }
   ]

@@ -16,7 +16,6 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
     $("iframe").contents().find("#viewSelect").on("selectmenuchange", function (event, ui) {
         var viewer = containers[0].viewer;
         var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
-        gdo.net.instance[instanceId].stack.currentImageIndex = viewer.mainImage.currentSlice;
         console.log("Switching to: " + viewText);
 
         gdo.net.app["XNATImaging"].sendImageParam(instanceId);
@@ -73,26 +72,6 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
             viewer.gotoCoordinate(viewer.currentCoord);
         }
     });
-
-    /*$("iframe").contents().find('#dicomImage').on('mousewheel DOMMouseScroll', function (e) {
-        // Firefox e.originalEvent.detail > 0 scroll back, < 0 scroll forward
-        // chrome/safari e.originalEvent.wheelDelta < 0 scroll back, > 0 scroll forward
-        if (e.originalEvent.wheelDelta < 0 || e.originalEvent.detail > 0) {
-            gdo.net.app["XNATImaging"].navigateDown(instanceId);
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Down');
-                gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#downNavigationButton').text());
-            }
-        } else if (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0) {
-            if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-                gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Up');
-                gdo.net.app["XNATImaging"].server.setControl(instanceId, $("iframe").contents().find('#upNavigationButton').text());
-            }
-            gdo.net.app["XNATImaging"].navigateUp(instanceId);
-        }
-        //prevent page fom scrolling
-        return false;
-    });*/
 }
 
 
@@ -139,22 +118,7 @@ gdo.net.app["XNATImaging"].initializeSlider = function() {
 */
 gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
-
-    $("iframe").contents().find("#upNavigationButton")
-       .unbind()
-       .click(function () {
-           gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Up');
-           
-           gdo.net.app["XNATImaging"].navigateUp(instanceId);
-       });
-
-    $("iframe").contents().find("#downNavigationButton")
-    .unbind()
-    .click(function () {
-        gdo.consoleOut('.XNATImaging', 1, 'Sending Control to Clients :' + 'Down');
-        
-        gdo.net.app["XNATImaging"].navigateDown(instanceId);
-    });
+    var appConfig = gdo.net.app["XNATImaging"].appConfig;
 
     $("iframe").contents().find("#resetButton")
     .unbind()
@@ -205,4 +169,44 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
 
             gdo.net.app["XNATImaging"].sendImageParam();
         });
+
+    var rowCounter = 0;
+    for (var i = 0; i < appConfig.mriUrlList.length; i++) {
+        if (rowCounter % 2 == 0) {
+            console.log("new row");
+            $("iframe").contents().find("#switchScreenContainer").append("<div class='row'>");
+        }
+        var buttonStyle = "btn-primary";
+        if (i == 0) {
+            buttonStyle = "btn-success";
+        }
+        $("iframe").contents().find("#switchScreenContainer").append("<input id='screen" + i + "' type='button' class='btn " + buttonStyle + "'/ value='" + appConfig.mriUrlList[i].modality + "'/>");
+        
+        if (rowCounter % 2 == 0) {
+            $("iframe").contents().find("#switchScreenContainer").append("</div>");
+        }
+        rowCounter++;
+    }
+
+
+    $("iframe").contents().find("#switchScreenContainer input.btn")
+        .unbind()
+        .click(function (event) {
+            $("iframe").contents().find("#switchScreenContainer input.btn").removeClass("btn-success");
+            $("iframe").contents().find("#switchScreenContainer input.btn").addClass("btn-primary");
+            $(event.target).removeClass("btn-primary");
+            $(event.target).addClass("btn-success");
+            var index = event.target.id.substr(event.target.id.length - 1);
+            var url = appConfig.mriUrlList[index].url;
+            var modality = event.target.value;
+
+            gdo.net.app["XNATImaging"].server.requestScreenSwitch(instanceId, url, modality);
+
+            appConfig.controlUrl = url;
+            gdo.net.app["XNATImaging"].initializePapaya(instanceId, "control", url);
+
+    });
+
+
+
 }

@@ -168,9 +168,11 @@
     <Content Include="Scripts\XNATImaging\images\redmarker.png" />
     <Content Include="Scripts\XNATImaging\papaya.js" />
     <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.utility.js" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\GSK131086_000001_msmetrix_report-2.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\GSK131086_000001_140926_msmetrix_report-3.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\GSK131086_000001_150925_msmetrix_report-3.pdf" />
+    <Content Include="Scripts\XNATImaging\pdf.js" />
+    <Content Include="Scripts\XNATImaging\pdf.worker.js" />
+    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\msmetrix_report-2.pdf" />
+    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\140926_msmetrix_report-3.pdf" />
+    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\150925_msmetrix_report-3.pdf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

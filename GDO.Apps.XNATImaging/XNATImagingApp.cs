@@ -25,10 +25,13 @@ namespace GDO.Apps.XNATImaging
         public double WindowCenter { get; set; }
 
         string[] AllModes = { "title", "topText", "subText", "mri", "zoom", "pdf" };
+
+        // parameters for default configuration
         string[] DefaultTextStrings = { "Multiple Sclerosis Imaging", "T1", "T2/FLAIR", "Baseline", "Followup", "PDF Reports"};
         string[] DefaultMriUrls = { "t1_baseline.nii.gz", "t2_baseline.nii.gz", "t1_followup.nii.gz", "t2_followup.nii.gz" };
+        string[] DefaultModalityStrings = { "T1 Baseline", "T2 Baseline", "T1 Followup", "T2 Followup" };
         string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "patient_t1_baseline.nii.gz", "patient_t1_baseline.nii.gz" };
-        string[] DefaultPdfUrls = { "_140926_msmetrix_report-3.pdf", "_msmetrix_report-2.pdf", "_150925_msmetrix_report-3.pdf" };
+        string[] DefaultPdfUrls = { "140926_msmetrix_report-3.pdf", "msmetrix_report-2.pdf", "150925_msmetrix_report-3.pdf" };
 
         public void Init()
         {
@@ -62,17 +65,17 @@ namespace GDO.Apps.XNATImaging
             WindowCenter = windowCenter;
         }
 
+        // Generates blank configuration file
         public string GenerateBlankConfigurationFile()
         {
-
             JObject appConfig = JObject.FromObject(new
             {
                 appName = AppName,
                 localHost = "http://localhost:12332/",
                 testServerHost = "http://dsigdotesting.doc.ic.ac.uk/",
                 experimentName = "GSK131086_000001",
-                patient = "AD10713",
-                controlUrl = "GSK131086_000001/t1_baseline.nii.gz",
+                patient = "AD201713",
+                controlUrl = "t1_baseline.nii.gz",
                 mriUrl = "Scripts/XNATImaging/Scans/",
                 mriUrlList = new JArray(),
                 pdfUrl = "../../Scripts/XNATImaging/pdf/",
@@ -110,8 +113,8 @@ namespace GDO.Apps.XNATImaging
         }
 
 
-        // Regenerates default Configuration File
-        public string GenerateDefaultConfigurationFile(string[] textStrings, string[] mriUrls, string[] zoomUrls, string[] pdfUrls)
+        // Method to generate default Configuration File
+        public string GenerateDefaultConfigurationFile(string[] textStrings, string[] mriUrls, string[] modalityStrings, string[] zoomUrls, string[] pdfUrls)
         {
             JObject appConfig = JObject.FromObject(new
             {
@@ -119,8 +122,8 @@ namespace GDO.Apps.XNATImaging
                 localHost = "http://localhost:12332/",
                 testServerHost = "http://dsigdotesting.doc.ic.ac.uk/",
                 experimentName = "GSK131086_000001",
-                patient = "AD10713",
-                controlUrl = "GSK131086_000001/t1_baseline.nii.gz",
+                patient = "AD201713",
+                controlUrl = "t1_baseline.nii.gz",
                 mriUrl = "Scripts/XNATImaging/Scans/",
                 mriUrlList = new JArray(),
                 pdfUrl = "../../Scripts/XNATImaging/pdf/",
@@ -151,9 +154,9 @@ namespace GDO.Apps.XNATImaging
                     }
                     if (mode == AllModes[3])
                     {
-                        if (mriCounter < mriUrls.Length)
+                        if (mriCounter < mriUrls.Length && mriCounter < modalityStrings.Length)
                         {
-                            screenConfig = AddMriConfig(mode, mriUrls[mriCounter]);
+                            screenConfig = AddMriConfig(mode, mriUrls[mriCounter], modalityStrings[mriCounter]);
                         }
                         mriCounter++;
                     }
@@ -202,13 +205,14 @@ namespace GDO.Apps.XNATImaging
             });
         }
 
-        private JObject AddMriConfig(string mode, string url)
+        private JObject AddMriConfig(string mode, string url, string modality)
         {
             return JObject.FromObject(new 
             {
                 mode,
 		        url,
 		        orthogonal = true,
+                modality,
 		        imageData = JObject.FromObject(new 
                 {
                     x = 0,
@@ -258,16 +262,16 @@ namespace GDO.Apps.XNATImaging
                 })
 	        });
         }
-
+        
         private JObject AddPdfConfig(string mode, int row, string url)
         {
             return JObject.FromObject(new
             {
                 mode,
                 url,
+                displaySize = new JArray(1, 3),
                 zoomOffset = new JArray(0, row - 1),
-                displaySize = new JArray(3, 4),
-                zoomFactor = 3.1
+                scale = 3.1
             });
         }
 
@@ -279,9 +283,9 @@ namespace GDO.Apps.XNATImaging
                 url = "",
                 switchable = false,
                 orthogonal = true,
-                zoomOffset = new JArray(),
                 displaySize = new JArray(),
-                zoomFactor = 3,
+                zoomOffset = new JArray(),
+                scale = 3,
                 text = "",
                 modality = "",
                 imageData = JObject.FromObject(new
@@ -298,7 +302,7 @@ namespace GDO.Apps.XNATImaging
             });
         }
 
-
+        // Maps screens to mode based on column and row in cave
         private string GetMode(int col, int row)
         {
 
@@ -349,49 +353,34 @@ namespace GDO.Apps.XNATImaging
             return "";
         }
 
-
-        /*public void BuildZoomConfigurations()
-        {
-            ZoomConfigJson = new string[ZoomConfiguration.GetLength(0), ZoomConfiguration.GetLength(1)];
-            for (int i = 0; i < ZoomConfiguration.GetLength(0); i++)
-            {
-                for (int j = 0; j < ZoomConfiguration.GetLength(1); j++)
-                {
-                    ZoomConfigJson[i, j] = "{" +
-                                        "   'url': 'GSK131086_000001/Baseline/flair'," +
-                                        "   'topLeft': [ " + j + ", " + i + " ]," +
-                                        "   'bottomRight': [ " + (j + 1) + ", " + (i + 1) + " ]," +
-                                        "   'zoomId': " + (i * ZoomConfiguration.GetLength(1) + (j + 1)) + "," +
-                                        "   'zoomFactor': 16" +
-                                        "}";
-                }
-            }
-        }
-
-        public AppConfiguration GetZoomConfiguration(int nodeId)
-        {
-
-            for (int i = 0; i < ZoomConfiguration.GetLength(0); i++)
-            {
-                for (int j = 0; j < ZoomConfiguration.GetLength(1); j++)
-                {
-                    if (nodeId == ZoomConfiguration[i, j])
-                    {
-                        dynamic json = JsonConvert.DeserializeObject(ZoomConfigJson[i, j]);
-                        return new AppConfiguration("Zoom" + nodeId, json);
-                    }
-                }
-            }
-            return null;
-        }*/
-
         // test method
         public void InitConfigurations()
         {
             Debug.WriteLine(Configuration.Name);
+
+            var jsonString = Configuration.Json.ToString();
+            dynamic config = JObject.Parse(jsonString);
+
+            JArray mriUrlList = new JArray();
+            foreach (var screen in config.screens)
+            {
+                if (screen.config.mode == "mri")
+                {
+                    Debug.WriteLine("MRI!");
+                    mriUrlList.Add(JObject.FromObject(new
+                    {
+                        modality = screen.config.modality.ToString(),
+                        url = screen.config.url.ToString()
+                    }));
+                }
+            }
+            config.mriUrlList.Replace(mriUrlList);
+            Configuration.Json = config.DeepClone();
+            Debug.WriteLine(Configuration.Json);
+
             //Debug.WriteLine(Configuration.Json);
             //Debug.WriteLine(GenerateBlankConfigurationFile());
-            Debug.WriteLine(GenerateDefaultConfigurationFile(DefaultTextStrings, DefaultMriUrls, DefaultZoomUrls, DefaultPdfUrls));
+            //Debug.WriteLine(GenerateDefaultConfigurationFile(DefaultTextStrings, DefaultMriUrls, DefaultModalityStrings, DefaultZoomUrls, DefaultPdfUrls));
         }
     }
 }

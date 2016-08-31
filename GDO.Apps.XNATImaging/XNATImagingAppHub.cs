@@ -104,6 +104,7 @@ namespace GDO.Apps.XNATImaging
                     {
                         Debug.WriteLine(appConfig.Name);
                         //Debug.WriteLine(appConfig.Json);
+                        
                         var jsonString = appConfig.Json.ToString();
                         dynamic config = JObject.Parse(jsonString);
 
@@ -117,7 +118,6 @@ namespace GDO.Apps.XNATImaging
                         {
                             foreach (var screen in config.screens)
                             {
-
                                 int row = screen.row;
                                 int col = screen.col;
                                 if (row == Cave.Nodes[nodeId].Row && col == Cave.Nodes[nodeId].Col)
@@ -159,22 +159,18 @@ namespace GDO.Apps.XNATImaging
                         var jsonString = appConfig.Json.ToString();
                         dynamic config = JObject.Parse(jsonString);
 
+                        config.controlUrl = url;
+
                         foreach (var screen in config.screens)
                         {
-
-                            int row = screen.row;
-                            int col = screen.col;
-                            if (screen.mode == "zoom" && screen.switchable)
+                            if (screen.config.mode == "zoom" && screen.config.switchable != null && (bool) screen.config.switchable)
                             {
-                                screen.url = url;
-
-                                // send config
-                                Debug.WriteLine("Delete screen configs");
-                                config.screens.Replace(
-                                    JObject.FromObject(screen));
+                                screen.config.url = url;
+                                screen.config.modality = modality;
                             }
-
                         }
+
+                        appConfig.Json = config;
 
                         var jsonStr = config.ToString();
                         var jsonStri = appConfig.Json.ToString();

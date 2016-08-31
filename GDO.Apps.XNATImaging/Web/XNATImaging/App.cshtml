@@ -13,9 +13,10 @@
     <link rel="stylesheet" type="text/css" href="../../Scripts/XNATImaging/css/papaya.css"/>
     <link rel="stylesheet" href="../../Scripts/XNATImaging/css/main.css"/>
 
-    <script src="../../Scripts/XNATImaging/papaya.js"></script>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
     <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/XNATImaging/papaya.js"></script>
+    <script src="../../Scripts/XNATImaging/pdf.js"></script>
 
     <title>XNAT Imaging Project</title>
     @*<link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">*@
@@ -54,7 +55,7 @@
             console.log("Papaya loaded");
 
             var gdo = parent.gdo;
-            gdo.net.app["XNATImaging"].initClient(papaya, papayaContainers);
+            gdo.net.app["XNATImaging"].initClient(papaya, papayaContainers, PDFJS);
         });
 </script>
 
