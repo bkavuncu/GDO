@@ -1206,10 +1206,14 @@ var initDD3App = function () {
             };
 
             var _dd3_shapeHandler = function (data) {
+                console.log("Data before _dd3_shapeHandler");
+                console.log(data);
+
                 var mainId = data.containers.shift(),
                     obj = d3.select("#" + data.sendId),
                     g1 = d3.select("#" + mainId), g2,
                     c = false; // Whether the object was changed of group since last time
+                
 
                 if (g1.empty()) {
                     utils.log("The group with id '" + mainId + "' received doesn't exist in the dom - A group with an id must exist in every browsers !", 2);
@@ -1251,6 +1255,12 @@ var initDD3App = function () {
                 obj.html_(data.html)
                     .classed_('dd3_received', true)
                     .attr_("id", data.sendId); // Here because attr can contain id
+
+                console.log("Data after _dd3_shapeHandler");
+                console.log(data);
+
+                console.log("Object after _dd3_shapeHandler");
+                console.log(obj);
             };
 
             var _dd3_removeHandler = function (data) {
@@ -1363,6 +1373,9 @@ var initDD3App = function () {
                             trst.ease(d3.easeLinear);//TODO v4: change the parsing of the easing
                         }
                     }
+
+                    console.log(trst.node());
+                    console.log(trst.node().__transition);
                     
                 };
 
@@ -1763,12 +1776,25 @@ var initDD3App = function () {
                 var createShapeObject = function (obj, elem, onSend) {
                     var groups = getParentGroups(elem, onSend);
 
+                    /*
+                    console.log('obj in createShapeObject');
+                    console.log(obj);
+                    console.log('elem in createShapeObject');
+                    console.log(elem);
+                    console.log('groups in createShapeObject');
+                    console.log(groups);
+                    */
+
                     obj.type = 'shape';
                     obj.attr = utils.getAttr(elem);
                     obj.name = elem.nodeName;
                     obj.html = elem.innerHTML;
                     // Remember the container to keep the drawing order (superposition)
                     obj.containers = groups;
+                    /*
+                    console.log('obj in createShapeObject');
+                    console.log(obj);
+                    */
                 };
 
                 var createPropertiesObject = function (obj, elem, f, props) {
