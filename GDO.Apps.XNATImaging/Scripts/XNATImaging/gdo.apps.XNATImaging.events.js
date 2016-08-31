@@ -225,7 +225,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
                     gdo.net.app["XNATImaging"].playing = false;
                     $('iframe').contents().find('#playButton').val("Play");
                 }
-            }, 300);
+            }, 200);
 
         } else {
             gdo.net.app["XNATImaging"].pause(instanceId);
@@ -243,9 +243,9 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
         if (orientation == "Sagittal") {
             viewer.incrementSagittal(false, 1);
         } else if (orientation == "Coronal") {
-            viewer.incrementCoronal(false, 1);
+            viewer.incrementCoronal(true, 1);
         } else if (orientation == "Axial") {
-            viewer.incrementAxial(false, 1);
+            viewer.incrementAxial(true, 1);
         }
 
         gdo.net.app["XNATImaging"].sendImageParam(instanceId);
@@ -258,6 +258,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
 ** TODO: May consider resetting image param values to defaults here as well
 */
 gdo.net.app["XNATImaging"].resetView = function (instanceId) {
+    var papaya = gdo.net.app["XNATImaging"].papaya;
     var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
 
     var center = new papaya.core.Coordinate(Math.floor(viewer.volume.header.imageDimensions.xDim / 2),
