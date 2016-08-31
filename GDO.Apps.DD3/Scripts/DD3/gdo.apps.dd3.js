@@ -1206,9 +1206,6 @@ var initDD3App = function () {
             };
 
             var _dd3_shapeHandler = function (data) {
-                console.log("Data before _dd3_shapeHandler");
-                console.log(data);
-
                 var mainId = data.containers.shift(),
                     obj = d3.select("#" + data.sendId),
                     g1 = d3.select("#" + mainId), g2,
@@ -1256,11 +1253,6 @@ var initDD3App = function () {
                     .classed_('dd3_received', true)
                     .attr_("id", data.sendId); // Here because attr can contain id
 
-                console.log("Data after _dd3_shapeHandler");
-                console.log(data);
-
-                console.log("Object after _dd3_shapeHandler");
-                console.log(obj);
             };
 
             var _dd3_removeHandler = function (data) {
@@ -1296,6 +1288,7 @@ var initDD3App = function () {
 
                     utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
                     
+
                     for (var a in data.start.attr) {
                         if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
                     }
@@ -1374,8 +1367,6 @@ var initDD3App = function () {
                         }
                     }
 
-                    console.log(trst.node());
-                    console.log(trst.node().__transition);
                     
                 };
 
@@ -1695,13 +1686,13 @@ var initDD3App = function () {
             };
 
             _dd3.selection.prototype.send = function () {
+                console.log('Manually sending a shape ....'); //TODO v4: remove
                 _dd3_selection_createProperties(this);
                 return _dd3_selection_send.call(this, 'shape');
             };
 
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
-
 
                 this.each(function () {
                     if (this.nodeName === 'g')
@@ -1710,8 +1701,11 @@ var initDD3App = function () {
                         counter += _dd3_sendElement.call(this, type, args, rcpts);
                 });
 
+                console.log('Number of recipients: '+counter);
+
                 // We buffered so we need to flush buffer of recipients !
                 rcpts.forEach(function (d) { peer.flush(d[0], d[1]); });
+
 
                 if (counter > 0)
                     utils.log("Sending " + type + " to " + counter + " recipients...");
@@ -1720,15 +1714,14 @@ var initDD3App = function () {
             };
 
             var _dd3_sendElement = function (type, args, rcpts) {
-
+                console.log('_dd3_sendElement');
                 var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
-
                 // Get former recipients list saved in the __recipients__ variable to send them 'exit' message
                 formerRcpts = this.__recipients__;
                 // Get current recipients
 
-
                 rcpt = this.__recipients__ = _dd3_findTransitionsRecipients(this);
+                console.log(rcpt);
                 // Create (enter,update,exit) selections with the recipients
                 selections = _dd3_getSelections(rcpt, formerRcpts);
 
@@ -1776,25 +1769,12 @@ var initDD3App = function () {
                 var createShapeObject = function (obj, elem, onSend) {
                     var groups = getParentGroups(elem, onSend);
 
-                    /*
-                    console.log('obj in createShapeObject');
-                    console.log(obj);
-                    console.log('elem in createShapeObject');
-                    console.log(elem);
-                    console.log('groups in createShapeObject');
-                    console.log(groups);
-                    */
-
                     obj.type = 'shape';
                     obj.attr = utils.getAttr(elem);
                     obj.name = elem.nodeName;
                     obj.html = elem.innerHTML;
                     // Remember the container to keep the drawing order (superposition)
                     obj.containers = groups;
-                    /*
-                    console.log('obj in createShapeObject');
-                    console.log(obj);
-                    */
                 };
 
                 var createPropertiesObject = function (obj, elem, f, props) {
@@ -2117,6 +2097,7 @@ var initDD3App = function () {
                 if (this.__unwatch__ || ([].indexOf.call(this.classList, 'dd3_received') >= 0))
                     return;
 
+                //TODO v4: apparently this thing is supposed to add shape
                 if (this.nodeName === 'g')
                     [].forEach.call(this.childNodes, function (_) { _dd3_notifyChildren.call(_, name); });
                 else
@@ -2191,6 +2172,9 @@ var initDD3App = function () {
             
             var _dd3_findTransitionsRecipients = function (elem) {
 
+                console.log('_dd3_findTransitionsRecipients');
+                console.log(elem);
+
                 if (!elem || !elem.parentNode) {
                     return [];
                 }
@@ -2224,7 +2208,7 @@ var initDD3App = function () {
 
                 clones = containers.map(function (c) {
                     g = c.cloneNode(c.nodeName === "g" ? false : true);
-                    c2.appendChild(g); //V4: is erased by next line
+                    c2.appendChild(g); 
                     c2 = g;
                     return g;
                 });
@@ -2290,6 +2274,7 @@ var initDD3App = function () {
 
                 //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
+                console.log(rcpts)
                 return rcpts;
             };
 
@@ -2413,6 +2398,9 @@ var initDD3App = function () {
                             }
                         }
                         if(!transition) utils.log("V4 Warning: No transition on the object",4);
+
+                        console.log('Transition Starting');
+                        
                         //var transition = this.__transition[2];
                         //if(!transition) transition = this.__transition[2];
                         /*if(!transition) {
@@ -2483,10 +2471,12 @@ var initDD3App = function () {
                         };
                         args.elapsed = _dd3_timeTransitionRelative ? args.time - syncTime : args.time;
 
+
                         _dd3_retrieveTransitionSettings(this, args);
 
-                        this.__dd3_transitions__.set(ns, args);//TODO: v4 should be populated
+                        console.log(this);
 
+                        this.__dd3_transitions__.set(ns, args);//TODO: v4 should be populated
                         _dd3_selection_send.call(d3.select(this), 'transitions', { 'ns': ns });
                     });
 
