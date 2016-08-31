@@ -368,7 +368,7 @@
                 });
                     $('#createCircles').click(function () {
                         if (!circles) {
-                            circles = 100;
+                            circles = 5;
                             server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
                             $(".superposition.non_distributed .red").removeClass("red").addClass("green");
                             $(this).removeClass("green").addClass("red");
