@@ -641,5 +641,20 @@ namespace GDO.Apps.Images
                 }
             }
         }
+        public void ReceiveCanvasData(int instanceId, string dataURL)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).receiveCanvasData(instanceId, dataURL);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
     }
 }

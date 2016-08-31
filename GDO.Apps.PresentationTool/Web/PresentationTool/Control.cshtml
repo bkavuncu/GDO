@@ -180,6 +180,20 @@
     <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
     <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
     <script src="../../Scripts/PresentationTool/jquery.ui.touch-punch.min.js"></script>
+    
+    <!-- wColorPicker -->
+    <link href="../../Scripts/PresentationTool/wPaint/wColorPicker.min.css" rel="stylesheet" />
+    <script src="../../Scripts/PresentationTool/wPaint/wColorPicker.min.js"></script>
+
+    <!-- wPaint -->
+    <link href="../../Scripts/PresentationTool/wPaint/wPaint.min.css" rel="stylesheet" />
+    <script src="../../Scripts/PresentationTool/wPaint/wPaint.utils.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/wPaint.min.js"></script>
+    <!-- Plugins -->
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/main/wPaint.menu.main.min.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/text/wPaint.menu.text.min.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/file/wPaint.menu.main.file.min.js"></script>
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -238,6 +252,7 @@
                             <button id="img_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
                             <button id="img_restore" class="btn btn-primary"><i class='fa  fa-refresh fa-fw'></i>&nbsp;Restore</button>
                             <button id="img_rotate" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Rotate</button>
+                            <button id="img_paint" class="btn btn-primary" data-toggle='modal' data-target='#paint_canvas'><i class='fa  fa-files-o fa-fw'></i>&nbsp;Manage</button>
                         </div>
                     </div>
                 </div>
@@ -431,6 +446,27 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="button" data-dismiss="modal" id="delete_file" class="btn btn-primary btn-ok">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="paint_canvas" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5><i align="center" class='fa  fa-files-o  fa-fw'></i>&nbsp;<font color="white">File Management</font></h5>
+                </div>
+                <div class="modal-body">
+                    <font color="white">Select file to be deleted</font>
+                    <br>
+                    &nbsp;
+                    <br />
+                    <div id="wPaint" style="position:relative; width:88.88888vh; height:50vh; background:#CACACA;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" data-dismiss="modal" id="update_canvas" class="btn btn-primary btn-ok">Update</button>
                 </div>
             </div>
         </div>
@@ -719,8 +755,22 @@
                 }
             });
         });
-
-
+        $('#wPaint').wPaint({
+            menuOffsetLeft: -35,
+            menuOffsetTop: -50,
+            onShapeDown: createCallback('onShapeDown'),
+            onShapeUp: createCallback('onShapeUp'),
+            onShapeMove: createCallback('onShapeDMove')
+        });
+        function createCallback(cbName) {
+            return function () {
+                if (cbName === 'onShapeUp') {
+                    var canvas = $("#wPaint").wPaint("image");
+                    var serializeCanvas = JSON.stringify(canvas);
+                    gdo.net.app["Images"].server.receiveCanvasData(1, serializeCanvas);
+                }
+            }
+        }
     </script>
 
     <script>
