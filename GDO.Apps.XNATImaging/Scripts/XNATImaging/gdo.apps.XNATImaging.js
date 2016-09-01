@@ -44,8 +44,8 @@ $(function () {
     ** SignalR receive method to update image parameters based on control input
     **  Update image parameters:
     **  instanceId      int
-    **  windowWidth     int
-    **  windowCenter    int
+    **  windowWidth     dbl
+    **  windowCenter    dbl
     **  currentCoord    obj
     **  markingCoords   obj
     */
@@ -77,7 +77,6 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, container
 
     $("iframe").contents().find("#viewSelect").selectmenu();
     $("iframe").contents().find("#colorSelect").selectmenu();
-    $("iframe").contents().find("#patientSelect").selectmenu();
 
     gdo.net.app["XNATImaging"].server.requestConfig(instanceId, 0);
 }
@@ -89,11 +88,6 @@ gdo.net.app["XNATImaging"].setupControl = function (instanceId, appConfig) {
     var url = appConfig.controlUrl;
     gdo.net.app["XNATImaging"].appConfig = appConfig;
     gdo.net.app["XNATImaging"].patientName = appConfig.patient;
-
-    // Keep mri url list after switching patients
-    if (gdo.net.app["XNATImaging"].mriUrlList != null) {
-        gdo.net.app["XNATImaging"].appConfig.mriUrlList = gdo.net.app["XNATImaging"].mriUrlList;
-    }
 
     console.log(appConfig);
 
@@ -135,16 +129,16 @@ gdo.net.app["XNATImaging"].setupClient = function (instanceId, appConfig) {
         mode = "";
     }
 
-    if (mode == "mri") {
+    if (mode === "mri") {
         gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, screenConfig.url);
 
-    } else if (mode == "pdf") {
+    } else if (mode === "pdf") {
         gdo.net.app["XNATImaging"].setupPDF();
 
-    } else if (mode == "zoom") {
+    } else if (mode === "zoom") {
         gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, screenConfig.url);
 
-    } else if (mode == "title" || mode == "topText" || mode == "subText") {
+    } else if (mode === "title" || mode === "topText" || mode === "subText") {
         gdo.net.app["XNATImaging"].setupText(mode);
     } else {
         $("iframe").contents().find("#main").empty();
@@ -152,19 +146,22 @@ gdo.net.app["XNATImaging"].setupClient = function (instanceId, appConfig) {
 }
 
 
+/*
+** Initialise Client nodes in display text modes
+*/
 gdo.net.app["XNATImaging"].setupText = function (mode) {
     var screenConfig = gdo.net.app["XNATImaging"].appConfig.screens.config;
 
     $("iframe").contents().find("#main").empty();
     $("iframe").contents().find("#main").append("<div class='heading'>");
-    if (mode == "title") {
+    if (mode === "title") {
         $("iframe").contents().find(".heading").append("<h1>" + screenConfig.text + "</h1>");
-        if (gdo.net.node[gdo.clientId].col == 0) {
+        if (gdo.net.node[gdo.clientId].col === 0) {
             $("iframe").contents().find(".heading").append("<h2>Patient ID: " + gdo.net.app["XNATImaging"].patientName + "</h2>");
         } else if (screenConfig.subText != null) {
             $("iframe").contents().find(".heading").append("<h2>" + screenConfig.subText + "</h2>");
         }
-    } else if (mode == "topText") {
+    } else if (mode === "topText") {
         $("iframe").contents().find(".heading").append("<h2>" + screenConfig.text + "</h2>");
     } else {
         $("iframe").contents().find(".heading").append("<h3>" + screenConfig.text.toUpperCase() + "</h3>");
@@ -202,7 +199,7 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
             var context = canvas.getContext('2d');
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            var widthDifference = gdo.net.node[gdo.clientId].width - viewport.width;
+            var widthDifference = gdo.net.node[gdo.clientId].width * screenConfig.displaySize[0] - viewport.width;
             if (widthDifference > 0) {
                 $("iframe").contents().find('#pdf-canvas').css("margin-left", widthDifference / 2 + "px");
             }
@@ -223,16 +220,19 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
             });
         });
     });
-
 }
 
 
 gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
 
     var papaya = gdo.net.app["XNATImaging"].papaya;
-    //var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var appConfig = gdo.net.app["XNATImaging"].appConfig;
     var screenConfig = appConfig.screens.config;
+
+    // Fix for empty screens being used for displaying Papaya after a configuration change
+    if ($("iframe").contents().find("#dicomImage")[0] == null) {
+        $("iframe").contents().find("#main").append("<div id='dicomImage'><div class='papaya' data-params='params'></div>");
+    }
 
     var baseUrl = appConfig.localHost + appConfig.mriUrl + appConfig.experimentName + "/";
     //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
@@ -246,10 +246,8 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
     var imageName = url;
     var imageIds = [imageUrl];
 
-    params["worldSpace"] = appConfig.worldSpace;
-    params["smoothDisplay"] = true;
-
-    if (gdo.clientMode == gdo.CLIENT_MODE.NODE && mode == "zoom") {
+    //overlay color stuff
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE && mode === "zoom") {
         params["luts"] = [
             { "name": "GMBlue", "data": [[0, 0.21, 0.34, 0.4], [1, 0.21, 0.34, 0.4]] },
             { "name": "Red", "data": [[0, 1, 0, 0], [1, 1, 0, 0]] }
@@ -259,10 +257,9 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
             for (var i = 0; i < screenConfig.overlays.length; i++) {
                 imageIds.push(baseUrl + screenConfig.overlays[i]);
 
-                if (screenConfig.overlays[i] == "gm_baseline.nii.gz" || screenConfig.overlays[i] == "gm_followup.nii.gz") {
-                    console.log("Blue");
+                if (screenConfig.overlays[i] == "gm_baseline.nii.gz" || screenConfig.overlays[i] === "gm_followup.nii.gz") {
                     params[screenConfig.overlays[i]] = { "alpha": 0.9, "lut": "GMBlue" };
-                } else if (screenConfig.overlays[i] == "labeled_lesions_baseline.nii.gz" || screenConfig.overlays[i] == "labeled_lesions_followup.nii.gz") {
+                } else if (screenConfig.overlays[i] === "labeled_lesions_baseline.nii.gz" || screenConfig.overlays[i] === "labeled_lesions_followup.nii.gz") {
                     console.log("Red");
                     params[screenConfig.overlays[i]] = { "alpha": 0.8, "lut": "Red" };
                 } else {
@@ -272,8 +269,15 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
         }
     }
 
+    /*if (screenConfig != null && screenConfig.imageData.screenMax != 0) {
+        console.log(imageName);
+        console.log(screenConfig.imageData.screenMax);
+        params[imageName] = { min: 0, max: 649 };
+    }*/
+
+    params["worldSpace"] = appConfig.worldSpace;
+    params["smoothDisplay"] = true;
     params["images"] = imageIds;
-    //params[imageName] = { minPercent: 0.1 };
     params["mainView"] = appConfig.defaultOrientation;
     params["radiological"] = false;
     params["showControls"] = false;
@@ -310,17 +314,16 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
         default:
             console.log("No accepted mode found in config");
     }
-
     console.log(params);
     papaya.Container.resetViewer(0, params);
 }
+
 
 /*
 ** Resize papaya for zoom canvas
 */
 gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight) {
 
-    //var papaya = gdo.net.app["XNATImaging"].papaya;
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var screenConfig = gdo.net.app["XNATImaging"].appConfig.screens.config;
 
@@ -345,21 +348,21 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
         $("iframe").contents().find("#dicomImage").css("margin-bottom", heightDifference + "px");
     }
 
-    var dicomDiv = $("iframe").contents().find('#dicomImage');
     // resize container div to match child divs and canvas
+    var dicomDiv = $("iframe").contents().find('#dicomImage');
     dicomDiv.width(canvasWidth).height(canvasHeight + heightDifference);
 
     if (screenConfig.modality != null) {
-        $("iframe").contents().find('#main').append(
-            "<div class='heading' style='position: absolute; width: 100%; height: 50%; top: 200px; left: 150px; z-index: 2'>" +
-            "<h1 style='font-size: 220px; color: white'>" + screenConfig.modality + "</h1>" +
-            "</div>"
-        );
+        if ($("iframe").contents().find('.heading h1').length) {
+            $("iframe").contents().find('.heading h1').text(screenConfig.modality);
+        } else {
+            $("iframe").contents().find('#main').append(
+                "<div class='heading' style='position: absolute; width: 200%; height: 50%; top: 150px; left: 180px; z-index: 2'>" +
+                "<h1 style='font-size: 180px; color: white'>" + screenConfig.modality + "</h1>" +
+                "</div>"
+            );
+        }
     }
-
-    /*$("iframe").contents().find('#main').height(canvasHeight + heightDifference);
-    $("iframe").contents().find('body').height(canvasHeight + heightDifference);
-    $("iframe").contents().find('html').height(canvasHeight + heightDifference);*/
 
     var iframe = $("iframe")[0];
     setTimeout(function () {  // setTimeout necessary in Chrome
@@ -369,8 +372,8 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     gdo.consoleOut(".XNATImaging", 1, "Width x Height of display: (" + gdo.net.node[gdo.clientId].width + " x " + gdo.net.node[gdo.clientId].height + ")");
     gdo.consoleOut(".XNATImaging", 1, "Canvas dimensions: (" + canvasWidth + " x " + canvasHeight + ")");
     gdo.consoleOut(".XNATImaging", 1, "Offset image by: (" + offsetX + ", " + offsetY + ")");
-
 }
+
 
 /*
 ** Broadcasts updated image parameters to all client nodes
@@ -390,16 +393,22 @@ gdo.net.app["XNATImaging"].sendImageParam = function (instanceId) {
     gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
 }
 
+
 /*
 ** Update image parameters using data received from server
 */
 gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords) {
 
+    var screenConfig = gdo.net.app["XNATImaging"].screenConfig;
     var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
     var volume = viewer.screenVolumes[0];
     console.log(volume);
 
-    if (volume.screenMin != windowWidth || volume.screenMax != windowCenter) {
+    if (screenConfig != null && screenConfig.imageData.screenMax != 0) {
+        console.log(screenConfig.imageData);
+        volume.setScreenRange(0, screenConfig.imageData.screenMax);
+    }
+    else if (volume.screenMin != windowWidth || volume.screenMax != windowCenter) {
         console.log(volume.screenMin, volume.screenMax);
         volume.setScreenRange(windowWidth, windowCenter);
     }
@@ -420,9 +429,11 @@ gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth
     }
 }
 
+
 gdo.net.app["XNATImaging"].terminateClient = function () {
     gdo.consoleOut('.XNATImaging', 1, 'Terminating XNATImaging App Client at Node ' + clientId);
 }
+
 
 gdo.net.app["XNATImaging"].terminateControl = function () {
     gdo.consoleOut('.XNATImaging', 1, 'Terminating XNATImaging App Control at Instance ' + gdo.controlId);

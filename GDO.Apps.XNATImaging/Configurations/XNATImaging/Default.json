@@ -6,10 +6,10 @@
   "patient": "AD201713",
   "controlUrl": "t1_baseline.nii.gz",
   "mriUrl": "Scripts/XNATImaging/Scans/",
-  "mriUrlList": [ ],
   "pdfUrl": "../../Scripts/XNATImaging/pdf/",
   "defaultOrientation": "sagittal",
-  "worldSpace":  true,
+  "worldSpace": true,
+  "mriUrlList": [ ],
   "screens": [
     {
       "col": 0,
@@ -19,9 +19,7 @@
         "text": "Multiple Sclerosis Imaging",
         "url": "",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -37,9 +35,7 @@
         "text": "T1",
         "url": "",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -56,9 +52,7 @@
         "text": "T2/FLAIR",
         "url": "",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -75,9 +69,7 @@
         "text": "",
         "url": "",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -94,9 +86,7 @@
         "text": "Baseline",
         "url": "",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -115,9 +105,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
@@ -136,9 +124,7 @@
         "modality": "T2 Baseline",
         "color": "green",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
@@ -155,9 +141,7 @@
         "url": "",
         "orthogonal": true,
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
@@ -174,9 +158,7 @@
         "text": "Followup",
         "url": "",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -190,14 +172,12 @@
       "row": 1,
       "config": {
         "mode": "mri",
-        "url": "../Nifty/ocoregistered_followup_6DOF.nii.gz",
+        "url": "t1_followup.nii.gz",
         "orthogonal": true,
         "modality": "T1 Followup",
         "color": "blue",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
@@ -211,14 +191,12 @@
       "row": 2,
       "config": {
         "mode": "mri",
-        "url": "../Nifty/ocoregistered_to_baseline_T1.nii.gz",
+        "url": "t1_followup.nii.gz",
         "orthogonal": true,
         "modality": "T2 Followup",
         "color": "yellow",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
@@ -235,9 +213,7 @@
         "url": "",
         "orthogonal": true,
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "Sagittal",
           "screenMin": 0,
           "screenMax": 0,
@@ -259,9 +235,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -283,9 +257,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -303,11 +275,10 @@
         "orthogonal": true,
         "zoomOffset": [ 0, 2 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -325,11 +296,10 @@
         "orthogonal": true,
         "zoomOffset": [ 0, 3 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -350,9 +320,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -373,9 +341,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -393,11 +359,10 @@
         "orthogonal": true,
         "zoomOffset": [ 1, 2 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -415,11 +380,10 @@
         "orthogonal": true,
         "zoomOffset": [ 1, 3 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -440,9 +404,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -463,9 +425,7 @@
         "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -483,11 +443,10 @@
         "orthogonal": true,
         "zoomOffset": [ 2, 2 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -500,16 +459,15 @@
       "row": 3,
       "config": {
         "mode": "zoom",
-        "switchable":  true,
+        "switchable": true,
         "url": "t1_baseline.nii.gz",
         "orthogonal": true,
         "zoomOffset": [ 2, 3 ],
         "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
         "color": "red",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
           "screenMax": 0,
@@ -520,67 +478,127 @@
     },
     {
       "col": 6,
-      "row": 1,
+      "row": 0,
       "config": {
         "mode": "zoom",
-        "url": "patient_t1_baseline.nii.gz",
-        "overlays": [ "lesion_filled_image_baseline.nii.gz", "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
         "orthogonal": true,
         "zoomOffset": [ 0, 0 ],
-        "displaySize": [ 2, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
-          "screenMax": 0,
+          "screenMax": 649,
           "markers": {
           }
         }
       }
     },
     {
-      
+      "col": 6,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+
       "col": 6,
       "row": 2,
       "config": {
         "mode": "zoom",
-        "url": "patient_t1_baseline.nii.gz",
-        "overlays": [ "lesion_filled_image_baseline.nii.gz", "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
         "orthogonal": true,
-        "zoomOffset": [ 0, 1 ],
-        "displaySize": [ 2, 2 ],
+        "zoomOffset": [ 0, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
-          "screenMax": 0,
+          "screenMax": 649,
           "markers": {
           }
         }
       }
     },
     {
-      
-      "col": 7,
-      "row": 1,
+      "col": 6,
+      "row": 3,
       "config": {
         "mode": "zoom",
-        "url": "patient_t1_baseline.nii.gz",
-        "overlays": [ "lesion_filled_image_baseline.nii.gz", "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 7,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
         "orthogonal": true,
         "zoomOffset": [ 1, 0 ],
-        "displaySize": [ 2, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
-          "screenMax": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      
+      "col": 7,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
           "markers": {
           }
         }
@@ -591,18 +609,59 @@
       "row": 2,
       "config": {
         "mode": "zoom",
-        "url": "patient_t1_baseline.nii.gz",
-        "overlays": [ "lesion_filled_image_baseline.nii.gz", "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
         "orthogonal": true,
-        "zoomOffset": [ 1, 1 ],
-        "displaySize": [ 2, 2 ],
+        "zoomOffset": [ 1, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
-          "screenMax": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 7,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 8,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
           "markers": {
           }
         }
@@ -614,17 +673,16 @@
       "config": {
         "mode": "zoom",
         "url": "t1_baseline.nii.gz",
-        "overlays": ["lesion_filled_image_baseline.nii.gz", "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz"], 
+        "overlays": ["gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz"], 
         "orthogonal": true,
-        "zoomOffset": [ 0, 0 ],
-        "displaySize": [ 1, 2 ],
+        "zoomOffset": [ 2, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
-          "screenMax": 0,
+          "screenMax": 649,
           "markers": {
           }
         }
@@ -636,24 +694,298 @@
       "config": {
         "mode": "zoom",
         "url": "t1_baseline.nii.gz",
-        "overlays": ["gm_baseline.nii.gz", "lesions_filled_image_baseline.nii.gz", "labeled_lesions_baseline.nii.gz"], 
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
         "orthogonal": true,
-        "zoomOffset": [ 0, 1 ],
-        "displaySize": [ 1, 2 ],
+        "zoomOffset": [ 2, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
         "imageData": {
-          "x": 0,
-          "y": 0,
-          "z": 0,
+          "coord": { },
           "view": "",
           "screenMin": 0,
-          "screenMax": 0,
+          "screenMax": 649,
           "markers": {
           }
         }
       }
     },
     {
-      "col": 13,
+      "col": 8,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+
+      "col": 9,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 10,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      
+      "col": 10,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 10,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 10,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": ["gm_followup.nii.gz", "labeled_lesions_followup.nii.gz"], 
+        "orthogonal": true,
+        "zoomOffset": [ 2, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": ["gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz"], 
+        "orthogonal": true,
+        "zoomOffset": [ 2, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Followup with labeled lesions",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 14,
       "row": 0,
       "config": {
         "mode": "title",
@@ -662,40 +994,40 @@
       }
     },
     {
-      "col": 13,
+      "col": 14,
       "row": 1,
       "config": {
         "mode": "pdf",
-        "url": "140926_msmetrix_report-3.pdf",
+        "url": "msmetrix_report-1",
         "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 0 ],
         "scale": 3.1
       }
     },
     {
-      "col": 13,
+      "col": 14,
       "row": 2,
       "config": {
         "mode": "pdf",
-        "url": "140926_msmetrix_report-3.pdf",
+        "url": "msmetrix_report-1",
         "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 1 ],
         "scale": 3.1
       }
     },
     {
-      "col": 13,
+      "col": 14,
       "row": 3,
       "config": {
         "mode": "pdf",
-        "url": "140926_msmetrix_report-3.pdf",
+        "url": "msmetrix_report-1",
         "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 2 ],
         "scale": 3.1
       }
     },
     {
-      "col": 14,
+      "col": 15,
       "row": 0,
       "config": {
         "mode": "topText",
@@ -703,52 +1035,11 @@
       }
     },
     {
-      "col": 14,
-      "row": 1,
-      "config": {
-        "mode": "pdf",
-        "url": "msmetrix_report-2.pdf",
-        "displaySize": [ 1, 3 ],
-        "zoomOffset": [ 0, 0 ],
-        "scale": 3.1
-      }
-    },
-    {
-      "col": 14,
-      "row": 2,
-      "config": {
-        "mode": "pdf",
-        "url": "msmetrix_report-2.pdf",
-        "displaySize": [ 1, 3 ],
-        "zoomOffset": [ 0, 1 ],
-        "scale": 3.1
-      }
-    },
-    {
-      "col": 14,
-      "row": 3,
-      "config": {
-        "mode": "pdf",
-        "url": "msmetrix_report-2.pdf",
-        "displaySize": [ 1, 3 ],
-        "zoomOffset": [ 0, 2 ],
-        "scale": 3.1
-      }
-    },
-    {
-      "col": 15,
-      "row": 0,
-      "config": {
-        "mode": "topText",
-        "text": "Comparative"
-      }
-    },
-    {
       "col": 15,
       "row": 1,
       "config": {
         "mode": "pdf",
-        "url": "150925_msmetrix_report-3.pdf",
+        "url": "msmetrix_report-2.pdf",
         "displaySize": [ 1, 3 ],
         "zoomOffset": [ 0, 0 ],
         "scale": 3.1

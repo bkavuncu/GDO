@@ -1,13 +1,20 @@
 
 x Add PDF zoom
 x border
-3 switch mri screens
-4 flair contrast
+x switch mri screens
 x multiple patients
-6 registration
 
-remove crosshairs from clients
-remove add label button; replace with edit labels in table directly
+-add button to add lesions overlay to control panel (30min)
+-change papaya width/height calculations (30min)
+-fix touch screen event handlers (1hr)
+-add color tables (30min)
+-marker navigation not persistent between zoom dispaly switches (20min to investigate)
+-remove crosshairs from clients (20min to look into)
+-fix rotations on patients 1 and 2 by swapping to others (45min)
+-add edit labels option in table directly (2hr)
+-fix contrast issue with papaya (1hr+)
+-reregister t1/flair (3hr to investigate)
+-find solution for hosting nifty data (2hr to investigate)
 
 x fix play reset controls
 x remove up/down controls
@@ -37,6 +44,10 @@ x Reapply fixes for dicom image loading (switching to NIFTI next)
 x Add marking rectangle using canvas (built into papaya)
 
 bug fixes:
+
+switching patients - can't switch again options
+pdf duplicate views on patient switch with odd rotations
+dicomimage overflowing borders
 
 x fix zoom canvas offsets
 x fix background color to blue/black

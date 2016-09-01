@@ -58,7 +58,6 @@ namespace GDO.Apps.XNATImaging
         }
 
         
-
         public void SetImageConfig(int instanceId, double windowWidth, double windowCenter, 
             string currentOrientation, dynamic currentCoord, dynamic markingCoords)
         {
@@ -91,7 +90,6 @@ namespace GDO.Apps.XNATImaging
         }
 
 
-
         public void RequestConfig(int instanceId, int nodeId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -102,18 +100,23 @@ namespace GDO.Apps.XNATImaging
                     Debug.WriteLine(nodeId);
                     if (appConfig != null)
                     {
-                        Debug.WriteLine(appConfig.Name);
-                        //Debug.WriteLine(appConfig.Json);
-                        
                         var jsonString = appConfig.Json.ToString();
                         dynamic config = JObject.Parse(jsonString);
 
+                        // control node
                         if (nodeId == 0)
                         {
                             Debug.WriteLine("Delete screen configs");
                             config.screens.Replace(
                                 JObject.FromObject(new { }));
+
+                            config.mriUrlList.Replace(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).GetMriList());
+                            config.overlayLesions = new JArray(
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultBaselineOverlays[1], 
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultFollowupOverlays[1]);
+                            config.patientsList = new JArray(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients);
                         }
+                        // client node
                         else
                         {
                             foreach (var screen in config.screens)
@@ -131,7 +134,6 @@ namespace GDO.Apps.XNATImaging
                         }
 
                         var jsonStr = config.ToString();
-                        var jsonStri = appConfig.Json.ToString();
                         Clients.Caller.receiveConfig(instanceId, config);
                     }
 
@@ -142,8 +144,7 @@ namespace GDO.Apps.XNATImaging
                 }
             }
         }
-
-
+        
 
         public void RequestScreenSwitch(int instanceId, string url, string modality)
         {
@@ -161,7 +162,21 @@ namespace GDO.Apps.XNATImaging
 
                         config.controlUrl = url;
 
-                        var index = 1;
+                        var index = -1;
+                        for (int i = 0; i < config.mriUrlList; i++)
+                        {
+                            if (config.mriUrlList[i].url == url)
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+                        string color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[0];
+                        if (index != -1)
+                        {
+                            color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[index];
+                        }
+
                         //index = Array.IndexOf(config.mriUrlList, JObject.FromObject(new { modality, url }));
 
                         foreach (var screen in config.screens)
@@ -170,7 +185,7 @@ namespace GDO.Apps.XNATImaging
                             {
                                 screen.config.url = url;
                                 screen.config.modality = modality;
-                                //screen.config.color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[index];
+                                screen.config.color = color;
                             }
                         }
 
@@ -188,6 +203,7 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
+
         public void SetPatient(int instanceId, string patientId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -196,13 +212,15 @@ namespace GDO.Apps.XNATImaging
                 {
                     Debug.WriteLine("Setting new patient - server");
 
-                    
                     var index = 0;
                     index = Array.IndexOf(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients, patientId);
                     if (index >= 0 && index < ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients.Length)
                     {
-                        ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).PatientId = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients[index];
-                        ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).ExperimentName = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Experiments[index];
+                        ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).PatientId = 
+                                                    ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients[index];
+
+                        ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).ExperimentName = 
+                                                    ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Experiments[index];
 
                         AppConfiguration appConfig = Cave.Apps["XNATImaging"].Configurations["Default"];
                         if (appConfig != null)

@@ -16,7 +16,7 @@ body {
 .heading h1 {
     color: #ececec;
     font-size: 140px;
-    line-height: 150px;
+    line-height: 200px;
     position: absolute;
     margin: 100px 10px 200px 30px;
 }
@@ -109,7 +109,7 @@ fieldset {
     padding: 0; border: 0; margin-top: 15px;
 }
 
-#switchScreenContainer input.btn{
+#switchScreenContainer input.btn {
     width: 120px;
 }
 

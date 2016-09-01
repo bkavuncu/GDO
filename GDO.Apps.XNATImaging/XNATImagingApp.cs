@@ -25,8 +25,8 @@ namespace GDO.Apps.XNATImaging
         public double WindowCenter { get; set; }
 
         // List of available Patients and Corresponding Experiments
-        public string[] Patients = {"AD201713", "AD201714", "AD201715" };
-        public string[] Experiments = { "GSK131086_000001", "GSK131086_000002", "GSK131086_000003" };
+        public string[] Patients = {"AD201713", "AD201714", "AD201752" };
+        public string[] Experiments = { "GSK131086_000001", "GSK131086_000002", "GSK131086_000005" };
 
         public string[] mriColors = { "red", "green", "blue", "yellow" };
         string[] AllModes = { "title", "topText", "subText", "mri", "zoom", "pdf" };
@@ -35,8 +35,10 @@ namespace GDO.Apps.XNATImaging
         public string[] DefaultTextStrings = { "Multiple Sclerosis Imaging", "T1", "T2/FLAIR", "Baseline", "Followup", "PDF Reports"};
         public string[] DefaultMriUrls = { "t1_baseline.nii.gz", "t2_baseline.nii.gz", "t1_followup.nii.gz", "t2_followup.nii.gz" };
         public string[] DefaultModalityStrings = { "T1 Baseline", "T2 Baseline", "T1 Followup", "T2 Followup" };
-        public string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "patient_t1_baseline.nii.gz", "patient_t1_baseline.nii.gz" };
-        public string[] DefaultPdfUrls = { "140926_msmetrix_report-3.pdf", "msmetrix_report-2.pdf", "150925_msmetrix_report-3.pdf" };
+        public string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "t1_baseline.nii.gz", "t1_followup.nii.gz" };
+        public string[] DefaultPdfUrls = { "msmetrix_report1.pdf", "msmetrix_report2.pdf", "msmetrix_report3.pdf" };
+        public string[] DefaultBaselineOverlays = { "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" };
+        public string[] DefaultFollowupOverlays = { "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" };
 
         public void Init()
         {
@@ -85,7 +87,7 @@ namespace GDO.Apps.XNATImaging
                 mriUrlList = new JArray(),
                 pdfUrl = "../../Scripts/XNATImaging/pdf/",
                 defaultOrientation = "sagittal",
-                worldSpace = false
+                worldSpace = true
             });
 
             JArray screenConfigsArray = new JArray();
@@ -133,7 +135,7 @@ namespace GDO.Apps.XNATImaging
                 mriUrlList = new JArray(),
                 pdfUrl = "../../Scripts/XNATImaging/pdf/",
                 defaultOrientation = "sagittal",
-                worldSpace = false
+                worldSpace = true
             });
             
             int textCounter = 0;
@@ -221,10 +223,8 @@ namespace GDO.Apps.XNATImaging
                 color,
 		        imageData = JObject.FromObject(new 
                 {
-                    x = 0,
-			        y = 0,
-			        z = 0,
-			        view = "Sagittal",
+                    coord = new JObject(),
+                    view = "Sagittal",
 			        screenMin = 0,
 			        screenMax = 0,
 			        markers = new JObject()
@@ -236,14 +236,24 @@ namespace GDO.Apps.XNATImaging
         private JObject AddZoomConfig(string mode, int colOffset, int row, string url, int zoomCounter)
         {
             bool switchable = false;
-            JArray overlays = new JArray("lesion_filled_image_baseline.nii.gz", "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz");
+            JArray overlays = new JArray();
             string modality = "";
+            int screenMax = 0;
 
             if (zoomCounter == 0)
             {
                 switchable = true;
-                overlays = new JArray();
                 modality = "T1 Baseline";
+            } else if (zoomCounter == 1)
+            {
+                modality = "T1 Baseline with labeled lesions";
+                overlays = new JArray(DefaultBaselineOverlays[0], DefaultBaselineOverlays[1]);
+                screenMax = 649;
+            } else if (zoomCounter == 2)
+            {
+                modality = "T1 Followup with labeled lesions";
+                overlays = new JArray(DefaultFollowupOverlays[0], DefaultFollowupOverlays[1]);
+                screenMax = 649;
             }
             return JObject.FromObject(new 
             {
@@ -257,12 +267,10 @@ namespace GDO.Apps.XNATImaging
                 modality,
                 imageData = JObject.FromObject(new 
                 {
-                    x = 0,
-			        y = 0,
-			        z = 0,
+                    coord = new JObject(),
 			        view = "Sagittal",
 			        screenMin = 0,
-			        screenMax = 0,
+			        screenMax,
 			        markers = new JObject()
 
                 })
@@ -297,9 +305,7 @@ namespace GDO.Apps.XNATImaging
                 color = "",
                 imageData = JObject.FromObject(new
                 {
-                    x = 0,
-                    y = 0,
-                    z = 0,
+                    coord = new JObject(),
                     view = "Sagittal",
                     screenMin = 0,
                     screenMax = 0,
@@ -341,7 +347,7 @@ namespace GDO.Apps.XNATImaging
             {
                 return AllModes[4];
             }
-            if (col == 12)
+            if (col <= 13)
             {
                 return "";
             }
@@ -349,7 +355,7 @@ namespace GDO.Apps.XNATImaging
             {
                 if (row == 0)
                 {
-                    if (col == 13)
+                    if (col == 14)
                     {
                         return AllModes[0];
                     }
@@ -358,6 +364,26 @@ namespace GDO.Apps.XNATImaging
                 return AllModes[5];
             }
             return "";
+        }
+
+        public JArray GetMriList()
+        {
+            var jsonString = Configuration.Json.ToString();
+            dynamic config = JObject.Parse(jsonString);
+
+            JArray mriUrlList = new JArray();
+            foreach (var screen in config.screens)
+            {
+                if (screen.config.mode == "mri")
+                {
+                    mriUrlList.Add(JObject.FromObject(new
+                    {
+                        modality = screen.config.modality.ToString(),
+                        url = screen.config.url.ToString()
+                    }));
+                }
+            }
+            return mriUrlList;
         }
 
         // test method
@@ -370,23 +396,6 @@ namespace GDO.Apps.XNATImaging
 
             PatientId = config.patient;
             ExperimentName = config.experimentName;
-
-            JArray mriUrlList = new JArray();
-            foreach (var screen in config.screens)
-            {
-                if (screen.config.mode == "mri")
-                {
-                    Debug.WriteLine("MRI!");
-                    mriUrlList.Add(JObject.FromObject(new
-                    {
-                        modality = screen.config.modality.ToString(),
-                        url = screen.config.url.ToString()
-                    }));
-                }
-            }
-            config.mriUrlList.Replace(mriUrlList);
-            Configuration.Json = config.DeepClone();
-            Debug.WriteLine(Configuration.Json);
 
             //Debug.WriteLine(Configuration.Json);
             //Debug.WriteLine(GenerateBlankConfigurationFile());

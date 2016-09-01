@@ -1,4 +1,4 @@
-﻿
+﻿"use strict";
 
 /*
 ** Sets mouse handlers for control Node
@@ -21,13 +21,14 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
         gdo.net.app["XNATImaging"].initializeSlider();
     });
 
+    gdo.net.app["XNATImaging"].createPatientSwitchMenu();
+
     // patient change event
     $("iframe").contents().find("#patientSelect").on("selectmenuchange", function (event, ui) {
         var viewer = containers[0].viewer;
         var patientId = $("iframe").contents().find("#patientSelect option:selected").text();
         console.log("Switching to patient: " + patientId);
 
-        gdo.net.app["XNATImaging"].mriUrlList = gdo.net.app["XNATImaging"].appConfig.mriUrlList;
         gdo.net.app["XNATImaging"].server.setPatient(instanceId, patientId);
         containers[0].viewer.clearMarkers();
     });
@@ -104,11 +105,11 @@ gdo.net.app["XNATImaging"].initializeSlider = function() {
         console.log(viewer);
         currentOrientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
     }
-    if (currentOrientation == "Axial") {
+    if (currentOrientation === "Axial") {
         max = viewer.volume.header.imageDimensions.zDim;
-    } else if (currentOrientation == "Coronal") {
+    } else if (currentOrientation === "Coronal") {
         max = viewer.volume.header.imageDimensions.yDim;
-    } else if (currentOrientation == "Sagittal") {
+    } else if (currentOrientation === "Sagittal") {
         max = viewer.volume.header.imageDimensions.xDim;
     }
     slider.max = max;
@@ -176,31 +177,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
             gdo.net.app["XNATImaging"].sendImageParam();
         });
 
-    // sort list by modality string
-    appConfig.mriUrlList.sort(function (a, b) {
-        if (a.modality < b.modality) return -1;
-        if (a.modality > b.modality) return 1;
-        return 0;
-    });
-
-    // create an input button for each entry in mriUrlList
-    var rowCounter = 0;
-    for (var i = 0; i < appConfig.mriUrlList.length; i++) {
-        if (rowCounter % 2 == 0) {
-            console.log("new row");
-            $("iframe").contents().find("#switchScreenContainer").append("<div class='row'>");
-        }
-        var buttonStyle = "btn-primary";
-        if (i == 0) {
-            buttonStyle = "btn-success";
-        }
-        $("iframe").contents().find("#switchScreenContainer").append("<input id='screen" + i + "' type='button' class='btn " + buttonStyle + "'/ value='" + appConfig.mriUrlList[i].modality + "'/>");
-        
-        if (rowCounter % 2 == 0) {
-            $("iframe").contents().find("#switchScreenContainer").append("</div>");
-        }
-        rowCounter++;
-    }
+    gdo.net.app["XNATImaging"].fillSwitchScreenContainer(appConfig);
 
     // switch Zoom Display event handler
     $("iframe").contents().find("#switchScreenContainer input.btn")
@@ -223,52 +200,100 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
                 containers[0].viewer.markingCoords = markingCoords;
                 containers[0].viewer.drawMarkers();
             }
+        });
+}
+
+
+gdo.net.app["XNATImaging"].fillSwitchScreenContainer = function (appConfig) {
+
+    // sort list by modality string
+    appConfig.mriUrlList.sort(function (a, b) {
+        if (a.modality < b.modality) return -1;
+        if (a.modality > b.modality) return 1;
+        return 0;
     });
 
-    /*
-    ** Method to handle stack play event
-    */
-    gdo.net.app["XNATImaging"].playAll = function (instanceId) {
-        var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+    $("iframe").contents().find("#switchScreenContainer").empty();
+    // create an input button for each entry in mriUrlList
+    var rowCounter = 0;
+    for (var i = 0; i < appConfig.mriUrlList.length; i++) {
+        if (rowCounter % 2 === 0) {
+            console.log("new row");
+            $("iframe").contents().find("#switchScreenContainer").append("<div class='row'>");
+        }
+        var buttonStyle = "btn-primary";
+        if (appConfig.mriUrlList[i].url === appConfig.controlUrl) {
+            buttonStyle = "btn-success";
+        }
+        $("iframe").contents().find("#switchScreenContainer").append("<input id='screen" + i + "' type='button' class='btn " + buttonStyle + "'/ value='" + appConfig.mriUrlList[i].modality + "'/>");
 
-        if (gdo.net.app["XNATImaging"].playing == false) {
-            gdo.net.app["XNATImaging"].playing = true;
-            $('iframe').contents().find('#playButton').val("Pause");
-            gdo.net.app["XNATImaging"].interval = setInterval(function () {
-                if (gdo.net.app["XNATImaging"].playing && !gdo.net.app["XNATImaging"].lastSlice()) {
-                    gdo.net.app["XNATImaging"].incrementSlider(instanceId);
+        if (rowCounter % 2 === 0) {
+            $("iframe").contents().find("#switchScreenContainer").append("</div>");
+        }
+        rowCounter++;
+    }
+}
 
-                } else {
-                    clearInterval(gdo.net.app["XNATImaging"].interval);
-                    gdo.net.app["XNATImaging"].playing = false;
-                    $('iframe').contents().find('#playButton').val("Play");
-                }
-            }, 200);
 
+gdo.net.app["XNATImaging"].createPatientSwitchMenu = function () {
+
+    var appConfig = gdo.net.app["XNATImaging"].appConfig;
+    for (var i = 0; i < appConfig.patientsList.length; i++) {
+        var optionString = "";
+        if (appConfig.patientsList[i] === appConfig.patient) {
+            optionString = "<option selected='selected'>" + appConfig.patient + "</option>";
         } else {
-            gdo.net.app["XNATImaging"].pause(instanceId);
+            optionString = "<option>" + appConfig.patientsList[i] + "</option>";
         }
+        $("iframe").contents().find("#patientSelect").append(optionString);
+    }
+    $("iframe").contents().find("#patientSelect").selectmenu();
+}
+
+
+/*
+** Method to handle stack play event
+*/
+gdo.net.app["XNATImaging"].playAll = function (instanceId) {
+    var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+
+    if (gdo.net.app["XNATImaging"].playing === false) {
+        gdo.net.app["XNATImaging"].playing = true;
+        $('iframe').contents().find('#playButton').val("Pause");
+        gdo.net.app["XNATImaging"].interval = setInterval(function () {
+            if (gdo.net.app["XNATImaging"].playing && !gdo.net.app["XNATImaging"].lastSlice()) {
+                gdo.net.app["XNATImaging"].incrementSlider(instanceId);
+
+            } else {
+                clearInterval(gdo.net.app["XNATImaging"].interval);
+                gdo.net.app["XNATImaging"].playing = false;
+                $('iframe').contents().find('#playButton').val("Play");
+            }
+        }, 200);
+
+    } else {
+        gdo.net.app["XNATImaging"].pause(instanceId);
+    }
+}
+
+/*
+** Increments slider by 1
+*/
+gdo.net.app["XNATImaging"].incrementSlider = function (instanceId) {
+    var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+
+    var orientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
+    console.log(orientation);
+    if (orientation === "Sagittal") {
+        viewer.incrementSagittal(false, 1);
+    } else if (orientation === "Coronal") {
+        viewer.incrementCoronal(true, 1);
+    } else if (orientation === "Axial") {
+        viewer.incrementAxial(true, 1);
     }
 
-    /*
-    ** Increments slider by 1
-    */
-    gdo.net.app["XNATImaging"].incrementSlider = function (instanceId) {
-        var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
-
-        var orientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
-        console.log(orientation);
-        if (orientation == "Sagittal") {
-            viewer.incrementSagittal(false, 1);
-        } else if (orientation == "Coronal") {
-            viewer.incrementCoronal(true, 1);
-        } else if (orientation == "Axial") {
-            viewer.incrementAxial(true, 1);
-        }
-
-        gdo.net.app["XNATImaging"].sendImageParam(instanceId);
-        gdo.net.app["XNATImaging"].initializeSlider();
-    }
+    gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+    gdo.net.app["XNATImaging"].initializeSlider();
 }
 
 /*

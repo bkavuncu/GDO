@@ -1,4 +1,6 @@
-﻿gdo.net.app["XNATImaging"].getCurrentOrientation = function () {
+﻿"use strict";
+
+gdo.net.app["XNATImaging"].getCurrentOrientation = function () {
     var papaya = gdo.net.app["XNATImaging"].papaya;
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
 
@@ -30,11 +32,11 @@ gdo.net.app["XNATImaging"].lastSlice = function () {
     var orientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
     var max;
 
-    if (orientation == "Sagittal") {
+    if (orientation === "Sagittal") {
         max = viewer.volume.header.imageDimensions.xDim;
-    } else if (orientation == "Coronal") {
+    } else if (orientation === "Coronal") {
         max = viewer.volume.header.imageDimensions.yDim;
-    } else if (orientation == "Axial") {
+    } else if (orientation === "Axial") {
         max = viewer.volume.header.imageDimensions.zDim;
     }
 
