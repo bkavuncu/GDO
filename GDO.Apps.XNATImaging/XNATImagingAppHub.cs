@@ -60,7 +60,7 @@ namespace GDO.Apps.XNATImaging
         
 
         public void SetImageConfig(int instanceId, double windowWidth, double windowCenter, 
-            string rotateView, dynamic currentCoord, dynamic markingCoords)
+            string currentOrientation, dynamic currentCoord, dynamic markingCoords)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -78,7 +78,7 @@ namespace GDO.Apps.XNATImaging
                                     instanceId, 
                                     windowWidth, 
                                     windowCenter,
-                                    rotateView,
+                                    currentOrientation,
                                     currentCoord,
                                     markingCoords
                     );
@@ -161,12 +161,16 @@ namespace GDO.Apps.XNATImaging
 
                         config.controlUrl = url;
 
+                        var index = 0;
+                        index = Array.IndexOf(config.mriUrlList, new { modality, url });
+
                         foreach (var screen in config.screens)
                         {
                             if (screen.config.mode == "zoom" && screen.config.switchable != null && (bool) screen.config.switchable)
                             {
                                 screen.config.url = url;
                                 screen.config.modality = modality;
+                                screen.config.color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[index];
                             }
                         }
 
@@ -176,7 +180,6 @@ namespace GDO.Apps.XNATImaging
                         var jsonStri = appConfig.Json.ToString();
                         Clients.Group("" + instanceId).receiveScreenSwitch(instanceId);
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -185,16 +188,45 @@ namespace GDO.Apps.XNATImaging
             }
         }
 
-
-        public void SetControl(int instanceId, string controlName)
+        public void SetPatient(int instanceId, string patientId)
         {
             lock (Cave.AppLocks[instanceId])
             {
                 try
                 {
-                    Debug.WriteLine("Setting new control - server");
+                    Debug.WriteLine("Setting new patient - server");
 
-                    /*dynamic variableJson = Utilities.LoadJsonFile("Configurations/XNATImaging/Zoom.json");
+                    
+                    var index = 0;
+                    index = Array.IndexOf(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients, patientId);
+                    if (index >= 0 && index < ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients.Length)
+                    {
+                        ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).PatientId = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Patients[index];
+                        ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).ExperimentName = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Experiments[index];
+
+                        AppConfiguration appConfig = Cave.Apps["XNATImaging"].Configurations["Default"];
+                        if (appConfig != null)
+                        {
+                            appConfig.Json = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).GenerateDefaultConfigurationFile(
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultTextStrings,
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultMriUrls,
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultModalityStrings,
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultZoomUrls,
+                                ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).DefaultPdfUrls);
+
+                        }
+                        Clients.Group("" + instanceId).receivePatientChange(instanceId);
+                        Clients.Caller.receivePatientChange(instanceId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
+        /*dynamic variableJson = Utilities.LoadJsonFile("Configurations/XNATImaging/Zoom.json");
                     ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration = new AppConfiguration("Zoom", variableJson);
                     Debug.WriteLine(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).Configuration.Name);
 
@@ -204,14 +236,6 @@ namespace GDO.Apps.XNATImaging
                     {
                         Debug.WriteLine(i + ". " + configurations[i]);
                     }
-                    */
-                    Clients.Group("" + instanceId).receiveControl(instanceId, controlName);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-            }
-        }
+        */
     }
 }

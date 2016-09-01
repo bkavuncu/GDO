@@ -18,20 +18,25 @@ namespace GDO.Apps.XNATImaging
         public string Name { get; set; }
         public string Host { get; set; }
         public string ExperimentName { get; set; }
-        public string PatientName { get; set; }
+        public string PatientId { get; set; }
 
         public dynamic CurrentCoord { get; set; }
         public double WindowWidth { get; set; }
         public double WindowCenter { get; set; }
 
+        // List of available Patients and Corresponding Experiments
+        public string[] Patients = {"AD201713", "AD201714", "AD201715" };
+        public string[] Experiments = { "GSK131086_000001", "GSK131086_000002", "GSK131086_000003" };
+
+        public string[] mriColors = { "red", "green", "blue", "yellow" };
         string[] AllModes = { "title", "topText", "subText", "mri", "zoom", "pdf" };
 
         // parameters for default configuration
-        string[] DefaultTextStrings = { "Multiple Sclerosis Imaging", "T1", "T2/FLAIR", "Baseline", "Followup", "PDF Reports"};
-        string[] DefaultMriUrls = { "t1_baseline.nii.gz", "t2_baseline.nii.gz", "t1_followup.nii.gz", "t2_followup.nii.gz" };
-        string[] DefaultModalityStrings = { "T1 Baseline", "T2 Baseline", "T1 Followup", "T2 Followup" };
-        string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "patient_t1_baseline.nii.gz", "patient_t1_baseline.nii.gz" };
-        string[] DefaultPdfUrls = { "140926_msmetrix_report-3.pdf", "msmetrix_report-2.pdf", "150925_msmetrix_report-3.pdf" };
+        public string[] DefaultTextStrings = { "Multiple Sclerosis Imaging", "T1", "T2/FLAIR", "Baseline", "Followup", "PDF Reports"};
+        public string[] DefaultMriUrls = { "t1_baseline.nii.gz", "t2_baseline.nii.gz", "t1_followup.nii.gz", "t2_followup.nii.gz" };
+        public string[] DefaultModalityStrings = { "T1 Baseline", "T2 Baseline", "T1 Followup", "T2 Followup" };
+        public string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "patient_t1_baseline.nii.gz", "patient_t1_baseline.nii.gz" };
+        public string[] DefaultPdfUrls = { "140926_msmetrix_report-3.pdf", "msmetrix_report-2.pdf", "150925_msmetrix_report-3.pdf" };
 
         public void Init()
         {
@@ -58,7 +63,7 @@ namespace GDO.Apps.XNATImaging
             return Name;
         }
 
-        public void SetImage(int currentCoord, double windowWidth, double windowCenter)
+        public void SetImage(dynamic currentCoord, double windowWidth, double windowCenter)
         {
             CurrentCoord = currentCoord;
             WindowWidth = windowWidth;
@@ -66,15 +71,15 @@ namespace GDO.Apps.XNATImaging
         }
 
         // Generates blank configuration file
-        public string GenerateBlankConfigurationFile()
+        public JObject GenerateBlankConfigurationFile()
         {
             JObject appConfig = JObject.FromObject(new
             {
                 appName = AppName,
                 localHost = "http://localhost:12332/",
                 testServerHost = "http://dsigdotesting.doc.ic.ac.uk/",
-                experimentName = "GSK131086_000001",
-                patient = "AD201713",
+                experimentName = ExperimentName,
+                patient = PatientId,
                 controlUrl = "t1_baseline.nii.gz",
                 mriUrl = "Scripts/XNATImaging/Scans/",
                 mriUrlList = new JArray(),
@@ -109,20 +114,20 @@ namespace GDO.Apps.XNATImaging
             }
 
             appConfig.Add(new JProperty("screens", screenConfigsArray));
-		    return appConfig.ToString();
+		    return appConfig;
         }
 
 
         // Method to generate default Configuration File
-        public string GenerateDefaultConfigurationFile(string[] textStrings, string[] mriUrls, string[] modalityStrings, string[] zoomUrls, string[] pdfUrls)
+        public JObject GenerateDefaultConfigurationFile(string[] textStrings, string[] mriUrls, string[] modalityStrings, string[] zoomUrls, string[] pdfUrls)
         {
             JObject appConfig = JObject.FromObject(new
             {
                 appName = AppName,
                 localHost = "http://localhost:12332/",
                 testServerHost = "http://dsigdotesting.doc.ic.ac.uk/",
-                experimentName = "GSK131086_000001",
-                patient = "AD201713",
+                experimentName = ExperimentName,
+                patient = PatientId,
                 controlUrl = "t1_baseline.nii.gz",
                 mriUrl = "Scripts/XNATImaging/Scans/",
                 mriUrlList = new JArray(),
@@ -156,7 +161,7 @@ namespace GDO.Apps.XNATImaging
                     {
                         if (mriCounter < mriUrls.Length && mriCounter < modalityStrings.Length)
                         {
-                            screenConfig = AddMriConfig(mode, mriUrls[mriCounter], modalityStrings[mriCounter]);
+                            screenConfig = AddMriConfig(mode, mriUrls[mriCounter], modalityStrings[mriCounter], mriColors[mriCounter]);
                         }
                         mriCounter++;
                     }
@@ -192,7 +197,7 @@ namespace GDO.Apps.XNATImaging
             }
 
             appConfig.Add(new JProperty("screens", screenConfigsArray));
-            return appConfig.ToString();
+            return appConfig;
         }
 
         private JObject AddTextConfig(string mode, string text)
@@ -205,7 +210,7 @@ namespace GDO.Apps.XNATImaging
             });
         }
 
-        private JObject AddMriConfig(string mode, string url, string modality)
+        private JObject AddMriConfig(string mode, string url, string modality, string color)
         {
             return JObject.FromObject(new 
             {
@@ -213,6 +218,7 @@ namespace GDO.Apps.XNATImaging
 		        url,
 		        orthogonal = true,
                 modality,
+                color,
 		        imageData = JObject.FromObject(new 
                 {
                     x = 0,
@@ -288,6 +294,7 @@ namespace GDO.Apps.XNATImaging
                 scale = 3,
                 text = "",
                 modality = "",
+                color = "",
                 imageData = JObject.FromObject(new
                 {
                     x = 0,
@@ -360,6 +367,9 @@ namespace GDO.Apps.XNATImaging
 
             var jsonString = Configuration.Json.ToString();
             dynamic config = JObject.Parse(jsonString);
+
+            PatientId = config.patient;
+            ExperimentName = config.experimentName;
 
             JArray mriUrlList = new JArray();
             foreach (var screen in config.screens)

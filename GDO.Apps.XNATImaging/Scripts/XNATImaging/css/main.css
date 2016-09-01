@@ -11,7 +11,6 @@ body {
 }
 
 .heading {
-    background-color: #264164;
 }
 
 .heading h1 {
@@ -53,11 +52,30 @@ body {
     margin-bottom: 10px;
 }
 
+form {
+    margin-bottom: 20px;
+}
+
+fieldset.inline {
+    display: inline;
+    margin-right: 30px;
+  }
+
 #viewSelect {
     margin-top: 30px;
     margin-bottom: 40px;
     width: 200px;
     height: 50px;
+}
+
+#colorSelect {
+    width: 200px;
+    height: 50px;
+}
+
+#patientSelect {
+    margin-top: 20px;
+    width: 180px;
 }
 
 #slice-range {
@@ -73,12 +91,14 @@ h3 {
 
 input.btn {
     margin: 5px;
+    font-size: 16px;
     /*height: 40px;
-    font-size: 20px;*/
+    */
 }
 
 label, input {
     display: block;
+    font-size: 16px;
 }
 
 input.text {
@@ -87,6 +107,10 @@ input.text {
 
 fieldset {
     padding: 0; border: 0; margin-top: 15px;
+}
+
+#switchScreenContainer input.btn{
+    width: 120px;
 }
 
 div #markers-contain {

@@ -3,15 +3,6 @@
 $(function () {
     gdo.consoleOut('.XNATImaging', 1, 'Loaded XNATImaging JS');
 
-    $.connection.xNATImagingAppHub.client.receiveControl = function (instanceId, controlName) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
-            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Control : " + controlName);
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received Control : " + controlName);
-            gdo.net.app["XNATImaging"].clientControl(instanceId, controlName);
-        }
-    }
-
     $.connection.xNATImagingAppHub.client.receiveConfig = function (instanceId, json) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received control config : ");
@@ -36,6 +27,16 @@ $(function () {
                     gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
                 }
             }
+        }
+    }
+
+    $.connection.xNATImagingAppHub.client.receivePatientChange = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received patient switch request ");
+            gdo.net.app["XNATImaging"].server.requestConfig(instanceId, 0);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received patient switch request ");
+            gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
         }
     }
 
@@ -75,6 +76,8 @@ gdo.net.app["XNATImaging"].initControl = function (instanceId, papaya, container
     gdo.net.app["XNATImaging"].interval = null;
 
     $("iframe").contents().find("#viewSelect").selectmenu();
+    $("iframe").contents().find("#colorSelect").selectmenu();
+    $("iframe").contents().find("#patientSelect").selectmenu();
 
     gdo.net.app["XNATImaging"].server.requestConfig(instanceId, 0);
 }
@@ -86,6 +89,11 @@ gdo.net.app["XNATImaging"].setupControl = function (instanceId, appConfig) {
     var url = appConfig.controlUrl;
     gdo.net.app["XNATImaging"].appConfig = appConfig;
     gdo.net.app["XNATImaging"].patientName = appConfig.patient;
+
+    // Keep mri url list after switching patients
+    if (gdo.net.app["XNATImaging"].mriUrlList != null) {
+        gdo.net.app["XNATImaging"].appConfig.mriUrlList = gdo.net.app["XNATImaging"].mriUrlList;
+    }
 
     console.log(appConfig);
 
@@ -199,13 +207,18 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
                 $("iframe").contents().find('#pdf-canvas').css("margin-left", widthDifference / 2 + "px");
             }
 
+            var heightDifference = gdo.net.node[gdo.clientId].height * screenConfig.displaySize[1] - viewport.height;
+            console.log("Height difference: " + heightDifference);
+            if (heightDifference > 0) {
+                $("iframe").contents().find('#pdf-canvas').css("margin-bottom", heightDifference + "px");
+            }
+
             // Render PDF page into canvas context.
             var renderContext = {
                 canvasContext: context,
                 viewport: viewport
             };
             page.render(renderContext).then(function () {
-                //window.scrollTo(0, 1080);
                 $("iframe").get(0).contentWindow.scrollTo(gdo.net.node[gdo.clientId].width * screenConfig.zoomOffset[0], gdo.net.node[gdo.clientId].height * screenConfig.zoomOffset[1])
             });
         });
@@ -287,6 +300,12 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
 
         case "mri":
             params["orthogonal"] = appConfig.screens.config.orthogonal ? true : false;
+
+            var dicomDiv = $("iframe").contents().find('#dicomImage');
+
+            if (screenConfig.color != null) {
+                dicomDiv.css("border", "5px solid " + screenConfig.color);
+            }
             break;
         default:
             console.log("No accepted mode found in config");
@@ -305,7 +324,8 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var screenConfig = gdo.net.app["XNATImaging"].appConfig.screens.config;
 
-    containers[0].preferences.showCrosshairs = "No";
+    // TODO: Find way to disable crosshairs
+    //containers[0].preferences.showCrosshairs = "No";
 
     var offsetX = screenConfig.zoomOffset[0];
     var offsetY = screenConfig.zoomOffset[1];
@@ -318,14 +338,6 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
         canvasHeight = canvasWidth / 1.5;
     }
 
-    if (screenConfig.modality != null) {
-        $("iframe").contents().find('#main').append(
-            "<div class='heading' style='position: absolute' z-index: 2>" + 
-            "<h1 style='font-size: 220px'>" + screenConfig.modality + "</h1>" + 
-            "</div>"
-            );
-    }
-
     var heightDifference = 0;
     if (gdo.net.node[gdo.clientId].height * displayHeight > canvasHeight) {
         heightDifference = gdo.net.node[gdo.clientId].height * displayHeight - canvasHeight;
@@ -336,6 +348,14 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     var dicomDiv = $("iframe").contents().find('#dicomImage');
     // resize container div to match child divs and canvas
     dicomDiv.width(canvasWidth).height(canvasHeight + heightDifference);
+
+    if (screenConfig.modality != null) {
+        $("iframe").contents().find('#main').append(
+            "<div class='heading' style='position: absolute; width: 100%; height: 50%; top: 200px; left: 150px; z-index: 2'>" +
+            "<h1 style='font-size: 220px; color: white'>" + screenConfig.modality + "</h1>" +
+            "</div>"
+        );
+    }
 
     /*$("iframe").contents().find('#main').height(canvasHeight + heightDifference);
     $("iframe").contents().find('body').height(canvasHeight + heightDifference);

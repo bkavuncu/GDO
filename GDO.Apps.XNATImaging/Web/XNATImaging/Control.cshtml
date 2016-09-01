@@ -114,7 +114,7 @@
         <h2>Controls</h2>
 
         <form action="#">
-            <fieldset>
+            <fieldset class="inline">
                 <label for="view">Select a view</label>
                 <select name="view" id="viewSelect">
                     <option selected="selected">Sagittal</option>
@@ -122,10 +122,21 @@
                     <option>Axial</option>
                 </select>
             </fieldset>
-        </form>
 
+            <fieldset class="inline">
+                <label for="view">Select a color table</label>
+                <select name="view" id="colorSelect">
+                    <option selected="selected">Grayscale</option>
+                    <option>Spectrum</option>
+                    <option>Fire</option>
+                    <option>Hot-and-Cold</option>
+                    <option>Gold</option>
+                </select>
+            </fieldset>
+        </form>
+        
         <div id="markers-contain" class="ui-widget">
-            <h3>Existing markers:</h3>
+            <label>Existing markers:</label>
             <table id="markerTable" class="ui-widget ui-widget-content">
                 <thead>
                     <tr class="ui-widget-header ">
@@ -139,7 +150,24 @@
             </table>
         </div>
 
-        <div id="switchScreenContainer" style="width: 15%; margin: 30px 20px; float: right;"></div>
+        <div id="switchContainer" style="width: 20%; margin: 30px 10px 20px 10px; float: right">
+            <div id="switchScreenContainer">
+                <label>Switch Zoom Display</label>
+            </div>
+
+            <div id="switchPatientContainer">
+                <form action="#">
+                    <fieldset>
+                        <label for="view">Switch patients</label>
+                        <select name="view" id="patientSelect">
+                            <option selected="selected">AD201713</option>
+                            <option>AD201714</option>
+                            <option>AD201715</option>
+                        </select>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
 
         <div id="dicomImage" style="width: 50%; height: 66%;"> <!--1000x750 for tablets-->
             <div class="papaya" data-params="params"></div>
