@@ -1,17 +1,16 @@
 
-1 Add PDF zoom
-2 border
+x Add PDF zoom
+x border
 3 switch mri screens
 4 flair contrast
-5 multiple patients
+x multiple patients
 6 registration
 
 remove crosshairs from clients
-switch to local view with rotations and padding
-fix play reset controls
-remove up/down controls
 remove add label button; replace with edit labels in table directly
 
+x fix play reset controls
+x remove up/down controls
 x add labeled lesions dicom
 x change css cursor when marking
 x rearrange marker table columns

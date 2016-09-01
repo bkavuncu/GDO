@@ -161,8 +161,8 @@ namespace GDO.Apps.XNATImaging
 
                         config.controlUrl = url;
 
-                        var index = 0;
-                        index = Array.IndexOf(config.mriUrlList, new { modality, url });
+                        var index = 1;
+                        //index = Array.IndexOf(config.mriUrlList, JObject.FromObject(new { modality, url }));
 
                         foreach (var screen in config.screens)
                         {
@@ -170,7 +170,7 @@ namespace GDO.Apps.XNATImaging
                             {
                                 screen.config.url = url;
                                 screen.config.modality = modality;
-                                screen.config.color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[index];
+                                //screen.config.color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[index];
                             }
                         }
 
