@@ -73,9 +73,8 @@ gdo.net.app["Twitter"].sectionIsFree = function(instanceId, colStart, colEnd, ro
     return true;
 }
 
-gdo.net.app["Twitter"].launchSlide = function (instanceId, slideId) {
-    gdo.consoleOut('.Twitter', 1, "Attempting to launch slide " + slideId);
-    var slide = gdo.net.instance[instanceId].data.slides[slideId];
+gdo.net.app["Twitter"].launchSlide = function (instanceId, slide) {
+    gdo.consoleOut('.Twitter', 1, "Attempting to launch slide " + slide.id);
     console.log(slide);
     var sectionRequests = [];
     for (var i = 0; i < slide.sections.length; ++i) {

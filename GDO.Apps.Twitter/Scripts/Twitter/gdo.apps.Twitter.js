@@ -109,7 +109,7 @@ gdo.net.app["Twitter"].initControl = function () {
         analyticsDisplay: {},
         selectedGraphApps: [],
         selectedApp: null,
-        selectedSlide: -1
+        selectedSlide: null
     }
     gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, 0);
     gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
@@ -203,7 +203,8 @@ gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
             break;
         case "Images":
             gdo.consoleOut('.Twitter', 1, "Requesting server start Image app at instance " + section.appInstanceId);
-            gdo.net.app["Images"].server.processImage(section.appInstanceId, section.twitterVis.filePath);
+            gdo.net.app["Images"].server.processAndLaunch(section.appInstanceId, section.twitterVis.filePath);
+            break;
         case "StaticHTML":
             gdo.consoleOut('.Twitter', 1, 'Requesting server start StaticHTML app with url = "' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
             gdo.net.app["StaticHTML"].server.setURL(section.appInstanceId, section.twitterVis.filePath);

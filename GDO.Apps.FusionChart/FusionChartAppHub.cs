@@ -140,7 +140,7 @@ namespace GDO.Apps.FusionChart
         {
             string serialisedChartData =
                 ((FusionChartApp) Cave.Apps["FusionChart"].Instances[instanceId]).GetChartData();
-            Debug.WriteLine(serialisedChartData);
+//            Debug.WriteLine(serialisedChartData);
             Clients.Caller.receiveChartData(instanceId, serialisedChartData);
             if (toAll)
             {

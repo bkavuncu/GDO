@@ -192,27 +192,21 @@ gdo.net.app["Twitter"].updateSlideTable = function(instanceId, slides) {
     gdo.consoleOut('.Twitter', 1, 'Updating slide tables for instance: ' + instanceId);
     gdo.net.instance[instanceId].data.slides = slides;
     $("iframe").contents().find("#slide_table tbody tr").remove();
-    for (var key in slides) {
-        if (slides.hasOwnProperty(key)) {
+    for (var i = 0; i < slides.length; ++i) {
             $("iframe")
                 .contents()
                 .find("#slide_table tbody")
                 .append("" +
                     "<tr>" +
                     "<td><font size='3'>" +
-                    slides[key]["id"] +
+                    slides[i]["description"] +
                     "</font></td>" +
                     "<td><font size='3'>" +
-                    slides[key]["description"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    slides[key]["sections"].length +
+                    slides[i]["sections"].length +
                     "</font></td>");
         }
     }
 
-
-}
 
 gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, dataSetanalytics) {
 

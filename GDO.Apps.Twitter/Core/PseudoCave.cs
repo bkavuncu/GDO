@@ -40,9 +40,10 @@ namespace GDO.Apps.Twitter.Core
             ConcurrentDictionary<int, GDO.Core.Section> caveSections, int sectionId)
         {
             UpdateSectionsToCreate(caveNodes);
+            UpdateAppsToDispose(caveSections);
             UpdateSectionsToDispose(caveNodes);
             UpdateAppsToDeploy(caveSections);
-            UpdateAppsToDispose(caveSections);
+            
             UpdateAppQueue();
 
             foreach (var entry in caveNodes)

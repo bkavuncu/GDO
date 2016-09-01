@@ -218,7 +218,7 @@ namespace GDO.Apps.Twitter
 
         public string GetSlides()
         {
-            return JsonConvert.SerializeObject(RestController.GetSlides().ToDictionary(s=>s.id, s=>s));
+            return JsonConvert.SerializeObject(RestController.GetSlides());
         }
 
         public string GetDataSets()

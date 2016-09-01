@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -370,7 +371,7 @@ namespace GDO.Apps.Images
                     
                     double height = ia.ImageNaturalHeight;
                     double width = ia.ImageNaturalWidth;
-
+                    Debug.WriteLine("Height: " + height + " width: " + width);
                     double sectionWidth = ia.Section.Width;
                     double sectionHeight = ia.Section.Height;
 

@@ -49,7 +49,9 @@ namespace GDO.Apps.StaticHTML
             {
                 try
                 {
-                    Clients.Caller.receiveURL(instanceId, ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).GetURL());
+                    bool responsiveMode = ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).ResponsiveMode;
+                    Clients.Caller.receiveURL(instanceId, ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).GetURL(),
+                        responsiveMode);
                 }
                 catch (Exception e)
                 {

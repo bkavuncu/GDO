@@ -48,8 +48,16 @@
             }
         }
     }
-    $.connection.imagesAppHub.client.reloadIFrame = function() {
-        $("iframe").attr("src", $("iframe").attr("src"));
+    $.connection.imagesAppHub.client.reloadIFrame = function () {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
+            if (gdo.controlId == instanceId)
+            {
+                $("iframe").attr("src", $("iframe").attr("src"));
+            }
+        } else {
+            $("iframe").attr("src", $("iframe").attr("src"));    
+        }
+        
     }
     $.connection.imagesAppHub.client.setMessage = function (message) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {

@@ -88,7 +88,8 @@
             position: relative;
             text-align: center;
         }
-                .color_field {
+
+        .color_field {
             width: 40px;
             height: 40px;
             background: transparent;
@@ -127,10 +128,10 @@
 <div class="row">
     <div class="col-lg-3">
         <div id="admin-panel" class="panel panel-danger">
-            <div class="panel-heading">
+            <div class="panel-heading" style="padding: 5px">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" style="padding: 5px">
                 <div class="btn-group">
                     <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
                     <button id="debug_b" class="btn btn-success"><i class='fa fa-television'></i>&nbsp; PrintState</button>
@@ -141,22 +142,22 @@
     </div>
     <div class="col-lg-3">
         <div id="status-panel" class="panel panel-danger">
-            <div class="panel-heading">
+            <div class="panel-heading" style="padding: 5px">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Twitter API Status</h6>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" style="padding: 5px">
                 <fieldset>
-                    <h6 id="message_from_api_server"></h6>
+                    <h6 id="message_from_api_server" style="font-size: 14px"></h6>
                 </fieldset>
             </div>
         </div>
     </div>
     <div class="col-lg-6">
         <div id="message_panel" class="panel panel-danger">
-            <div class="panel-heading">
+            <div class="panel-heading" style="padding: 5px">
                 <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" style="padding: 5px">
                 <fieldset>
                     <h6 id="message_from_server"></h6>
                 </fieldset>
@@ -164,6 +165,8 @@
         </div>
     </div>
 </div>
+<div class="row">
+<div class="col-lg-12">
 <ul class="nav nav-tabs">
     <li class="active">
         <a href="#dataset_control" data-toggle="tab"><i class="fa fa-cube  fa-fw"></i>&nbsp;&nbsp;Data Sets</a>
@@ -181,71 +184,61 @@
 <div class="tab-content" style="height: 90vh">
 <div class="tab-pane fade in active" id="dataset_control" style="height: 84vh;">
     <div class="row">
-        <div class="col-lg-11">
+        <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
                 </div>
                 <div class="panel-body">
-                    <div id="dataset_list" style="margin-top: 3px; background: transparent;">
-                        <table style="width: 100%; background: transparent; text-align: left" id="dataset_table">
-                            <thead>
-                            <tr id="data_set_table_title">
-                                <th>
-                                    <font size="3">
-                                        <b>Id</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Description</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Status</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Size</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Type</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Start</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>End</b>
-                                    </font>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div style="overflow: auto; height: 25vh">
+                        <div id="dataset_list" style="margin-top: 3px; background: transparent;">
+                            <table style="width: 100%; background: transparent; text-align: left" id="dataset_table">
+                                <thead>
+                                <tr id="data_set_table_title">
+                                    <th>
+                                        <font size="3">
+                                            <b>Id</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Description</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Status</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Size</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Type</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Start</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>End</b>
+                                        </font>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer">
                     <button id="get_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
-                </div>
-            </div>
-
-
-        </div>
-        <div class="col-lg-1" style="height: 100%">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                </div>
-                <div class="panel-body">
-                </div>
-                <div class="panel-footer">
                 </div>
             </div>
         </div>
@@ -257,24 +250,26 @@
                     <h5><i class='fa  fa-twitter'></i>&nbsp;Analytics Options</h5>
                 </div>
                 <div class="panel-body">
-                    <div id="analytics_options_list" style="margin-top: 3px; background: transparent;">
-                        <table style="width: 100%; background: transparent; text-align: left" id="analytics_options_table">
-                            <thead>
-                            <tr id="analytics_options_table_title">
-                                <th>
-                                    <font size="3">
-                                        <b>Classification</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Type</b>
-                                    </font>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div style="overflow: auto; height: 25vh">
+                        <div id="analytics_options_list" style="margin-top: 3px; background: transparent;">
+                            <table style="width: 100%; background: transparent; text-align: left" id="analytics_options_table">
+                                <thead>
+                                <tr id="analytics_options_table_title">
+                                    <th>
+                                        <font size="3">
+                                            <b>Classification</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Type</b>
+                                        </font>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -288,20 +283,74 @@
                     <h5><i class='fa  fa-pie-chart'></i>&nbsp;Analytics History</h5>
                 </div>
                 <div class="panel-body">
-                    <div id="analytics_list" style="margin-top: 3px; background: transparent;">
-                        <table style="width: 100%; background: transparent; text-align: left" id="analytics_table">
+                    <div style="overflow: auto; height: 25vh">
+                        <div id="analytics_list" style="margin-top: 3px; background: transparent;">
+                            <table style="width: 100%; background: transparent; text-align: left" id="analytics_table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <font size="3">
+                                            <b>Classification</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Type</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Description</b>
+                                        </font>
+                                    </th>
+                                    <th>
+                                        <font size="3">
+                                            <b>Status</b>
+                                        </font>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tab-pane fade" id="app_deployment">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8" style="padding: 6px;">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_1"></span></h6>
+                    <hr style="clear: both; border: 0"/>
+                </div>
+                <div style="overflow: auto; height: 30vh">
+                    <div class="panel-body" style="height: 15.5vh;">
+                        <div class="list-group list-group-root" id="analytics_deploy_list_1">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3" style="padding: 6px;">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Slides</h6>
+                    <hr style="clear: both; border: 0"/>
+                </div>
+                <div style="overflow: auto; height: 30vh">
+                    <div class="panel-body" style="height: 15.5vh;">
+                        <table style="width: 100%; background: transparent; text-align: left" id="slide_table">
                             <thead>
-                            <tr>
-                                <th>
-                                    <font size="3">
-                                        <b>Classification</b>
-                                    </font>
-                                </th>
-                                <th>
-                                    <font size="3">
-                                        <b>Type</b>
-                                    </font>
-                                </th>
+                            <tr id="slide_table_table_title">
                                 <th>
                                     <font size="3">
                                         <b>Description</b>
@@ -309,7 +358,7 @@
                                 </th>
                                 <th>
                                     <font size="3">
-                                        <b>Status</b>
+                                        <b>Sections</b>
                                     </font>
                                 </th>
                             </tr>
@@ -322,81 +371,21 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="tab-pane fade" id="app_deployment">
-    <div class="row">
-        <div class="col-lg-6" style="padding: 6px;">
+        <div class="col-lg-1" style="height: 100%; padding: 6px;">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Analytics for: <span id="deployTabDescription_1"></span></h6>
+                    <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Admin</h6>
                     <hr style="clear: both; border: 0"/>
                 </div>
-                <div style="overflow: auto; height: 300px">
-                    <div class="panel-body" style="height: 15.5vh;">
-                        <div class="list-group list-group-root" id="analytics_deploy_list_1">
-@*                            <a href="#items_analytics_1" class="list-group-item" data-toggle="collapse">*@
-@*                                <i class="fa fa-chevron-down fa-fw"></i>Analytics*@
-@*                            </a>*@
-@*                            <ul class="list-group collapse in" id="items_analytics_1"></ul>*@
-@*                            <a href="#items_graphs_1" class="list-group-item" data-toggle="collapse">*@
-@*                                <i class="fa fa-chevron-down fa-fw"></i>Graphs*@
-@*                            </a>*@
-@*                            <ul class="list-group collapse in" id="items_graphs_1"></ul>*@
+                <div class="panel-body" style="padding: 0px">
+                    <div style="overflow: auto; height: 30vh">
+                        <div class="btn-group-vertical" style="width: 100%">
+                            <button id="launch_slide" class="btn btn-success disabled">LaunchSlide</button>
                         </div>
+
                     </div>
                 </div>
                 <div class="panel-footer">
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6" style="padding: 6px;">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <button id="allocate" class="btn btn-success"><i class='fa fa-space-shuttle'></i>&nbsp; AutoLaunch Charts 2x2</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Slides</h6>
-                            <hr style="clear: both; border: 0" />
-                        </div>
-                        <div style="overflow: auto; height: 190px">
-                            <div class="panel-body" style="height: 15.5vh;">
-                                <table style="width: 100%; background: transparent; text-align: left" id="slide_table">
-                                    <thead>
-                                        <tr id="slide_table_table_title">
-                                            <th>
-                                                <font size="3">
-                                                    <b>Id</b>
-                                                </font>
-                                            </th>
-                                            <th>
-                                                <font size="3">
-                                                    <b>Description</b>
-                                                </font>
-                                            </th>
-                                            <th>
-                                                <font size="3">
-                                                    <b>Number of Sections</b>
-                                                </font>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="panel-footer">
-                            <button id="launch_slide" class="btn btn-success disabled"><i class='fa fa-space-shuttle'></i>&nbsp; Launch Slide</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -437,6 +426,7 @@
         </div>
     </div>
 </div>
+    </div>
 <div class="tab-pane fade" id="app_control">
     <div class="row">
         <div class="col-lg-4">
@@ -470,8 +460,8 @@
                                             <span><select id="gc_select_label" style="width: 30%" required class="input_field"></select></span>
                                             <span>&nbsp;as labels&nbsp;</span>
                                             <span>
-                                                <input type="color" id="color_Labels" value="#ff0000" class="color_field">
-                                            </span>
+                                                            <input type="color" id="color_Labels" value="#ff0000" class="color_field">
+                                                        </span>
                                         </div>
                                         <div>
                                             <span><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></span>
@@ -484,34 +474,34 @@
                                     <div class="row">
                                         <div>
                                             <span>
-                                                <button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button>
-                                            </span>
+                                                            <button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button>
+                                                        </span>
                                             <span>
-                                                <input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field">
-                                            </span>
+                                                            <input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field">
+                                                        </span>
                                             <span>
-                                                &nbsp;nodes with more than&nbsp;
-                                            </span>
+                                                            &nbsp;nodes with more than&nbsp;
+                                                        </span>
                                             <span>
-                                                <input class="input_field" style="width: 10%" size="4" type="text" id="numLinks" value="5" />
-                                            </span>
+                                                            <input class="input_field" style="width: 10%" size="4" type="text" id="numLinks" value="5" />
+                                                        </span>
                                             <span>
-                                                &nbsp;links
-                                            </span>
+                                                            &nbsp;links
+                                                        </span>
                                         </div>
                                         <div>
                                             <span>
-                                                <button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
-                                            </span>
+                                                            <button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
+                                                        </span>
                                             <span>
-                                                <select id="gc_select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
-                                            </span>
+                                                            <select id="gc_select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
+                                                        </span>
                                             <span>
-                                                &nbsp;as labels&nbsp;
-                                            </span>
+                                                            &nbsp;as labels&nbsp;
+                                                        </span>
                                             <span>
-                                                <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
-                                            </span>
+                                                            <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
+                                                        </span>
                                         </div>
                                         <div>
                                             <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
@@ -524,32 +514,32 @@
                                 @*                                <div style="border-collapse: separate; border-spacing: 1px;">*@
                                 <div>
                                     <span>
-                                            <button class='btn btn-default' id="startSearch">Search</button>
-                                        </span>
+                                                    <button class='btn btn-default' id="startSearch">Search</button>
+                                                </span>
                                     <span>
-                                            <input class="input_field" style="width: 60%" size="60" type="text" id="searchKeywords" />
-                                        </span>
+                                                    <input class="input_field" style="width: 60%" size="60" type="text" id="searchKeywords" />
+                                                </span>
                                     <span>&nbsp;in&nbsp;</span>
                                     <span>
-                                            <select id="gc_select_SearchFields" style="width: 20%" required class="input_field"></select>
-                                        </span>
+                                                    <select id="gc_select_SearchFields" style="width: 20%" required class="input_field"></select>
+                                                </span>
                                 </div>
                                 <div>
                                     <span>
-                                            <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
-                                        </span>
+                                                    <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
+                                                </span>
                                     <span>
-                                            <select id="gc_select_SearchLabels" style="width: 30%" required class="input_field"></select>
-                                        </span>
+                                                    <select id="gc_select_SearchLabels" style="width: 30%" required class="input_field"></select>
+                                                </span>
                                     <span>&nbsp;as labels&nbsp;</span>
                                 </div>
                                 <div>
                                     <span>
-                                            <button class='btn btn-default' id="hide_sublinks">Hide links</button>
-                                        </span>
+                                                    <button class='btn btn-default' id="hide_sublinks">Hide links</button>
+                                                </span>
                                     <span>
-                                            <button class='btn btn-default' id="hide_search">Hide all</button>
-                                        </span>  
+                                                    <button class='btn btn-default' id="hide_search">Hide all</button>
+                                                </span>
                                 </div>
 
 
@@ -561,24 +551,24 @@
                             <div class="row">
                                 <div>
                                     <span>
-                                        <button class='btn btn-default' id="searchUser">Find User</button>
-                                    </span>
+                                                    <button class='btn btn-default' id="searchUser">Find User</button>
+                                                </span>
                                     <span>
-                                        <input class="input_field" style="width: 60%" size="60" type="text" id="userKeyword" />
-                                    </span>
+                                                    <input class="input_field" style="width: 60%" size="60" type="text" id="userKeyword" />
+                                                </span>
                                 </div>
                                 <div>
                                     <span>
-                                        <button class='btn btn-default' id="searchTweets">Find Tweet Containing</button>
-                                    </span>
+                                                    <button class='btn btn-default' id="searchTweets">Find Tweet Containing</button>
+                                                </span>
                                     <span>
-                                        <input class="input_field" style="width: 60%" size="60" type="text" id="tweetKeyword" />
-                                    </span> 
+                                                    <input class="input_field" style="width: 60%" size="60" type="text" id="tweetKeyword" />
+                                                </span>
                                 </div>
                                 <div>
                                     <span>
-                                        <button class='btn btn-default FLAG_OFF' id="showTimeNodes">Show Time Nodes</button>
-                                    </span>
+                                                    <button class='btn btn-default FLAG_OFF' id="showTimeNodes">Show Time Nodes</button>
+                                                </span>
                                 </div>
                             </div>
                         </div>
@@ -613,13 +603,14 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
 </div>
 </div>
-
+</div>
+    </div>
 <script>
     var gdo = parent.gdo;
     gdo.net.app["Twitter"].drawSectionTable = function(instanceId) {
@@ -797,7 +788,7 @@
         }
     }
 
-    gdo.net.app["Twitter"].drawSectionControlTable = function (instanceId) {
+    gdo.net.app["Twitter"].drawSectionControlTable = function(instanceId) {
         gdo.net.app["Twitter"].drawEmptySectionControlTable(gdo.net.cols, gdo.net.rows);
         $("#graph_control_description").html(gdo.net.instance[instanceId].control.selectedGraphApps.join(", "));
 
@@ -842,7 +833,7 @@
                     .css("border", "1px solid #333")
                     .css("background", "#222")
                     .css('padding', 0)
-                    .click(function () {
+                    .click(function() {
                     });
 
             } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
@@ -899,14 +890,14 @@
                         $("#section_control_table_row_" + node.row + "_col_" + node.col)
                             .css("border", "1px solid #d56c0a");
                     }
-                    
+
                 }
                 if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
-                $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                    .click(function () {
-                        var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
+                    $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                        .click(function() {
+                            var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
                                 .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
-                        
+
                             var index = gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId);
                             if (index > -1) {
                                 gdo.net.instance[instanceId].control.selectedGraphApps.splice(index, 1);
@@ -923,15 +914,17 @@
                                 }
                             }
                             gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
-                    
-                    });
+
+                        });
                 }
 
-                if (gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) > -1) {
-                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                            .css("background-color", "#95078a")
-                            .css("border", "1px solid #ce0ad6");
-                        $("#section_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
+                if (gdo.net.instance[instanceId].control.selectedGraphApps
+                    .indexOf(gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) >
+                    -1) {
+                    $("#section_control_table_row_" + node.row + "_col_" + node.col)
+                        .css("background-color", "#95078a")
+                        .css("border", "1px solid #ce0ad6");
+                    $("#section_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
                 }
             } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
                 $("#section_control_table_row_" + node.row + "_col_" + node.col).hide();
@@ -939,7 +932,7 @@
         }
     }
 
-    gdo.net.app["Twitter"].drawAppControlTable = function (instanceId) {
+    gdo.net.app["Twitter"].drawAppControlTable = function(instanceId) {
         console.log("Drawing App Control Table");
         gdo.net.app["Twitter"].drawEmptyAppControlTable(gdo.net.cols, gdo.net.rows);
         $("#app_control_description").html(gdo.net.instance[instanceId].control.selectedApp);
@@ -984,7 +977,7 @@
                     .css("border", "1px solid #333")
                     .css("background", "#222")
                     .css('padding', 0)
-                    .click(function () {
+                    .click(function() {
                     });
 
             } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
@@ -1010,41 +1003,42 @@
                         .append("<font size='4px'><b> I" +
                             gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
                             "</b></font>");
-                        $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                            .css('overflow', 'hidden')
-                            .append("<div id='app_control_table_section_" +
-                                sectionId +
-                                "_a'> <b>&nbsp;App:</b> " +
-                                gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
-                                    .appInstanceId]
-                                .appName +
-                                "</div>")
-                            .css('overflow', 'hidden')
-                            .css("background", "#559100");
-                        $("#app_control_table_section_" + sectionId + "_i").css("background", "#77B300");
-                        $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                            .css("border", "1px solid #77B300");
-                   }
                     $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                        .click(function () {
-                            var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
-                                    .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
+                        .css('overflow', 'hidden')
+                        .append("<div id='app_control_table_section_" +
+                            sectionId +
+                            "_a'> <b>&nbsp;App:</b> " +
+                            gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
+                                .appInstanceId]
+                            .appName +
+                            "</div>")
+                        .css('overflow', 'hidden')
+                        .css("background", "#559100");
+                    $("#app_control_table_section_" + sectionId + "_i").css("background", "#77B300");
+                    $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                        .css("border", "1px solid #77B300");
+                }
+                $("#app_control_table_row_" + node.row + "_col_" + node.col)
+                    .click(function() {
+                        var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
+                            .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
 
-                            
-                            if (gdo.net.instance[instanceId].control.selectedApp == appInstanceId) {
-                                gdo.net.instance[instanceId].control.selectedApp = null;
-                                $("#app_control_frame").attr("src", "");
-                            } else {
-                                gdo.net.instance[instanceId].control.selectedApp = appInstanceId;
-                                $("#app_control_frame")
-                                    .attr("src", window.location.origin + "/Web/Instances.cshtml?id=" + appInstanceId);
-                            }
-                            console.log(gdo.net.instance[instanceId].control.selectedApp);
-                            gdo.net.app["Twitter"].drawAppControlTable(instanceId);
 
-                        });
-                
-                if (gdo.net.instance[instanceId].control.selectedApp == gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) {
+                        if (gdo.net.instance[instanceId].control.selectedApp == appInstanceId) {
+                            gdo.net.instance[instanceId].control.selectedApp = null;
+                            $("#app_control_frame").attr("src", "");
+                        } else {
+                            gdo.net.instance[instanceId].control.selectedApp = appInstanceId;
+                            $("#app_control_frame")
+                                .attr("src", window.location.origin + "/Web/Instances.cshtml?id=" + appInstanceId);
+                        }
+                        console.log(gdo.net.instance[instanceId].control.selectedApp);
+                        gdo.net.app["Twitter"].drawAppControlTable(instanceId);
+
+                    });
+
+                if (gdo.net.instance[instanceId].control.selectedApp ==
+                    gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) {
                     $("#app_control_table_row_" + node.row + "_col_" + node.col)
                         .css("background-color", "#95078a")
                         .css("border", "1px solid #ce0ad6");
@@ -1055,7 +1049,6 @@
             }
         }
     }
-
 
 
     $("#dataset_table tbody")
@@ -1089,28 +1082,27 @@
         .on('click',
             'tr',
             function () {
+                console.log($(this).index());
                 var gdo = parent.gdo;
-                var id = $(this).find('td:first').text();
-                var desc = $(this).find('td:nth-child(1)').text();
+                var slide = gdo.net.instance[gdo.controlId].data.slides[$(this).index()];
 
-                if (gdo.net.instance[gdo.controlId].control.selectedSlide === id) {
-                    gdo.net.instance[gdo.controlId].control.selectedSlide = -1;
+                if (gdo.net.instance[gdo.controlId].control.selectedSlide === slide) {
+                    gdo.net.instance[gdo.controlId].control.selectedSlide = null;
                     $("#launch_slide").addClass("disabled").addClass("btn-default").removeClass("btn-success");
                     $(this).removeClass("btn-success");
                 } else {
-                    gdo.net.instance[gdo.controlId].control.selectedSlide = id;
-                    gdo.net.app["Twitter"].setMessage("Selected: " + desc);
+                    gdo.net.instance[gdo.controlId].control.selectedSlide = slide;
+                    gdo.net.app["Twitter"].setMessage("Selected: " + slide["description"]);
                     $(this)
                         .addClass("btn-success")
                         .siblings()
                         .removeClass("btn-success");
                 }
-                if (gdo.net.instance[gdo.controlId].control.selectedSlide !== -1) {
+                if (gdo.net.instance[gdo.controlId].control.selectedSlide !== null) {
                     $("#launch_slide").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
                 }
 
             });
-
 
 
     $("#analytics_options_table tbody")
@@ -1173,16 +1165,16 @@
             });
 
     $("#launch_slide")
-     .on('click',
-         function () {
-             if (gdo.net.instance[gdo.controlId].control.selectedSlide != -1) {
-                 parent.gdo.net.app["Twitter"]
-                     .launchSlide(gdo.controlId, gdo.net.instance[gdo.controlId].control.selectedSlide);
-             }
-         });
+        .on('click',
+            function() {
+                if (gdo.net.instance[gdo.controlId].control.selectedSlide != null) {
+                    parent.gdo.net.app["Twitter"]
+                        .launchSlide(gdo.controlId, gdo.net.instance[gdo.controlId].control.selectedSlide);
+                }
+            });
     $("#refresh")
         .on("click",
-            function () {
+            function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
                 gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
@@ -1195,10 +1187,10 @@
                 console.log(gdo.net);
             });
     $("#redownload")
-    .on("click",
-        function () {
-            gdo.net.app["Twitter"].server.toggleRedownloadFiles(gdo.controlId);
-        });
+        .on("click",
+            function() {
+                gdo.net.app["Twitter"].server.toggleRedownloadFiles(gdo.controlId);
+            });
     $("#allocate")
         .on("click",
             function() {
@@ -1207,7 +1199,7 @@
 
     //////////////////////////////////////////Graph Control
     $("#showTimeNodes")
-        .click(function () {
+        .click(function() {
             if ($(this).hasClass("FLAG_ON")) {
                 gdo.net.app["Twitter"].hideTimeNodes(gdo.controlId);
                 $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
@@ -1219,26 +1211,26 @@
             }
         });
     $("#searchTweets")
-    .click(function () {
-        gdo.net.app["Twitter"].searchTweets(gdo.controlId, $("#tweetKeyword").val());
-    });
+        .click(function() {
+            gdo.net.app["Twitter"].searchTweets(gdo.controlId, $("#tweetKeyword").val());
+        });
     $("#searchUsers")
-    .click(function () {
-        gdo.net.app["Twitter"].searchUsers(gdo.controlId, $("#userKeyword").val());
-    });
+        .click(function() {
+            gdo.net.app["Twitter"].searchUsers(gdo.controlId, $("#userKeyword").val());
+        });
 
-    $("#toggle_nodeSize").click(function () {
-        if ($(this).hasClass("FLAG_ON")) {
-            gdo.net.app["Twitter"].setAllNodesSize(gdo.controlId, parseInt($("#allNodeSize").val()));
-            $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
-            $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Original size");
-        } else {
-            gdo.net.app["Twitter"].setOriginalSize(gdo.controlId);
-            $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
-            $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size");
-        }
-    });
-
+    $("#toggle_nodeSize")
+        .click(function() {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Twitter"].setAllNodesSize(gdo.controlId, parseInt($("#allNodeSize").val()));
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Original size");
+            } else {
+                gdo.net.app["Twitter"].setOriginalSize(gdo.controlId);
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size");
+            }
+        });
 
 
     $("#toggle_links")
