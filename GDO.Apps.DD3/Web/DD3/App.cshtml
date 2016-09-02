@@ -341,8 +341,7 @@
 
                     orderController.orders['createDistributedCircles'] = function (number, opacity) {
                         nbdc += number || 10;
-                        circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()
-                            .append('g')
+                        circleGroupDistributed.selectAll(".new").data(d3.range(number || 10)).enter()//.append('g')
                             .append('circle')
                             .attr("class", "c new");
 

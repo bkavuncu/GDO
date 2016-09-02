@@ -379,7 +379,7 @@
 
                     $('#createDistributedCircles').click(function () {
                         if (!dcircles) {
-                            dcircles = 10;
+                            dcircles = 1;
                             server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
                             $(".superposition.distributed .red").removeClass("red").addClass("green");
                             $(this).removeClass("green").addClass("red");

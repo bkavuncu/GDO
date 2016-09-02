@@ -1171,7 +1171,9 @@ var initDD3App = function () {
                 if (!elems.empty()) {
                     s[1] = +s[1];
                     //TODO v4: use selection.nodes() to return an array
+                    
                     elems = elems.nodes();
+                    
 
                     elems.some(function (a) {
                         o = +a.getAttribute('order').split("_")[1];
@@ -1189,8 +1191,9 @@ var initDD3App = function () {
 
                 } else {
                     elems = g.selectAll_("#" + g.node().id + " > [order]");
-
+                    
                     elems = elems.nodes();
+                    
 
                     elems.some(function (a) {
                         var o = a.getAttribute('order');
@@ -1289,6 +1292,7 @@ var initDD3App = function () {
                     utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
                     
 
+
                     for (var a in data.start.attr) {
                         if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
                     }
@@ -1318,6 +1322,7 @@ var initDD3App = function () {
 
                     //TODO v4: should be fixed to ignore attr
                     
+                    /*
                     if (data.attrTweens) {
                         data.attrTweens.forEach(function (o) {
                             if(_dd3_tweens["dd3_"+o.key+"_std_value"]){
@@ -1329,6 +1334,7 @@ var initDD3App = function () {
                             }
                         });
                     }
+                    */
                     
                     
                     if (data.styleTweens) {
@@ -1640,7 +1646,6 @@ var initDD3App = function () {
                         }
                     }
                 }
-
                 return rcpt;
             };
 
@@ -1686,7 +1691,6 @@ var initDD3App = function () {
             };
 
             _dd3.selection.prototype.send = function () {
-                console.log('Manually sending a shape ....'); //TODO v4: remove
                 _dd3_selection_createProperties(this);
                 return _dd3_selection_send.call(this, 'shape');
             };
@@ -1701,8 +1705,6 @@ var initDD3App = function () {
                         counter += _dd3_sendElement.call(this, type, args, rcpts);
                 });
 
-                console.log('Number of recipients: '+counter);
-
                 // We buffered so we need to flush buffer of recipients !
                 rcpts.forEach(function (d) { peer.flush(d[0], d[1]); });
 
@@ -1714,14 +1716,12 @@ var initDD3App = function () {
             };
 
             var _dd3_sendElement = function (type, args, rcpts) {
-                console.log('_dd3_sendElement');
                 var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
                 // Get former recipients list saved in the __recipients__ variable to send them 'exit' message
                 formerRcpts = this.__recipients__;
                 // Get current recipients
 
                 rcpt = this.__recipients__ = _dd3_findTransitionsRecipients(this);
-                console.log(rcpt);
                 // Create (enter,update,exit) selections with the recipients
                 selections = _dd3_getSelections(rcpt, formerRcpts);
 
@@ -2171,10 +2171,6 @@ var initDD3App = function () {
 
             
             var _dd3_findTransitionsRecipients = function (elem) {
-
-                console.log('_dd3_findTransitionsRecipients');
-                console.log(elem);
-
                 if (!elem || !elem.parentNode) {
                     return [];
                 }
@@ -2191,9 +2187,7 @@ var initDD3App = function () {
 
 
                 do {
-                    //INFO: add g at the beginning of containers
-
-                    containers.unshift(g);//v4
+                    containers.unshift(g);
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
 
                 var c1 = containers[0], c2;
@@ -2230,7 +2224,6 @@ var initDD3App = function () {
                         };
                     });
                 });
-
                 // ! Doesn't take in account order of the transitions !
                 var step = precision * (max - now);
                 
@@ -2238,6 +2231,7 @@ var initDD3App = function () {
                 var range = d3.range(now, max, step);
                 range.push(max);
 
+                //V4: fine at this point
                 range.forEach(function (time) {
                     if (!(transitionsInfos instanceof Array)) utild.log("V4 Error: transitionsInfos is a Map and handled as an array",4);
                     transitionsInfos.forEach(function (c, i) {
@@ -2251,11 +2245,12 @@ var initDD3App = function () {
                                     }else{
                                         t = d3[obj.ease](a);//V4: why not a function directly
                                     }
-                                     
+                                     //TODO V4: we've got  the interpolator ??? Why not use them instead of the tween
                                     if (!(obj.tweened instanceof Array)) utils.log("V4 Error: obj.tweened  is a Map and handled as an array",4);
                                     obj.tweened.forEach(function (f) {
                                         f.call(clones[i], t);
                                     });
+
                                 }
                             });
                         } else {
@@ -2263,6 +2258,7 @@ var initDD3App = function () {
                         }
                     });
                     var rcpt = _dd3_findRecipients(g);
+
                     if (!(rcpt instanceof Array)) utils.log("V4 Error: rcpt  is a Map and handled as an array",4);
                     rcpt.forEach(function (r) {
                         r.min = time - step;
@@ -2274,7 +2270,7 @@ var initDD3App = function () {
 
                 //utils.log("Computed in " + (Date.now() - now)/1000 + "s probable recipients: [" + rcpts.join('],[') + ']', 2);
                 //utils.log("Computed in " + (Date.now() - now)/1000 + " sec", 2);
-                console.log(rcpts)
+
                 return rcpts;
             };
 
@@ -2286,7 +2282,7 @@ var initDD3App = function () {
                     properties = [],
                     startValues = [],
                     endValues = [];
-                
+
                 //TODO v4: find how to call tween.each
                 
                 //TODO v4: refine
@@ -2302,11 +2298,23 @@ var initDD3App = function () {
                 //TODO v4: something in this block prevenrs the transition from running
                 tween.forEach(function (obj) {
                     //var type = value.type;
+                    
                     //var value = obj.value.call(elem, args.data, args.index);
-                    //if (value) {
-                        properties.push(obj.name);
-                    //    tweened.push(value);
-                    //}
+                    console.log(obj);
+                    console.log(obj.value);
+                    console.log(obj.value._value);
+                    var i = obj.value._value.call(elem, args.data, args.index);
+                    //TODO v4: handle if NAMEspace and if style
+                    var name = obj.name.split('.')[1];
+                    var value = function(t){
+                        this.setAttribute(name, i(t));
+                    };
+                    //The original tween function  is bound to the node it interpolates.
+                    
+                    if (value) {
+                          properties.push(obj.name);
+                          tweened.push(value);
+                    }
                 });
                 
 
@@ -2315,18 +2323,20 @@ var initDD3App = function () {
 
                 var d3_node = d3.select(node);
                 
+                /*
                 properties.forEach(function(prop){
                     var ps = prop.split('.'),
                         p0 = ps[0],
                         p1 = typeof ps[1] !== "undefined" ? [ps[1]] : [];
                     //TODO v4: quite weird we have to parse float
-                    startValues.push(parseFloat(d3_node[p0].apply(d3_node, p1)));
-                    endValues.push(args.transition.value[prop]);
-
+                    //startValues.push(parseFloat(d3_node[p0].apply(d3_node, p1)));
+                    //endValues.push(args.transition.value[prop]);
                 });
+*/
+                
+
                 //TODO v4: check if we can have start and end values without touching stuff
 
-                /*
                 if (!(tweened instanceof Array)) utils.log("V4 Error: tweened  is a Map and handled as an array",4);
                 tweened.forEach(function (f, j) {
                     var ps = properties[j].split('.'),
@@ -2338,18 +2348,21 @@ var initDD3App = function () {
                         endValues.push(null);
                     } else {
                         
+                        //TODO v4: how can I call thos
                         f.call(node, 0);
                         
                         startValues.push(d3_node[p0].apply(d3_node, p1));
                         f.call(node, 1);
-                        //endValues.push(d3_node[p0].apply(d3_node, p1));
-                        endValues.push(args.transition.value[properties[j]]+"");
+
+                        endValues.push(d3_node[p0].apply(d3_node, p1));
+                        //endValues.push(args.transition.value[properties[j]]+"");
                     }
                 });
-                */
 
+                
                     
                 group.removeChild(node);
+
 
                 args.startValues = startValues;
                 args.endValues = endValues;
@@ -2399,7 +2412,6 @@ var initDD3App = function () {
                         }
                         if(!transition) utils.log("V4 Warning: No transition on the object",4);
 
-                        console.log('Transition Starting');
                         
                         //var transition = this.__transition[2];
                         //if(!transition) transition = this.__transition[2];
@@ -2473,8 +2485,6 @@ var initDD3App = function () {
 
 
                         _dd3_retrieveTransitionSettings(this, args);
-
-                        console.log(this);
 
                         this.__dd3_transitions__.set(ns, args);//TODO: v4 should be populated
                         _dd3_selection_send.call(d3.select(this), 'transitions', { 'ns': ns });
