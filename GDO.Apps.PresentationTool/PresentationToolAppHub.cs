@@ -39,7 +39,7 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    if (pa.isPlaying == 0)
+                    if (pa.isPlaying == 0 || pa.TempSlides.Count == 0)
                     {
                         List<string> sections = new List<string>(pa.Slides[pa.CurrentSlide].Sections.Count);
                         foreach (KeyValuePair<int, AppSection> kvp in pa.Slides[pa.CurrentSlide].Sections)
@@ -47,7 +47,7 @@ namespace GDO.Apps.PresentationTool
                             sections.Add(GetSectionUpdate(instanceId, kvp.Value.Id, pa.CurrentSlide));
                         }
 
-                        Clients.Caller.receiveAppUpdate(sections, pa.CurrentSlide, pa.Slides.Count, pa.isPlaying, pa.CurrentPlayingIndex, pa.ImagesWidth);
+                        Clients.Caller.receiveAppUpdate(sections, pa.CurrentSlide, pa.Slides.Count, 0, pa.CurrentPlayingIndex, pa.ImagesWidth);
                     } else
                     {
                         List<string> sections = new List<string>(pa.TempSlides[pa.CurrentSlide].Sections.Count);
@@ -55,7 +55,7 @@ namespace GDO.Apps.PresentationTool
                         {
                             sections.Add(JsonConvert.SerializeObject(kvp.Value));
                         }
-                        Clients.Caller.receiveAppUpdate(sections, pa.CurrentSlide, pa.TempSlides.Count, pa.isPlaying, pa.CurrentPlayingIndex, pa.ImagesWidth);
+                        Clients.Caller.receiveAppUpdate(sections, pa.CurrentSlide, pa.TempSlides.Count, 1, pa.CurrentPlayingIndex, pa.ImagesWidth);
                     }
 
                 }
@@ -141,68 +141,6 @@ namespace GDO.Apps.PresentationTool
                 }
             }
         }
-
-        public void UpdateProcessedImages(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
-                    string[] database = { };
-                    if (File.Exists(database_path))
-                    {
-                        database = File.ReadAllLines(database_path);
-                        Clients.Caller.receiveProcessedImages(database);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to process image ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-            }
-        }
-
-        public void DeleteImageFolder(int instanceId, string filename)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    string database_path = System.Web.HttpContext.Current.Server.MapPath("~/Web/Images/Images/Database.txt");
-                    string[] database = { };
-                    if (File.Exists(database_path))
-                    {
-                        database = File.ReadAllLines(database_path);
-                        string tempFile = Path.GetTempFileName();
-                        using (var sw = new StreamWriter(tempFile))
-                        {
-                            foreach (string s in database)
-                            {
-                                if (s.Split('|')[0].Equals(filename))
-                                {
-                                    Directory.Delete(pa.ImagesAppBasePath + s.Split('|')[1], false);
-                                    Clients.Caller.setMessage("Delete " + s.Split('|')[0] + " Success!");
-                                } else
-                                {
-                                    sw.WriteLine(s);
-                                }
-                            }
-                        }
-                        File.Delete(database_path);
-                        File.Move(tempFile, database_path);
-                    } 
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to process image ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-            }
-        }
        
         public void UpdateFileList(int instanceId)
         {
@@ -241,10 +179,14 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.isPlaying = status;
+                    if (status == 0)
+                    {
+                        RequestAppUpdate(instanceId);
+                    }
                 }
                 catch (Exception e)
                 {
-                    Log.Error("failed to create section ", e);
+                    Log.Error("failed to change playing status ", e);
                     Clients.Caller.setMessage(e.GetType().ToString() + e);
                 }
 
@@ -310,7 +252,7 @@ namespace GDO.Apps.PresentationTool
         }
 
 
-        public void RequestAllSections(int instanceId)
+        public void RequestAllSectionsInfo(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -345,7 +287,7 @@ namespace GDO.Apps.PresentationTool
                         }
                         pa.SectionList.Add(section);
                     }
-                    Clients.Caller.receiveAllSections(pa.SectionList);
+                    Clients.Caller.receiveAllSectionsInfo(pa.SectionList);
                 }
                 catch (Exception e)
                 {

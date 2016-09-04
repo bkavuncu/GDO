@@ -656,5 +656,34 @@ namespace GDO.Apps.Images
                 }
             }
         }
+
+        public void LoadImage(int instanceId, string imageName)
+        {
+            try
+            {
+                ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
+                string[] database = { };
+                if (File.Exists(database_path))
+                {
+                    database = File.ReadAllLines(database_path);
+                    foreach (string s in database)
+                    {
+                        if (s.Split('|')[0].Equals(imageName))
+                        {
+                            FindDigits(instanceId, s.Split('|')[1]);
+                            return;
+                        }
+                    }
+                }
+                ProcessImage(instanceId, imageName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Clients.Caller.setMessage(e.GetType().ToString());
+            }
+        }
     }
+
 }

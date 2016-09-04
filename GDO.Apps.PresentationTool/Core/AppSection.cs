@@ -12,7 +12,7 @@ namespace GDO.Core
         public Node[,] Nodes;
         public int[,] NodeMap { get; set; }
         public int NumNodes { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
         public int Width { get; set; }
         public int Height { get; set; }
         public int Pixels { get; set; }

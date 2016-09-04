@@ -83,20 +83,11 @@
     </script>
     <div id="image-tiles">
     </div>
-    <div id="paint-canvas" style ="position:absolute; z-index:1">
-        <canvas id="myCanvas" width="1920" height="1080" style="margin: 0px;"></canvas>
+    <div id="paint-canvas" style ="width:100%; height:100%; position:absolute; z-index:1">
+        <canvas id="myCanvas" style="width: 100%; height:100%; margin: 0px;"></canvas>
     </div>
     <script>
-        var c = document.getElementById("myCanvas");
-        var ctx = c.getContext("2d");
-        ctx.beginPath();
-        ctx.moveTo(0, 1080/2);
-        ctx.lineTo(1920, 1080/2);
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
-
-        function setCanvas(dataURL) {
+        function setCanvasData(dataURL) {
 
             var canvasData = JSON.parse(dataURL);
             var image = new Image();
@@ -105,7 +96,7 @@
             var canvas = document.getElementById("myCanvas");
             var ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 0);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         }
 
     </script>
