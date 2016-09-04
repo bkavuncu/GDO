@@ -70,13 +70,14 @@
 
         .brush .extent {
         fill-opacity: .3;
-        stroke: #fff;
+        stroke: #A18648;
         shape-rendering: crispEdges;
         }
 
         .axis text {
         text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
         cursor: move;
+        font-size: 30px;
         }            
 
     </style>
@@ -1247,11 +1248,13 @@
                         foreground,
                         dimensions,
                         g,
+                        drag,
                         yScale = {},
                         dragging = {},
-                        svg = dd3.svgCanvas;
+                        svg = dd3.svgCanvas,
+                        saved_data;
 
-                    //Way to make a white background, because the main body is unselectable                    
+                    //Way to make a black background, because the main body is unselectable                    
                     svg.append("rect")
                         .attr("width", "100%")
                         .attr("height", "100%")
@@ -1279,6 +1282,7 @@
 
                     
                     var draw = function(data){
+                        saved_data=data;
                         // Add grey background lines for context.
                         background = svg.append("g")
                                     .attr("class", "background")
@@ -1295,7 +1299,7 @@
                                     .enter().append("path")
                                     .attr("d", path);
 
-                        var drag = d3.behavior.drag()
+                        drag = d3.behavior.drag()
                                     .origin(function(d) { return {x: xScale(d)}; })
                                     .on("dragstart", function(d) {
                                         dragging[d] = xScale(d);
@@ -1334,6 +1338,7 @@
                                 .each(function(l) { d3.select(this).call(xAxis.scale(yScale[l])); })
                                 .append("text")
                                 .style("text-anchor", "middle")
+                                .style("font-size","40px")
                                 .attr("y", -9)
                                 .text(function(d) { return d; });
 
@@ -1357,7 +1362,7 @@
                     }
 
                     function transition(g) {
-                        return g.transition().duration(500);
+                        return g.transition().duration(5000);
                     }
 
                     // Returns the path for a given data point.
@@ -1384,6 +1389,8 @@
                         //console.log(new_dim);
                         /*if(!new_dim) dimensions = ["Id", "Partner Id", "Match", "Partner's decision","Gender", "Partner Age", "Partner Race", "PP Attractiveness", "PP Sincerity", "PP Intelligence", "PP Fun", "PP Ambition", "PP Shared Interest"];
                         else dimensions=new_dim;*/
+                        console.log(dimensions);
+                        console.log(new_dim);
                         dimensions = new_dim;
                         background.attr("visibility", "hidden");
                         //console.log(xScale.domain());
@@ -1394,7 +1401,7 @@
                         
                         transition(foreground).attr("d", path);
                         background.attr("d", path).transition()
-                                    .delay(500)
+                                    .delay(5000)
                                     .duration(0)
                                     .attr("visibility", null);
 
@@ -1405,15 +1412,23 @@
                         brush.extent([min, max]);
                         var rect = dd3.select("."+dim.replace(new RegExp(' ', 'g'), ''));
                         brush(rect.transition());
-                        brush.event(rect.transition().duration(500));
+                        brush.event(rect.transition().duration(5000));
                     }
 
                     function resetVisualization(){
+                        //drag.remove();
+                        foreground.remove();
+                        background.remove();
+                        g.remove();
+
+                        draw(saved_data);
+                        /*
                         updateDimensions(init_dim);
                         dimensions.forEach((dimension) => {
                             updateFilter(dimension, dim[dimension].min, dim[dimension].max);
                             
                         });
+                        */
                         
                     }
 
