@@ -1,6 +1,11 @@
 ﻿/**
 *   Version 0.0.1
 *   dd3 - v0.0.2
+*   Commentary Glossary:
+*   TODO: code or function to be refactored
+*   TODEL: code that doesn't appear to serve any purpose and should be deleted after validation
+*   APIDOC: to be included in dd3 documentation
+*   INFO: so you don't have to google it
 */
 
 // ==== IF THIS NODE IS AN APP ====
@@ -13,13 +18,14 @@ var initDD3App = function () {
     //Retrieve the d3 library element
     d3 = document.getElementById('app_frame_content').contentWindow.d3;
 
-    //Common JS utility function.
+    /**
+     * Common JS utility function. 
+     */
     var utils = (function () {
         return {
-
-            //get the value of an url variable if it exist, false else
-
-
+            /**
+             *get the value of an url variable if it exist, false else
+             */
             getUrlVar: function (variable) {
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -29,8 +35,8 @@ var initDD3App = function () {
                 }
                 return false;
             },
-
-            //Clamp a value between a min and a max
+            
+            /**Clamp a value between a min and a max */
 
             clamp: function (value, min, max) {
                 return value < min ? min : value > max ? max : value;
@@ -1062,6 +1068,7 @@ var initDD3App = function () {
                 c = +c;
 
                 // Try to find peer with r and c as row and column - use Array.some to stop when found
+                // if the row, column pair is not the same as those of the connections, return false
                 return peer.peers.some(function (p) {
                     if (+p.row !== r || +p.col !== c)
                         return false;
@@ -1154,19 +1161,21 @@ var initDD3App = function () {
             };
 
             /* Functions handling data reception  */
-            //INFO: 
+            //INFO: d3.map() is an implementation of Map according to ES6 specification. Nothing to do with d3 data visualization function.
+            //TODEL: Never used...
             var _dd3_timeoutStartReceivedTransition = d3.map();
+            //TODEL: Never used...
             var _dd3_timeoutEndReceivedTransition = d3.map();
 
+            // Returun the next HTML element in an ordered group. Used solely for shape handling
+            // g: Current element in the ordered group.
+            // order: current 'position' of in the ordered group
             //TODO v4: the selector can't find the order. Is that a problem?
             var getOrderFollower = function (g, order) {
                 var s = order.split("_");
-
-                var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),
+                var elems = g.selectAll_("#" + g.node().id + " > [order^='" + s[0] + "']"),//TODO document this CSS selector query
                     follower,
                     o;
-
-
 
                 if (!elems.empty()) {
                     s[1] = +s[1];
@@ -1197,7 +1206,7 @@ var initDD3App = function () {
 
                     elems.some(function (a) {
                         var o = a.getAttribute('order');
-                        if (o > order) {
+                        if (o > order) {//TODO: What if order is NaN as suggested by the first line of the function
                             follower = a;
                             return true;
                         }
@@ -1208,6 +1217,8 @@ var initDD3App = function () {
                 return follower;
             };
 
+            //Handler to be called upon the reception of a shape from peerjs.
+            // Create the element from the data received (data.sendId), add it to the group (data.containers) in the proper ordering.
             var _dd3_shapeHandler = function (data) {
                 var mainId = data.containers.shift(),
                     obj = d3.select("#" + data.sendId),
@@ -1233,6 +1244,7 @@ var initDD3App = function () {
                     //g1 = g2.empty() ? (c = true, g1.insert_('g', function () { return getOrderFollower(g1, o.order); })) : g2;
                     g1.attr_(o);//TODO v4: does this actually work
                     if (!g1) utils.log('Warning!!! attr_ in _dd3_shapeHandler has failed', 4);
+
                     if (o.transition)
                         peer.receive(o.transition);
                 });
@@ -1243,8 +1255,8 @@ var initDD3App = function () {
                     obj = g1.insert_(data.name, function () { return getOrderFollower(g1, data.attr.order); });
                 }
 
-                if (data.name == "image") {
-                    obj.attr_("xlink:href", data.attr.href);
+                if (data.name === "image") {
+                    obj.attr_("xlink:href", data.attr.href); 
                     delete data.attr.href;
                 }
 
@@ -1258,6 +1270,8 @@ var initDD3App = function () {
 
             };
 
+            //Handler to be called upon the reception of a remove request from peerjs.
+            // removes the corresponding element (data.sendId) and all its children from the DOM
             var _dd3_removeHandler = function (data) {
                 var el = d3.select('#' + data.sendId).node();
                 while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
@@ -1265,6 +1279,8 @@ var initDD3App = function () {
                 d3.select(el).remove();
             };
 
+            //Handler to be called upon the reception of a property from peerjs.
+            //find the object and set the properties to their values
             var _dd3_propertyHandler = function (data) {
                 var obj = d3.select("#" + data.sendId);
                 if (!obj.empty()) {
@@ -1275,24 +1291,23 @@ var initDD3App = function () {
                 }
             };
 
+
+            
+            //Handler to be called upon the reception of a transition from peerjs.
+            //TODO: v4: d3.ease implementation changed radically
             var _dd3_transitionHandler = function (data) {
                 
                 //TODO v4: reread to handle all edge cases
                 var launchTransition = function (data) {
 
                     var obj = d3.select("#" + data.sendId);
+                    //interrupt any ongoing animation
                     obj.interrupt(data.name);
-                    
-
                     var trst = _dd3_hook_selection_transition.call(obj, data.name);
-                    //var trst = dd3.transition(data.name);
-
+                    
                     //utils.log("Delay taken: " + (data.delay + (syncTime + data.elapsed - Date.now())), 0);
-
                     utils.log("Transition on " + data.sendId + ". To be plot between " + data.min + " and " + data.max + ". (" + (data.max - data.min) / 1000 + "s)");
                     
-
-
                     for (var a in data.start.attr) {
                         if (data.start.attr[a]) obj.attr_(a, data.start.attr[a]);
                     }
@@ -1357,7 +1372,6 @@ var initDD3App = function () {
                         //trst.delay(-tmp);
                     }
                     
-
                     if (data.ease) {
                         if (typeof data.ease === "string" && _dd3_eases[data.ease]) {
                             trst.ease(_dd3_eases[data.ease]);
@@ -1391,6 +1405,8 @@ var initDD3App = function () {
                 */
             };
 
+            //Handler to be called upon the reception of an end transition from peerjs.
+            //Interrupt the transition and remove element if data.remove is true.
             var _dd3_endTransitionHandler = function (data) {
                 var obj = d3.select("#" + data.sendId);
                 obj.interrupt(data.name);
@@ -1402,6 +1418,7 @@ var initDD3App = function () {
              *  Hook helper functions for d3
              */
 
+            //TODEL: used once by a function which is never used
             var _dd3_hook_d3 = function (hook, newObj) {
                 var a = function () {
                     if (!arguments.length) return hook();
@@ -1411,6 +1428,7 @@ var initDD3App = function () {
                 return a;
             };
 
+            //TODEL: used once by a function which is never used
             var _dd3_hook_basic = function (hook) {
                 var a = function () {
                     return hook.apply(this, arguments);
@@ -1418,6 +1436,7 @@ var initDD3App = function () {
                 return a;
             };
 
+            //TODEL: Never used
             var _dd3_hookD3Object = function (oldObj, newObj) {
                 for (var func in oldObj) {
                     if (oldObj.hasOwnProperty(func)) {
@@ -1426,6 +1445,7 @@ var initDD3App = function () {
                 }
             };
 
+            //TODEL: Never used
             var _dd3_hookObject = function (oldObj, newObj) {
                 for (var func in oldObj) {
                     if (oldObj.hasOwnProperty(func)) {
@@ -1434,6 +1454,7 @@ var initDD3App = function () {
                 }
             };
 
+            //TODEL: Never user
             var _dd3_default = function (value, def) {
                 return typeof value === "undefined" ? def : value;
             };
@@ -1464,21 +1485,28 @@ var initDD3App = function () {
             *  dd3.selection
             */
 
-            utils.log('Beginning to add dd3 selection', 1);
 
+            /*APIDOC: see d3.selection */
             _dd3.selection = d3.selection;
 
-            //IN: path of the object to watch for. (usually prototype)
-            //OUT: a function (watcher)
+
+            //Create the watcher function for a given prototype
+            //IN: prototype of the object to watch for 
+            //OUT: the watcher function:  
             var _dd3_factory = function (path) {
+                //append the original function with functionName suffixed with a _ to the input prototype.
+                // and then call watcher with arguments as its first argument.
                 return function (watcher, original, funcName) {
                     //add a function to the prototype specified in the second arguments.
                     path[funcName + '_'] = original;
+
                     //INFO: difference between apply and call: apply lets you specify arguments as an array.
                     //Call the watcher function with no context and the argument 1 in an array 
+
                     return watcher.apply(null, [].slice.call(arguments, 1));
                 };
             };
+
 
             //Function to add a watcher function on a change function call to selection. Function in _dd3.selection.prototype
             var _dd3_watchFactory = _dd3_factory(_dd3.selection.prototype);
@@ -1490,14 +1518,18 @@ var initDD3App = function () {
             var _dd3_watchSelectFactory = _dd3_factory(_dd3);
 
             //Called on a change to the DOM structure
+
             var _dd3_watchChange = function (original, funcName, expectedArg) {
                 return function () {
                     if (arguments.length < expectedArg && typeof arguments[0] !== 'object')
                         return original.apply(this, arguments);
+                    
                     original.apply(this, arguments);
 
+                    //e is the property  of changes that have yet to be received and that we are watching for
                     var e = _dd3_selection_createProperties(_dd3_selection_filterWatched(this));
 
+                    //If there are properties to change on watched and unreceived, send them
                     if (!e.empty())
                         _dd3_selection_send.call(e, 'property', { 'function': funcName, 'property': arguments[0] });
 
@@ -1505,15 +1537,18 @@ var initDD3App = function () {
                 };
             };
 
+
             //Called when a DOM element is added to the DOM structure
             var _dd3_watchAdd = function (original, funcName) {
                 return function (what, beforeWhat) {
                     if (funcName === 'append') {
                         beforeWhat = function () {
+
                             var a = _dd3_selection_filterUnreceived(d3.selectAll(this.childNodes));
                             return (a[0] && a[0][a[0].length - 1] && a[0][a[0].length - 1].nextElementSibling);//TO v4 added one additionnal condition which shouldn't trigger
                         };
                     }
+
 
 
                     return _dd3.selection.prototype.insert_.call(this, what, beforeWhat).each(function () {
@@ -1524,21 +1559,28 @@ var initDD3App = function () {
                 };
             };
 
+
             //Called when a DOM element is selected
             var _dd3_watchSelect = function (original) {
-                return function (string) {
-                    if (typeof string !== "string") return original.apply(this, arguments);
-                    string += ':not(.dd3_received)';
-                    return original.call(this, string);
+                return function (selector) {
+                    if (typeof selector !== "string") return original.apply(this, arguments);// if the selector is not a string, nothing to do
+                    selector += ':not(.dd3_received)';
+                    //else, we don't want to select elements that have yet to be received.
+                    return original.call(this, selector);
                 };
             };
 
+
             //Called when no operation is performer ... or an insert call in some remote circumstances
             var _dd3_watchNoOperation = function (original) {
+
                 return function () {
                     return original.apply(this, arguments);
                 };
             };
+
+            //watchFactory since D3 functions under d3.selection.prototype
+            //first arg is the watcher, second is the d3 function to watch for, third is the name of the new function and fourth is the number of expected arguments for this function.
 
             _dd3.selection.prototype.attr = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.attr, 'attr', 2);
 
@@ -1553,6 +1595,7 @@ var initDD3App = function () {
             _dd3.selection.prototype.property = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.property, 'property', 2);
 
             _dd3.selection.prototype.remove = _dd3_watchFactory(_dd3_watchChange, d3.selection.prototype.remove, 'remove', 0);
+
 
             //_dd3.selection.enter={};
             //_dd3.selection.enter.prototype={};
@@ -1570,6 +1613,8 @@ var initDD3App = function () {
 
             _dd3.selection.prototype.select = _dd3_watchFactory(_dd3_watchSelect, d3.selection.prototype.select, 'select');
 
+            //watchFactory since D3 functions under d3
+
             _dd3.selectAll = _dd3_watchSelectFactory(_dd3_watchSelect, d3.selectAll, 'selectAll');
 
             _dd3.select = _dd3_watchSelectFactory(_dd3_watchSelect, d3.select, 'select');
@@ -1579,8 +1624,10 @@ var initDD3App = function () {
 
             /**
             *  Function for preparing and sending data
+            *  newSelection are the recipients
+            *  oldSelection are the former recipients
+            *  Returns which elements enter, update or exit the new selection 
             */
-
             var _dd3_getSelections = function (newSelection, oldSelection) {
                 var ns = newSelection.slice(),
                     os = oldSelection.slice();
@@ -1619,7 +1666,7 @@ var initDD3App = function () {
                 return [enter, update, exit];
             };
 
-            // Find all browsers which MAY need to receive the element
+            /**  Find all browsers which MAY need to receive the element */
             var _dd3_findRecipients = function (el) {
 
                 if (!el)
@@ -1649,6 +1696,8 @@ var initDD3App = function () {
                 return rcpt;
             };
 
+            /** Return the browser coordinates adapted to the svg/html context
+             */
             var _dd3_findBrowserAt = function (left, top, context) {
                 context = context || 'svg';
 
@@ -1664,7 +1713,7 @@ var initDD3App = function () {
                 return pos;
             };
 
-            // Take the first array of recipients and add to the second one all those which are not already in it
+            /** Take the first array of recipients and add to the second one all those which are not already in it */
             var _dd3_mergeRecipientsIn = function (a, b) {
                 var chk;
 
@@ -1684,17 +1733,20 @@ var initDD3App = function () {
                 });
             };
 
+            /** Take the two arrays of recipients, add all those which are not already in it and returned a merged array*/
             var _dd3_mergeRecipients = function (a, b) {
                 var c = b.slice();
                 _dd3_mergeRecipientsIn(a, c);
                 return c;
             };
 
+            /** Behaviour when a shape is sent. Can be used manually.  */
             _dd3.selection.prototype.send = function () {
                 _dd3_selection_createProperties(this);
                 return _dd3_selection_send.call(this, 'shape');
             };
 
+            /** Sends each elements of an array based on its type.*/
             var _dd3_selection_send = function (type, args) {
                 var counter = 0, formerRcpts, rcpt, rcpts = [], objs, selections;
 
@@ -1715,6 +1767,12 @@ var initDD3App = function () {
                 return this;
             };
 
+            /** send an element to its recipients
+             * type: can be shape, property, endTransition, transitions and updateContainer
+             * args: 
+             * rcpts: array of recipients for this send
+             */
+            
             var _dd3_sendElement = function (type, args, rcpts) {
                 var active = this.__dd3_transitions__.size() > 0, rcpt, formerRcpts, selections, objs;
                 // Get former recipients list saved in the __recipients__ variable to send them 'exit' message
@@ -1737,6 +1795,7 @@ var initDD3App = function () {
                 return rcpt.length;
             };
 
+            /** Send group of elements to their recipients */
             var _dd3_sendGroup = function (type, args, rcpts) {
 
                 var active = this.__dd3_transitions__.size() > 0, rcpt, objs;
@@ -1761,6 +1820,7 @@ var initDD3App = function () {
                 return rcpt.length;
             };
 
+            /**Format the data before sending it*/
             var _dd3_dataFormatter = (function () {
                 var sendId = 1;
 
@@ -2048,12 +2108,14 @@ var initDD3App = function () {
                     [].forEach.call(this.childNodes, function (_) { _dd3_unwatch.call(_); });
             };
 
+            /** calls _dd3_createProperties for each element in the input*/
             var _dd3_selection_createProperties = function (elem) {
 
                 elem.each(function () { _dd3_createProperties.call(this); });
                 return elem;
             };
 
+            /** Create dd3 specific properties on the object: recipient list, transitions and ordering  */
             var _dd3_createProperties = function () {
                 if (!this.__recipients__) {
                     this.__recipients__ = [];
@@ -2065,6 +2127,7 @@ var initDD3App = function () {
                     [].forEach.call(this.childNodes, function (_) { _dd3_createProperties.call(_); });
             };
 
+            //Filter elements from a d3 selection to keep only  
             var _dd3_selection_filterWatched = function (e) {
                 return e.filter(function (d, i) {
                     return !this.__unwatch__ && ([].indexOf.call(this.classList, 'dd3_received') < 0);
@@ -2155,14 +2218,17 @@ var initDD3App = function () {
              *  Transition
              */
 
+            //TODEL: set to false and never changed
             var _dd3_timeTransitionRelative = false;
 
             var _dd3_precision = 0.01;
 
             var _dd3_idTransition = 1;
 
+            //Contain tween functions for transitions. Prevents having to send tween funciton definition through peerjs
             var _dd3_tweens = {};
 
+            //Contain tween functions for transitions. Prevents having to send ease function definition through peerjs
             var _dd3_eases = {};
 
             var _dd3_transitionNamespace = function (name) {
@@ -2184,15 +2250,17 @@ var initDD3App = function () {
                     now = Date.now(),
                     max = now,
                     precision = 1;
-
-
                 do {
+                    
                     containers.unshift(g);
                 } while (g.id !== "dd3_rootGroup" && (g = g.parentNode));
+                
 
                 var c1 = containers[0], c2;
 
+
                 while (c1 && c1.__dd3_transitions__.empty()) {//TODO v4: c1.__dd3_transitions__ should be instantiated as long as c1 is
+
                     c2 = containers.shift();
                     c1 = containers[0];
                 }
@@ -2300,9 +2368,6 @@ var initDD3App = function () {
                     //var type = value.type;
                     
                     //var value = obj.value.call(elem, args.data, args.index);
-                    console.log(obj);
-                    console.log(obj.value);
-                    console.log(obj.value._value);
                     var i = obj.value._value.call(elem, args.data, args.index);
                     //TODO v4: handle if NAMEspace and if style
                     var name = obj.name.split('.')[1];
@@ -2370,9 +2435,9 @@ var initDD3App = function () {
                 args.properties = properties;
             };
 
-            var _dd3_hook_selection_transition = _dd3.selection.prototype.transition_ = d3.selection.prototype.transition;
+            var _dd3_hook_selection_transition = _dd3.selection.prototype.transition_ = d3.selection.prototype.transition;//TODO: v4 still exist?
 
-            var _dd3_hook_transition_transition = d3.transition.prototype.transition;
+            var _dd3_hook_transition_transition = d3.transition.prototype.transition; //TODO: v4 still exists?
 
             _dd3.selection.prototype.transition = function (name) {
                 var t = _dd3_selection_createProperties(_dd3_hook_selection_transition.apply(this, arguments)),
@@ -2700,6 +2765,7 @@ var initDD3App = function () {
 
             /**
              *  Getter
+             *  Allow outside access to dd3 methods
              */
 
             _dd3.peers = peer;
@@ -2722,14 +2788,17 @@ var initDD3App = function () {
 
             _dd3.requestRemoteData = dd3_data.requestRemoteData;
 
+            /**Access to the data dimensions of dd3*/
             _dd3.retrieveDimensions = function (id) {
                 return data["dd3_" + id].dataDimensions;
             };
 
+            /**Access to the data of dd3*/
             _dd3.retrieveData = function (name, id) {
                 return data["dd3_" + id]["dd3_" + name].dataPoints;
             };
 
+            /** Access to the state of dd3 */
             _dd3.state = function () { return state(); };
 
             // We could re-synchronize before emitting the 'ready' event
@@ -2766,10 +2835,10 @@ var initDD3App = function () {
 // These functions need to be defined before signalR is started, so we need to use a callback system:
 // signalR_callback is defined later in dd3 when it is initiated.
 
-var dd3Server = $.connection.dD3AppHub;
-var signalR_callback = {};
-var main_callback; // Callback inside the html file
-var orderTransmitter; // Callback inside the html file
+var dd3Server = $.connection.dD3AppHub;//Contains all methods of AppHub
+var signalR_callback = {};//Contains server interaction functions
+var main_callback; // Callback inside the html file called when the configuration of GDO is received for application node or when the controller is updated for a controller
+var orderTransmitter; // Callback inside the html file when the client is initialized
 
 // Function used for dd3 callback
 dd3Server.client.dd3Receive = function (f) {
@@ -2778,6 +2847,7 @@ dd3Server.client.dd3Receive = function (f) {
 
 // Non-dd3 functions
 
+// called by AppHub when the configuration is broadcasted. Execute main_callback as defined in HTML file
 dd3Server.client.receiveGDOConfiguration = function (id) {
     // To get configId from server
     if (main_callback) {
@@ -2788,6 +2858,8 @@ dd3Server.client.receiveGDOConfiguration = function (id) {
     main_callback = null;
 };
 
+//called from AppHub. orderTransmitter is actually the orderController defined in html file. 
+//It isn't in the library as the controller embed the application logic.
 dd3Server.client.receiveControllerOrder = function (orders) {
     if (orderTransmitter) {
         orders = JSON.parse(orders);
@@ -2800,6 +2872,7 @@ dd3Server.client.receiveControllerOrder = function (orders) {
 
 // ==== IF THIS NODE IS A CONTROLLER ====
 
+//What to do when the controller is updated by the server => execute main_callback on  the received object.
 dd3Server.client.updateController = function (obj) {
     gdo.consoleOut('.DD3', 1, 'Controller : Receiving update from server');
     if (main_callback) {
@@ -2810,8 +2883,10 @@ dd3Server.client.updateController = function (obj) {
 
 // ===============================
 
+
 gdo.net.app.DD3.displayMode = 0;//TODO: email david about it
 
+//Initialize the application node, set the orderController, the instance id, the main callback and call initDD3App;
 gdo.net.app.DD3.initClient = function (launcher, orderController) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Client at Node ' + gdo.clientId);
     dd3Server.instanceId = gdo.net.node[gdo.clientId].appInstanceId;
@@ -2820,6 +2895,7 @@ gdo.net.app.DD3.initClient = function (launcher, orderController) {
     return initDD3App();
 };
 
+//Initialize the controller node.
 gdo.net.app.DD3.initControl = function (callback) {
     gdo.consoleOut('.DD3', 1, 'Initializing DD3 App Control at Instance ' + gdo.clientId);
     main_callback = callback;
@@ -2827,11 +2903,13 @@ gdo.net.app.DD3.initControl = function (callback) {
     return gdo.net.instance[gdo.controlId].id;
 };
 
+/**What to do when application node is killed => log it + remove the client from SignalR*/ 
 gdo.net.app.DD3.terminateClient = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Client at Node ' + gdo.clientId);
-    dd3Server.server.removeClient(dd3Server.instanceId);
+    dd3Server.server.removeClient(dd3Server.instanceId);//in DD3AppHub and DD3App
 };
 
+/**What to do when controller node is killed => just log it*/
 gdo.net.app.DD3.terminateControl = function () {
     gdo.consoleOut('.DD3', 1, 'Terminating DD3 App Control at Instance ' + gdo.clientId);
 };

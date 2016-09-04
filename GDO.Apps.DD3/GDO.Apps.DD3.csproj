@@ -136,6 +136,7 @@
     <Content Include="Configurations\DD3\Data\FileMapTubeLondon.txt" />
     <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
     <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
+    <Content Include="Configurations\DD3\Data\FileParallelCoordinates.txt" />
     <Content Include="packages.config" />
     <Content Include="Web\DD3\Scripts\animationLines.js" />
     <Content Include="Web\DD3\Scripts\animation.js" />
@@ -152,6 +153,7 @@
     <Content Include="Configurations\DD3\MapTubeShanghai.json" />
     <Content Include="Configurations\DD3\MapTubeShanghaiLines2.json" />
     <Content Include="Configurations\DD3\MapTubeShanghaiLines30.json" />
+    <Content Include="Configurations\DD3\ParallelCoordinates.json" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

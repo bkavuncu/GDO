@@ -4895,7 +4895,7 @@
   var clockLast = 0;
   var clockNow = 0;
   var clockSkew = 0;
-  var clock = Date;// v4:typeof performance === "object" ? performance : Date;
+  var clock = typeof performance === "object" ? performance : Date;//V4: maybe use Date only
   var setFrame = typeof requestAnimationFrame === "function"
     ? (clock === Date ? function (f) { requestAnimationFrame(function () { f(clock.now()); }); } : requestAnimationFrame)
     : function (f) { setTimeout(f, 17); };

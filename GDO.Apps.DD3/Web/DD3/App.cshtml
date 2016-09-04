@@ -31,12 +31,13 @@
         .axis path,
         .axis line {
           fill: none;
-          stroke: #000;
+          stroke: #FFF;
+          /*stroke: #000;*/
           shape-rendering: crispEdges;
         }
 
         .dot {
-          stroke: #000;
+          stroke: #FFF;
         }
 
         #viz_title, #clock {
@@ -51,6 +52,33 @@
             background-color: #3a3d3d;
         }
 
+        svg {
+        font: 10px sans-serif;
+        }
+
+        /*#2F4F4F;*/
+        .background path {
+        fill: none;
+        stroke: #192a2a;
+        shape-rendering: crispEdges;
+        }
+
+        .foreground path {
+        fill: none;
+        stroke: steelblue;
+        }
+
+        .brush .extent {
+        fill-opacity: .3;
+        stroke: #fff;
+        shape-rendering: crispEdges;
+        }
+
+        .axis text {
+        text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+        cursor: move;
+        }            
+
     </style>
 </head>
 <body>
@@ -64,11 +92,14 @@
 
         //we load the d3 library WITHOUT the requestAnimationFrame function. Therefore, the d3.timer will fall back on using the timeout function
         //This prevents animations from slowing down.
-        var temp = requestAnimationFrame;
+        var temp_raf = requestAnimationFrame;
+        var temp_perf = performance;
         requestAnimationFrame=undefined;
+        performance=undefined;
         $.getScript('Scripts/d3.v4.js', function(data, textStatus) { 
             d3.now();
-            requestAnimationFrame=temp; 
+            requestAnimationFrame=temp_raf;
+            performance=temp_perf; 
         });
 
         d3.selection.prototype.moveToFront = function () {
@@ -444,7 +475,7 @@
                         triggered=false;
                         circleGroupDistributed.selectAll(".c")
                             .transition()
-                            .duration(10000)
+                            .duration(5000)
                             .precision(0.05)
                             .attr("cx", function () { return width * Math.random(); })
                             .attr("cy", function () { return height * Math.random(); })
@@ -488,10 +519,6 @@
                     };
                     dd3.synchronize(f, 5000);
                 //*/
-
-                    
-
-                    
                     
                 };
 
@@ -1234,6 +1261,192 @@
                     };
 
                     loadMap();
+                };
+
+                //Parallel Coordinates Graph
+                test_bench['10'] =  function(){
+                    var dim,
+                        init_dim,
+                        xScale = dd3.scale.ordinal().rangePoints([0, dd3.cave.svgWidth], 1),
+                        line = d3.svg.line(),
+                        xAxis = d3.svg.axis().orient("left"),
+                        background,
+                        foreground,
+                        dimensions,
+                        g,
+                        yScale = {},
+                        dragging = {},
+                        svg = dd3.svgCanvas;
+
+                    //Way to make a white background, because the main body is unselectable                    
+                    svg.append("rect")
+                        .attr("width", "100%")
+                        .attr("height", "100%")
+                        .attr("fill", "black")
+                        .attr("transform", "translate("+[-dd3.browser.margin.left + dd3.position('svg', 'local', 'svg', 'global').left(0), - dd3.browser.margin.top + dd3.position('svg', 'local', 'svg', 'global').top(0)]+")")
+
+                
+                    dd3.getDataDimensions('speedDatingData', function(d){
+                        dim = d;
+
+                        //nb_dim=Object.keys(dim).length-1;
+                        dimensions=[];
+                        for(var key in dim){
+                            if(key !== "length"){
+                                dimensions.push(key);
+                                yScale[key]=dd3.scale.linear().domain([dim[key].min, dim[key].max]).range([dd3.cave.svgHeight, 0]);
+                            }
+                        }
+                        init_dim = dimensions
+                        xScale.domain(dimensions);
+                        //TODO: refine the filtering
+                        dd3.getData('speedDating','speedDatingData', draw);
+                        
+                    });
+
+                    
+                    var draw = function(data){
+                        // Add grey background lines for context.
+                        background = svg.append("g")
+                                    .attr("class", "background")
+                                    .selectAll("path")
+                                    .data(data)
+                                    .enter().append("path")
+                                    .attr("d", path);
+
+                        // Add blue foreground lines for focus.
+                        foreground = svg.append("g")
+                                    .attr("class", "foreground")
+                                    .selectAll("path")
+                                    .data(data)
+                                    .enter().append("path")
+                                    .attr("d", path);
+
+                        var drag = d3.behavior.drag()
+                                    .origin(function(d) { return {x: xScale(d)}; })
+                                    .on("dragstart", function(d) {
+                                        dragging[d] = xScale(d);
+                                        background.attr("visibility", "hidden");
+                                    })
+                                    .on("drag", function(d) {
+                                        dragging[d] = Math.min(width, Math.max(0, d3.event.x));
+                                        foreground.attr("d", path);
+                                        dimensions.sort(function(a, b) { return position(a) - position(b); });
+                                        xScale.domain(dimensions);
+                                        g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
+                                    })
+                                    .on("dragend", function(d) {
+                                        delete dragging[d];
+                                        transition(d3.select(this)).attr("transform", "translate(" + xScale(d) + ")");
+                                        transition(foreground).attr("d", path);
+                                        background
+                                            .attr("d", path)
+                                            .transition()
+                                            .delay(500)
+                                            .duration(0)
+                                            .attr("visibility", null);
+                                    });
+
+                        // Add a group element for each dimension.
+                        g = svg.selectAll(".dimension")
+                                .data(dimensions)
+                                .enter().append("g")
+                                .attr("class", "dimension")
+                                .attr("transform", function(l) { return "translate(" + xScale(l) + ")"; })
+                                .call(drag);
+
+                            // Add an axis and title.
+                            g.append("g")
+                                .attr("class", "axis")
+                                .each(function(l) { d3.select(this).call(xAxis.scale(yScale[l])); })
+                                .append("text")
+                                .style("text-anchor", "middle")
+                                .attr("y", -9)
+                                .text(function(d) { return d; });
+
+                            // Add and store a brush for each axis.
+                            g.append("g")
+                                .attr("class", "brush")
+                                .each(function(d) {
+                                    d3.select(this).call(yScale[d].brush = d3.svg.brush().y(yScale[d]).on("brushstart", brushstart).on("brush", brush));
+                                    d3.select(this).classed(d.replace(new RegExp(' ', 'g'), ''),true);
+                                })
+                                .selectAll("rect")
+                                .attr("x", -8)
+                                .attr("width", 16);
+                            
+                            console.log("Drawing Parallel Coordinate graph is done");
+                    };
+
+                    function position(d) {
+                        var v = dragging[d];
+                        return v == null ? xScale(d) : v;
+                    }
+
+                    function transition(g) {
+                        return g.transition().duration(500);
+                    }
+
+                    // Returns the path for a given data point.
+                    function path(d) {
+                        return line(dimensions.map(function(p) { return [position(p), yScale[p](d[p])]; }));
+                    }
+
+                    function brushstart() {
+                        if(d3.event.sourceEvent) d3.event.sourceEvent.stopPropagation();
+                    }
+
+                    // Handles a brush event, toggling the display of foreground lines.
+                    function brush() {
+                        var actives = dimensions.filter(function(p) { return !yScale[p].brush.empty(); }),
+                            extents = actives.map(function(p) { return yScale[p].brush.extent(); });
+                            foreground.style("display", function(d) {
+                                return actives.every(function(p, i) {
+                                    return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+                                }) ? null : "none";
+                            });
+                    }
+
+                    function updateDimensions(new_dim){
+                        //console.log(new_dim);
+                        /*if(!new_dim) dimensions = ["Id", "Partner Id", "Match", "Partner's decision","Gender", "Partner Age", "Partner Race", "PP Attractiveness", "PP Sincerity", "PP Intelligence", "PP Fun", "PP Ambition", "PP Shared Interest"];
+                        else dimensions=new_dim;*/
+                        dimensions = new_dim;
+                        background.attr("visibility", "hidden");
+                        //console.log(xScale.domain());
+                        xScale.domain(dimensions);
+                        //console.log(xScale.domain());
+
+                        transition(g).attr("transform", function(d) { return "translate(" + xScale(d) + ")"; });
+                        
+                        transition(foreground).attr("d", path);
+                        background.attr("d", path).transition()
+                                    .delay(500)
+                                    .duration(0)
+                                    .attr("visibility", null);
+
+                    }
+
+                    function updateFilter(dim, min, max){
+                        var brush = yScale[dim].brush;
+                        brush.extent([min, max]);
+                        var rect = dd3.select("."+dim.replace(new RegExp(' ', 'g'), ''));
+                        brush(rect.transition());
+                        brush.event(rect.transition().duration(500));
+                    }
+
+                    function resetVisualization(){
+                        updateDimensions(init_dim);
+                        dimensions.forEach((dimension) => {
+                            updateFilter(dimension, dim[dimension].min, dim[dimension].max);
+                            
+                        });
+                        
+                    }
+
+                    orderController.orders['updateDimensions']=updateDimensions;
+                    orderController.orders['updateFilter']=updateFilter;
+                    orderController.orders['resetVisualization']=resetVisualization;
                 };
 
             });

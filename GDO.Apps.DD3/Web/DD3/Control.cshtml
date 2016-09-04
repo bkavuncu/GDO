@@ -190,101 +190,9 @@
                     var dataset = [];
                     var eventLog = [];
 
-                    /*var updateFPSChart= function (){
-                        d3.select("#fps_graph").selectAll("div")
-                                .data(dataset[conn.label])
-                                .enter()
-                                .append("div")
-                                .attr("class", "bar")
-                                .style("height", function (d) {
-                                    return d + "px";
-                                });
-
-
-
-                        xScale.domain(d3.range(dataset.length));
-                        yScale.domain([0, d3.max(dataset, function (d) { return ((typeof d) === "number") ? d : 60; })]);
-
-                        //Select…
-                        var bars = svg.selectAll("rect")
-                            .data(dataset, key);
-
-                        //Enter…
-                        bars.enter()
-                            .append("rect")
-                            .attr("x", w)
-                            .attr("y", function (d) {
-                                return h - yScale(d);
-                            })
-                            .attr("width", xScale.bandwidth())
-                            .attr("height", function (d) {
-                                return yScale(d);
-                            })
-                            .attr("fill", function (d) {
-                                return "rgb(0, 0, " + (d * 10) + ")";
-                            });
-
-                        //Update…
-                        bars.transition()
-                            .duration(500)
-                            .attr("x", function (d, i) {
-                                return xScale(i);
-                            })
-                            .attr("y", function (d) {
-                                return h - yScale(d.value);
-                            })
-                            .attr("width", xScale.bandwidth())
-                            .attr("height", function (d) {
-                                return yScale(d.value);
-                            });
-
-                        //Exit…
-                        bars.exit()
-                            .transition()
-                            .duration(500)
-                            .attr("x", -xScale.bandwidth())
-                            .remove();
-                    };
-
-                    var initFPSChart = function () {
-                        var w = 500;
-                        var h = 300;
-                        var padding = 30;
-
-                        var xScale = d3.scaleLinear()
-                            .domain(d3.range(dataset.length))
-                            .range([padding, w - padding * 2]);
-
-                        var yScale = d3.scaleLinear()
-                                     .domain([0, d3.max(dataset, function (d) { return ((typeof d) === "number") ? d : 60; })])
-                                     .range([h - padding, padding]);
-
-                        var xAxis = d3.axisBottom(xScale).ticks(5);
-
-                        var yAxis = d3.axisLeft(yScale).ticks(5);
-
-                        var svg = d3.select("#fps_graph")
-                            .append("svg")
-                            .attr("width", w)
-                            .attr("height", h);
-
-                        svg.append("g")
-                            .attr("class", "axis")
-                            .attr("transform", "translate(0," + (h - padding) + ")")
-                            .call(xAxis);
-
-                        svg.append("g")
-                            .attr("class", "axis")
-                            .attr("transform", "translate(" + padding + ",0)")
-                            .call(yAxis);
-                    };
-                    */
-     
-
                     con_peer.on('connection', function (conn) {
                         eventLog.push([new Date().getTime(), "Connecting with  "+ conn.label]);
                         conn.on('data', function (data) {
-
                             var raw = data.split(';');
                             var row = raw[0];
                             var col = raw[1];
@@ -296,7 +204,6 @@
                             var std = raw[7];
                             dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
                             //gdo.consoleOut(".DD3", 4, dataset);
-                            
                             //updateFPSChart();
                         });
                     });
@@ -445,14 +352,6 @@
                             server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
                             eventLog.push([new Date().getTime(), "Moving Distributed Circles"]);
                         }
-                    });
-
-                    $('#benchmark250DistributedCircles').click(function(){
-                       var nbOnOneScreen = Math.floor(250/numClients);
-                       server.sendOrder(instanceId, order("createDistributedCircles", [nbOnOneScreen, 0.9]), true);
-                       server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
-                       setTimeout();
-                        
                     });
 
                 // == Group Transition ==
@@ -788,6 +687,46 @@
                     server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
                 });
             };
+
+            //Parallel Coordinates Graph Control
+            test_bench[10] = function(){
+                /*var raw_dim, dimensions;
+                dd3.getDataDimensions('speedDatingData', function(d){
+                    raw_dim=d;
+                    dimensions=[];
+                    for(var key in dim){
+                        if(key !== "length"){
+                            dimensions.push(key);
+                        }
+                    }
+                    $("#dimension_list").val(dimensions.join());
+                });*/
+                
+                $("#dimension_list").click(function(e) { e.stopPropagation(); });
+
+                $('#updim').click(function () {
+                    var dimensions = $("#dimension_list").val().split(",");
+                    console.log(dimensions);
+                    server.sendOrder(instanceId, order("updateDimensions", [dimensions]), true);
+                });
+
+                $("#attr").click(function(e) { e.stopPropagation(); });
+                $("#min").click(function(e) { e.stopPropagation(); });
+                $("#max").click(function(e) { e.stopPropagation(); });
+
+                $('#upfilter').click(function() {
+                    var attrib = $("#attr").val();
+                    var min= $("#min").val();
+                    var max= $("#max").val();
+                    server.sendOrder(instanceId, order("updateFilter", [attrib, min, max]), true);
+                });
+
+                $('#resetviz').click(function() {
+                    server.sendOrder(instanceId, order("resetVisualization", []), true);
+                });
+
+
+            }
         });
     });
 </script>
@@ -903,15 +842,12 @@
                 <td class="red" id="addCircles">Add Circles <input id="nbAddCircles" type="number" value="100" style="width:50px"/></td>
             </tr>
             <tr class="superposition distributed">
-                <td rowspan="3" class="green" id="createDistributedCircles">Create distributed Circles</td>
+                <td rowspan="2" class="green" id="createDistributedCircles">Create distributed Circles</td>
                 <td class="red" id="moveDistributedCircles">Move <span id="spandc"></span> distributed Circles</td>
-                <td rowspan="3" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
+                <td rowspan="2" class="red" id="removeDistributedCircles">Remove distributed Circles</td>
             </tr>
             <tr class="superposition distributed">
                 <td class="red" id="addDistributedCircles">Add Distributed Circles <input id="nbAddDistributedCircles" type="number" value="10" style="width:50px" /></td>
-            </tr>
-            <tr class="superposition distributed">
-                <td class="red" id="benchmark250DistributedCircles"> Benchmark 250 Distributed Circles</td>
             </tr>
             <tr class="group">
                 <td colspan="3">Group transition</td>
@@ -1047,6 +983,21 @@
             <tr>
                 <td class="green" id="launchDisruptedAnimationShanghaiLines">Launch Animation with disrupted data</td>
             </tr>
+        </table>
+    </div>
+
+    <div id="control_10" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="updim">Update Dimensions:  <input id="dimension_list" type="string" value="Gender,Id,Partner Id,Match,Partner Age,Partner Race,Partner's Preference of Attractiveness,Partner's Preference of Sincerity,Partner's Preference of Intelligence,Partner's Preference of Fun,Partner's Preference of Ambition,Partner's Preference of Shared Interest,Partner's decision" style="width:200px"/></td>
+            </tr>
+            <tr>
+                <td class="green" id="resetviz">Reset Dimensions</td>
+            </tr>
+            <tr>
+                <td class="green" id="upfilter">Update Filter: <input id="attr" type="string" value="Id" style="width:100px"/> Min: <input id="min" type="number" value="0" style="width:50px"/> Max: <input id="max" type="number" value="10" style="width:50px"/></td>
+            </tr>
+            
         </table>
     </div>
 
