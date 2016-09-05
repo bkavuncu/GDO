@@ -28,7 +28,7 @@ namespace GDO.Apps.Maps.Core.Layers
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ClassTypes = new string[1] { "Style" },
+                ClassTypes = new string[2] { "Style", "GeoJSONStyle" },
             };
 
             RenderBuffer = new IntegerParameter

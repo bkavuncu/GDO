@@ -184,10 +184,10 @@
 /* inline edit actions button*/
 .ui-inline-del.ui-state-hover span, .ui-inline-edit.ui-state-hover span,
 .ui-inline-save.ui-state-hover span, .ui-inline-cancel.ui-state-hover span {
-    margin: -1px;
+	margin: -1px;
 }
 .ui-inline-del, .ui-inline-cancel {
-    margin-left: 8px;
+	margin-left: 8px;
 }
 
 .ui-jqgrid .inline-edit-cell {
@@ -219,10 +219,14 @@
 	position: absolute; 
 	padding: 2px 5px; 
 	z-index:99999;
+	-webkit-box-shadow: 7px 7px 5px 0px #323232;
 	-webkit-box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    7px 7px 5px 0px #323232;
 	-moz-box-shadow:    7px 7px 5px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         7px 7px 5px 0px #323232;
 	box-shadow:         7px 7px 5px 0px rgba(50, 50, 50, 0.75);
 }
+
 .ui-search-menu.ui-menu .ui-menu-item,
 .ui-nav-menu.ui-menu .ui-menu-item
 { 
@@ -248,7 +252,7 @@ a.g-menu-item, a.soptclass, a.clearsearchclass { cursor: pointer; }
 .ui-jqgrid .ui-jqgrid-view select,
 .ui-jqgrid .ui-jqgrid-view textarea,
 .ui-jqgrid .ui-jqgrid-view button {
-    font-size: 11px;
+	font-size: 11px;
 }
 .ui-jqgrid .ui-scroll-popup {width: 95px;}
 .ui-search-table select,

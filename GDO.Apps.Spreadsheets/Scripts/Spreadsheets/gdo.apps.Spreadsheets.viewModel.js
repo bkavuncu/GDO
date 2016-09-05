@@ -19,7 +19,7 @@
     grid.empty().jqGrid({
         datatype: "local",
         data: gridData.rows,
-        editurl: "http://146.169.32.111/SheetServer/Operations/ViewSheet?instanceId=" + instanceId,
+        editurl: "http://146.169.32.111/Operations/ViewSheet?instanceId=" + instanceId,
         sortable: false,
         hidegrid: false,
         colModel: [
@@ -63,11 +63,11 @@
 
 var createSection = function (id, section) {
     $.ajax({
-        url: "http://146.169.32.111/SheetServer/Operations/GetSheetNames?instanceId=" + id,
+        url: "http://146.169.32.111/Operations/GetSheetNames?instanceId=" + id,
         method: "GET",
         success: function (response) {
             if (response.success) {
-                names = response.message;
+               var  names = response.message;
                 $('iframe').contents().find('#view_model_message').html("Successfully obtained data.");
                 createGrid(id, names, section);
             } else {
@@ -80,7 +80,7 @@ var createSection = function (id, section) {
 
 gdo.net.app["Spreadsheets"].viewModel = function (id, model, section) {
 	$.ajax({
-	    url: "http://146.169.32.111/SheetServer/Operations/ViewModel",
+	    url: "http://146.169.32.111/Operations/ViewModel",
         method: "POST",
 	    data: {instanceId:id, model: model },
 	    success: function (response) {

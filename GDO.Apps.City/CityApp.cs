@@ -8,15 +8,17 @@ using System.Web.UI.WebControls;
 using GDO.Core;
 using GDO.Core.Apps;
 using GDO.Utility;
+using Microsoft.AspNet.SignalR;
 using Microsoft.SqlServer.Server;
 using Newtonsoft.Json;
 
 namespace GDO.Apps.City
 {
-    public class CityApp : IAdvancedAppInstance
+    public class CityApp : ICompositeAppInstance
     {
         JsonSerializerSettings JsonSettings = new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.All};
         public int Id { get; set; }
+        public App App { get; set; }
         public string AppName { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }

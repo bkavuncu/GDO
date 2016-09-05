@@ -14,6 +14,7 @@ using GDO.Apps.Maps.Core.Formats;
 using GDO.Core;
 using GDO.Core.Apps;
 using GDO.Utility;
+using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using Configuration = GDO.Apps.Maps.Core.Configuration;
 using Style = GDO.Apps.Maps.Core.Style;
@@ -25,9 +26,10 @@ namespace GDO.Apps.Maps
         public JsonSerializerSettings JsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public Section Section { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
         public AppConfiguration Configuration { get; set; }
         public string[] MarkerPosition { get; set; }
         public Map Map;
@@ -848,6 +850,7 @@ namespace GDO.Apps.Maps
             RegularShapeStyle regularShapeStyle = new RegularShapeStyle();
             StrokeStyle strokeStyle = new StrokeStyle();
             TextStyle textStyle = new TextStyle();
+            GeoJSONStyle dynamicStyle = new GeoJSONStyle();
             GDO.Apps.Maps.Core.Styles.Style style = new GDO.Apps.Maps.Core.Styles.Style();
 
 
@@ -858,6 +861,7 @@ namespace GDO.Apps.Maps
             styles.Add(regularShapeStyle);
             styles.Add(strokeStyle);
             styles.Add(textStyle);
+            styles.Add(dynamicStyle);
             styles.Add(style);
 
             //Add Sources to Template

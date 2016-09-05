@@ -1,5 +1,6 @@
-﻿var confName = this.gdo.net.instance[this.instanceId].configName;
-var conf = this.gdo.net.app["Spreadsheets"].config[configName];
+﻿var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+var configName = gdo.net.instance[instanceId].configName;
+var conf = gdo.net.app["Spreadsheets"].config[configName];
 
 var viewSheet = function (id, sheet) {
     $.ajax({
@@ -64,8 +65,9 @@ var startGeneticAlgorithm = function (id, numInputs, fitnessDefinition, iteratio
 var getFitnessDefinitions = function(response, options) {
     var fitnessDefinition = [];
     for (var i = 0; i < response.outputs.length; i++) {
-        var direction = options.filter(function (o) { return o.name === ('o' + i); })[0].value;
-        var weight = options.filter(function (w) { return w.name === ('w' + i); })[0].value;
+        var ii = i;// inner loop access 
+        var direction = options.filter(function (o) { return o.name === ('o' + ii); })[0].value;
+        var weight = options.filter(function (w) { return w.name === ('w' + ii); })[0].value;
         fitnessDefinition.push({ Name: response.outputs[i].Name, Direction: direction, Weight: weight });
     }
     return fitnessDefinition;

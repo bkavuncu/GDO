@@ -13,7 +13,7 @@ gdo.net.P2P_MODE = {
 gdo.net.APP_TYPE = {
     NONE: -1,
     BASE: 1,
-    ADVANCED: 2
+    COMPOSITE: 2
 };
 
 gdo.net.NEIGHBOUR_ENUM = {
@@ -878,7 +878,7 @@ gdo.net.processApp = function (app) {
     }
     gdo.net.app[app.Name].instances = [];
     if (app.SupportedApps != null) {
-        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.ADVANCED;
+        gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.COMPOSITE;
         gdo.net.app[app.Name].supportedApps = app.SupportedApps;
     } else {
         gdo.net.app[app.Name].appType = gdo.net.APP_TYPE.BASE;
@@ -919,8 +919,8 @@ gdo.net.processInstance = function (exists, id, instance) {
                     gdo.consoleOut('.NET', 1, 'Joining Group: (app:' + instance.AppName + ', instanceId: ' + instance.Id + ")");
                 }
             }*/
-        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
-            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.ADVANCED;
+        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.COMPOSITE) {
+            gdo.net.instance[instance.Id].appType = gdo.net.APP_TYPE.COMPOSITE;
             gdo.net.instance[instance.Id].integratedInstances = instance.IntegratedInstances;
         } else {
             gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);
@@ -943,7 +943,7 @@ gdo.net.processInstance = function (exists, id, instance) {
                     gdo.net.node[gdo.net.getNodeId(gdo.net.section[instance.Section.Id].col + i, gdo.net.section[instance.Section.Id].row + j)].appInstanceId = -1;
                 }
             }
-        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.ADVANCED) {
+        } else if (gdo.net.app[instance.AppName].appType == gdo.net.APP_TYPE.COMPOSITE) {
 
         } else {
             gdo.consoleOut('.NET', 5, 'Unrecognized App Type for Instance: ' + instance.Id);

@@ -41,7 +41,7 @@ namespace GDO.Apps.Maps.Core.Styles
                 IsEditable = true,
                 IsVisible = true,
                 LinkedParameter = "styles",
-                ClassTypes = new string[1] { "ImageStyle" },
+                ClassTypes = new string[3] { "ImageStyle", "CircleStyle", "RegularShapeStyle" },
             };
             StrokeStyle = new LinkParameter
             {

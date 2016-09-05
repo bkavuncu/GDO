@@ -15,41 +15,47 @@ $(function () {
                 .css("width", gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + "px")
                 .css("height", gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows + "px");
 
-            var s;
+            var scale;
+            var offsetX;
+            var offsetY;
+            var origin;
+            var width;
+            var height;
+
             if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > 1) {
-                var scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
+                scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
             } else {
-                var scale = "scale(1.01)";
+                scale = "scale(1.01)";
             }
 
             if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) {
 
-                var offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
-                var offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows + (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) - 1));
-                var origin = offsetX + "% " + offsetY + "%";
-                var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
-                var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
+                offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
+                offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows + (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) - 1));
+                origin = offsetX + "% " + offsetY + "%";
+                width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+                height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
 
             } else if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols < gdo.net.section[gdo.net.instance[instanceId].sectionId].rows) {
 
                 if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols == 1) {
-                    var offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols));
-                    var offsetY = 100 * gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols)));
+                    offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols));
+                    offsetY = 100 * gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols)));
                 } else {
-                    var offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
-                    var offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1)));
+                    offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
+                    offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows * (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1)));
                 }
-                var origin = offsetX + "% " + offsetY + "%";
-                var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
-                var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
+                origin = offsetX + "% " + offsetY + "%";
+                vwidth = gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+                height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
 
             } else {
 
-                var offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
-                var offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows - 1));
-                var origin = offsetX + "% " + offsetY + "%";
-                var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
-                var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
+                offsetX = gdo.net.node[gdo.clientId].sectionCol * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 1));
+                offsetY = gdo.net.node[gdo.clientId].sectionRow * (100 / (gdo.net.section[gdo.net.instance[instanceId].sectionId].rows - 1));
+                origin = offsetX + "% " + offsetY + "%";
+                width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width / gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+                height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height / gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
             }
             gdo.consoleOut('.Youtube', 4, origin);
             $("iframe").contents().find("#youtube_player")
@@ -79,15 +85,17 @@ $(function () {
             gdo.net.instance[instanceId].youtubePlayer.setPlaybackRate(rate);
             gdo.consoleOut('.Youtube', 0, 'Loaded URL:' + url + " with title " + gdo.net.instance[instanceId].youtubePlayer.getVideoData().title);
         }, 500);
+        gdo.net.app["Youtube"].refresh(instanceId);
 
     }
-    $.connection.youtubeAppHub.client.playVideo = function (instanceId,time) {
+    $.connection.youtubeAppHub.client.playVideo = function (instanceId, time) {
         gdo.consoleOut('.Youtube', 0, "Play Command Received " + time);
-       // if (gdo.net.instance[instanceId].youtubePlayer.getPlayerState() == 3) {
-            //gdo.net.app["Youtube"].server.seekTo(instanceId, gdo.net.instance[instanceId].youtubePlayer.getCurrentTime(), true);
+        // if (gdo.net.instance[instanceId].youtubePlayer.getPlayerState() == 3) {
+        //gdo.net.app["Youtube"].server.seekTo(instanceId, gdo.net.instance[instanceId].youtubePlayer.getCurrentTime(), true);
         //    gdo.net.instance[instanceId].youtubePlayer.playVideo();
         //} else {
         gdo.net.setTimeout(function () { gdo.net.instance[instanceId].youtubePlayer.playVideo(); }, time);
+        gdo.net.app["Youtube"].refresh(instanceId);
         //}
     }
 
@@ -97,22 +105,26 @@ $(function () {
             seconds = 0.01;
         }
         gdo.net.setTimeout(function () { gdo.net.instance[instanceId].youtubePlayer.seekTo(seconds, allowSeekAhead); }, time);
+        gdo.net.app["Youtube"].refresh(instanceId);
         //gdo.net.instance[instanceId].youtubePlayer.seekTo(seconds, allowSeekAhead);
     }
 
     $.connection.youtubeAppHub.client.pauseVideo = function (instanceId, time) {
         gdo.consoleOut('.Youtube', 4, "Pause Command Received");
-        gdo.net.setTimeout(function () {  gdo.net.instance[instanceId].youtubePlayer.pauseVideo(); }, time);
+        gdo.net.setTimeout(function () { gdo.net.instance[instanceId].youtubePlayer.pauseVideo(); }, time);
+        gdo.net.app["Youtube"].refresh(instanceId);
     }
 
     $.connection.youtubeAppHub.client.stopVideo = function (instanceId) {
         gdo.consoleOut('.Youtube', 5, "Stop Command Received");
         gdo.net.instance[instanceId].youtubePlayer.stopVideo();
+        gdo.net.app["Youtube"].refresh(instanceId);
     }
 
     $.connection.youtubeAppHub.client.setPlaybackQuality = function (instanceId, quality) {
         gdo.consoleOut('.Youtube', 1, "Setting Playback Quality to " + quality);
         gdo.net.instance[instanceId].youtubePlayer.setPlaybackQuality(quality);
+        gdo.net.app["Youtube"].refresh(instanceId);
     }
 
     $.connection.youtubeAppHub.client.bufferComplete = function (instanceId) {
@@ -122,9 +134,39 @@ $(function () {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#control_buttons").show();
         }
+        gdo.net.app["Youtube"].refresh(instanceId);
     }
 });
 
+gdo.net.app["Youtube"].refresh = function (instanceId) {
+    gdo.checkpoint(instanceId);
+    if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+        var scale;
+        if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > 1) {
+            scale = "scale(" + gdo.net.section[gdo.net.instance[instanceId].sectionId].cols + ")";
+        } else {
+            scale = "scale(1.001)";
+        }
+        var dscale;
+        if (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols > 1) {
+            dscale = "scale(" + (gdo.net.section[gdo.net.instance[instanceId].sectionId].cols - 0.001) + ")";
+        } else {
+            dscale = "scale(1.00)";
+        }
+        $("iframe").contents().find("#youtube_player")
+            .css("zoom", 1)
+            .css("-moz-transform", dscale)
+            .css("-o-transform", dscale)
+            .css("-webkit-transform", dscale);
+        setTimeout(function () {
+            $("iframe").contents().find("#youtube_player")
+                .css("zoom", 1)
+                .css("-moz-transform", scale)
+                .css("-o-transform", scale)
+                .css("-webkit-transform", scale);
+        }, 1000);
+    }
+}
 
 gdo.net.app["Youtube"].initClient = function () {
     gdo.consoleOut('.Youtube', 1, 'Initializing Youtube App Client at Node ' + gdo.clientId);
@@ -153,7 +195,7 @@ gdo.net.app["Youtube"].initControl = function (controlId) {
         var amount = gdo.net.instance[gdo.controlId].youtubePlayer.getCurrentTime() + gdo.net.instance[gdo.controlId].youtubePlayer.getDuration() / 100;
         //gdo.consoleOut('.Youtube', 0, "Sending Forward Command with " + amount);
         gdo.net.app["Youtube"].server.playVideo(gdo.controlId, gdo.net.time.getTime() + 350);
-        setTimeout(function () {gdo.net.app["Youtube"].server.seekTo(gdo.controlId, amount, true, gdo.net.time.getTime() + 350);}, 700);
+        setTimeout(function () { gdo.net.app["Youtube"].server.seekTo(gdo.controlId, amount, true, gdo.net.time.getTime() + 350); }, 700);
     });
 
     $("iframe").contents().find("#pauseButton").unbind().click(function () {
@@ -213,13 +255,13 @@ gdo.net.app["Youtube"].updateTitle = function (instanceId) {
                 if ($("iframe").contents().find("#youtube_player").is(":visible")) {
                     $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getCurrentTime()) + "/" + parseInt(gdo.net.instance[instanceId].youtubePlayer.getDuration()) + " seconds</h6>");
                 } else {
-                    $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;Buffering "+parseInt((gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() * 100) / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal())+"%</h6>");
+                    $("iframe").contents().find("#youtube_duration").empty().append("<h6>&nbsp;Buffering " + parseInt((gdo.net.instance[instanceId].youtubePlayer.getVideoBytesLoaded() * 100) / gdo.net.instance[instanceId].youtubePlayer.getVideoBytesTotal()) + "%</h6>");
                 }
                 $("iframe").contents().find("#youtube_title").empty().append("<h6><i class='fa  fa-youtube  fa-fw'></i>&nbsp;" + gdo.net.instance[instanceId].youtubePlayer.getVideoData().title + "</h6>");
-               
+
             }
         } catch (err) {
-            
+
         }
         gdo.net.app["Youtube"].updateTitle(instanceId);
     }, 700);
@@ -261,7 +303,7 @@ gdo.net.app["Youtube"].stateChange = function (event) {
         default:
             //
             break;
-    } 
+    }
 }
 
 gdo.net.app["Youtube"].terminateClient = function () {
@@ -272,8 +314,7 @@ gdo.net.app["Youtube"].ternminateControl = function () {
     gdo.consoleOut('.Youtube', 1, 'Terminating Youtube App Control at Instance ' + gdo.controlId);
 }
 
-gdo.net.app["Youtube"].playVideo = function ()
-{
+gdo.net.app["Youtube"].playVideo = function () {
     var instanceId;
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
         instanceId = gdo.controlId;

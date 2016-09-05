@@ -123,7 +123,7 @@ $(function () {
         for (var i = 0; i < layerIds.length; i++) {
             var layerId = layerIds[i];
             var index = getClosest(timeStep, gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].timestamps);
-            gdo.net.instance[instanceId].layers[layerId].setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].sources[index]);
+            gdo.net.instance[instanceId].layers[layerId].object.setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].sources[index].object);
         }
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL
             && gdo.net.node[gdo.clientId].sectionCol == gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols - 1
@@ -134,7 +134,7 @@ $(function () {
 
     $.connection.mapsAppHub.client.receiveLayerTimeStep = function (instanceId, layerId, timeStep) {
         var index = getClosest(timeStep, gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].timestamps);
-        gdo.net.instance[instanceId].layers[layerId].setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].sources[index]);
+        gdo.net.instance[instanceId].layers[layerId].object.setSource(gdo.net.instance[instanceId].sources[gdo.net.instance[instanceId].layers[layerId].properties.Source.Value].sources[index].object);
         if (gdo.clientMode != gdo.CLIENT_MODE.CONTROL
             && gdo.net.node[gdo.clientId].sectionCol == gdo.net.section[gdo.net.node[gdo.clientId].sectionId].cols - 1
             && gdo.net.node[gdo.clientId].sectionRow == 0) {
