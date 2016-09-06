@@ -23,7 +23,7 @@ $(function () {
             
             if (gdo.net.app["XNATImaging"].screenConfig != null) {
                 if (gdo.net.app["XNATImaging"].screenConfig.switchable) {
-                    console.log("Requesting new config");
+                    gdo.consoleOut(".XNATImaging", 1, "Requesting new config");
                     gdo.net.app["XNATImaging"].server.requestConfig(instanceId, gdo.clientId);
                 }
             }
@@ -44,21 +44,22 @@ $(function () {
     ** SignalR receive method to update image parameters based on control input
     **  Update image parameters:
     **  instanceId      int
-    **  windowWidth     dbl
-    **  windowCenter    dbl
+    **  screenMin       dbl
+    **  screenMax       dbl
+    **  orientation     str
     **  currentCoord    obj
     **  markingCoords   obj
+    **  colorTable      str
     */
     $.connection.xNATImagingAppHub.client.receiveImageUpdate =
-        function (instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords) {
-            console.log(markingCoords);
+        function (instanceId, windowWidth, windowCenter, orientation, currentCoord, markingCoords, colorTable) {
             if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
                 // ignore
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
-                if (gdo.net.app["XNATImaging"].screenCOnfig.mode == "zoom" || gdo.net.app["XNATImaging"].screenConfig.mode == "mri") {
-                    gdo.net.app["XNATImaging"].updateImageParams(instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords);
+                if (gdo.net.app["XNATImaging"].screenConfig.mode == "zoom" || gdo.net.app["XNATImaging"].screenConfig.mode == "mri") {
+                    gdo.net.app["XNATImaging"].updateImageParams(instanceId, windowWidth, windowCenter, orientation, currentCoord, markingCoords, colorTable);
                 }
             }
         }
@@ -93,7 +94,7 @@ gdo.net.app["XNATImaging"].setupControl = function (instanceId, appConfig) {
 
     gdo.net.app["XNATImaging"].lesionsOverlay = appConfig.overlayLesions[0];
 
-    console.log(appConfig);
+    gdo.consoleOut(".XNATImaging", 1, "Received app config: \n" + appConfig);
 
     gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, url);
     gdo.net.app["XNATImaging"].initButtons(instanceId);
@@ -198,7 +199,7 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
         pdf.getPage(1).then(function (page) {
             var scale = screenConfig.scale;
             var viewport = page.getViewport(scale);
-            console.log(viewport);
+            gdo.consoleOut(".XNATImaging", 1, viewport);
 
             // Prepare canvas using PDF page dimensions.
             var canvas = $("iframe").contents().find('#pdf-canvas')[0];
@@ -211,7 +212,7 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
             }
 
             var heightDifference = gdo.net.node[gdo.clientId].height * screenConfig.displaySize[1] - viewport.height;
-            console.log("Height difference: " + heightDifference);
+            gdo.consoleOut(".XNATImaging", 1, "Height difference: " + heightDifference);
             if (heightDifference > 0) {
                 $("iframe").contents().find('#pdf-canvas').css("margin-bottom", heightDifference + "px");
             }
@@ -267,7 +268,6 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
                 if (screenConfig.overlays[i] == "gm_baseline.nii.gz" || screenConfig.overlays[i] === "gm_followup.nii.gz") {
                     params[screenConfig.overlays[i]] = { "alpha": 0.9, "lut": "GMBlue" };
                 } else if (screenConfig.overlays[i] === "labeled_lesions_baseline.nii.gz" || screenConfig.overlays[i] === "labeled_lesions_followup.nii.gz") {
-                    console.log("Red");
                     params[screenConfig.overlays[i]] = { "alpha": 0.8, "lut": "Red" };
                 } else {
                     params[screenConfig.overlays[i]] = { "alpha": 0.8, "lut": "Grayscale" };
@@ -277,7 +277,7 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
     }
 
     if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.net.app["XNATImaging"].lesionsOverlay != null) {
-        console.log(gdo.net.app["XNATImaging"].lesionsOverlay);
+        gdo.consoleOut(".XNATImaging", 1, gdo.net.app["XNATImaging"].lesionsOverlay);
         imageIds.push(baseUrl + gdo.net.app["XNATImaging"].lesionsOverlay);
         params[gdo.net.app["XNATImaging"].lesionsOverlay] = { "alpha": 0.8, "lut": "Red" };
         $("iframe").contents().find("#lesionsCheckBox").prop('checked', true);
@@ -296,7 +296,7 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
         case "control":
             // add handlers for mouse events once the image is loaded
             papaya.Container.allowPropagation = true;
-            params["kioskMode"] = false;
+            params["kioskMode"] = true;
             params["orthogonal"] = true;
             params["loadingComplete"] = gdo.net.app["XNATImaging"].setEventHandlers(instanceId, markingCoords);
             break;
@@ -321,9 +321,9 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
             }
             break;
         default:
-            console.log("No accepted mode found in config");
+            gdo.consoleOut(".XNATImaging", 1, "No accepted mode found in config");
     }
-    console.log(params);
+    gdo.consoleOut(".XNATImaging", 1, params);
     papaya.Container.resetViewer(0, params);
 }
 
@@ -336,7 +336,7 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var screenConfig = gdo.net.app["XNATImaging"].appConfig.screens.config;
 
-    containers[0].viewer.Preferences.showCrosshairs = "No";
+    containers[0].preferences.showCrosshairs = "No";
 
     var offsetX = screenConfig.zoomOffset[0];
     var offsetY = screenConfig.zoomOffset[1];
@@ -391,13 +391,15 @@ gdo.net.app["XNATImaging"].sendImageParams = function (instanceId) {
     var viewer = containers[0].viewer;
     var volume = viewer.screenVolumes[0];
     var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
+    var colorTable = $("iframe").contents().find("#colorSelect option:selected").text();
 
     gdo.net.app["XNATImaging"].server.setImageConfig(instanceId,
         volume.screenMin,
         volume.screenMax,
         viewText,
         viewer.currentCoord,
-        viewer.markingCoords);
+        viewer.markingCoords,
+        colorTable);
     gdo.consoleOut(".XNATImaging", 1, "Set New Image Config");
 }
 
@@ -405,7 +407,7 @@ gdo.net.app["XNATImaging"].sendImageParams = function (instanceId) {
 /*
 ** Update image parameters using data received from server
 */
-gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords) {
+gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, screenMin, screenMax, view, currentCoord, markingCoords, colorTable) {
 
     var screenConfig = gdo.net.app["XNATImaging"].screenConfig;
     var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
@@ -416,9 +418,9 @@ gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth
         console.log(screenConfig.imageData);
         volume.setScreenRange(0, screenConfig.imageData.screenMax);
     }
-    else if (volume.screenMin != windowWidth || volume.screenMax != windowCenter) {
+    else if (volume.screenMin != screenMin || volume.screenMax != screenMax) {
         console.log(volume.screenMin, volume.screenMax);
-        volume.setScreenRange(windowWidth, windowCenter);
+        volume.setScreenRange(screenMin, screenMax);
     }
 
     viewer.markingCoords = markingCoords;
@@ -434,6 +436,10 @@ gdo.net.app["XNATImaging"].updateImageParams = function (instanceId, windowWidth
 
     if (gdo.net.app["XNATImaging"].getSliceDirection(view) != viewer.mainImage.sliceDirection) {
         viewer.rotateToView(view);
+    }
+
+    if (colorTable != null && screenConfig.mode == "mri" || (screenConfig.mode == "zoom" && screenConfig.switchable == true)) {
+        volume.changeColorTable(viewer, colorTable);
     }
 }
 

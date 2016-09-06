@@ -53,19 +53,20 @@ x fix zoom canvas offsets
 x fix background color to blue/black
 x Fix NIFTI world view cropping issue (local view with rotations an option, padAllImages param too)
 
-
 Today Todo
 
-
-x Add overlay of lesions onto control
+x Add overlay of lesions onto control page
 x switching patients - can't switch again select
 x colored borders for zoom display
 x fixed various patient and screen switching bugs
+
+disabled crosshairs for zoom
 
 fix touch marker coord bug
 alter canvas size in papaya
 ROI appear on all orthogonal planes
 marker table should use coordinates from rectangle not crosshair
 
+x Add color tables (try in sample project with base papaya build to test worldSpace bug when changing windowLevel or lut);
 Install FSL FLIRT
 Register followup to baseline for all data sets including lesions

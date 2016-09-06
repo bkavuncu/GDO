@@ -21,8 +21,11 @@ namespace GDO.Apps.XNATImaging
         public string PatientId { get; set; }
 
         public dynamic CurrentCoord { get; set; }
-        public double WindowWidth { get; set; }
-        public double WindowCenter { get; set; }
+        public double ScreenMin { get; set; }
+        public double ScreenMax { get; set; }
+        public string CurrentOrientation { get; set; }
+        public dynamic MarkingCoords { get; set; }
+        public string ColorTable { get; set; }
 
         // List of available Patients and Corresponding Experiments
         public string[] Patients = {"AD201713", "AD201714", "AD201752" };
@@ -65,11 +68,17 @@ namespace GDO.Apps.XNATImaging
             return Name;
         }
 
-        public void SetImage(dynamic currentCoord, double windowWidth, double windowCenter)
+        public void SetImage(dynamic currentCoord, double screenMin, double screenMax,
+                                   string currentOrientation,
+                                   dynamic markingCoords,
+                                   string colorTable)
         {
             CurrentCoord = currentCoord;
-            WindowWidth = windowWidth;
-            WindowCenter = windowCenter;
+            ScreenMin = screenMin;
+            ScreenMax = screenMax;
+            CurrentOrientation = currentOrientation;
+            MarkingCoords = markingCoords;
+            ColorTable = colorTable;
         }
 
         // Generates blank configuration file

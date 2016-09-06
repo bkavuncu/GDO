@@ -58,8 +58,8 @@ namespace GDO.Apps.XNATImaging
         }
 
         
-        public void SetImageConfig(int instanceId, double windowWidth, double windowCenter, 
-            string currentOrientation, dynamic currentCoord, dynamic markingCoords)
+        public void SetImageConfig(int instanceId, double screenMin, double screenMax, 
+            string currentOrientation, dynamic currentCoord, dynamic markingCoords, string colorTable)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -69,17 +69,21 @@ namespace GDO.Apps.XNATImaging
                     
                     ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).SetImage(
                                     currentCoord, 
-                                    windowWidth, 
-                                    windowCenter
+                                   screenMin, 
+                                   screenMax,
+                                   currentOrientation,
+                                   markingCoords,
+                                   colorTable
                     );
 
                     Clients.Group("" + instanceId).receiveImageUpdate(
                                     instanceId, 
-                                    windowWidth, 
-                                    windowCenter,
+                                   screenMin, 
+                                   screenMax,
                                     currentOrientation,
                                     currentCoord,
-                                    markingCoords
+                                    markingCoords,
+                                    colorTable
                     );
                 }
                 catch (Exception e)

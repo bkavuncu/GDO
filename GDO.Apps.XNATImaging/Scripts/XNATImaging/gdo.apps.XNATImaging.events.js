@@ -17,42 +17,54 @@ gdo.net.app["XNATImaging"].setEventHandlers = function (instanceId, markingCoord
         containers[0].viewer.drawMarkers();
     }
 
-    // orientation change event
+    // orientation select menu change event
     $("iframe").contents().find("#viewSelect").on("selectmenuchange", function (event, ui) {
         var viewer = containers[0].viewer;
         var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
-        console.log("Switching to view: " + viewText);
+        gdo.consoleOut(".XNATImaging", 1, "Switching to view: " + viewText);
 
         gdo.net.app["XNATImaging"].sendImageParams(instanceId);
         viewer.rotateToView(viewText);
-        gdo.net.app["XNATImaging"].initializeSlider();
+        gdo.net.app["XNATImaging"].initializeSlider(); 
+    });
+
+    // color table select menu change event
+    $("iframe").contents().find("#colorSelect").on("selectmenuchange", function (event, ui) {
+        var viewer = containers[0].viewer;
+        var colorText = $("iframe").contents().find("#colorSelect option:selected").text();
+        gdo.consoleOut(".XNATImaging", 1, "Switching to color table: " + colorText);
+
+        var volume = viewer.screenVolumes[0];
+        volume.changeColorTable(viewer, colorText);
+
+        gdo.net.app["XNATImaging"].sendImageParams(instanceId);
+
     });
 
     // mouse up event
     $("iframe").contents().find('#papayaContainer0').mouseup(function (e) {
-        console.log("mouseup");
+        gdo.consoleOut(".XNATImaging", 1, "mouseup");
 
-        gdo.net.app["XNATImaging"].initializeSlider();
+        gdo.net.app["XNATImaging"].updateSlider();
         gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     });
 
     // touch end event
     $("iframe").contents().find('#papayaContainer0').on("touchend", function (e) {
-        console.log("touchend");
+        gdo.consoleOut(".XNATImaging", 1, "touchend");
 
-        gdo.net.app["XNATImaging"].initializeSlider();
+        gdo.net.app["XNATImaging"].updateSlider();
         gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     });
 
     // marker table hotlink navigation event
     $("iframe").contents().find("#markerTable").click(function () {
-        gdo.net.app["XNATImaging"].initializeSlider();
+        gdo.net.app["XNATImaging"].updateSlider();
         gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     });
 
     // Bind the range slider events
     $("iframe").contents().find('#slice-range').on("input", function (event) {
-        //gdo.consoleOut(".XNATImaging", 1, "slider input event");
         var currentImageIndex = containers[0].viewer.mainImage.currentSlice;
         // Get the range input value
         var newImageIndex = parseInt(event.currentTarget.value, 10);
@@ -89,13 +101,19 @@ gdo.net.app["XNATImaging"].setEventHandlers = function (instanceId, markingCoord
         }
     });
 
-    console.log(containers[0].viewer.initialized);
     gdo.net.app["XNATImaging"].initializeSlider();
+}
+
+gdo.net.app["XNATImaging"].updateSlider = function () {
+    var slider = $("iframe").contents().find('#slice-range').get(0);
+    var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
+
+    slider.value = viewer.mainImage.currentSlice;
 }
 
 gdo.net.app["XNATImaging"].initializeSlider = function() {
     // Initialize slider input range
-    gdo.consoleOut(".XNATImaging", 1, "Initialised slider");
+    //gdo.consoleOut(".XNATImaging", 3, "Initialized slider");
 
     var slider = $("iframe").contents().find('#slice-range').get(0);
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
@@ -107,9 +125,11 @@ gdo.net.app["XNATImaging"].initializeSlider = function() {
 
     var max = 160;
     var currentOrientation = "";
-    if (viewer.initialized) {
-        console.log(viewer);
-        currentOrientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
+    if (!viewer.initialized) {
+        setTimeout(function () {  // setTimeout necessary in Chrome
+            console.log(viewer);
+            currentOrientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
+        }, 6000);
     }
     if (currentOrientation === "Axial") {
         max = viewer.volume.header.imageDimensions.zDim;
@@ -121,13 +141,9 @@ gdo.net.app["XNATImaging"].initializeSlider = function() {
     slider.max = max;
 
     // Set current value
-    if (viewer.initialized) {
-        slider.value = viewer.mainImage.currentSlice;
-    } else {
-        slider.value = slider.max / 2;
-        gdo.consoleOut(".XNATImaging", 1, "Initialised slider with range 0-" + slider.max);
-        gdo.consoleOut(".XNATImaging", 1, "Initialised slider to current index " + slider.value);
-    }
+    slider.value = slider.max / 2;
+    gdo.consoleOut(".XNATImaging", 1, "Initialised slider with range 0-" + slider.max + "(" + slider.value + ")");
+    gdo.consoleOut(".XNATImaging", 1, "Initialised slider to current index " + slider.value);
 }
 
 
@@ -157,7 +173,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
 
             if (containers[0].viewer.isMarkingMode) {
                 containers[0].viewer.isMarkingMode = false;
-                console.log(containers[0].viewer.isMarkingMode);
+                gdo.consoleOut(".XNATImaging", 1, containers[0].viewer.isMarkingMode);
                 $(this).val("Place markers disabled");
                 $(this).removeClass('btn-success');
                 $(this).addClass('btn-default');
@@ -165,7 +181,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
                 $("iframe").contents().find(".papaya-viewer canvas").css("cursor", "crosshair");
             } else {
                 containers[0].viewer.isMarkingMode = true;
-                console.log(containers[0].viewer.isMarkingMode);
+                gdo.consoleOut(".XNATImaging", 1, containers[0].viewer.isMarkingMode);
                 $(this).val("Place markers enabled");
                 $(this).removeClass('btn-default');
                 $(this).addClass('btn-success');
@@ -190,7 +206,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
     $("iframe").contents().find("#patientSelect").unbind().bind("selectmenuchange", function (event, ui) {
         var viewer = containers[0].viewer;
         var patientId = $("iframe").contents().find("#patientSelect option:selected").text();
-        console.log("Switching to patient: " + patientId);
+        gdo.consoleOut(".XNATImaging", 1, "Switching to patient: " + patientId);
 
         gdo.net.app["XNATImaging"].server.setPatient(instanceId, patientId);
         containers[0].viewer.clearMarkers();
@@ -206,15 +222,13 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
             $(event.target).addClass("btn-success");
             var index = event.target.id.substr(event.target.id.length - 1);
             var url = appConfig.mriUrlList[index].url;
-            console.log(url);
-            console.log(appConfig.mriUrlList);
+            gdo.consoleOut(".XNATImaging", 1, url);
             var modality = event.target.value;
 
             gdo.net.app["XNATImaging"].server.requestScreenSwitch(instanceId, url, modality);
 
             appConfig.controlUrl = url;
 
-            console.log(url);
             if (url.includes("baseline")) {
                 gdo.net.app["XNATImaging"].lesionsOverlay = gdo.net.app["XNATImaging"].appConfig.overlayLesions[0];
             } else if (url.includes("followup")) {
@@ -239,7 +253,6 @@ gdo.net.app["XNATImaging"].fillSwitchScreenContainer = function (appConfig) {
     var rowCounter = 0;
     for (var i = 0; i < appConfig.mriUrlList.length; i++) {
         if (rowCounter % 2 === 0) {
-            console.log("new row");
             $("iframe").contents().find("#switchScreenContainer").append("<div class='row'>");
         }
         var buttonStyle = "btn-primary";
@@ -305,7 +318,6 @@ gdo.net.app["XNATImaging"].incrementSlider = function (instanceId) {
     var viewer = gdo.net.app["XNATImaging"].papayaContainers[0].viewer;
 
     var orientation = gdo.net.app["XNATImaging"].getCurrentOrientation();
-    console.log(orientation);
     if (orientation === "Sagittal") {
         viewer.incrementSagittal(false, 1);
     } else if (orientation === "Coronal") {
@@ -315,7 +327,7 @@ gdo.net.app["XNATImaging"].incrementSlider = function (instanceId) {
     }
 
     gdo.net.app["XNATImaging"].sendImageParams(instanceId);
-    gdo.net.app["XNATImaging"].initializeSlider();
+    gdo.net.app["XNATImaging"].updateSlider();
 }
 
 /*
@@ -331,7 +343,7 @@ gdo.net.app["XNATImaging"].resetView = function (instanceId) {
                     Math.floor(viewer.volume.header.imageDimensions.zDim / 2));
     viewer.gotoCoordinate(center);
     gdo.net.app["XNATImaging"].pause(instanceId);
-    gdo.net.app["XNATImaging"].initializeSlider();
+    gdo.net.app["XNATImaging"].updateSlider();
 }
 
 /*
