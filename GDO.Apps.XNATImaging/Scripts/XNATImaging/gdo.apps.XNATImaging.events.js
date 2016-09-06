@@ -3,12 +3,19 @@
 /*
 ** Sets mouse handlers for control Node
 */
-gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
+gdo.net.app["XNATImaging"].setEventHandlers = function (instanceId, markingCoords) {
 
     gdo.consoleOut('.XNATImaging', 1, "Image stack finished loading");
 
     var papaya = gdo.net.app["XNATImaging"].papaya;
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
+
+    if (markingCoords != null) {
+        console.log(markingCoords);
+        console.log(containers[0].viewer);
+        containers[0].viewer.markingCoords = markingCoords;
+        containers[0].viewer.drawMarkers();
+    }
 
     // orientation change event
     $("iframe").contents().find("#viewSelect").on("selectmenuchange", function (event, ui) {
@@ -16,21 +23,9 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
         var viewText = $("iframe").contents().find("#viewSelect option:selected").text();
         console.log("Switching to view: " + viewText);
 
-        gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+        gdo.net.app["XNATImaging"].sendImageParams(instanceId);
         viewer.rotateToView(viewText);
         gdo.net.app["XNATImaging"].initializeSlider();
-    });
-
-    gdo.net.app["XNATImaging"].createPatientSwitchMenu();
-
-    // patient change event
-    $("iframe").contents().find("#patientSelect").on("selectmenuchange", function (event, ui) {
-        var viewer = containers[0].viewer;
-        var patientId = $("iframe").contents().find("#patientSelect option:selected").text();
-        console.log("Switching to patient: " + patientId);
-
-        gdo.net.app["XNATImaging"].server.setPatient(instanceId, patientId);
-        containers[0].viewer.clearMarkers();
     });
 
     // mouse up event
@@ -38,7 +33,7 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
         console.log("mouseup");
 
         gdo.net.app["XNATImaging"].initializeSlider();
-        gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+        gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     });
 
     // touch end event
@@ -46,13 +41,13 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
         console.log("touchend");
 
         gdo.net.app["XNATImaging"].initializeSlider();
-        gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+        gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     });
 
     // marker table hotlink navigation event
     $("iframe").contents().find("#markerTable").click(function () {
         gdo.net.app["XNATImaging"].initializeSlider();
-        gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+        gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     });
 
     // Bind the range slider events
@@ -78,8 +73,19 @@ gdo.net.app["XNATImaging"].setMouseHandlers = function (instanceId) {
                 viewer.currentCoord.x = newImageIndex;
             }
 
-            gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+            gdo.net.app["XNATImaging"].sendImageParams(instanceId);
             viewer.gotoCoordinate(viewer.currentCoord);
+        }
+    });
+
+    $("iframe").contents().find("#lesionsCheckBox").click(function () {
+        if ($(this).prop("checked") == true) {
+            if (containers[0].viewer.initialized) {
+                papaya.Container.showImage(0, 1);
+            }
+        }
+        else if ($(this).prop("checked") == false) {
+            papaya.Container.hideImage(0, 1);
         }
     });
 
@@ -174,10 +180,21 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
             gdo.consoleOut('.XNATImaging', 1, "Clear all markers");
             containers[0].viewer.clearMarkers();
 
-            gdo.net.app["XNATImaging"].sendImageParam();
+            gdo.net.app["XNATImaging"].sendImageParams();
         });
 
+    // create patient select and switch Screen container
     gdo.net.app["XNATImaging"].fillSwitchScreenContainer(appConfig);
+
+    // patient change event
+    $("iframe").contents().find("#patientSelect").unbind().bind("selectmenuchange", function (event, ui) {
+        var viewer = containers[0].viewer;
+        var patientId = $("iframe").contents().find("#patientSelect option:selected").text();
+        console.log("Switching to patient: " + patientId);
+
+        gdo.net.app["XNATImaging"].server.setPatient(instanceId, patientId);
+        containers[0].viewer.clearMarkers();
+    });
 
     // switch Zoom Display event handler
     $("iframe").contents().find("#switchScreenContainer input.btn")
@@ -189,17 +206,21 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
             $(event.target).addClass("btn-success");
             var index = event.target.id.substr(event.target.id.length - 1);
             var url = appConfig.mriUrlList[index].url;
+            console.log(url);
+            console.log(appConfig.mriUrlList);
             var modality = event.target.value;
 
             gdo.net.app["XNATImaging"].server.requestScreenSwitch(instanceId, url, modality);
 
             appConfig.controlUrl = url;
-            var markingCoords = containers[0].viewer.markingCoords;
-            gdo.net.app["XNATImaging"].initializePapaya(instanceId, "control", url);
-            if (markingCoords != null) {
-                containers[0].viewer.markingCoords = markingCoords;
-                containers[0].viewer.drawMarkers();
+
+            console.log(url);
+            if (url.includes("baseline")) {
+                gdo.net.app["XNATImaging"].lesionsOverlay = gdo.net.app["XNATImaging"].appConfig.overlayLesions[0];
+            } else if (url.includes("followup")) {
+                gdo.net.app["XNATImaging"].lesionsOverlay = gdo.net.app["XNATImaging"].appConfig.overlayLesions[1];
             }
+            gdo.net.app["XNATImaging"].initializePapaya(instanceId, "control", url, containers[0].viewer.markingCoords);
         });
 }
 
@@ -235,9 +256,8 @@ gdo.net.app["XNATImaging"].fillSwitchScreenContainer = function (appConfig) {
 }
 
 
-gdo.net.app["XNATImaging"].createPatientSwitchMenu = function () {
+gdo.net.app["XNATImaging"].createPatientSwitchMenu = function (appConfig) {
 
-    var appConfig = gdo.net.app["XNATImaging"].appConfig;
     for (var i = 0; i < appConfig.patientsList.length; i++) {
         var optionString = "";
         if (appConfig.patientsList[i] === appConfig.patient) {
@@ -247,7 +267,9 @@ gdo.net.app["XNATImaging"].createPatientSwitchMenu = function () {
         }
         $("iframe").contents().find("#patientSelect").append(optionString);
     }
+
     $("iframe").contents().find("#patientSelect").selectmenu();
+    gdo.net.app["XNATImaging"].selectPatientInitialized = true;
 }
 
 
@@ -292,7 +314,7 @@ gdo.net.app["XNATImaging"].incrementSlider = function (instanceId) {
         viewer.incrementAxial(true, 1);
     }
 
-    gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+    gdo.net.app["XNATImaging"].sendImageParams(instanceId);
     gdo.net.app["XNATImaging"].initializeSlider();
 }
 
@@ -319,5 +341,5 @@ gdo.net.app["XNATImaging"].pause = function (instanceId) {
     clearInterval(gdo.net.app["XNATImaging"].interval);
     $('iframe').contents().find('#playButton').val("Play");
     gdo.net.app["XNATImaging"].playing = false;
-    gdo.net.app["XNATImaging"].sendImageParam(instanceId);
+    gdo.net.app["XNATImaging"].sendImageParams(instanceId);
 }

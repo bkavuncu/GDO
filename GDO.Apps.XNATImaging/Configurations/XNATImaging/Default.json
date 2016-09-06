@@ -191,7 +191,7 @@
       "row": 2,
       "config": {
         "mode": "mri",
-        "url": "t1_followup.nii.gz",
+        "url": "t2_followup.nii.gz",
         "orthogonal": true,
         "modality": "T2 Followup",
         "color": "yellow",

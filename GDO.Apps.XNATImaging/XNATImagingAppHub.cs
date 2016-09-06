@@ -133,7 +133,7 @@ namespace GDO.Apps.XNATImaging
                             }
                         }
 
-                        var jsonStr = config.ToString();
+                        var configStr = config.ToString();
                         Clients.Caller.receiveConfig(instanceId, config);
                     }
 
@@ -163,11 +163,14 @@ namespace GDO.Apps.XNATImaging
                         config.controlUrl = url;
 
                         var index = -1;
-                        for (int i = 0; i < config.mriUrlList; i++)
+                        Debug.WriteLine((int)((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).GetMriList().Count);
+                        config.mriUrlList.Replace(((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).GetMriList());
+                        for (int i = 0; i < config.mriUrlList.Count; i++)
                         {
                             if (config.mriUrlList[i].url == url)
                             {
                                 index = i;
+                                Debug.WriteLine("url index is " + index);
                                 break;
                             }
                         }
@@ -176,6 +179,7 @@ namespace GDO.Apps.XNATImaging
                         {
                             color = ((XNATImagingApp)Cave.Apps["XNATImaging"].Instances[instanceId]).mriColors[index];
                         }
+                        Debug.WriteLine(color + " " + index);
 
                         //index = Array.IndexOf(config.mriUrlList, JObject.FromObject(new { modality, url }));
 
@@ -191,8 +195,8 @@ namespace GDO.Apps.XNATImaging
 
                         appConfig.Json = config;
 
-                        var jsonStr = config.ToString();
-                        var jsonStri = appConfig.Json.ToString();
+                        var configStr = config.ToString();
+                        var appConfigStr = appConfig.Json.ToString();
                         Clients.Group("" + instanceId).receiveScreenSwitch(instanceId);
                     }
                 }
@@ -202,7 +206,6 @@ namespace GDO.Apps.XNATImaging
                 }
             }
         }
-
 
         public void SetPatient(int instanceId, string patientId)
         {

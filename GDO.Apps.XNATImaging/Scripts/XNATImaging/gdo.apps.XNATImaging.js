@@ -57,7 +57,9 @@ $(function () {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
             } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
                 gdo.consoleOut('.XNATImaging', 1, 'Instance - ' + instanceId + ": Received ImageUpdate");
-                gdo.net.app["XNATImaging"].updateImageParams(instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords);
+                if (gdo.net.app["XNATImaging"].screenCOnfig.mode == "zoom" || gdo.net.app["XNATImaging"].screenConfig.mode == "mri") {
+                    gdo.net.app["XNATImaging"].updateImageParams(instanceId, windowWidth, windowCenter, view, currentCoord, markingCoords);
+                }
             }
         }
 });
@@ -89,10 +91,16 @@ gdo.net.app["XNATImaging"].setupControl = function (instanceId, appConfig) {
     gdo.net.app["XNATImaging"].appConfig = appConfig;
     gdo.net.app["XNATImaging"].patientName = appConfig.patient;
 
+    gdo.net.app["XNATImaging"].lesionsOverlay = appConfig.overlayLesions[0];
+
     console.log(appConfig);
 
     gdo.net.app["XNATImaging"].initializePapaya(instanceId, mode, url);
     gdo.net.app["XNATImaging"].initButtons(instanceId);
+
+    if (!gdo.net.app["XNATImaging"].selectPatientInitialized) {
+        gdo.net.app["XNATImaging"].createPatientSwitchMenu(appConfig);
+    }
 }
 
 /*
@@ -105,8 +113,6 @@ gdo.net.app["XNATImaging"].initClient = function (papaya, containers, pdfjs) {
     gdo.net.app["XNATImaging"].papaya = papaya;
     gdo.net.app["XNATImaging"].papayaContainers = containers;
     gdo.net.app["XNATImaging"].pdfjs = pdfjs;
-
-    console.log(gdo.net.app["XNATImaging"].instances[instanceId].config);
 
     gdo.consoleOut('.XNATImaging', 1, 'Initializing XNATImaging App Client at Node ' + gdo.clientId);
 
@@ -210,6 +216,8 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
                 $("iframe").contents().find('#pdf-canvas').css("margin-bottom", heightDifference + "px");
             }
 
+            $("iframe").contents().find('#pdf-canvas').css("margin-top", "30px");
+
             // Render PDF page into canvas context.
             var renderContext = {
                 canvasContext: context,
@@ -223,7 +231,7 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
 }
 
 
-gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
+gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, markingCoords) {
 
     var papaya = gdo.net.app["XNATImaging"].papaya;
     var appConfig = gdo.net.app["XNATImaging"].appConfig;
@@ -245,14 +253,13 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
     var imageUrl = gdo.net.app["XNATImaging"].imageUrl;
     var imageName = url;
     var imageIds = [imageUrl];
+    params["luts"] = [
+            { "name": "GMBlue", "data": [[0, 0.21, 0.34, 0.4], [1, 0.21, 0.34, 0.4]] },
+            { "name": "Red", "data": [[0, 1, 0, 0], [1, 1, 0, 0]] }
+    ];
 
     //overlay color stuff
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE && mode === "zoom") {
-        params["luts"] = [
-            { "name": "GMBlue", "data": [[0, 0.21, 0.34, 0.4], [1, 0.21, 0.34, 0.4]] },
-            { "name": "Red", "data": [[0, 1, 0, 0], [1, 1, 0, 0]] }
-        ];
-
         if (screenConfig != undefined && screenConfig.overlays != undefined && screenConfig.overlays.length > 0) {
             for (var i = 0; i < screenConfig.overlays.length; i++) {
                 imageIds.push(baseUrl + screenConfig.overlays[i]);
@@ -269,11 +276,12 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
         }
     }
 
-    /*if (screenConfig != null && screenConfig.imageData.screenMax != 0) {
-        console.log(imageName);
-        console.log(screenConfig.imageData.screenMax);
-        params[imageName] = { min: 0, max: 649 };
-    }*/
+    if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.net.app["XNATImaging"].lesionsOverlay != null) {
+        console.log(gdo.net.app["XNATImaging"].lesionsOverlay);
+        imageIds.push(baseUrl + gdo.net.app["XNATImaging"].lesionsOverlay);
+        params[gdo.net.app["XNATImaging"].lesionsOverlay] = { "alpha": 0.8, "lut": "Red" };
+        $("iframe").contents().find("#lesionsCheckBox").prop('checked', true);
+    }
 
     params["worldSpace"] = appConfig.worldSpace;
     params["smoothDisplay"] = true;
@@ -290,8 +298,9 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url) {
             papaya.Container.allowPropagation = true;
             params["kioskMode"] = false;
             params["orthogonal"] = true;
-            params["loadingComplete"] = gdo.net.app["XNATImaging"].setMouseHandlers(instanceId);
+            params["loadingComplete"] = gdo.net.app["XNATImaging"].setEventHandlers(instanceId, markingCoords);
             break;
+
         case "zoom":
             params["fullScreen"] = true;
             params["orthogonalTall"] = false;
@@ -327,8 +336,7 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var screenConfig = gdo.net.app["XNATImaging"].appConfig.screens.config;
 
-    // TODO: Find way to disable crosshairs
-    //containers[0].preferences.showCrosshairs = "No";
+    containers[0].viewer.Preferences.showCrosshairs = "No";
 
     var offsetX = screenConfig.zoomOffset[0];
     var offsetY = screenConfig.zoomOffset[1];
@@ -378,7 +386,7 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
 /*
 ** Broadcasts updated image parameters to all client nodes
 */
-gdo.net.app["XNATImaging"].sendImageParam = function (instanceId) {
+gdo.net.app["XNATImaging"].sendImageParams = function (instanceId) {
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
     var viewer = containers[0].viewer;
     var volume = viewer.screenVolumes[0];

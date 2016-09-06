@@ -36,7 +36,7 @@ namespace GDO.Apps.XNATImaging
         public string[] DefaultMriUrls = { "t1_baseline.nii.gz", "t2_baseline.nii.gz", "t1_followup.nii.gz", "t2_followup.nii.gz" };
         public string[] DefaultModalityStrings = { "T1 Baseline", "T2 Baseline", "T1 Followup", "T2 Followup" };
         public string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "t1_baseline.nii.gz", "t1_followup.nii.gz" };
-        public string[] DefaultPdfUrls = { "msmetrix_report1.pdf", "msmetrix_report2.pdf", "msmetrix_report3.pdf" };
+        public string[] DefaultPdfUrls = { "msmetrix_report-1.pdf", "msmetrix_report-2.pdf", "msmetrix_report-3.pdf" };
         public string[] DefaultBaselineOverlays = { "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" };
         public string[] DefaultFollowupOverlays = { "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" };
 

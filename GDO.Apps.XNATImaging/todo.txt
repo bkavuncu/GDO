@@ -13,7 +13,7 @@ x multiple patients
 -fix rotations on patients 1 and 2 by swapping to others (45min)
 -add edit labels option in table directly (2hr)
 -fix contrast issue with papaya (1hr+)
--reregister t1/flair (3hr to investigate)
+-reregister t1/flair (3hr to install)
 -find solution for hosting nifty data (2hr to investigate)
 
 x fix play reset controls
@@ -45,10 +45,27 @@ x Add marking rectangle using canvas (built into papaya)
 
 bug fixes:
 
-switching patients - can't switch again options
-pdf duplicate views on patient switch with odd rotations
 dicomimage overflowing borders
 
+x pdf duplicate views on patient switch with odd rotations
+x switching patients - can't switch again options
 x fix zoom canvas offsets
 x fix background color to blue/black
 x Fix NIFTI world view cropping issue (local view with rotations an option, padAllImages param too)
+
+
+Today Todo
+
+
+x Add overlay of lesions onto control
+x switching patients - can't switch again select
+x colored borders for zoom display
+x fixed various patient and screen switching bugs
+
+fix touch marker coord bug
+alter canvas size in papaya
+ROI appear on all orthogonal planes
+marker table should use coordinates from rectangle not crosshair
+
+Install FSL FLIRT
+Register followup to baseline for all data sets including lesions
