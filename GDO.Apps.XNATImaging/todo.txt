@@ -1,21 +1,22 @@
 
+
+
+x add button to add lesions overlay to control panel (30min)
+-change papaya width/height calculations (30min)
+x fix touch screen event handlers (1hr)
+x add color tables (30min)
+-marker navigation not persistent between zoom display switches (20min to investigate)
+x remove crosshairs from clients (20min to look into)
+-add edit labels option in table directly (2hr)
+-reregister t1/flair (3hr to install)
+-fix contrast issue with papaya (1hr+)
+-find solution for hosting nifty data (2hr to investigate
+-fix rotations on patients 1 and 2 by swapping to others (45min)
+
 x Add PDF zoom
 x border
 x switch mri screens
 x multiple patients
-
--add button to add lesions overlay to control panel (30min)
--change papaya width/height calculations (30min)
--fix touch screen event handlers (1hr)
--add color tables (30min)
--marker navigation not persistent between zoom dispaly switches (20min to investigate)
--remove crosshairs from clients (20min to look into)
--fix rotations on patients 1 and 2 by swapping to others (45min)
--add edit labels option in table directly (2hr)
--fix contrast issue with papaya (1hr+)
--reregister t1/flair (3hr to install)
--find solution for hosting nifty data (2hr to investigate)
-
 x fix play reset controls
 x remove up/down controls
 x add labeled lesions dicom
@@ -53,7 +54,8 @@ x fix zoom canvas offsets
 x fix background color to blue/black
 x Fix NIFTI world view cropping issue (local view with rotations an option, padAllImages param too)
 
-Today Todo
+
+Latest Todo
 
 x Add overlay of lesions onto control page
 x switching patients - can't switch again select
@@ -62,11 +64,14 @@ x fixed various patient and screen switching bugs
 
 disabled crosshairs for zoom
 
-fix touch marker coord bug
+x fix touch marker coord bug
 alter canvas size in papaya
-ROI appear on all orthogonal planes
-marker table should use coordinates from rectangle not crosshair
-
+x ROI appear on all orthogonal planes
+x marker table should use coordinates from rectangle not crosshair
 x Add color tables (try in sample project with base papaya build to test worldSpace bug when changing windowLevel or lut);
+
+make screenMin/Max updates compatible with both T1 and FLAIR
+make markerCoordinates transfer when switching zoomDisplay
+also make markers get sent and drawn immediately after labeling
 Install FSL FLIRT
 Register followup to baseline for all data sets including lesions

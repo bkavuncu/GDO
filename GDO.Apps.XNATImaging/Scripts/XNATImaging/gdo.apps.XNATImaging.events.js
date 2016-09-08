@@ -186,7 +186,7 @@ gdo.net.app["XNATImaging"].initButtons = function (instanceId) {
                 $(this).removeClass('btn-default');
                 $(this).addClass('btn-success');
                 
-                $("iframe").contents().find(".papaya-viewer canvas").css("cursor", "url(../../Scripts/XNATImaging/images/redmarker.png),copy");
+                $("iframe").contents().find(".papaya-viewer canvas").css("cursor", "copy");
             }
         });
 
