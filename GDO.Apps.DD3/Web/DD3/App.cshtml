@@ -77,7 +77,7 @@
         .axis text {
         text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
         cursor: move;
-        font-size: 30px;
+        font-size: 40px;
         }            
 
     </style>
@@ -1264,7 +1264,7 @@
                 
                     dd3.getDataDimensions('speedDatingData', function(d){
                         dim = d;
-
+                        
                         //nb_dim=Object.keys(dim).length-1;
                         dimensions=[];
                         for(var key in dim){
@@ -1273,6 +1273,13 @@
                                 yScale[key]=dd3.scale.linear().domain([dim[key].min, dim[key].max]).range([dd3.cave.svgHeight, 0]);
                             }
                         }
+                        //["Id", "Wave", "Order", "P Id", "Match", "Same Race", "P Age", "P Race", "PP Attractiveness", "PP Sincerity", "PP Intelligence", "PP Fun", "PP Ambition", "PP Shared Interest", "P Decision", "Attractiveness R", "Sincerity R", "Intelligence R", "Fun R", "Ambition R", "Shared Interest R", "P Likability", "P Reciprocity", "P Met", "Age", "Field", "Race", " Searched Intelligence", " Gender", " Race Importance", " Religion Importance", " Income", "Goal", "Career id", "Searched Sincerity", "Searched Fun", "Searched Ambition", "Searched Shared Interests", "Decision", "Attractiveness", "Sincerity", "Intelligence", "Fun", "Ambition", "Shared Interest", "Likability", "Reciprocity", "Met"]
+
+                        //["Id", "Gender", "Wave", "Order", "P Id", "Match", "Same Race", "P Age", "P Race", "PP Attractiveness", "PP Sincerity", "PP Intelligence", "PP Fun", "PP Ambition", "PP Shared Interest", "P Decision", "Attractiveness R", "Sincerity R", "Intelligence R", "Fun R", "Ambition R", "Shared Interest R", "P Likability", "P Reciprocity", "P Met", "Age", "Field", "Race", "Race Importance", "Religion Importance", "Income", "Goal", "Career id", "Searched Attractiveness", "Searched Sincerity", "Searched Intelligence", "Searched Fun", "Searched Ambition", "Searched Shared Interests", "Decision", "Attractiveness", "Sincerity", "Intelligence", "Fun", "Ambition", "Shared Interest", "Likability", "Reciprocity", "Met"]
+
+                        //["Id", "Wave", "Order", "P Id", "Match", "Same Race", "P Age", "P Race", "PP Attractiveness", "PP Sincerity", "PP Intelligence", "PP Fun", "PP Ambition", "PP Shared Interest", "P Decision", "Attractiveness R", "Sincerity R", "Intelligence R", "Fun R", "Ambition R", "Shared Interest R", "P Likability", "P Reciprocity", "P Met", "Age", "Field", "Race", " Searched Intelligence", " Gender", " Race Importance", " Religion Importance", " Income", "Goal", "Career id", "Searched Sincerity", "Searched Fun", "Searched Ambition", "Searched Shared Interests", "Decision", "Attractiveness", "Sincerity", "Intelligence", "Fun", "Ambition", "Shared Interest", "Likability", "Reciprocity", "Met"]
+
+                        
                         init_dim = dimensions
                         xScale.domain(dimensions);
                         //TODO: refine the filtering
@@ -1338,8 +1345,8 @@
                                 .each(function(l) { d3.select(this).call(xAxis.scale(yScale[l])); })
                                 .append("text")
                                 .style("text-anchor", "middle")
-                                .style("font-size","40px")
-                                .attr("y", -9)
+                                .style("font-size","50px")
+                                .attr("y", -1)
                                 .text(function(d) { return d; });
 
                             // Add and store a brush for each axis.
@@ -1397,7 +1404,9 @@
                         xScale.domain(dimensions);
                         //console.log(xScale.domain());
 
-                        transition(g).attr("transform", function(d) { return "translate(" + xScale(d) + ")"; });
+                        transition(g).attr("transform", function(d) {
+                            return "translate(" + xScale(d) + ")"; 
+                        });
                         
                         transition(foreground).attr("d", path);
                         background.attr("d", path).transition()
