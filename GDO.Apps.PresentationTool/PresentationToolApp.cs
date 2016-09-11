@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization.Formatters.Binary;
+using System;
 
 namespace GDO.Apps.PresentationTool
 {
@@ -23,10 +24,11 @@ namespace GDO.Apps.PresentationTool
     {
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
         public string BasePath { get; set; }
         public string ImagesAppBasePath { get; set; }
         public string FileName { get; set; }
@@ -40,6 +42,7 @@ namespace GDO.Apps.PresentationTool
         public List<Slide> Slides { get; set; }
         public List<Slide> TempSlides { get; set; }
         public Dictionary<string, List<string>> FileNames { get; set; }
+
 
         public void Init()
         {
@@ -116,6 +119,23 @@ namespace GDO.Apps.PresentationTool
                 string path = this.BasePath + s;
                 File.Delete(path);             
                 File.Delete(this.BasePath + "/PPTs/Origin/" + Path.GetFileName(s));
+            }
+        }
+
+        public void clearDirectory(string path)
+        {
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                if (dir.Name != "Origin")
+                {
+                    dir.Delete(true);
+                }             
             }
         }
 

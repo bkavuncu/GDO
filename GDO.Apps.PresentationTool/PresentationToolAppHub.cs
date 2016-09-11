@@ -595,6 +595,28 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
+        public void RequestDeleteAllFiles(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    pa.clearDirectory(pa.BasePath + "/PPTs");
+                    pa.clearDirectory(pa.BasePath + "/Images");
+                    pa.clearDirectory(pa.BasePath + "/PPTs/Origin");
+                    pa.clearDirectory(pa.BasePath + "/Images/Origin");
+                    pa.clearDirectory(pa.ImagesAppBasePath);
+                    UpdateFileList(instanceId);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to restore voice control status", e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
         public void CreateSection(int instanceId, int colStart, int rowStart, int colEnd, int rowEnd)
         {
             lock (Cave.AppLocks[instanceId])

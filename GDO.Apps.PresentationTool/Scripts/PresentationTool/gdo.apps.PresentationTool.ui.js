@@ -59,7 +59,7 @@ $("iframe").contents().find('#item_ppts').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].selectedResource = null;
     gdo.updateDisplayCanvas();
 });
-
+    
 //file image list click
 $("iframe").contents().find('#item_images').on('click', 'li', function () {
     gdo.net.app["PresentationTool"].selectedResource = "/Images/" + $(this).text();

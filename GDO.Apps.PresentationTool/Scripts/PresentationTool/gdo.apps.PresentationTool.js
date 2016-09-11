@@ -184,23 +184,9 @@ gdo.net.app["PresentationTool"].rotateImage = function (instanceId) {
     gdo.consoleOut('.PresentationTool', 1, 'Rotate image on instance' + (instanceId));
     var instance = gdo.net.instance[instanceId];
     if (instance === null || !instance.exists) return;
-    var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (instanceId);
-
-    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
-    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
-
-    $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
-        $(this).contents().find("iframe").on('load', function () {
-            $(this).contents().find("#thumbnail_control > img").on('load', function () {
-                setTimeout(function () {
-                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
-                    $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#rotate_control").click();
-                    $("iframe").contents().find("#hidden_app_iframe").css({ "display": "none" });
-                    $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', '');
-                }, 200);
-            });
-        });
-    });
+    if (instance.appName === "Images") {
+        gdo.net.app["Images"].server.requestRotateImage(instanceId, 90);
+    }
 
 }
 
@@ -217,26 +203,12 @@ gdo.net.app["PresentationTool"].zoomImage = function (instanceId, i) {
     }, 2);
 }
 
-gdo.net.app["PresentationTool"].dispearSlide = function (instanceId, direction, speed, width, isImagesApp, lastApp) {
+gdo.net.app["PresentationTool"].shiftSlide = function (instanceId, style, direction, imageName, mode) {
     var instance = gdo.net.instance[instanceId];
     if (instance === null || !instance.exists) return;
-    if (width <= 0) {
-        if (lastApp) {
-            setTimeout(function () {
-                gdo.updateDisplayCanvas();
-                gdo.net.app["PresentationTool"].loadCurrentSlide(false);
-            }, 1000);
-        }
-        return;
+    if (instance.appName === "Images") {
+        gdo.net.app["Images"].server.requestShiftImage(instanceId, style, direction, imageName, mode);
     }
-
-    if (isImagesApp) {
-        gdo.net.app["Images"].server.requestMoveImage(instanceId, direction * speed, 0);
-    }
-    setTimeout(function () {
-        width = width - speed;
-        gdo.net.app["PresentationTool"].dispearSlide(instanceId, direction, speed, width, isImagesApp, lastApp);
-    }, 5);
 }
 
 // swap
@@ -275,6 +247,12 @@ gdo.net.app["PresentationTool"].swapSrc = function (sections, i) {
 // Button control
 gdo.net.app["PresentationTool"].previousSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Previous slide');
+    var style;
+    if (gdo.net.app["PresentationTool"].template === 0) {
+        style = "animate";
+    } else if (gdo.net.app["PresentationTool"].template === 1) {
+        style = "fadeOut";
+    }
     var numOfApps = 0;
     var numOfSections = gdo.net.app["PresentationTool"].section.length;
     for (var i = 2; i < numOfSections; i++) {
@@ -296,20 +274,25 @@ gdo.net.app["PresentationTool"].previousSlide = function () {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
             numOfApps--;
-            var width = (section.appName === "Images" && gdo.net.app["PresentationTool"].imagesWidth[k] !== null
-                && typeof gdo.net.app["PresentationTool"].imagesWidth[k] !== 'undefined') ? gdo.net.app["PresentationTool"].imagesWidth[k] : 0;
-            gdo.net.app["PresentationTool"].dispearSlide(section.realInstanceId, 1, 20, width, section.appName === "Images", numOfApps === 0);
             var targetSection = JSON.parse(gdo.net.app["PresentationTool"].currentSlideSection[index]);
+            gdo.net.app["PresentationTool"].shiftSlide(section.realInstanceId, style, 1, targetSection.Src.replace(/^.*[\\\/]/, ''), 2);
             gdo.net.app["PresentationTool"].server.changeSection(gdo.controlId, section.id, targetSection.Src, targetSection.AppName);
             gdo.net.app["PresentationTool"].processSection(gdo.net.app["PresentationTool"].isPlaying, true, section.id, gdo.net.app["PresentationTool"].currentSlideSection[index]);
             k++;
             index++;;
         }
     }
+    gdo.updateDisplayCanvas();
 }
 
 gdo.net.app["PresentationTool"].nextSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Next slide');
+    var style;
+    if (gdo.net.app["PresentationTool"].template === 0) {
+        style = "animate";
+    } else if (gdo.net.app["PresentationTool"].template === 1) {
+        style = "fadeOut";
+    }
     // Check if can play
     var numOfApps = 0;
     var numOfSections = gdo.net.app["PresentationTool"].section.length;
@@ -337,16 +320,16 @@ gdo.net.app["PresentationTool"].nextSlide = function () {
     for (var i = 2; i < numOfSections; i++) {
         var section = gdo.net.app["PresentationTool"].section[i];
         if (section.appInstanceId > 0 && section.appInstanceId !== gdo.controlId) {
-            numOfApps--;
-            var width = (section.appName === "Images") ? gdo.net.app["PresentationTool"].imagesWidth[k] : 0;
-            gdo.net.app["PresentationTool"].dispearSlide(section.realInstanceId, -1, 20, width, section.appName === "Images", numOfApps === 0);
+            numOfApps--;        
             var targetSection = JSON.parse(gdo.net.app["PresentationTool"].currentSlideSection[index]);
+            gdo.net.app["PresentationTool"].shiftSlide(section.realInstanceId, style, -1, targetSection.Src.replace(/^.*[\\\/]/, ''), 2);
             gdo.net.app["PresentationTool"].server.changeSection(gdo.controlId, section.id, targetSection.Src, targetSection.AppName);
             gdo.net.app["PresentationTool"].processSection(gdo.net.app["PresentationTool"].isPlaying, true, section.id, gdo.net.app["PresentationTool"].currentSlideSection[index]);
             k++;
             index++;
         }
     }
+    gdo.updateDisplayCanvas();
 }
 
 gdo.net.app["PresentationTool"].createNewSlide = function () {
@@ -551,14 +534,14 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function (firstPlay) {
                 if (reDeploy) {
                     gdo.net.app["PresentationTool"].addElement('gdo.net.server', 'deployBaseApp', [section.realSectionId, '"' + section.appName + '"', '"Default"'], 0.1, false);
                 }
-                gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'loadImage', [section.realInstanceId, '"' + section.src.replace(/^.*[\\\/]/, '') + '"'], 0.1, false);
+                gdo.net.app["PresentationTool"].addElement('gdo.net.app.Images.server', 'showImage', [section.realInstanceId, '"' + section.src.replace(/^.*[\\\/]/, '') + '"', 2], 0.1, false);
             }
         }
     }
     if (firstPlay) {
         gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool.server', 'requestAllSectionsInfo', [gdo.controlId], 0, false);
     }
-    gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool', 'playCurrentSlide', [], 0, false);
+    //gdo.net.app["PresentationTool"].addElement('gdo.net.app.PresentationTool', 'playCurrentSlide', [], 0, false);
     gdo.net.app["PresentationTool"].readyToExcute();
     gdo.net.app["PresentationTool"].executeElement(gdo.net.app["PresentationTool"].Elements[gdo.net.app["PresentationTool"].CurrentElement]);
 }
@@ -567,21 +550,19 @@ gdo.net.app["PresentationTool"].loadCurrentSlide = function (firstPlay) {
 gdo.net.app["PresentationTool"].playInstance = function (instanceId) {
     var instance = gdo.net.instance[instanceId];
     if (instance === null || !instance.exists) return;
+
+    if (instance.appName === "Images") {
+        gdo.net.app["Images"].server.displayImageWithMode(instanceId, 2);
+        return;
+    } 
     var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (instanceId);
     $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
     $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
 
     $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
         $(this).contents().find("iframe").on('load', function () {
-            if (instance.appName === "Images") {
-                $(this).contents().find("#thumbnail_control > img").on('load', function () {
-                    setTimeout(function () {
-                        $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (instanceId));
-                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
-                        $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#center_mode").click();
-                    }, 200);
-                });
-            } else if (instance.appName === "YoutubeWall") {
+
+            if (instance.appName === "YoutubeWall") {
                 setTimeout(function () {
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#search_mode").click();
                     $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#new_keyword").val(gdo.net.app["PresentationTool"].section[instance.id].src);
@@ -631,11 +612,10 @@ gdo.net.app["PresentationTool"].loadImagesAppIframe = function (i) {
 
     var section = gdo.net.app["PresentationTool"].section[i];
     if (section != null && section.src !== null && section.appName === "Images") {
-
         var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (section.realInstanceId);
         $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
+        // Load hidden iframe
         $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
-
         $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
             $(this).contents().find("iframe").on('load', function () {
                 if (section.appName === "Images") {
@@ -650,7 +630,7 @@ gdo.net.app["PresentationTool"].loadImagesAppIframe = function (i) {
                         }, 200);
                     });
                 }
-            });
+            }); return;
         });
 
     } else {
