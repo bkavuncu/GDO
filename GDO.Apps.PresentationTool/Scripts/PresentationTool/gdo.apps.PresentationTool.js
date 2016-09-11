@@ -153,7 +153,7 @@
                     gdo.net.app["PresentationTool"].currentSlideSection.push(sections[i][j]);
                 }
             }
-            console.log(gdo.net.app["PresentationTool"].currentSlideSection);
+  
             for (var i = 0; i < gdo.net.app["PresentationTool"].currentSlide; i++) {
                 gdo.net.app["PresentationTool"].currentPlayingIndex += sections[i].length;
             }
@@ -217,40 +217,17 @@ gdo.net.app["PresentationTool"].swapSrc = function (sections, i) {
     if (i == sections.length) {
         return;
     }
-
-    gdo.net.app["Images"].server.loadImage(sections[i].realInstanceId, sections[i].src.replace(/^.*[\\\/]/, ''));
-
-    setTimeout(function () {
-        var instance = gdo.net.instance[sections[i].realInstanceId];
-        if (instance === null || !instance.exists) return;
-        var appPage = window.location.origin + "/Web/Instances.cshtml?id=" + (sections[i].realInstanceId);
-        $("iframe").contents().find("#hidden_app_iframe").css({ "display": "block" });
-        $("iframe").contents().find("#hidden_app_iframe").unbind().attr('src', appPage);
-
-        $("iframe").contents().find("#hidden_app_iframe").on('load', function () {
-            $(this).contents().find("iframe").on('load', function () {
-                if (instance.appName === "Images") {
-                    $(this).contents().find("#thumbnail_control > img").on('load', function () {
-                        setTimeout(function () {
-                            $("iframe").contents().find("#message_from_server").html("Play Image on instance " + (sections[i].realInstanceId));
-                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#active_control").click();
-                            $("iframe").contents().find("#hidden_app_iframe").contents().find("iframe").contents().find("#center_mode").click();
-                            gdo.net.app["PresentationTool"].swapSrc(sections, ++i);
-                        }, 200);
-                    });
-                }
-            });
-        });
-    }, 200);
+    gdo.net.app["Images"].server.showImage(sections[i].realInstanceId, sections[i].src.replace(/^.*[\\\/]/, ''), 2);
+    gdo.net.app["PresentationTool"].swapSrc(sections, ++i);
 }
 
 // Button control
 gdo.net.app["PresentationTool"].previousSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Previous slide');
-    var style;
-    if (gdo.net.app["PresentationTool"].template === 0) {
+    var style = "animate";
+    if (gdo.net.app["PresentationTool"].template === 1) {
         style = "animate";
-    } else if (gdo.net.app["PresentationTool"].template === 1) {
+    } else if (gdo.net.app["PresentationTool"].template === 2) {
         style = "fadeOut";
     }
     var numOfApps = 0;
@@ -287,10 +264,10 @@ gdo.net.app["PresentationTool"].previousSlide = function () {
 
 gdo.net.app["PresentationTool"].nextSlide = function () {
     gdo.consoleOut('.PresentationTool', 1, 'Next slide');
-    var style;
-    if (gdo.net.app["PresentationTool"].template === 0) {
+    var style = "animate";
+    if (gdo.net.app["PresentationTool"].template === 1) {
         style = "animate";
-    } else if (gdo.net.app["PresentationTool"].template === 1) {
+    } else if (gdo.net.app["PresentationTool"].template === 2) {
         style = "fadeOut";
     }
     // Check if can play

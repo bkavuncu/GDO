@@ -165,6 +165,7 @@
             position: relative;
             text-align: center;
         }
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -826,8 +827,9 @@
                         var serializeCanvasData = JSON.stringify(canvasData);
                         gdo.net.app["Images"].server.receiveCanvasData(realInstanceId, serializeCanvasData);
                     },
-                });
+                }); 
                 $(".wPaint-menu").width("auto").css({ "left": "0px" });
+                $(".wPaint-menu-select").css({ "overflow-y": "scroll" });
             }
         });
   
