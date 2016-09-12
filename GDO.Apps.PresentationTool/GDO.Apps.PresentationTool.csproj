@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <None Include="Web\PresentationTool\MobileControl.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -162,8 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\PresentationTool\Default.json" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.1.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.1.min.js" />
     <Content Include="Scripts\PresentationTool\artyom.min.js" />
     <Content Include="Scripts\PresentationTool\cropper.min.css" />
     <Content Include="Scripts\PresentationTool\cropper.min.js" />
