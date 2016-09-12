@@ -243,7 +243,7 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
         $("iframe").contents().find("#main").append("<div id='dicomImage'><div class='papaya' data-params='params'></div>");
     }
 
-    var baseUrl = appConfig.localHost + appConfig.mriUrl + appConfig.experimentName + "/";
+    var baseUrl = appConfig.host + appConfig.mriUrl + appConfig.experimentName + "/";
     //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
     //"http://localhost:12332/Scripts/XNATImaging/Scans/";
 
@@ -356,9 +356,16 @@ gdo.net.app["XNATImaging"].setupZoomCanvas = function (canvasWidth, canvasHeight
         $("iframe").contents().find("#dicomImage").css("margin-bottom", heightDifference + "px");
     }
 
+    var widthDifference = 0;
+    if (gdo.net.node[gdo.clientId].width * displayWidth > canvasWidth) {
+        widthDifference = gdo.net.node[gdo.clientId].width * displayWidth - canvasWidth;
+        console.log(widthDifference);
+        $("iframe").contents().find("#dicomImage").css("margin-right", widthDifference + "px");
+    }
+
     // resize container div to match child divs and canvas
     var dicomDiv = $("iframe").contents().find('#dicomImage');
-    dicomDiv.width(canvasWidth).height(canvasHeight + heightDifference);
+    dicomDiv.width(canvasWidth + widthDifference).height(canvasHeight + heightDifference);
 
     if (screenConfig.modality != null) {
         if ($("iframe").contents().find('.heading h1').length) {

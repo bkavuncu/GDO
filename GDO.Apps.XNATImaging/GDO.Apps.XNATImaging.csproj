@@ -172,15 +172,13 @@
     <Content Include="Scripts\XNATImaging\pdf.worker.js" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\msmetrix_report-1.pdf" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\msmetrix_report-2.pdf" />
+    <Content Include="Configurations\XNATImaging\Production.json" />
+    <Content Include="Configurations\XNATImaging\Preproduction.json" />
+    <Content Include="Configurations\XNATImaging\TestServer.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="Scripts\XNATImaging\scans\Nifty\baseline_t1.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\Nifty\coregistered_followup_6DOF.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\Nifty\coregistered_to_baseline_T1.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\Nifty\ocoregistered_followup_6DOF.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\Nifty\ocoregistered_to_baseline_T1.nii.gz" />
     <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\labeled_lesions_baseline.nii.gz" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000002\msmetrix_report-1.pdf" />
     <Content Include="Scripts\XNATImaging\pdf\GSK131086_000002\msmetrix_report-2.pdf" />

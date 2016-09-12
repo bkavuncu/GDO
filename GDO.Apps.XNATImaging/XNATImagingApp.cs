@@ -35,11 +35,11 @@ namespace GDO.Apps.XNATImaging
         string[] AllModes = { "title", "topText", "subText", "mri", "zoom", "pdf" };
 
         // parameters for default configuration
-        public string[] DefaultTextStrings = { "Multiple Sclerosis Imaging", "T1", "T2/FLAIR", "Baseline", "Followup", "PDF Reports"};
+        public string[] DefaultTextStrings = { "Multiple Sclerosis Imaging", "T1", "T2/FLAIR", "Baseline", "Followup", "Data Imaging Analysis"};
         public string[] DefaultMriUrls = { "t1_baseline.nii.gz", "t2_baseline.nii.gz", "t1_followup.nii.gz", "t2_followup.nii.gz" };
         public string[] DefaultModalityStrings = { "T1 Baseline", "T2 Baseline", "T1 Followup", "T2 Followup" };
         public string[] DefaultZoomUrls = { "t1_baseline.nii.gz", "t1_baseline.nii.gz", "t1_followup.nii.gz" };
-        public string[] DefaultPdfUrls = { "msmetrix_report-1.pdf", "msmetrix_report-2.pdf", "msmetrix_report-3.pdf" };
+        public string[] DefaultPdfUrls = { "msmetrix_report-1.pdf", "msmetrix_report-2.pdf" };
         public string[] DefaultBaselineOverlays = { "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" };
         public string[] DefaultFollowupOverlays = { "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" };
 
@@ -87,8 +87,7 @@ namespace GDO.Apps.XNATImaging
             JObject appConfig = JObject.FromObject(new
             {
                 appName = AppName,
-                localHost = "http://localhost:12332/",
-                testServerHost = "http://dsigdotesting.doc.ic.ac.uk/",
+                host = Host,
                 experimentName = ExperimentName,
                 patient = PatientId,
                 controlUrl = "t1_baseline.nii.gz",
@@ -135,8 +134,7 @@ namespace GDO.Apps.XNATImaging
             JObject appConfig = JObject.FromObject(new
             {
                 appName = AppName,
-                localHost = "http://localhost:12332/",
-                testServerHost = "http://dsigdotesting.doc.ic.ac.uk/",
+                host = Host,
                 experimentName = ExperimentName,
                 patient = PatientId,
                 controlUrl = "t1_baseline.nii.gz",
@@ -182,9 +180,9 @@ namespace GDO.Apps.XNATImaging
                         {
                             zoomCol = 0;
                         }
-                        if ((int)Math.Floor(zoomCounter / 12.0) < zoomUrls.Length)
+                        if ((int)Math.Floor(zoomCounter / 16.0) < zoomUrls.Length)
                         {
-                            screenConfig = AddZoomConfig(mode, (int) Math.Floor(zoomCol/4.0), j, zoomUrls[(int) Math.Floor(zoomCounter/12.0)], (int)Math.Floor(zoomCounter / 12.0));
+                            screenConfig = AddZoomConfig(mode, (int) Math.Floor(zoomCol/4.0), j, zoomUrls[(int) Math.Floor(zoomCounter/16.0)], (int)Math.Floor(zoomCounter / 16.0));
                         }
                         zoomCol++;
                         zoomCounter++;
@@ -246,6 +244,7 @@ namespace GDO.Apps.XNATImaging
         {
             bool switchable = false;
             JArray overlays = new JArray();
+            JArray displaySize = null;
             string modality = "";
             int screenMax = 0;
 
@@ -253,15 +252,18 @@ namespace GDO.Apps.XNATImaging
             {
                 switchable = true;
                 modality = "T1 Baseline";
+                displaySize = new JArray(3, 4);
             } else if (zoomCounter == 1)
             {
-                modality = "T1 Baseline with labeled lesions";
+                modality = "T1 Baseline with T2 lesions overlayed";
                 overlays = new JArray(DefaultBaselineOverlays[0], DefaultBaselineOverlays[1]);
+                displaySize = new JArray(4, 4);
                 screenMax = 649;
             } else if (zoomCounter == 2)
             {
-                modality = "T1 Followup with labeled lesions";
+                modality = "T1 Followup with T2 lesions overlayed";
                 overlays = new JArray(DefaultFollowupOverlays[0], DefaultFollowupOverlays[1]);
+                displaySize = new JArray(4, 4);
                 screenMax = 649;
             }
             return JObject.FromObject(new 
@@ -272,7 +274,7 @@ namespace GDO.Apps.XNATImaging
                 overlays,
 		        orthogonal = true,
 		        zoomOffset = new JArray(colOffset, row),
-                displaySize = new JArray(3, 4),
+                displaySize,
                 modality,
                 imageData = JObject.FromObject(new 
                 {
@@ -403,6 +405,7 @@ namespace GDO.Apps.XNATImaging
             var jsonString = Configuration.Json.ToString();
             dynamic config = JObject.Parse(jsonString);
 
+            Host = config.host;
             PatientId = config.patient;
             ExperimentName = config.experimentName;
 

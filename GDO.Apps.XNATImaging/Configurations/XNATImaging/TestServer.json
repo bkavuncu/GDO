@@ -1,0 +1,1238 @@
+﻿{
+  "appName": "Multiple Sclerosis Imaging",
+  "host": "http://dsigdotesting.doc.ic.ac.uk/",
+  "experimentName": "GSK131086_000001",
+  "patient": "AD201713",
+  "controlUrl": "t1_baseline.nii.gz",
+  "mriUrl": "Scripts/XNATImaging/Scans/",
+  "pdfUrl": "../../Scripts/XNATImaging/pdf/",
+  "defaultOrientation": "sagittal",
+  "worldSpace": true,
+  "mriUrlList": [ ],
+  "screens": [
+    {
+      "col": 0,
+      "row": 0,
+      "config": {
+        "mode": "title",
+        "text": "Multiple Sclerosis Imaging",
+        "url": "",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 0,
+      "row": 1,
+      "config": {
+        "mode": "subText",
+        "text": "T1",
+        "url": "",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 0,
+      "row": 2,
+      "config": {
+        "mode": "subText",
+        "text": "T2/FLAIR",
+        "url": "",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 0,
+      "row": 3,
+      "config": {
+        "mode": "",
+        "text": "",
+        "url": "",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 1,
+      "row": 0,
+      "config": {
+        "mode": "topText",
+        "text": "Baseline",
+        "url": "",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 1,
+      "row": 1,
+      "config": {
+        "mode": "mri",
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "Sagittal",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 1,
+      "row": 2,
+      "config": {
+        "mode": "mri",
+        "url": "t2_baseline.nii.gz",
+        "orthogonal": true,
+        "modality": "T2 Baseline",
+        "color": "green",
+        "imageData": {
+          "coord": { },
+          "view": "Sagittal",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 1,
+      "row": 3,
+      "config": {
+        "mode": "",
+        "url": "",
+        "orthogonal": true,
+        "imageData": {
+          "coord": { },
+          "view": "Sagittal",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 2,
+      "row": 0,
+      "config": {
+        "mode": "topText",
+        "text": "Followup",
+        "url": "",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 2,
+      "row": 1,
+      "config": {
+        "mode": "mri",
+        "url": "t1_followup.nii.gz",
+        "orthogonal": true,
+        "modality": "T1 Followup",
+        "color": "blue",
+        "imageData": {
+          "coord": { },
+          "view": "Sagittal",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 2,
+      "row": 2,
+      "config": {
+        "mode": "mri",
+        "url": "t2_followup.nii.gz",
+        "orthogonal": true,
+        "modality": "T2 Followup",
+        "color": "yellow",
+        "imageData": {
+          "coord": { },
+          "view": "Sagittal",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 2,
+      "row": 3,
+      "config": {
+        "mode": "",
+        "url": "",
+        "orthogonal": true,
+        "imageData": {
+          "coord": { },
+          "view": "Sagittal",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 3,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 0, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+
+        }
+      }
+    },
+    {
+      "col": 3,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 0, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 3,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 0, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 3,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 0, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 4,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 1, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 4,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 1, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 4,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 1, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 4,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 1, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 5,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 2, 0 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 5,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 2, 1 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 5,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "switchable":  true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 2, 2 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": { }
+        }
+      }
+    },
+    {
+      "col": 5,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "switchable": true,
+        "url": "t1_baseline.nii.gz",
+        "orthogonal": true,
+        "zoomOffset": [ 2, 3 ],
+        "displaySize": [ 3, 4 ],
+        "modality": "T1 Baseline",
+        "color": "red",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 0,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 6,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 0 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 6,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 1 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+
+      "col": 6,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 2 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 6,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 7,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 0 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      
+      "col": 7,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 1 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 7,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 2 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 7,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 8,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 0 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 8,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": ["gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz"], 
+        "orthogonal": true,
+        "zoomOffset": [ 2, 1 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 8,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 2 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 8,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 9,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_baseline.nii.gz",
+        "overlays": [ "gm_baseline.nii.gz", "labeled_lesions_baseline.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Baseline with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 10,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 0 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 10,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 1 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+
+      "col": 10,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 2 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 10,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 0, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 0 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      
+      "col": 11,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 1 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 2 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 11,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 1, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 12,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 0 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 12,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": ["gm_followup.nii.gz", "labeled_lesions_followup.nii.gz"], 
+        "orthogonal": true,
+        "zoomOffset": [ 2, 1 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 12,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 2 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 12,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 2, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 13,
+      "row": 0,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 13,
+      "row": 1,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 13,
+      "row": 2,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": [ "gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz" ],
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 13,
+      "row": 3,
+      "config": {
+        "mode": "zoom",
+        "url": "t1_followup.nii.gz",
+        "overlays": ["gm_followup.nii.gz", "lesions_filled_image_followup.nii.gz", "labeled_lesions_followup.nii.gz"], 
+        "orthogonal": true,
+        "zoomOffset": [ 3, 3 ],
+        "displaySize": [ 4, 4 ],
+        "modality": "T1 Followup with T2 lesions overlayed",
+        "imageData": {
+          "coord": { },
+          "view": "",
+          "screenMin": 0,
+          "screenMax": 649,
+          "markers": {
+          }
+        }
+      }
+    },
+    {
+      "col": 14,
+      "row": 0,
+      "config": {
+        "mode": "title",
+        "text": "Data Imaging Analysis",
+        "subText": "Baseline"
+      }
+    },
+    {
+      "col": 14,
+      "row": 1,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-1.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 0 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 14,
+      "row": 2,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-1.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 1 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 14,
+      "row": 3,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-1.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 2 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 15,
+      "row": 0,
+      "config": {
+        "mode": "topText",
+        "text": "Followup"
+      }
+    },
+    {
+      "col": 15,
+      "row": 1,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 0 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 15,
+      "row": 2,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 1 ],
+        "scale": 3.1
+      }
+    },
+    {
+      "col": 15,
+      "row": 3,
+      "config": {
+        "mode": "pdf",
+        "url": "msmetrix_report-2.pdf",
+        "displaySize": [ 1, 3 ],
+        "zoomOffset": [ 0, 2 ],
+        "scale": 3.1
+      }
+    }
+  ]
+}
