@@ -80,7 +80,7 @@ namespace GDO.Apps.PresentationTool
                     Application pptApp = new Application();
                     Presentation pptFile = pptApp.Presentations.Open(pptPath, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
                     pa.PPTPageCount = pptFile.Slides.Count;
-                    int width = 3072;
+                    int width = 5760;
                     int height = Convert.ToInt32(width * pptFile.PageSetup.SlideHeight / pptFile.PageSetup.SlideWidth);
                     for (int i = 0; i < pptFile.Slides.Count; i++)
                     {
