@@ -26,6 +26,22 @@ namespace GDO.Apps.Twitter
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public void GetFileLists(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.receiveFileLists(instanceId, ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).GetFileLists());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(instanceId, e.GetType().ToString());
+                }
+            }
+        }
+
         private void BroadcastState(int instanceId, int refresh = 0)
         {
             var ta = (TwitterApp) Cave.Apps["Twitter"].Instances[instanceId];
@@ -197,7 +213,10 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     Debug.WriteLine("Multiple section creation " + serialisedSections);
-                    ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).CreateSections(JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
+                    List<SectionRequest> sectionRequests =
+                        JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections);
+                    Clients.Caller.setMessage(instanceId, "Auto launching " + sectionRequests.Count + " sections");
+                    ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).CreateSections(sectionRequests);
                     ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).QueueApps(JsonConvert.DeserializeObject<List<SectionRequest>>(serialisedSections));
                     Clients.Caller.setMessage(instanceId, serialisedSections);
                     BroadcastState(instanceId, 2);
@@ -256,9 +275,10 @@ namespace GDO.Apps.Twitter
                 try
                 {
                     string msg = "Loading visualisation (" + dataSetId + "," + analyticsId + ") from REST api";
+                    Clients.Caller.setMessage(instanceId, msg);
                     Debug.WriteLine(msg);
                     ((TwitterApp)Cave.Apps["Twitter"].Instances[instanceId]).LoadVisualisation(sectionId, analyticsId, dataSetId);
-                    Clients.Caller.setMessage(instanceId, msg);
+                    Clients.Caller.setMessage(instanceId, "Loading visualisation for section (" + sectionId + ") from REST api");
                     BroadcastState(instanceId, 0);
                 }
                 catch (Exception e)

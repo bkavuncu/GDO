@@ -44,14 +44,14 @@ namespace GDO.Apps.Twitter
         {
             GraphAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/");
             ImageAppBasePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
-            StaticHtmlBasePath = HttpContext.Current.Server.MapPath("~/Web/StaticHTML/");
+//            StaticHtmlBasePath = HttpContext.Current.Server.MapPath("~/Web/StaticHTML/");
             TwitterBasePath = HttpContext.Current.Server.MapPath("~/Web/Twitter/data/");
             FusionChartAppBasePath = HttpContext.Current.Server.MapPath("~/Web/FusionChart/data/");
             TwitterRelativePath = "/Web/Twitter/data/";
 
             Debug.WriteLine("Using graph path : " + GraphAppBasePath);
             Debug.WriteLine("Using graph path : " + ImageAppBasePath);
-            Debug.WriteLine("Using graph path : " + StaticHtmlBasePath);
+//            Debug.WriteLine("Using graph path : " + StaticHtmlBasePath);
             Debug.WriteLine("Using graph path : " + TwitterBasePath);
             Debug.WriteLine("Using graph path : " + FusionChartAppBasePath);
 
@@ -151,7 +151,7 @@ namespace GDO.Apps.Twitter
         public TwitterVis GetVisualisation(string analyticsId, string dataSetId)
         {
             Analytics analytics;
-            if (RestController.Analytics != null && RestController.Analytics.ContainsKey(dataSetId))
+            if (RestController.Analytics != null && RestController.Analytics.ContainsKey(dataSetId) && RestController.Analytics[dataSetId].ContainsKey(analyticsId))
             {
                 analytics = RestController.Analytics[dataSetId][analyticsId];
             }
@@ -180,7 +180,7 @@ namespace GDO.Apps.Twitter
                     twitterVis.FilePath = Download(url, ImageAppBasePath);
                     break;
                 default:
-                    twitterVis.Config = "Responsive";
+                    twitterVis.Config = "ResponsiveBlank";
                     twitterVis.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
                     break;
             }
@@ -249,5 +249,19 @@ namespace GDO.Apps.Twitter
         }
 
         #endregion
+
+        public object GetFileLists()
+        {
+
+            Dictionary<string, List<string>> fileList = new Dictionary<string, List<string>>();
+            
+            fileList.Add("Graphs", Directory.GetFiles(GraphAppBasePath).Select(d=> d.Split('\\').Last()).ToList());
+            fileList.Add("Images", Directory.GetFiles(ImageAppBasePath).Select(d => d.Split('\\').Last()).ToList());
+//            fileList.Add("StaticHTML", Directory.GetFiles(StaticHtmlBasePath).Select(d => d.Split('\\').Last()).ToList());
+            fileList.Add("Twitter", Directory.GetFiles(TwitterBasePath).Select(d => d.Split('\\').Last()).ToList());
+            fileList.Add("Charts", Directory.GetFiles(FusionChartAppBasePath).Select(d => d.Split('\\').Last()).ToList());
+
+            return JsonConvert.SerializeObject(fileList);
+        }
     }
 }

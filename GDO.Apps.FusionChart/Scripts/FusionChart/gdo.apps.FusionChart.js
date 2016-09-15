@@ -18,12 +18,12 @@
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
             var chartData = JSON.parse(serialisedChartData);
-            gdo.net.app["FusionChart"].processChartData(instanceId, chartData);
+            gdo.net.app["FusionChart"].processChartData(instanceId, chartData, true);
             $("iframe").contents().find('#chartType').val(chartData.chartType);
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
-            gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData));
+            gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData), false);
         }
     }
 
@@ -73,15 +73,22 @@
 });
 
 
-gdo.net.app["FusionChart"].processChartData = function (instanceId, chartData) {
+gdo.net.app["FusionChart"].processChartData = function (instanceId, chartData, resize) {
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Type: " + chartData.chartType);
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Width: " + gdo.net.section[gdo.net.instance[instanceId].sectionId].width);
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Height: " + gdo.net.section[gdo.net.instance[instanceId].sectionId].height);
+    var width = "100%";
+    var height = "100%";
+    if (!resize) {
+        width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
+        height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
+    }
+
     $("iframe")[0].contentWindow.processChartData({
         type: chartData.chartType,
         renderAt: 'chart-container',
-        width:  gdo.net.section[gdo.net.instance[instanceId].sectionId].width,
-        height: gdo.net.section[gdo.net.instance[instanceId].sectionId].height,
+        width:  width,
+        height: height,
         dataFormat: 'json',
         dataSource: chartData.dataSource
     }, instanceId);

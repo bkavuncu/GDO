@@ -46,14 +46,45 @@ gdo.net.app["Twitter"].setRedownloadButton = function(instanceId, state) {
     
 };
 
+gdo.net.app["Twitter"].setFileLists = function (instanceId, fileLists) {
+    
+    $("iframe")
+      .contents()
+      .find("#file_list_body")
+      .empty();
+    console.log(fileLists);
+    Object.keys(fileLists)
+        .forEach(function (fileType, index) {
+            if (fileLists[fileType].length > 0) {
+                $("iframe")
+                .contents()
+                .find("#file_list_body")
+                .append("<h6>" +
+                    fileType +
+                    "</h6>" +
+                    "<ul class='list-group' id=" +
+                    fileType +
+                    "_file_list></ul>");
+                for (var i = 0; i < fileLists[fileType].length; ++i) {
+                    $("iframe")
+                        .contents()
+                        .find("#" + fileType + "_file_list")
+                        .append(" <li class='list-group-item'>" + fileLists[fileType][i] + "</li>");
+                }
+            }
+            
+        });
+}
+
 gdo.net.app["Twitter"].setMessage = function(message) {
     $("iframe").contents().find("#message_from_server").html(message);
 }
 
 gdo.net.app["Twitter"].setAPIMessage = function(instanceId, message) {
     $("iframe").contents().find("#message_from_api_server").html(message.msg);
+    $("iframe").contents().find("#error_message_from_api_server").html(message.msg);
     gdo.net.instance[instanceId].apiStatus = message.healthy;
-
+    $("iframe")[0].contentWindow.showErrorModal(message.healthy);
     if (!gdo.net.instance[instanceId].apiStatus) {
         $("iframe")
             .contents()
@@ -70,6 +101,7 @@ gdo.net.app["Twitter"].setAPIMessage = function(instanceId, message) {
             .find("#admin-panel")
             .removeClass("panel-success")
             .addClass("panel-danger");
+
     } else {
         $("iframe")
             .contents()

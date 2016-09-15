@@ -7,7 +7,7 @@
             gdo.net.app["Twitter"].setMessage(message);
         } 
     }
-
+    
     $.connection.twitterAppHub.client.setAPIMessage = function (instanceId, message) {
         gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
         var messageDes = JSON.parse(message);
@@ -20,6 +20,13 @@
             $("iframe").contents().find("#client_api_status_message").empty().append(messageDes.msg);
         }
     }
+
+    $.connection.twitterAppHub.client.receiveFileLists = function (instanceId, fileLists) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.net.app["Twitter"].setFileLists(instanceId, JSON.parse(fileLists));
+        }
+    }
+
 
     $.connection.twitterAppHub.client.receiveCaveStatus = function (instanceId, serialisedStatus, refresh) {
         gdo.consoleOut('.Twitter', 1, 'Received cave status');

@@ -1387,6 +1387,7 @@ gdo.net.app["Graph"].initControl = function () {
     gdo.controlId = parseInt(getUrlVar("controlId"));
     gdo.net.instance[gdo.clientId].graphFieldsLoaded = false;
     gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
+    gdo.net.app["Graph"].server.getFields(gdo.controlId);
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Initializing Graph Renderer App Control at Instance ' + gdo.controlId);
 }
 
