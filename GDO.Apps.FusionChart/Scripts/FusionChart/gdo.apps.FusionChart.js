@@ -18,12 +18,12 @@
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
             var chartData = JSON.parse(serialisedChartData);
-            gdo.net.app["FusionChart"].processChartData(instanceId, chartData, true);
+            gdo.net.app["FusionChart"].processChartData(instanceId, chartData);
             $("iframe").contents().find('#chartType').val(chartData.chartType);
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
-            gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData), false);
+            gdo.net.app["FusionChart"].processChartData(instanceId, JSON.parse(serialisedChartData));
         }
     }
 
@@ -73,25 +73,11 @@
 });
 
 
-gdo.net.app["FusionChart"].processChartData = function (instanceId, chartData, resize) {
+gdo.net.app["FusionChart"].processChartData = function (instanceId, chartData) {
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Type: " + chartData.chartType);
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Width: " + gdo.net.section[gdo.net.instance[instanceId].sectionId].width);
     gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Chart Height: " + gdo.net.section[gdo.net.instance[instanceId].sectionId].height);
-    var width = "100%";
-    var height = "100%";
-    if (!resize) {
-        width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
-        height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
-    }
-
-    $("iframe")[0].contentWindow.processChartData({
-        type: chartData.chartType,
-        renderAt: 'chart-container',
-        width:  width,
-        height: height,
-        dataFormat: 'json',
-        dataSource: chartData.dataSource
-    }, instanceId);
+    $("iframe")[0].contentWindow.processChartData(chartData, instanceId);
 }
 
 gdo.net.app["FusionChart"].initClient = function () {
@@ -104,34 +90,39 @@ gdo.net.app["FusionChart"].initClient = function () {
 gdo.net.app["FusionChart"].initControl = function () {
     gdo.controlId = getUrlVar("controlId");
     gdo.consoleOut('.FusionChart', 1, 'Initializing FusionChart App Control at Instance ' + gdo.controlId);
+    gdo.net.instance[gdo.controlId].controlWidth = 1920.0;
+    gdo.net.app["FusionChart"].setControlSize(gdo.controlId);
 
-    var width = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].width;
-    var height = gdo.net.section[gdo.net.instance[gdo.controlId].sectionId].height;
+//    $("iframe")
+//        .contents()
+//        .find("#blocker")
+//        .css("width", 1920.0 + "px")
+//        .css("height", height * 1920.0 / width + "px");
 
-    var transform = "scale(" + 1920.0 / width + ")";
-    var origin = "0px 0px";
-    $("iframe")
-        .contents()
-        .find("#blocker")
-        .css("width", 1920.0 + "px")
-        .css("height", height * 1920.0 / width + "px");
-    $("iframe")
-        .contents()
-        .find("#chart-container")
-        .css("zoom", 1)
-        .css("-moz-transform", transform)
-        .css("-moz-transform-origin", origin)
-        .css("-o-transform", transform)
-        .css("-o-transform-origin", origin)
-        .css("-webkit-transform", transform)
-        .css("-webkit-transform-origin", origin)
-        .css("width", width + "px")
-        .css("height", height + "px");
 
     gdo.net.app["FusionChart"].server.getChartData(gdo.controlId);
 }
 
+gdo.net.app["FusionChart"].setControlSize = function (instanceId) {
 
+
+    var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
+    var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
+    var transform = "scale(" + gdo.net.instance[instanceId].controlWidth / width + ")";
+    var origin = "0px 0px";
+
+    $("iframe")
+    .contents()
+    .find("#chart-container")
+    .css("-moz-transform", transform)
+    .css("-moz-transform-origin", origin)
+    .css("-o-transform", transform)
+    .css("-o-transform-origin", origin)
+    .css("-webkit-transform", transform)
+    .css("-webkit-transform-origin", origin)
+    .css("width", width + "px")
+    .css("height", height + "px");
+}
 
 gdo.net.app["FusionChart"].terminateClient = function () {
     gdo.consoleOut('.FusionChart', 1, 'Terminating FusionChart App Client at Node ' + clientId);

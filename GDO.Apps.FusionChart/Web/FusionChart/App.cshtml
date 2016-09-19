@@ -65,9 +65,16 @@
 <script type="text/javascript">
        
 
-    function processChartData(data) {
+    function processChartData(chartData, instanceId) {
            var gdo = parent.gdo;
-           gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart = new FusionCharts(data);
+           gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart = new FusionCharts({
+               type: chartData.chartType,
+               renderAt: 'chart-container',
+               width: gdo.net.section[gdo.net.instance[instanceId].sectionId].width,
+               height: gdo.net.section[gdo.net.instance[instanceId].sectionId].height,
+               dataFormat: 'json',
+               dataSource: chartData.dataSource
+           });
            gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
    };
 

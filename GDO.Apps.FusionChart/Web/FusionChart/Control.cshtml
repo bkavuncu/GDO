@@ -26,6 +26,7 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
     <script type="text/javascript" src="http://static.fusioncharts.com/code/latest/fusioncharts.js"></script>
     <script type="text/javascript" src="http://static.fusioncharts.com/code/latest/themes/fusioncharts.theme.fint.js?cacheBust=56"></script>
     <style>
@@ -120,12 +121,22 @@
     });
 
 
-    function processChartData(data, instanceId) {
+    function processChartData(chartData, instanceId) {
+
+     
         var gdo = parent.gdo;
         if (gdo.net.instance[instanceId].chart == undefined) {
             $("#setChartType").removeClass("btn-warning").addClass("btn-success").removeClass("disabled");
         }
-        gdo.net.instance[instanceId].chart = new FusionCharts(data);
+
+        gdo.net.instance[instanceId].chart = new FusionCharts({
+            type: chartData.chartType,
+            renderAt: 'chart-container',
+            width:  "100%",
+            height: "100%",
+            dataFormat: 'json',
+            dataSource: chartData.dataSource
+        });
         gdo.net.instance[instanceId].chart.render();
         
     };
@@ -257,16 +268,19 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
-                    <div class="col-lg-10">
-                    <h6><i class='fa  fa-bar-chart fa-fw'></i>&nbsp;Displayed Chart</h6>
+                    <div class="col-lg-8">
+                        <h6><i class='fa  fa-bar-chart fa-fw'></i>&nbsp;Displayed Chart</h6>
+                    
                     </div>
-                    <div class="col-lg-2">
-                    <button id="toggleMouseControl" class="FLAG_OFF btn btn-warning"  style="float: right;">Enable Mouse Forwarding</button>
-                    </div>
+                        <div class="col-lg-4">
+                            <button id="zoom_in" class="btn btn-success"><i class='fa fa-search-plus'></i>&nbsp;</button>
+                            <button id="zoom_out" class="btn btn-success"><i class='fa fa-search-minus'></i>&nbsp;</button>
+                            <button id="toggleMouseControl" class="FLAG_OFF btn btn-warning" style="float: right;">Enable Mouse Forwarding</button>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-body">
-                    
+                   
                     <div style="position: relative; overflow: auto; border: 0 none; display: block; width: 100%; height: 61vh;">
                         <div id="blocker" style="position:absolute; top: 0; left: 0;background-color:aliceblue; opacity:0.1; z-index:1"></div>
                             <div id="chart-container">
@@ -294,12 +308,27 @@
     }
 </div>
 <script>
+    $("#zoom_in")
+        .click(function () {
+            var gdo = parent.gdo;
+            gdo.consoleOut('.FusionChart', 1, "Zoom In");
+            gdo.net.instance[gdo.controlId].controlWidth *= 1.5;
+            gdo.net.app["FusionChart"].setControlSize(gdo.controlId);
+        });
+    $("#zoom_out")
+    .click(function () {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.FusionChart', 1, "Zoom Out");
+        gdo.net.instance[gdo.controlId].controlWidth /= 1.5;
+        gdo.net.app["FusionChart"].setControlSize(gdo.controlId);
+    });
+
+
     $("#setChartType").click(function () {
         var gdo = parent.gdo;
         
         if (gdo.net.instance[gdo.controlId].chart != undefined) {
-            gdo.consoleOut('.FusionChart',
-                1,
+            gdo.consoleOut('.FusionChart',1,
                 'Instance - ' + gdo.controlId + ": Requesting Chart Type: " + $("#chartType").val());
             gdo.net.instance[gdo.controlId].chart.chartType($("#chartType").val());
             gdo.net.app["FusionChart"].server.broadcastChartType(gdo.controlId, $("#chartType").val());
@@ -345,12 +374,12 @@
     
 
     $("#debug")
-    .click(function () {
-        var gdo = parent.gdo;
-        console.log(gdo.net.instance[gdo.controlId]);
+        .click(function () {
+            var gdo = parent.gdo;
+            console.log(gdo.net.instance[gdo.controlId]);
             console.log(gdo.net.app["FusionChart"]);
             gdo.net.app["FusionChart"].server.printState(gdo.controlId);
-    });
+        });
 
 
     $("#reRender")
@@ -382,45 +411,45 @@
             }
         });
 
-         $("#toggleMouseControl")
-     .click(function () {
-         var gdo = parent.gdo;
-         if ($(this).hasClass("FLAG_ON")) {
-             $("#chart-container").off("mousemove");
-             $("#chart-container").off("click");
-             $("#chart-container").off("mousedown");
-             $("#chart-container").off("mouseover");
-             $("#chart-container").off("mouseup");
-             $("#chart-container").off("mouseout");
-             $("#blocker").css("z-index","1");
+    $("#toggleMouseControl")
+        .click(function () {
+            var gdo = parent.gdo;
+            if ($(this).hasClass("FLAG_ON")) {
+                $("#chart-container").off("mousemove");
+                $("#chart-container").off("click");
+                $("#chart-container").off("mousedown");
+                $("#chart-container").off("mouseover");
+                $("#chart-container").off("mouseup");
+                $("#chart-container").off("mouseout");
+                $("#blocker").css("z-index","1");
              
-             $("#toggleMouseMove")
+                $("#toggleMouseMove")
                     .removeClass("FLAG_ON")
                     .removeClass("btn-success")
                     .addClass("btn-warning")
                     .addClass("FLAG_OFF").html("On Mouse Move");
-             $(this)
-                 .removeClass("FLAG_ON")
-                 .removeClass("btn-success")
-                 .addClass("btn-warning")
-                 .addClass("FLAG_OFF");
-             $(this).html("Enable Mouse Forwarding");
-         } else {
-             $("#chart-container")
-                   .click(function (e) { sendClick(e) })
-                   .mousedown(function (e) { sendClick(e) })
-                   .mouseup(function (e) { sendClick(e) })
-                   .mouseover(function (e) { sendClick(e) })
-                   .mouseout(function (e) { sendClick(e) });
-             $("#blocker").css("z-index", "-1");
-             $(this)
-                 .removeClass("FLAG_OFF")
-                 .removeClass("btn-warning")
-                 .addClass("btn-success")
-                 .addClass("FLAG_ON");
-             $(this).html("Disable Mouse Forwarding");
-         }
-     });
+                $(this)
+                    .removeClass("FLAG_ON")
+                    .removeClass("btn-success")
+                    .addClass("btn-warning")
+                    .addClass("FLAG_OFF");
+                $(this).html("Enable Mouse Forwarding");
+            } else {
+                $("#chart-container")
+                    .click(function (e) { sendClick(e) })
+                    .mousedown(function (e) { sendClick(e) })
+                    .mouseup(function (e) { sendClick(e) })
+                    .mouseover(function (e) { sendClick(e) })
+                    .mouseout(function (e) { sendClick(e) });
+                $("#blocker").css("z-index", "-1");
+                $(this)
+                    .removeClass("FLAG_OFF")
+                    .removeClass("btn-warning")
+                    .addClass("btn-success")
+                    .addClass("FLAG_ON");
+                $(this).html("Disable Mouse Forwarding");
+            }
+        });
 
     $("#toggleDebugMode")
         .click(function() {
