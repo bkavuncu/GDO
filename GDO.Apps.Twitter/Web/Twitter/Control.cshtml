@@ -151,53 +151,66 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
-                </div>
-                <div class="panel-body">
-                    <div style="overflow: auto; height: 25vh">
-                        <div id="dataset_list" style="margin-top: 3px; background: transparent;">
-                            <table style="width: 100%; font-size: 13px; background: transparent; text-align: left" id="dataset_table">
-                                <thead>
-                                <tr id="data_set_table_title">
-                                    <th>
-                                        <b>Id</b>
-                                    </th>
-                                    <th>
-                                        <b>Description</b>
-                                    </th>
-                                    <th>
-                                        <b>Status</b>
-                                    </th>
-                                    <th>
-                                        <b>Size</b>
-                                    </th>
-                                    <th>
-                                        <b>Type</b>
-                                    </th>
-                                    <th>
-                                        <b>Start</b>
-                                    </th>
-                                    <th>
-                                        <b>End</b>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h5><i class='fa  fa-twitter'></i>&nbsp;Data Sets</h5>
+                        </div>
+                        <div class="col-lg-4">
+                            <button id="get_analytics" class="btn btn-default disabled" style="float: right;"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
+                        </div>
+                       
+                    </div>
+                    </div>
+                        <div class="panel-body">
+                            <div style="overflow: auto; height: 25vh">
+                                <div id="dataset_list" style="margin-top: 3px; background: transparent;">
+                                    <table style="width: 100%; font-size: 13px; background: transparent; text-align: left" id="dataset_table">
+                                        <thead>
+                                            <tr id="data_set_table_title">
+                                                <th>
+                                                    <b>Id</b>
+                                                </th>
+                                                <th>
+                                                    <b>Description</b>
+                                                </th>
+                                                <th>
+                                                    <b>Status</b>
+                                                </th>
+                                                <th>
+                                                    <b>Size</b>
+                                                </th>
+                                                <th>
+                                                    <b>Type</b>
+                                                </th>
+                                                <th>
+                                                    <b>Start</b>
+                                                </th>
+                                                <th>
+                                                    <b>End</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">
-                    <button id="get_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="row">
         <div class="col-lg-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h5><i class='fa  fa-twitter'></i>&nbsp;Analytics Options</h5>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h5><i class='fa  fa-twitter'></i>&nbsp;Analytics Options</h5>
+                        </div>
+                        <div class="col-lg-4">
+                            <button id="order_analytics" class="btn btn-default disabled" style="float: right;"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Order Analytics</button>
+                        </div>               
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div style="overflow: auto; height: 25vh">
@@ -218,9 +231,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">
-                    <button id="order_analytics" class="btn btn-default disabled"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Order Analytics</button>
-                </div>
+@*                <div class="panel-footer">*@
+@*                   *@
+@*                </div>*@
             </div>
         </div>
         <div class="col-lg-6">
@@ -252,8 +265,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
-                <div class="panel-footer">
                 </div>
             </div>
         </div>

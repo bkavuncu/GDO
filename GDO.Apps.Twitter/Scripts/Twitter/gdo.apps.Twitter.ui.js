@@ -268,7 +268,7 @@ gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, dataSet
                   })
             .collapse();
 
-            for (var i = 0; i < analytics.length; i++) {
+            for (var i = analytics.length - 1; i >= 0; --i) {
                 $("iframe")
                     .contents()
                     .find("#analytics_table tbody")
