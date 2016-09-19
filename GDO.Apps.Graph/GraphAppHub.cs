@@ -28,6 +28,36 @@ namespace GDO.Apps.Graph
             Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
+        public void GetFields(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+           
+                    ga = (GraphApp) Cave.Apps["Graph"].Instances[instanceId];
+                    Clients.Caller.setMessage("Requesting fields...");
+                    if (((GraphApp) Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields != null)
+                    {
+                        Clients.Caller.setFields(
+                            ((GraphApp) Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(),
+                            instanceId);
+                        Clients.Caller.setMessage("Graph fields requested and sent successfully!");
+                    }
+                    else
+                    {
+                        Clients.Caller.setMessage("No Graph Fields");
+                    }
+                  
+                }
+                catch (Exception e)
+                {
+                    Clients.Caller.setMessage(e.ToString());
+                    Debug.WriteLine(e);
+                }
+            }
+        }
+
         public void InitiateProcessing(int instanceId, string filename)
         {
             Debug.WriteLine("Debug: Server side InitiateProcessing is called.");
@@ -56,7 +86,7 @@ namespace GDO.Apps.Graph
                     Clients.Caller.setMessage("Graph is now ready for zooming."); */
 
                     Clients.Caller.setMessage("Requesting fields...");
-                    Clients.Caller.setFields(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray());
+                    Clients.Caller.setFields(((GraphApp)Cave.Apps["Graph"].Instances[instanceId]).graphinfo.NodeOtherFields.ToArray(), instanceId);
                     Clients.Caller.setMessage("Graph fields requested and sent successfully!");
                 }
                 catch (WebException e)
