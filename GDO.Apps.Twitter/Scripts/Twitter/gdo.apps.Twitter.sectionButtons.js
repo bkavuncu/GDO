@@ -217,11 +217,9 @@ gdo.net.app["Twitter"].drawCloseAppB = function (instanceId) {
 gdo.net.app["Twitter"].atLeastOneVis = function (instanceId) {
 
     for (var sId in gdo.net.instance[instanceId].caveStatus.sections) {
-        //        console.log("checking" + sId);
         if (gdo.net.instance[instanceId].caveStatus.sections.hasOwnProperty(sId) &&
             gdo.net.instance[instanceId].caveStatus.sections[sId].twitterVis.id !== null &&
             gdo.net.instance[instanceId].caveStatus.sections[sId].appInstanceId < 0) {
-            //            console.log("found" + sId);
             return true;
         }
     }
@@ -232,7 +230,6 @@ gdo.net.app["Twitter"].atLeastOneVis = function (instanceId) {
 gdo.net.app["Twitter"].drawDeployAll = function (instanceId) {
 
     var oneFound = gdo.net.app["Twitter"].atLeastOneVis(instanceId);
-    //    console.log(oneFound);
     $("iframe")
       .contents()
       .find(".deploy_all_app_button_div")

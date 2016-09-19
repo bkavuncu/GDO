@@ -61,17 +61,6 @@
             cursor: text !important;
         }
 
-        .file_upload input.upload {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-            padding: 0;
-            cursor: pointer;
-            opacity: 0;
-            filter: alpha(opacity=0);
-        }
-
         .input_field_div {
             margin: 0;
             padding: 0;
@@ -105,7 +94,7 @@
 </head>
 <body unselectable="on" class="unselectable">
 <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
 <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
 <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
@@ -113,47 +102,29 @@
 <script>
     $(function() { parent.gdo.net.app["Twitter"].initControl(); });
 
-    function showErrorModal(healthy) {
+    function showAPIModal(healthy) {
         if (!healthy) {
-            $('#api_error')
-                .modal({
-                    show: true,
-                    backdrop: "static"
-                });
+            $('#api_error').modal({ show: true, backdrop: "static" });
             $("#dialog_dismiss").addClass("disabled");
             $("#dialog_dismiss").removeAttr("data-dismiss", "modal").removeClass("btn-success").addClass("btn-default");
         } else {
-            $('#api_error')
-                .modal({
-                    show: true,
-                });
+            $('#api_error').modal({ show: true });
             $("#dialog_dismiss").attr("data-dismiss", "modal");
             $("#dialog_dismiss").removeClass("disabled").removeClass("btn-default").addClass("btn-success");
         }
     };
-
+    function showErrorModal(message) {
+        $("#error_messages").append("<li class='list-group-item'>" + message + "</li>");
+        $('#error_dialog').modal({ show: true, backdrop: "static" });    
+    };
 </script>
 
 <div class="wrapper" style="width: 97%">
 <div class="row">
-@*    <div class="col-lg-3">*@
-@*        <div id="status-panel" class="panel panel-danger">*@
-@*            $1$            <div class="panel-heading" style="padding: 5px">#1#*@
-@*            $1$                <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Twitter API Status</h6>#1#*@
-@*            $1$            </div>#1#*@
-@*            <div class="panel-body" style="padding: 5px">*@
-@*                <fieldset>*@
-@*                    <h6 id="message_from_api_server" style="font-size: 14px"></h6>*@
-@*                </fieldset>*@
-@*            </div>*@
-@*        </div>*@
-@*    </div>*@
     <div class="col-lg-12">
         <div id="message_panel" class="panel panel-danger">
             <div class="panel-body" style="padding: 5px">
-                <fieldset>
-                    <h6 id="message_from_server"></h6>
-                </fieldset>
+                <h6 id="message_from_server"></h6>
             </div>
         </div>
     </div>
@@ -185,43 +156,29 @@
                 <div class="panel-body">
                     <div style="overflow: auto; height: 25vh">
                         <div id="dataset_list" style="margin-top: 3px; background: transparent;">
-                            <table style="width: 100%; background: transparent; text-align: left" id="dataset_table">
+                            <table style="width: 100%; font-size: 13px; background: transparent; text-align: left" id="dataset_table">
                                 <thead>
                                 <tr id="data_set_table_title">
                                     <th>
-                                        <font size="3">
-                                            <b>Id</b>
-                                        </font>
+                                        <b>Id</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Description</b>
-                                        </font>
+                                        <b>Description</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Status</b>
-                                        </font>
+                                        <b>Status</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Size</b>
-                                        </font>
+                                        <b>Size</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Type</b>
-                                        </font>
+                                        <b>Type</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Start</b>
-                                        </font>
+                                        <b>Start</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>End</b>
-                                        </font>
+                                        <b>End</b>
                                     </th>
                                 </tr>
                                 </thead>
@@ -245,18 +202,14 @@
                 <div class="panel-body">
                     <div style="overflow: auto; height: 25vh">
                         <div id="analytics_options_list" style="margin-top: 3px; background: transparent;">
-                            <table style="width: 100%; background: transparent; text-align: left" id="analytics_options_table">
+                            <table style="width: 100%; font-size: 13px; background: transparent; text-align: left" id="analytics_options_table">
                                 <thead>
                                 <tr id="analytics_options_table_title">
                                     <th>
-                                        <font size="3">
-                                            <b>Classification</b>
-                                        </font>
+                                        <b>Classification</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Type</b>
-                                        </font>
+                                        <b>Type</b>
                                     </th>
                                 </tr>
                                 </thead>
@@ -278,28 +231,20 @@
                 <div class="panel-body">
                     <div style="overflow: auto; height: 25vh">
                         <div id="analytics_list" style="margin-top: 3px; background: transparent;">
-                            <table style="width: 100%; background: transparent; text-align: left" id="analytics_table">
+                            <table style="width: 100%; font-size: 13px; background: transparent; text-align: left" id="analytics_table">
                                 <thead>
                                 <tr>
                                     <th>
-                                        <font size="3">
-                                            <b>Classification</b>
-                                        </font>
+                                        <b>Classification</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Type</b>
-                                        </font>
+                                        <b>Type</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Description</b>
-                                        </font>
+                                        <b>Description</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Status</b>
-                                        </font>
+                                        <b>Status</b>
                                     </th>
                                 </tr>
                                 </thead>
@@ -325,34 +270,28 @@
                     </div>
                     <div style="overflow: auto; height: 30vh">
                         <div class="panel-body" style="height: 15.5vh;">
-                            <div class="list-group list-group-root" id="analytics_deploy_list_1">
+                            <div class="list-group list-group-root" style="font-size: 10px" id="analytics_deploy_list">
                             </div>
                         </div>
-                    </div>
-                    <div class="panel-footer">
                     </div>
                 </div>
             </div>
             <div class="col-lg-3" style="padding: 6px;">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Slides</h6>
+                        <h6 style="text-align: left; float: left;"><i class='fa  fa-clone fa-fw'></i>&nbsp; Slides</h6>
                         <hr style="clear: both; border: 0"/>
                     </div>
                     <div style="overflow: auto; height: 30vh">
                         <div class="panel-body" style="height: 15.5vh;">
-                            <table style="width: 100%; background: transparent; text-align: left" id="slide_table">
+                            <table style="width: 100%; font-size: 13px; background: transparent; text-align: left" id="slide_table">
                                 <thead>
                                 <tr id="slide_table_table_title">
                                     <th>
-                                        <font size="3">
-                                            <b>Description</b>
-                                        </font>
+                                        <b>Description</b>
                                     </th>
                                     <th>
-                                        <font size="3">
-                                            <b>Sections</b>
-                                        </font>
+                                        <b>Sections</b>
                                     </th>
                                 </tr>
                                 </thead>
@@ -360,31 +299,30 @@
                             </table>
                         </div>
                     </div>
-                    <div class="panel-footer">
-                    </div>
                 </div>
             </div>
             <div class="col-lg-1" style="height: 100%; padding: 6px;">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h6 style="text-align: left; float: left;"><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Control</h6>
+                        <h6 style="text-align: left; float: left;"><i class='fa  fa-circle-o fa-fw'></i>&nbsp; Control</h6>
                         <hr style="clear: both; border: 0"/>
                     </div>
-                    <div class="panel-body" style="padding: 0px">
+                    <div class="panel-body" style="padding: 0">
                         <div style="overflow: auto; height: 30vh">
                             <div class="btn-group-vertical" style="width: 100%">
                                 <button id="launch_slide" class="btn btn-success disabled">LaunchSlide</button>
                             </div>
+                            <hr>
                             <div class="btn-group-vertical" style="width: 100%">
-                                <button id="redownload" class="btn btn-danger"><i class='fa fa-download '></i>&nbsp; Redownload</button>
-                                <button id="refresh" class="btn btn-success"><i class='fa fa-refresh'></i>&nbsp; Refresh</button>
-                                <button id="debug_b" class="btn btn-success"><i class='fa fa-television'></i>&nbsp; PrintState</button>
-                                <button id="getFileLists" class='btn btn-warning' data-toggle='modal' data-target='#dir_list'><i class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Items</button>
+                                <button id="redownload" class="btn btn-danger">Redownload</button>
+                                <button id="getFileLists" class='btn btn-default' data-toggle='modal' data-target='#dir_list'>Items</button>
+                                <button id="refresh" class="btn btn-default"><i class='fa fa-refresh'></i>&nbsp; Refresh</button> 
                             </div>
-
+                            <hr>
+                            <div class="btn-group-vertical" style="width: 100%">
+                                <button id="debug_b" class="btn btn-warning"><i class='fa fa-television'></i>&nbsp; PrintState</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-footer">
                     </div>
                 </div>
             </div>
@@ -410,7 +348,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5><i align="center" class='fa  fa-times  fa-fw'></i>&nbsp;<font color="white">Clear Sub Sections</font></h5>
+                                <h5 style="color: white"><i align="center" class='fa  fa-times  fa-fw'></i>&nbsp;Clear Sub Sections</h5>
                             </div>
                             <div class="modal-body">
                                 Are you sure you want to close all app instances and sections associated with this Twitter App?
@@ -581,11 +519,12 @@
         <div class="col-lg-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <button id="app_control" class="btn btn-success" data-toggle='modal' data-target='#app_control_management' style="text-align: left; border-color: transparent;"><i class='fa  fa-files-o fa-fw'></i>&nbsp;Controlling <span id="app_control_description"></button>
+                    <button id="app_control_select" class="btn btn-success" data-toggle='modal' data-target='#app_control_management' style="text-align: left; border-color: transparent;"><i class='fa  fa-files-o fa-fw'></i>&nbsp;Controlling <span id="app_control_description"></button>
+
                 </div>
                 <div class="panel-body">
                     <div id="wrapper" style="position: relative; border: 0 none; display: block; width: 100%; height: 70vh; background: black; overflow-x: hidden; overflow-y: auto">
-                        <iframe id="app_control_frame" src="" allowtransparency="true" frameborder="0" style="transform:scale(0.8) translateX(-307px) translateY(-90px); transform-origin: 0px 0px; position: absolute; border: 0 none; display: block; width: 154%; height: 160%"></iframe>
+                        <iframe id="app_control_frame" src="" allowtransparency="true" frameborder="0" style="transform: scale(0.8) translateX(-307px) translateY(-90px); transform-origin: 0px 0px; position: absolute; border: 0 none; display: block; width: 154%; height: 160%"></iframe>
                     </div>
                 </div>
             </div>
@@ -597,17 +536,15 @@
 </div>
 </div>
 </div>
-<div class="modal fade" id="app_control_management" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="app_control_management" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5><i align="center" class='fa  fa-files-o  fa-fw'></i>&nbsp;<font color="white">App Control</font></h5>
+                <h5 style="color: white"><i align="center" class='fa  fa-files-o  fa-fw'></i>&nbsp;App Control</h5>
             </div>
             <div class="modal-body">
-                <font color="white">Select App</font>
-                <br>
-                &nbsp;
-                <br/>
+                <div style="color: white">Select App</div>
                 <div class="row">
                     <table id="app_control_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
                 </div>
@@ -619,11 +556,11 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="api_error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true" style="z-index: 1050">
+<div class="modal fade" id="api_error" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;<font color="white">API Status</font></h5>
+                <h5 style="color: white"><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;API Status</h5>
             </div>
             <div class="modal-body">
                 <h6 id="error_message_from_api_server" style="font-size: 14px"></h6>
@@ -635,474 +572,38 @@
         </div>
     </div>
 </div>
-    <div class="modal fade" id="dir_list" tabindex="-1" role="dialog" style="z-index: 1050;">
+<div class="modal fade" id="dir_list" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: white"><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Directory List</h5>
+            </div>
+            <div id="file_list_body" class="modal-body" style="max-height: 58vh; overflow: auto"></div>
+        </div>
+    </div>
+</div>
+    <div class="modal fade" id="error_dialog" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;<font color="white">Directory List</font></h5>
+                    <h5 style="color: white"><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Error</h5>
                 </div>
-                <div id="file_list_body" class="modal-body" style="max-height: 58vh; overflow:auto">
-@*                    <h6>Graphs</h6>*@
-@*                    <ul class="list-group" id="graph_file_list">*@
-@*                    </ul>*@
-@*                    <h6>Images</h6>*@
-@*                    <ul class="list-group" id="images_file_list">*@
-@*                    </ul>*@
-@*                    <h6>HTML Files</h6>*@
-@*                    <ul class="list-group" id="html_file_list">*@
-@*                    </ul>*@
-@*                    <h6>Chart Files</h6>*@
-@*                    <ul class="list-group" id="chart_file_list">*@
-@*                    </ul>*@
+                <div class="modal-body">
+                    <ul class='list-group' id="error_messages"></ul>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" id="error_dismiss" data-dismiss="modal" class="btn btn-warning">Dismiss</button>
                 </div>
             </div>
         </div>
-    </div>
+    </div>    
+    
+    
 <script>
-    var gdo = parent.gdo;
-    gdo.net.app["Twitter"].drawSectionTable = function(instanceId) {
-        gdo.net.app["Twitter"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows + 1);
-
-        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-            var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
-            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED) {
-                //Node is assigned to another app
-                continue;
-            } else if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
-                //Node is part of the root section
-                $("#section_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                $("#section_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='section_table_node_" +
-                        node.id +
-                        "_i' style='text-align:center;background:#740202;'> <font size='4px'><b>" +
-                        node.id +
-                        "</b></font></div>")
-                    .append("</br>")
-                    .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-                    .css("width", (gdo.net.app["Twitter"].uiProperties.table_width / gdo.net.cols) + "%")
-                    .css("border", "1px solid #8c0606")
-                    .css('overflow', 'hidden')
-                    .css("background", "#c70000")
-                    .css({ fontSize: gdo.net.app["Twitter"].uiProperties.section_font_size })
-                    .css('padding', 0);
-                continue;
-            }
-
-            var sectionId = node.sectionId;
-            $("#section_table_row_" + gdo.net.rows).css("height", 0);
-            if (sectionId === 0) {
-                $("#section_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                $("#section_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='section_table_node_" +
-                        node.id +
-                        "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
-                        node.id +
-                        "</b></font></div>")
-                    .append("</br>")
-                    .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-                    .css("width", (gdo.net.app["Twitter"].uiProperties.table_width / gdo.net.cols) + "%")
-                    .css("border", "1px solid #333")
-                    .css('overflow', 'hidden')
-                    .css("background", "#222")
-                    .css({ fontSize: gdo.net.app["Twitter"].uiProperties.section_font_size })
-                    .css('padding', 0)
-                    .click(function() {
-                        var id = gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'));
-                        if (gdo.net.instance[instanceId].caveStatus.nodes[id].isSelected) {
-                            gdo.net.instance[instanceId].caveStatus.nodes[id].isSelected = false;
-                        } else {
-                            gdo.net.instance[instanceId].control.selectedSection = -1;
-                            gdo.net.instance[instanceId].caveStatus.nodes[id].isSelected = true;
-                        }
-                        gdo.net.app["Twitter"].updateDisplayCanvas(instanceId);
-                    });
-
-            } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
-                $("#section_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .attr('colspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols)
-                    .attr('rowspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].rows)
-                    .css("width",
-                        ((gdo.net.app["Twitter"].uiProperties.table_width / gdo.net.cols) *
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols) +
-                        "%")
-                    .css("border", "1px solid #2A9FD6")
-                    .css("background", "#087DB4")
-                    .css('padding', 0)
-                    .css('overflow', 'hidden')
-                    .css("vertical-align", "top")
-                    .append("<div id='section_table_section_" +
-                        sectionId +
-                        "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" +
-                        sectionId +
-                        "</b></font></div>")
-                    .append("<div style='height:5px'></div>");
-                //Prepared
-                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.id != null) {
-                    $("#section_table_row_" + node.row + "_col_" + node.col)
-                        .css('overflow', 'hidden')
-                        .append("<div id='section_table_section_" +
-                            sectionId +
-                            "_c'> <b>&nbsp;Vis Type:</b> " +
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.twitterVisSubType +
-                            "</div>")
-                        .css('overflow', 'hidden')
-                        .css("background", "#a7a100")
-                        .append("<div id='section_table_section_" +
-                            sectionId +
-                            "_c'> <b>&nbsp;File Path:</b> " +
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.filePath +
-                            "</div>")
-                        .css('overflow', 'hidden')
-                        .css("background", "#a7a100");
-
-                    $("#section_table_section_" + sectionId + "_i").css("background", "#b8b100");
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #b8b100");
-                }
-                //Deployed
-                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
-                    $("#section_table_section_" + sectionId + "_i")
-                        .empty()
-                        .append("<font size='4px'><b> S" +
-                            sectionId +
-                            ", I" +
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
-                            "</b></font>");
-                    $("#section_table_row_" + node.row + "_col_" + node.col)
-                        .css('overflow', 'hidden')
-                        .append("<div id='section_table_section_" +
-                            sectionId +
-                            "_a'> <b>&nbsp;App:</b> " +
-                            gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId]
-                            .appName +
-                            "</div>")
-                        .css('overflow', 'hidden')
-                        .css("background", "#559100");
-                    $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");
-                }
-                $("#section_table_row_" + node.row + "_col_" + node.col)
-                    .click(function() {
-                        var id = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
-                            .getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
-                        if (gdo.net.instance[instanceId].control.selectedSection === id) {
-                            gdo.net.instance[instanceId].control.selectedSection = -1;
-                        } else {
-                            for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-                                gdo.net.instance[instanceId].caveStatus.nodes[i].isSelected = false;
-                            }
-                            gdo.net.instance[instanceId].control.selectedSection = id;
-                        }
-                        gdo.net.app["Twitter"].updateDisplayCanvas(instanceId);
-                    });
-
-                if (gdo.net.instance[instanceId].control.selectedSection === sectionId) {
-                    if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
-                        $("#section_table_row_" + node.row + "_col_" + node.col)
-                            .css("background-color", "#77B300")
-                            .css("border", "1px solid #99D522");
-                        $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
-                    } else if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId < 0 &&
-                        gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.id != null) {
-                        $("#section_table_row_" + node.row + "_col_" + node.col)
-                            .css("background-color", "#b8b100")
-                            .css("border", "1px solid #d2ca02");
-                        $("#section_table_section_" + sectionId + "_i").css("background", "#d2ca02");
-                    } else {
-                        $("#section_table_row_" + node.row + "_col_" + node.col)
-                            .css("background-color", "#2A9FD6")
-                            .css("border", "1px solid #4CBFF8");
-                        $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");
-                    }
-                }
-
-            } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
-                $("#section_table_row_" + node.row + "_col_" + node.col).hide();
-            }
-            if (node.isSelected) {
-                $("#section_table_row_" + node.row + "_col_" + node.col)
-                    .css("background-color", "#333")
-                    .css("border", "1px solid #555");
-                $("#section_table_node_" + node.id + "_i").css("background-color", "#555");
-            }
-        }
-    }
-
-    gdo.net.app["Twitter"].drawSectionControlTable = function(instanceId) {
-        gdo.net.app["Twitter"].drawEmptySectionControlTable(gdo.net.cols, gdo.net.rows);
-        $("#graph_control_description").html(gdo.net.instance[instanceId].control.selectedGraphApps.join(", "));
-
-        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-            var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
-            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED) {
-                //Node is assigned to another app
-                continue;
-            } else if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
-                //Node is part of the root section
-                $("#section_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='section_control_table_node_" +
-                        node.id +
-                        "_i' style='text-align:center;background:#740202;'> <font size='4px'><b>" +
-                        node.id +
-                        "</b></font></div>")
-                    .append("</br>")
-                    .css("border", "1px solid #8c0606")
-                    .css('overflow', 'hidden')
-                    .css("background", "#c70000")
-                    .css('padding', 0);
-                continue;
-            }
-            var sectionId = node.sectionId;
-            $("#section_control_table_row_" + gdo.net.rows).css("height", 0);
-            if (sectionId === 0) {
-                $("#section_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='section_control_table_node_" +
-                        node.id +
-                        "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
-                        node.id +
-                        "</b></font></div>")
-                    .append("</br>")
-                    .css("border", "1px solid #333")
-                    .css("background", "#222")
-                    .css('padding', 0)
-                    .click(function() {
-                    });
-
-            } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
-                $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .attr('colspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols)
-                    .attr('rowspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].rows)
-                    .css("border", "1px solid #2A9FD6")
-                    .css("background", "#087DB4")
-                    .css('padding', 0)
-                    .css('overflow', 'hidden')
-                    .css("vertical-align", "top")
-                    .append("<div id='section_control_table_section_" +
-                        sectionId +
-                        "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" +
-                        sectionId +
-                        "</b></font></div>");
-                //Deployed
-                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
-                    $("#section_control_table_section_" + sectionId + "_i")
-                        .empty()
-                        .append("<font size='4px'><b> I" +
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
-                            "</b></font>");
-                    if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
-                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                            .css('overflow', 'hidden')
-                            .append("<div id='section_control_table_section_" +
-                                sectionId +
-                                "_a'> <b>&nbsp;App:</b> " +
-                                gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
-                                    .appInstanceId]
-                                .appName +
-                                "</div>")
-                            .css('overflow', 'hidden')
-                            .css("background", "#559100");
-                        $("#section_control_table_section_" + sectionId + "_i").css("background", "#77B300");
-                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                            .css("border", "1px solid #77B300");
-                    } else {
-                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                            .css('overflow', 'hidden')
-                            .append("<div id='section_control_table_section_" +
-                                sectionId +
-                                "_a'> <b>&nbsp;App:</b> " +
-                                gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
-                                    .appInstanceId]
-                                .appName +
-                                "</div>")
-                            .css('overflow', 'hidden')
-                            .css("background", "#f98111");
-                        $("#section_control_table_section_" + sectionId + "_i").css("background", "#d56c0a");
-                        $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                            .css("border", "1px solid #d56c0a");
-                    }
-
-                }
-                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].twitterVis.appType === "Graph") {
-                    $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                        .click(function() {
-                            var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
-                                .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
-
-                            var index = gdo.net.instance[instanceId].control.selectedGraphApps.indexOf(appInstanceId);
-                            if (index > -1) {
-                                gdo.net.instance[instanceId].control.selectedGraphApps.splice(index, 1);
-                                gdo.net.app["Twitter"].updateGraphFields(instanceId);
-                            } else {
-                                if (gdo.net.instance[appInstanceId].graphFieldsLoaded) {
-                                    gdo.net.instance[instanceId].control.selectedGraphApps.push(appInstanceId);
-                                    gdo.net.app["Twitter"].updateGraphFields(instanceId);
-                                } else {
-                                    gdo.net.app["Graph"].server.getFields(appInstanceId);
-                                    gdo.net.app["Twitter"]
-                                        .setMessage("Trying to control:" +
-                                            appInstanceId +
-                                            " before fields have been processed, please wait");
-                                }
-                            }
-                            gdo.net.app["Twitter"].drawSectionControlTable(instanceId);
-
-                        });
-                }
-
-                if (gdo.net.instance[instanceId].control.selectedGraphApps
-                    .indexOf(gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) >
-                    -1) {
-                    $("#section_control_table_row_" + node.row + "_col_" + node.col)
-                        .css("background-color", "#95078a")
-                        .css("border", "1px solid #ce0ad6");
-                    $("#section_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
-                }
-            } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
-                $("#section_control_table_row_" + node.row + "_col_" + node.col).hide();
-            }
-        }
-    }
-
-    gdo.net.app["Twitter"].drawAppControlTable = function(instanceId) {
-        console.log("Drawing App Control Table");
-        gdo.net.app["Twitter"].drawEmptyAppControlTable(gdo.net.cols, gdo.net.rows);
-        $("#app_control_description").html(gdo.net.instance[instanceId].control.selectedApp);
-        for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-            var node = gdo.net.instance[instanceId].caveStatus.nodes[i];
-            if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.RESERVED) {
-                //Node is assigned to another app
-                continue;
-            } else if (node.nodeContext === gdo.net.app["Twitter"].NodeContext.ROOT_SECTION) {
-                //Node is part of the root section
-                $("#app_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='app_control_table_node_" +
-                        node.id +
-                        "_i' style='text-align:center;background:#740202;'> <font size='4px'><b>" +
-                        node.id +
-                        "</b></font></div>")
-                    .append("</br>")
-                    .css("border", "1px solid #8c0606")
-                    .css('overflow', 'hidden')
-                    .css("background", "#c70000")
-                    .css('padding', 0);
-                continue;
-            }
-            var sectionId = node.sectionId;
-            $("#app_control_table_row_" + gdo.net.rows).css("height", 0);
-            if (sectionId === 0) {
-                $("#app_control_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .css("vertical-align", "top")
-                    .append("<div id='app_control_table_node_" +
-                        node.id +
-                        "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" +
-                        node.id +
-                        "</b></font></div>")
-                    .append("</br>")
-                    .css("border", "1px solid #333")
-                    .css("background", "#222")
-                    .css('padding', 0)
-                    .click(function() {
-                    });
-
-            } else if ((node.sectionCol === 0 && node.sectionRow === 0) && node.sectionId > 0) {
-                $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                    .empty()
-                    .unbind()
-                    .attr('colspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].cols)
-                    .attr('rowspan', gdo.net.instance[instanceId].caveStatus.sections[sectionId].rows)
-                    .css("border", "1px solid #2A9FD6")
-                    .css("background", "#087DB4")
-                    .css('padding', 0)
-                    .css('overflow', 'hidden')
-                    .css("vertical-align", "top")
-                    .append("<div id='app_control_table_section_" +
-                        sectionId +
-                        "_i' style='text-align:center;background:#2A9FD6'> <font size='4px'><b> S" +
-                        sectionId +
-                        "</b></font></div>");
-                //Deployed
-                if (gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId >= 0) {
-                    $("#app_control_table_section_" + sectionId + "_i")
-                        .empty()
-                        .append("<font size='4px'><b> I" +
-                            gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId +
-                            "</b></font>");
-                    $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                        .css('overflow', 'hidden')
-                        .append("<div id='app_control_table_section_" +
-                            sectionId +
-                            "_a'> <b>&nbsp;App:</b> " +
-                            gdo.net.instance[gdo.net.instance[instanceId].caveStatus.sections[sectionId]
-                                .appInstanceId]
-                            .appName +
-                            "</div>")
-                        .css('overflow', 'hidden')
-                        .css("background", "#559100");
-                    $("#app_control_table_section_" + sectionId + "_i").css("background", "#77B300");
-                    $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                        .css("border", "1px solid #77B300");
-                }
-                $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                    .click(function() {
-                        var appInstanceId = gdo.net.instance[instanceId].caveStatus.nodes[gdo.net
-                            .getNodeId($(this).attr('col'), $(this).attr('row'))].appInstanceId;
-
-
-                        if (gdo.net.instance[instanceId].control.selectedApp == appInstanceId) {
-                            gdo.net.instance[instanceId].control.selectedApp = null;
-                            $("#app_control_frame").attr("src", "");
-
-                        } else {
-                            gdo.net.instance[instanceId].control.selectedApp = appInstanceId;
-                            $("#app_control_frame")
-                                .attr("src", window.location.origin + "/Web/Instances.cshtml?id=" + appInstanceId);
-                        }
-                        $('#app_control_management').modal('hide');
-                        console.log(gdo.net.instance[instanceId].control.selectedApp);
-                        gdo.net.app["Twitter"].drawAppControlTable(instanceId);
-
-                    });
-
-                if (gdo.net.instance[instanceId].control.selectedApp ==
-                    gdo.net.instance[instanceId].caveStatus.sections[sectionId].appInstanceId) {
-                    $("#app_control_table_row_" + node.row + "_col_" + node.col)
-                        .css("background-color", "#95078a")
-                        .css("border", "1px solid #ce0ad6");
-                    $("#app_control_table_section_" + sectionId + "_i").css("background", "#ce0ad6");
-                }
-            } else if ((node.sectionCol !== 0 || node.sectionRow !== 0) && node.sectionId > 0) {
-                $("#app_control_table_row_" + node.row + "_col_" + node.col).hide();
-            }
-        }
-    }
-
-
+    $("#error_dismiss")
+        .click(function() {
+            $("#error_messages").empty();
+        });
 
     $("#dataset_table tbody")
         .on('click',
@@ -1123,22 +624,18 @@
                         .addClass("btn-success")
                         .siblings()
                         .removeClass("btn-success");
-                    console.log("HereB");
                 }
                 if (gdo.net.instance[gdo.controlId].control.selectedDataSet !== -1) {
                     $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
                 }
-
             });
 
     $("#slide_table tbody")
         .on('click',
             'tr',
             function() {
-                console.log($(this).index());
                 var gdo = parent.gdo;
                 var slide = gdo.net.instance[gdo.controlId].data.slides[$(this).index()];
-
                 if (gdo.net.instance[gdo.controlId].control.selectedSlide === slide) {
                     gdo.net.instance[gdo.controlId].control.selectedSlide = null;
                     $("#launch_slide").addClass("disabled").addClass("btn-default").removeClass("btn-success");
@@ -1154,9 +651,7 @@
                 if (gdo.net.instance[gdo.controlId].control.selectedSlide !== null) {
                     $("#launch_slide").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
                 }
-
             });
-
 
     $("#analytics_options_table tbody")
         .on("click",
@@ -1178,7 +673,6 @@
                             .removeClass("disabled")
                             .removeClass("btn-default");
                     }
-
                 } else {
                     for (var i = 0; i < gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.length; ++i) {
                         if (gdo.net.instance[gdo.controlId].control.selectedNewAnalytics[i].classification ===
@@ -1194,9 +688,11 @@
 
                 }
             });
+
     $("#order_analytics")
         .on('click',
             function() {
+                var gdo = parent.gdo;
                 if (gdo.net.instance[gdo.controlId].control.selectedNewAnalytics.length > 0) {
                     parent.gdo.net.app["Twitter"]
                         .requestNewAnalytics(gdo.net.instance[gdo.controlId].control.selectedNewAnalytics);
@@ -1210,6 +706,7 @@
     $("#get_analytics")
         .on('click',
             function() {
+                var gdo = parent.gdo;
                 if (gdo.net.instance[gdo.controlId].control.selectedDataSet != -1) {
                     parent.gdo.net.app["Twitter"]
                         .requestAnalytics([gdo.net.instance[gdo.controlId].control.selectedDataSet]);
@@ -1220,9 +717,11 @@
     $("#launch_slide")
         .on('click',
             function() {
+                var gdo = parent.gdo;
                 if (gdo.net.instance[gdo.controlId].control.selectedSlide != null) {
-                    parent.gdo.net.app["Twitter"]
-                        .launchSlide(gdo.controlId, gdo.net.instance[gdo.controlId].control.selectedSlide);
+                    gdo.net.app["Twitter"].launchSlide(gdo
+                        .controlId,
+                        gdo.net.instance[gdo.controlId].control.selectedSlide);
                 }
             });
     $("#refresh")
@@ -1234,48 +733,48 @@
             });
     $("#dialog_refresh")
         .on("click",
-            function () {
+            function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
                 gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
             });
 
     $("#app_control_clear")
-    .on("click", function () {
-            var gdo = parent.gdo;
-        $("#app_control_frame").attr("src","");
-        gdo.net.instance[gdo.controlId].control.selectedApp = null;
-            gdo.net.app["Twitter"].drawAppControlTable(gdo.controlId);
-
-        })
+        .on("click",
+            function() {
+                var gdo = parent.gdo;
+                $("#app_control_frame").attr("src", "");
+                gdo.net.instance[gdo.controlId].control.selectedApp = null;
+                gdo.net.app["Twitter"].drawAppControlTable(gdo.controlId);
+            });
 
     $("#debug_b")
         .on("click",
             function() {
+                var gdo = parent.gdo;
                 console.log(gdo.net.instance[gdo.controlId]);
                 console.log(gdo.net.app["Twitter"]);
                 console.log(gdo.net);
             });
 
-    $("#getFileLists").on("click",
-            function () {
+    $("#getFileLists")
+        .on("click",
+            function() {
+                var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.getFileLists(gdo.controlId);
             });
 
     $("#redownload")
         .on("click",
             function() {
+                var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.toggleRedownloadFiles(gdo.controlId);
-            });
-    $("#allocate")
-        .on("click",
-            function() {
-                gdo.net.app["Twitter"].autoAllocateSections(gdo.controlId);
             });
 
     //////////////////////////////////////////Graph Control
     $("#showTimeNodes")
         .click(function() {
+            var gdo = parent.gdo;
             if ($(this).hasClass("FLAG_ON")) {
                 gdo.net.app["Twitter"].hideTimeNodes(gdo.controlId);
                 $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
@@ -1288,15 +787,18 @@
         });
     $("#searchTweets")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].searchTweets(gdo.controlId, $("#tweetKeyword").val());
         });
     $("#searchUser")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].searchUsers(gdo.controlId, $("#userKeyword").val());
         });
 
     $("#toggle_nodeSize")
         .click(function() {
+            var gdo = parent.gdo;
             if ($(this).hasClass("FLAG_ON")) {
                 gdo.net.app["Twitter"].setAllNodesSize(gdo.controlId, parseInt($("#allNodeSize").val()));
                 $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
@@ -1308,9 +810,9 @@
             }
         });
 
-
     $("#toggle_links")
         .click(function() {
+            var gdo = parent.gdo;
             if ($(this).hasClass("FLAG_ON")) {
                 gdo.net.app["Twitter"].hideLinks(gdo.controlId);
                 $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
@@ -1323,6 +825,7 @@
         });
     $("#toggle_labels")
         .click(function() {
+            var gdo = parent.gdo;
             if ($(this).hasClass("FLAG_ON")) {
                 gdo.net.app["Twitter"].hideLabels(gdo.controlId);
                 $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
@@ -1337,12 +840,14 @@
         });
     $("#show_mostConnectedNodes")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].renderMostConnectedNodes(gdo.controlId,
                 parseInt($("#numLinks").val()),
                 $("#color_mostConnectedNodes").val());
         });
     $("#toggle_mostConnectedLabels")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].renderMostConnectedLabels(gdo.controlId,
                 parseInt($("#numLinks").val()),
                 $("#gc_select_mostConnectedLabels").val(),
@@ -1350,24 +855,29 @@
         });
     $("#hide_mostConnected")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].hideMostConnected(gdo.controlId);
         });
     $("#startSearch")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].initiateSearch(gdo.controlId,
                 $("#searchKeywords").val(),
                 $("#gc_select_SearchFields").val());
         });
     $("#toggle_searchLabels")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].renderSearchLabels(gdo.controlId, $("#gc_select_SearchLabels").val());
         });
     $("#hide_sublinks")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].hideSublinks(gdo.controlId);
         });
     $("#hide_search")
         .click(function() {
+            var gdo = parent.gdo;
             gdo.net.app["Twitter"].hideSearch(gdo.controlId);
         });
 </script>

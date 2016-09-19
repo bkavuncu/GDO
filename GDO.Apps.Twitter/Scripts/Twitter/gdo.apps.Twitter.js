@@ -1,20 +1,19 @@
 ﻿$(function () {
     gdo.consoleOut('.Twitter', 1, 'Loaded Twitter JS');
 
-    $.connection.twitterAppHub.client.setMessage = function (instanceId, message) {
+    $.connection.twitterAppHub.client.setMessage = function (instanceId, message, error) {
         gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
-            gdo.net.app["Twitter"].setMessage(message);
+            gdo.net.app["Twitter"].setMessage(message,error);
         } 
     }
     
     $.connection.twitterAppHub.client.setAPIMessage = function (instanceId, message) {
-        gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
+        gdo.consoleOut('.Twitter', 1, 'API message from server: ' + message);
         var messageDes = JSON.parse(message);
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.net.app["Twitter"].setAPIMessage(instanceId, messageDes);
             gdo.consoleOut('.Twitter', 1, 'Using data set endpoint : ' + messageDes.uri_data_set);
-            gdo.consoleOut('.Twitter', 1, 'Using analytics options endpoint : ' + messageDes.uri_analysis_options);
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
             $("iframe").contents().find("#client_api_status_message").empty().append(messageDes.msg);
@@ -97,6 +96,7 @@ gdo.net.app["Twitter"].initControl = function () {
     gdo.loadScript("ui", "Twitter", gdo.SCRIPT_TYPE.APP);
     gdo.loadScript("sectionButtons", "Twitter", gdo.SCRIPT_TYPE.APP);
     gdo.loadScript("graphControl", "Twitter", gdo.SCRIPT_TYPE.APP);
+    gdo.loadScript("util", "Twitter", gdo.SCRIPT_TYPE.APP);
     
    
     //app["Twitter"]
@@ -164,11 +164,9 @@ gdo.net.app["Twitter"].createSections = function (sections) {
 }
 gdo.net.app["Twitter"].createSection = function (section) {
     gdo.consoleOut('.Twitter', 1, 'Requesting server creates new section');
-    var result = gdo.net.server.createSection(section.col,
-        section.row,
+    gdo.net.server.createSection(section.col, section.row,
         section.col + section.cols - 1,
         section.row + section.rows - 1);
-    console.log(result);
 }
 
 gdo.net.app["Twitter"].closeSection = function(section) {
@@ -226,9 +224,8 @@ gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
 }
 
 gdo.net.app["Twitter"].closeApp = function(section) {
-    gdo.consoleOut('.Twitter', 1, 'Requesting server close app');
-    var result = gdo.net.server.closeApp(section.appInstanceId);
-    console.log(result);
+    gdo.consoleOut('.Twitter', 1, 'Requesting server close app on section ' + section.id);
+    gdo.net.server.closeApp(section.appInstanceId);
 }
 gdo.net.app["Twitter"].closeApps = function (sections) {
     sections.forEach(function(section) {
@@ -262,11 +259,6 @@ gdo.net.app["Twitter"].requestCreateSections = function(instanceId, sections) {
     gdo.net.app["Twitter"].server.createSections(instanceId, JSON.stringify(sections));
 }
 
-gdo.net.app["Twitter"].reqeustAutoLoadSections = function(instanceId, sections) {
-    gdo.consoleOut('.Twitter', 1, "Requesting hub auto create sections");
-    gdo.net.app["Twitter"].server.autoLaunchSections(instanceId, JSON.stringify(sections));
-}
-
 gdo.net.app["Twitter"].requestCreateSection = function (instanceId, colStart, rowStart, colEnd, rowEnd) {
     gdo.consoleOut('.Twitter', 1, "Requesting hub create new section for instance: " + instanceId);
     gdo.net.app["Twitter"].server.createSection(instanceId, colStart, rowStart, colEnd, rowEnd);
@@ -277,7 +269,6 @@ gdo.net.app["Twitter"].requestCloseSection= function(instanceId, sectionId) {
     gdo.net.app["Twitter"].server.closeSection(instanceId, sectionId);
     
 }
-
 
 gdo.net.app["Twitter"].requestDeployApp = function(instanceId, sectionId) {
     gdo.consoleOut('.Twitter', 1, "Requesting hub deploy app at section: " + sectionId);
@@ -320,6 +311,37 @@ gdo.net.app["Twitter"].requestNewAnalytics = function(newAnalytics) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+gdo.net.app["Twitter"].launchSlide = function (instanceId, slide) {
+    gdo.consoleOut('.Twitter', 1, "Attempting to launch slide " + slide.id);
+    var sectionRequests = [];
+    for (var i = 0; i < slide.sections.length; ++i) {
+        if (!gdo.net.app["Twitter"].sectionIsFree(instanceId, slide.sections[i].colStart, slide.sections[i].colEnd,
+            slide.sections[i].rowStart, slide.sections[i].rowEnd)) {
+
+            var msg = 'Slide section with coordinates: ' +
+                slide.sections[i].colStart + " " +
+                slide.sections[i].colEnd + " " +
+                slide.sections[i].rowStart + " " +
+                slide.sections[i].rowEnd + " could not be started as node is already allocated";
+            gdo.consoleOut('.Twitter', 1, msg);
+            gdo.net.app["Twitter"].setMessage(msg);
+            continue;
+        }
+
+        sectionRequests.push({
+            ColStart: slide.sections[i].colStart,
+            RowStart: slide.sections[i].rowStart,
+            ColEnd: slide.sections[i].colEnd,
+            RowEnd: slide.sections[i].rowEnd,
+            DataSetId: slide.sections[i].dataSetId,
+            AnalyticsId: slide.sections[i].analyticsId
+        });
+    }
+    if (sectionRequests.length > 0) {
+        gdo.net.app["Twitter"].server.autoLaunchSections(instanceId, JSON.stringify(sectionRequests));
+    }
+}
+
 
 gdo.net.app["Twitter"].terminateClient = function () {
     gdo.consoleOut('.Twitter', 1, 'Terminating Twitter App Client at Node ' + clientId);

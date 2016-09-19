@@ -257,7 +257,6 @@ namespace GDO.Apps.Twitter
             
             fileList.Add("Graphs", Directory.GetFiles(GraphAppBasePath).Select(d=> d.Split('\\').Last()).ToList());
             fileList.Add("Images", Directory.GetFiles(ImageAppBasePath).Select(d => d.Split('\\').Last()).ToList());
-//            fileList.Add("StaticHTML", Directory.GetFiles(StaticHtmlBasePath).Select(d => d.Split('\\').Last()).ToList());
             fileList.Add("Twitter", Directory.GetFiles(TwitterBasePath).Select(d => d.Split('\\').Last()).ToList());
             fileList.Add("Charts", Directory.GetFiles(FusionChartAppBasePath).Select(d => d.Split('\\').Last()).ToList());
 

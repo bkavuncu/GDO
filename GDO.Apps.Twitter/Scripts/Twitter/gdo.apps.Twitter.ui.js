@@ -1,16 +1,4 @@
-﻿$(function() {
-    $("iframe")
-        .contents()
-        .find('.list-group-item')
-        .on('click',
-            function() {
-                $('.fa', this)
-                    .toggleClass('fa-chevron-right')
-                    .toggleClass('fa-chevron-down');
-            });
-});
-
-gdo.net.app["Twitter"].uiProperties = {
+﻿gdo.net.app["Twitter"].uiProperties = {
     table_width: 100,
     button_cols: 9.5,
     button_font_size: 21,
@@ -34,16 +22,13 @@ gdo.net.app["Twitter"].setRedownloadButton = function(instanceId, state) {
             .find("#redownload")
             .removeClass("btn-danger")
             .addClass("btn-success")
-            .html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Don't Redownload");
+            .html("Don't Redownload");
     } else {
         $("iframe").contents().find("#redownload")
             .removeClass("btn-success")
             .addClass("btn-danger")
-            .html("<i class='fa  fa-link  fa-fw'></i>&nbsp;Redownload");
-    }
-    
-
-    
+            .html("Redownload");
+    }    
 };
 
 gdo.net.app["Twitter"].setFileLists = function (instanceId, fileLists) {
@@ -52,39 +37,37 @@ gdo.net.app["Twitter"].setFileLists = function (instanceId, fileLists) {
       .contents()
       .find("#file_list_body")
       .empty();
-    console.log(fileLists);
     Object.keys(fileLists)
         .forEach(function (fileType, index) {
             if (fileLists[fileType].length > 0) {
                 $("iframe")
                 .contents()
                 .find("#file_list_body")
-                .append("<h6>" +
-                    fileType +
-                    "</h6>" +
-                    "<ul class='list-group' id=" +
-                    fileType +
-                    "_file_list></ul>");
+                .append("<h6>" + fileType + "</h6><ul class='list-group' id=" + fileType + "_file_list></ul>");
                 for (var i = 0; i < fileLists[fileType].length; ++i) {
                     $("iframe")
                         .contents()
                         .find("#" + fileType + "_file_list")
                         .append(" <li class='list-group-item'>" + fileLists[fileType][i] + "</li>");
                 }
-            }
-            
+            }   
         });
 }
 
-gdo.net.app["Twitter"].setMessage = function(message) {
+gdo.net.app["Twitter"].setMessage = function (message, error) {
+    error = error || false;
     $("iframe").contents().find("#message_from_server").html(message);
+    if (error) {
+        $("iframe")[0].contentWindow.showErrorModal(message);
+        gdo.consoleOut('.Twitter', 5, 'Recieved Error message: ' + message);
+    }
 }
 
 gdo.net.app["Twitter"].setAPIMessage = function(instanceId, message) {
     $("iframe").contents().find("#message_from_api_server").html(message.msg);
     $("iframe").contents().find("#error_message_from_api_server").html(message.msg);
     gdo.net.instance[instanceId].apiStatus = message.healthy;
-    $("iframe")[0].contentWindow.showErrorModal(message.healthy);
+    $("iframe")[0].contentWindow.showAPIModal(message.healthy);
     if (!gdo.net.instance[instanceId].apiStatus) {
         $("iframe")
             .contents()
@@ -228,25 +211,17 @@ gdo.net.app["Twitter"].updateSlideTable = function(instanceId, slides) {
             $("iframe")
                 .contents()
                 .find("#slide_table tbody")
-                .append("" +
-                    "<tr>" +
-                    "<td><font size='3'>" +
-                    slides[i]["description"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    slides[i]["sections"].length +
-                    "</font></td>");
+                .append("<tr>" +
+                        "<td>" + slides[i]["description"] + "</td>" +
+                        "<td>" + slides[i]["sections"].length + "</td>");
         }
     }
 
 
 gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, dataSetanalytics) {
-
-//    $("iframe").contents().find("#items_graphs_" + listNumber).empty();
-//    $("iframe").contents().find("#items_analytics_" + listNumber).empty();
     $("iframe")
         .contents()
-        .find("#analytics_deploy_list_1")
+        .find("#analytics_deploy_list")
         .empty();
 
     Object.keys(dataSetanalytics)
@@ -255,84 +230,71 @@ gdo.net.app["Twitter"].updateSingleAnalyticsTable = function(listNumber, dataSet
 
             $("iframe")
                 .contents()
-                .find("#analytics_deploy_list_1")
-                .append("<a href='#items_" +
-                    analyticsClassification +
-                    "_1' class='list-group-item' data-toggle='collapse'>" +
-                    "<i class='fa fa-chevron-down fa-fw'></i>" +
-                    analyticsClassification +
-                    "</a><ul class='list-group collapse in' id='items_" +
-                    analyticsClassification +
-                    "_1'" +
-                    "></ul>");
+                .find("#analytics_deploy_list")
+                .append("<a href='#items_" + analyticsClassification + "' id = 'items_" + analyticsClassification + "_toggle' class='list-group-item' data-toggle='collapse'>" +
+                            "<i class='fa fa-chevron-right fa-fw'></i>" + analyticsClassification + "</a>" +
+                        "<ul class='list-group collapse in' id='items_" + analyticsClassification + "'" + "></ul>");
+
+            $("iframe")
+                .contents()
+                .find("#items_" + analyticsClassification + "_toggle")
+                .on('click',
+                    function () {
+                        $('.fa', this)
+                            .toggleClass('fa-chevron-right')
+                            .toggleClass('fa-chevron-down');
+                    });
+
 
             $("iframe")
               .contents()
-              .find("#items_" + analyticsClassification +
-                    "_1")
-              .on("click",
-                  'li',
+              .find("#items_" + analyticsClassification)
+              .on("click", 'li',
                   function () {
                       var id = $(this).find("span:first").text().trim();
                       gdo.consoleOut(".Twitter", 1, "Selected analytics with id: " + id);
-                      gdo.net.instance[gdo.controlId].control
-                          .selectedAnalytics = {
+                      gdo.net.instance[gdo.controlId].control.selectedAnalytics = {
                               id: id,
                               dsid: gdo.net.instance[gdo.controlId].control.analyticsDisplay[1]
                           };
                       gdo.net.app["Twitter"].updateControlCanvas(gdo.controlId);
                   })
-              .on("blur",
-                  "li",
+              .on("blur", "li",
                   function (e) {
                       if ($(e.relatedTarget).attr("id") === "load-vis-button")
                           return;
                       gdo.net.instance[gdo.controlId].control.selectedAnalytics = null;
                       gdo.net.app["Twitter"].updateControlCanvas(gdo.controlId);
-                  });
+                  })
+            .collapse();
 
             for (var i = 0; i < analytics.length; i++) {
                 $("iframe")
                     .contents()
                     .find("#analytics_table tbody")
-                    .append("" +
-                        "<tr>" +
-                        "<td><font size='3'>" +
-                        analytics[i]["classification"] +
-                        "</font></td>" +
-                        "<td><font size='3'>" +
-                        analytics[i]["type"] +
-                        "</font></td>" +
-                        "<td><font size='3'>" +
-                        analytics[i]["description"] +
-                        "</font></td>" +
-                        "<td><font size='3'>" +
-                        analytics[i]["status"] +
-                        "</font></td>" +
-                        "</tr>");
+                    .append("<tr>" +
+                            "<td>" + analytics[i]["classification"] + "</td>" +
+                            "<td>" + analytics[i]["type"] + "</td>" +
+                            "<td>" + analytics[i]["description"] + "</td>" +
+                            "<td>" + analytics[i]["status"] + "</td>" +
+                            "</tr>");
 
                 if (analytics[i]["status"] !== "FINISHED") {
                     continue;
                 }
-                console.log(analytics[i]);
+
                 $("iframe")
                     .contents()
-                    .find("#items_" + analyticsClassification + "_1")
-                    .append("" +
-                        "<li><a href='#' class='list-group-item'>" +
-                        "<span>" +
-                        analytics[i]["id"] +
-                        "</span>  " +
-                        "<span>" +
-                        analytics[i]["type"] +
-                        "</span>  " +
-                        "<span>" +
-                        analytics[i]["description"] +
-                        "</span></a>" +
-                        "</li>");
+                    .find("#items_" + analyticsClassification)
+                    .append("<li><a href='#' class='list-group-item'>" +
+                            "<span>" + analytics[i]["id"] + "</span>  " +
+                            "<span>" + analytics[i]["type"] + "</span>  " +
+                            "<span>" + analytics[i]["description"] + "</span>" +
+                            "</a></li>");
             }
         });
 }
+
 
 gdo.net.app["Twitter"].updateDataSetTable = function(instanceId, dataSets) {
     gdo.consoleOut(".Twitter", 1, "Updating data set table" + instanceId);
@@ -343,29 +305,14 @@ gdo.net.app["Twitter"].updateDataSetTable = function(instanceId, dataSets) {
             $("iframe")
                 .contents()
                 .find("#dataset_table tbody")
-                .append("" +
-                    "<tr>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["id"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["description"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["status"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["collection_size"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["type"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["start_time"] +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    dataSets[key]["end_time"] +
-                    "</font></td>" +
+                .append("<tr>" +
+                    "<td>" + dataSets[key]["id"] + "</td>" +
+                    "<td>" + dataSets[key]["description"] + "</td>" +
+                    "<td>" + dataSets[key]["status"] + "</td>" +
+                    "<td>" + dataSets[key]["collection_size"] + "</td>" +
+                    "<td>" + dataSets[key]["type"] + "</td>" +
+                    "<td>" + dataSets[key]["start_time"] + "</td>" +
+                    "<td>" + dataSets[key]["end_time"] + "</td>" +
                     "</tr>");
         }
     }
@@ -381,16 +328,10 @@ gdo.net.app["Twitter"].updateAnalyticsOptionsTable = function(instanceId, analyt
             $("iframe")
                 .contents()
                 .find("#analytics_options_table tbody")
-                .append("" +
-                    "<tr>" +
-                    "<td><font size='3'>" +
-                    analyticsClassification.classification +
-                    "</font></td>" +
-                    "<td><font size='3'>" +
-                    analyticsClassification.types[j].type +
-                    "</font></td>" +
-                    "</tr>");
+                .append("<tr>" +
+                        "<td>" + analyticsClassification.classification + "</td>" +
+                        "<td>" + analyticsClassification.types[j].type + "</td>" +
+                        "</tr>");
         }
     }
-
 }
