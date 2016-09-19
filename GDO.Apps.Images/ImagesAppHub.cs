@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -353,6 +354,81 @@ namespace GDO.Apps.Images
             }
         }
         */
+
+        public void ProcessAndLaunch(int instanceId, string imageName)
+        {
+            ProcessImage(instanceId, imageName);
+            AutoCenter(instanceId);
+        }
+
+        public void AutoCenter(int instanceId)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    ThumbNailImageInfo ii = new ThumbNailImageInfo();
+                    
+                    double height = ia.ImageNaturalHeight;
+                    double width = ia.ImageNaturalWidth;
+                    Debug.WriteLine("Height: " + height + " width: " + width);
+                    double sectionWidth = ia.Section.Width;
+                    double sectionHeight = ia.Section.Height;
+
+                double sWidth = sectionWidth/width;
+                double sHeight = sectionHeight/height;
+
+                double left;
+                double top;
+                double imgWidth;
+                double imgHeight;
+                if (sWidth > sHeight)
+                {
+                    imgWidth = sHeight*width;
+                    imgHeight = sHeight*height;
+                    top = 0;
+                    left = (sectionWidth - imgWidth)/2;
+                }
+                else
+                {
+                    imgWidth = sWidth * width;
+                    imgHeight = sWidth * height;
+                    top = (sectionHeight - imgHeight) / 2; ;
+                    left = 0;
+                }
+
+                    ii.imageData = new ImageDataInfo()
+                    {
+                        height = imgHeight,
+                        width = imgWidth,
+                        naturalHeight = imgHeight,
+                        naturalWidth = imgWidth,
+                        aspectRatio = ia.Section.Width/(0.0+ia.Section.Height),
+                        left = left,
+                        top = top,
+                        rotate = 0
+                    };
+
+                    ii.canvasData = new CanvasDataInfo()
+                    {
+                        height = imgHeight,
+                        width = imgWidth,
+                        left = left,
+                        top = top
+                    };
+
+                    ii.cropboxData = new CropboxDataInfo()
+                    {
+                        height = ia.Section.Height,
+                        width =  ia.Section.Width,
+                        left = 0,
+                        top = 0
+                    };
+
+                    SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ii));
+                    
+            }
+        }
 
         public void SetThumbNailImageInfo(int instanceId, string imageInfo)
         {
