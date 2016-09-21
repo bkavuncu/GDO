@@ -139,9 +139,6 @@
         <a href="#app_deployment" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;App Deployment</a>
     </li>
     <li>
-        <a href="#app_control" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;Graph App Control</a>
-    </li>
-    <li>
         <a href="#chart_control" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i>&nbsp;&nbsp;Control</a>
     </li>
 </ul>
@@ -157,8 +154,7 @@
                         </div>
                         <div class="col-lg-4">
                             <button id="get_analytics" class="btn btn-default disabled" style="float: right;"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Get Analytics</button>
-                        </div>
-                       
+                        </div>           
                     </div>
                     </div>
                         <div class="panel-body">
@@ -202,7 +198,6 @@
         <div class="col-lg-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-
                     <div class="row">
                         <div class="col-lg-8">
                             <h5><i class='fa  fa-twitter'></i>&nbsp;Analytics Options</h5>
@@ -231,9 +226,6 @@
                         </div>
                     </div>
                 </div>
-@*                <div class="panel-footer">*@
-@*                   *@
-@*                </div>*@
             </div>
         </div>
         <div class="col-lg-6">
@@ -290,7 +282,7 @@
             <div class="col-lg-3" style="padding: 6px;">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h6 style="text-align: left; float: left;"><i class='fa  fa-clone fa-fw'></i>&nbsp; Slides</h6>
+                        <h6 style="text-align: left; float: left;"><i class='fa fa-square-o fa-fw'></i>&nbsp; Slides</h6>
                         <hr style="clear: both; border: 0"/>
                     </div>
                     <div style="overflow: auto; height: 30vh">
@@ -333,6 +325,11 @@
                             <div class="btn-group-vertical" style="width: 100%">
                                 <button id="debug_b" class="btn btn-warning"><i class='fa fa-television'></i>&nbsp; PrintState</button>
                             </div>
+                            <hr/>
+                            <div class="btn-group-vertical" style="width: 100%">
+                                <button id="graph_control_toggle" class='btn btn-default' data-toggle='modal' data-target='#graph_control_dialog'>GraphControl</button>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -375,163 +372,14 @@
         </div>
     </div>
 </div>
-<div class="tab-pane fade" id="app_control">
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Select Graph Apps</h6>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <table id="section_table_control" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-8">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h6><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Controlling: <span id="graph_control_description"></span></h6>
-                </div>
-                <div class="panel-body">
-                    <div class="panel panel-primary">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="row">
-                                        <div>
-                                            <button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button>
-                                        </div>
-                                        <div>
-                                            <span><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></span>
-                                            <span><select  id="gc_select_label" style="width: 30%" required class="input_field"></select></span>
-                                            <span>&nbsp;as labels&nbsp;</span>
-                                            <span>
-                                                            <input type="color" id="color_Labels" value="#ff0000" class="color_field">
-                                                        </span>
-                                        </div>
-                                        <div>
-                                            <span><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></span>
-                                            <span>&nbsp;Default size: &nbsp;</span>
-                                            <span><input size="2" style="width: 10%" class="input_field" type="text" id="allNodeSize" value="3" /></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="row">
-                                        <div>
-                                            <span>
-                                                            <button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button>
-                                                        </span>
-                                            <span>
-                                                            <input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field">
-                                                        </span>
-                                            <span>
-                                                            &nbsp;nodes with more than&nbsp;
-                                                        </span>
-                                            <span>
-                                                            <input class="input_field" style="width: 10%" size="4" type="text" id="numLinks" value="5" />
-                                                        </span>
-                                            <span>
-                                                            &nbsp;links
-                                                        </span>
-                                        </div>
-                                        <div>
-                                            <span>
-                                                            <button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
-                                                        </span>
-                                            <span>
-                                                            <select  id="gc_select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
-                                                        </span>
-                                            <span>
-                                                            &nbsp;as labels&nbsp;
-                                                        </span>
-                                            <span>
-                                                            <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
-                                                        </span>
-                                        </div>
-                                        <div>
-                                            <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div>
-                                    <span>
-                                                    <button class='btn btn-default' id="startSearch">Search</button>
-                                                </span>
-                                    <span>
-                                                    <input class="input_field" style="width: 60%" size="60" type="text" id="searchKeywords" />
-                                                </span>
-                                    <span>&nbsp;in&nbsp;</span>
-                                    <span>
-                                                    <select  id="gc_select_SearchFields" style="width: 20%" required class="input_field"></select>
-                                                </span>
-                                </div>
-                                <div>
-                                    <span>
-                                                    <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
-                                                </span>
-                                    <span>
-                                                    <select  id="gc_select_SearchLabels" style="width: 30%" required class="input_field"></select>
-                                                </span>
-                                    <span>&nbsp;as labels&nbsp;</span>
-                                </div>
-                                <div>
-                                    <span>
-                                                    <button class='btn btn-default' id="hide_sublinks">Hide links</button>
-                                                </span>
-                                    <span>
-                                                    <button class='btn btn-default' id="hide_search">Hide all</button>
-                                                </span>
-                                </div>
 
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-primary">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div>
-                                    <span>
-                                                    <button class='btn btn-default' id="searchUser">Find User</button>
-                                                </span>
-                                    <span>
-                                                    <input class="input_field" style="width: 60%" size="60" type="text" id="userKeyword" />
-                                                </span>
-                                </div>
-                                <div>
-                                    <span>
-                                                    <button class='btn btn-default' id="searchTweets">Find Tweet Containing</button>
-                                                </span>
-                                    <span>
-                                                    <input class="input_field" style="width: 60%" size="60" type="text" id="tweetKeyword" />
-                                                </span>
-                                </div>
-                                <div>
-                                    <span>
-                                                    <button class='btn btn-default FLAG_OFF' id="showTimeNodes">Show Time Nodes</button>
-                                                </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="tab-pane fade" id="chart_control">
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <button id="app_control_select" class="btn btn-success" data-toggle='modal' data-target='#app_control_management' style="text-align: left; border-color: transparent;"><i class='fa  fa-files-o fa-fw'></i>&nbsp;Controlling <span id="app_control_description"></button>
-
+                   
                 </div>
                 <div class="panel-body">
                     <div id="wrapper" style="position: relative; border: 0 none; display: block; width: 100%; height: 70vh; background: black; overflow-x: hidden; overflow-y: auto">
@@ -561,6 +409,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="app_control_clear" data-dismiss="modal">Clear</button>
             </div>
@@ -593,29 +442,190 @@
         </div>
     </div>
 </div>
-    <div class="modal fade" id="error_dialog" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 style="color: white"><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Error</h5>
-                </div>
-                <div class="modal-body">
-                    <ul class='list-group' id="error_messages"></ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="error_dismiss" data-dismiss="modal" class="btn btn-warning">Dismiss</button>
-                </div>
+<div class="modal fade" id="error_dialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: white"><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Error</h5>
+            </div>
+            <div class="modal-body">
+                <ul class='list-group' id="error_messages"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="error_dismiss" data-dismiss="modal" class="btn btn-warning">Dismiss</button>
             </div>
         </div>
-    </div>    
-    
+    </div>
+</div>    
+<div class="modal fade" id="graph_control_dialog" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog"  style="width: 90vw">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: white"><i align="center" class='fa  fa-exclamation-circle  fa-fw'></i>&nbsp;Graph Control</h5>
+            </div>
+            <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h6><i class='fa  fa-question-circle fa-fw'></i>&nbsp;Select Graph Apps</h6>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <table id="section_table_control" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 99.5%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h6><i class='fa  fa-pie-chart fa-fw'></i>&nbsp; Controlling: <span id="graph_control_description"></span></h6>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div>
+                                                            <button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button>
+                                                        </div>
+                                                        <div>
+                                                            <span><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></span>
+                                                            <span><select id="gc_select_label" style="width: 30%" required class="input_field"></select></span>
+                                                            <span>&nbsp;as labels&nbsp;</span>
+                                                            <span>
+                                                                <input type="color" id="color_Labels" value="#ff0000" class="color_field">
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></span>
+                                                            <span>&nbsp;Default size: &nbsp;</span>
+                                                            <span><input size="2" style="width: 10%" class="input_field" type="text" id="allNodeSize" value="3" /></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row">
+                                                        <div>
+                                                            <span>
+                                                                <button class='btn btn-default' id="show_mostConnectedNodes">Highlight</button>
+                                                            </span>
+                                                            <span>
+                                                                <input type="color" id="color_mostConnectedNodes" value="#ffff00" class="color_field">
+                                                            </span>
+                                                            <span>
+                                                                &nbsp;nodes with more than&nbsp;
+                                                            </span>
+                                                            <span>
+                                                                <input class="input_field" style="width: 10%" size="4" type="text" id="numLinks" value="5" />
+                                                            </span>
+                                                            <span>
+                                                                &nbsp;links
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span>
+                                                                <button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
+                                                            </span>
+                                                            <span>
+                                                                <select id="gc_select_mostConnectedLabels" style="width: 30%" required class="input_field"></select>
+                                                            </span>
+                                                            <span>
+                                                                &nbsp;as labels&nbsp;
+                                                            </span>
+                                                            <span>
+                                                                <input type="color" id="color_mostConnectedLabels" value="#ff0000" class="color_field">
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <button class='btn btn-default' id="hide_mostConnected">Hide all</button>
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div>
+                                                    <span>
+                                                        <button class='btn btn-default' id="startSearch">Search</button>
+                                                    </span>
+                                                    <span>
+                                                        <input class="input_field" style="width: 60%" size="60" type="text" id="searchKeywords" />
+                                                    </span>
+                                                    <span>&nbsp;in&nbsp;</span>
+                                                    <span>
+                                                        <select id="gc_select_SearchFields" style="width: 20%" required class="input_field"></select>
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span>
+                                                        <button class='btn btn-default' id="toggle_searchLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button>
+                                                    </span>
+                                                    <span>
+                                                        <select id="gc_select_SearchLabels" style="width: 30%" required class="input_field"></select>
+                                                    </span>
+                                                    <span>&nbsp;as labels&nbsp;</span>
+                                                </div>
+                                                <div>
+                                                    <span>
+                                                        <button class='btn btn-default' id="hide_sublinks">Hide links</button>
+                                                    </span>
+                                                    <span>
+                                                        <button class='btn btn-default' id="hide_search">Hide all</button>
+                                                    </span>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div>
+                                                    <span>
+                                                        <button class='btn btn-default' id="searchUser">Find User</button>
+                                                    </span>
+                                                    <span>
+                                                        <input class="input_field" style="width: 60%" size="60" type="text" id="userKeyword" />
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span>
+                                                        <button class='btn btn-default' id="searchTweets">Find Tweet Containing</button>
+                                                    </span>
+                                                    <span>
+                                                        <input class="input_field" style="width: 60%" size="60" type="text" id="tweetKeyword" />
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span>
+                                                        <button class='btn btn-default FLAG_OFF' id="showTimeNodes">Show Time Nodes</button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-warning">Dismiss</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     
 <script>
     $("#error_dismiss")
         .click(function() {
             $("#error_messages").empty();
         });
-
     $("#dataset_table tbody")
         .on('click',
             'tr',
@@ -638,6 +648,8 @@
                 }
                 if (gdo.net.instance[gdo.controlId].control.selectedDataSet !== -1) {
                     $("#get_analytics").addClass("btn-success").removeClass("disabled").removeClass("btn-default");
+                    gdo.net.app["Twitter"].requestAnalytics([gdo.net.instance[gdo.controlId].control.selectedDataSet]);
+                    gdo.net.app["Twitter"].server.getAnalyticsOptions(gdo.controlId);
                 }
             });
 
@@ -699,7 +711,6 @@
 
                 }
             });
-
     $("#order_analytics")
         .on('click',
             function() {
@@ -713,7 +724,6 @@
                         .requestAnalytics([gdo.net.instance[gdo.controlId].control.selectedDataSet]);
                 }
             });
-
     $("#get_analytics")
         .on('click',
             function() {
@@ -724,7 +734,6 @@
                     parent.gdo.net.app["Twitter"].server.getAnalyticsOptions(gdo.controlId);
                 }
             });
-
     $("#launch_slide")
         .on('click',
             function() {
@@ -749,7 +758,6 @@
                 gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
                 gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
             });
-
     $("#app_control_clear")
         .on("click",
             function() {
@@ -758,7 +766,6 @@
                 gdo.net.instance[gdo.controlId].control.selectedApp = null;
                 gdo.net.app["Twitter"].drawAppControlTable(gdo.controlId);
             });
-
     $("#debug_b")
         .on("click",
             function() {
@@ -767,21 +774,18 @@
                 console.log(gdo.net.app["Twitter"]);
                 console.log(gdo.net);
             });
-
     $("#getFileLists")
         .on("click",
             function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.getFileLists(gdo.controlId);
             });
-
     $("#redownload")
         .on("click",
             function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.toggleRedownloadFiles(gdo.controlId);
             });
-
     //////////////////////////////////////////Graph Control
     $("#showTimeNodes")
         .click(function() {

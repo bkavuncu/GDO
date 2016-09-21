@@ -484,7 +484,7 @@ gdo.net.app["Twitter"].drawAppControlTable = function (instanceId) {
                         $("iframe").contents().find("#app_control_frame")
                             .attr("src", window.location.origin + "/Web/Instances.cshtml?id=" + appInstanceId);
                     }
-                    $("iframe").contents().find('#app_control_management').modal('hide');
+                    $("iframe").contents().find('#app_control_management').modal("hide");
                     gdo.net.app["Twitter"].drawAppControlTable(instanceId);
 
                 });
