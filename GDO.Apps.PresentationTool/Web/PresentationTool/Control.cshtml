@@ -203,6 +203,12 @@
     <script src="../../Scripts/PresentationTool/wPaint/plugins/text/wPaint.menu.text.min.js"></script>
     <script src="../../Scripts/PresentationTool/wPaint/plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
     <script src="../../Scripts/PresentationTool/wPaint/plugins/file/wPaint.menu.main.file.min.js"></script>
+
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.paint.js"></script>
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.ui.sectionTable.js"></script>
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.voice.js"></script>
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.imageControl.js"></script>
+
     <script>
         $(function () {
             var gdo = parent.gdo;
@@ -329,8 +335,8 @@
                         </div>
                         <div class="panel-footer">
                             <button id="video_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
-                            <button id="video_play" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Play</button>
-                            <button id="video_pause" class="btn btn-primary"><i class='fa  fa-pause fa-fw'></i>&nbsp;Pause</button>
+                            <button id="video_play" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Play Video</button>
+                            <button id="video_pause" class="btn btn-primary"><i class='fa  fa-pause fa-fw'></i>&nbsp;Pause Video</button>
                         </div>
                     </div>
                 </div>
@@ -361,7 +367,7 @@
                                         <div>
                                             <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
                                                 <div>
-                                                    <span id="submit_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Submit<input type="file" name="file" class="upload" id="upload_file"></span>
+                                                    <span id="submit_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Upload<input type="file" name="file" class="upload" id="upload_file"></span>
                                                 </div>
                                             </form>
                                         </div>
@@ -405,11 +411,6 @@
                         </div>
                         <div class="panel-body" style="height: 35.5vh;overflow: hidden">
                             <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
-                                <!--
-                                <div>
-                                    <span id="load_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</span>
-                                </div>
-                                -->
                                 <div>
                                     <span id="play_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Play</span>
                                 </div>
@@ -513,7 +514,6 @@
     </div>
 
     <script>
-
         // file list
         $("#file_list").enscroll({
             showOnHover: false,
@@ -527,7 +527,7 @@
         });
 
 
-        // Slide upload
+        // layout file upload
         $('#upload_slide').change(function () {
             var slidename = $('#upload_slide').val().split('\\').pop();
             $("#file_name").html(slidename);
@@ -648,8 +648,6 @@
             gdo.net.app["PresentationTool"].deleteCurrentSlide();
         });
 
-
-
         $("#play_slide").click(function () {
             var gdo = parent.gdo;
             gdo.net.app["PresentationTool"].isPlaying = 1 - gdo.net.app["PresentationTool"].isPlaying;
@@ -691,393 +689,6 @@
             gdo.net.app["PresentationTool"].server.requestDeleteAllFiles(gdo.controlId);
         });
 
-        // Voice control
-        var gdo = parent.gdo;
-        gdo.net.app["PresentationTool"].artyom = artyom;
-        var curr_section = 0;
-        var database = [];
-        var length = 65;
-        for (var i = 0; i < 65; i++) {
-            database.push(i);
-        }
-        var voiceInitialized = false;
-        artyom.addCommands([
-            {
-                indexes: ["Hello there"],
-                action: function (i) {
-                    artyom.say("Hey there !");
-                    artyom.say("You could say following commands");
-                    voiceInitialized = true;
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Hey there! You could say: Next, previous, play", 1);
-
-                }
-            },
-            {
-                indexes: ["Next"],
-                action: function (i) {
-                    if (!voiceInitialized) return;
-                    artyom.say("Receive command");
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing next slide", 1);
-                    $("#next_slide").click();
-                }
-            },
-            {
-                indexes: ["Previous"],
-                action: function (i) {
-                    if (!voiceInitialized) return;
-                    artyom.say("Receive command");
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing previous slide", 1);
-                    $("#previous_slide").click();
-                }
-            },
-            {
-                indexes: ["Play"],
-                action: function (i) {
-                    if (!voiceInitialized) return;
-                    artyom.say("Receive command");
-                    gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Playing current page", 1);
-                    $("#play_slide").click();
-                }
-            },
-
-            {
-                indexes: ["Section *"],
-                smart: true,
-                action: function (i, wildcard, sentence) {
-                    if (!voiceInitialized) return;
-                    artyom.say("Receive command");
-                    if (database.indexOf(parseInt(wildcard.trim()))) {
-                        curr_section = parseInt(wildcard.trim());
-                        gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Section " + curr_section, 1);
-                    }
-                }
-            },
-
-            {
-                indexes: ["Zoom"],
-                action: function (i) {
-                    if (!voiceInitialized) return;
-                    artyom.say("Receive command");
-                    if (curr_section !== 0) {
-                        gdo.net.app["PresentationTool"].server.requestVoiceInfo(gdo.controlId, "Zoom in Image on Section " + (curr_section), 1);
-                        gdo.net.app["Images"].server.requestZoomImage(gdo.net.app["PresentationTool"].section[curr_section + 1].realInstanceId, 0.5);
-                    }
-                }
-            }
-
-        ]);
-        $("#voice_control").click(function () {
-            gdo.net.app["PresentationTool"].server.changeVoiceControlStatus(gdo.controlId);
-        });
-
-        $("#img_control").click(function () {
-            if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
-            if (gdo.net.app["PresentationTool"].img_control_enable === 0) return;
-            gdo.net.app["PresentationTool"].img_control_status = 1 - gdo.net.app["PresentationTool"].img_control_status;
-
-            if (gdo.net.app["PresentationTool"].img_control_status === 0) {
-                $('#img_preview > img').cropper('destroy');
-                $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-primary");
-                return;
-            }
-            $(this).removeClass("btn-primary").removeClass("btn-success").addClass("btn-success");
-
-            // Image control
-            var left = 0.00;
-            var top = 0.00;
-
-            $('#img_preview > img').cropper({
-                autoCrop: false,
-                strict: false,
-                guides: false,
-                highlight: false,
-                dragCrop: false,
-                cropBoxMovable: false,
-                cropBoxResizable: false,
-                dragMode: 'move',
-                built: function () {
-                    $(this).cropper('clear');
-                    left = $(this).cropper('getCanvasData').left;
-                    top = $(this).cropper('getCanvasData').top;
-                }
-            });
-
-            $('#img_preview > img').on('cropmove.cropper', function (e) {
-                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
-                if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
-                    gdo.net.app["Images"].server.requestMoveImage(realInstanceId, $(this).cropper('getCanvasData').left - left, $(this).cropper('getCanvasData').top - top);
-                    left = $(this).cropper('getCanvasData').left;
-                    top = $(this).cropper('getCanvasData').top;
-                }
-            });
-
-            $('#img_preview > img').on('zoom.cropper', function (e) {
-                var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
-                if (instanceId !== null && instanceId > 0 && gdo.net.instance[instanceId].appName === "Images") {
-                    if (e.ratio > e.oldRatio) {
-                        gdo.net.app["Images"].server.requestZoomImage(realInstanceId, 0.05);
-                        left = $(this).cropper('getCanvasData').left;
-                        top = $(this).cropper('getCanvasData').top;
-                    } else {
-                        gdo.net.app["Images"].server.requestZoomImage(realInstanceId, -0.05);
-                        left = $(this).cropper('getCanvasData').left;
-                        top = $(this).cropper('getCanvasData').top;
-                    }
-                }
-            });
-        });
-        $("#img_paint").click(function (e) {
-            if (gdo.net.app["PresentationTool"].isPlaying === 0 || gdo.net.app["PresentationTool"].img_control_enable === 0) {
-                e.preventDefault();
-                return false;
-            } else {
-                $("#paint_img").attr('src', gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].src);
-                var newHeight = $("#paint_bg").width() / (gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].width / gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].height);
-                $("#paint_bg").height(newHeight);
-
-
-                var cropboxDataWidth = $("#paint_bg").width();
-                var cropboxDataHeight = $("#paint_bg").height();
-
-                var canvasDataWidth = document.getElementById("paint_img").naturalWidth;
-                var canvasDataHeight = document.getElementById("paint_img").naturalHeight;
-
-                var scalewidth = cropboxDataWidth / canvasDataWidth;
-                var scaleheight = cropboxDataHeight / canvasDataHeight;
-
-                if (scalewidth < scaleheight) {
-                    $("#paint_img").width(cropboxDataWidth);
-                    $("#paint_img").height(cropboxDataWidth / (canvasDataWidth / canvasDataHeight));
-                } else {
-                    $("#paint_img").height(cropboxDataHeight);
-                    $("#paint_img").width(cropboxDataHeight * (canvasDataWidth / canvasDataHeight));
-                }
-                $('#wPaint').empty().remove();
-                $("#paint_modal_body")
-                    .append("<div id='wPaint' style='position:relative; width:640px; height:" + newHeight + "px; margin: 50px 0px 0px 0px'></div>");
-                $('#wPaint').wPaint({
-                    path: '/../Scripts/PresentationTool/wPaint/',
-                    menuOffsetLeft: -35,
-                    menuOffsetTop: -50,
-                    onShapeDown: createCallback('onShapeDown'),
-                    onShapeUp: createCallback('onShapeUp'),
-                    onShapeMove: createCallback('onShapeDMove')
-                });
-                function createCallback(cbName) {
-                    return function () {
-                        if (cbName === 'onShapeDMove' || cbName === 'onShapeUp') {
-                            var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                            var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
-                            var canvasData = $("#wPaint").wPaint("image");
-                            var serializeCanvasData = JSON.stringify(canvasData);
-                            gdo.net.app["Images"].server.receiveCanvasData(realInstanceId, serializeCanvasData);
-                        }
-                    }
-                }
-
-                $.fn.wPaint.extend({
-                    undo: function () {
-                        if (this.undoArray[this.undoCurrent - 1]) {
-                            this._setUndo(--this.undoCurrent);
-                        }
-                        this._undoToggleIcons();
-                        var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                        var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
-                        var canvasData = $("#wPaint").wPaint("image");
-                        var serializeCanvasData = JSON.stringify(canvasData);
-                        gdo.net.app["Images"].server.receiveCanvasData(realInstanceId, serializeCanvasData);
-                    },
-                    clear: function () {
-                        var instanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].appInstanceId;
-                        var realInstanceId = gdo.net.app["PresentationTool"].section[gdo.net.app["PresentationTool"].selectedSection].realInstanceId;
-                        var canvasData = $("#wPaint").wPaint("image");
-                        var serializeCanvasData = JSON.stringify(canvasData);
-                        gdo.net.app["Images"].server.receiveCanvasData(realInstanceId, serializeCanvasData);
-                    },
-                });
-                $(".wPaint-menu").width("auto").css({ "left": "0px" });
-                $(".wPaint-menu-select").css({ "overflow-y": "scroll" });
-            }
-        });
-
-    </script>
-
-    <script>
-        /** draw section table quickly instead of using iframe find() **/
-        var gdo = parent.gdo;
-        gdo.net.app["PresentationTool"].drawSectionTable = function () {
-            /// <summary>
-            /// Draws the section table.
-            /// </summary>
-            /// <returns></returns>
-            gdo.net.app["PresentationTool"].drawEmptySectionTable(gdo.net.cols, gdo.net.rows);
-            for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-                var node = gdo.net.app["PresentationTool"].node[i];
-                //if (!node.isValid)
-                  //continue;
-                $("#section_table_row_" + gdo.net.rows).css("height", 0);
-                var sectionId = node.sectionId;
-                if (sectionId == 0) {
-                    $("#section_table_row_" + node.row).css("height", "7vh").css('overflow', 'hidden');
-                    $("#section_table_row_" + node.row + "_col_" + node.col)
-                            .empty()
-                            .unbind()
-                            .css("vertical-align", "top")
-                            .append("<div id='section_table_node_" + node.id + "_i' style='text-align:center;background:#444;'> <font size='4px'><b>" + node.id + "</b></font></div>")
-                            .append("</br>")
-                            .append("<b>&nbsp;Col:</b> " + node.col + " | <b>Row:</b> " + node.row)
-                            //.css("height", (gdo.net.app["PresentationTool"].table_height / gdo.net.rows) + "")
-                            .css("width", (gdo.net.app["PresentationTool"].table_width / gdo.net.cols) + "%")
-                            .css("border", "1px solid #333")
-                            .css('overflow', 'hidden')
-                            .css("background", "#222")
-                            .css({ fontSize: gdo.net.app["PresentationTool"].section_font_size })
-                            .css('padding', 0)
-                            .css('background-size', "100%")
-                            .click(function () {
-                                var id = gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'));
-
-                                if (gdo.net.app["PresentationTool"].node[id].isSelected) {
-                                    gdo.net.app["PresentationTool"].node[id].isSelected = false;
-
-                                } else {
-                                    gdo.net.app["PresentationTool"].selectedSection = -1;
-                                    gdo.net.app["PresentationTool"].node[id].isSelected = true;
-
-                                }
-                                gdo.updateDisplayCanvas();
-                            });
-                } else if ((node.sectionCol == 0 && node.sectionRow == 0) && sectionId > 0) {
-                    $("#section_table_row_" + node.row + "_col_" + node.col)
-                        .empty()
-                        .unbind()
-                        .attr('colspan', gdo.net.app["PresentationTool"].section[sectionId].cols)
-                        .attr('rowspan', gdo.net.app["PresentationTool"].section[sectionId].rows)
-                        //.css("height", ((gdo.management.table_height / gdo.net.rows) * gdo.net.section[sectionId].rows) + "")
-                        .css("width", ((gdo.net.app["PresentationTool"].table_width / gdo.net.cols) * gdo.net.app["PresentationTool"].section[sectionId].cols) + "%")
-                        .css("border", "1px solid #2A9FD6")
-                        .css("background", "#087DB4")
-                        .css('padding', 0)
-                        //.css('overflow', 'hidden')
-                        .css("vertical-align", "top")
-                        .append("<div id='section_table_section_" + sectionId + "_i' style='text-align:center;background:#5A9FD6'> <font size='4px'><b> S" + sectionId + "</b></font></div>");
-
-                    if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId > 0 && gdo.net.app["PresentationTool"].section[sectionId].appName === "Images") {
-
-                        $("#section_table_row_" + node.row + "_col_" + node.col).droppable({
-                            drop: function (event, ui) {
-
-                                var droppableId = gdo.net.app["PresentationTool"].node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
-                                var temp = gdo.net.app["PresentationTool"].section[droppableId].src;
-                                gdo.net.app["PresentationTool"].section[droppableId].src = ui.draggable.attr('src');
-                                var draggableId = gdo.net.app["PresentationTool"].node[gdo.net.getNodeId(ui.draggable.parent().attr('col'), ui.draggable.parent().attr('row'))].sectionId;
-                                gdo.net.app["PresentationTool"].section[draggableId].src = temp;
-
-                                if (gdo.net.app["PresentationTool"].isPlaying === 0) {
-                                    if (draggableId != droppableId) {
-                                        gdo.net.app["PresentationTool"].server.swapSrc(gdo.controlId, draggableId, droppableId);
-                                    }
-                                } else {
-                                    if (draggableId != droppableId) {
-                                        //gdo.net.app["PresentationTool"].server.swapSrc(gdo.controlId, draggableId, droppableId);
-                                        var sections = [gdo.net.app["PresentationTool"].section[droppableId], gdo.net.app["PresentationTool"].section[draggableId]];
-                                        gdo.net.app["PresentationTool"].swapSrc(sections, 0);
-                                    }
-                                }
-                                gdo.updateDisplayCanvas();
-                            }
-                        });
-                    }
-
-                    if (gdo.net.app["PresentationTool"].section[sectionId].appName !== "Images") {
-                        $("#section_table_row_" + node.row + "_col_" + node.col).append("<div style='height:5px'></div>");
-                        if (gdo.net.app["PresentationTool"].section[sectionId].cols == 1 && gdo.net.app["PresentationTool"].section[sectionId].rows == 1) {
-                            $("#section_table_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[sectionId].col, gdo.net.app["PresentationTool"].section[sectionId].row) + "");
-                        } else {
-                            $("#section_table_row_" + node.row + "_col_" + node.col).append("&nbsp;<b>N</b>" + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[sectionId].col, gdo.net.app["PresentationTool"].section[sectionId].row + gdo.net.app["PresentationTool"].section[sectionId].rows - 1) + " to <b>N</b>" + gdo.net.getNodeId(gdo.net.app["PresentationTool"].section[sectionId].col + gdo.net.app["PresentationTool"].section[sectionId].cols - 1, gdo.net.app["PresentationTool"].section[sectionId].row) + "");
-                        }
-                    }
-
-                    if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId >= 0) {
-
-                        $("#section_table_section_" + sectionId + "_i")
-                            .empty()
-                            .append("<font size='4px'><b> S" + sectionId + ", I" + gdo.net.app["PresentationTool"].section[sectionId].appInstanceId + "</b></font>");
-
-                        if (gdo.net.app["PresentationTool"].section[sectionId].appName === "Images") {
-                            $("#section_table_row_" + node.row + "_col_" + node.col)
-                                .append("<img id = 'section_table_row_" + node.row + "_col_" + node.col + "_img' style='width:100%; height:auto' src='" + gdo.net.app["PresentationTool"].section[sectionId].src + "'/>")
-                                //.css('overflow', 'hidden')
-                                .css("background", "#559100");
-                            var width = $("#section_table_row_" + node.row + "_col_" + node.col + "_img").width();
-                            $("#section_table_row_" + node.row + "_col_" + node.col + "_img").height(width / (gdo.net.app["PresentationTool"].section[sectionId].width / gdo.net.app["PresentationTool"].section[sectionId].height));
-                            // draggable
-                            $("#section_table_row_" + node.row + "_col_" + node.col + "_img")
-                                .unbind()
-                                .draggable({
-                                    containment: '#section_table',
-                                    scroll: false,
-                                    revert: true,
-                                    stack: "#section_table_row_" + node.row + "_col_" + node.col + "_img"
-                                });
-
-
-                        } else if (gdo.net.app["PresentationTool"].section[sectionId].appName === "Youtube") {
-                            $("#section_table_row_" + node.row + "_col_" + node.col)
-                                .append("</br>")
-                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.app["PresentationTool"].section[sectionId].appName + "</div>")
-                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;Src:</b> " + gdo.net.app["PresentationTool"].section[sectionId].src + "</div>")
-                                //.css('overflow', 'hidden')
-                                .css("background", "#559100");
-                        } else {
-                            $("#section_table_row_" + node.row + "_col_" + node.col)
-                                .append("</br>")
-                                .append("<div id='section_table_section_" + sectionId + "_a'> <b>&nbsp;App:</b> " + gdo.net.app["PresentationTool"].section[sectionId].appName + "</div>")
-                                //.css('overflow', 'hidden')
-                                .css("background", "#559100");
-                        }
-                        $("#section_table_section_" + sectionId + "_i").css("background", "#77B300");
-                        $("#section_table_row_" + node.row + "_col_" + node.col).css("border", "1px solid #77B300");
-                    }
-                    $("#section_table_row_" + node.row + "_col_" + node.col)
-                       .css({ fontSize: gdo.net.app["PresentationTool"].section_font_size })
-                       .click(function () {
-                           var id = gdo.net.app["PresentationTool"].node[gdo.net.getNodeId($(this).attr('col'), $(this).attr('row'))].sectionId;
-                           if (gdo.net.app["PresentationTool"].section[id] === gdo.controlId) return;
-                           if (gdo.net.app["PresentationTool"].selectedSection == id) {
-                               gdo.net.app["PresentationTool"].selectedSection = -1;
-                           } else {
-                               for (var i = 1; i <= gdo.net.cols * gdo.net.rows; i++) {
-                                   gdo.net.app["PresentationTool"].node[i].isSelected = false;
-                               }
-                               gdo.net.app["PresentationTool"].selectedSection = id;
-                               //gdo.management.selectedInstance = gdo.net.section[gdo.management.selectedSection].appInstanceId;
-                           }
-                           gdo.updateDisplayCanvas();
-                       });
-
-                    if (gdo.net.app["PresentationTool"].selectedSection == sectionId) {
-                        if (gdo.net.app["PresentationTool"].section[sectionId] === gdo.controlId) return;
-                        if (gdo.net.app["PresentationTool"].section[sectionId].appInstanceId >= 0) {
-                            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#77B300").css("border", "1px solid #99D522");
-                            $("#section_table_section_" + sectionId + "_i").css("background", "#99D522");
-                        } else {
-                            $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#2A9FD6").css("border", "1px solid #4CBFF8");
-                            $("#section_table_section_" + sectionId + "_i").css("background", "#4CBFF8");
-                        }
-                    }
-                } else if ((node.sectionCol != 0 || node.sectionRow != 0) && sectionId > 0) {
-                    $("#section_table_row_" + node.row + "_col_" + node.col).hide();
-                }
-
-                if (node.isSelected) {
-                    $("#section_table_row_" + node.row + "_col_" + node.col).css("background-color", "#333").css("border", "1px solid #555");
-                    $("#section_table_node_" + node.id + "_i").css("background-color", "#555");
-                }
-            }
-        }
     </script>
 </body>
 </html>

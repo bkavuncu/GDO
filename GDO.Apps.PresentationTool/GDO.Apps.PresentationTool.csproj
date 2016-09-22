@@ -153,6 +153,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.ui.sectionTable.js" />
+    <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.paint.js" />
+    <Content Include="Scripts\PresentationTool\gdo.apps.presentationTool.ImageControl.js" />
     <None Include="Web\PresentationTool\MobileControl.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -170,6 +173,7 @@
     <Content Include="Scripts\PresentationTool\cropper.min.js" />
     <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.js" />
     <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.ui.js" />
+    <Content Include="Scripts\PresentationTool\gdo.apps.PresentationTool.voice.js" />
     <Content Include="Scripts\PresentationTool\jquery.ui.touch-punch.min.js" />
     <Content Include="Scripts\PresentationTool\mo.min.js" />
     <Content Include="Scripts\PresentationTool\wPaint\plugins\file\img\icons-menu-main-file.png" />

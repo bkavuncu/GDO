@@ -5,7 +5,7 @@
     gdo.net.app["PresentationTool"].header_font_size = 17;
     gdo.net.app["PresentationTool"].table_height = 210;
     gdo.net.app["PresentationTool"].info_height = 35;
-    gdo.net.app["PresentationTool"].table_width = 100;
+    gdo.net.app["PresentationTool"].table_width = 130;
     gdo.net.app["PresentationTool"].button_height = 61;
     gdo.net.app["PresentationTool"].button_cols = 9.5;
     gdo.net.app["PresentationTool"].header_cols = 11;
@@ -366,7 +366,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
     //Deploy Image
     $("iframe").contents().find(".deploy_app_button_div")
         .empty()
-        .append("<button id='deploy-app-button' type='button' class='deploy_app_button btn btn-default disabled btn-lg btn-block deploy_app_button'><i class='fa  fa-cloud-upload fa-fw'></i>&nbsp;Deploy App</button>")
+        .append("<button id='deploy-app-button' type='button' class='deploy_app_button btn btn-default disabled btn-lg btn-block deploy_app_button'><i class='fa  fa-cloud-upload fa-fw'></i>&nbsp;Deploy Resource</button>")
         .css("height", "100%")
         .css("width", (gdo.net.app["PresentationTool"].table_width / gdo.net.app["PresentationTool"].button_cols) + "%")
         .css('padding', 1)
@@ -413,7 +413,7 @@ gdo.net.app["PresentationTool"].drawButtonTable = function () {
     // close app
     $("iframe").contents().find(".close_app_button_div")
         .empty()
-        .append("<button type='button' class='close_app_button btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Close App</button>")
+        .append("<button type='button' class='close_app_button btn btn-default disabled btn-lg btn-block'><i class='fa  fa-times-circle fa-fw'></i>&nbsp;Undeploy Resource</button>")
         .css("height", "100%")
         .css("width", (gdo.net.app["PresentationTool"].table_width / gdo.net.app["PresentationTool"].button_cols) + "%")
         .css('padding', 1)

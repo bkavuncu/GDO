@@ -211,28 +211,6 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-
-        public void updateImagesWidth(int instanceId, int[]width)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                try
-                {
-                    PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
-                    pa.ImagesWidth.Clear();
-                    for (int i = 0; i < width.Length; i++)
-                    {
-                        pa.ImagesWidth.Add(width[i]);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("failed to create section ", e);
-                    Clients.Caller.setMessage(e.GetType().ToString() + e);
-                }
-
-            }
-        }
         public void requestSectionList(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -250,7 +228,6 @@ namespace GDO.Apps.PresentationTool
 
             }
         }
-
 
         public void RequestAllSectionsInfo(int instanceId)
         {
@@ -377,7 +354,6 @@ namespace GDO.Apps.PresentationTool
             }
         }
         
-
         public void RequestNextSlide(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])
@@ -464,7 +440,6 @@ namespace GDO.Apps.PresentationTool
                 }
             }
         }
-
 
         public void changeSection(int instanceId, int id, string src, string appName)
         {
@@ -742,7 +717,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        private bool BroadcastSectionUpdate(int instanceId, int sectionId)
+        public bool BroadcastSectionUpdate(int instanceId, int sectionId)
         {
             try
             {
@@ -766,7 +741,7 @@ namespace GDO.Apps.PresentationTool
             }
         }
 
-        private string GetSectionUpdate(int instanceId, int sectionId, int slide)
+        public string GetSectionUpdate(int instanceId, int sectionId, int slide)
         {
             try
             {
