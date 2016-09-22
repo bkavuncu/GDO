@@ -82,10 +82,13 @@ $(function () {
     }
 
 
-    $.connection.graphAppHub.client.setFields = function (options) {
+    $.connection.graphAppHub.client.setFields = function (options, instanceId) {
+        // !!If you add and gdo.controlId check here, it will break the Twitter applications!!
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Graph', 1, 'Set fields ');
 
+            gdo.net.instance[instanceId].graphFields = options;
+            gdo.net.instance[instanceId].graphFieldsLoaded = true;
             //add fields in loaded graph to the appropriate droplists
             var elem1 = $("iframe").contents().find("#select_label");
             var elem2 = $("iframe").contents().find("#select_SearchFields");
@@ -1383,7 +1386,9 @@ gdo.net.app["Graph"].initClient = function () {
 
 gdo.net.app["Graph"].initControl = function () {
     gdo.controlId = parseInt(getUrlVar("controlId"));
+    gdo.net.instance[gdo.clientId].graphFieldsLoaded = false;
     gdo.net.app["Graph"].server.requestRendering(gdo.controlId);
+    gdo.net.app["Graph"].server.getFields(gdo.controlId);
     gdo.consoleOut('.GRAPHRENDERER', 1, 'Initializing Graph Renderer App Control at Instance ' + gdo.controlId);
 }
 
