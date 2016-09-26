@@ -52,7 +52,7 @@ namespace GDO.Apps.Images
                     {
                         ia.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
                     }
-                    Clients.Caller.setDigitText(ia.ImageNameDigit);
+                    Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     String path2 = basePath + ia.ImageNameDigit + "\\origin.png";
                     Directory.CreateDirectory(basePath + ia.ImageNameDigit);
                     Image img1 = Image.FromFile(path1);
@@ -239,7 +239,7 @@ namespace GDO.Apps.Images
             {
                 Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
                 //Clients.Caller.receiveImageName(imageName, imageNameDigit);
-                Clients.Caller.reloadIFrame();
+                Clients.Caller.reloadIFrame(instanceId);
             }
             catch (Exception e)
             {
@@ -292,7 +292,7 @@ namespace GDO.Apps.Images
                             };
                         }
                     }
-                    Clients.Caller.setDigitText(ia.ImageNameDigit);
+                    Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     SendImageNames(instanceId, ia.ImageName, ia.ImageNameDigit);
                     Clients.Caller.setMessage("Initialized image Successfully!");
                 }
@@ -313,10 +313,10 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Requesting image name...");
                     if (((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
                     {
-                        Clients.Caller.receiveImageName(
+                        Clients.Caller.receiveImageName(instanceId,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
-                        Clients.Caller.setDigitText(
+                        Clients.Caller.setDigitText(instanceId,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                         Clients.Caller.setMessage("Request image name Successfully!");
                     }
@@ -372,80 +372,6 @@ namespace GDO.Apps.Images
             }
         }
         */
-
-        public void ProcessAndLaunch(int instanceId, string imageName)
-        {
-            ProcessImage(instanceId, imageName);
-            AutoCenter(instanceId);
-        }
-
-        public void AutoCenter(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                ThumbNailImageInfo ii = new ThumbNailImageInfo();
-
-                double height = ia.ImageNaturalHeight;
-                double width = ia.ImageNaturalWidth;
-                Debug.WriteLine("Height: " + height + " width: " + width);
-                double sectionWidth = ia.Section.Width;
-                double sectionHeight = ia.Section.Height;
-
-                double sWidth = sectionWidth/width;
-                double sHeight = sectionHeight/height;
-
-                double left;
-                double top;
-                double imgWidth;
-                double imgHeight;
-                if (sWidth > sHeight)
-                {
-                    imgWidth = sHeight*width;
-                    imgHeight = sHeight*height;
-                    top = 0;
-                    left = (sectionWidth - imgWidth)/2;
-                }
-                else
-                {
-                    imgWidth = sWidth*width;
-                    imgHeight = sWidth*height;
-                    top = (sectionHeight - imgHeight)/2;
-                    ;
-                    left = 0;
-                }
-
-                ii.imageData = new ImageDataInfo()
-                {
-                    height = imgHeight,
-                    width = imgWidth,
-                    naturalHeight = imgHeight,
-                    naturalWidth = imgWidth,
-                    aspectRatio = ia.Section.Width/(0.0 + ia.Section.Height),
-                    left = left,
-                    top = top,
-                    rotate = 0
-                };
-
-                ii.canvasData = new CanvasDataInfo()
-                {
-                    height = imgHeight,
-                    width = imgWidth,
-                    left = left,
-                    top = top
-                };
-
-                ii.cropboxData = new CropboxDataInfo()
-                {
-                    height = ia.Section.Height,
-                    width = ia.Section.Width,
-                    left = 0,
-                    top = 0
-                };
-
-                SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ii));
-            }
-        }
 
         public void SetThumbNailImageInfo(int instanceId, string imageInfo)
         {
@@ -625,7 +551,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting tiles information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
+                    Clients.Caller.setTiles(instanceId, ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
                         ia.Section.Height/ia.Section.Rows,
                         ia.BlockRegion[col, row].tiles != null
                             ? JsonConvert.SerializeObject(ia.BlockRegion[col, row].tiles)
@@ -648,7 +574,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setThumbNailImageInfo(ia.ThumbNailImage != null
+                    Clients.Caller.setThumbNailImageInfo(instanceId, ia.ThumbNailImage != null
                         ? JsonConvert.SerializeObject(ia.ThumbNailImage)
                         : null);
 
@@ -670,7 +596,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting section information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.getSectionSize(ia.Section.Width, ia.Section.Height);
+                    Clients.Caller.getSectionSize(instanceId, ia.Section.Width, ia.Section.Height);
                     Clients.Caller.setMessage("Requested section information Success!");
                 }
                 catch (Exception e)
@@ -745,6 +671,7 @@ namespace GDO.Apps.Images
                     ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
                     string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
                     string[] database = { };
+                    // if file is processed
                     if (File.Exists(database_path))
                     {
                         database = File.ReadAllLines(database_path);
@@ -753,13 +680,13 @@ namespace GDO.Apps.Images
                             if (s.Split('|')[0].Equals(imageName))
                             {
                                 FindDigits(instanceId, s.Split('|')[1]);
-                                DisplayImageWithMode(instanceId, displayMode);
+                                SetMode(instanceId, displayMode);
                                 return;
                             }
                         }
                     }
                     ProcessImage(instanceId, imageName);
-                    DisplayImageWithMode(instanceId, displayMode);
+                    SetMode(instanceId, displayMode);
                 }
                 catch (Exception e)
                 {
@@ -770,7 +697,7 @@ namespace GDO.Apps.Images
         }
 
         // Set display Mode
-        public void DisplayImageWithMode(int instanceId, int displayMode)
+        public void SetMode(int instanceId, int displayMode)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -789,7 +716,7 @@ namespace GDO.Apps.Images
                     // Cropper box
                     double cropBoxWidth = canvasWidth;
                     double cropBoxHeight = canvasHeight;
-                    Clients.Caller.setMessage("Setting ddd2d mode " + cropBoxHeight + "," + cropBoxWidth + ",");
+
                     if (canvasHeight * aspectRatio > canvasWidth)
                     {
                         cropBoxHeight = cropBoxWidth / aspectRatio;
@@ -806,6 +733,8 @@ namespace GDO.Apps.Images
                     double cropBoxTop = 0 + (canvasHeight - cropBoxHeight) / 2;
 
                     ThumbNailImageInfo ti = new ThumbNailImageInfo();
+
+                    // Cropbox Data
                     ti.cropboxData = new CropboxDataInfo()
                     {
                         height = cropBoxHeight,
@@ -883,6 +812,7 @@ namespace GDO.Apps.Images
                         }
                     }
 
+                    // Image data
                     ti.imageData = new ImageDataInfo()
                     {
                         height = imgHeight,
@@ -895,6 +825,7 @@ namespace GDO.Apps.Images
                         rotate = 0
                     };
 
+                    // CanvasData
                     ti.canvasData = new CanvasDataInfo()
                     {
                         height = imgHeight,
