@@ -42,7 +42,7 @@ namespace GDO.Apps.Twitter.Core
         public string StartTime { get; set; }
 
         [DataMember(Name = "end_time")]
-        public DateTime EndTime { get; set; }
+        public string EndTime { get; set; }
 
         [DataMember(Name = "uri_analytics")]
         public string UriAnalytics { get; set; }
