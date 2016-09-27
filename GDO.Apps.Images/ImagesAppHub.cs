@@ -10,7 +10,6 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
-
 using Newtonsoft.Json;
 
 //[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Scripts.imagetiles.js", "application/x-javascript")]
@@ -22,12 +21,14 @@ namespace GDO.Apps.Images
     public class ImagesAppHub : Hub, IBaseAppHub
     {
         public string Name { get; set; } = "Images";
-        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
+        public int P2PMode { get; set; } = (int) Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new ImagesApp().GetType();
+
         public void JoinGroup(string groupId)
         {
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
+
         public void ExitGroup(string groupId)
         {
             Groups.Remove(Context.ConnectionId, "" + groupId);
@@ -40,7 +41,7 @@ namespace GDO.Apps.Images
                 try
                 {
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    
+
                     ia.ImageName = imageName;
 
                     Clients.Caller.setMessage("Generating random id for the image...");
@@ -51,7 +52,7 @@ namespace GDO.Apps.Images
                     {
                         ia.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
                     }
-                    Clients.Caller.setDigitText(ia.ImageNameDigit);
+                    Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     String path2 = basePath + ia.ImageNameDigit + "\\origin.png";
                     Directory.CreateDirectory(basePath + ia.ImageNameDigit);
                     Image img1 = Image.FromFile(path1);
@@ -61,26 +62,30 @@ namespace GDO.Apps.Images
 
                     // log to index file  
                     String indexFile = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
-                    File.AppendAllLines(indexFile, new[] { ia.ImageName + "|" + ia.ImageNameDigit });
+                    File.AppendAllLines(indexFile, new[] {ia.ImageName + "|" + ia.ImageNameDigit});
 
 
                     Clients.Caller.setMessage("Loading the image and creating thumbnail...");
                     //create origin
                     Image originImage = Image.FromFile(path2);
                     Image image;
-                    if (originImage.Height > originImage.Width) {
+                    if (originImage.Height > originImage.Width)
+                    {
                         originImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
                         image = originImage;
-                    } else {
+                    }
+                    else
+                    {
                         image = originImage;
                     }
-                    
+
                     //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
                     //File.Delete(path1);
 
                     //create thumbnail
                     int thumbHeight = 500;
-                    Image thumb = image.GetThumbnailImage(thumbHeight * image.Width / image.Height, thumbHeight, () => false, IntPtr.Zero);
+                    Image thumb = image.GetThumbnailImage(thumbHeight*image.Width/image.Height, thumbHeight, () => false,
+                        IntPtr.Zero);
                     thumb.Save(basePath + ia.ImageNameDigit + "\\thumb.png", ImageFormat.Png);
                     thumb.Dispose();
 
@@ -88,67 +93,76 @@ namespace GDO.Apps.Images
                     ia.ImageNaturalHeight = image.Height;
 
                     Clients.Caller.setMessage("Resizing the image to FIT/FILL the screen...");
-                    double scaleWidth = (ia.Section.Width + 0.000) / image.Width;
-                    double scaleHeight = (ia.Section.Height + 0.000) / image.Height;
+                    double scaleWidth = (ia.Section.Width + 0.000)/image.Width;
+                    double scaleHeight = (ia.Section.Height + 0.000)/image.Height;
 
-                    int totalTilesNumCols = ia.Section.Cols * ia.TilesNumInEachBlockCol; // default 3*3=9 tiles in each block
-                    int totalTilesNumRows = ia.Section.Rows * ia.TilesNumInEachBlockRow; 
+                    int totalTilesNumCols = ia.Section.Cols*ia.TilesNumInEachBlockCol;
+                        // default 3*3=9 tiles in each block
+                    int totalTilesNumRows = ia.Section.Rows*ia.TilesNumInEachBlockRow;
                     if (scaleWidth > scaleHeight)
                     {
-                        ia.TileWidth = (image.Width - 1) / totalTilesNumCols + 1; // ceiling
-                        ia.TileHeight = (ia.TileWidth * (ia.Section.Height / totalTilesNumRows) - 1) / (ia.Section.Width / totalTilesNumCols) + 1;
+                        ia.TileWidth = (image.Width - 1)/totalTilesNumCols + 1; // ceiling
+                        ia.TileHeight = (ia.TileWidth*(ia.Section.Height/totalTilesNumRows) - 1)/
+                                        (ia.Section.Width/totalTilesNumCols) + 1;
                         ia.TileCols = totalTilesNumCols;
-                        ia.TileRows = Math.Max(totalTilesNumRows, (image.Height - 1) / ia.TileHeight + 1); // ceiling
+                        ia.TileRows = Math.Max(totalTilesNumRows, (image.Height - 1)/ia.TileHeight + 1); // ceiling
                     }
                     else
                     {
-                        ia.TileHeight = (image.Height - 1) / totalTilesNumRows + 1; // ceiling
-                        ia.TileWidth = (ia.TileHeight * (ia.Section.Width / totalTilesNumCols) - 1) / (ia.Section.Height / totalTilesNumRows) + 1; // ceiling and keep ratio
-                        ia.TileCols = Math.Max(totalTilesNumCols, (image.Width - 1) / ia.TileWidth + 1); // ceiling
+                        ia.TileHeight = (image.Height - 1)/totalTilesNumRows + 1; // ceiling
+                        ia.TileWidth = (ia.TileHeight*(ia.Section.Width/totalTilesNumCols) - 1)/
+                                       (ia.Section.Height/totalTilesNumRows) + 1; // ceiling and keep ratio
+                        ia.TileCols = Math.Max(totalTilesNumCols, (image.Width - 1)/ia.TileWidth + 1); // ceiling
                         ia.TileRows = totalTilesNumRows;
                     }
                     int sum = ia.TileCols*ia.TileRows;
                     // if too many tiles
-                    if (sum > 1000) {
-                        totalTilesNumCols = Math.Max(ia.Section.Cols * ia.TilesNumInEachBlockCol / (sum/1000 + 1), 1);
-                        totalTilesNumRows = Math.Max(ia.Section.Rows * ia.TilesNumInEachBlockRow / (sum/1000 + 1), 1); 
+                    if (sum > 1000)
+                    {
+                        totalTilesNumCols = Math.Max(ia.Section.Cols*ia.TilesNumInEachBlockCol/(sum/1000 + 1), 1);
+                        totalTilesNumRows = Math.Max(ia.Section.Rows*ia.TilesNumInEachBlockRow/(sum/1000 + 1), 1);
                         if (scaleWidth > scaleHeight)
                         {
-                            ia.TileWidth = (image.Width - 1) / totalTilesNumCols + 1; // ceiling
-                            ia.TileHeight = (ia.TileWidth * (ia.Section.Height / totalTilesNumRows) - 1) / (ia.Section.Width / totalTilesNumCols) + 1;
+                            ia.TileWidth = (image.Width - 1)/totalTilesNumCols + 1; // ceiling
+                            ia.TileHeight = (ia.TileWidth*(ia.Section.Height/totalTilesNumRows) - 1)/
+                                            (ia.Section.Width/totalTilesNumCols) + 1;
                             ia.TileCols = totalTilesNumCols;
-                            ia.TileRows = Math.Max(totalTilesNumRows, (image.Height - 1) / ia.TileHeight + 1); // ceiling
+                            ia.TileRows = Math.Max(totalTilesNumRows, (image.Height - 1)/ia.TileHeight + 1); // ceiling
                         }
                         else
                         {
-                            ia.TileHeight = (image.Height - 1) / totalTilesNumRows + 1; // ceiling
-                            ia.TileWidth = (ia.TileHeight * (ia.Section.Width / totalTilesNumCols) - 1) / (ia.Section.Height / totalTilesNumRows) + 1; // ceiling and keep ratio
-                            ia.TileCols = Math.Max(totalTilesNumCols, (image.Width - 1) / ia.TileWidth + 1); // ceiling
+                            ia.TileHeight = (image.Height - 1)/totalTilesNumRows + 1; // ceiling
+                            ia.TileWidth = (ia.TileHeight*(ia.Section.Width/totalTilesNumCols) - 1)/
+                                           (ia.Section.Height/totalTilesNumRows) + 1; // ceiling and keep ratio
+                            ia.TileCols = Math.Max(totalTilesNumCols, (image.Width - 1)/ia.TileWidth + 1); // ceiling
                             ia.TileRows = totalTilesNumRows;
                         }
                         sum = ia.TileCols*ia.TileRows;
                     }
-                    
+
                     Clients.Caller.setMessage("Cropping the image...");
                     ia.Tiles = new TilesInfo[ia.TileCols, ia.TileRows];
-                    for (int col = 0; col < ia.TileCols; col++) {
+                    for (int col = 0; col < ia.TileCols; col++)
+                    {
                         // so we are still getting threading issues here, Server side image processing is painful 
                         // create an image object for each thread
                         //    var images = Enumerable.Range(1, ia.TileCols).Select(i => (Image) image.Clone()).ToArray();
                         //      try {
                         //    Parallel.For(0, ia.TileCols, col => {
 
-                        for (int row = 0; row < ia.TileRows; row++) {
+                        for (int row = 0; row < ia.TileRows; row++)
+                        {
                             int tileID = col*ia.TileRows + row;
                             Clients.Caller.setMessage("Cropping the image " + tileID + "/" + sum);
 
                             int success = 0;
 
-                            while (success > -3 && success != 1) {
+                            while (success > -3 && success != 1)
+                            {
 // repeat a couple of times to avoid issues with the GDI+ instability within System.Drawing
 
-                                try {
-
+                                try
+                                {
                                     ia.Tiles[col, row] = new TilesInfo();
                                     Image curTile = new Bitmap(ia.TileWidth, ia.TileHeight);
                                     Graphics graphics = Graphics.FromImage(curTile);
@@ -168,17 +182,16 @@ namespace GDO.Apps.Images
                                     curTile.Save(path2, ImageFormat.Png);
 
                                     success = 1;
-
                                 }
-                                catch (Exception e) {
+                                catch (Exception e)
+                                {
                                     Clients.Caller.setMessage("retrying" + e.Message + e.StackTrace);
                                     success--;
                                 }
-
-
                             }
 
-                            if (success != 1) {
+                            if (success != 1)
+                            {
                                 Clients.Caller.setMessage("FAILED after 3 retires :-/ ");
                             }
                         }
@@ -195,9 +208,10 @@ namespace GDO.Apps.Images
                     originImage.Dispose();
                     image.Dispose();
                     ia.ThumbNailImage = null;
-                    using (StreamWriter file = new StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt")) 
+                    using (StreamWriter file = new StreamWriter(basePath + ia.ImageNameDigit + "\\config.txt"))
                     {
-                        file.WriteLine("//ImageName ImageNameDigit ImageNaturalWidth ImageNaturalHeight TileWidth TileHeight TileCols TileRows");
+                        file.WriteLine(
+                            "//ImageName ImageNameDigit ImageNaturalWidth ImageNaturalHeight TileWidth TileHeight TileCols TileRows");
                         file.WriteLine(ia.ImageName);
                         file.WriteLine(ia.ImageNameDigit);
                         file.WriteLine(ia.ImageNaturalWidth);
@@ -225,7 +239,7 @@ namespace GDO.Apps.Images
             {
                 Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
                 //Clients.Caller.receiveImageName(imageName, imageNameDigit);
-                Clients.Caller.reloadIFrame();
+                Clients.Caller.reloadIFrame(instanceId);
             }
             catch (Exception e)
             {
@@ -234,7 +248,7 @@ namespace GDO.Apps.Images
             }
         }
 
-        public void FindDigits(int instanceId, string digits) 
+        public void FindDigits(int instanceId, string digits)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -242,15 +256,17 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Finding image digits " + digits);
                     String basePath = HttpContext.Current.Server.MapPath("~/Web/Images/images/");
-                    if (digits == "" || !Directory.Exists(basePath + digits)) {
+                    if (digits == "" || !Directory.Exists(basePath + digits))
+                    {
                         Clients.Caller.setMessage("Digits not found! Please upload a new image!");
-                        return; 
+                        return;
                     }
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     ia.ImageNameDigit = digits;
                     Clients.Caller.setMessage("Digits found! Initializing image configuration...");
                     string[] lines = File.ReadAllLines(basePath + ia.ImageNameDigit + "\\config.txt");
-                    if (lines.Length != 9) {
+                    if (lines.Length != 9)
+                    {
                         Clients.Caller.setMessage("Configuration file damaged! Please upload a new image!");
                         return;
                     }
@@ -267,7 +283,8 @@ namespace GDO.Apps.Images
                     {
                         for (int j = 0; j < ia.TileRows; j++)
                         {
-                            ia.Tiles[i, j] = new TilesInfo {
+                            ia.Tiles[i, j] = new TilesInfo
+                            {
                                 left = i*ia.TileWidth,
                                 top = j*ia.TileHeight,
                                 cols = i,
@@ -275,7 +292,7 @@ namespace GDO.Apps.Images
                             };
                         }
                     }
-                    Clients.Caller.setDigitText(ia.ImageNameDigit);
+                    Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     SendImageNames(instanceId, ia.ImageName, ia.ImageNameDigit);
                     Clients.Caller.setMessage("Initialized image Successfully!");
                 }
@@ -296,10 +313,11 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Requesting image name...");
                     if (((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
                     {
-                        Clients.Caller.receiveImageName(
+                        Clients.Caller.receiveImageName(instanceId,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
-                        Clients.Caller.setDigitText(((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
+                        Clients.Caller.setDigitText(instanceId,
+                            ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                         Clients.Caller.setMessage("Request image name Successfully!");
                     }
                     else
@@ -440,109 +458,144 @@ namespace GDO.Apps.Images
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
                     ia.ThumbNailImage = JsonConvert.DeserializeObject<ThumbNailImageInfo>(imageInfo);
                     ia.Rotate = Convert.ToInt32(ia.ThumbNailImage.imageData.rotate);
-                    double ratio = ia.ImageNaturalWidth / (ia.ThumbNailImage.imageData.width + 0.0);
+                    double ratio = ia.ImageNaturalWidth/(ia.ThumbNailImage.imageData.width + 0.0);
                     double tl, tt, tw, th;
                     // compute display region info
-                    if (ia.Rotate == 0) {
+                    if (ia.Rotate == 0)
+                    {
                         tl = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
                         tt = ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.canvasData.top;
                         tw = ia.ThumbNailImage.cropboxData.width;
                         th = ia.ThumbNailImage.cropboxData.height;
-                    } else if (ia.Rotate == 90) {
+                    }
+                    else if (ia.Rotate == 90)
+                    {
                         tl = ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.canvasData.top;
                         tt = ia.ThumbNailImage.canvasData.left + ia.ThumbNailImage.canvasData.width -
                              ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.cropboxData.width;
                         tw = ia.ThumbNailImage.cropboxData.height;
                         th = ia.ThumbNailImage.cropboxData.width;
-                    } else if (ia.Rotate == 180) {
+                    }
+                    else if (ia.Rotate == 180)
+                    {
                         tl = ia.ThumbNailImage.canvasData.left + ia.ThumbNailImage.canvasData.width -
                              ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.cropboxData.width;
                         tt = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
                              ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
                         tw = ia.ThumbNailImage.cropboxData.width;
                         th = ia.ThumbNailImage.cropboxData.height;
-                    } else { // ia.Rotate == 270
+                    }
+                    else
+                    {
+                        // ia.Rotate == 270
                         tl = ia.ThumbNailImage.canvasData.top + ia.ThumbNailImage.canvasData.height -
                              ia.ThumbNailImage.cropboxData.top - ia.ThumbNailImage.cropboxData.height;
                         tt = ia.ThumbNailImage.cropboxData.left - ia.ThumbNailImage.canvasData.left;
                         tw = ia.ThumbNailImage.cropboxData.height;
                         th = ia.ThumbNailImage.cropboxData.width;
                     }
-                    ia.DisplayRegion.left = Convert.ToInt32(Math.Floor(ratio * tl));
-                    ia.DisplayRegion.top = Convert.ToInt32(Math.Floor(ratio * tt));
-                    ia.DisplayRegion.width = Convert.ToInt32(Math.Ceiling(ratio * tw));
-                    ia.DisplayRegion.height = Convert.ToInt32(Math.Ceiling(ratio * th));
+                    ia.DisplayRegion.left = Convert.ToInt32(Math.Floor(ratio*tl));
+                    ia.DisplayRegion.top = Convert.ToInt32(Math.Floor(ratio*tt));
+                    ia.DisplayRegion.width = Convert.ToInt32(Math.Ceiling(ratio*tw));
+                    ia.DisplayRegion.height = Convert.ToInt32(Math.Ceiling(ratio*th));
 
                     // compute each screen block and related tiles info
                     int blockImageWidth, blockImageHeight;
                     double displayRatio;
-                    if (ia.Rotate == 0 || ia.Rotate == 180) {
-                        blockImageWidth = (ia.DisplayRegion.width - 1) / ia.Section.Cols + 1; //ceiling
-                        blockImageHeight = (ia.DisplayRegion.height - 1) / ia.Section.Rows + 1; //ceiling
-                        displayRatio = ia.Section.Height / (ia.DisplayRegion.height + 0.0);
-                    } else {  // (ia.Rotate == 90 || ia.Rotate == 270) 
-                        blockImageWidth = (ia.DisplayRegion.width - 1) / ia.Section.Rows + 1; //ceiling
-                        blockImageHeight = (ia.DisplayRegion.height -1 )/ ia.Section.Cols + 1; //ceiling
-                        displayRatio = ia.Section.Height / (ia.DisplayRegion.width + 0.0);
+                    if (ia.Rotate == 0 || ia.Rotate == 180)
+                    {
+                        blockImageWidth = (ia.DisplayRegion.width - 1)/ia.Section.Cols + 1; //ceiling
+                        blockImageHeight = (ia.DisplayRegion.height - 1)/ia.Section.Rows + 1; //ceiling
+                        displayRatio = ia.Section.Height/(ia.DisplayRegion.height + 0.0);
+                    }
+                    else
+                    {
+                        // (ia.Rotate == 90 || ia.Rotate == 270) 
+                        blockImageWidth = (ia.DisplayRegion.width - 1)/ia.Section.Rows + 1; //ceiling
+                        blockImageHeight = (ia.DisplayRegion.height - 1)/ia.Section.Cols + 1; //ceiling
+                        displayRatio = ia.Section.Height/(ia.DisplayRegion.width + 0.0);
                     }
 
-                    for (int i = 0 ; i < ia.Section.Cols ; i++) {
-                        for (int j = 0 ; j < ia.Section.Rows ; j++) {
+                    for (int i = 0; i < ia.Section.Cols; i++)
+                    {
+                        for (int j = 0; j < ia.Section.Rows; j++)
+                        {
                             int di, dj;
-                            if (ia.Rotate == 0) {
-                                di = i; 
+                            if (ia.Rotate == 0)
+                            {
+                                di = i;
                                 dj = j;
-                            } else if (ia.Rotate == 90) {
-                                di = j; 
+                            }
+                            else if (ia.Rotate == 90)
+                            {
+                                di = j;
                                 dj = ia.Section.Cols - 1 - i;
-                            } else if (ia.Rotate == 180) {
-                                di = ia.Section.Cols - 1 - i; 
+                            }
+                            else if (ia.Rotate == 180)
+                            {
+                                di = ia.Section.Cols - 1 - i;
                                 dj = ia.Section.Rows - 1 - j;
-                            } else { //if (ia.Rotate == 270)
-                                di = ia.Section.Rows - 1 - j; 
+                            }
+                            else
+                            {
+                                //if (ia.Rotate == 270)
+                                di = ia.Section.Rows - 1 - j;
                                 dj = i;
                             }
-                            ia.BlockRegion[i, j].left = di * blockImageWidth + ia.DisplayRegion.left;
-                            ia.BlockRegion[i, j].top = dj * blockImageHeight + ia.DisplayRegion.top;
+                            ia.BlockRegion[i, j].left = di*blockImageWidth + ia.DisplayRegion.left;
+                            ia.BlockRegion[i, j].top = dj*blockImageHeight + ia.DisplayRegion.top;
                             ia.BlockRegion[i, j].width = blockImageWidth;
                             ia.BlockRegion[i, j].height = blockImageHeight;
-                            int tileLeftTopCol = Math.Max(0, ia.BlockRegion[i, j].left / ia.TileWidth - 1);
-                            int tileLeftTopRow = Math.Max(0, ia.BlockRegion[i, j].top / ia.TileHeight - 1);
+                            int tileLeftTopCol = Math.Max(0, ia.BlockRegion[i, j].left/ia.TileWidth - 1);
+                            int tileLeftTopRow = Math.Max(0, ia.BlockRegion[i, j].top/ia.TileHeight - 1);
                             int tileRightBottomCol = Math.Min(ia.TileCols - 1,
-                                                          (ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width) / ia.TileWidth + 1);
+                                (ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width)/ia.TileWidth + 1);
                             int tileRightBottomRow = Math.Min(ia.TileRows - 1,
-                                                          (ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height) / ia.TileHeight + 1);
-                            int tilesNum = (tileRightBottomCol - tileLeftTopCol + 1) * (tileRightBottomRow - tileLeftTopRow + 1);
-                            if (tilesNum <= 0) {
+                                (ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height)/ia.TileHeight + 1);
+                            int tilesNum = (tileRightBottomCol - tileLeftTopCol + 1)*
+                                           (tileRightBottomRow - tileLeftTopRow + 1);
+                            if (tilesNum <= 0)
+                            {
                                 ia.BlockRegion[i, j].tiles = null;
                                 continue;
                             }
                             ia.BlockRegion[i, j].tiles = new DisplayTileInfo[tilesNum];
                             // traverse every tile that will be shown in this screen block
-                            for (int ii = tileLeftTopCol ; ii <= tileRightBottomCol ; ii++) {
-                                for (int jj = tileLeftTopRow ; jj <= tileRightBottomRow ; jj++) {
-                                    if (ia.Rotate == 0) {
+                            for (int ii = tileLeftTopCol; ii <= tileRightBottomCol; ii++)
+                            {
+                                for (int jj = tileLeftTopRow; jj <= tileRightBottomRow; jj++)
+                                {
+                                    if (ia.Rotate == 0)
+                                    {
                                         tl = ia.Tiles[ii, jj].left - ia.BlockRegion[i, j].left;
                                         tt = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
-                                    } else if (ia.Rotate == 90) {
+                                    }
+                                    else if (ia.Rotate == 90)
+                                    {
                                         tl = ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height -
                                              ia.Tiles[ii, jj].top;
                                         tt = ia.Tiles[ii, jj].left - ia.BlockRegion[i, j].left;
-                                    } else if (ia.Rotate == 180) {
+                                    }
+                                    else if (ia.Rotate == 180)
+                                    {
                                         tl = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
                                              ia.Tiles[ii, jj].left;
                                         tt = ia.BlockRegion[i, j].top + ia.BlockRegion[i, j].height -
                                              ia.Tiles[ii, jj].top;
-                                    } else { // ia.Rotate == 270
+                                    }
+                                    else
+                                    {
+                                        // ia.Rotate == 270
                                         tl = ia.Tiles[ii, jj].top - ia.BlockRegion[i, j].top;
                                         tt = ia.BlockRegion[i, j].left + ia.BlockRegion[i, j].width -
                                              ia.Tiles[ii, jj].left;
                                     }
                                     tw = ia.TileWidth;
                                     th = ia.TileHeight;
-                                    int rank = (ii - tileLeftTopCol) * (tileRightBottomRow - tileLeftTopRow + 1) + 
+                                    int rank = (ii - tileLeftTopCol)*(tileRightBottomRow - tileLeftTopRow + 1) +
                                                (jj - tileLeftTopRow);
-                                    ia.BlockRegion[i, j].tiles[rank] = new DisplayTileInfo {
+                                    ia.BlockRegion[i, j].tiles[rank] = new DisplayTileInfo
+                                    {
                                         tileIdCol = ii,
                                         tileIdRow = jj,
                                         displayLeft = Convert.ToInt32(Math.Floor(displayRatio*tl)),
@@ -573,7 +626,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting tiles information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
+                    Clients.Caller.setTiles(instanceId, ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
                         ia.Section.Height/ia.Section.Rows,
                         ia.BlockRegion[col, row].tiles != null
                             ? JsonConvert.SerializeObject(ia.BlockRegion[col, row].tiles)
@@ -596,7 +649,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setThumbNailImageInfo(ia.ThumbNailImage != null
+                    Clients.Caller.setThumbNailImageInfo(instanceId, ia.ThumbNailImage != null
                         ? JsonConvert.SerializeObject(ia.ThumbNailImage)
                         : null);
 
@@ -618,8 +671,245 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting section information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.getSectionSize(ia.Section.Width, ia.Section.Height);
+                    Clients.Caller.getSectionSize(instanceId, ia.Section.Width, ia.Section.Height);
                     Clients.Caller.setMessage("Requested section information Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        // Zoom image with ratio
+        public void RequestZoomImage(int instanceId, double ratio)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ratio = (ratio < 0) ? ratio = 1 / (1 - ratio) : 1 + ratio;
+                        ratio = ia.ThumbNailImage.imageData.width * ratio / ia.ThumbNailImage.imageData.naturalWidth;
+                        double newWidth = ia.ThumbNailImage.imageData.naturalWidth * ratio;
+                        double newHeight = ia.ThumbNailImage.imageData.naturalHeight * ratio;
+                        ia.ThumbNailImage.canvasData.left -= (newWidth - ia.ThumbNailImage.imageData.width) / 2;
+                        ia.ThumbNailImage.canvasData.top -= (newHeight - ia.ThumbNailImage.imageData.height) / 2;
+                        ia.ThumbNailImage.imageData.width = newWidth;
+                        ia.ThumbNailImage.imageData.height = newHeight;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        // Move Image
+        public void RequestMoveImage(int instanceId, double x, double y)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ia.ThumbNailImage.canvasData.left += x;
+                        ia.ThumbNailImage.canvasData.top += y;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+
+        }
+
+        // Display Image
+        public void DisplayImage(int instanceId, string imageName, int displayMode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
+                    string[] database = { };
+                    // if file is processed
+                    if (File.Exists(database_path))
+                    {
+                        database = File.ReadAllLines(database_path);
+                        foreach (string s in database)
+                        {
+                            if (s.Split('|')[0].Equals(imageName))
+                            {
+                                FindDigits(instanceId, s.Split('|')[1]);
+                                SetMode(instanceId, displayMode);
+                                return;
+                            }
+                        }
+                    }
+                    ProcessImage(instanceId, imageName);
+                    SetMode(instanceId, displayMode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        // Set display Mode
+        public void SetMode(int instanceId, int displayMode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Setting display mode " + displayMode);
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+
+                    double autoCropArea = 0.65;
+                    double aspectRatio = ia.Section.Width / (0.0 + ia.Section.Height);
+                    double canvasAspectRatio = 1920.0 / 1080.0;
+                    // Image wrapper
+                    double canvasHeight = 435.0;
+                    double canvasWidth = canvasHeight * canvasAspectRatio;
+
+                    // Cropper box
+                    double cropBoxWidth = canvasWidth;
+                    double cropBoxHeight = canvasHeight;
+
+                    if (canvasHeight * aspectRatio > canvasWidth)
+                    {
+                        cropBoxHeight = cropBoxWidth / aspectRatio;
+                    }
+                    else
+                    {
+                        cropBoxWidth = cropBoxHeight * aspectRatio;
+                    }
+
+                    cropBoxWidth = cropBoxWidth * autoCropArea;
+                    cropBoxHeight = cropBoxHeight * autoCropArea;
+
+                    double cropBoxLeft = 0 + (canvasWidth - cropBoxWidth) / 2;
+                    double cropBoxTop = 0 + (canvasHeight - cropBoxHeight) / 2;
+
+                    ThumbNailImageInfo ti = new ThumbNailImageInfo();
+
+                    // Cropbox Data
+                    ti.cropboxData = new CropboxDataInfo()
+                    {
+                        height = cropBoxHeight,
+                        width = cropBoxWidth,
+                        left = cropBoxLeft,
+                        top = cropBoxTop
+                    };
+
+                    CropboxDataInfo cropboxData = ti.cropboxData;
+
+                    double imgNatureWidth = ia.ImageNaturalWidth;
+                    double imgNatureHeight = ia.ImageNaturalHeight;
+
+                    var scalewidth = cropboxData.width / imgNatureWidth;
+                    var scaleheight = cropboxData.height / imgNatureHeight;
+
+
+                    double imgAspectRatio = imgNatureWidth / imgNatureHeight;
+
+                    double imgLeft = 0;
+                    double imgTop = 0;
+                    double imgWidth = 0;
+                    double imgHeight = 0;
+
+                    // Display mode (2: centre image)
+                    if (displayMode == 0)
+                    {
+                        if (scalewidth < scaleheight)
+                        {
+                            imgWidth = cropboxData.width;
+                            imgHeight = imgWidth / imgAspectRatio;
+                            imgTop = cropboxData.top;
+                            imgLeft = cropboxData.left;
+                        }
+                        else
+                        {
+                            imgHeight = cropboxData.height;
+                            imgWidth = imgHeight * imgAspectRatio;
+                            imgLeft = cropboxData.left;
+                            imgTop = cropboxData.top;
+                        }
+                    }
+                    else if (displayMode == 1)
+                    {
+                        if (scalewidth < scaleheight)
+                        {
+                            imgHeight = cropboxData.height;
+                            imgWidth = imgHeight * imgAspectRatio;
+                            imgLeft = cropboxData.left;
+                            imgTop = cropboxData.top;
+                        }
+                        else
+                        {
+                            imgWidth = cropboxData.width;
+                            imgHeight = imgWidth / imgAspectRatio;
+                            imgTop = cropboxData.top;
+                            imgLeft = cropboxData.left;
+                        }
+                    }
+                    else if (displayMode == 2)
+                    {
+                        if (scalewidth < scaleheight)
+                        {
+                            imgWidth = cropboxData.width;
+                            imgHeight = imgWidth / imgAspectRatio;
+                            imgTop = cropboxData.top + (cropboxData.height - imgHeight) / 2;
+                            imgLeft = cropboxData.left;
+                        }
+                        else
+                        {
+                            imgHeight = cropboxData.height;
+                            imgWidth = imgHeight * imgAspectRatio;
+                            imgLeft = cropboxData.left + (cropboxData.width - imgWidth) / 2;
+                            imgTop = cropboxData.top;
+                        }
+                    }
+
+                    // Image data
+                    ti.imageData = new ImageDataInfo()
+                    {
+                        height = imgHeight,
+                        width = imgWidth,
+                        naturalHeight = imgHeight,
+                        naturalWidth = imgWidth,
+                        aspectRatio = cropboxData.width / (cropboxData.height + 0.0),
+                        left = imgLeft,
+                        top = imgTop,
+                        rotate = 0
+                    };
+
+                    // CanvasData
+                    ti.canvasData = new CanvasDataInfo()
+                    {
+                        height = imgHeight,
+                        width = imgWidth,
+                        left = imgLeft,
+                        top = imgTop
+                    };
+
+                    SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ti));
                 }
                 catch (Exception e)
                 {

@@ -83,6 +83,7 @@ $(function () {
 
 
     $.connection.graphAppHub.client.setFields = function (options, instanceId) {
+        // !!If you add and gdo.controlId check here, it will break the Twitter applications!!
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             gdo.consoleOut('.Graph', 1, 'Set fields ');
 
