@@ -15,11 +15,6 @@ namespace GDO.Core
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CaveHub));
 
-        public override System.Threading.Tasks.Task OnConnected()
-        {
-            return base.OnConnected();
-        }
-
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
             lock (Cave.ServerLock)
@@ -224,12 +219,27 @@ namespace GDO.Core
             }
         }
 
-
-        public int DeployAdvancedApp(List<int> instanceIds, string appName, string configName)
+        public int DeployChildApp(int sectionId, string appName, string configName, int parentId)
         {
             lock (Cave.ServerLock)
             {
-                int instanceId = Cave.CreateAdvancedAppInstance(instanceIds, appName, configName);
+                int instanceId = Cave.CreateChildAppInstance(sectionId, appName, configName, true, parentId);
+                Cave.SetSectionP2PMode(sectionId, Cave.Apps[appName].P2PMode);
+                if (instanceId >= 0)
+                {
+                    string serializedInstance = GetInstanceUpdate(instanceId);
+                    BroadcastAppUpdate(true, instanceId, serializedInstance);
+                }
+                return instanceId;
+            }
+        }
+
+
+        public int DeployCompositeApp(List<int> instanceIds, string appName, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                int instanceId = Cave.CreateCompositeAppInstance(instanceIds, appName, configName);
                 if (instanceId >= 0)
                 {
                     //Do more
@@ -257,9 +267,10 @@ namespace GDO.Core
                         int sectionId = ((IBaseAppInstance)Cave.Apps[appName].Instances[instanceId]).Section.Id;
                         Cave.SetSectionP2PMode(sectionId, Cave.DefaultP2PMode);
                     }
-                    else if (Cave.Apps[appName].Instances[instanceId] is IAdvancedAppInstance)
+                    else if (Cave.Apps[appName].Instances[instanceId] is ICompositeAppInstance)
                     {
-                        List<int> integratedInstances = ((IAdvancedAppInstance)Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        List<int> integratedInstances = ((ICompositeAppInstance)Cave.Apps[appName].Instances[instanceId]).GetListofIntegratedInstances();
+                        //todo this is unfinished - var not used
                     }
                     if (Cave.DisposeAppInstance(appName, instanceId))
                     {
@@ -270,6 +281,7 @@ namespace GDO.Core
                 return false;
             }
         }
+
         /// <summary>
         /// Uploads the node information.
         /// </summary>
@@ -277,32 +289,35 @@ namespace GDO.Core
         /// <param name="connectionId">The connection identifier.</param>
         /// <param name="connectedNodes">The connected nodes.</param>
         /// <param name="peerId">The peer identifier.</param>
+        /// <param name="isConnectedToPeerServer">whether the peer is connected to a server or not</param>
         public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId, bool isConnectedToPeerServer)
         {
             lock (Cave.ServerLock)
             {
                 Node node;
                 Cave.Nodes.TryGetValue(nodeId, out node);
-                node.IsConnectedToCaveServer = true;
-                node.ConnectionId = connectionId;
-                node.PeerId = peerId;
-                node.IsConnectedToPeerServer = isConnectedToPeerServer;
-                int[] deserializedConnectedNodes = JsonConvert.DeserializeObject<int[]>(connectedNodes);
-                node.ConnectedNodeList.Clear();
-                foreach (int connectedNode in deserializedConnectedNodes)
-                {
-                    node.ConnectedNodeList.Add(connectedNode);
+                if (node != null) {
+                    node.IsConnectedToCaveServer = true;
+                    node.ConnectionId = connectionId;
+                    node.PeerId = peerId;
+                    node.IsConnectedToPeerServer = isConnectedToPeerServer;
+                    int[] deserializedConnectedNodes = JsonConvert.DeserializeObject<int[]>(connectedNodes);
+                    node.ConnectedNodeList.Clear();
+                    foreach (int connectedNode in deserializedConnectedNodes) {
+                        node.ConnectedNodeList.Add(connectedNode);
+                    }
+                    if (node.IsDeployed) {
+                        Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                    }
+                    else {
+                        Groups.Remove(node.ConnectionId, node.SectionId.ToString());
+                    }
+                    node.AggregateConnectionHealth();
                 }
-                if (node.IsDeployed)
-                {
-                    Groups.Add(node.ConnectionId, node.SectionId.ToString());
+                else {
+                    Log.Debug("could not find node number "+nodeId);
                 }
-                else
-                {
-                    Groups.Remove(node.ConnectionId, node.SectionId.ToString());
-                }
-                node.AggregateConnectionHealth();
-                BroadcastNodeUpdate(nodeId);
+                BroadcastNodeUpdate(nodeId);//todo should we broadcast? 
             }
         }
 
@@ -340,6 +355,89 @@ namespace GDO.Core
             }
         }
 
+        public void BroadcastAppConfigurations(int instanceId)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        List<string> configList = Cave.Apps[Cave.GetAppName(instanceId)].GetConfigurationList();
+                        Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to BroadcastAppConfigurations", e);
+                }
+            }
+        }
+
+        public void UseAppConfiguration(int instanceId, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        if (Cave.Apps[Cave.GetAppName(instanceId)].Configurations.ContainsKey(configName))
+                        {
+                            Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration = Cave.Apps[Cave.GetAppName(instanceId)].Configurations[configName];
+                            List<string> configList = Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                            string serializedInstance = GetInstanceUpdate(instanceId);
+                            BroadcastAppUpdate(true, instanceId, serializedInstance);
+                            Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                            Clients.Group(""+((IBaseAppInstance)Cave.Instances[instanceId]).Section.Id).reloadNodeIFrame();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to UseAppConfiguration", e);
+                }
+            }
+        }
+
+        public void LoadAppConfiguration(int instanceId, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        List<string> configList = Cave.LoadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                        Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to LoadAppConfiguration", e);
+                }
+            }
+        }
+
+        public void UnloadAppConfiguration(int instanceId, string configName)
+        {
+            lock (Cave.ServerLock)
+            {
+                try
+                {
+                    if (Cave.ContainsInstance(instanceId))
+                    {
+                        List<string> configList = Cave.UnloadAppConfiguration(Cave.GetAppName(instanceId), configName);
+                        Clients.All.receiveAppConfigList(instanceId, JsonConvert.SerializeObject(configList));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("failed to UnloadAppConfiguration", e);
+                }
+            }
+        }
+
         public void RequestAppConfiguration(int instanceId)
         {
             lock (Cave.ServerLock)
@@ -349,7 +447,7 @@ namespace GDO.Core
                     if (Cave.ContainsInstance(instanceId))
                     {
                         Clients.Caller.receiveAppConfig(instanceId, Cave.GetAppName(instanceId), Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Name,
-                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()));
+                            JsonConvert.SerializeObject(Cave.Apps[Cave.GetAppName(instanceId)].Instances[instanceId].Configuration.Json.ToString()), true);
                     }
                 }
                 catch (Exception e)
@@ -367,8 +465,10 @@ namespace GDO.Core
                 {
                     Node node;
                     Cave.Nodes.TryGetValue(nodeId, out node);
-                    node.AggregateConnectionHealth();
-                    return node.SerializeJSON();
+                    if (node != null) {
+                        node.AggregateConnectionHealth();
+                        return node.SerializeJSON();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -383,21 +483,18 @@ namespace GDO.Core
 
         private string GetSectionUpdate(int sectionId)
         {
-            try
-            {
-                if (Cave.ContainsSection(sectionId))
-                {
+            try {
+                if (Cave.ContainsSection(sectionId)) {
                     Section section;
                     Cave.Sections.TryGetValue(sectionId, out section);
-                    return section.SerializeJSON();
+                    if (section != null) return section.SerializeJSON();
                 }
-                else
-                {
-                    return null;
-                }
+
+                Log.Error("failed to GetNodeUpdate " + sectionId);
+                return null;
+
             }
-            catch (Exception e)
-            {
+            catch (Exception e) { // dont think this will hit
                 Console.WriteLine(e);
                 Log.Error("failed to GetNodeUpdate", e);
                 return null;
@@ -432,16 +529,16 @@ namespace GDO.Core
                 {
                     App app;
                     Cave.Apps.TryGetValue(appName, out app);
-                    return app.SerializeJSON();
+                    if (app != null) return app.SerializeJSON();
                 }
-                else
-                {
-                    return null;
-                }
+
+                    Log.Error("could not get app update " + appName);
+                    return null;                
             }
-            catch (Exception e)
+            catch (Exception e) // dont think this will reach
             {
                 Console.WriteLine(e);
+                Log.Error("could not get app update "+appName,e);
                 return null;
             }
         }
@@ -583,7 +680,6 @@ namespace GDO.Core
                 Console.WriteLine(e);
                 return false;
             }
-            return false;
         }
 
         /// <summary>
@@ -676,8 +772,8 @@ namespace GDO.Core
             if (!Cave.InitializedSync)
             {
                 Cave.InitializedSync = true;
-                Cave.SyncTimer = new System.Timers.Timer(70);
-                Cave.SyncTimer.Elapsed += new ElapsedEventHandler(BroadcastHeartbeat);
+                Cave.SyncTimer = new Timer(70);
+                Cave.SyncTimer.Elapsed += BroadcastHeartbeat;
                 Cave.SyncTimer.Start();
             }
         }
@@ -731,7 +827,7 @@ namespace GDO.Core
                 State caveState = Cave.States[id];
                 ClearCave();
                 
-                //TODO Advanced apps
+                //TODO Composite apps
                 foreach (AppState appState in caveState.States)
                 {
                     CreateSection(appState.Col, appState.Row, (appState.Col + appState.Cols -1),
@@ -816,18 +912,18 @@ namespace GDO.Core
             }
         }
 
-        public void UpdateConsoleInstance(int instanceId)
+        public void UpdateConsole(string consoleId)
         {
             lock (Cave.ServerLock)
             {
-                Cave.ConsoleInstanceId = instanceId;
-                Clients.All.receiveConsoleInstanceId(instanceId);
+                Cave.ConsoleId = consoleId;
+                Clients.All.receiveConsoleId(consoleId);
             }
         }
 
-        public void RequestConsoleInstance()
+        public void RequestConsole()
         {
-            Clients.Caller.receiveConsoleInstanceId(Cave.ConsoleInstanceId);
+            Clients.Caller.receiveConsoleId(Cave.ConsoleId);
         }
     }
 }

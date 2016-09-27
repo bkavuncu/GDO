@@ -26,6 +26,8 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard-dark.min.css" rel="stylesheet" type="text/css">
     <style>
         body {
             color: #FFF;
@@ -101,16 +103,27 @@
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Scripts/jquery.keyboard.js"></script>
 
     <script>
         $(function () {
             var gdo = parent.gdo;
             gdo.net.module["EyeTracking"].initControl();
+            if (gdo.net.consoleMode) {
+                $("#user_1_ip").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_1_port").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_2_ip").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_2_port").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_3_ip").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_3_port").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_4_ip").keyboard(gdo.net.keyboardOptions.num);
+                $("#user_4_port").keyboard(gdo.net.keyboardOptions.num);
+            }
         });
     </script>
     <div class="wrapper" style="width: 97%">

@@ -262,7 +262,7 @@ gdo.management.scenarios.addElementToUI = function (element) {
         case gdo.management.scenarios.ELEMENT_STATUS.CURRENT:
             color = '#4CBFF8';
             if (element.DefaultWait != element.Wait) {
-                icon = 'fa-spinner';
+                icon = 'fa-spinner fa-spin';
             } else {
                 icon = 'fa-pause';
             }
@@ -301,10 +301,7 @@ gdo.management.scenarios.addElementToUI = function (element) {
                 },
                 source: gdo.functions.array.funcs[element.Mod]
             });
-        } else {
         }
-
-
         $("#scenario_element_" + element.Id + "_params_input").off().on('change', gdo.management.scenarios.saveEdits);
         $("#scenario_element_" + element.Id + "_wait_input").off().on('change', gdo.management.scenarios.saveEdits);
     } else {

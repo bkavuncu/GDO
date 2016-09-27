@@ -1,0 +1,243 @@
+{
+	"files": [{
+		"timestamp": "2016-01-01 00:00:00:000",
+		"file": "../../Data/Maps/sk01.json"
+	},{
+		"timestamp": "2016-01-02 00:00:00:000",
+		"file": "../../Data/Maps/sk02.json"
+	},{
+		"timestamp": "2016-01-03 00:00:00:000",
+		"file": "../../Data/Maps/sk03.json"
+	},{
+		"timestamp": "2016-01-04 00:00:00:000",
+		"file": "../../Data/Maps/sk04.json"
+	},{
+		"timestamp": "2016-01-05 00:00:00:000",
+		"file": "../../Data/Maps/sk06.json"
+	},{
+		"timestamp": "2016-01-07 00:00:00:000",
+		"file": "../../Data/Maps/sk07.json"
+	},{
+		"timestamp": "2016-01-08 00:00:00:000",
+		"file": "../../Data/Maps/sk08.json"
+	},{
+		"timestamp": "2016-01-09 00:00:00:000",
+		"file": "../../Data/Maps/sk09.json"
+	},{
+		"timestamp": "2016-01-10 00:00:00:000",
+		"file": "../../Data/Maps/sk10.json"
+	},{
+		"timestamp": "2016-01-11 00:00:00:000",
+		"file": "../../Data/Maps/sk11.json"
+	},{
+		"timestamp": "2016-01-12 00:00:00:000",
+		"file": "../../Data/Maps/sk12.json"
+	},{
+		"timestamp": "2016-01-13 00:00:00:000",
+		"file": "../../Data/Maps/sk13.json"
+	},{
+		"timestamp": "2016-01-14 00:00:00:000",
+		"file": "../../Data/Maps/sk14.json"
+	},{
+		"timestamp": "2016-01-15 00:00:00:000",
+		"file": "../../Data/Maps/sk15.json"
+	},{
+		"timestamp": "2016-01-16 00:00:00:000",
+		"file": "../../Data/Maps/sk16.json"
+	},{
+		"timestamp": "2016-01-17 00:00:00:000",
+		"file": "../../Data/Maps/sk17.json"
+	},{
+		"timestamp": "2016-01-18 00:00:00:000",
+		"file": "../../Data/Maps/sk18.json"
+	},{
+		"timestamp": "2016-01-19 00:00:00:000",
+		"file": "../../Data/Maps/sk19.json"
+	},{
+		"timestamp": "2016-01-20 00:00:00:000",
+		"file": "../../Data/Maps/sk2.json"
+	},{
+		"timestamp": "2016-01-2 00:00:00:000",
+		"file": "../../Data/Maps/sk20.json"
+	},{
+		"timestamp": "2016-01-21 00:00:00:000",
+		"file": "../../Data/Maps/sk21.json"
+	},{
+		"timestamp": "2016-01-22 00:00:00:000",
+		"file": "../../Data/Maps/sk22.json"
+	},{
+		"timestamp": "2016-01-23 00:00:00:000",
+		"file": "../../Data/Maps/sk23.json"
+	},{
+		"timestamp": "2016-01-24 00:00:00:000",
+		"file": "../../Data/Maps/sk24.json"
+	},{
+		"timestamp": "2016-01-25 00:00:00:000",
+		"file": "../../Data/Maps/sk25.json"
+	},{
+		"timestamp": "2016-01-26 00:00:00:000",
+		"file": "../../Data/Maps/sk26.json"
+	},{
+		"timestamp": "2016-01-27 00:00:00:000",
+		"file": "../../Data/Maps/sk27.json"
+	},{
+		"timestamp": "2016-01-28 00:00:00:000",
+		"file": "../../Data/Maps/sk28.json"
+	},{
+		"timestamp": "2016-01-29 00:00:00:000",
+		"file": "../../Data/Maps/sk29.json"
+	},{
+		"timestamp": "2016-01-30 00:00:00:000",
+		"file": "../../Data/Maps/sk30.json"
+	},{
+		"timestamp": "2016-01-31 00:00:00:000",
+		"file": "../../Data/Maps/sk31.json"
+	},{
+		"timestamp": "2016-02-01 00:00:00:000",
+		"file": "../../Data/Maps/sk32.json"
+	},{
+		"timestamp": "2016-02-02 00:00:00:000",
+		"file": "../../Data/Maps/sk33.json"
+	},{
+		"timestamp": "2016-02-03 00:00:00:000",
+		"file": "../../Data/Maps/sk34.json"
+	},{
+		"timestamp": "2016-02-04 00:00:00:000",
+		"file": "../../Data/Maps/sk35.json"
+	},{
+		"timestamp": "2016-02-05 00:00:00:000",
+		"file": "../../Data/Maps/sk36.json"
+	},{
+		"timestamp": "2016-02-06 00:00:00:000",
+		"file": "../../Data/Maps/sk37.json"
+	},{
+		"timestamp": "2016-02-07 00:00:00:000",
+		"file": "../../Data/Maps/sk38.json"
+	},{
+		"timestamp": "2016-02-08 00:00:00:000",
+		"file": "../../Data/Maps/sk39.json"
+	},{
+		"timestamp": "2016-02-09 00:00:00:000",
+		"file": "../../Data/Maps/sk40.json"
+	},{
+		"timestamp": "2016-02-10 00:00:00:000",
+		"file": "../../Data/Maps/sk41.json"
+	},{
+		"timestamp": "2016-02-11 00:00:00:000",
+		"file": "../../Data/Maps/sk42.json"
+	},{
+		"timestamp": "2016-02-12 00:00:00:000",
+		"file": "../../Data/Maps/sk43.json"
+	},{
+		"timestamp": "2016-02-13 00:00:00:000",
+		"file": "../../Data/Maps/sk44.json"
+	},{
+		"timestamp": "2016-02-14 00:00:00:000",
+		"file": "../../Data/Maps/sk45.json"
+	},{
+		"timestamp": "2016-02-15 00:00:00:000",
+		"file": "../../Data/Maps/sk46.json"
+	},{
+		"timestamp": "2016-02-16 00:00:00:000",
+		"file": "../../Data/Maps/sk47.json"
+	},{
+		"timestamp": "2016-02-17 00:00:00:000",
+		"file": "../../Data/Maps/sk48.json"
+	},{
+		"timestamp": "2016-02-18 00:00:00:000",
+		"file": "../../Data/Maps/sk49.json"
+	},{
+		"timestamp": "2016-02-19 00:00:00:000",
+		"file": "../../Data/Maps/sk50.json"
+	},{
+		"timestamp": "2016-02-20 00:00:00:000",
+		"file": "../../Data/Maps/sk51.json"
+	},{
+		"timestamp": "2016-02-21 00:00:00:000",
+		"file": "../../Data/Maps/sk52.json"
+	},{
+		"timestamp": "2016-02-22 00:00:00:000",
+		"file": "../../Data/Maps/sk53.json"
+	},{
+		"timestamp": "2016-02-23 00:00:00:000",
+		"file": "../../Data/Maps/sk54.json"
+	},{
+		"timestamp": "2016-02-24 00:00:00:000",
+		"file": "../../Data/Maps/sk55.json"
+	},{
+		"timestamp": "2016-02-25 00:00:00:000",
+		"file": "../../Data/Maps/sk56.json"
+	},{
+		"timestamp": "2016-02-26 00:00:00:000",
+		"file": "../../Data/Maps/sk57.json"
+	},{
+		"timestamp": "2016-02-27 00:00:00:000",
+		"file": "../../Data/Maps/sk58.json"
+	},{
+		"timestamp": "2016-02-28 00:00:00:000",
+		"file": "../../Data/Maps/sk59.json"
+	},{
+		"timestamp": "2016-02-29 00:00:00:000",
+		"file": "../../Data/Maps/sk60.json"
+	},{
+		"timestamp": "2016-03-01 00:00:00:000",
+		"file": "../../Data/Maps/sk61.json"
+	},{
+		"timestamp": "2016-03-02 00:00:00:000",
+		"file": "../../Data/Maps/sk62.json"
+	},{
+		"timestamp": "2016-03-03 00:00:00:000",
+		"file": "../../Data/Maps/sk63.json"
+	},{
+		"timestamp": "2016-03-04 00:00:00:000",
+		"file": "../../Data/Maps/sk64.json"
+	},{
+		"timestamp": "2016-03-05 00:00:00:000",
+		"file": "../../Data/Maps/sk65.json"
+	},{
+		"timestamp": "2016-03-06 00:00:00:000",
+		"file": "../../Data/Maps/sk66.json"
+	},{
+		"timestamp": "2016-03-07 00:00:00:000",
+		"file": "../../Data/Maps/sk67.json"
+	},{
+		"timestamp": "2016-03-08 00:00:00:000",
+		"file": "../../Data/Maps/sk68.json"
+	},{
+		"timestamp": "2016-03-09 00:00:00:000",
+		"file": "../../Data/Maps/sk69.json"
+	},{
+		"timestamp": "2016-03-10 00:00:00:000",
+		"file": "../../Data/Maps/sk70.json"
+	},{
+		"timestamp": "2016-03-11 00:00:00:000",
+		"file": "../../Data/Maps/sk71.json"
+	},{
+		"timestamp": "2016-03-12 00:00:00:000",
+		"file": "../../Data/Maps/sk72.json"
+	},{
+		"timestamp": "2016-03-13 00:00:00:000",
+		"file": "../../Data/Maps/sk73.json"
+	},{
+		"timestamp": "2016-03-14 00:00:00:000",
+		"file": "../../Data/Maps/sk74.json"
+	},{
+		"timestamp": "2016-03-15 00:00:00:000",
+		"file": "../../Data/Maps/sk75.json"
+	},{
+		"timestamp": "2016-03-16 00:00:00:000",
+		"file": "../../Data/Maps/sk76.json"
+	},{
+		"timestamp": "2016-03-17 00:00:00:000",
+		"file": "../../Data/Maps/sk77.json"
+	},{
+		"timestamp": "2016-03-18 00:00:00:000",
+		"file": "../../Data/Maps/sk78.json"
+	},{
+		"timestamp": "2016-03-19 00:00:00:000",
+		"file": "../../Data/Maps/sk79.json"
+	},{
+		"timestamp": "2016-03-20 00:00:00:000",
+		"file": "../../Data/Maps/sk80.json"
+	}]
+}

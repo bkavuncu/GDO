@@ -20,27 +20,26 @@ namespace GDO.Apps.DD3
         private readonly object _locker = new Object();
         public static DD3AppHub self;
 
-        public string Name { get; set; }
-        public int P2PMode { get; set; }
-        public Type InstanceType { get; set; }
+        public string Name { get; set; } = "DD3";
+        public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
+        public Type InstanceType { get; set; } = new DD3App().GetType();
 
         public DD3AppHub () {
             self = this;
-            this.Name = "DD3";
-            this.P2PMode = (int) Cave.P2PModes.None;
-            this.InstanceType = new DD3App().GetType();
+            //this.Name = "DD3";
+            //this.P2PMode = (int) Cave.P2PModes.None;
+            //this.InstanceType = new DD3App().GetType();
         }
 
         // == APP ==
 
-        public void JoinGroup(int instanceId)
-        { 
-            Groups.Add(Context.ConnectionId, "" + instanceId);
-        }
-
-        public void ExitGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
+        }
+        public void ExitGroup(string groupId)
+        {
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public override System.Threading.Tasks.Task OnConnected()
@@ -56,7 +55,7 @@ namespace GDO.Apps.DD3
 	            {
                     if (((DD3App)i.Value).removeClient(Context.ConnectionId))
                     {
-                        ExitGroup(i.Value.Id);
+                        ExitGroup("" + i.Value.Id);
                     }
 	            }
             }
@@ -65,7 +64,7 @@ namespace GDO.Apps.DD3
 
         public void updateInformation (int instanceId, BrowserInfo b)
         {
-            JoinGroup(instanceId);
+            JoinGroup("" + instanceId);
             instances = Cave.Apps["DD3"].Instances;
             ((DD3App) instances[instanceId]).newClient(Context.ConnectionId, b);
         }
@@ -88,7 +87,7 @@ namespace GDO.Apps.DD3
 
         public void removeClient(int instanceId)
         {
-            ExitGroup(instanceId);
+            ExitGroup("" + instanceId);
             if (instances != null && instances.ContainsKey(instanceId))
             {
                 ((DD3App)instances[instanceId]).removeClient(Context.ConnectionId);

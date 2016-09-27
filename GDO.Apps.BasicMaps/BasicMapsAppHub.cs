@@ -17,13 +17,13 @@ namespace GDO.Apps.BasicMaps
         public string Name { get; set; } = "BasicMaps";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new BasicMapsApp().GetType();
-        public void JoinGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-        public void ExitGroup(int instanceId)
+        public void ExitGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void UploadMapPosition(int instanceId, string[] topLeft, string[] center, string[] bottomRight, string resolution, int width, int height,  int zoom)
@@ -67,7 +67,7 @@ namespace GDO.Apps.BasicMaps
                 try
                 {
                     ((BasicMapsApp)Cave.Apps["BasicMaps"].Instances[instanceId]).SetLayerVisible(id);
-                    Clients.Caller.setLayerVisible(instanceId, id);
+                    Clients.Group("c" + instanceId).setLayerVisible(instanceId, id);
                     Clients.Group("" + instanceId).setLayerVisible(instanceId, id);
                 }
                 catch (Exception e)

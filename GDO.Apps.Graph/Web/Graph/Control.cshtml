@@ -109,7 +109,7 @@
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
@@ -147,6 +147,18 @@
         $("#graph_digit").keypress(function (e) {
             if (e.keyCode == 13) {
                 $("#image_digit_button").click();
+            }
+        });
+
+        $("#toggle_nodeSize").click(function () {
+            if ($(this).hasClass("FLAG_ON")) {
+                gdo.net.app["Graph"].server.setAllNodesSize(gdo.controlId, parseInt($("#allNodeSize").val()));
+                $(this).removeClass("FLAG_ON").addClass("FLAG_OFF");
+                $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Original size");
+            } else {
+                gdo.net.app["Graph"].server.setOriginalSize(gdo.controlId);
+                $(this).removeClass("FLAG_OFF").addClass("FLAG_ON");
+                $(this).html("<i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size");
             }
         });
 
@@ -402,8 +414,13 @@
                                             <br />
                                             <label> for All nodes </label>
                                             <br/>
-                                            <button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button>
                                             <table style="border-collapse: separate; border-spacing: 1px;">
+                                                <tr>
+                                                    <td><button class='btn btn-default FLAG_ON' id="toggle_nodeSize"><i class='fa  fa-circle  fa-fw'></i>&nbsp;Same size</button></td>
+                                                    <td>&nbsp;Default size: &nbsp;</td>
+                                                    <td><input size="2" class="input_field" type="text" id="allNodeSize" value="3"/></td>
+                                                </tr>
+                                                <tr><td><button class='btn btn-default FLAG_ON' id="toggle_links"><i class='fa  fa-link  fa-fw'></i>&nbsp;Hide Links</button></td></tr>
                                                 <tr>
                                                     <td><button class='btn btn-default FLAG_OFF' id="toggle_labels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
                                                     <td><select id="select_label" required class="input_field"></select></td>
@@ -455,8 +472,6 @@
                                                     <td><input class="input_field" size="4" type="text" id="numLinks" value="5" /></td>
                                                     <td>&nbsp;links</td>
                                                 </tr>
-                                            </table>
-                                            <table style="border-collapse: separate; border-spacing: 1px;">
                                                 <tr>
                                                     <td><button class='btn btn-default' id="toggle_mostConnectedLabels"><i class='fa  fa-tag  fa-fw'></i>&nbsp;Show</button></td>
                                                     <td><select id="select_mostConnectedLabels" required class="input_field"></select></td>

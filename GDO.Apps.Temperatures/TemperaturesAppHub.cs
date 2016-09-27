@@ -18,11 +18,13 @@ namespace GDO.Apps.Temperatures {
         public string Name { get; set; } = "Temperatures";
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new TemperaturesApp().GetType();
-        public void JoinGroup(int instanceId) {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+        public void JoinGroup(string groupId)
+        {
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-        public void ExitGroup(int instanceId) {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+        public void ExitGroup(string groupId)
+        {
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         // Clients.Caller.updateVideo(yf.CurrentVideoUrls[rows, cols]);

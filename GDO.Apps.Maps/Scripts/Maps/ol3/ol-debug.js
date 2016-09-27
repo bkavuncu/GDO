@@ -8,7 +8,8 @@
   } else if (typeof define === "function" && define.amd) {
     define([], factory);
   } else {
-    root.ol = factory();
+      //root.ol = factory();
+      parent.ol = factory();
   }
 }(this, function () {
   var OPENLAYERS = {};
@@ -59108,8 +59109,8 @@ ol.renderer.canvas.Map.prototype.renderFrame = function(frameState) {
     layerState = layerStatesArray[i];
     layer = layerState.layer;
     layerRenderer = this.getLayerRenderer(layer);
-    goog.asserts.assertInstanceof(layerRenderer, ol.renderer.canvas.Layer,
-        'layerRenderer is an instance of ol.renderer.canvas.Layer');
+    //goog.asserts.assertInstanceof(layerRenderer, ol.renderer.canvas.Layer,
+        //'layerRenderer is an instance of ol.renderer.canvas.Layer');
     if (!ol.layer.Layer.visibleAtResolution(layerState, viewResolution) ||
         layerState.sourceState != ol.source.State.READY) {
       continue;
@@ -73524,6 +73525,15 @@ ol.format.GeoJSON.readPolygonGeometry_ = function(object) {
   return new ol.geom.Polygon(object.coordinates);
 };
 
+ /**
+ * @param {GeoJSONGeometry} object Object.
+ * @private
+ * @return {ol.geom.Circle} Circle.
+ */
+ol.format.GeoJSON.readCircleGeometry_ = function(object) {
+  goog.asserts.assert(object.type == 'Circle');
+ return new ol.geom.Circle(object.center, object.radius);
+};
 
 /**
  * @param {ol.geom.Geometry} geometry Geometry.
@@ -73678,6 +73688,22 @@ ol.format.GeoJSON.writePolygonGeometry_ = function(geometry, opt_options) {
   });
 };
 
+ /**
++ * @param {ol.geom.Geometry} geometry Geometry.
++ * @param {olx.format.WriteOptions=} opt_options Write options.
++ * @private
++ * @return {GeoJSONGeometry} GeoJSON geometry.
++ */
+ol.format.GeoJSON.writeCircleGeometry_ = function(geometry, opt_options) {
+  goog.asserts.assertInstanceof(geometry, ol.geom.Circle,
+      'geometry should be an ol.geom.Circle');
+  return /** @type {GeoJSONGeometry} */ ({
+    'type': 'Circle',
+    'center': geometry.getCenter(),
+    'radius': geometry.getRadius()
+  });
+};
+
 
 /**
  * @const
@@ -73691,7 +73717,8 @@ ol.format.GeoJSON.GEOMETRY_READERS_ = {
   'MultiPoint': ol.format.GeoJSON.readMultiPointGeometry_,
   'MultiLineString': ol.format.GeoJSON.readMultiLineStringGeometry_,
   'MultiPolygon': ol.format.GeoJSON.readMultiPolygonGeometry_,
-  'GeometryCollection': ol.format.GeoJSON.readGeometryCollectionGeometry_
+  'GeometryCollection': ol.format.GeoJSON.readGeometryCollectionGeometry_,
+  'Circle': ol.format.GeoJSON.readCircleGeometry_
 };
 
 
@@ -73708,7 +73735,7 @@ ol.format.GeoJSON.GEOMETRY_WRITERS_ = {
   'MultiLineString': ol.format.GeoJSON.writeMultiLineStringGeometry_,
   'MultiPolygon': ol.format.GeoJSON.writeMultiPolygonGeometry_,
   'GeometryCollection': ol.format.GeoJSON.writeGeometryCollectionGeometry_,
-  'Circle': ol.format.GeoJSON.writeEmptyGeometryCollectionGeometry_
+  'Circle': ol.format.GeoJSON.writeCircleGeometry_
 };
 
 
@@ -74243,6 +74270,7 @@ goog.require('ol.geom.Geometry');
 goog.require('ol.geom.GeometryLayout');
 goog.require('ol.geom.LineString');
 goog.require('ol.geom.LinearRing');
+//goog.require('ol.geom.Circle');
 goog.require('ol.geom.MultiLineString');
 goog.require('ol.geom.MultiPoint');
 goog.require('ol.geom.MultiPolygon');

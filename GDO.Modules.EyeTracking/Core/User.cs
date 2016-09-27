@@ -63,7 +63,6 @@ namespace GDO.Modules.EyeTracking.Core
         public void StartTCPClient()
         {
             ClientSocket = new System.Net.Sockets.TcpClient();
-            bool IsInitialized = false;
             try
             {
 
@@ -292,6 +291,7 @@ namespace GDO.Modules.EyeTracking.Core
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return null;
             }
         }
@@ -348,11 +348,12 @@ namespace GDO.Modules.EyeTracking.Core
                 }
                 return overallLocationData;
             }
-            catch (Exception e)
-            {
-                LocationData overallLocationData = new LocationData();
-                overallLocationData.Angle = 0;
-                overallLocationData.Distance = 0;
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+                LocationData overallLocationData = new LocationData {
+                    Angle = 0,
+                    Distance = 0
+                };
                 return overallLocationData;
             }
         }
@@ -424,6 +425,7 @@ namespace GDO.Modules.EyeTracking.Core
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.ToString());
                 return null;
             }
         }

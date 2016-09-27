@@ -36,8 +36,12 @@
 
 
     <style>
-            body{
-            overflow:hidden;
+        body {
+            height: 100%;
+            width: 100%;
+            max-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
         }
     </style>
     <script>
@@ -78,7 +82,7 @@
     <script src="../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
-    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../Scripts/jquery.csv-0.71.min.js"></script>
     <script src="../Scripts/jquery-ui.min.js"></script>
@@ -91,13 +95,19 @@
             <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
                 <tr>
                     <td>
-                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-square fa-fw'></i>&nbsp;Blank</font></font></button>
+                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-square fa-fw'></i>&nbsp;Blank Mode</font></font></button>
                     </td>
                     <td>
-                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance</font></button>
+                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance Mode</font></button>
                     </td>
                     <td>
-                        <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console</font></button></a>
+                        <button type="button" id="sendToConsoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-upload  fa-fw'></i>&nbsp;Send to Console</font></button>
+                    </td>
+                    <td>
+                        <button type="button" id="clearConsoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-times  fa-fw'></i>&nbsp;Clear Console</font></button>
+                    </td>
+                    <td>
+                        <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console Mode</font></button></a>
                     </td>
                     <td>
                         <div style="width:14px"></div>

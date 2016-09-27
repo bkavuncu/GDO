@@ -2,8 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using GDO.Utility;
 using log4net;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using Newtonsoft.Json;
 
 namespace GDO.Core.Apps
@@ -11,12 +15,13 @@ namespace GDO.Core.Apps
     public class App
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(App));
-
         public string Name { get; set; }
-        public int P2PMode { get; set; }
+        //[JsonIgnore]
+        //public Type AppHubType { get; set; }
         [JsonIgnore]
         public Type AppClassType { get; set; }
         public int AppType { get; set; }
+        public int P2PMode { get; set; }
         [JsonIgnore]
         public ConcurrentDictionary<string,AppConfiguration> Configurations { get; set; }
         public List<string> ConfigurationList { get; set; }
@@ -27,34 +32,47 @@ namespace GDO.Core.Apps
         {
 
         }
-        public App(string name, int p2pmode, Type appClassType, int appType)
+        public App(string name, Type appClassType,  int appType, int p2pmode)
         {
-            this.Name = name;
-            this.P2PMode = p2pmode;
-            this.AppClassType = appClassType;
-            this.AppType = appType;
-            this.Configurations = new ConcurrentDictionary<string, AppConfiguration>();
-            this.Instances = new ConcurrentDictionary<int, IAppInstance>();
+            Name = name;
+
+            AppClassType = appClassType;
+            AppType = appType;
+            P2PMode = p2pmode;
+            Configurations = new ConcurrentDictionary<string, AppConfiguration>();
+            Instances = new ConcurrentDictionary<int, IAppInstance>();
         }
 
-        public int CreateAppInstance(string configName, int sectionId) {
+        public int CreateAppInstance(string configName, int sectionId, bool integrationMode, int parentId) {
             if (!Configurations.ContainsKey(configName)) {
                 return -1;
             }
 
-            int instanceId = Utilities.GetAvailableSlot<IAppInstance>(Cave.Instances);
-            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(this.AppClassType, new object[0]);
+            int instanceId = Utilities.GetAvailableSlot(Cave.Instances);
+            IBaseAppInstance instance = (IBaseAppInstance) Activator.CreateInstance(AppClassType, new object[0]);
             AppConfiguration conf;
             Cave.Sections[sectionId].CalculateDimensions();
             Configurations.TryGetValue(configName, out conf);
+            if (conf==null) {
+                Log.Error("Failed to find config name "+configName);
+                return -1;
+            }
             instance.Id = instanceId;
-            instance.AppName = this.Name;
+            instance.App = this;
+            instance.AppName = Name;
+            //instance.HubContext = GlobalHost.ConnectionManager.GetHubContext(Name + "Hub");
+            //instance.HubContext = (IHubContext) typeof (IConnectionManager).GetMethod("GetHubContext").GetGenericMethodDefinition().MakeGenericMethod(AppHubType).Invoke(GlobalHost.ConnectionManager, null);
             instance.Section = Cave.Sections[sectionId];
             instance.Configuration = conf;
-            ((IBaseAppInstance) instance).IntegrationMode = conf.IntegrationMode;
+            instance.IntegrationMode = integrationMode;
+            if (integrationMode)
+            {
+                instance.ParentApp = (ICompositeAppInstance) Cave.Instances[parentId];
+            }
             instance.Init();
             Instances.TryAdd(instanceId,instance);
             Cave.Instances.TryAdd(instanceId,instance);
+            Log.Info("created app "+Name+ " instance "+configName);
             return instanceId;
         }
 
@@ -78,7 +96,7 @@ namespace GDO.Core.Apps
             List<string> configurationList =
                 Configurations.Select(configurationEntry => configurationEntry.Value.Name).ToList();
             configurationList.Sort();
-            this.ConfigurationList = configurationList;
+            ConfigurationList = configurationList;
             return configurationList;
         }
 

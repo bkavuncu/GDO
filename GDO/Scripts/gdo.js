@@ -13,9 +13,9 @@ gdo.SCRIPT_TYPE = {
 $(function () {
     /// <summary>
     /// Registering Event Handlers on load
-    gdo.loadScript('utilities', 'utilities', gdo.SCRIPT_TYPE.CORE);
     /// </summary>
     /// <returns></returns>
+    gdo.loadScript('utilities', 'utilities', gdo.SCRIPT_TYPE.CORE);
 });
 gdo.initGDO = function (clientMode) {
     /// <summary>
@@ -169,14 +169,17 @@ gdo.loadScript = function (subscript, script, scriptType) {
 
 gdo.timeStamp = function() {
     var now = new Date();
-    var date = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+    var date = [now.getDate(), now.getMonth() + 1, now.getFullYear()];
     var time = [now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds()];
     var suffix = (time[0] < 12) ? "AM" : "PM";
     time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
     time[0] = time[0] || 12;
-    for (var i = 1; i < 3; i++) {
+    for (var i = 0; i < 3; i++) {
         if (time[i] < 10) {
             time[i] = "0" + time[i];
+        }
+        if (date[i] < 10) {
+            date[i] = "0" + date[i];
         }
     }
     if (time[3] < 10) {

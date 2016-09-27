@@ -10,9 +10,9 @@ namespace GDO.Apps.Maps.Core.Styles
     {
         public LinkParameter FillStyle { get; set; }
         public IntegerParameter Points { get; set; }
-        public NullableIntegerParameter Radius { get; set; }
-        public NullableIntegerParameter Radius1 { get; set; }
-        public NullableIntegerParameter Radius2 { get; set; }
+        public IntegerParameter Radius { get; set; }
+        public IntegerParameter Radius1 { get; set; }
+        public IntegerParameter Radius2 { get; set; }
         public IntegerParameter Angle { get; set; }
         public BooleanParameter SnapToPixel { get; set; }
         public LinkParameter StrokeStyle { get; set; }
@@ -20,70 +20,77 @@ namespace GDO.Apps.Maps.Core.Styles
         public RegularShapeStyle()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.RegularShape;
+            ObjectType.Value = "ol.style.RegularShape";
+            Description.Value = "Set regular shape style for vector features. The resulting shape will be a regular polygon when radius is provided, or a star when radius1 and radius2 are provided.";
 
             FillStyle = new LinkParameter
             {
                 Name = "Fill Style",
+                PropertyName = "fill",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "FillStyle"
+                LinkedParameter = "styles",
+                ClassTypes = new string[1] { "FillStyle" },
             };
             Points = new IntegerParameter
             {
                 Name = "Number of Points",
+                PropertyName = "points",
                 Description = "Number of points for stars and regular polygons. In case of a polygon, the number of points is the number of sides.",
                 Priority = (int)GDO.Utility.Priorities.Required,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
-            Radius = new NullableIntegerParameter
+            Radius = new IntegerParameter
             {
                 Name = "Radius",
+                PropertyName = "radius",
                 Description = "Radius of a regular polygon.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
-            Radius1 = new NullableIntegerParameter
+            Radius1 = new IntegerParameter
             {
                 Name = "Inner Radius",
+                PropertyName = "radius1",
                 Description = "Inner radius of a star.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
-            Radius2 = new NullableIntegerParameter
+            Radius2 = new IntegerParameter
             {
                 Name = "Outer Radius",
+                PropertyName = "radius2",
                 Description = "Outer Radius of a star",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
             Angle = new IntegerParameter
             {
                 Name = "Angle",
+                PropertyName = "angle",
                 Description = "Shape's angle in radians. A value of 0 will have one of the shape's point facing up.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = false,
                 IsVisible = true,
-                DefaultValue = 0
+                DefaultValue = 0,
+                Increment = 1,
             };
             SnapToPixel = new BooleanParameter
             {
                 Name = "SnapToPixel",
+                PropertyName = "snapToPixel",
                 Description = "If true integral numbers of pixels are used as the X and Y pixel coordinate when drawing the shape in the output canvas. If false fractional numbers may be used. Using true allows for sharp rendering (no blur), while using false allows for accurate rendering. Note that accuracy is important if the shape's position is animated. Without it, the shape may jitter noticeably. ",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
@@ -91,12 +98,13 @@ namespace GDO.Apps.Maps.Core.Styles
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
+                PropertyName = "stroke",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = false,
                 IsVisible = true,
-                LinkedParameter = "StrokeStyle"
+                LinkedParameter = "styles",
+                ClassTypes = new string[1] { "StrokeStyle" },
             };
         }
     }

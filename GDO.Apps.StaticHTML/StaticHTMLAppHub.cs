@@ -16,14 +16,13 @@ namespace GDO.Apps.StaticHTML
         public int P2PMode { get; set; } = (int)Cave.P2PModes.None;
         public Type InstanceType { get; set; } = new StaticHTMLApp().GetType();
 
-        public void JoinGroup(int instanceId)
+        public void JoinGroup(string groupId)
         {
-            Groups.Add(Context.ConnectionId, "" + instanceId);
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-
-        public void ExitGroup(int instanceId)
+        public void ExitGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + instanceId);
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void SetURL(int instanceId, string url)
@@ -32,9 +31,10 @@ namespace GDO.Apps.StaticHTML
             {
                 try
                 {
+                    bool responsiveMode = ((StaticHTMLApp) Cave.Apps["StaticHTML"].Instances[instanceId]).ResponsiveMode;
                     ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).SetURL(url);
-                    Clients.Group("" + instanceId).receiveURL(instanceId, url);
-                    Clients.Caller.receiveURL(instanceId, url);
+                    Clients.Group("" + instanceId).receiveURL(instanceId, url, responsiveMode);
+                    Clients.Caller.receiveURL(instanceId, url, responsiveMode);
                 }
                 catch (Exception e)
                 {

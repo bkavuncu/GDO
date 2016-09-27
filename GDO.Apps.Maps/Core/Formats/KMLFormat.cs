@@ -11,19 +11,20 @@ namespace GDO.Apps.Maps.Core.Formats
     {
         public BooleanParameter ExtractStyles { get; set; }
         public BooleanParameter ShowPointNames { get; set; }
-        public IntegerArrayParameter DefaultStyleIds { get; set; }
+        public LinkParameter DefaultStyle { get; set; }
+        public BooleanParameter WriteStyles { get; set; }
 
         public KMLFormat()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)FormatTypes.KML;
+            ObjectType.Value = "ol.format.KML";
+            Description.Value = "Feature format for reading and writing data in the KML format.";
 
             ExtractStyles = new BooleanParameter
             {
                 Name = "Extract Styles",
+                PropertyName = "extractStyles",
                 Description = "Extract styles from the KML",
-                Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
@@ -32,20 +33,33 @@ namespace GDO.Apps.Maps.Core.Formats
             ShowPointNames = new BooleanParameter
             {
                 Name = "Show Point Names",
+                PropertyName = "showPointNames",
                 Description = "Show names as labels for placemarks which contain points.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Boolean,
                 DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
             };
 
-            DefaultStyleIds = new IntegerArrayParameter
+            DefaultStyle = new LinkParameter
             {
-                Name = "Default Styles",
+                Name = "Default Style",
+                PropertyName = "defaultStyle",
                 Description = "Default style. The default default style is the same as Google Earth.",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Array,
+                LinkedParameter = "styles",
+                ClassTypes = new string[1] {"Style"},
+                IsEditable = false,
+                IsVisible = true
+            };
+
+            WriteStyles = new BooleanParameter
+            {
+                Name = "Write Styles",
+                PropertyName = "writeStyles",
+                Description = "Write styles into KML.",
+                Priority = (int)GDO.Utility.Priorities.Optional,
+                DefaultValue = true,
                 IsEditable = false,
                 IsVisible = true
             };

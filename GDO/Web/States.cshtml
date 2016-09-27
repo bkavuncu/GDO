@@ -32,10 +32,16 @@
     <link href="../CSS/gdo.management.css" rel="stylesheet">
     <link href="../CSS/jquery-ui.min.css" rel="stylesheet">
 
-
     <style>
         td {
           padding: 0px !important;
+        }
+        body {
+            height: 100%;
+            width: 100%;
+            max-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
         }
     </style>
     <script>
@@ -72,14 +78,13 @@
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="../Scripts/enscroll-0.6.1.min.js"></script>
     <script src="../Scripts/jquery.csv-0.71.min.js"></script>
     <script src="../Scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
-
     <script>
         gdo.updateDisplayCanvas = function () {
                 gdo.management.updateMaintenanceButton();
@@ -119,13 +124,13 @@
             <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
                 <tr>
                     <td>
-                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-square fa-fw'></i>&nbsp;Blank</font></font></button>
+                        <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-square fa-fw'></i>&nbsp;Blank Mode</font></font></button>
                     </td>
                     <td>
-                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance</font></button>
+                        <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance Mode</font></button>
                     </td>
                     <td>
-                        <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console</font></button></a>
+                        <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console Mode</font></button></a>
                     </td>
                     <td>
                         <div style="width:14px"></div>

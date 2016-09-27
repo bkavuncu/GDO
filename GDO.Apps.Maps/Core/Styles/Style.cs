@@ -13,61 +13,67 @@ namespace GDO.Apps.Maps.Core.Styles
         public LinkParameter ImageStyle { get; set; }
         public LinkParameter StrokeStyle { get; set; }
         public LinkParameter TextStyle { get; set; }
-        public NullableIntegerParameter ZIndex { get; set; }
+        public IntegerParameter ZIndex { get; set; }
 
         public Style()
         {
             ClassName.Value = this.GetType().Name;
-            Type.Value = (int)StyleTypes.Style;
+            ObjectType.Value = "ol.style.Style";
+            Description.Value = "Container for vector feature rendering styles. Any changes made to the style or its children through set*() methods will not take effect until the feature or layer that uses the style is re-rendered.";
 
             FillStyle = new LinkParameter
             {
                 Name = "Fill Style",
+                PropertyName = "fill",
                 Description = "Select Fill Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "FillStyle"
+                LinkedParameter = "styles",
+                ClassTypes = new string[1] { "FillStyle" },
             };
             ImageStyle = new LinkParameter
             {
                 Name = "Image Style",
+                PropertyName = "image",
                 Description = "Select Image Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "ImageStyle"
+                LinkedParameter = "styles",
+                ClassTypes = new string[3] { "ImageStyle", "CircleStyle", "RegularShapeStyle" },
             };
             StrokeStyle = new LinkParameter
             {
                 Name = "Stroke Style",
+                PropertyName = "stroke",
                 Description = "Select Stroke Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "StrokeStyle"
+                LinkedParameter = "styles",
+                ClassTypes = new string[1] { "StrokeStyle" },
             };
             TextStyle = new LinkParameter
             {
                 Name = "Text Style",
+                PropertyName = "text",
                 Description = "Select Text Style",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Datalist,
                 IsEditable = true,
                 IsVisible = true,
-                LinkedParameter = "TextStyle"
+                LinkedParameter = "styles",
+                ClassTypes = new string[1] { "TextStyle" },
             };
-            ZIndex = new NullableIntegerParameter
+            ZIndex = new IntegerParameter
             {
                 Name = "ZIndex",
+                PropertyName = "zIndex",
                 Description = "ZIndex",
                 Priority = (int)GDO.Utility.Priorities.Optional,
-                VisualisationType = (int)GDO.Utility.VisualisationTypes.Integer,
                 IsEditable = true,
-                IsVisible = true
+                IsVisible = true,
+                Increment = 1,
             };
         }
     }

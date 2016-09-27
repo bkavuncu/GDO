@@ -18,10 +18,11 @@ namespace GDO.Apps.DD3
     {
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
 
         public void Init()
         {
@@ -242,7 +243,7 @@ namespace GDO.Apps.DD3
         private void calculateDimensions (string dataId)
         {
             var dataSet = this.data[dataId];
-            var dimensions = new JObject();
+            var dimensions = new JObject();//TODO this is hiding a class field - rename local variable XOR use class variable
             Func<JToken, JToken> tryParseNumber = d =>
             {
                 double number;

@@ -2,6 +2,7 @@
 using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
+using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.Images
 {
@@ -16,10 +17,11 @@ namespace GDO.Apps.Images
     {
         public int Id { get; set; }
         public string AppName { get; set; }
+        public App App { get; set; }
         public Section Section { get; set; }
         public AppConfiguration Configuration { get; set; }
         public bool IntegrationMode { get; set; }
-        public IAdvancedAppInstance ParentApp { get; set; }
+        public ICompositeAppInstance ParentApp { get; set; }
         public string ImageName { get; set; }
         public string ImageNameDigit { get; set; }
         public int DisplayMode { get; set; }

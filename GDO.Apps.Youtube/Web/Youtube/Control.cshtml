@@ -23,6 +23,8 @@
     <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard.min.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/keyboard-dark.min.css" rel="stylesheet" type="text/css">
     <style>
         body {
             color: #FFF;
@@ -87,15 +89,29 @@
             position: relative;
             text-align: center;
         }
+                /* override Bootstrap excessive button padding */
+         button.ui-keyboard-button.btn {
+            padding: 1px 6px;
+        }
+        /* Bootswatch Darkly input is too bright */
+         .ui-keyboard-input.light, .ui-keyboard-preview.light {
+            color: #282828;
+            background: #ddd;
+        }
+        .ui-keyboard-input.dark, .ui-keyboard-preview.dark {
+            color: #ddd;
+            background: #282828;
+        }
     </style>
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
     <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
     <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Scripts/jquery.keyboard.js"></script>
     <script>
         function getUrlVar(variable) {
             /// <summary>
@@ -127,6 +143,9 @@
                 var firstScriptTag = document.getElementsByTagName('script')[0];
                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
                 gdo.net.app["Youtube"].initControl(gdo.controlId);
+                if (gdo.net.consoleMode) {
+                    //$("#url_input").keyboard(gdo.net.keyboardOptions.tex);
+                }
             });
 
         });

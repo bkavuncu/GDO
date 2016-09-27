@@ -66,17 +66,20 @@
 </head>
 <body unselectable="on" class="unselectable">
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
     <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
-    <script>
-            $(function () {
-                $(document).ready(function () {
-                    var gdo = parent.gdo;
-                    gdo.net.app["StaticHTML"].initClient(gdo.clientId);
-                });
+<script>
+    $(function() {
+        $(document)
+            .ready(function() {
+                var gdo = parent.gdo;
+                gdo.net.app["StaticHTML"].initClient(gdo.clientId);
             });
-    </script>
-    <iframe id="html_frame" frameborder="0" style="border: 0 none; display: block; overflow:hidden;"></iframe>
+    });
+</script>
+    <div id="wrapper">
+        <iframe id="html_frame" frameborder="0" style="border: 0 none; display: block; overflow: hidden;"></iframe>
+    </div>
 
 </body>
 </html>

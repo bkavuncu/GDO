@@ -18,14 +18,13 @@ namespace GDO.Modules.EyeTracking
         public string Name { get; set; } = "EyeTracking";
         public Type ModuleType { get; set; } = new EyeTrackingModule().GetType();
 
-        public void JoinGroup(string moduleName)
+        public void JoinGroup(string groupId)
         {
-            Groups.Add(Context.ConnectionId, "" + moduleName);
+            Groups.Add(Context.ConnectionId, "" + groupId);
         }
-
-        public void ExitGroup(string moduleName)
+        public void ExitGroup(string groupId)
         {
-            Groups.Remove(Context.ConnectionId, "" + moduleName);
+            Groups.Remove(Context.ConnectionId, "" + groupId);
         }
 
         public void LinkCallbackFunction()
