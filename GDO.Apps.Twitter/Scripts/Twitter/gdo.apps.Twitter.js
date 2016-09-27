@@ -84,8 +84,39 @@ gdo.net.app["Twitter"].NodeContext = {
     FREE: 9
 }
 
-gdo.net.app["Twitter"].initClient = function () {
+gdo.net.app["Twitter"].initClient = function() {
     gdo.consoleOut('.Twitter', 1, 'Initializing Twitter App Client at Node ' + gdo.clientId);
+
+    var instanceId = gdo.net.node[gdo.clientId].appInstanceId;
+    var screenWidth = gdo.net.section[gdo.net.instance[instanceId].sectionId].width /
+                    gdo.net.section[gdo.net.instance[instanceId].sectionId].cols;
+    var screenHeight = gdo.net.section[gdo.net.instance[instanceId].sectionId].height /
+        gdo.net.section[gdo.net.instance[instanceId].sectionId].rows;
+    var xOffset = -gdo.net.node[gdo.clientId].sectionCol * screenWidth;
+    var yOffset = -gdo.net.node[gdo.clientId].sectionRow * screenHeight;
+    var width = gdo.net.section[gdo.net.instance[instanceId].sectionId].width;
+    var height = gdo.net.section[gdo.net.instance[instanceId].sectionId].height;
+    var origin = "0% 0%";
+    var transform = "translate(" + xOffset + "px," + yOffset + "px)";
+
+    $("iframe")
+       .contents()
+       .find("#page_wrapper")
+       .css("width", screenWidth + "px")
+        .css("height", screenHeight + "px");
+
+
+    $("iframe")
+        .contents()
+        .find("#wrapper")
+        .css("-moz-transform", transform)
+        .css("-moz-transform-origin", origin)
+        .css("-o-transform", transform)
+        .css("-o-transform-origin", origin)
+        .css("-webkit-transform", transform)
+        .css("-webkit-transform-origin", origin)
+        .css("width", width + "px")
+        .css("height", height + "px");
 }
 
 gdo.net.app["Twitter"].initControl = function () {
