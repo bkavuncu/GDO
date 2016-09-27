@@ -17,6 +17,25 @@
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.Twitter', 1, 'Message from server: ' + message);
             $("iframe").contents().find("#client_api_status_message").empty().append(messageDes.msg);
+            if (messageDes.healthy) {
+                $("iframe")
+                    .contents()
+                    .find("#client_status")
+                    .removeClass("fa-circle-o-notch")
+                    .removeClass("fa-spin")
+                    .addClass("fa-check-circle")
+                .css("color", "#24ca00");
+                
+            } else {
+                $("iframe")
+                    .contents()
+                    .find("#client_status")
+                    .removeClass("fa-circle-o-notch")
+                    .removeClass("fa-spin")
+                    .addClass("fa-times-circle-o")
+                 .css("color", "#ff0000");;
+            }
+ 
         }
     }
 
@@ -239,6 +258,7 @@ gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
             break;
         case "Images":
             gdo.consoleOut('.Twitter', 1, "Requesting server start Image app at instance " + section.appInstanceId);
+//            gdo.net.app["Images"].server.displayImage(section.appInstanceId, section.twitterVis.filePath, 2);
             gdo.net.app["Images"].server.processAndLaunch(section.appInstanceId, section.twitterVis.filePath);
             break;
         case "StaticHTML":
