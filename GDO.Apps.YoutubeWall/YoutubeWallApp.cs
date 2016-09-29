@@ -120,9 +120,32 @@ namespace GDO.Apps.YoutubeWall
         {
             public string kind { get; set; }
             public string etag { get; set; }
-            public string nextPageToken { get; set; }
+            public string regionCode { get; set; }
             public PageNumInfo pageInfo { get; set; }
             public ChannelItemInfo[] items { get; set; }
+        }
+
+        public class PlaylistIdInfo
+        {
+            public string kind { get; set; }
+            public string playlistId { get; set; }
+        }
+
+        public class PlaylistItemInfo
+        {
+            public string kind { get; set; }
+            public string etag { get; set; }
+            public PlaylistIdInfo id { get; set; }
+            public SnippetInfo snippet { get; set; }
+        }
+
+        public class PlaylistInfo
+        {
+            public string kind { get; set; }
+            public string etag { get; set; }
+            public string nextPageToken { get; set; }
+            public PageNumInfo pageInfo { get; set; }
+            public PlaylistItemInfo[] items { get; set; }
         }
 
         public class PlayInfo
@@ -192,7 +215,8 @@ namespace GDO.Apps.YoutubeWall
             return yJson;
         }
 
-        public PlayInfo getPlaylists(string channelId)
+        // For channel mode, get playlist id by channel id
+        public PlayInfo getPlaylistsByChannelId(string channelId)
         {
             string yURL = baseURL + "channels" + "?";
             yURL += "part=" + "contentDetails" + ",snippet" + "&";
@@ -205,7 +229,8 @@ namespace GDO.Apps.YoutubeWall
             return yJson;
         }
 
-        public ChannelInfo getChannelId(string channelName)
+        // For channel mode, get channel id by channel name
+        public ChannelInfo getChannelIdByChannelName(string channelName)
         {
             string yURL = baseURL + "search" + "?";
             yURL += "part=" + "snippet" + "&";
@@ -219,6 +244,23 @@ namespace GDO.Apps.YoutubeWall
             return yJson;
         }
 
+        //TODO: For playlist mode, get playlist id by playlist name
+        public PlaylistInfo getPlaylistIdByPlaylistName(string playlistName)
+        {
+            string yURL = baseURL + "search" + "?";
+            yURL += "part=" + "snippet" + "&";
+            yURL += "q=" + playlistName.Replace(" ", "+") + "&";
+            yURL += "type=" + "playlist" + "&";
+            yURL += "maxResults=" + "3" + "&";
+            yURL += "key=" + key;
+
+            string yResponse = requestYoutubeInfo(yURL);
+            PlaylistInfo yJson = JsonConvert.DeserializeObject<PlaylistInfo>(yResponse);
+            return yJson;
+        }
+
+
+        // For keywords mode
         public KeywordVideoInfo getVideoByKeywords(string keywords, string pageToken, string num)
         {
             string yURL = baseURL + "search" + "?";
