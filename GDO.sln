@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.RayMarching", "GDO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Apps.UKTravel\GDO.Apps.UKTravel.csproj", "{4E0EC509-B2BE-459A-92CE-5EFB978679DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Globe", "GDO.Apps.Globe\GDO.Apps.Globe.csproj", "{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.FusionChart", "GDO.Apps.FusionChart\GDO.Apps.FusionChart.csproj", "{990557AF-B778-47E2-8A2B-5F4401E64DD2}"
 EndProject
 Global
