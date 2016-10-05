@@ -235,7 +235,7 @@ gdo.net.app["Twitter"].deployApps = function (sections) {
     });
 }
 gdo.net.app["Twitter"].deployApp = function (section) {
-    gdo.consoleOut('.Twitter', 1, "Deploying app " + section.twitterVis.appType + " to section " + section.id);
+    gdo.consoleOut('.Twitter', 1, "Deploying app " + section.twitterVis.appType + " to section " + section.id + " with config " + section.twitterVis.config);
     gdo.net.server.deployBaseApp(section.id, section.twitterVis.appType, section.twitterVis.config);
 }
 

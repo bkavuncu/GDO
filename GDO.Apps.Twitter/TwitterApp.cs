@@ -180,7 +180,7 @@ namespace GDO.Apps.Twitter
                     twitterVis.FilePath = Download(url, ImageAppBasePath);
                     break;
                 default:
-                    twitterVis.Config = "ResponsiveBlank";
+                    twitterVis.Config = "ResponsiveBlack";
                     twitterVis.FilePath = Path.Combine(TwitterRelativePath, Download(url, TwitterBasePath));
                     break;
             }
