@@ -57,9 +57,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.City", "GDO.Apps.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Cortical", "GDO.Apps.Cortical\GDO.Apps.Cortical.csproj", "{193D0D08-0D61-4511-94AC-34AB78FB3793}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Twitter", "GDO.Apps.Twitter\GDO.Apps.Twitter.csproj", "{D49111D3-36F1-485C-8D20-7308E3EAFD5B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.RayMarching", "GDO.Apps.RayMarching\GDO.Apps.RayMarching.csproj", "{A3076015-E50D-49D1-8FA2-3F9DD8853FBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Apps.UKTravel\GDO.Apps.UKTravel.csproj", "{4E0EC509-B2BE-459A-92CE-5EFB978679DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.Globe", "GDO.Apps.Globe\GDO.Apps.Globe.csproj", "{DBAD45EA-6E89-4D67-9F11-B6962DB2FDD5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.FusionChart", "GDO.Apps.FusionChart\GDO.Apps.FusionChart.csproj", "{990557AF-B778-47E2-8A2B-5F4401E64DD2}"
 EndProject
