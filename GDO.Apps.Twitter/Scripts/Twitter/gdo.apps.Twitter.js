@@ -268,6 +268,7 @@ gdo.consoleOut('.Twitter', 1, 'Starting app at section ' + section.id);
         case "FusionChart":
             gdo.consoleOut('.Twitter', 1, 'Requesting server start FusionChart app with path = "' + section.twitterVis.filePath + "' at instance " + section.appInstanceId);
             gdo.net.app["FusionChart"].server.processFile(section.appInstanceId, section.twitterVis.filePath);
+            break;
         default:
             gdo.consoleOut('.Twitter', 2, 'App is an unknown type could not be deployed');
             break;

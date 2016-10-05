@@ -749,7 +749,7 @@
             function() {
                 var gdo = parent.gdo;
                 gdo.net.app["Twitter"].server.initApiConnection(gdo.controlId);
-                gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, false);
+                gdo.net.app["Twitter"].getPseudoCaveStatus(gdo.controlId, 0);
             });
     $("#dialog_refresh")
         .on("click",
