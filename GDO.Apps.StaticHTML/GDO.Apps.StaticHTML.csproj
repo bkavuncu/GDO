@@ -131,6 +131,8 @@
     <Content Include="Data\StaticHTML\sample.html" />
     <Content Include="packages.config" />
     <Content Include="Configurations\StaticHTML\Matrix.json" />
+    <Content Include="Configurations\StaticHTML\Responsive.json" />
+    <Content Include="Configurations\StaticHTML\ResponsiveBlack.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

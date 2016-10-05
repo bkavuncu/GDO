@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using GDO.Apps.StaticHTML;
 using GDO.Core;
 using GDO.Core.Apps;
@@ -31,10 +32,11 @@ namespace GDO.Apps.StaticHTML
             {
                 try
                 {
-                    bool responsiveMode = ((StaticHTMLApp) Cave.Apps["StaticHTML"].Instances[instanceId]).ResponsiveMode;
-                    ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).SetURL(url);
-                    Clients.Group("" + instanceId).receiveURL(instanceId, url, responsiveMode);
-                    Clients.Caller.receiveURL(instanceId, url, responsiveMode);
+                    StaticHTMLApp app = ((StaticHTMLApp) Cave.Apps["StaticHTML"].Instances[instanceId]);
+                    app.SetURL(url);
+                    Debug.WriteLine("Using responsive mode: " + app.IsResponsiveMode);
+                    Clients.Group("" + instanceId).receiveURL(instanceId, url, app.IsResponsiveMode);
+                    Clients.Caller.receiveURL(instanceId, url, app.IsResponsiveMode);
                 }
                 catch (Exception e)
                 {
@@ -49,7 +51,9 @@ namespace GDO.Apps.StaticHTML
             {
                 try
                 {
-                    Clients.Caller.receiveURL(instanceId, ((StaticHTMLApp)Cave.Apps["StaticHTML"].Instances[instanceId]).GetURL());
+                    StaticHTMLApp app = ((StaticHTMLApp) Cave.Apps["StaticHTML"].Instances[instanceId]);
+                    Debug.WriteLine("Using responsive mode: " + app.IsResponsiveMode);
+                    Clients.Caller.receiveURL(instanceId, app.GetURL(), app.IsResponsiveMode);
                 }
                 catch (Exception e)
                 {
