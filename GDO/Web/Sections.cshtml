@@ -129,8 +129,35 @@
         gdo.updateSelf();
     }
 </script>
-    <div id="wrapper">
 
+
+@{
+    object sessionpassword = HttpContext.Current.Session["password"];
+    string password = IsPost ? Request.Form["password"] : (sessionpassword == null ? "" : sessionpassword.ToString());
+    HttpContext.Current.Session["password"] = password;
+
+    var loginDisplay = "display: block;";
+    var mainVisibility = "visibility: hidden";
+
+    if (password == "5867")
+    {
+        loginDisplay = "display: none;";
+        mainVisibility = "visibility: visible";
+    }
+}
+<div style="@loginDisplay">
+    <form id="submit_login_form" action="Scenarios.cshtml" method="post">
+        <table style="border-collapse: separate; border-spacing: 1px;">
+            <tr>
+                <td>&nbsp;Please, enter the password: &nbsp;</td>
+                <td><input type='password' class='form-control' name='password' placeholder='pass' spellcheck='false' style='width: 70%; height: 100%;' /></td>
+                <td><input id="submit_password" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Submit password" /></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="wrapper" style="@mainVisibility">
         <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
             <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
                 <tr>
