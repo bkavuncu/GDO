@@ -149,7 +149,7 @@ namespace GDO.Apps.YoutubeWall
                     Clients.Caller.setMessage("Searching for Channel id!");
 
                     YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
-                    YoutubeWallApp.ChannelInfo channelJson = yf.getChannelId(newChannelName);
+                    YoutubeWallApp.ChannelInfo channelJson = yf.getChannelIdByChannelName(newChannelName);
                     if (channelJson.items.Length <= 0)
                     {
                         yf.Error = true;
@@ -163,7 +163,7 @@ namespace GDO.Apps.YoutubeWall
 
                     // get playlist id
                     Clients.Caller.setMessage("Searching for Playlist id!");
-                    YoutubeWallApp.PlayInfo playlistJson = yf.getPlaylists(yf.ChannelId);
+                    YoutubeWallApp.PlayInfo playlistJson = yf.getPlaylistsByChannelId(yf.ChannelId);
                     if (playlistJson.items.Length <= 0)
                     {
                         yf.Error = true;
@@ -182,6 +182,50 @@ namespace GDO.Apps.YoutubeWall
                     yf.NextVideoUrls = null;
                     Clients.Caller.updateKeywords(yf.Keywords);
                     Clients.Caller.setMessage("Fetched channel information Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+
+        public void SetPlaylistName(int instanceId, string newPlaylistName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    // update playlist name
+                    // search and get playlist id
+
+                    Clients.Caller.setMessage("Searching for Channel id!");
+
+                    YoutubeWallApp yf = ((YoutubeWallApp)Cave.Apps["YoutubeWall"].Instances[instanceId]);
+                    YoutubeWallApp.PlaylistInfo playlistJson = yf.getPlaylistIdByPlaylistName(newPlaylistName);
+                    if (playlistJson.items.Length <= 0)
+                    {
+                        yf.Error = true;
+                        yf.ErrorDetails = "Error! Channel Not Found!";
+                        Clients.Caller.setMessage(yf.ErrorDetails);
+                        return;
+                    }
+                    yf.Keywords = playlistJson.items[0].snippet.title;
+                    //Clients.Caller.setKeywords(yf.Keywords);  //put the channel name in the interface
+                    yf.ChannelId = playlistJson.items[0].snippet.channelId;
+
+                    yf.Error = false;
+                    yf.PlaylistId = playlistJson.items[0].id.playlistId;
+                    yf.VideoReady = false;
+                    yf.NextPageToken = "";
+                    yf.CurrentVideoName = null;
+                    yf.NextVideoName = null;
+                    yf.CurrentVideoUrls = null;
+                    yf.NextVideoUrls = null;
+                    Clients.Caller.updateKeywords(yf.Keywords);
+                    Clients.Caller.setMessage("Fetched playlist information Success!");
                 }
                 catch (Exception e)
                 {
@@ -336,6 +380,7 @@ namespace GDO.Apps.YoutubeWall
             }
         }
 
+        //todo
         public void SetSearchMode(int instanceId, int sm)
         {
             lock (Cave.AppLocks[instanceId])
@@ -344,7 +389,7 @@ namespace GDO.Apps.YoutubeWall
                 {
                     Clients.Caller.setMessage("Updating search mode...");
                     YoutubeWallApp yf = ((YoutubeWallApp) Cave.Apps["YoutubeWall"].Instances[instanceId]);
-                    if (sm == 0 || sm == 1)
+                    if (sm == 0 || sm == 1 || sm == 2)
                         yf.SearchMode = sm;
                     Clients.Caller.updateSearchMode(yf.SearchMode);
                     if (yf.SearchMode == 0)
@@ -354,6 +399,10 @@ namespace GDO.Apps.YoutubeWall
                     else if (yf.SearchMode == 1)
                     {
                         Clients.Caller.setMessage("Set search mode to [ Keywords Mode ] Success!");
+                    }
+                    else if (yf.SearchMode == 2)
+                    {
+                        Clients.Caller.setMessage("Set search mode to [ Playlist Mode ] Success!");
                     }
                     else
                     {

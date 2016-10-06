@@ -52,7 +52,7 @@ namespace GDO.Apps.Images
                     {
                         ia.ImageNameDigit = imgDigitGenerator.Next(10000, 99999).ToString();
                     }
-                    Clients.Caller.setDigitText(ia.ImageNameDigit);
+                    Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     String path2 = basePath + ia.ImageNameDigit + "\\origin.png";
                     Directory.CreateDirectory(basePath + ia.ImageNameDigit);
                     Image img1 = Image.FromFile(path1);
@@ -239,7 +239,7 @@ namespace GDO.Apps.Images
             {
                 Clients.Group("" + instanceId).receiveImageName(imageName, imageNameDigit);
                 //Clients.Caller.receiveImageName(imageName, imageNameDigit);
-                Clients.Caller.reloadIFrame();
+                Clients.Caller.reloadIFrame(instanceId);
             }
             catch (Exception e)
             {
@@ -292,7 +292,7 @@ namespace GDO.Apps.Images
                             };
                         }
                     }
-                    Clients.Caller.setDigitText(ia.ImageNameDigit);
+                    Clients.Caller.setDigitText(instanceId, ia.ImageNameDigit);
                     SendImageNames(instanceId, ia.ImageName, ia.ImageNameDigit);
                     Clients.Caller.setMessage("Initialized image Successfully!");
                 }
@@ -313,10 +313,10 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Requesting image name...");
                     if (((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName != null)
                     {
-                        Clients.Caller.receiveImageName(
+                        Clients.Caller.receiveImageName(instanceId,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageName,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
-                        Clients.Caller.setDigitText(
+                        Clients.Caller.setDigitText(instanceId,
                             ((ImagesApp) Cave.Apps["Images"].Instances[instanceId]).ImageNameDigit);
                         Clients.Caller.setMessage("Request image name Successfully!");
                     }
@@ -372,80 +372,6 @@ namespace GDO.Apps.Images
             }
         }
         */
-
-        public void ProcessAndLaunch(int instanceId, string imageName)
-        {
-            ProcessImage(instanceId, imageName);
-            AutoCenter(instanceId);
-        }
-
-        public void AutoCenter(int instanceId)
-        {
-            lock (Cave.AppLocks[instanceId])
-            {
-                ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                ThumbNailImageInfo ii = new ThumbNailImageInfo();
-
-                double height = ia.ImageNaturalHeight;
-                double width = ia.ImageNaturalWidth;
-                Debug.WriteLine("Height: " + height + " width: " + width);
-                double sectionWidth = ia.Section.Width;
-                double sectionHeight = ia.Section.Height;
-
-                double sWidth = sectionWidth/width;
-                double sHeight = sectionHeight/height;
-
-                double left;
-                double top;
-                double imgWidth;
-                double imgHeight;
-                if (sWidth > sHeight)
-                {
-                    imgWidth = sHeight*width;
-                    imgHeight = sHeight*height;
-                    top = 0;
-                    left = (sectionWidth - imgWidth)/2;
-                }
-                else
-                {
-                    imgWidth = sWidth*width;
-                    imgHeight = sWidth*height;
-                    top = (sectionHeight - imgHeight)/2;
-                    ;
-                    left = 0;
-                }
-
-                ii.imageData = new ImageDataInfo()
-                {
-                    height = imgHeight,
-                    width = imgWidth,
-                    naturalHeight = imgHeight,
-                    naturalWidth = imgWidth,
-                    aspectRatio = ia.Section.Width/(0.0 + ia.Section.Height),
-                    left = left,
-                    top = top,
-                    rotate = 0
-                };
-
-                ii.canvasData = new CanvasDataInfo()
-                {
-                    height = imgHeight,
-                    width = imgWidth,
-                    left = left,
-                    top = top
-                };
-
-                ii.cropboxData = new CropboxDataInfo()
-                {
-                    height = ia.Section.Height,
-                    width = ia.Section.Width,
-                    left = 0,
-                    top = 0
-                };
-
-                SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ii));
-            }
-        }
 
         public void SetThumbNailImageInfo(int instanceId, string imageInfo)
         {
@@ -625,7 +551,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting tiles information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setTiles(ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
+                    Clients.Caller.setTiles(instanceId, ia.ImageNameDigit, ia.Rotate, ia.Section.Width/ia.Section.Cols,
                         ia.Section.Height/ia.Section.Rows,
                         ia.BlockRegion[col, row].tiles != null
                             ? JsonConvert.SerializeObject(ia.BlockRegion[col, row].tiles)
@@ -648,7 +574,7 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting thumbnail image information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.setThumbNailImageInfo(ia.ThumbNailImage != null
+                    Clients.Caller.setThumbNailImageInfo(instanceId, ia.ThumbNailImage != null
                         ? JsonConvert.SerializeObject(ia.ThumbNailImage)
                         : null);
 
@@ -670,8 +596,245 @@ namespace GDO.Apps.Images
                 {
                     Clients.Caller.setMessage("Requesting section information...");
                     ImagesApp ia = (ImagesApp) Cave.Apps["Images"].Instances[instanceId];
-                    Clients.Caller.getSectionSize(ia.Section.Width, ia.Section.Height);
+                    Clients.Caller.getSectionSize(instanceId, ia.Section.Width, ia.Section.Height);
                     Clients.Caller.setMessage("Requested section information Success!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        // Zoom image with ratio
+        public void RequestZoomImage(int instanceId, double ratio)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ratio = (ratio < 0) ? ratio = 1 / (1 - ratio) : 1 + ratio;
+                        ratio = ia.ThumbNailImage.imageData.width * ratio / ia.ThumbNailImage.imageData.naturalWidth;
+                        double newWidth = ia.ThumbNailImage.imageData.naturalWidth * ratio;
+                        double newHeight = ia.ThumbNailImage.imageData.naturalHeight * ratio;
+                        ia.ThumbNailImage.canvasData.left -= (newWidth - ia.ThumbNailImage.imageData.width) / 2;
+                        ia.ThumbNailImage.canvasData.top -= (newHeight - ia.ThumbNailImage.imageData.height) / 2;
+                        ia.ThumbNailImage.imageData.width = newWidth;
+                        ia.ThumbNailImage.imageData.height = newHeight;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        // Move Image
+        public void RequestMoveImage(int instanceId, double x, double y)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    if (ia.ThumbNailImage != null)
+                    {
+                        ia.ThumbNailImage.canvasData.left += x;
+                        ia.ThumbNailImage.canvasData.top += y;
+                        SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ia.ThumbNailImage));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+
+        }
+
+        // Display Image
+        public void DisplayImage(int instanceId, string imageName, int displayMode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    string database_path = HttpContext.Current.Server.MapPath("~/Web/Images/images/Database.txt");
+                    string[] database = { };
+                    // if file is processed
+                    if (File.Exists(database_path))
+                    {
+                        database = File.ReadAllLines(database_path);
+                        foreach (string s in database)
+                        {
+                            if (s.Split('|')[0].Equals(imageName))
+                            {
+                                FindDigits(instanceId, s.Split('|')[1]);
+                                SetMode(instanceId, displayMode);
+                                return;
+                            }
+                        }
+                    }
+                    ProcessImage(instanceId, imageName);
+                    SetMode(instanceId, displayMode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage(e.GetType().ToString());
+                }
+            }
+        }
+
+        // Set display Mode
+        public void SetMode(int instanceId, int displayMode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Caller.setMessage("Setting display mode " + displayMode);
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+
+                    double autoCropArea = 0.65;
+                    double aspectRatio = ia.Section.Width / (0.0 + ia.Section.Height);
+                    double canvasAspectRatio = 1920.0 / 1080.0;
+                    // Image wrapper
+                    double canvasHeight = 435.0;
+                    double canvasWidth = canvasHeight * canvasAspectRatio;
+
+                    // Cropper box
+                    double cropBoxWidth = canvasWidth;
+                    double cropBoxHeight = canvasHeight;
+
+                    if (canvasHeight * aspectRatio > canvasWidth)
+                    {
+                        cropBoxHeight = cropBoxWidth / aspectRatio;
+                    }
+                    else
+                    {
+                        cropBoxWidth = cropBoxHeight * aspectRatio;
+                    }
+
+                    cropBoxWidth = cropBoxWidth * autoCropArea;
+                    cropBoxHeight = cropBoxHeight * autoCropArea;
+
+                    double cropBoxLeft = 0 + (canvasWidth - cropBoxWidth) / 2;
+                    double cropBoxTop = 0 + (canvasHeight - cropBoxHeight) / 2;
+
+                    ThumbNailImageInfo ti = new ThumbNailImageInfo();
+
+                    // Cropbox Data
+                    ti.cropboxData = new CropboxDataInfo()
+                    {
+                        height = cropBoxHeight,
+                        width = cropBoxWidth,
+                        left = cropBoxLeft,
+                        top = cropBoxTop
+                    };
+
+                    CropboxDataInfo cropboxData = ti.cropboxData;
+
+                    double imgNatureWidth = ia.ImageNaturalWidth;
+                    double imgNatureHeight = ia.ImageNaturalHeight;
+
+                    var scalewidth = cropboxData.width / imgNatureWidth;
+                    var scaleheight = cropboxData.height / imgNatureHeight;
+
+
+                    double imgAspectRatio = imgNatureWidth / imgNatureHeight;
+
+                    double imgLeft = 0;
+                    double imgTop = 0;
+                    double imgWidth = 0;
+                    double imgHeight = 0;
+
+                    // Display mode (2: centre image)
+                    if (displayMode == 0)
+                    {
+                        if (scalewidth < scaleheight)
+                        {
+                            imgWidth = cropboxData.width;
+                            imgHeight = imgWidth / imgAspectRatio;
+                            imgTop = cropboxData.top;
+                            imgLeft = cropboxData.left;
+                        }
+                        else
+                        {
+                            imgHeight = cropboxData.height;
+                            imgWidth = imgHeight * imgAspectRatio;
+                            imgLeft = cropboxData.left;
+                            imgTop = cropboxData.top;
+                        }
+                    }
+                    else if (displayMode == 1)
+                    {
+                        if (scalewidth < scaleheight)
+                        {
+                            imgHeight = cropboxData.height;
+                            imgWidth = imgHeight * imgAspectRatio;
+                            imgLeft = cropboxData.left;
+                            imgTop = cropboxData.top;
+                        }
+                        else
+                        {
+                            imgWidth = cropboxData.width;
+                            imgHeight = imgWidth / imgAspectRatio;
+                            imgTop = cropboxData.top;
+                            imgLeft = cropboxData.left;
+                        }
+                    }
+                    else if (displayMode == 2)
+                    {
+                        if (scalewidth < scaleheight)
+                        {
+                            imgWidth = cropboxData.width;
+                            imgHeight = imgWidth / imgAspectRatio;
+                            imgTop = cropboxData.top + (cropboxData.height - imgHeight) / 2;
+                            imgLeft = cropboxData.left;
+                        }
+                        else
+                        {
+                            imgHeight = cropboxData.height;
+                            imgWidth = imgHeight * imgAspectRatio;
+                            imgLeft = cropboxData.left + (cropboxData.width - imgWidth) / 2;
+                            imgTop = cropboxData.top;
+                        }
+                    }
+
+                    // Image data
+                    ti.imageData = new ImageDataInfo()
+                    {
+                        height = imgHeight,
+                        width = imgWidth,
+                        naturalHeight = imgHeight,
+                        naturalWidth = imgWidth,
+                        aspectRatio = cropboxData.width / (cropboxData.height + 0.0),
+                        left = imgLeft,
+                        top = imgTop,
+                        rotate = 0
+                    };
+
+                    // CanvasData
+                    ti.canvasData = new CanvasDataInfo()
+                    {
+                        height = imgHeight,
+                        width = imgWidth,
+                        left = imgLeft,
+                        top = imgTop
+                    };
+
+                    SetThumbNailImageInfo(instanceId, JsonConvert.SerializeObject(ti));
                 }
                 catch (Exception e)
                 {

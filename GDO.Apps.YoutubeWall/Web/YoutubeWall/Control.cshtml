@@ -75,6 +75,7 @@
             position: relative;
             text-align: center;
         }
+
     </style>
 </head>
 <body unselectable="on" class="unselectable">
@@ -99,16 +100,19 @@
                 <div class="panel panel-primary youtube_text">
                     <div class="panel-heading">
                         <div class="row">
-                            <div id="update_keyword_title" class="col-lg-8">
+                            <div id="update_keyword_title" class="col-lg-4">
                                 <h5><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Channel</h5>
                             </div>
                             <div class="col-lg-4" align="right">
-                                <button type='button' align="right" id="search_mode" style="align-content:flex-end; border-color: transparent;" class='btn btn-success btn-block'><i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Channel Mode</button>
+                                <button type='button' align="right" id="search_mode_lft" style="align-content:flex-end; border-color: transparent;" class='btn btn-success btn-block'><i class='fa  fa-power-off fa-fw'></i>&nbsp;Keywords Mode</button>
+                            </div>
+                            <div class="col-lg-4" align="right">
+                                <button type='button' align="right" id="search_mode_rgt" style="align-content:flex-end; border-color: transparent;" class='btn btn-success btn-block'><i class='fa  fa-power-off fa-fw'></i>&nbsp;Playlist Mode</button>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body">
-                        <fieldset>
+                    <div class="panel-body" style="height: 11vh">
+                        <fieldset style="position: relative; top: 50%; transform: translateY(-50%)">
                             <table style="border-collapse: separate; border-spacing: 7px;background-color:transparent;">
                                 <tr>
                                     <td>
@@ -132,8 +136,8 @@
                     <div class="panel-heading">
                         <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Message</h6>
                     </div>
-                    <div class="panel-body">
-                        <fieldset>
+                    <div class="panel-body" style="height: 11vh">
+                        <fieldset style="position: relative; top: 50%; transform: translateY(-50%)">
                             <h6 id="message_from_server"></h6>
                         </fieldset>
                     </div>
@@ -167,10 +171,15 @@
         $(this).toggleClass("btn-success");
         gdo.net.app["YoutubeWall"].server.toggleMute(gdo.controlId, [$(this).text()]);
     });
-    $("#search_mode").click(function () {
+    $("#search_mode_lft").click(function () {
         var gdo = parent.gdo;
-        gdo.consoleOut('.YoutubeWall', 1, 'Updating search mode: ' + (1 - $("#search_mode").val()));
-        gdo.net.app["YoutubeWall"].server.setSearchMode(gdo.controlId, (1 - $("#search_mode").val()));
+        gdo.consoleOut('.YoutubeWall', 1, 'Updating search mode: ' + $("#search_mode_lft").val());
+        gdo.net.app["YoutubeWall"].server.setSearchMode(gdo.controlId, $("#search_mode_lft").val());
+    });
+    $("#search_mode_rgt").click(function () {
+        var gdo = parent.gdo;
+        gdo.consoleOut('.YoutubeWall', 1, 'Updating search mode: ' + $("#search_mode_rgt").val());
+        gdo.net.app["YoutubeWall"].server.setSearchMode(gdo.controlId, $("#search_mode_rgt").val());
     });
     $("#update_keyword_submit").click(function () {
         var gdo = parent.gdo;
@@ -180,6 +189,8 @@
             gdo.net.app["YoutubeWall"].server.setChannelName(gdo.controlId, $("#new_keyword").val());
         } else if (gdo.net.app["YoutubeWall"].searchMode == 1) {
             gdo.net.app["YoutubeWall"].server.setKeywords(gdo.controlId, $("#new_keyword").val());
+        } else if (gdo.net.app["YoutubeWall"].searchMode == 2) {
+            gdo.net.app["YoutubeWall"].server.setPlaylistName(gdo.controlId, $("#new_keyword").val());
         }
     });
     $("#get_next_videos").click(function () {
@@ -189,6 +200,8 @@
             gdo.net.app["YoutubeWall"].server.getNextVideos(gdo.controlId);
         } else if (gdo.net.app["YoutubeWall"].searchMode == 1) {
             gdo.net.app["YoutubeWall"].server.getNextVideosByKeywords(gdo.controlId);
+        } else if (gdo.net.app["YoutubeWall"].searchMode == 2) {
+            gdo.net.app["YoutubeWall"].server.getNextVideos(gdo.controlId); // same as channel mode
         }
     });
     $("#new_keyword").keypress(function (e) {
