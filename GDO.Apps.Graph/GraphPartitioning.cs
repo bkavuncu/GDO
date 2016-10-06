@@ -45,6 +45,7 @@ namespace GDO.Apps.Graph
         internal static Partition[,] DistributeNodesInPartitions(Partition[,] partitions, List<GraphNode> nodes, Section section)
         {
             // distribute nodes into respective partitions
+            //TODO this algorithm should be parallelised - a parallel.ForEach would be fine
             foreach (GraphNode n in nodes)
             {
                 PartitionPos nodePartitionPos = PartionPosition(n.Pos, section);
@@ -57,6 +58,7 @@ namespace GDO.Apps.Graph
             int singleDisplayHeight, Section section)
         {
 
+            //TODO this algorithm should be parallelised - a parallel.ForEach would be fine provided that the partition.links is made into a ConcurrentList 
             // distribute links into respective partitions
             foreach (GraphLink link in links)
             {

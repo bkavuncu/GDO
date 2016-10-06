@@ -108,8 +108,9 @@ namespace GDO.Apps.Twitter.Core
                                 FileStream fileStream = new FileStream(Path.Combine(dirPath, fileName), FileMode.Create, FileAccess.Write,
                                     FileShare.None))
                             {
-                                await responseTask.Result.Content.CopyToAsync(fileStream);
+                                await responseTask.Result.Content.CopyToAsync(fileStream);// todo i wonder if this process is realeasing the file lock propery and quickly enough ? - investigating file locking problems on large Graph files 
                             }
+                            // todo possibly we need to wait for the file stream to close? / be disposed of? 
                             return cdh.FileName;
                         });
 

@@ -60,7 +60,7 @@ namespace GDO.Apps.Graph.Domain
     }
 
     public class Partition
-    {
+    {// TODO there is a good argument that the parallel bersions of the lists should be used
         public PartitionPos partitionPos { get; set; }
         public List<GraphNode> Nodes { get; set; }
         public List<GraphLink> Links { get; set; }
