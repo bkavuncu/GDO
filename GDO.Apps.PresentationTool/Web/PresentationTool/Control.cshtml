@@ -1,0 +1,694 @@
+﻿@using System.IO
+@using System.Web
+@using GDO.Core.Apps
+@using GDO.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap Core CSS -->
+    <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.css" rel="stylesheet">
+    <!-- Timeline CSS -->
+    <link href="../../Bootstrap/dist/css/timeline.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../Bootstrap/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="../../Bootstrap/bower_components/morrisjs/morris.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../Scripts/PresentationTool/cropper.min.css" rel="stylesheet" />
+
+    <style>
+        .unselectable {
+            -moz-user-select: -moz-none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
+
+            .btn-file input[type=submit] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                cursor: inherit;
+                display: block;
+            }
+
+        input[readonly] {
+            background-color: #555 !important;
+            cursor: text !important;
+        }
+
+        .file_upload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+
+        .panel-body {
+            padding: 0px;
+        }
+
+        .track4 {
+            width: 20px;
+            background-clip: padding-box;
+            background: #333;
+            border-style: solid;
+            border-color: transparent;
+            border-width: 0;
+            border-left-width: 1px;
+        }
+
+            .track4.dragging,
+            .track4:hover {
+                background: #333; /* No RGBA support */
+            }
+
+            .track4:active {
+                background: #222; /* No RGBA support */
+            }
+
+        .handle4 {
+            width: 20px;
+            background-clip: padding-box;
+            background: #444; /* No RGBA support */
+        }
+
+            .handle4:hover {
+                background: #555; /* No RGBA support */
+            }
+
+            .dragging .handle4,
+            .handle4:active {
+                background: #444; /* No RGBA support */
+            }
+
+        .list-group.list-group-root {
+            padding: 0;
+            border: 0px solid;
+            overflow: auto;
+            margin-bottom: 0px;
+            height: 100%;
+        }
+
+            .list-group.list-group-root .list-group {
+                margin-bottom: 0;
+            }
+
+            .list-group.list-group-root > .list-group > .list-group-item {
+                padding-left: 30px;
+            }
+
+            .list-group.list-group-root > .list-group > .list-group > .list-group-item {
+                padding-left: 45px;
+            }
+
+        .list-group-item .fa {
+            margin-right: 5px;
+        }
+
+        .input_field_div {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .input_field {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #333;
+            background: #333;
+            color: #FFF;
+            padding: 0px;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+        }
+
+        .btn-circle.btn-xl {
+          width: 150px;
+          height: 100px;
+          padding: 10px 16px;
+          font-size: 24px;
+          line-height: 1.33;
+          border-radius: 75px;
+        }
+
+    </style>
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery-ui.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/jquery.csv-0.71.min.js"></script>
+    <script src="../../Scripts/enscroll-0.6.1.min.js"></script>
+    <script src="../../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../../Bootstrap/dist/js/sb-admin-2.js"></script>
+    <script src="../../Bootstrap/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="../../Scripts/PresentationTool/artyom.min.js"></script>
+    <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
+    <script src="../../Scripts/PresentationTool/cropper.min.js"></script>
+    <script src="../../Scripts/PresentationTool/jquery.ui.touch-punch.min.js"></script>
+
+    <!-- wColorPicker -->
+    <link href="../../Scripts/PresentationTool/wPaint/wColorPicker.min.css" rel="stylesheet" />
+    <script src="../../Scripts/PresentationTool/wPaint/wColorPicker.min.js"></script>
+
+    <!-- wPaint -->
+    <link href="../../Scripts/PresentationTool/wPaint/wPaint.min.css" rel="stylesheet" />
+    <script src="../../Scripts/PresentationTool/wPaint/wPaint.min.js"></script>
+    <!-- Plugins -->
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/main/wPaint.menu.main.min.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/text/wPaint.menu.text.min.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
+    <script src="../../Scripts/PresentationTool/wPaint/plugins/file/wPaint.menu.main.file.min.js"></script>
+
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.paint.js"></script>
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.ui.sectionTable.js"></script>
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.voice.js"></script>
+    <script src="../../Scripts/PresentationTool/gdo.apps.PresentationTool.imageControl.js"></script>
+
+    <script>
+        $(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].initControl();
+            // if mobile devices
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('#wrapper').hide();
+                $('#mobile_wrapper').show();
+            } else {
+                $('#wrapper').show();
+                $('#mobile_wrapper').hide();
+            }
+        });
+    </script>
+    <div id="mobile_wrapper" class="wrapper" style="width:100%; display:none">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table style="padding-right:30px; width:100%; height: 100%; text-align:center; border-collapse: separate;background-color:transparent; ">
+                            <tr>
+                                <td style="padding:15px">
+                                    <button id="play_page_m" type="button" class="btn btn-success btn-circle btn-xl"><i class="fa fa-play"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:15px">
+                                    <button id="previous_page_m" type="button" class="btn btn-success btn-circle btn-xl"><i class="fa fa-backward"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:15px">
+                                    <button id="next_page_m" type="button" class="btn btn-success btn-circle btn-xl"><i class="fa fa-forward"></i></button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wrapper" class="wrapper" style="width:97%; display:none" >
+        @{
+            var path = "";
+            var filename = "";
+            var extension = "";
+            if (IsPost)
+            {
+                HttpPostedFileBase file = Request.Files[0];
+                if (file != null)
+                {
+                    filename = Path.GetFileName(file.FileName);
+                    extension = Path.GetExtension(file.FileName).ToLower();
+                    //foldername
+                    if (extension.Equals(".pptx") || extension.Equals(".ppt"))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/PPTs"));
+                        path = System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/PPTs/") + filename;
+                        file.SaveAs(path);
+                    }
+                    else if (extension.Equals(".png") || extension.Equals(".jpg"))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/Images"));
+                        path = System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/Images/") + filename;
+                        file.SaveAs(path);
+                    }
+                    else if (extension.Equals(".json"))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files"));
+                        path = System.Web.HttpContext.Current.Server.MapPath("~/Web/PresentationTool/Files/") + filename;
+                        file.SaveAs(path);
+                    }
+                }
+            }
+        }
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-4" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 id="current_slide" style="text-align:left;float:left;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Image</h6>
+                            <h6 id="message_from_server" style="text-align:right;float:right;">Message</h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <div id="img_preview" style="width:100%;height:100%;">
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button id="img_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
+                            <button id="img_restore" class="btn btn-primary"><i class='fa  fa-refresh fa-fw'></i>&nbsp;Restore</button>
+                            <button id="img_paint" class="btn btn-primary" data-toggle='modal' data-target='#paint_modal'><i class='fa  fa-files-o fa-fw'></i>&nbsp;Paint</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-lg-10" id="youtube_title"><h6><i class='fa  fa-youtube  fa-fw'></i>&nbsp;Video</h6></div>
+                                <div class="col-lg-2" id="youtube_duration" style="text-align: right;"><h6></h6></div>
+                            </div>
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <fieldset>
+                                <table style="border-collapse: separate; margin:20px 10px 0px 10px; border-spacing: 6px 0;background-color:transparent; ">
+                                    <tr>
+                                        <td>
+                                            <div style="background-color: transparent;" id="update_url_label"><h6>URL:</h6></div>
+                                        </td>
+                                        <td>
+                                            <div class="input_field_div"><input type="text" class="input_field" id="new_url" size="50" value="https://www.youtube.com/watch?v=F2SNurf7B9M" onfocus="this.value=''"></div>
+                                        </td>
+
+                                        <td>
+                                            <button id="update_url_submit" class="btn btn-primary youtube_button"><i class='fa  fa-check-circle fa-fw'></i>&nbsp;Submit</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div>
+                        <div class="panel-footer">
+                            <button id="video_control" class="btn btn-primary"><i class='fa  fa-power-off fa-fw'></i>&nbsp;Control</button>
+                            <button id="video_play" class="btn btn-primary"><i class='fa  fa-repeat fa-fw'></i>&nbsp;Play Video</button>
+                            <button id="video_pause" class="btn btn-primary"><i class='fa  fa-pause fa-fw'></i>&nbsp;Pause Video</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-2" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 style="text-align:left;float:left;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Files</h6>
+                            <h6 id="file_name" style="text-align:right;float:right;white-space: nowrap; text-overflow: ellipsis; width: 120px; overflow: hidden"></h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;">
+                            <div class="list-group list-group-root" id="file_list">
+                                <a href="#item_ppts" class="list-group-item" data-toggle="collapse">
+                                    <i class="fa fa-chevron-down fa-fw"></i>PPTs
+                                </a>
+                                <ul class="list-group collapse in" id="item_ppts"></ul>
+                                <a href="#item_images" class="list-group-item" data-toggle="collapse">
+                                    <i class="fa fa-chevron-down fa-fw"></i>Images
+                                </a>
+                                <ul class="list-group collapse in" id="item_images"></ul>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <table style="border-collapse: separate; border-spacing: 4px 0;background-color:transparent;">
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <form id="submit_image_form" action="" method="post" enctype="multipart/form-data">
+                                                <div>
+                                                    <span id="submit_file" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Upload<input type="file" name="file" class="upload" id="upload_file"></span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <button id="manage_file" class="btn btn-primary btn-file btn-block" data-toggle='modal' data-target='#file_management' style="text-align:left;border-color:transparent;"><i class='fa  fa-files-o fa-fw'></i>&nbsp;Manage</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-1" style="padding: 6px;">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h6 id="Templates" style="text-align:left;float:left;">&nbsp;Templates</h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <ul id="template_list" class="list-unstyled">
+                                <li><a href="#template_one" name="1" class="list-group-item">Template 1</a></li>
+                                <li><a href="#template_two" name="2" class="list-group-item">Template 2</a></li>
+                                <li><a href="#template_three" name="3" class="list-group-item">Template 3</a></li>
+                            </ul>
+                        </div>
+                        <div class="panel-footer">
+                            <button id="load_template" class="btn btn-primary"><i class='fa  fa-upload fa-fw'></i>&nbsp;Load</button>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-1" style="padding: 6px;">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h6 id="currentPlayingIndex" style="text-align:left;float:left;">&nbsp;0</h6>
+                            <hr style="clear:both; border: 0" />
+                        </div>
+                        <div class="panel-body" style="height: 35.5vh;overflow: hidden">
+                            <form id="submit_slide_form" action="" method="post" enctype="multipart/form-data">
+                                <div>
+                                    <span id="play_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-play-circle fa-fw'></i>&nbsp;Play</span>
+                                </div>
+
+                                <div>
+                                    <span id="next_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-forward fa-fw'></i>&nbsp;Next</span>
+                                </div>
+                                <div>
+                                    <span id="previous_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-step-backward fa-fw'></i>&nbsp;Previous</span>
+                                </div>
+
+                                <div>
+                                    <span id="open_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-file-powerpoint-o fa-fw'></i>&nbsp;Open<input type="file" name="file" class="upload" id="upload_slide" /></span>
+                                </div>
+                                <div>
+                                    <span id="save_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-download fa-fw'></i>&nbsp;Save</span>
+                                    <a id="slide_link"></a>
+                                </div>
+                                <div>
+                                    <span id="new_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-plus fa-fw'></i>&nbsp;New</span>
+                                </div>
+                                <div>
+                                    <span id="delete_slide" class="btn btn-primary btn-file btn-block" style="text-align:left;border-color:transparent;"><i class='fa  fa-minus fa-fw'></i>&nbsp;Delete</span>
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="panel-footer text-center">
+                            <button id="voice_control" class="btn btn-primary btn-file btn-block" style="border-color:transparent;"><i class='fa  fa-microphone fa-fw'></i>&nbsp;Voice</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-12">
+                <ul class="nav nav-pills" id="slide_tab" style="padding: 6px;">
+                    <li class="active"><a href="#slide_table" data-toggle="tab"><b>0</b></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="slide_table">
+                        <table id="section_table" unselectable="on" class="unselectable" style="table-layout: fixed; padding: 2px; width: 100%; height: 28vh; border-collapse: separate; border-spacing: 2px;"></table>
+                    </div>
+                </div>
+                <div id="section_table_space">
+                    <br>
+                </div>
+                <div id="button_table" unselectable="on" class="unselectable" style="width: 99.5%; padding: 3px;">
+                    <div class="col-lg-1 select_section_div"></div>
+                    <div class="col-lg-1 create_section_button_div"></div>
+                    <div class="col-lg-1 close_section_button_div"></div>
+                    <div class="col-lg-1 deploy_app_button_div"></div>
+                    <div class="col-lg-1 close_app_button_div"></div>
+                    <div class="col-lg-1 clear_cave_button_div"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="file_management" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5><i align="center" class='fa  fa-files-o  fa-fw'></i>&nbsp;<font color="white">File Management</font></h5>
+                </div>
+                <div class="modal-body">
+                    <font color="white">Select file to be deleted</font>
+                    <br>
+                    &nbsp;
+                    <br />
+                    <div id="file_list_management">
+                        <select multiple class="form-control" id="file_selection" style="border-color:black"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" id="delete_all_file" class="btn btn-primary btn-ok">Delete All</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" data-dismiss="modal" id="delete_file" class="btn btn-primary btn-ok">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="paint_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5><i align="center" class='fa  fa-files-o  fa-fw'></i>&nbsp;<font color="white">Highlight Paint</font></h5>
+                </div>
+                <div class="modal-body" id="paint_modal_body">
+                    <font color="white">Draw anything on it!</font>
+                    <br>&nbsp;<br />
+                    <div id="paint_bg" style="position:absolute; width:640px; height:320px;  border-style: solid; border-width: 1px; margin: 50px 0px 0px 0px">
+                        <img id="paint_img" style="width:100%; height:100%;position: absolute;left: 50%;top: 50%;-webkit-transform: translate(-50%, -50%);transform: translate(-50%, -50%);" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // file list
+        $("#file_list").enscroll({
+            showOnHover: false,
+            verticalTrackClass: 'track4',
+            verticalHandleClass: 'handle4'
+        }).css({ "padding-right": "0px", "width": "99.5%" });
+        $('.list-group-item').on('click', function () {
+            $('.fa', this)
+              .toggleClass('fa-chevron-right')
+              .toggleClass('fa-chevron-down');
+        });
+
+
+        // layout file upload
+        $('#upload_slide').change(function () {
+            var slidename = $('#upload_slide').val().split('\\').pop();
+            $("#file_name").html(slidename);
+            if ($.trim($("#upload_slide").val()) === "") {
+                $("#message_from_server").html("Please choose a file to upload!");
+                return false;
+            }
+            var filename = $('#upload_slide').val().split('\\').pop();
+            var extension = filename.split(".").pop().toLowerCase();
+            if (extension !== "json") {
+                return false;
+            }
+
+            var formData = new FormData();
+            formData.append('file', $('#upload_slide')[0].files[0]);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    gdo.net.app["PresentationTool"].openSlideFile(filename);
+                },
+                error: function (jXHR, textStatus, errorThrown) {
+                    $("#message_from_server").html("Something wrong!");
+                }
+            });
+        });
+
+        // File upload
+        $('#upload_file').change(function() {
+            var filename = $('#upload_file').val().split('\\').pop();
+            $("#file_name").html(filename);
+            if ($.trim($("#upload_file").val()) === "") {
+                $("#message_from_server").html("Please choose a file to upload!");
+                return false;
+            }
+            var filename = $('#upload_file').val().split('\\').pop();
+            var extension = filename.split(".").pop().toLowerCase();
+            if (!(extension === "pptx" || extension === "ppt" || extension === "png" || extension === "jpg")) {
+                $("#message_from_server").html("Please upload correct file format!");
+                return false;
+            }
+
+            var formData = new FormData();
+            formData.append('file', $('#upload_file')[0].files[0]);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    var filename = $('#upload_file').val().split('\\').pop();
+                    var gdo = parent.gdo;
+                    gdo.consoleOut('.PresentationTool', 1, "Uploaded " + filename);
+                    var extension = filename.split(".").pop().toLowerCase();
+                    if (extension === "pptx" || extension === "ppt") {
+                        gdo.net.app["PresentationTool"].server.uploadPPT(gdo.controlId, filename);
+                    } else if (extension === "png" || extension === "jpg") {
+                        gdo.net.app["PresentationTool"].server.uploadImage(gdo.controlId, filename);
+                    }
+                },
+                error: function (jXHR, textStatus, errorThrown) {
+                    $("#message_from_server").html("Something wrong!");
+                }
+            });
+        });
+
+        // mobile button
+        $("#play_page_m").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].isPlaying = 1 - gdo.net.app["PresentationTool"].isPlaying;
+            gdo.updateDisplayCanvas();
+            if (gdo.net.app["PresentationTool"].isPlaying === 1) {
+                gdo.net.app["PresentationTool"].server.changePlayingStatus(gdo.controlId, gdo.net.app["PresentationTool"].isPlaying);
+                gdo.net.app["PresentationTool"].loadCurrentSlide(true);
+            } else {
+                gdo.net.app["PresentationTool"].server.changePlayingStatus(gdo.controlId, gdo.net.app["PresentationTool"].isPlaying);
+            }
+        });
+
+        $("#previous_page_m").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
+            gdo.net.app["PresentationTool"].previousSlide();
+        });
+
+        $("#next_page_m").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
+            gdo.net.app["PresentationTool"].nextSlide();
+        });
+
+        // Button click listener
+        $("#previous_slide").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
+            gdo.net.app["PresentationTool"].previousSlide();
+        });
+
+        $("#next_slide").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 0) return;
+            gdo.net.app["PresentationTool"].nextSlide();
+        });
+
+        $("#new_slide").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 1) return;
+            gdo.net.app["PresentationTool"].createNewSlide();
+        });
+
+        $("#delete_slide").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 1) return;
+            gdo.net.app["PresentationTool"].deleteCurrentSlide();
+        });
+
+        $("#play_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].isPlaying = 1 - gdo.net.app["PresentationTool"].isPlaying;
+            gdo.updateDisplayCanvas();
+            if (gdo.net.app["PresentationTool"].isPlaying === 1) {
+                gdo.net.app["PresentationTool"].server.changePlayingStatus(gdo.controlId, gdo.net.app["PresentationTool"].isPlaying);
+                gdo.net.app["PresentationTool"].loadCurrentSlide(true);
+            } else {
+                gdo.net.app["PresentationTool"].server.changePlayingStatus(gdo.controlId, gdo.net.app["PresentationTool"].isPlaying);
+            }
+        });
+
+        $("#load_template").click(function () {
+            var gdo = parent.gdo;
+            if (gdo.net.app["PresentationTool"].isPlaying === 1) return;
+            gdo.net.app["PresentationTool"].loadTemplate();
+        });
+
+        $("#save_slide").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].saveSlideFile();
+        });
+
+        $("#manage_file").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].updateFileManagementList();
+        });
+
+        $("#delete_file").click(function () {
+            var gdo = parent.gdo;
+            var files = []
+            $('#file_selection :selected').each(function (i, selected) {
+                files[i] = $(selected).text();
+            });
+            gdo.net.app["PresentationTool"].server.requestDeleteFiles(gdo.controlId, files);
+        });
+        $("#delete_all_file").click(function () {
+            var gdo = parent.gdo;
+            gdo.net.app["PresentationTool"].server.requestDeleteAllFiles(gdo.controlId);
+        });
+
+    </script>
+</body>
+</html>

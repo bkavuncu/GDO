@@ -1,0 +1,97 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+</head>
+<body unselectable="on" class="unselectable">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="../../Scripts/PresentationTool/mo.min.js"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var gdo = parent.gdo;
+                gdo.net.app["PresentationTool"].initClient();
+            });
+        });
+    </script>
+    <div id="wrapper" style="background-color:#000;width:97vw;height:97vh;">
+
+        <div style="width:100%;height: 100%; overflow: hidden; position:relative">
+            <div id="img_microphone_div" style="visibility:hidden">
+                <span class="fa fa-microphone" style="color:white; margin-left:80px; margin-top: 80px; font-size:48px;" id="img_microphone"></span>
+            </div>
+            <div style="display: table; width:100%;height: 100%; overflow: hidden; text-align:center;  z-index: 10; top: 0; left: 0; position:absolute;">
+                <div id="voice_info" style="display: table-cell; font-size: 12vh; color: azure; font-family: helvetica; text-align:center; vertical-align: middle;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const shape1 = new mojs.Shape({
+            parent: document.getElementById("img_microphone"),
+            radius: { 0: 95 },
+            fill: 'transparent',
+            stroke: '#C0C1C3',
+            strokeWidth: { 50: 0 },
+            opacity: 0.4,
+            duration: 1000,
+            delay: 100,
+            easing: mojs.easing.bezier(0, 1, 0.5, 1),
+        });
+
+        const shape2 = new mojs.Shape({
+            parent: document.getElementById("img_microphone"),
+            radius: { 0: 80 },
+            fill: 'transparent',
+            stroke: '#C0C1C3',
+            strokeWidth: { 40: 0 },
+            opacity: 0.2,
+            duration: 1800,
+            delay: 300,
+            easing: mojs.easing.bezier(0, 1, 0.5, 1),
+        });
+        var opacityCurve11 = mojs.easing.path('M0,0 C0,87 27,100 40,100 L40,0 L100,0');
+        var scaleCurve11 = mojs.easing.path('M0,0c0,80,39.2,100,39.2,100L40-100c0,0-0.7,106,60,106');
+        var elspan = document.getElementById("img_microphone");
+        const tween = new mojs.Tween({
+            duration: 1300,
+            easing: mojs.easing.ease.out,
+            onUpdate: function (progress) {
+                var scaleProgress = scaleCurve11(progress);
+                elspan.style.WebkitTransform = elspan.style.transform = 'scale3d(' + 1 + ',' + 1 + ',1)';
+            },
+        });
+        const timeline = new mojs.Timeline({
+            delay: 1000,
+            repeat: 999999,
+            onUpdate (ep, p, isForward) {
+            }
+        })
+        .add(shape1)
+        .add(shape2)
+        .add(tween)
+        .play();
+        function setVoiceInfo(info, type, firstChild) {
+            if (firstChild) {
+                $("#img_microphone_div").css('visibility', 'visible');
+                if (type === 1) {
+                    $("#voice_info").empty().hide().append(info).fadeIn(1500);
+                }
+            } else {
+                $("#img_microphone_div").css('visibility', 'hidden');
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

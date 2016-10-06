@@ -76,9 +76,40 @@
                 }
             }
             tileIdDictionary = tmpTileIdDic; // update tiles dictionary
+
+
         }
+
+        function shiftImage(instanceId, style, direction, distance, imageName, mode) {
+            var gdo = parent.gdo;
+            var finish = 0;
+
+           
+        }
+
+        function showImage(finish, instanceId, imageName, mode) {
+
+        }
+
     </script>
     <div id="image-tiles">
     </div>
+    <div id="paint-canvas" style ="width:1980px; height:1080px; position:absolute; z-index:1">
+        <canvas id="myCanvas" style="width: 100%; height:100%; margin: 0px;"></canvas>
+    </div>
+    <script>
+        function setCanvasData(dataURL) {
+
+            var canvasData = JSON.parse(dataURL);
+            var image = new Image();
+            image.src = canvasData;
+
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+    </script>
 </body>
 </html>
