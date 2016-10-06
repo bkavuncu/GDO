@@ -645,7 +645,7 @@ namespace GDO.Core
         /// </summary>
         /// <param name="sectionId">The section identifier.</param>
         /// <returns></returns>
-        private bool BroadcastSectionUpdate(int sectionId)
+        public bool BroadcastSectionUpdate(int sectionId)
         {
             try
             {

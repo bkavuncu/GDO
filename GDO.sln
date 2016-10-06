@@ -70,6 +70,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.UKTravel", "GDO.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.FusionChart", "GDO.Apps.FusionChart\GDO.Apps.FusionChart.csproj", "{990557AF-B778-47E2-8A2B-5F4401E64DD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDO.Apps.PresentationTool", "GDO.Apps.PresentationTool\GDO.Apps.PresentationTool.csproj", "{B4130C61-E958-4DE0-8AEC-F266D00F0CB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -196,6 +198,10 @@ Global
 		{990557AF-B778-47E2-8A2B-5F4401E64DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990557AF-B778-47E2-8A2B-5F4401E64DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990557AF-B778-47E2-8A2B-5F4401E64DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4130C61-E958-4DE0-8AEC-F266D00F0CB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4130C61-E958-4DE0-8AEC-F266D00F0CB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4130C61-E958-4DE0-8AEC-F266D00F0CB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4130C61-E958-4DE0-8AEC-F266D00F0CB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
