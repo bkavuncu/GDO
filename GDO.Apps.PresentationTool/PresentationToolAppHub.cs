@@ -196,22 +196,30 @@ namespace GDO.Apps.PresentationTool
                         if (pa.Pages[pa.CurrentPage].ContainsKey(id))
                         {
                             pa.caveHub.CloseSection(id);
+                            Clients.Caller.broadcastSectionUpdate(id);
                         }
                     }
 
                     pa.CurrentPage = pageIndex;
 
-                    foreach (Core.Slide slide in pa.Pages[pa.CurrentPage].Values)
+                    // copy page
+                    Dictionary<int, Core.Slide> tempPage = new Dictionary<int, Core.Slide>(pa.Pages[pa.CurrentPage].Count);
+                    foreach (KeyValuePair<int, Core.Slide> element in pa.Pages[pa.CurrentPage])
                     {
-                        pa.caveHub.CreateSection(slide.ColStart, slide.RowStart, slide.ColEnd, slide.RowEnd);
-                    }
-                  
-                    foreach (int id in Cave.Sections.Keys)
-                    {
-                        Clients.Caller.broadcastSectionUpdate(id);
+                        tempPage.Add(element.Key, element.Value);
                     }
 
-                    BroadcastSectionUpdate(instanceId);
+                    pa.Pages[pa.CurrentPage].Clear();
+
+
+                    foreach (Core.Slide slide in tempPage.Values)
+                    {
+                        CreateSection(instanceId, slide.ColStart, slide.RowStart, slide.ColEnd, slide.RowEnd);
+                        DeployResource(instanceId, Cave.GetSectionId(slide.ColStart, slide.RowStart), slide.Src, slide.AppName);
+                    }
+
+                    tempPage.Clear();
+                          
 
                     Clients.Caller.receivePageUpdate(pa.CurrentPage, pa.Pages.Count);
                 }
@@ -450,6 +458,9 @@ namespace GDO.Apps.PresentationTool
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.Pages[pa.CurrentPage].Remove(sectionId);
+
+                    //
+
                     pa.caveHub.CloseSection(sectionId);
                     Clients.Caller.broadcastSectionUpdate(sectionId);
                 }
