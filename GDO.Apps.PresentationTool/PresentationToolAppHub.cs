@@ -190,16 +190,27 @@ namespace GDO.Apps.PresentationTool
 
                     // Todo close check
 
+                    // TODO close app
+
                     // undeploy apps and close sections
                     foreach (int id in Cave.Sections.Keys)
                     {
                         if (pa.Pages[pa.CurrentPage].ContainsKey(id))
                         {
+                            // close current page sections
                             pa.caveHub.CloseSection(id);
-                            Clients.Caller.broadcastSectionUpdate(id);
+                        }
+                        else
+                        {
+                            // close other sections
+                            if (id != 0 && id != pa.Section.Id && Cave.Sections[id].AppInstanceId == -1)
+                            {
+                                pa.caveHub.CloseSection(id);                 
+                            }
                         }
                     }
 
+                    // set page
                     pa.CurrentPage = pageIndex;
 
                     // copy page
@@ -218,8 +229,11 @@ namespace GDO.Apps.PresentationTool
                         DeployResource(instanceId, Cave.GetSectionId(slide.ColStart, slide.RowStart), slide.Src, slide.AppName);
                     }
 
-                    tempPage.Clear();
-                          
+                    // update ui
+                    foreach (int id in Cave.Sections.Keys)
+                    {
+                        Clients.Caller.broadcastSectionUpdate(id);
+                    }
 
                     Clients.Caller.receivePageUpdate(pa.CurrentPage, pa.Pages.Count);
                 }

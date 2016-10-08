@@ -25,15 +25,18 @@
     $.connection.presentationToolAppHub.client.receiveSectionUpdate = function (slides) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
 
+            // clear section
+            for (var i = 0; i < gdo.net.section.length; i++) {
+                gdo.net.section[i].src = null;
+                gdo.net.section[i].appName = null;
+            }
+
             // update current page
             for (var i = 0; i < slides.length; i++) {
                 if (slides[i] != null) {
                     var slide = JSON.parse(slides[i]);
                     gdo.net.section[slide.Id].src = slide.Src;
                     gdo.net.section[slide.Id].appName = slide.AppName;
-                } else {
-                    gdo.net.section[i].src = null;
-                    gdo.net.section[i].appName = null;
                 }
             }
 
