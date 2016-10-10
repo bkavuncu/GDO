@@ -202,7 +202,7 @@ namespace GDO.Apps.PresentationTool
                         }
                         else
                         {
-                            // close other sections
+                            // close other sections create in section manage ui
                             if (id != 0 && id != pa.Section.Id && Cave.Sections[id].AppInstanceId == -1)
                             {
                                 pa.caveHub.CloseSection(id);                 
@@ -219,14 +219,21 @@ namespace GDO.Apps.PresentationTool
                     {
                         tempPage.Add(element.Key, element.Value);
                     }
-
                     pa.Pages[pa.CurrentPage].Clear();
 
 
                     foreach (Core.Slide slide in tempPage.Values)
                     {
-                        CreateSection(instanceId, slide.ColStart, slide.RowStart, slide.ColEnd, slide.RowEnd);
-                        DeployResource(instanceId, Cave.GetSectionId(slide.ColStart, slide.RowStart), slide.Src, slide.AppName);
+                        // create section
+                        pa.caveHub.CreateSection(slide.ColStart, slide.RowStart, slide.ColEnd, slide.RowEnd);
+                        int sectionId = Cave.GetSectionId(slide.ColStart, slide.RowStart);
+                        Core.Slide newSlide = new Core.Slide(sectionId, slide.ColStart, slide.RowStart, slide.ColEnd, slide.RowEnd);
+                        pa.Pages[pa.CurrentPage].Add(sectionId, newSlide);
+
+
+                        // deploy resource
+                        pa.Pages[pa.CurrentPage][sectionId].Src = slide.Src;
+                        pa.Pages[pa.CurrentPage][sectionId].AppName = slide.AppName;
                     }
 
                     // update ui
@@ -234,6 +241,7 @@ namespace GDO.Apps.PresentationTool
                     {
                         Clients.Caller.broadcastSectionUpdate(id);
                     }
+                    BroadcastSectionUpdate(instanceId);
 
                     Clients.Caller.receivePageUpdate(pa.CurrentPage, pa.Pages.Count);
                 }
@@ -449,6 +457,7 @@ namespace GDO.Apps.PresentationTool
                 try
                 {
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
+                    // cave section create
                     pa.caveHub.CreateSection(colStart, rowStart, colEnd, rowEnd);
                     int sectionId = Cave.GetSectionId(colStart, rowStart);
                     Clients.Caller.broadcastSectionUpdate(sectionId);
@@ -473,8 +482,7 @@ namespace GDO.Apps.PresentationTool
                     PresentationToolApp pa = ((PresentationToolApp)Cave.Apps["PresentationTool"].Instances[instanceId]);
                     pa.Pages[pa.CurrentPage].Remove(sectionId);
 
-                    //
-
+                    // cave section close
                     pa.caveHub.CloseSection(sectionId);
                     Clients.Caller.broadcastSectionUpdate(sectionId);
                 }
