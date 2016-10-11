@@ -94,7 +94,7 @@
 
         
         .input_field_sole {
-            width: 20%;
+            width: 100%;
             height: 40px;
             border: 1px solid #333;
             background: #333;
@@ -165,7 +165,7 @@
         }
     }
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h6><i class='fa  fa-upload fa-fw'></i>&nbsp;Upload Data File</h6>
@@ -227,36 +227,58 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <div id="admin-panel" class="panel panel-danger">
                 <div class="panel-heading">
                     <h6><i class='fa  fa-info-circle fa-fw'></i>&nbsp;Admin</h6>
                 </div>
                 <div class="panel-body">
-                    
-                        <select class="input_field_sole" id="chartType">
-                            <option value="msline">msline</option>
-                            <option value="line">line</option>
-                            <option value="zoomline">zoomline</option>
-                            <option value="area2d">area2d</option>
-                            <option value="pie2d">pie2d</option>
-                            <option value="doughnut2d">doughnut2d</option>
-                            <option value="doughnut3d">doughnut3d</option>
-                            <option value="bar2d">bar2d</option>
-                            <option value="column2d">column2d</option>
-                            <option value="scatter">scatter</option>
-                            <option value="zoomscatter">zoomscatter</option>
-                            <option value="scrollline2d">scrollline2d</option>
-                            <option value="scrollarea2d">scrollarea2d</option>
-                        </select>
-                    
-                        <div class="btn-group">
-                            <button id="setChartType" class="btn btn-warning disabled">Set Chart Type</button>
-                            <button id="reRender" class="btn btn-danger">Re Render</button>
-                            <button id="toggleDebugMode" class="FLAG_OFF btn btn-warning">Show Debug Mode</button>
-@*                            <button id="debug" class="btn btn-warning">Debug</button>*@
-                        </div>
-                    </div>
+                    <fieldset>
+                        <table style="border-collapse: separate; border-spacing: 3px; background-color: transparent;">
+                            <tr>
+                                <td>
+                                    <select class="input_field_sole" id="chartConfigKey" style="width:100%">
+                                    </select>
+                                </td>
+                                <td>
+                                    <input class="input_field_sole" id="chartConfigValue" placeholder="Value" style="width:100%"/>
+                                </td>
+                                <td>
+                                    <button id="reRenderConfig" class="btn btn-danger" style="width:100%">Re Render Config</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select class="input_field_sole" id="chartType" style="width:100%">
+                                        <option value="msline">msline</option>
+                                        <option value="line">line</option>
+                                        <option value="zoomline">zoomline</option>
+                                        <option value="area2d">area2d</option>
+                                        <option value="pie2d">pie2d</option>
+                                        <option value="doughnut2d">doughnut2d</option>
+                                        <option value="doughnut3d">doughnut3d</option>
+                                        <option value="bar2d">bar2d</option>
+                                        <option value="column2d">column2d</option>
+                                        <option value="scatter">scatter</option>
+                                        <option value="zoomscatter">zoomscatter</option>
+                                        <option value="scrollline2d">scrollline2d</option>
+                                        <option value="scrollarea2d">scrollarea2d</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button id="setChartType" class="btn btn-warning disabled" style="width:100%">Set Chart Type</button>
+                                </td>
+                                <td>
+                                    <button id="reRender" class="btn btn-danger" style="width:100%">Re Render</button>
+                                </td>
+                                <td>
+                                    <button id="toggleDebugMode" class="FLAG_OFF btn btn-warning" style="width:100%">Show Debug Mode</button>
+                                </td>
+                                @*                            <button id="debug" class="btn btn-warning">Debug</button>*@
+                            </tr>
+                        </table>
+                    </fieldset>
+                </div>
             </div>
         </div>
     </div>
@@ -266,11 +288,10 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
-                    <div class="col-lg-8">
-                        <h6><i class='fa  fa-bar-chart fa-fw'></i>&nbsp;Displayed Chart</h6>
-                    
-                    </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
+                            <h6><i class='fa  fa-bar-chart fa-fw'></i>&nbsp;Displayed Chart</h6>
+                        </div>
+                        <div class="col-lg-6" align="right">
                             <div class="btn-group">
                                 <button id="zoom_in" class="btn btn-success"><i class='fa fa-search-plus'></i>&nbsp;</button>
                                 <button id="zoom_out" class="btn btn-success"><i class='fa fa-search-minus'></i>&nbsp;</button>
@@ -309,6 +330,31 @@
     }
 </div>
 <script>
+    $("#chartConfigKey")
+        .change(function () {
+            var gdo = parent.gdo;
+            var nkey = $(this).val();
+            if (gdo.net.instance[gdo.controlId].chart.getChartAttribute(nkey)) {
+                var nval = gdo.net.instance[gdo.controlId].chart.getChartAttribute(nkey);
+                $("#chartConfigValue").val(nval);
+            } else {
+                $("#chartConfigValue").val("Key Error");
+            }
+        });
+    $("#reRenderConfig")
+        .click(function () {
+            var gdo = parent.gdo;
+            var ckey = $("#chartConfigKey").val();
+            var cval = $("#chartConfigValue").val();
+            if (gdo.net.instance[gdo.controlId].chart.getChartAttribute(ckey)) {
+                gdo.consoleOut('.FusionChart', 1, 'Update fusionchart configuration ' + ckey + ": " + cval);
+                gdo.net.app["FusionChart"].server.broadcastChartConfig(gdo.controlId, ckey, cval);
+                gdo.net.instance[gdo.controlId].chart.setChartAttribute(ckey, cval);
+            } else {
+                gdo.consoleOut('.FusionChart', 5, 'Configuration Key Error! ' + ckey);
+            }
+        });
+
     $("#zoom_in")
         .click(function () {
             var gdo = parent.gdo;

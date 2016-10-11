@@ -20,6 +20,13 @@
             var chartData = JSON.parse(serialisedChartData);
             gdo.net.app["FusionChart"].processChartData(instanceId, chartData);
             $("iframe").contents().find('#chartType').val(chartData.chartType);
+            $("iframe").contents().find('#chartConfigKey').empty();
+            var configKeys = Object.keys(chartData.dataSource.chart);
+            for (var i = 0 ; i < configKeys.length ; i++) {
+                $("iframe").contents().find('#chartConfigKey').append("<option value=\"" + configKeys[i] + "\">" + configKeys[i] + "</option>");
+            }
+            $("iframe").contents().find('#chartConfigKey').val(configKeys[0]);
+            $("iframe").contents().find('#chartConfigValue').val(chartData.dataSource.chart[configKeys[0]]);
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
@@ -37,6 +44,16 @@
         }
     }
 
+    $.connection.fusionChartAppHub.client.reRenderConfig = function (instanceId) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Config");
+            gdo.net.instance[instanceId].chart.render();
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Config");
+            gdo.net.instance[instanceId].chart.render();
+        }
+    }
+
     $.connection.fusionChartAppHub.client.receiveChartType = function (instanceId, chartType) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart typr: " + chartType);
@@ -44,6 +61,16 @@
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart typr: " + chartType);
             gdo.net.instance[instanceId].chart.chartType(chartType);
+        }
+    }
+
+    $.connection.fusionChartAppHub.client.receiveChartConfig = function (instanceId, configKey, configValue) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart config: " + configKey + ": " + configValue);
+            gdo.net.instance[instanceId].chart.setChartAttribute(configKey, configValue);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart config: " + configKey + ": " + configValue);
+            gdo.net.instance[instanceId].chart.setChartAttribute(configKey, configValue);
         }
     }
 
