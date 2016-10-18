@@ -38,20 +38,51 @@ namespace GDO.Apps.FusionChart
             }
         }
 
-//        public void PrintState(int instanceId)
-//        {
-//            lock (Cave.AppLocks[instanceId])
-//            {
-//                try
-//                {
-//                    Clients.Group("" + instanceId).printState(instanceId);
-//                }
-//                catch (Exception e)
-//                {
-//                    Console.WriteLine(e);
-//                }
-//            }
-//        }
+        public void BroadcastChartConfig(int instanceId, string configKey, string configValue)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Clients.Group("" + instanceId).receiveChartConfig(instanceId, configKey, configValue);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void SaveConfig(int instanceId, string config)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    bool success = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
+                    Clients.Caller.saveConfigFinished(instanceId, success);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        } 
+
+        //        public void PrintState(int instanceId)
+        //        {
+        //            lock (Cave.AppLocks[instanceId])
+        //            {
+        //                try
+        //                {
+        //                    Clients.Group("" + instanceId).printState(instanceId);
+        //                }
+        //                catch (Exception e)
+        //                {
+        //                    Console.WriteLine(e);
+        //                }
+        //            }
+        //        }
 
         public void ReRender(int instanceId)
         {

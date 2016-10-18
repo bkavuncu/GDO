@@ -20,6 +20,13 @@
             var chartData = JSON.parse(serialisedChartData);
             gdo.net.app["FusionChart"].processChartData(instanceId, chartData);
             $("iframe").contents().find('#chartType').val(chartData.chartType);
+            $("iframe").contents().find('#chartConfigKey').empty();
+            var configKeys = Object.keys(chartData.dataSource.chart);
+            for (var i = 0 ; i < configKeys.length ; i++) {
+                $("iframe").contents().find('#chartConfigKey').append("<option value=\"" + configKeys[i] + "\">" + configKeys[i] + "</option>");
+            }
+            $("iframe").contents().find('#chartConfigKey').val(configKeys[0]);
+            $("iframe").contents().find('#chartConfigValue').val(chartData.dataSource.chart[configKeys[0]]);
 
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Processing Chart Data");
@@ -44,6 +51,30 @@
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart typr: " + chartType);
             gdo.net.instance[instanceId].chart.chartType(chartType);
+        }
+    }
+
+    $.connection.fusionChartAppHub.client.receiveChartConfig = function (instanceId, configKey, configValue) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart config: " + configKey + ": " + configValue);
+            gdo.net.instance[instanceId].chart.setChartAttribute(configKey, configValue);
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart config: " + configKey + ": " + configValue);
+            gdo.net.instance[instanceId].chart.setChartAttribute(configKey, configValue);
+        }
+    }
+
+    $.connection.fusionChartAppHub.client.saveConfigFinished = function (instanceId, success) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            if (success) {
+                alert("Chart config saved successfully!");
+                gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + "Saving configuration succeed!");
+            } else {
+                gdo.consoleOut('.FusionChart', 5, 'Instance - ' + instanceId + "Saving configuration failed!");
+            }
+            $("iframe").contents().find('#saveConfig').html("Save Config");
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing
         }
     }
 
