@@ -1,6 +1,6 @@
 ﻿{
   "appName": "Multiple Sclerosis Imaging",
-  "host": "http://dsigdotesting.doc.ic.ac.uk/",
+  "host": "http://localhost:12332/",
   "experimentName": "GSK131086_000001",
   "patient": "AD201713",
   "controlUrl": "t1_baseline.nii.gz",

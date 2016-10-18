@@ -19,6 +19,7 @@ namespace GDO.Apps.XNATImaging
         public string Host { get; set; }
         public string ExperimentName { get; set; }
         public string PatientId { get; set; }
+        public string MriUrl { get; set; }
 
         public dynamic CurrentCoord { get; set; }
         public double ScreenMin { get; set; }
@@ -45,8 +46,6 @@ namespace GDO.Apps.XNATImaging
 
         public void Init()
         {
-            //Debug.WriteLine(AppName);
-            //AppName = "Multiple Sclerosis Imaging";
             InitConfigurations();
         }
 
@@ -91,7 +90,7 @@ namespace GDO.Apps.XNATImaging
                 experimentName = ExperimentName,
                 patient = PatientId,
                 controlUrl = "t1_baseline.nii.gz",
-                mriUrl = "Scripts/XNATImaging/Scans/",
+                mriUrl = MriUrl,
                 mriUrlList = new JArray(),
                 pdfUrl = "../../Scripts/XNATImaging/pdf/",
                 defaultOrientation = "sagittal",
@@ -138,7 +137,7 @@ namespace GDO.Apps.XNATImaging
                 experimentName = ExperimentName,
                 patient = PatientId,
                 controlUrl = "t1_baseline.nii.gz",
-                mriUrl = "Scripts/XNATImaging/Scans/",
+                mriUrl = MriUrl,
                 mriUrlList = new JArray(),
                 pdfUrl = "../../Scripts/XNATImaging/pdf/",
                 defaultOrientation = "sagittal",
@@ -404,10 +403,11 @@ namespace GDO.Apps.XNATImaging
 
             var jsonString = Configuration.Json.ToString();
             dynamic config = JObject.Parse(jsonString);
-
+            
             Host = config.host;
             PatientId = config.patient;
             ExperimentName = config.experimentName;
+            MriUrl = config.mriUrl;
 
             //Debug.WriteLine(Configuration.Json);
             //Debug.WriteLine(GenerateBlankConfigurationFile());

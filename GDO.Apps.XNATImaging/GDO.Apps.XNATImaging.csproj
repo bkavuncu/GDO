@@ -170,43 +170,41 @@
     <Content Include="Scripts\XNATImaging\gdo.apps.XNATImaging.utility.js" />
     <Content Include="Scripts\XNATImaging\pdf.js" />
     <Content Include="Scripts\XNATImaging\pdf.worker.js" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\msmetrix_report-1.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000001\msmetrix_report-2.pdf" />
-    <Content Include="Configurations\XNATImaging\Production.json" />
-    <Content Include="Configurations\XNATImaging\Preproduction.json" />
-    <Content Include="Configurations\XNATImaging\TestServer.json" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\msmetrix_report-1.pdf" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\msmetrix_report-2.pdf" />
+    <Content Include="Configurations\XNATImaging\LocalTest.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\labeled_lesions_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000002\msmetrix_report-1.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000002\msmetrix_report-2.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000005\msmetrix_report-1.pdf" />
-    <Content Include="Scripts\XNATImaging\pdf\GSK131086_000005\msmetrix_report-2.pdf" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\gm_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\t1_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\labeled_lesions_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\t1_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\t1_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\gm_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\labeled_lesions_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\t2_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\gm_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\t2_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000001\t2_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\t1_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\gm_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\labeled_lesions_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000002\t2_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\t1_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\gm_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\labeled_lesions_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\t2_baseline.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\t1_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\labeled_lesions_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\gm_followup.nii.gz" />
-    <Content Include="Scripts\XNATImaging\scans\GSK131086_000005\t2_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\labeled_lesions_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\msmetrix_report-1.pdf" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\msmetrix_report-2.pdf" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\msmetrix_report-1.pdf" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\msmetrix_report-2.pdf" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\gm_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\t1_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\labeled_lesions_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\t1_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\t1_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\gm_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\labeled_lesions_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\t2_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\gm_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\t2_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201713\t2_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\t1_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\gm_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\labeled_lesions_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201714\t2_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\t1_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\gm_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\labeled_lesions_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\t2_baseline.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\t1_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\labeled_lesions_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\gm_followup.nii.gz" />
+    <Content Include="Scripts\XNATImaging\scans\AD201752\t2_followup.nii.gz" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -246,6 +244,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\XNATImaging\" />
+    <Folder Include="Scripts\XNATImaging\pdf\AD201713\" />
+    <Folder Include="Scripts\XNATImaging\pdf\AD201714\" />
+    <Folder Include="Scripts\XNATImaging\pdf\AD201752\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">

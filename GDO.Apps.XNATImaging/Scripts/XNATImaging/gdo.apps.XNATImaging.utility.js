@@ -4,12 +4,18 @@ gdo.net.app["XNATImaging"].getCurrentOrientation = function () {
     var papaya = gdo.net.app["XNATImaging"].papaya;
     var containers = gdo.net.app["XNATImaging"].papayaContainers;
 
-    if (containers[0].viewer.mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_AXIAL) {
-        return "Axial";
-    } else if (containers[0].viewer.mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_CORONAL) {
-        return "Coronal";
-    } else if (containers[0].viewer.mainImage.sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_SAGITTAL) {
-        return "Sagittal";
+    if (containers[0].viewer.mainImage === null) {
+        return "";
+    } else {
+        var sliceDirection = containers[0].viewer.mainImage.sliceDirection;
+
+        if (sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_AXIAL) {
+            return "Axial";
+        } else if (sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_CORONAL) {
+            return "Coronal";
+        } else if (sliceDirection === papaya.viewer.ScreenSlice.DIRECTION_SAGITTAL) {
+            return "Sagittal";
+        }
     }
 }
 

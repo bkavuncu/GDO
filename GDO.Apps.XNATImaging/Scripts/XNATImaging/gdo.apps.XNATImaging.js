@@ -191,7 +191,12 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
     $("iframe").contents().find("#main").append("<canvas id='pdf-canvas'/>");
 
     PDFJS.workerSrc = '../../Scripts/XNATImaging/pdf.worker.js';
-    var url = appConfig.pdfUrl + appConfig.experimentName + "/" + screenConfig.url;
+    var url = "";
+    if (appConfig.host === "https://central.xnat.org/") {
+        url = appConfig.host + appConfig.mriUrl + appConfig.patient + "/files/" + screenConfig.url;
+    } else {
+        url = appConfig.pdfUrl + appConfig.patient + "/" + screenConfig.url;
+    }
 
     // Fetch the PDF document from the URL using promises.
     PDFJS.getDocument(url).then(function (pdf) {
@@ -231,7 +236,9 @@ gdo.net.app["XNATImaging"].setupPDF = function () {
     });
 }
 
-
+/*
+** Initialises Papaya Nifti and Dicom viewer and sets its parameters
+*/
 gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, markingCoords) {
 
     var papaya = gdo.net.app["XNATImaging"].papaya;
@@ -242,8 +249,14 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
     if ($("iframe").contents().find("#dicomImage")[0] == null) {
         $("iframe").contents().find("#main").append("<div id='dicomImage'><div class='papaya' data-params='params'></div>");
     }
-
-    var baseUrl = appConfig.host + appConfig.mriUrl + appConfig.experimentName + "/";
+    var baseUrl = appConfig.host;
+    if (baseUrl === "https://central.xnat.org/") {
+        baseUrl += appConfig.mriUrl + appConfig.patient + "/files/";
+    } else {
+        baseUrl += appConfig.mriUrl + appConfig.patient + "/";
+    }
+    
+    //appConfig.host + appConfig.mriUrl + appConfig.experimentName + "/";
     //"http://dsigdotesting.doc.ic.ac.uk/Scripts/XNATImaging/Scans/";
     //"http://localhost:12332/Scripts/XNATImaging/Scans/";
 
@@ -259,7 +272,7 @@ gdo.net.app["XNATImaging"].initializePapaya = function (instanceId, mode, url, m
             { "name": "Red", "data": [[0, 1, 0, 0], [1, 1, 0, 0]] }
     ];
 
-    //overlay color stuff
+    //overlays and colour contrasts
     if (gdo.clientMode == gdo.CLIENT_MODE.NODE && mode === "zoom") {
         if (screenConfig != undefined && screenConfig.overlays != undefined && screenConfig.overlays.length > 0) {
             for (var i = 0; i < screenConfig.overlays.length; i++) {

@@ -1,11 +1,10 @@
 ﻿{
   "appName": "Multiple Sclerosis Imaging",
-  "host": "http://dsigdoprod.doc.ic.ac.uk/",
+  "host": "https://central.xnat.org/",
   "experimentName": "GSK131086_000001",
   "patient": "AD201713",
   "controlUrl": "t1_baseline.nii.gz",
-  "mriUrl": "Scripts/XNATImaging/Scans/",
-  "pdfUrl": "../../Scripts/XNATImaging/pdf/",
+  "mriUrl": "data/archive/projects/msimaging/subjects/",
   "defaultOrientation": "sagittal",
   "worldSpace": true,
   "mriUrlList": [ ],
