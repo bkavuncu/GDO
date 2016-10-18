@@ -2,6 +2,7 @@
 using GDO.Core;
 using System.Diagnostics;
 using System.IO;
+using System.Globalization;
 using System.Web;
 using GDO.Core.Apps;
 using log4net;
@@ -73,6 +74,21 @@ namespace GDO.Apps.FusionChart
             mouseEvent.scaledY = mouseEvent.y*Section.Height / mouseEvent.controlHeight;
             return JsonConvert.SerializeObject(mouseEvent);
 
+        }
+
+        public bool ProcessSaveConfig(string config)
+        {
+            try
+            {
+                string path = Path.Combine(ChartBasePath, DateTime.Now.ToString("ddMMMyyyy HHmmss") + ".json");
+                File.WriteAllText(path, config);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            } 
+            return true;
         }
     }
 

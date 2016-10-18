@@ -44,16 +44,6 @@
         }
     }
 
-    $.connection.fusionChartAppHub.client.reRenderConfig = function (instanceId) {
-        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
-            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Config");
-            gdo.net.instance[instanceId].chart.render();
-        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
-            gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Config");
-            gdo.net.instance[instanceId].chart.render();
-        }
-    }
-
     $.connection.fusionChartAppHub.client.receiveChartType = function (instanceId, chartType) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart typr: " + chartType);
@@ -71,6 +61,20 @@
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": Setting chart config: " + configKey + ": " + configValue);
             gdo.net.instance[instanceId].chart.setChartAttribute(configKey, configValue);
+        }
+    }
+
+    $.connection.fusionChartAppHub.client.saveConfigFinished = function (instanceId, success) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            if (success) {
+                alert("Chart config saved successfully!");
+                gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + "Saving configuration succeed!");
+            } else {
+                gdo.consoleOut('.FusionChart', 5, 'Instance - ' + instanceId + "Saving configuration failed!");
+            }
+            $("iframe").contents().find('#saveConfig').html("Save Config");
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            // do nothing
         }
     }
 

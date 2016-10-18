@@ -244,7 +244,10 @@
                                     <input class="input_field_sole" id="chartConfigValue" placeholder="Value" style="width:100%"/>
                                 </td>
                                 <td>
-                                    <button id="reRenderConfig" class="btn btn-danger" style="width:100%">Re Render Config</button>
+                                    <button id="updateConfig" class="btn btn-danger" style="width:100%">Update Config</button>
+                                </td>
+                                <td>
+                                    <button id="saveConfig" class="btn btn-warning" style="width:100%">Save Config</button>
                                 </td>
                             </tr>
                             <tr>
@@ -341,7 +344,7 @@
                 $("#chartConfigValue").val("Key Error");
             }
         });
-    $("#reRenderConfig")
+    $("#updateConfig")
         .click(function () {
             var gdo = parent.gdo;
             var ckey = $("#chartConfigKey").val();
@@ -352,6 +355,22 @@
                 gdo.net.instance[gdo.controlId].chart.setChartAttribute(ckey, cval);
             } else {
                 gdo.consoleOut('.FusionChart', 5, 'Configuration Key Error! ' + ckey);
+            }
+        });
+
+    $("#saveConfig")
+        .click(function () {
+            var gdo = parent.gdo;
+            var current_chart = gdo.net.instance[gdo.controlId].chart;
+            if (current_chart) {
+                $("#saveConfig").html("Saving");
+                var chart_config = {
+                    "chartType": current_chart.options.chartType,
+                    "dataSource": current_chart.options.dataSource
+                }
+                gdo.net.app["FusionChart"].server.saveConfig(gdo.controlId, JSON.stringify(chart_config));
+            } else {
+                gdo.consoleOut('.FusionChart', 5, 'Cant save chart configuration, as chart doesnt exist!');
             }
         });
 

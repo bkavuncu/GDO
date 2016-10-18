@@ -53,6 +53,22 @@ namespace GDO.Apps.FusionChart
             }
         }
 
+        public void SaveConfig(int instanceId, string config)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    bool success = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
+                    Clients.Caller.saveConfigFinished(instanceId, success);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        } 
+
         //        public void PrintState(int instanceId)
         //        {
         //            lock (Cave.AppLocks[instanceId])
