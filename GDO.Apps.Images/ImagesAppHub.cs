@@ -708,7 +708,7 @@ namespace GDO.Apps.Images
 
                     double autoCropArea = 0.65;
                     double aspectRatio = ia.Section.Width / (0.0 + ia.Section.Height);
-                    double canvasAspectRatio = 1920.0 / 1080.0;
+                    //double canvasAspectRatio = 1920.0 / 1080.0;
                     // Image wrapper
                     double canvasHeight = 50 * windowHeight / 100; // height 50vh (convert vh to px)
                     double canvasWidth = windowWidth * 0.97 - 30 - 2; // wrapper 97%, padding 30, border 2
