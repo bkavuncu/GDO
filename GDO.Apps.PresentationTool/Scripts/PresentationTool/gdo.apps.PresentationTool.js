@@ -325,6 +325,7 @@ gdo.net.app["PresentationTool"].nextSlide = function () {
 
 // Play current page
 gdo.net.app["PresentationTool"].playCurrentPage = function () {
+
     gdo.consoleOut('.PresentationTool', 1, 'Play current page ' + gdo.net.app["PresentationTool"].currentPage);
     $("iframe").contents().find("#message_from_server").html('Play current page ' + gdo.net.app["PresentationTool"].currentPage);
 
@@ -335,7 +336,8 @@ gdo.net.app["PresentationTool"].playCurrentPage = function () {
             setTimeout(function () {
                 console.log(section.appInstanceId);
                 if (section.appName === "Images") {
-                    gdo.net.app["Images"].server.displayImage(section.appInstanceId, section.src.replace(/^.*[\\\/]/, ''), 2);
+                  
+                    gdo.net.app["Images"].server.displayImage(section.appInstanceId, section.src.replace(/^.*[\\\/]/, ''), 2, $("iframe")[0].contentWindow.width, $("iframe")[0].contentWindow.height);
                 } else if (section === "Youtube") {
 
                 }
