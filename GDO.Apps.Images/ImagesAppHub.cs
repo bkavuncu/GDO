@@ -662,7 +662,7 @@ namespace GDO.Apps.Images
         }
 
         // Display Image
-        public void DisplayImage(int instanceId, string imageName, int displayMode)
+        public void DisplayImage(int instanceId, string imageName, int displayMode, double windowWidth, double windowHeight)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -680,13 +680,13 @@ namespace GDO.Apps.Images
                             if (s.Split('|')[0].Equals(imageName))
                             {
                                 FindDigits(instanceId, s.Split('|')[1]);
-                                SetMode(instanceId, displayMode);
+                                SetMode(instanceId, displayMode, windowWidth, windowHeight);
                                 return;
                             }
                         }
                     }
                     ProcessImage(instanceId, imageName);
-                    SetMode(instanceId, displayMode);
+                    SetMode(instanceId, displayMode, windowWidth, windowHeight);
                 }
                 catch (Exception e)
                 {
@@ -697,7 +697,7 @@ namespace GDO.Apps.Images
         }
 
         // Set display Mode
-        public void SetMode(int instanceId, int displayMode)
+        public void SetMode(int instanceId, int displayMode, double windowWidth, double windowHeight)
         {
             lock (Cave.AppLocks[instanceId])
             {
@@ -708,10 +708,10 @@ namespace GDO.Apps.Images
 
                     double autoCropArea = 0.65;
                     double aspectRatio = ia.Section.Width / (0.0 + ia.Section.Height);
-                    double canvasAspectRatio = 1920.0 / 1080.0;
+                    //double canvasAspectRatio = 1920.0 / 1080.0;
                     // Image wrapper
-                    double canvasHeight = 435.0;
-                    double canvasWidth = canvasHeight * canvasAspectRatio;
+                    double canvasHeight = 50 * windowHeight / 100; // height 50vh (convert vh to px)
+                    double canvasWidth = windowWidth * 0.97 - 30 - 2; // wrapper 97%, padding 30, border 2
 
                     // Cropper box
                     double cropBoxWidth = canvasWidth;
