@@ -13,6 +13,10 @@ namespace GDO.Apps.Graph.Domain
     {
         public float X { get; set; }
         public float Y { get; set; }
+
+        public override string ToString() {
+            return X+":"+Y;
+        }
     }
 
     public class PartitionPos
@@ -58,6 +62,10 @@ namespace GDO.Apps.Graph.Domain
         public int G { get; set; }
         public int B { get; set; }
         public Dictionary<string, string> Attrs { get; set; }
+
+        public override string ToString() {
+            return "Link = S:"+Source+" T:"+Target+ " | "+ StartPos+" to "+EndPos;
+        }
     }
 
     public class Partition

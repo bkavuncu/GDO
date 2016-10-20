@@ -119,14 +119,17 @@ namespace GDO.Apps.Graph
                     // 3. loop through array; for every two consecutive points, find the partition it belongs to, and add to it
 
                     // calculate line equation y = mx + c
-                    var m = (endPos.Y - startPos.Y)/(endPos.X - startPos.X);
-                    if (Double.IsInfinity(m))
-                        //TODO: this is a dirty hack to prevent infinity slopes, the intersections should be calculated in another way...
-                    {
-                        m = (endPos.Y - startPos.Y)/(endPos.X + 0.0001F - startPos.X);
+                    float m = (endPos.Y - startPos.Y)/(endPos.X - startPos.X);
+                    bool adjusted = false;
+                    //test  to prevent infinity slopes, the intersections should be calculated in another way...
+                    if (float.IsInfinity(m)) {
+                   
+              //          m = (endPos.Y - startPos.Y)/(endPos.X + 0.0001f - startPos.X);// this frequently calculates back to m=-infinity yet it should not! - due to compiler optimisation and undefined behaviour on the edge of float precision
+                        m = 100000f;
+                        adjusted = true;
                     }
 
-                    var c = startPos.Y - m*startPos.X;
+                    float c = startPos.Y - m*startPos.X;
 
                     // get intersection points
                     // check for x intersection with horizontal line (y = a)
@@ -175,6 +178,14 @@ namespace GDO.Apps.Graph
                             B = link.B,
                             Attrs = link.Attrs // copy rest of attributes
                         };
+
+                        if (segmentPos.Row < 0 || segmentPos.Row >= partitions.GetLength(0)) {
+                            throw new Exception("bad partition row "+segmentPos.Row+ " "+ link+" SectionHeight="+section.Height+" sectionWidth="+section.Width+" rows= "+section.Rows+" cols"+section.Cols+" adjusted ="+adjusted);
+                        }
+
+                        if (segmentPos.Col < 0 || segmentPos.Col >= partitions.GetLength(1)) {
+                            throw new Exception("bad partition col " + segmentPos.Col + " " + link + " SectionHeight=" + section.Height + " sectionWidth=" + section.Width + " rows= " + section.Rows + " cols" + section.Cols + " adjusted =" + adjusted);
+                        }
 
                         partitions[segmentPos.Row, segmentPos.Col].Links.Add(linkSegment);
                     }
