@@ -221,6 +221,9 @@
                                 <td>
                                     <button type='button' id="file_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
                                 </td>
+                                <td>
+                                    <button type='button' id="file_delete_button" class='btn btn-danger btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Delete</button>
+                                </td>
                             </tr>
                         </table>
                     </fieldset>
@@ -247,7 +250,7 @@
                                     <button id="updateConfig" class="btn btn-danger" style="width:100%">Update Config</button>
                                 </td>
                                 <td>
-                                    <button id="saveConfig" class="btn btn-warning" style="width:100%">Save Config</button>
+                                    <button id="saveConfig" class="btn btn-warning" style="width:100%" title="Save and Download current configuration.">Save &amp; Download</button>
                                 </td>
                             </tr>
                             <tr>
@@ -403,6 +406,10 @@
     $("#file_digit_button").click(function () {
         var gdo = parent.gdo;
         gdo.net.app["FusionChart"].server.processFile(gdo.controlId, $("#file_digit").val());
+    });
+    $("#file_delete_button").click(function () {
+        var gdo = parent.gdo;
+        gdo.net.app["FusionChart"].server.deleteFile(gdo.controlId, $("#file_digit").val());
     });
     $("#sendMouseEvent")
         .click(function() {

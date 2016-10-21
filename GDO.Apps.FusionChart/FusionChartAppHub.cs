@@ -152,6 +152,25 @@ namespace GDO.Apps.FusionChart
             }
         }
 
+        public void DeleteFile(int instanceId, string fileName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Debug.WriteLine("Delete file: " + fileName);
+                    if (((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).DeleteFile(fileName))
+                    {
+                        Clients.Caller.deleteFileFinished(instanceId, fileName);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public void GetChartData(int instanceId)
         {
             lock (Cave.AppLocks[instanceId])

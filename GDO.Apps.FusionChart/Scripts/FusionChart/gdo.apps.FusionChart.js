@@ -34,6 +34,14 @@
         }
     }
 
+    $.connection.fusionChartAppHub.client.deleteFileFinished = function (instanceId, filePath) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            $("iframe")[0].contentWindow.location.reload();
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            //do nothing
+        }
+    }
+
     $.connection.fusionChartAppHub.client.reRender = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");

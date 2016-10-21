@@ -59,6 +59,23 @@ namespace GDO.Apps.FusionChart
             return true;
         }
 
+        public bool DeleteFile(string fileName)
+        {
+            Debug.WriteLine(fileName);
+            string filePath = Path.Combine(ChartBasePath, fileName);
+            Debug.WriteLine("Using file path: " + filePath);
+
+            if (!File.Exists(filePath))
+            {
+                Debug.WriteLine("Nothing there " + filePath);
+                return false;
+            }
+
+            File.Delete(filePath);
+
+            return true;
+        }
+
         public string GetChartData()
         {
             return ChartData;
