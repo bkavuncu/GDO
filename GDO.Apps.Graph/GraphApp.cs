@@ -5,10 +5,8 @@ using System.IO;
 using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
-using GDO.Apps.Graph.Domain;
 using GDO.Core.Apps;
 using log4net;
-using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.Graph
 {
@@ -36,7 +34,7 @@ namespace GDO.Apps.Graph
                 Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls"));
             }
             catch (Exception e) {
-                Log.Error("failed to launch the Graphs App",e);
+                Log.Error("failed to launch the Graphs App: directories cannot be created",e);
             }
         }
 
@@ -47,13 +45,18 @@ namespace GDO.Apps.Graph
         public bool zoomedIn;//only has two zoom levels
         RectDimension rectDim;
 
+        public string LoadGraphFromFile(string filename, bool zoomed, string folderName)
+        {
+            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename);
+            GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
+
+            return ProcessGraph(filename, zoomed, folderName);
+        }
+
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
         public string ProcessGraph(string filename, bool zoomed, string folderName)
         {
-            string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
-            GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
-
             //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();
 

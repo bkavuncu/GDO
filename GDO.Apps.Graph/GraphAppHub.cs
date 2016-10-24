@@ -72,7 +72,7 @@ namespace GDO.Apps.Graph
                     ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
 
                     Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
-                    string folderNameDigit = ga.ProcessGraph(filename, false, null);
+                    string folderNameDigit = ga.LoadGraphFromFile(filename, false, null);
                     Clients.Caller.setMessage("Processing of raw graph data is completed.");
 
                     // Clients.Group to broadcast and get all clients to update graph
