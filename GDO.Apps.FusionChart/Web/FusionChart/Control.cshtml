@@ -137,7 +137,25 @@
             dataFormat: 'json',
             dataSource: chartData.dataSource
         });
-        gdo.net.instance[instanceId].chart.render();
+        if (chartData.dataSource.datasetURL) {
+            $.getJSON(chartData.dataSource.datasetURL, function (json) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                currentData.dataset = json;
+                gdo.net.instance[instanceId].chartDatasetURL = chartData.dataSource.datasetURL;
+                gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                gdo.net.instance[instanceId].chart.render();
+            });
+        } else if (chartData.dataSource.dataURL) {
+            $.getJSON(chartData.dataSource.dataURL, function (json) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                currentData.data = json;
+                gdo.net.instance[instanceId].chartDataURL = chartData.dataSource.dataURL;
+                gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                gdo.net.instance[instanceId].chart.render();
+            });
+        } else {
+            gdo.net.instance[instanceId].chart.render();
+        }
         
     };
 
@@ -448,8 +466,26 @@
     $("#reRender")
         .click(function() {
             var gdo = parent.gdo;
-            gdo.net.instance[gdo.controlId].chart.render();
-            gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+            if (gdo.net.instance[gdo.controlId].chartDatasetURL) {
+                var currentData = gdo.net.instance[gdo.controlId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[gdo.controlId].chartDatasetURL, function (json) {
+                    currentData.dataset = json;
+                    gdo.net.instance[gdo.controlId].chart.setJSONData(currentData);
+                    gdo.net.instance[gdo.controlId].chart.render();
+                    gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+                });
+            } else if (gdo.net.instance[gdo.controlId].chartDataURL) {
+                var currentData = gdo.net.instance[gdo.controlId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[gdo.controlId].chartDataURL, function (json) {
+                    currentData.data = json;
+                    gdo.net.instance[gdo.controlId].chart.setJSONData(currentData);
+                    gdo.net.instance[gdo.controlId].chart.render();
+                    gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+                });
+            } else {
+                gdo.net.instance[gdo.controlId].chart.render();
+                gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+            }
         });
 
     $("#toggleMouseMove")
