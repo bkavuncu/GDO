@@ -75,7 +75,25 @@
                dataFormat: 'json',
                dataSource: chartData.dataSource
            });
-           gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+           if (chartData.dataSource.datasetURL) {
+               $.getJSON(chartData.dataSource.datasetURL, function (json) {
+                   var currentData = gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.getJSONData();
+                   currentData.dataset = json;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chartDatasetURL = chartData.dataSource.datasetURL;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.setJSONData(currentData);
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+               });
+           } else if (chartData.dataSource.dataURL) {
+               $.getJSON(chartData.dataSource.dataURL, function (json) {
+                   var currentData = gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.getJSONData();
+                   currentData.data = json;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chartDataURL = chartData.dataSource.datasetURL;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.setJSONData(currentData);
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+               });
+           } else {
+               gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+           }
    };
 
     function processMouseEvent(mouseEvent, targetObj) {

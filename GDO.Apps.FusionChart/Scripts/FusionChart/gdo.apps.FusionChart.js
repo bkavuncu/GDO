@@ -37,10 +37,42 @@
     $.connection.fusionChartAppHub.client.reRender = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");
-            gdo.net.instance[instanceId].chart.render();
+            if (gdo.net.instance[instanceId].chartDatasetURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDatasetURL, function (json) {
+                    currentData.dataset = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else if (gdo.net.instance[instanceId].chartDataURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDataURL, function (json) {
+                    currentData.data = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else {
+                gdo.net.instance[instanceId].chart.render();
+            }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");
-            gdo.net.instance[instanceId].chart.render();
+            if (gdo.net.instance[instanceId].chartDatasetURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDatasetURL, function (json) {
+                    currentData.dataset = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else if (gdo.net.instance[instanceId].chartDataURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDataURL, function (json) {
+                    currentData.data = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else {
+                gdo.net.instance[instanceId].chart.render();
+            }
         }
     }
 
