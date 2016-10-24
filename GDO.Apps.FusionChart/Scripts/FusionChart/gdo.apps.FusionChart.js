@@ -72,11 +72,17 @@
         }
     }
 
-    $.connection.fusionChartAppHub.client.saveConfigFinished = function (instanceId, success) {
+    $.connection.fusionChartAppHub.client.saveConfigFinished = function (instanceId, success, filename) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             if (success) {
                 alert("Chart config saved successfully!");
                 gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + "Saving configuration succeed!");
+                $("iframe")[0].contentWindow.location.reload();
+                url = "FusionChart/data/" + filename;
+                var a = document.createElement('a');
+                a.download = filename;
+                a.href = url;
+                a.click();
             } else {
                 gdo.consoleOut('.FusionChart', 5, 'Instance - ' + instanceId + "Saving configuration failed!");
             }

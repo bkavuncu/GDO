@@ -93,19 +93,19 @@ namespace GDO.Apps.FusionChart
 
         }
 
-        public bool ProcessSaveConfig(string config)
+        public string ProcessSaveConfig(string config)
         {
             try
             {
                 string path = Path.Combine(ChartBasePath, DateTime.Now.ToString("ddMMMyyyy HHmmss") + ".json");
                 File.WriteAllText(path, config);
+                return path;
             }
             catch(Exception e)
             {
                 Console.WriteLine(e);
-                return false;
-            } 
-            return true;
+                return "";
+            }
         }
     }
 

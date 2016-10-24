@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using GDO.Core;
@@ -59,8 +60,18 @@ namespace GDO.Apps.FusionChart
             {
                 try
                 {
-                    bool success = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
-                    Clients.Caller.saveConfigFinished(instanceId, success);
+                    string path = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
+                    if (path.Equals(""))
+                    {
+                        // failed
+                        Clients.Caller.saveConfigFinished(instanceId, false, "");
+                    }
+                    else
+                    {
+                        // succeed
+                        Clients.Caller.saveConfigFinished(instanceId, true, Path.GetFileName(path));
+                    }
+                    
                 }
                 catch (Exception e)
                 {
