@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using GDO.Core;
@@ -59,8 +60,18 @@ namespace GDO.Apps.FusionChart
             {
                 try
                 {
-                    bool success = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
-                    Clients.Caller.saveConfigFinished(instanceId, success);
+                    string path = ((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).ProcessSaveConfig(config);
+                    if (path.Equals(""))
+                    {
+                        // failed
+                        Clients.Caller.saveConfigFinished(instanceId, false, "");
+                    }
+                    else
+                    {
+                        // succeed
+                        Clients.Caller.saveConfigFinished(instanceId, true, Path.GetFileName(path));
+                    }
+                    
                 }
                 catch (Exception e)
                 {
@@ -144,6 +155,25 @@ namespace GDO.Apps.FusionChart
                     {
                         BroadcastChartData(instanceId, true);
                     }      
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public void DeleteFile(int instanceId, string fileName)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    Debug.WriteLine("Delete file: " + fileName);
+                    if (((FusionChartApp)Cave.Apps["FusionChart"].Instances[instanceId]).DeleteFile(fileName))
+                    {
+                        Clients.Caller.deleteFileFinished(instanceId, fileName);
+                    }
                 }
                 catch (Exception e)
                 {
