@@ -87,7 +87,7 @@
                $.getJSON(chartData.dataSource.dataURL, function (json) {
                    var currentData = gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.getJSONData();
                    currentData.data = json;
-                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chartDataURL = chartData.dataSource.datasetURL;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chartDataURL = chartData.dataSource.dataURL;
                    gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.setJSONData(currentData);
                    gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
                });
