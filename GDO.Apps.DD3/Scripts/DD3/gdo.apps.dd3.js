@@ -1046,12 +1046,39 @@ var initDD3App = function () {
                    .html_(data.html)
                    .classed_('dd3_received', true)
                    .attr_("id", data.sendId); // Here because attr can contain id
+
+                var img = obj[0][0];
+                if (img.getAttribute('isSound') == "true") {
+                    console.log("Shape Start sound here");
+                    var tmp = img.childNodes[0].cloneNode();
+                    img.childNodes[0].remove();
+                    tmp.muted = false;
+                    tmp.autoplay = true;
+                    tmp.controls = true;
+                    tmp.loop = true;
+                    img.append(tmp);
+                    //img.childNodes[0].autoplay = true;
+                   // img.childNodes[0].controls = false;
+                   // img.childNodes[0].loop = true;
+                    //console.log(img.childNodes[0]);
+                    //img.childNodes[0].play();
+                }
             };
 
             var _dd3_removeHandler = function (data) {
                 var el = d3.select("#" + data.sendId).node();
                 while (el && _dd3_isReceived(el.parentElement) && el.parentElement.childElementCount == 1)
                     el = el.parentElement;
+
+                //Handle sound
+                console.log(d3.select("#" + data.sendId));
+                var img = d3.select("#" + data.sendId)[0][0];
+                if (img.getAttribute('isSound') == "true") {
+                    console.log("Stop sound here");
+                
+                }
+
+                //Remove from dom
                 d3.select(el).remove();
             };
 

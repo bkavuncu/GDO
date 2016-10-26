@@ -574,7 +574,7 @@
                     var current_y = 0;
                     var last_row = 0;
 
-                    orderController.orders['createRect'] = function (id, image, w_img, h_img) {
+                    orderController.orders['createRect'] = function (id, url, w_img, h_img) {
                         var rectG = svg.append('g').attr('id', "r" + id);
                         var id_int = parseInt(id.substr(1, id.length));
                         var col = (id_int - 1) % 5, row = Math.floor((id_int - 1) / 5);
@@ -613,19 +613,74 @@
                             .attr("fill", "transparent");
                             //.attr("stroke", "black");
                         //
-                        rectG.append("image")
-                            .attr("xlink:href", image)
-                            .attr("x", 0)
-                            .attr("y", 0)
-                            //.attr("preserveAspectRatio", "none")
-                            .attr("width", w)
-                            .attr("height", h);
+
+                        var ext = url.split('.').pop();
+                        console.log(ext);
+
+                        if (ext == "jpg" || ext == "png" || ext == "gif") {
+                            rectG.append("image")
+                                .attr("xlink:href", url)
+                                .attr("x", 0)
+                                .attr("y", 0)
+                                //.attr("preserveAspectRatio", "none")
+                                .attr("width", w)
+                                .attr("height", h)
+                                .attr('isSound', false);
+                        }
+                        else if (ext == "mp3" || ext == "ogg" || ext == "wav") {
+                            var placeHoler = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Audio-mp3.svg/2000px-Audio-mp3.svg.png";
+                            
+
+                            rectG.append("image")
+                                .attr("xlink:href", placeHoler)
+                                .attr("x", 0)
+                                .attr("y", 0)
+                                .attr("width", w)
+                                .attr("height", h)
+                                .attr('isSound', true)
+                                .append(function () {
+                                    var sound = document.createElement("audio");
+                                    sound.autoplay = true;
+                                    sound.controls = false;
+                                    sound.loop = true;
+                                    sound.src = url;
+                                    sound.muted = false;
+                                    return sound;
+                            });
+                        }
+                        else {
+                            console.log("ERROR: Unknown file format [" + url + "]");
+                        }
                     };
 
                     orderController.orders['moveRect'] = function (id, x, y) {
                         var rectG = svg.select("#r" + id);
                         rectG.moveToFront();
                         rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
+
+                        if (rectG.select("image")) {
+                            var img = rectG.select("image")[0][0];
+                            if (img.getAttribute("isSound") == "true") {
+                                //Check if is outside bounds
+                                if (x < (dd3.browser.column / dd3.cave.columns) ||
+                                    x > ((dd3.browser.column + 1) / dd3.cave.columns) ||
+                                    y < (dd3.browser.row / dd3.cave.rows) ||
+                                    y > ((dd3.browser.row + 1) / dd3.cave.rows)) {
+                                    console.log("Stop sound here");
+                                    img.childNodes[0].muted = true;
+                                }
+                                else {
+                                    console.log("Start sound here");
+                                    console.log(img);
+                                    img.childNodes[0].muted = false;
+
+                                }
+                            }
+                            else {
+                                console.log("Not a sound");
+                               
+                            }
+                        }
                     };
 
                     orderController.orders['resizeRect'] = function (id, x, y) {

@@ -412,6 +412,7 @@
 
                 var createHostedRect = function(url) {
 
+                    var ext = url.split('.').pop();
                     var that = this;
                     var img = new Image();
                     img.onload = function () {
@@ -444,8 +445,12 @@
                             .attr("fill", "rgba(252,231,31,0.5)")
                             .call(dragC, that);
                     }
-                    img.src = url;
-
+                    if (ext == 'mp3' || ext == "ogg" || ext == "wav") {
+                        img.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Audio-mp3.svg/2000px-Audio-mp3.svg.png";
+                    }
+                    else {
+                        img.src = url;
+                    }
                     
                 };
 
@@ -612,8 +617,9 @@
                         foreach (ZipArchiveEntry entry in archive.Entries)
                         {
                             extension = Path.GetExtension(entry.FullName);
-                            //This entry is an image
-                            if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".gif")
+                            //This entry is an image or sound
+                            if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".gif" ||
+                                extension == ".mp3" || extension == ".ogg" || extension == "wav")
                             {
                                 //Extract to hosted directory, overwrites
                                 entry.ExtractToFile(path + entry.Name, true);
@@ -625,15 +631,16 @@
                     //Do not keep the zip file
                     File.Delete(path + filename);
                 }
-                //Is an image
-                else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".gif")
+                //Is an image or a sound
+                else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".gif" ||
+                         extension == ".mp3" || extension == ".ogg" || extension == "wav")
                 {
                     //Put on disk
                     file.SaveAs(path + filename);
                     //Add to database.txt
                     database.Insert(0, filename);
                 }
-                else //Is not an Image
+                else //Is not an Image or sound
                 {
                     //Nothing
                 }
@@ -739,7 +746,7 @@
                 </tr>
                 <tr>
 
-                    <td class="green" id="addFiles">Upload files (.zip, .png, jpg, .gif)</td>
+                    <td class="green" id="addFiles">Upload files (.zip, .png/jpg, .mp3/ogg)</td>
                     <td class="green"><input id="fileInput" type="file" name="fileUpload"/></td>
                     <td class="green"><input id="submit_file" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="Submit"/></td>
 
