@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using VDS.RDF;
+using VDS.RDF.Query;
 
 namespace GDO.Apps.Graph
 {
@@ -162,6 +164,159 @@ namespace GDO.Apps.Graph
             sw.Stop();
             Debug.WriteLine("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
             GraphAppHub.self.LogTime("Time to read the Graphml file: " + sw.ElapsedMilliseconds + "ms");
+        }
+
+
+
+
+        public static void ReadDatabase(out GraphInfo graphinfo, out List<GraphLink> links,
+            out List<GraphNode> nodes, out RectDimension dimension)
+        {
+            string NODE_CLASS_URI = "http://www.imperial.ac.uk/dsi/graphdl#Node";
+            string EDGE_CLASS_URI = "http://www.imperial.ac.uk/dsi/graphdl#Edge";
+            string RDF_TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+            string LABEL_PROPERTY_URI = "http://www.imperial.ac.uk/dsi/graphdl#id";
+            string SOURCE_PROPERTY_URI = "http://www.imperial.ac.uk/dsi/graphdl#source";
+            string TARGET_PROPERTY_URI = "http://www.imperial.ac.uk/dsi/graphdl#target";
+            // default sizes for nodes and links
+            float DEFAULT_NODESIZE = 5;
+            float DEFAULT_LINKWIDTH = 1;
+            var DEFAULT_NODE_COLOR = new { r = 0, g = 0, b = 0 };
+            var DEFAULT_EDGE_COLOR = new { r = 184, g = 184, b = 184 };
+
+
+            string connection = "http://ugritlab.ugr.es:9999/blazegraph/namespace/drugbank/sparql";
+            string query = @"prefix graphdl: <http://www.imperial.ac.uk/dsi/graphdl#>
+construct {
+?d1 a graphdl:Node;
+            rdfs:label ?d1_name;
+            graphdl:id ?d1_label .
+?d2 a graphdl:Node;
+            rdfs:label ?d2_name;
+            graphdl:id ?d2_label .
+ 
+?i a graphdl:Edge;
+            rdfs:label ?i_name;
+            graphdl:id ?i_label;
+            graphdl:source ?d1;
+            graphdl:target ?d2 .
+}
+        where {
+ ?i a <http://bio2rdf.org/drugbank_vocabulary:Drug-Drug-Interaction> .
+ ?d1 <http://bio2rdf.org/drugbank_vocabulary:ddi-interactor-in> ?i ; rdfs:label ?d1_label .
+ ?d2 <http://bio2rdf.org/drugbank_vocabulary:ddi-interactor-in> ?i ; rdfs:label ?d2_label .
+ filter(str(?d1) != str(?d2)) ." +
+ "bind(strbefore(?d1_label, \" [\") AS ?d1_name) ." +
+ "bind(strbefore(?d2_label, \" [\") AS ?d2_name) ." +
+ "bind(str(?i) AS ?i_label) ." +
+ "bind(strafter(?i, \"drugbank:\") AS ?i_name) ." +
+"}";
+
+
+            SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(connection));
+
+            //Make a SELECT query against the Endpoint
+            //SparqlResultSet results = endpoint.QueryWithResultSet(query);
+            IGraph graph = endpoint.QueryWithResultGraph(query);
+
+            Random random = new Random();
+
+            nodes =
+                graph.Triples.Where(
+                    t => t.Predicate.ToString() == RDF_TYPE_URI && t.Object.ToString() == NODE_CLASS_URI)
+                    .Select(n =>
+                    new GraphNode()
+                    {
+                        ID = n.Subject.ToString(),
+                        Attrs = null,
+                        // remove attrs that have their own field (R,G,B, size)
+                        Label = graph.Triples.Where(
+                            r => r.Subject.ToString() == n.Subject.ToString() && r.Predicate.ToString() == LABEL_PROPERTY_URI)
+                        .Select(b => b.Object).First().ToString(),
+                        // leave labels blank
+                        Pos = new Position()
+                        {
+                            X = random.Next(0, 100), // float.Parse("100"),
+                            Y = random.Next(0, 100), // float.Parse("50"),
+                        },
+                        R = DEFAULT_NODE_COLOR.r,
+                        G = DEFAULT_NODE_COLOR.g,
+                        B = DEFAULT_NODE_COLOR.b,
+                        Size = DEFAULT_NODESIZE,
+                        Adj = new List<string>(),
+                        NumLinks = 0
+                    })
+                    .ToList();
+
+            var nodesbyID = nodes.ToDictionary(n => n.ID, n => n);
+
+
+            #region rescale nodes
+
+            float minX = nodes.Min(n => n.Pos.X);
+            float minY = nodes.Min(n => n.Pos.Y);
+            float maxX = nodes.Max(n => n.Pos.X);
+            float maxY = nodes.Max(n => n.Pos.Y);
+
+            dimension = new RectDimension()
+            {
+                Width = maxX - minX,
+                Height = maxY - minY
+            };
+
+            var xscale = 1 / dimension.Width;
+            var yscale = 1 / dimension.Height;
+
+            foreach (var node in nodes)
+            {
+                node.Pos.X = (node.Pos.X - minX) * xscale;
+                node.Pos.Y = (node.Pos.Y - minY) * yscale;
+            }
+
+            dimension = new RectDimension()
+            {
+                Width = 1,
+                Height = 1
+            };
+            #endregion
+
+            //Nodes.ForEach(n => Debug.WriteLine(n.ID + " - " + n.Label));
+
+
+            links =
+                graph.Triples.Where(
+                    t => t.Predicate.ToString() == RDF_TYPE_URI && t.Object.ToString() == EDGE_CLASS_URI)
+                    .Select(l => new
+                    {
+                        source = graph.Triples.Where(
+                            r => r.Subject.ToString() == l.Subject.ToString() && r.Predicate.ToString() == SOURCE_PROPERTY_URI)
+                        .Select(b => b.Object).First().ToString(),
+                        target = graph.Triples.Where(
+                            r => r.Subject.ToString() == l.Subject.ToString() && r.Predicate.ToString() == TARGET_PROPERTY_URI)
+                        .Select(b => b.Object).First().ToString()
+                    }).Select(e =>
+                    new GraphLink()
+                    {
+                        Source = e.source,
+                        Target = e.target,
+                        Attrs = null,
+                        Weight = DEFAULT_LINKWIDTH,
+                        R = DEFAULT_EDGE_COLOR.r,
+                        G = DEFAULT_EDGE_COLOR.g,
+                        B = DEFAULT_EDGE_COLOR.b,
+                        StartPos = nodesbyID[e.source].Pos,
+                        EndPos = nodesbyID[e.target].Pos
+                    }).ToList();
+
+
+
+            graphinfo = new GraphInfo()
+            {
+                NodeMandatoryFields = new List<string>(),
+                NodeOtherFields = new List<string>(),
+                LinkKeys = new List<string>()
+            };
+
         }
     }
 }

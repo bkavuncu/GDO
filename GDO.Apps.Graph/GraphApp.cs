@@ -2,11 +2,16 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Core.Apps;
 using log4net;
+using VDS.RDF;
+using VDS.RDF.Parsing;
+using VDS.RDF.Query;
+using VDS.RDF.Writing.Formatting;
 
 namespace GDO.Apps.Graph
 {
@@ -44,6 +49,20 @@ namespace GDO.Apps.Graph
 
         public bool zoomedIn;//only has two zoom levels
         RectDimension rectDim;
+
+
+
+        // create a fileFromDB
+        public string LoadFromDB()
+        {
+            GraphDataReader.ReadDatabase(out graphinfo, out Links, out Nodes, out rectDim);
+            string filename = "dynamicXXX";
+            return ProcessGraph(filename, false, null);
+        }
+
+
+  
+
 
         public string LoadGraphFromFile(string filename, bool zoomed, string folderName)
         {

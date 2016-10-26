@@ -71,9 +71,13 @@ namespace GDO.Apps.Graph
                     // create GraphApp project and call its function to process graph
                     ga = (GraphApp)Cave.Apps["Graph"].Instances[instanceId];
 
-                    Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
+                    /*Clients.Caller.setMessage("Initiating processing of graph data in file: " + filename);
                     string folderNameDigit = ga.LoadGraphFromFile(filename, false, null);
-                    Clients.Caller.setMessage("Processing of raw graph data is completed.");
+                    Clients.Caller.setMessage("Processing of raw graph data is completed."); */
+
+                    //generating GraphML file from DB results
+                    Clients.Caller.setMessage("Loading graph from query.");
+                    string folderNameDigit = ga.LoadFromDB();
 
                     // Clients.Group to broadcast and get all clients to update graph
                     Clients.Group("" + instanceId).renderGraph(folderNameDigit, false);
