@@ -68,9 +68,13 @@
 
     <script>
         d3.selection.prototype.moveToFront = function () {
-            return this.each(function () {
+            this.each(function () {
                 this.parentNode.appendChild(this);
             });
+            var img = this.select("image");
+            if (img && img.node().getAttribute("isSound") == "true") {
+                this.select("audio").node().play();
+            }
         };
 
         d3.selection.prototype.moveToBack = function () {
@@ -655,7 +659,6 @@
 
                     orderController.orders['moveRect'] = function (id, x, y) {
                         var rectG = svg.select("#r" + id);
-                        rectG.moveToFront();
                         rectG.attr("transform", "translate(" + [x * width, y * height] + ")");
 
                         if (rectG.select("image")) {
@@ -678,9 +681,9 @@
                             }
                             else {
                                 console.log("Not a sound");
-                               
                             }
                         }
+                        rectG.moveToFront();
                     };
 
                     orderController.orders['resizeRect'] = function (id, x, y) {

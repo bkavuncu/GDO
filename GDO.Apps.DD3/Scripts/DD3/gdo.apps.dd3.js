@@ -1047,21 +1047,25 @@ var initDD3App = function () {
                    .classed_('dd3_received', true)
                    .attr_("id", data.sendId); // Here because attr can contain id
 
-                var img = obj[0][0];
-                if (img.getAttribute('isSound') == "true") {
-                    console.log("Shape Start sound here");
-                    var tmp = img.childNodes[0].cloneNode();
-                    img.childNodes[0].remove();
-                    tmp.muted = false;
-                    tmp.autoplay = true;
-                    tmp.controls = true;
-                    tmp.loop = true;
-                    img.append(tmp);
-                    //img.childNodes[0].autoplay = true;
-                   // img.childNodes[0].controls = false;
-                   // img.childNodes[0].loop = true;
-                    //console.log(img.childNodes[0]);
-                    //img.childNodes[0].play();
+               var img = obj.node();
+                if (img && img.getAttribute('isSound') == "true") {
+                    var audio = null;
+                    var prev_audio = obj.select("audio").node();
+
+                    if (d3.select("#sound_" + data.sendId).node()) { //Exists
+                        audio = d3.select("#sound_" + data.sendId).node();
+                    }
+                    else { //Create audio
+                        audio = new Audio();
+                        audio.loop = true;
+                        audio.autoplay = true;
+                        audio.src = prev_audio.getAttribute("src");
+                        audio.id = "sound_" + data.sendId;
+                    }
+                    img.removeChild(prev_audio);
+                    img.appendChild(audio);
+                    audio.muted = false;
+                    audio.play();
                 }
             };
 

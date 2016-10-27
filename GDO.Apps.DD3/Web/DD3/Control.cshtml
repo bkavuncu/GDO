@@ -416,8 +416,6 @@
                     var that = this;
                     var img = new Image();
                     img.onload = function () {
-                        console.log(this.width + 'x' + this.height);
-
                         id++;
                         server.sendOrder(instanceId, order("createRect", ['d' + id, url, this.width, this.height]), false);
                         //Custom offset that stays in bounds and translate image on x&y according to ID
