@@ -661,6 +661,26 @@ namespace GDO.Apps.Images
 
         }
 
+
+        //Display Image 
+        public void DisplayImageByDigit(int instanceId, string digits, int displayMode)
+        {
+            lock (Cave.AppLocks[instanceId])
+            {
+                try
+                {
+                    ImagesApp ia = (ImagesApp)Cave.Apps["Images"].Instances[instanceId];
+                    FindDigits(instanceId, digits);
+                    SetMode(instanceId, displayMode);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Clients.Caller.setMessage("Image "+ digits + "cannot be found. >> " +e.GetType().ToString());
+                }
+            }
+        }
+
         // Display Image
         public void DisplayImage(int instanceId, string imageName, int displayMode)
         {
