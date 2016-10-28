@@ -137,7 +137,25 @@
             dataFormat: 'json',
             dataSource: chartData.dataSource
         });
-        gdo.net.instance[instanceId].chart.render();
+        if (chartData.dataSource.datasetURL) {
+            $.getJSON(chartData.dataSource.datasetURL, function (json) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                currentData.dataset = json;
+                gdo.net.instance[instanceId].chartDatasetURL = chartData.dataSource.datasetURL;
+                gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                gdo.net.instance[instanceId].chart.render();
+            });
+        } else if (chartData.dataSource.dataURL) {
+            $.getJSON(chartData.dataSource.dataURL, function (json) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                currentData.data = json;
+                gdo.net.instance[instanceId].chartDataURL = chartData.dataSource.dataURL;
+                gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                gdo.net.instance[instanceId].chart.render();
+            });
+        } else {
+            gdo.net.instance[instanceId].chart.render();
+        }
         
     };
 
@@ -221,6 +239,9 @@
                                 <td>
                                     <button type='button' id="file_digit_button" class='btn btn-primary btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Submit</button>
                                 </td>
+                                <td>
+                                    <button type='button' id="file_delete_button" class='btn btn-danger btn-block'><i class='fa  fa-check fa-fw'></i>&nbsp;Delete</button>
+                                </td>
                             </tr>
                         </table>
                     </fieldset>
@@ -247,7 +268,7 @@
                                     <button id="updateConfig" class="btn btn-danger" style="width:100%">Update Config</button>
                                 </td>
                                 <td>
-                                    <button id="saveConfig" class="btn btn-warning" style="width:100%">Save Config</button>
+                                    <button id="saveConfig" class="btn btn-warning" style="width:100%" title="Save and Download current configuration.">Save &amp; Download</button>
                                 </td>
                             </tr>
                             <tr>
@@ -404,6 +425,10 @@
         var gdo = parent.gdo;
         gdo.net.app["FusionChart"].server.processFile(gdo.controlId, $("#file_digit").val());
     });
+    $("#file_delete_button").click(function () {
+        var gdo = parent.gdo;
+        gdo.net.app["FusionChart"].server.deleteFile(gdo.controlId, $("#file_digit").val());
+    });
     $("#sendMouseEvent")
         .click(function() {
             var gdo = parent.gdo;
@@ -448,8 +473,26 @@
     $("#reRender")
         .click(function() {
             var gdo = parent.gdo;
-            gdo.net.instance[gdo.controlId].chart.render();
-            gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+            if (gdo.net.instance[gdo.controlId].chartDatasetURL) {
+                var currentData = gdo.net.instance[gdo.controlId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[gdo.controlId].chartDatasetURL, function (json) {
+                    currentData.dataset = json;
+                    gdo.net.instance[gdo.controlId].chart.setJSONData(currentData);
+                    gdo.net.instance[gdo.controlId].chart.render();
+                    gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+                });
+            } else if (gdo.net.instance[gdo.controlId].chartDataURL) {
+                var currentData = gdo.net.instance[gdo.controlId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[gdo.controlId].chartDataURL, function (json) {
+                    currentData.data = json;
+                    gdo.net.instance[gdo.controlId].chart.setJSONData(currentData);
+                    gdo.net.instance[gdo.controlId].chart.render();
+                    gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+                });
+            } else {
+                gdo.net.instance[gdo.controlId].chart.render();
+                gdo.net.app["FusionChart"].server.reRender(gdo.controlId);
+            }
         });
 
     $("#toggleMouseMove")
