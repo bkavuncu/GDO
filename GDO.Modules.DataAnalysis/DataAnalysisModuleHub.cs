@@ -3,9 +3,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using GDO.Core;
 using Microsoft.AspNet.SignalR;
-using Newtonsoft.Json.Linq;
 
 using GDO.Core.Modules;
 
