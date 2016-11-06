@@ -83,7 +83,7 @@ namespace GDO.Modules.DataAnalysis.Core
 
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
         {
-            return source != null && source.Any();
+            return source == null || !source.Any();
         }
 
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
@@ -115,7 +115,8 @@ namespace GDO.Modules.DataAnalysis.Core
 
         public static Type GetType(string name)
         {
-            return Type.GetType(types[name] ?? name);
+            // If you call types[name] first, you will get a KeyNotFoundException.
+            return Type.GetType(name) ?? Type.GetType(types[name]);
         }
 
         public static object[] ConvertArray<T>(T[] input)
@@ -131,7 +132,7 @@ namespace GDO.Modules.DataAnalysis.Core
             }
             catch(Exception)
             {
-                // Second attempt to obtain values in integer formats.
+                // Second attempt to obtain values in whole-number formats.
                 return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(input.ToString().Split('.')[0]);
             }
         }
@@ -155,7 +156,7 @@ namespace GDO.Modules.DataAnalysis.Core
         {
             ICollection<Assembly> defaultAssemblies = base.GetAssemblies();
             List<Assembly> assemblies = new List<Assembly>(defaultAssemblies);
-            if (Extensions.IsNullOrEmpty())
+            if (!Extensions.IsNullOrEmpty())
             {
                 Extensions.ForEach(x => defaultAssemblies.Add(x.GetType().Assembly));
             }
@@ -163,6 +164,10 @@ namespace GDO.Modules.DataAnalysis.Core
         }
     }
 
+    /// <summary>
+    /// There is no explicit error handling in this  class, therefore the consumer needs 
+    /// to handle errors accordingly.
+    /// </summary>
     public class RawJsonActionResult : IHttpActionResult
     {
         // Json responder based on http://stackoverflow.com/a/35161220

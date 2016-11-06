@@ -7,6 +7,11 @@ using System.Linq;
 
 namespace GDO.Modules.DataAnalysis.Core.DataModels.Mongo
 {
+    /// <summary>
+    /// Builds a datamodel based on a collection of entries on MongoDB as values and labels.
+    /// Please note that the label is optional. There is no explicit error handling in this 
+    /// class, therefore the consumer needs to handle errors accordingly.
+    /// </summary>
     public class JsonLabelValueArray
     {
         private JsonValueArrayRootobject model = null;

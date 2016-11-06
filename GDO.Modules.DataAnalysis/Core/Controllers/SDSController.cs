@@ -4,6 +4,7 @@
 using GDO.Modules.DataAnalysis.Core.DataModels.Mongo;
 using GDO.Modules.DataAnalysis.Ext;
 using Newtonsoft.Json;
+using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Web.Http;
@@ -23,14 +24,24 @@ namespace GDO.Modules.DataAnalysis.Core.Controllers
         public IHttpActionResult Get(string db, string collection, string seriesname = "",
             int pagesize = 200, string datatype = "float")
         {
-            string baseurl = ((HttpSelfHostConfiguration)Configuration).BaseAddress.ToString();
-            var source = new JsonLabelValueArray(
-                string.Format(baseurl + "/mongodb/{0}/{1}?pagesize={2}", db, collection, pagesize));
-            var result = (object[])InvokeGenericMethod(typeof(TypeMapper), "ConvertArray", datatype,
-                new[] { InvokeGenericMethod(source, source.GetType(), "GetValues", datatype) });
-            return new RawJsonActionResult { Payload = 
-                JsonConvert.SerializeObject(new[] { new { data = result.Select(
-                x => new { value = x }).ToArray(), seriesname = seriesname } }, Formatting.Indented) };
+            try
+            {
+                string baseurl = ((HttpSelfHostConfiguration)Configuration).BaseAddress.ToString();
+                var source = new JsonLabelValueArray(
+                    string.Format(baseurl + "/mongodb/{0}/{1}?pagesize={2}", db, collection, pagesize));
+                var result = (object[])InvokeGenericMethod(typeof(TypeMapper), "ConvertArray", datatype,
+                    new[] { InvokeGenericMethod(source, source.GetType(), "GetValues", datatype) });
+                return new RawJsonActionResult
+                {
+                    Payload =
+                    JsonConvert.SerializeObject(new[] { new { data = result.Select(
+                x => new { value = x }).ToArray(), seriesname = seriesname } }, Formatting.Indented)
+                };
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
         }
     }
 }

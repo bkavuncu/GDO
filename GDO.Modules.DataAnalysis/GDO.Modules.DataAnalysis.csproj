@@ -166,11 +166,7 @@
     <Compile Include="DataAnalysisModule.cs" />
     <Compile Include="DataAnalysisModuleHub.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\DataAnalysis\" />
-    <Folder Include="Views\Data\" />
-    <Folder Include="Views\FXData\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
       <Project>{4a27f694-1d9a-420a-a3a6-62521eaa047e}</Project>

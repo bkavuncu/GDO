@@ -12,12 +12,18 @@ namespace GDO.Modules.DataAnalysis.Core
     {
         public void Init(JObject configuration)
         {
-            var mappings = configuration["mappings"].ToDictionary(
-                x => x["context"].ToString(), x => x["url"].ToString());
-            var url  = configuration["baseurl"].ToString();
-            var config = Utilities.GetProxyServerConfig(url);
-            new[] { new RouteHandler(url, mappings) }.ForEach(x => config.MessageHandlers.Add(x));
-            new HttpSelfHostServer(config).OpenAsync().Wait();
+            // If the server must not be started remove "baseurl"
+            var url = configuration["baseurl"];
+            if (!url.IsNullOrEmpty())
+            {
+                // If there are no mappings, specify as "mappings": []
+                var mappings = configuration["mappings"].ToDictionary(
+                    x => x["context"].ToString(), x => x["url"].ToString());
+                var config = Utilities.GetProxyServerConfig(url.ToString());
+                new[] { new RouteHandler(url.ToString(), mappings) }.ForEach(x => config.MessageHandlers.Add(x));
+                new HttpSelfHostServer(config).OpenAsync().Wait();
+            }
+            
         }   
     }
 }

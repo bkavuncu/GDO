@@ -36,7 +36,10 @@ namespace GDO.Modules.DataAnalysis.Core.Handlers.Message
                 return await base.SendAsync(request, cancellationToken).ContinueWith((task) =>
                 {
                     HttpResponseMessage response = task.Result;
+                    
+                    // Below line is required for CORS support required by Browsers.
                     response.Headers.Add("Access-Control-Allow-Origin", "*");
+
                     return response;
                 });
             }
@@ -45,9 +48,15 @@ namespace GDO.Modules.DataAnalysis.Core.Handlers.Message
             request.RequestUri = requestedURI;
             request.Headers.AcceptEncoding.Clear();
             var responseMessage = await new HttpClient().SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-            responseMessage.Headers.TransferEncodingChunked = null; //throws an error on calls to WebApi results
+            
+            // Below lines are required for:
+            //     1. Dealing with an error reported by WebAPIs
+            //     2. CORS support required by Browsers
+            //     3. Head messages sent by Browsers
+            responseMessage.Headers.TransferEncodingChunked = null;
             responseMessage.Headers.Add("Access-Control-Allow-Origin", "*");
             if (request.Method == HttpMethod.Head) responseMessage.Content = null;
+
             return responseMessage;
         }
     }
