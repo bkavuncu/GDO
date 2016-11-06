@@ -13,7 +13,7 @@ namespace GDO.Modules.DataAnalysis
         public void Init()
         {
             Name = "DataAnalysis";
-            new ProxyServer() { URL = "http://localhost:12432" }.Init();
+            new ProxyServer().Init(Utilities.GetModuleConfigurations()["Default"]);
         }
     }
 }

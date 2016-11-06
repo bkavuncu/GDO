@@ -2,25 +2,21 @@
 //
 
 using GDO.Modules.DataAnalysis.Core.Handlers.Message;
-using System.Collections.Generic;
-using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Linq;
 using System.Web.Http.SelfHost;
 
 namespace GDO.Modules.DataAnalysis.Core
 {
     public class ProxyServer
     {
-        public string URL { get; set; }
-
-        public void Init()
+        public void Init(JObject configuration)
         {
-            var handlers = new List<DelegatingHandler> {
-                new RouteHandler(URL, new Dictionary<string, string>() {
-                    { "/twitter", "http://146.169.32.192:5000" },
-                    { "/mongo", "http://10.0.2.2:8080" }
-                }) };
-            var config = Utilities.GetProxyServerConfig(URL);
-            handlers.ForEach(x => config.MessageHandlers.Add(x));
+            var mappings = configuration["mappings"].ToDictionary(
+                x => x["context"].ToString(), x => x["url"].ToString());
+            var url  = configuration["baseurl"].ToString();
+            var config = Utilities.GetProxyServerConfig(url);
+            new[] { new RouteHandler(url, mappings) }.ForEach(x => config.MessageHandlers.Add(x));
             new HttpSelfHostServer(config).OpenAsync().Wait();
         }   
     }

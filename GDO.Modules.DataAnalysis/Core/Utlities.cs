@@ -2,6 +2,7 @@
 //
 
 using GDO.Modules.DataAnalysis.Ext;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.SelfHost;
+
+using GDOUtilities = GDO.Utility.Utilities;
 
 namespace GDO.Modules.DataAnalysis.Core
 {
@@ -46,6 +49,26 @@ namespace GDO.Modules.DataAnalysis.Core
             string datatype, object[] input = null)
         {
             return InvokeGenericMethod(null, classname, method, datatype, input);
+        }
+
+        public static Dictionary<string, JObject> GetModuleConfigurations()
+        {
+            var configurations = new Dictionary<string, JObject>();
+            string path = Directory.GetCurrentDirectory() + @"\Configurations\DataAnalysis";
+            if (Directory.Exists(path))
+            {
+                string[] filePaths = Directory.GetFiles(@path, "*.json", SearchOption.AllDirectories);
+                foreach (string filePath in filePaths)
+                {
+                    JObject json = GDOUtilities.LoadJsonFile(filePath);
+                    if (json != null)
+                    {
+                        configurations.Add(GDOUtilities.RemoveString(
+                            GDOUtilities.RemoveString(filePath, path + "\\"), ".json"), json);
+                    }
+                }
+            }
+            return configurations;
         }
     }
 

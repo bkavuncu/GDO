@@ -25,7 +25,7 @@ namespace GDO.Modules.DataAnalysis.Core.Controllers
         {
             string baseurl = ((HttpSelfHostConfiguration)Configuration).BaseAddress.ToString();
             var source = new JsonLabelValueArray(
-                string.Format(baseurl + "/mongo/{0}/{1}?pagesize={2}", db, collection, pagesize));
+                string.Format(baseurl + "/mongodb/{0}/{1}?pagesize={2}", db, collection, pagesize));
             var result = (object[])InvokeGenericMethod(typeof(TypeMapper), "ConvertArray", datatype,
                 new[] { InvokeGenericMethod(source, source.GetType(), "GetValues", datatype) });
             return new RawJsonActionResult { Payload = 

@@ -33,7 +33,12 @@ namespace GDO.Modules.DataAnalysis.Core.Handlers.Message
             var requestedURI = GetRequestURI(request.RequestUri);
             if (requestedURI.ToString().Equals(request.RequestUri.ToString()))
             {
-                return await base.SendAsync(request, cancellationToken);
+                return await base.SendAsync(request, cancellationToken).ContinueWith((task) =>
+                {
+                    HttpResponseMessage response = task.Result;
+                    response.Headers.Add("Access-Control-Allow-Origin", "*");
+                    return response;
+                });
             }
             request.Headers.Add("X-Forwarded-For", request.GetClientIp());
             if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Trace) request.Content = null;
@@ -41,6 +46,7 @@ namespace GDO.Modules.DataAnalysis.Core.Handlers.Message
             request.Headers.AcceptEncoding.Clear();
             var responseMessage = await new HttpClient().SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             responseMessage.Headers.TransferEncodingChunked = null; //throws an error on calls to WebApi results
+            responseMessage.Headers.Add("Access-Control-Allow-Origin", "*");
             if (request.Method == HttpMethod.Head) responseMessage.Content = null;
             return responseMessage;
         }
