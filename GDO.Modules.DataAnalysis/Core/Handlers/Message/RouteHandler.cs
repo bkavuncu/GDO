@@ -5,11 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.ServiceModel.Channels;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GDO.Modules.DataAnalysis.Core.MessageHandlers
+namespace GDO.Modules.DataAnalysis.Core.Handlers.Message
 {
     public class RouteHandler : DelegatingHandler
     {
@@ -31,24 +30,19 @@ namespace GDO.Modules.DataAnalysis.Core.MessageHandlers
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            var requestedURI = GetRequestURI(request.RequestUri);
+            if (requestedURI.ToString().Equals(request.RequestUri.ToString()))
+            {
+                return await base.SendAsync(request, cancellationToken);
+            }
             request.Headers.Add("X-Forwarded-For", request.GetClientIp());
             if (request.Method == HttpMethod.Get || request.Method == HttpMethod.Trace) request.Content = null;
-            request.RequestUri = GetRequestURI(request.RequestUri);
+            request.RequestUri = requestedURI;
             request.Headers.AcceptEncoding.Clear();
             var responseMessage = await new HttpClient().SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             responseMessage.Headers.TransferEncodingChunked = null; //throws an error on calls to WebApi results
             if (request.Method == HttpMethod.Head) responseMessage.Content = null;
             return responseMessage;
-        }
-    }
-
-    public static class HttpRequestMessageExtension
-    {
-        public static string GetClientIp(this HttpRequestMessage request)
-        {
-            return request.Properties.ContainsKey("MS_HttpContext") ?
-                ((dynamic)request.Properties["MS_HttpContext"]).Request.UserHostAddress as string :
-                ((RemoteEndpointMessageProperty)request.Properties[RemoteEndpointMessageProperty.Name]).Address;
         }
     }
 }

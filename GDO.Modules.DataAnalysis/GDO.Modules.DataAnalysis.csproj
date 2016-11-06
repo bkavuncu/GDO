@@ -155,14 +155,21 @@
     <Content Include="Web\DataAnalysis\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\MessageHandlers\RouteHandler.cs" />
+    <Compile Include="Core\Controllers\DataController.cs" />
+    <Compile Include="Core\DataModels\Mongo\JsonLabelValueArray.cs" />
+    <Compile Include="Core\Handlers\Message\RouteHandler.cs" />
     <Compile Include="Core\ProxyServer.cs" />
+    <Compile Include="Core\Utlities.cs" />
+    <Compile Include="Ext\IDataAnalysisController.cs" />
+    <Compile Include="Core\Controllers\SDSController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataAnalysisModule.cs" />
     <Compile Include="DataAnalysisModuleHub.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataAnalysis\" />
+    <Folder Include="Views\Data\" />
+    <Folder Include="Views\FXData\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GDO\GDO.csproj">
