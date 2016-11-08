@@ -61,7 +61,7 @@ namespace GDO
                     //Change this URL for the generated slack channel
                     string slack_url = "https://hooks.slack.com/services/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";
                     //Change content if needed
-                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':gear:', 'text': 'Deployed new GDO instance ['" + hostname + "]}";
+                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':gear:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
 
                     var encoding = new System.Text.UTF8Encoding();
                     var slack_payload = encoding.GetBytes(slack_json);
