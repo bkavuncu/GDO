@@ -59,7 +59,7 @@ namespace GDO
                     hostname == "dsigdotesting.doc.ic.ac.uk")
                 {
                     //Change this URL for the generated slack channel
-                    string slack_url = "https://hooks.slack.com/services/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";
+                    string slack_url = "https://hooks.slack.com/services/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";
                     //Change content if needed
                     var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':gear:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
 
