@@ -52,6 +52,28 @@ namespace GDO
                     };
                     map.RunSignalR(config);
                 });
+
+                var hostname = System.Net.Dns.GetHostName();
+                if (hostname == "dsigdoprod.doc.ic.ac.uk" ||
+                    hostname == "dsigdopreprod.doc.ic.ac.uk" ||
+                    hostname == "dsigdotesting.doc.ic.ac.uk")
+                {
+                    //Change this URL for the generated slack channel
+                    string slack_url = "https://hooks.slack.com/services/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";
+                    //Change content if needed
+                    var slack_json = "{ 'username': 'GDO - Slack bot', 'icon_emoji': ':gear:', 'text': 'Deployed new GDO instance [" + hostname + "]' }";
+
+                    var encoding = new System.Text.UTF8Encoding();
+                    var slack_payload = encoding.GetBytes(slack_json);
+                    var slack = System.Net.HttpWebRequest.Create(slack_url);
+                    slack.Method = "POST";
+                    slack.ContentType = "application/json";
+                    slack.ContentLength = slack_payload.Length;
+                    var slack_stream = slack.GetRequestStream();
+                    slack_stream.Write(slack_payload, 0, slack_payload.Length);
+                    slack_stream.Close();
+                }
+
             }
             catch (Exception e)
             {
