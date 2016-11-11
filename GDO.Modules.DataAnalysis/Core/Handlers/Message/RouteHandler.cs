@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,7 +56,16 @@ namespace GDO.Modules.DataAnalysis.Core.Handlers.Message
             //     3. Head messages sent by Browsers
             responseMessage.Headers.TransferEncodingChunked = null;
             responseMessage.Headers.Add("Access-Control-Allow-Origin", "*");
-            if (request.Method == HttpMethod.Head) responseMessage.Content = null;
+            if (request.Method == HttpMethod.Head)
+            {
+                responseMessage.Content = null;
+            }
+            else
+            {
+                var content = await responseMessage.Content.ReadAsStringAsync();
+                responseMessage.Content = new StringContent(content.Replace("/API", "API"),
+                    Encoding.UTF8, "application/json");
+            }
 
             return responseMessage;
         }
