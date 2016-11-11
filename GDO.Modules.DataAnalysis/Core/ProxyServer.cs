@@ -14,7 +14,7 @@ namespace GDO.Modules.DataAnalysis.Core
         {
             // If the server must not be started remove "baseurl"
             var url = configuration["baseurl"];
-            if (!url.IsNullOrEmpty())
+            if (url != null)
             {
                 // If there are no mappings, specify as "mappings": []
                 var mappings = configuration["mappings"].ToDictionary(
