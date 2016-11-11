@@ -2,7 +2,6 @@
 using System.Web;
 using GDO.Core;
 using GDO.Core.Apps;
-using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.Images
 {
