@@ -29,7 +29,7 @@ namespace GDO.Apps.Twitter.Core
 
         public StatusMsg GetApiMessage()
         {
-            StatusMsg =  Get<StatusMsg>("/API") ?? new StatusMsg() { Msg = "Could not connect to API", Healthy = false };
+            StatusMsg =  Get<StatusMsg>("API") ?? new StatusMsg() { Msg = "Could not connect to API", Healthy = false };
             Debug.WriteLine("Using base paths: " + StatusMsg.DataSetUrl + " " + StatusMsg.AnalysisOptionsUrl);
             return StatusMsg;
         }
