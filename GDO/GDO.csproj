@@ -95,8 +95,8 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin">
@@ -969,7 +969,9 @@
     <Content Include="Scripts\gdo.fs.js" />
     <Content Include="Scripts\gdo.js" />
     <Content Include="Scripts\gdo.net.js" />
+    <Content Include="Scripts\o.js" />
     <Content Include="Scripts\peer.js" />
+    <Content Include="Scripts\q.js" />
     <Content Include="Web\Nodes.cshtml" />
     <Content Include="Web\Sections.cshtml" />
     <Content Include="Web\States.cshtml" />
