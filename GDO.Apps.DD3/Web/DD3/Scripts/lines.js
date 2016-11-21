@@ -16,13 +16,13 @@ var tubeLines = function (svg, map, lineNames, lineColors) {
 		    console.log("Loading tube lines");
 		    dd3.getData('lines', 'linesData', function (data) {
 		        l.lines = d3.map(data);
-		        callback && callback();
+		        if(callback)  callback();
 		    });
 		});
 	};
 	
 	l.drawLines = function () {
-		var lineGenerator = d3.svg.line().interpolate("cardinal");
+		var lineGenerator = d3.line().curve(d3.curveCardinal);
 		var g = svg.append("g").unwatch().attr("id", "tubeLines").style("filter", "url(#shadow)");
 		
 		// filters go in defs element

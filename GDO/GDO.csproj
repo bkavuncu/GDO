@@ -951,6 +951,7 @@
     <Content Include="Bootstrap\LICENSE" />
     <Content Include="Bootstrap\README.md" />
     <None Include="Properties\PublishProfiles\emergency.pubxml" />
+    <None Include="Properties\PublishProfiles\new_paillot.pubxml" />
     <None Include="Properties\PublishProfiles\PreProd.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Properties\PublishProfiles\studentserver.pubxml" />

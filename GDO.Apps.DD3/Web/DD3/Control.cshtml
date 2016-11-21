@@ -65,12 +65,31 @@
             background-color:#8B0000;
         }
 
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .x.axis path {
+            display: none;
+        }
+
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+
     </style>
 </head>
 <body>
     <script src="../../Scripts/jquery-2.1.4.min.js"></script>
-    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
-    <script src="../../Scripts/d3.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="~/Web/DD3/Scripts/d3.v4.js"></script>
+    <script src="../../Scripts/peer.js"></script>
     <script>
         d3.selection.prototype.moveToFront = function () {
             return this.each(function () {
@@ -159,6 +178,38 @@
                 return JSON.stringify({ name: name, args: args });
             };
 
+
+                    // == FPS ==
+                    var peerObject = { host: "146.169.32.109", port: 55555 };
+                    //{ host: "localhost", port: 55555 };
+                    //{ host: "146.169.32.109", port: 55555 }
+                    var con_peer= new Peer("idofthecontrollerfordd3", peerObject);
+                    con_peer.on('open', function (conn) {
+                        gdo.consoleOut(".DD3", 4, "The peer client of the controller is opened");
+                    });
+                    var dataset = [];
+                    var eventLog = [];
+
+                    con_peer.on('connection', function (conn) {
+                        eventLog.push([new Date().getTime(), "Connecting with  "+ conn.label]);
+                        conn.on('data', function (data) {
+                            var raw = data.split(';');
+                            var row = raw[0];
+                            var col = raw[1];
+                            var nbr = raw[2];
+                            var nbc = raw[3];
+                            var nbdc = raw[4];
+                            var ts = raw[5];
+                            var fps = raw[6];
+                            var std = raw[7];
+                            dataset.push([row, col, nbr, nbc, nbdc, ts, fps, std]);
+                            //gdo.consoleOut(".DD3", 4, dataset);
+                            //updateFPSChart();
+                        });
+                    });
+                    
+                    
+
             if (!gdo.net.app["DD3"].initControl) {
                 $("#wait").css("display", "none");
                 $("#error").css("display", "");
@@ -172,131 +223,193 @@
 
                 // == Basic Moves ==
 
-                $('#createRect').click(function() {
+                $('#createRect').click(function () {
                     if (!rect) {
                         server.sendOrder(instanceId, order("createRect", []), false);
                         $(".basic_moves .red").removeClass("red").addClass("green");
                         $(this).removeClass("green").addClass("red");
                         rect = true;
+                        eventLog.push([new Date().getTime(), "Creating Rectangles"]);
                     }
                 });
 
-                $('#removeRect').click(function() {
+                $('#removeRect').click(function () {
                     if (rect) {
                         server.sendOrder(instanceId, order("removeRect", []), false);
                         $(".basic_moves .green").removeClass("green").addClass("red");
                         $('#createRect').removeClass("red").addClass("green");
                         rect = false;
+                        eventLog.push([new Date().getTime(), "Removing Rectangles"]);
                     }
                 });
 
-                $('#translationX').click(function() {
-                    rect && server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
+                $('#translationX').click(function () {
+                    if (rect) {
+                        server.sendOrder(instanceId, order("startXTranslation", ['X']), false);
+                        eventLog.push([new Date().getTime(), "Starting X Translation"]);
+                    }
                 });
 
-                $('#translationY').click(function() {
-                    rect && server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
+                $('#translationY').click(function () {
+                    if (rect) {
+                        server.sendOrder(instanceId, order("startYTranslation", ['Y']), false);
+                        eventLog.push([new Date().getTime(), "Starting Y Translation"]);
+                    }
+                        
                 });
 
-                $('#rotation').click(function() {
-                    rect && server.sendOrder(instanceId, order("startRotation", ['R']), false);
+                $('#rotation').click(function () {
+                    if (rect) {
+                        server.sendOrder(instanceId, order("startRotation", ['R']), false);
+                        eventLog.push([new Date().getTime(), "Starting Rotation"]);
+                    }
                 });
 
-                $('#allMoves').click(function() {
+                $('#allMoves').click(function () {
                     if (rect) {
                         server.sendOrder(instanceId, order("startXTranslation", ["X"]), false);
                         server.sendOrder(instanceId, order("startYTranslation", ["Y"]), false);
                         server.sendOrder(instanceId, order("startRotation", ["R"]), false);
+                        eventLog.push([new Date().getTime(), "Starting All moves"]);
                     }
                 });
+                    $('#createCircles').click(function () {
+                        if (!circles) {
+                            circles = 5;
+                            server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
+                            $(".superposition.non_distributed .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            $("#spanc").text(circles)
+                            eventLog.push([new Date().getTime(), "Creating Circles"]);
+                        }
+                    });
 
-                // == Superposition ==
+                    $('#createDistributedCircles').click(function () {
+                        if (!dcircles) {
+                            dcircles = 1;
+                            server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
+                            $(".superposition.distributed .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            $("#spandc").text(dcircles * numClients);
+                            eventLog.push([new Date().getTime(), "Creating Distributed Circles"]);
+                        }
+                    });
 
-                $('#createCircles').click(function() {
-                    if (!circles) {
-                        circles = 100;
-                        server.sendOrder(instanceId, order("createCircles", [circles, 1]), false);
-                        $(".superposition.non_distributed .red").removeClass("red").addClass("green");
-                        $(this).removeClass("green").addClass("red");
-                        $("#spanc").text(circles)
-                    }
-                });
+                    $('#removeCircles').click(function () {
+                        if (!!circles) {
+                            server.sendOrder(instanceId, order("removeCircles", []), false);
+                            $(".superposition.non_distributed .green").removeClass("green").addClass("red");
+                            $('#createCircles').removeClass("red").addClass("green");
+                            circles = 0;
+                            $("#spanc").text("");
+                            eventLog.push([new Date().getTime(), "Removing Circles"]);
+                        }
+                    });
 
-                $('#createDistributedCircles').click(function() {
-                    if (!dcircles) {
-                        dcircles = 10;
-                        server.sendOrder(instanceId, order("createDistributedCircles", [dcircles, 0.9]), true);
-                        $(".superposition.distributed .red").removeClass("red").addClass("green");
-                        $(this).removeClass("green").addClass("red");
-                        $("#spandc").text(dcircles * numClients)
-                    }
-                });
+                    $('#removeDistributedCircles').click(function () {
+                        if (!!dcircles) {
+                            server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
+                            $(".superposition.distributed .green").removeClass("green").addClass("red");
+                            $('#createDistributedCircles').removeClass("red").addClass("green");
+                            dcircles = 0;
+                            $("#spandc").text("");
+                            eventLog.push([new Date().getTime(), "Removing Distributed Circles"]);
+                        }
+                    });
 
-                $('#removeCircles').click(function() {
-                    if (!!circles) {
-                        server.sendOrder(instanceId, order("removeCircles", []), false);
-                        $(".superposition.non_distributed .green").removeClass("green").addClass("red");
-                        $('#createCircles').removeClass("red").addClass("green");
-                        circles = 0;
-                        $("#spanc").text("");
-                    }
-                });
-
-                $('#removeDistributedCircles').click(function() {
-                    if (!!dcircles) {
-                        server.sendOrder(instanceId, order("removeDistributedCircles", []), true);
-                        $(".superposition.distributed .green").removeClass("green").addClass("red");
-                        $('#createDistributedCircles').removeClass("red").addClass("green");
-                        dcircles = 0;
-                        $("#spandc").text("");
-                    }
-                });
 
                 $("#nbAddCircles").click(function(e) { e.stopPropagation(); });
 
-                $('#addCircles').click(function() {
-                    var n = +$("#nbAddCircles").val();
-                    circles && (server.sendOrder(instanceId, order("createCircles", [n]), false), $("#spanc").text(circles += n));
-                });
+                    $('#addCircles').click(function () {
+                        var n = +$("#nbAddCircles").val();
+                        if (circles) {
+                            server.sendOrder(instanceId, order("createCircles", [n]), false);
+                            $("#spanc").text(circles += n);
+                            eventLog.push([new Date().getTime(), "Adding " + n + " Circles"]);
+                        }
+                    });
 
                 $("#nbAddDistributedCircles").click(function(e) { e.stopPropagation(); });
 
-                $('#addDistributedCircles').click(function() {
-                    var n = +$("#nbAddDistributedCircles").val();
-                    dcircles && (server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true), $("#spandc").text((dcircles += n) * numClients));
-                });
+                    $('#addDistributedCircles').click(function () {
+                        var n = +$("#nbAddDistributedCircles").val();
+                        if(dcircles){
+                            server.sendOrder(instanceId, order("createDistributedCircles", [n, 0.9]), true);
+                            $("#spandc").text((dcircles += n) * numClients);
+                            eventLog.push([new Date().getTime(), "Adding "+n+" Distributed Circles"]);
+                        }
+                    });
 
-                $('#moveCircles').click(function() {
-                    circles && server.sendOrder(instanceId, order("startMoveCircles", []), false);
-                });
+                    $('#moveCircles').click(function () {
+                        if(circles){
+                            server.sendOrder(instanceId, order("startMoveCircles", []), false);
+                            eventLog.push([new Date().getTime(), "Moving Circles"]);
+                        }
+                    });
 
-                $('#moveDistributedCircles').click(function() {
-                    dcircles && server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
-                });
+                    $('#moveDistributedCircles').click(function () {
+                        if(dcircles){
+                            server.sendOrder(instanceId, order("startMoveDistributedCircles", []), true);
+                            eventLog.push([new Date().getTime(), "Moving Distributed Circles"]);
+                        }
+                    });
 
                 // == Group Transition ==
 
-                $('#createPolygon').click(function() {
-                    if (!polygon) {
-                        server.sendOrder(instanceId, order("createPolygon", []), false);
-                        $(".group .red").removeClass("red").addClass("green");
-                        $(this).removeClass("green").addClass("red");
-                        polygon = true;
-                    }
-                });
+                    $('#createPolygon').click(function () {
+                        if (!polygon) {
+                            server.sendOrder(instanceId, order("createPolygon", []), false);
+                            $(".group .red").removeClass("red").addClass("green");
+                            $(this).removeClass("green").addClass("red");
+                            polygon = true;
+                            eventLog.push([new Date().getTime(), "Creating Polygons"]);
+                        }
+                    });
 
-                $('#removePolygon').click(function() {
-                    if (polygon) {
-                        server.sendOrder(instanceId, order("removePolygon", []), false);
-                        $(".group .green").removeClass("green").addClass("red");
-                        $('#createPolygon').removeClass("red").addClass("green");
-                        polygon = false;
-                    }
-                });
+                    $('#removePolygon').click(function () {
+                        if (polygon) {
+                            server.sendOrder(instanceId, order("removePolygon", []), false);
+                            $(".group .green").removeClass("green").addClass("red");
+                            $('#createPolygon').removeClass("red").addClass("green");
+                            polygon = false;
+                            eventLog.push([new Date().getTime(), "Removing Polygons"]);
+                        }
+                    });
 
-                $('#movePolygon').click(function() {
-                    polygon && server.sendOrder(instanceId, order("startMovePolygon", []), false);
-                });
+                    $('#movePolygon').click(function () {
+                        if (polygon) {
+                            server.sendOrder(instanceId, order("startMovePolygon", []), false);
+                            eventLog.push([new Date().getTime(), "Moving Polygons"]);
+                        }
+                    });
+
+                    $('#fps_data').click(function () {
+                        var csvContent = "data:text/csv;charset=utf-8,";
+                        csvContent += "Row; Column; Rectangles; Circles; Distributed Circles; Timestamp; Average FPS; Standard Deviation FPS \n";
+                        dataset.forEach(function (infoArray, index) {
+                            dataString = infoArray.join(";");
+                            csvContent += index < dataset.length ? dataString + "\n" : dataString;
+                        });
+                        var encodedUri = encodeURI(csvContent);
+                        var link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", "fps_data.csv");
+                        link.click();
+                    });
+
+                    $('#event_data').click(function () {
+                        var csvContent = "data:text/csv;charset=utf-8,";
+                        eventLog.forEach(function (infoArray, index) {
+                            dataString = infoArray.join(",");
+                            csvContent += index < eventLog.length ? dataString + "\n" : dataString;
+                        });
+                        var encodedUri = encodeURI(csvContent);
+                        var link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", "event_data.csv");
+                        link.click();
+                    });
+
 
             };
 
@@ -383,12 +496,12 @@
                     d3.select(this).remove();
                 };
 
-                var drag = d3.behavior.drag();
-                var dragC = d3.behavior.drag();
+                var drag = d3.drag();
+                var dragC = d3.drag();
                 drag.on("drag", function() {
                     moveRect.call(this);
                 });
-                drag.on("dragstart", function() {
+                drag.on("start", function() {
                     console.log('move');
                     console.log(this);
                     d3.select(this.parentElement).moveToFront();
@@ -400,7 +513,7 @@
                 dragC.on("drag", function() {
                     resizeRect.call(this);
                 });
-                dragC.on("dragstart", function() {
+                dragC.on("start", function() {
                     console.log('resize');
                     console.log(this);
                     d3.select(this.parentElement).moveToFront();
@@ -577,6 +690,46 @@
                     server.sendOrder(instanceId, order("launchAnimation", [1, cb.prop("checked"), cb2.prop("checked"), cb3.prop("checked")]), true);
                 });
             };
+
+            //Parallel Coordinates Graph Control
+            test_bench[10] = function(){
+                /*var raw_dim, dimensions;
+                dd3.getDataDimensions('speedDatingData', function(d){
+                    raw_dim=d;
+                    dimensions=[];
+                    for(var key in dim){
+                        if(key !== "length"){
+                            dimensions.push(key);
+                        }
+                    }
+                    $("#dimension_list").val(dimensions.join());
+                });*/
+                
+                $("#dimension_list").click(function(e) { e.stopPropagation(); });
+
+                $('#updim').click(function () {
+                    var dimensions = $("#dimension_list").val().split(",");
+                    console.log(dimensions);
+                    server.sendOrder(instanceId, order("updateDimensions", [dimensions]), true);
+                });
+
+                $("#attr").click(function(e) { e.stopPropagation(); });
+                $("#min").click(function(e) { e.stopPropagation(); });
+                $("#max").click(function(e) { e.stopPropagation(); });
+
+                $('#upfilter').click(function() {
+                    var attrib = $("#attr").val();
+                    var min= $("#min").val();
+                    var max= $("#max").val();
+                    server.sendOrder(instanceId, order("updateFilter", [attrib, min, max]), true);
+                });
+
+                $('#resetviz').click(function() {
+                    server.sendOrder(instanceId, order("resetVisualization", []), true);
+                });
+
+
+            }
         });
     });
 </script>
@@ -680,7 +833,7 @@
                 <td class="red" id="rotation">Rotation</td>
             </tr>
             <tr class="basic_moves">
-                <td class="red" id="allMoves">All</td>
+                <td class="red" id="allMoves">All</td>  
             </tr>
             <tr class="superposition">
                 <td colspan="3">Superposition</td>
@@ -711,6 +864,15 @@
             </tr>
             <tr class="group">
                 <td class="red">Test 2 (not implemented)</td>
+            </tr>
+            <tr class="fps">
+                <td colspan="3">Framepersecond</td>
+            </tr>
+            <tr class="group">
+                <td colspan="3" rowspan="1" class="green" id="fps_data"> Save FPS to CSV </td>
+            </tr>
+            <tr class="group">
+                <td colspan="3" rowspan="1" class="green" id="event_data"> Save event to CSV </td>
             </tr>
         </table>
     </div>
@@ -826,6 +988,21 @@
             <tr>
                 <td class="green" id="launchDisruptedAnimationShanghaiLines">Launch Animation with disrupted data</td>
             </tr>
+        </table>
+    </div>
+
+    <div id="control_10" style="display:none">
+        <table class="table_control">
+            <tr>
+                <td class="green" id="updim">Update Dimensions:  <input id="dimension_list" type="string" value="Gender,Id,Partner Id,Match,Partner Age,Partner Race,Partner's Preference of Attractiveness,Partner's Preference of Sincerity,Partner's Preference of Intelligence,Partner's Preference of Fun,Partner's Preference of Ambition,Partner's Preference of Shared Interest,Partner's decision" style="width:200px"/></td>
+            </tr>
+            <tr>
+                <td class="green" id="resetviz">Reset Dimensions</td>
+            </tr>
+            <tr>
+                <td class="green" id="upfilter">Update Filter: <input id="attr" type="string" value="Id" style="width:100px"/> Min: <input id="min" type="number" value="0" style="width:50px"/> Max: <input id="max" type="number" value="10" style="width:50px"/></td>
+            </tr>
+            
         </table>
     </div>
 

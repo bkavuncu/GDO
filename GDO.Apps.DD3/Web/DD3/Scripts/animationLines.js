@@ -5,9 +5,9 @@ var animationLines = function (arg) {
 		currentTime = 0,
 		initialized = 0,
 		running = false,
-		scale = d3.scale.log().clamp(true),
-		linkScale = d3.scale.linear().clamp(true),
-        colorScale = d3.scale.linear().clamp(true).interpolate(d3.interpolateRgb).range(["green", "red"]),  // GDOCONFIG
+		scale = d3.scaleLog().clamp(true),
+		linkScale = d3.scaleLinear().clamp(true),
+        colorScale = d3.scaleLinear().clamp(true).interpolate(d3.interpolateRgb).range(["green", "red"]),  // GDOCONFIG
 	    polygonPosition;
 		
 	var a = function (arg) {
@@ -104,7 +104,7 @@ var animationLines = function (arg) {
 			}
 
 			initialized = 1;
-			if (--end == 0)
+			if (--end === 0)
 			    (console.log("Data loaded"), callback && callback());
 		}, null, null, ["coordinates", 0], ["coordinates", 1], [["name"], ["entries"]], limit);
 
@@ -131,7 +131,7 @@ var animationLines = function (arg) {
 	            break;
 	        }
 
-	        if (--end == 0)
+	        if (--end === 0)
 	            (console.log("Data loaded"), callback && callback());
 	    });
 
@@ -297,7 +297,7 @@ var animationLines = function (arg) {
 
 	                            poly.transition()
                                     .duration(a.timeStep)
-                                    .ease("linear")
+                                    .ease(d3.easeLinear)
                                     .attr("points", [ptPrec, dPrec[0], d[0], ptAct].join(" "))
                                     .attr("fill", fillColor);
 	                        }
@@ -338,7 +338,7 @@ var animationLines = function (arg) {
 
 	                        stationLine.transition()
                                         .duration(a.timeStep)
-                                        .ease("linear")
+                                        .ease(d3.easeLinear)
                                         .attr({
                                             "x1": ptActs[0][0],
                                             "y1": ptActs[0][1],

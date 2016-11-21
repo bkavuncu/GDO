@@ -10,7 +10,7 @@ var mapHandler = function (arg) {
 		m.svg = arg.svg;
 		m.style = arg.style;
 		
-		m.path = d3.geo.path().projection(m.projection);
+		m.path = d3.geoPath().projection(m.projection);
 		m.ids = 0;
 		
 		if (arg.autoProjection) {
@@ -72,7 +72,7 @@ var mapHandler = function (arg) {
 	    d3.json("https://tile.mapzen.com/mapzen/vector/v1/" + type + "/" + m.zoom + "/" + i + "/" + j + ".json", function (error, tile) {
 			if (error) {
 				return console.error(error);
-			};
+			}
 			
 			tile.features = tile.features.filter(function (d) {
 				if (isAbsurd(m.path.bounds(d))) {
@@ -90,7 +90,7 @@ var mapHandler = function (arg) {
 			m.svg.select_("g#" + type)
 				.selectAll_("path")
 				.data(tile.features, function () {return m.ids++; })
-				.enter().append_("path")
+				.enter().append("path")
 				.attr_("d", m.path)
 				.attr_("class", function (d) {return d.properties.kind; })
 				.classed_(type, true)

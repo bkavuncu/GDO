@@ -4,7 +4,7 @@ var animation = function (arg) {
     var currentTimeout = null,
         initialized = 0,
         running = false,
-        scale = d3.scale.linear(),  //.log(),
+        scale = d3.scaleLinear(),  //.log(),
 		currentTime = 0;
 		
 	var a = function (arg) {
@@ -54,7 +54,7 @@ var animation = function (arg) {
 			a.aggregatedData = d3.map();
 			a.dataLength = 0;
 
-			if (data.length != 0) {
+			if (data.length !== 0) {
 			    a.dataLength = data[Object.keys(data)[0]].entries.length;
 			    data.forEach(function (d) {
 			        a.data.set(d.name, d.entries);
@@ -94,7 +94,7 @@ var animation = function (arg) {
 
 			initialized = 1;
 			console.log("Data loaded");
-			callback && callback();
+			if(callback) callback();
 		}, null, null, ["coordinates", 0], ["coordinates", 1], [["name"], ["entries"]], limit);
 	};
 	
@@ -138,7 +138,7 @@ var animation = function (arg) {
                     .transition()
                     .duration(function (d) { return (d[1] > 0) ? a.timeStep * a.aggregate * 0.4 : 0; })
                     .attr('r', 0)
-                    .each("end.new", function () {
+                    .on("end.new", function () {
                         d3.select(this).remove();
                     });
 	        }
@@ -158,13 +158,13 @@ var animation = function (arg) {
 	var createScale = function () {
 		var width = parseFloat(a.scaleContainer.style('width')),
 			height = parseFloat(a.scaleContainer.style('height')),
-			o = d3.scale.ordinal().domain(d3.range(5)).rangeBands([0, width], 0.25, 0.5),
-			ov = d3.scale.ordinal().domain(d3.range(2)).rangeBands([0, height], 0.1, 1),
+			o = d3.scaleBand().domain(d3.range(5)).range([0, width]).paddingInner(0.25).paddingOuter(0.5),
+			ov = d3.scaleBand().domain(d3.range(2)).range([0, height]).paddingInner(0.1).paddingOuter(1),
 			offsetRight = 20;
 
 		a.scaleGroup = a.scaleContainer.append("svg").attr("width", width).attr("height", height);
 		
-		var g1 = a.scaleGroup.append("g").attr("transform", "translate(" + 0 + "," + (ov.range()[0] + ov.rangeBand() / 3) + ")");
+		var g1 = a.scaleGroup.append("g").attr("transform", "translate(" + 0 + "," + (ov.range()[0] + ov.bandwidth() / 3) + ")");
 		g1.append("line")
 			.attr("x1", 0.3 * width )
 			.attr("y1",  bigScreen ? -50 : -20)
@@ -175,7 +175,7 @@ var animation = function (arg) {
 			
 		g1.append("text").text("Passengers in station").attr("x", width - offsetRight).attr("fill", "white"/*a.lines.lineColors[i]*/).attr("font-size",  bigScreen ? "6em" : "2em").attr("text-anchor", "end");
 		
-		var g2 = a.scaleGroup.append("g").attr("transform", "translate(" + (o.rangeBand() / 2) + "," + (ov.range()[1] + ov.rangeBand() / 2) + ")");
+		var g2 = a.scaleGroup.append("g").attr("transform", "translate(" + (o.bandwidth() / 2) + "," + (ov.range()[1] + ov.bandwidth() / 2) + ")");
 		d3.range(5).forEach(function (i) {
 			var g = g2.append("g").attr("transform", "translate(" + (o.range()[i]) + ","  + 0 + ")");
 			g.append("circle").attr("r", scale(Math.pow(10, i))).attr("fill", a.color[1]);

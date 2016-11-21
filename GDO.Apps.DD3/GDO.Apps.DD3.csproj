@@ -120,9 +120,18 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\BarDataRequest.cs" />
+    <Compile Include="Domain\BrowserBroadcastInfo.cs" />
+    <Compile Include="Domain\BrowserInfo.cs" />
+    <Compile Include="Domain\ControllerMessage.cs" />
+    <Compile Include="Domain\Data.cs" />
+    <Compile Include="Domain\DataRequest.cs" />
     <Compile Include="DD3App.cs" />
     <Compile Include="DD3AppHub.cs" />
+    <Compile Include="Domain\PathDataRequest.cs" />
+    <Compile Include="Domain\PointDataRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Domain\RemoteDataRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Data\FileMapTube.txt" />
@@ -132,6 +141,7 @@
     <Content Include="Configurations\DD3\Data\FileMapTubeLondon.txt" />
     <Content Include="Configurations\DD3\Data\FileScatterplot.txt" />
     <Content Include="Configurations\DD3\Data\FileGraphs.txt" />
+    <Content Include="Configurations\DD3\Data\FileParallelCoordinates.txt" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\jquery.signalR-2.2.1.min.js" />
@@ -150,6 +160,7 @@
     <Content Include="Configurations\DD3\MapTubeShanghai.json" />
     <Content Include="Configurations\DD3\MapTubeShanghaiLines2.json" />
     <Content Include="Configurations\DD3\MapTubeShanghaiLines30.json" />
+    <Content Include="Configurations\DD3\ParallelCoordinates.json" />
     <Content Include="Scripts\DD3\gdo.apps.dd3.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
