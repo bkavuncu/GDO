@@ -6,10 +6,12 @@ $(function() {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             $("iframe").contents().find("#current_keyword").html(message);
             gdo.consoleOut('.YoutubeWall', 1, 'Getting videos from Youtube');
-            if (gdo.net.app["YoutubeWall"].searchMode == 0) {
+            if (gdo.net.app["YoutubeWall"].searchMode == gdo.net.app["YoutubeWall"].searchModeEnum.ChannelMode) {
                 gdo.net.app["YoutubeWall"].server.getNextVideos(gdo.controlId);
-            } else if (gdo.net.app["YoutubeWall"].searchMode == 1) {
+            } else if (gdo.net.app["YoutubeWall"].searchMode == gdo.net.app["YoutubeWall"].searchModeEnum.KeyworksMode) {
                 gdo.net.app["YoutubeWall"].server.getNextVideosByKeywords(gdo.controlId);
+            } else if (gdo.net.app["YoutubeWall"].searchMode == gdo.net.app["YoutubeWall"].searchModeEnum.PlaylistMode) {
+                gdo.net.app["YoutubeWall"].server.getNextVideos(gdo.controlId); // same as channel mode
             }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             // do nothing
@@ -35,10 +37,12 @@ $(function() {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL) {
             if (first === 1) {
                 gdo.consoleOut('.YoutubeWall', 1, 'Getting videos from Youtube');
-                if (gdo.net.app["YoutubeWall"].searchMode == 0) {
+                if (gdo.net.app["YoutubeWall"].searchMode == gdo.net.app["YoutubeWall"].searchModeEnum.ChannelMode) {
                     gdo.net.app["YoutubeWall"].server.getNextVideos(gdo.controlId);
-                } else if (gdo.net.app["YoutubeWall"].searchMode == 1) {
+                } else if (gdo.net.app["YoutubeWall"].searchMode == gdo.net.app["YoutubeWall"].searchModeEnum.KeyworksMode) {
                     gdo.net.app["YoutubeWall"].server.getNextVideosByKeywords(gdo.controlId);
+                } else if (gdo.net.app["YoutubeWall"].searchMode == gdo.net.app["YoutubeWall"].searchModeEnum.PlaylistMode) {
+                    gdo.net.app["YoutubeWall"].server.getNextVideos(gdo.controlId); // same as channel mode
                 }
             } else {
                 gdo.consoleOut('.YoutubeWall', 1, 'Videos are ready and Clients are requesting from server');
@@ -90,15 +94,27 @@ $(function() {
 
     $.connection.youtubeWallAppHub.client.updateSearchMode = function (search_mode) {
         gdo.net.app["YoutubeWall"].searchMode = search_mode;
-        $("iframe").contents().find("#search_mode").val(search_mode);
-        if (search_mode == 1) {
-            $("iframe").contents().find("#update_keyword_title").empty().append("<h6><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Keywords</h6>");
-            $("iframe").contents().find("#update_keyword_label").empty().append("<h6>Keywords:</h6>");
-            $("iframe").contents().find("#search_mode").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Channel Mode");
-        } else if (search_mode == 0) {
+        if (search_mode == gdo.net.app["YoutubeWall"].searchModeEnum.ChannelMode) {
             $("iframe").contents().find("#update_keyword_title").empty().append("<h6><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Channel</h6>");
             $("iframe").contents().find("#update_keyword_label").empty().append("<h6>Channel:</h6>");
-            $("iframe").contents().find("#search_mode").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Activate Keywords Mode");
+            $("iframe").contents().find("#search_mode_lft").val(1);
+            $("iframe").contents().find("#search_mode_lft").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Keywords Mode");
+            $("iframe").contents().find("#search_mode_rgt").val(2);
+            $("iframe").contents().find("#search_mode_rgt").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Playlist Mode");
+        } else if (search_mode == gdo.net.app["YoutubeWall"].searchModeEnum.KeyworksMode) {
+            $("iframe").contents().find("#update_keyword_title").empty().append("<h6><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Keywords</h6>");
+            $("iframe").contents().find("#update_keyword_label").empty().append("<h6>Keywords:</h6>");
+            $("iframe").contents().find("#search_mode_lft").val(0);
+            $("iframe").contents().find("#search_mode_lft").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Channel Mode");
+            $("iframe").contents().find("#search_mode_rgt").val(2);
+            $("iframe").contents().find("#search_mode_rgt").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Playlist Mode");
+        } else if (search_mode == gdo.net.app["YoutubeWall"].searchModeEnum.PlaylistMode) {
+            $("iframe").contents().find("#update_keyword_title").empty().append("<h6><i class='fa  fa-youtube fa-fw'></i>&nbsp;Update Playlist</h6>");
+            $("iframe").contents().find("#update_keyword_label").empty().append("<h6>Playlist:</h6>");
+            $("iframe").contents().find("#search_mode_lft").val(0);
+            $("iframe").contents().find("#search_mode_lft").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Channel Mode");
+            $("iframe").contents().find("#search_mode_rgt").val(1);
+            $("iframe").contents().find("#search_mode_rgt").empty().append("<i class='fa  fa-power-off fa-fw'></i>&nbsp;Keywords Mode");
         }
     }
 
@@ -160,7 +176,16 @@ $(function() {
     }
 });
 
-gdo.net.app["YoutubeWall"].searchMode = 0;  //by Channel
+gdo.net.app["YoutubeWall"].searchModeEnum = {
+    ChannelMode: 0,
+    KeyworksMode: 1,
+    PlaylistMode: 2
+}
+
+gdo.net.app["YoutubeWall"].searchMode = gdo.net.app["YoutubeWall"].searchModeEnum.ChannelMode;  //default: Channel mode
+// 0: channel mode
+// 1: keywords mode
+// 2: playlist mode
 
 gdo.net.app["YoutubeWall"].initClient = function () {
     gdo.consoleOut('.YoutubeWall', 1, 'Initializing YoutubeWall App Client at Node ' + gdo.clientId);
@@ -171,6 +196,7 @@ gdo.net.app["YoutubeWall"].initControl = function () {
     $("iframe").contents().find("#get_next_videos").prop("disabled", true);
     gdo.consoleOut('.YoutubeWall', 1, 'Initializing YoutubeWall App Control at Instance ' + gdo.controlId);
     gdo.net.app["YoutubeWall"].server.setSearchMode(gdo.controlId, gdo.net.app["YoutubeWall"].searchMode);
+    // default: channel mode
     gdo.net.app["YoutubeWall"].server.setChannelName(gdo.controlId, gdo.net.app["YoutubeWall"].config[gdo.net.instance[gdo.controlId].configName].channel);
     //gdo.net.app["YoutubeWall"].server.requestSearchMode(gdo.controlId);
     //gdo.net.app["YoutubeWall"].server.requestVideoName(gdo.controlId);

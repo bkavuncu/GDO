@@ -1,0 +1,93 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title></title>
+</head>
+<body unselectable="on" class="unselectable">
+<style>
+    #svgMain {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    #wrapper {
+        background: #2C3D51;
+        padding: 1em;
+    }
+
+    html, body, .container-fluid {
+        height: 100%;
+        width: 100%;
+        margin: auto;
+        text-align: center;
+        padding: 0px;
+    }
+
+    .supertitle {
+        font-size: 17vmin;
+        color: #8a8a8a;
+    }
+
+    .subtitle {
+        color: lightsteelblue;
+        font-size: 10vmin;
+    }
+
+
+</style>
+<script src="../../Scripts/jquery-2.1.4.min.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.0.min.js"></script>
+<!-- Custom Fonts -->
+<link href="../../Bootstrap/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Bootstrap Core CSS -->
+@*    <link href="../../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">*@
+<script>
+    $(function() {
+        $(document)
+            .ready(function() {
+                var gdo = parent.gdo;
+                gdo.net.app["Twitter"].initClient();
+            });
+    });
+</script>
+<div id="page_wrapper" style="overflow: hidden">
+    <div id="wrapper" style="width: 100vw; height: 100vh; overflow: hidden">
+        <div class="container-fluid">
+            <div class="row" style="height: 25%">
+                    <img class="img-responsive center-block" src="/Data/Twitter/icon.svg" style="height: 100%"/>
+            </div>
+            <div class="row" style="height: 25%">
+                <div class="supertitle">
+                    Data Science Institute
+                </div>
+                <div class="supertitle">
+                    Twitter Observatory
+                </div>
+                <hr/>
+                <div class="subtitle">
+                    A Set of Tools to Explore Twitter
+                </div>
+                <div class="subtitle">
+                    C Snowden, D Birch
+                </div>
+            </div>
+@*            <div class="row" style="height: 25%">*@
+@*            </div>*@
+            <div class="row" style="height: 25%">    
+                <div> <i id="client_status" class="fa fa-circle-o-notch fa-spin fa-5x fa-fw" style="color: #ff9d00; font-size: 20vmin"></i></div>          
+                <h1 id="client_api_status_message" style="font-size: 6vh; color: rgb(177, 177, 178); font-family: times; text-align: center; vertical-align: middle;"></h1>
+            </div>
+            </div>
+
+    </div>
+</div>
+
+</body>
+</html>

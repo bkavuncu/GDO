@@ -1,0 +1,119 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html style="overflow: hidden">
+<head>
+    <script type="text/javascript" src="http://static.fusioncharts.com/code/latest/fusioncharts.js"></script>
+    <script type="text/javascript" src="http://static.fusioncharts.com/code/latest/themes/fusioncharts.theme.fint.js?cacheBust=56"></script>
+    <meta name="viewport" content="width=device-width"/>
+    <title></title>
+    <style>
+          #chart-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            -moz-transform: translate(0px, 0px);
+            -moz-transform-origin: 0 0;
+            -o-transform: translate(0px, 0px);
+            -o-transform-origin: 0 0;
+            -webkit-transform: translate(0px, 0px);
+            -webkit-transform-origin: 0 0;
+        }
+
+        #wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0 none;
+            z-index: 1;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body unselectable="on" class="unselectable" style="background-color:blue">
+    <script src="../../Scripts/jquery-2.1.4.min.js"></script>
+    <script src="../../Scripts/jquery.signalR-2.2.1.min.js"></script>
+<script>
+    $(function() {
+        $(document)
+            .ready(function() {
+                var gdo = parent.gdo;
+                gdo.net.app["FusionChart"].initClient();
+
+//                document.onclick = function (e) {
+//                    console.log("clientX" + e.clientX + " clientY" + e.clientY + " screenX:" + e.screenX + " screenY:" + e.screenY);
+//                    console.log(e);
+//                }
+//                document.onmouseup = function (e) {
+//                    console.log("mouseUp");
+//                    console.log(e);
+//                }
+//                document.onmousedown = function (e) {
+//                    console.log("mouseDown");
+//                    console.log(e);
+//                }
+
+            });
+    });
+</script>
+<script type="text/javascript">
+       
+
+    function processChartData(chartData, instanceId) {
+           var gdo = parent.gdo;
+           gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart = new FusionCharts({
+               type: chartData.chartType,
+               renderAt: 'chart-container',
+               width: gdo.net.section[gdo.net.instance[instanceId].sectionId].width,
+               height: gdo.net.section[gdo.net.instance[instanceId].sectionId].height,
+               dataFormat: 'json',
+               dataSource: chartData.dataSource
+           });
+           if (chartData.dataSource.datasetURL) {
+               $.getJSON(chartData.dataSource.datasetURL, function (json) {
+                   var currentData = gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.getJSONData();
+                   currentData.dataset = json;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chartDatasetURL = chartData.dataSource.datasetURL;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.setJSONData(currentData);
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+               });
+           } else if (chartData.dataSource.dataURL) {
+               $.getJSON(chartData.dataSource.dataURL, function (json) {
+                   var currentData = gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.getJSONData();
+                   currentData.data = json;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chartDataURL = chartData.dataSource.dataURL;
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.setJSONData(currentData);
+                   gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+               });
+           } else {
+               gdo.net.instance[gdo.net.node[gdo.clientId].appInstanceId].chart.render();
+           }
+   };
+
+    function processMouseEvent(mouseEvent, targetObj) {
+        $("#mouseEventDebug").html("Debug: Event Type: " + mouseEvent.eventType + " x:" + mouseEvent.clientX + " y:" + mouseEvent.clientY);
+
+        var ev = document.createEvent("MouseEvent");
+        ev.initMouseEvent(mouseEvent.eventType, true, true, window, null,
+            mouseEvent.clientX, mouseEvent.clientY,
+            mouseEvent.clientX, mouseEvent.clientY,
+            false, false, false, false, 0, null);
+        targetObj.dispatchEvent(ev);
+    }
+
+</script>
+
+<div id="wrapper" style="background-color:black">
+    <div id="chart-container">FusionCharts XT will load here!</div>
+</div>
+<h1 id="mouseEventDebug" style="color: white; z-index:0">Debug: </h1>
+
+
+</body>
+</html>

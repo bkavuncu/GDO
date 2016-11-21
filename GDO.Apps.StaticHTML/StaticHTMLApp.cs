@@ -20,13 +20,13 @@ namespace GDO.Apps.StaticHTML
         public bool IntegrationMode { get; set; }
         public ICompositeAppInstance ParentApp { get; set; }
 
-        public bool ResponsiveMode { get; set; }
+        public bool IsResponsiveMode { get; set; } = false;
         public string URL { get; set; }
         public void Init()
         {
             URL = (string)Configuration.Json.SelectToken("url");
-            ResponsiveMode = (bool)(Configuration.Json.SelectToken("responsiveMode") ?? false);
-            Debug.WriteLine("Using responsive mode? " + ResponsiveMode);
+            IsResponsiveMode = (bool)(Configuration.Json.SelectToken("responsiveMode") ?? false);
+            Debug.WriteLine("Using responsive mode? " + IsResponsiveMode);
         }
 
         public void SetURL(string url)
