@@ -54,6 +54,8 @@ namespace GDO
                 });
 
                 var hostname = System.Net.Dns.GetHostName();
+                Log.Debug("Current hostname is " + hostname);
+                Console.WriteLine("Hostname = " + hostname);
                 if (hostname == "dsigdoprod.doc.ic.ac.uk" ||
                     hostname == "dsigdopreprod.doc.ic.ac.uk" ||
                     hostname == "dsigdotesting.doc.ic.ac.uk")
