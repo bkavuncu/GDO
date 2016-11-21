@@ -1,11 +1,5 @@
-﻿using System;
-using GDO.Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
+﻿using GDO.Core;
 using GDO.Core.Apps;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace GDO.Apps.Youtube
 {

@@ -117,7 +117,7 @@ namespace GDO
                     }
                 }
 
-                throw e;
+                throw;
             }
 
             assemblies.Add(typeof(CaveHub).Assembly);

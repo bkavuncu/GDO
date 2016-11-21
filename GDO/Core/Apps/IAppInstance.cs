@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.SignalR;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace GDO.Core.Apps
 {

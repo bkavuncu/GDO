@@ -1,15 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GDO;
+﻿using System.Collections.Generic;
 using GDO.Core;
-using System;
-using System.Configuration;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-
-namespace GDO.Tests
+namespace GDO.Tests.Core
 {
     [TestClass()]
     public class CaveTests

@@ -2,12 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using GDO.Utility;
 using log4net;
-using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Infrastructure;
 using Newtonsoft.Json;
 
 namespace GDO.Core.Apps
@@ -35,7 +31,6 @@ namespace GDO.Core.Apps
         public App(string name, Type appClassType,  int appType, int p2pmode)
         {
             Name = name;
-
             AppClassType = appClassType;
             AppType = appType;
             P2PMode = p2pmode;
