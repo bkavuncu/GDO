@@ -59,6 +59,23 @@ namespace GDO.Apps.FusionChart
             return true;
         }
 
+        public bool DeleteFile(string fileName)
+        {
+            Debug.WriteLine(fileName);
+            string filePath = Path.Combine(ChartBasePath, fileName);
+            Debug.WriteLine("Using file path: " + filePath);
+
+            if (!File.Exists(filePath))
+            {
+                Debug.WriteLine("Nothing there " + filePath);
+                return false;
+            }
+
+            File.Delete(filePath);
+
+            return true;
+        }
+
         public string GetChartData()
         {
             return ChartData;
@@ -76,19 +93,19 @@ namespace GDO.Apps.FusionChart
 
         }
 
-        public bool ProcessSaveConfig(string config)
+        public string ProcessSaveConfig(string config)
         {
             try
             {
                 string path = Path.Combine(ChartBasePath, DateTime.Now.ToString("ddMMMyyyy HHmmss") + ".json");
                 File.WriteAllText(path, config);
+                return path;
             }
             catch(Exception e)
             {
                 Console.WriteLine(e);
-                return false;
-            } 
-            return true;
+                return "";
+            }
         }
     }
 

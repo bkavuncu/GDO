@@ -1,19 +1,13 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using GDO.Core;
 using GDO.Core.Apps;
 using Newtonsoft.Json;
-
-//[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Scripts.imagetiles.js", "application/x-javascript")]
-//[assembly: System.Web.UI.WebResource("GDO.Apps.Images.Configurations.sample.js", "application/json")]
 
 namespace GDO.Apps.Images
 {
@@ -68,7 +62,9 @@ namespace GDO.Apps.Images
                     Clients.Caller.setMessage("Loading the image and creating thumbnail...");
                     //create origin
                     Image originImage = Image.FromFile(path2);
-                    Image image;
+                    Image image = originImage;
+
+                    /* // we don't want to be smart by autorotating
                     if (originImage.Height > originImage.Width)
                     {
                         originImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
@@ -77,10 +73,7 @@ namespace GDO.Apps.Images
                     else
                     {
                         image = originImage;
-                    }
-
-                    //image.Save(basePath + ImageNameDigit + "\\origin.png", ImageFormat.Png);
-                    //File.Delete(path1);
+                    }*/
 
                     //create thumbnail
                     int thumbHeight = 500;

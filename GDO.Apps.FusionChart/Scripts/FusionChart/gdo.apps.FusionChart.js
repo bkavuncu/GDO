@@ -34,13 +34,53 @@
         }
     }
 
+    $.connection.fusionChartAppHub.client.deleteFileFinished = function (instanceId, filePath) {
+        if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
+            $("iframe")[0].contentWindow.location.reload();
+        } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
+            //do nothing
+        }
+    }
+
     $.connection.fusionChartAppHub.client.reRender = function (instanceId) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");
-            gdo.net.instance[instanceId].chart.render();
+            if (gdo.net.instance[instanceId].chartDatasetURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDatasetURL, function (json) {
+                    currentData.dataset = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else if (gdo.net.instance[instanceId].chartDataURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDataURL, function (json) {
+                    currentData.data = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else {
+                gdo.net.instance[instanceId].chart.render();
+            }
         } else if (gdo.clientMode == gdo.CLIENT_MODE.NODE) {
             gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + ": ReRendering Chart Data");
-            gdo.net.instance[instanceId].chart.render();
+            if (gdo.net.instance[instanceId].chartDatasetURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDatasetURL, function (json) {
+                    currentData.dataset = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else if (gdo.net.instance[instanceId].chartDataURL) {
+                var currentData = gdo.net.instance[instanceId].chart.getJSONData();
+                $.getJSON(gdo.net.instance[instanceId].chartDataURL, function (json) {
+                    currentData.data = json;
+                    gdo.net.instance[instanceId].chart.setJSONData(currentData);
+                    gdo.net.instance[instanceId].chart.render();
+                });
+            } else {
+                gdo.net.instance[instanceId].chart.render();
+            }
         }
     }
 
@@ -64,11 +104,17 @@
         }
     }
 
-    $.connection.fusionChartAppHub.client.saveConfigFinished = function (instanceId, success) {
+    $.connection.fusionChartAppHub.client.saveConfigFinished = function (instanceId, success, filename) {
         if (gdo.clientMode == gdo.CLIENT_MODE.CONTROL && gdo.controlId == instanceId) {
             if (success) {
                 alert("Chart config saved successfully!");
                 gdo.consoleOut('.FusionChart', 1, 'Instance - ' + instanceId + "Saving configuration succeed!");
+                $("iframe")[0].contentWindow.location.reload();
+                url = "FusionChart/data/" + filename;
+                var a = document.createElement('a');
+                a.download = filename;
+                a.href = url;
+                a.click();
             } else {
                 gdo.consoleOut('.FusionChart', 5, 'Instance - ' + instanceId + "Saving configuration failed!");
             }
