@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Reflection;
+using System.Web.Http;
 using Autofac;
 using Autofac.Integration.SignalR;
 using Microsoft.AspNet.SignalR;
@@ -19,6 +20,25 @@ using Microsoft.Owin.Cors;
 
 namespace GDO
 {
+
+    public static class WebApiConfig
+    {
+        public static void Register(IAppBuilder app)
+        {
+            HttpConfiguration config = new HttpConfiguration();
+            // Web API routes
+            config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+
+            app.UseWebApi(config);
+        }
+    }
+
 
     public class Startup
     {
@@ -42,7 +62,7 @@ namespace GDO
                 app.UseAutofacMiddleware(container);
                 //app.MapSignalR("/signalr", config);
                 //config.EnableCors(new EnableCorsAttribute("*", "*", "GET, POST, OPTIONS, PUT, DELETE"));
-                //WebApiConfig.Register(config);
+                WebApiConfig.Register(app);
                 app.Map("/signalr", map =>
                 {
                     map.UseCors(CorsOptions.AllowAll);
