@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
+using GDO.Core;
+using Microsoft.AspNet.SignalR;
 
 namespace GDO
 {
@@ -19,6 +17,9 @@ namespace GDO
         // GET api/<controller>/5
         public string Get(int id)
         {
+            //Cave.ClearCave();
+            IHubContext cavehub = GlobalHost.ConnectionManager.GetHubContext<CaveHub>();
+            //cavehub.ClearCave();
             return "Thank you Senaka! " +id;
         }
 
