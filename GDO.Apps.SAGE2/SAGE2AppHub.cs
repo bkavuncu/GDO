@@ -18,6 +18,7 @@ namespace GDO.Apps.SAGE2
 
         public void JoinGroup(string groupId)
         {
+            Cave.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)
