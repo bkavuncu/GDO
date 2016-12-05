@@ -19,6 +19,7 @@ namespace GDO.Apps.Twitter
 
         public void JoinGroup(string groupId)
         {
+            Cave.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
 

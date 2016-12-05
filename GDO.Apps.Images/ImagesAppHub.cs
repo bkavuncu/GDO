@@ -20,6 +20,7 @@ namespace GDO.Apps.Images
 
         public void JoinGroup(string groupId)
         {
+            Cave.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
 

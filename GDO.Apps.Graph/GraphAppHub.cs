@@ -21,6 +21,7 @@ namespace GDO.Apps.Graph
         public Type InstanceType { get; set; } = new GraphApp().GetType();
         public void JoinGroup(string groupId)
         {
+            Cave.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)

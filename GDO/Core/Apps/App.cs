@@ -23,6 +23,8 @@ namespace GDO.Core.Apps
         public List<string> ConfigurationList { get; set; }
         [JsonIgnore]
         public ConcurrentDictionary<int,IAppInstance> Instances { get; set; }
+        [JsonIgnore]
+        public IAppHub Hub { get; set; }
 
         public App()
         {
