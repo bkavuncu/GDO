@@ -105,17 +105,18 @@
             gdo.management.scenarios.displayScenariosToLoad("");
 
             @{
-                object scenario = Request["scenario"] == null ? "cortical" : Request["scenario"];
+                object scenario = Request["scenario"] == null ? "DSIslide" : Request["scenario"];
+                HttpContext.Current.Session["password"] = "5867";
             }
             gdo.net.server.clearCave();
             gdo.management.scenarios.loadScenario("@scenario");
             $("#playButton").click();
-
         }
     </script>
 
     
-    <h1>@scenario</h1>
+<h2>@scenario</h2>
+    <a href="~/Web/Sections.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="4px"><i class="fa fa-desktop fa-fw"></i>&nbsp;Sections</font></button></a>
 
 <div id="wrapper" style="visibility: hidden">
     <div id="page-wrapper">
