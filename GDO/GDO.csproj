@@ -1017,6 +1017,7 @@
     <Content Include="Web\Management.cshtml" />
     <Content Include="Web\Scenarios.cshtml" />
     <Content Include="Web\Modules.cshtml" />
+    <Content Include="Web\ScenariosLauncher.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Scenarios\Element.cs" />
