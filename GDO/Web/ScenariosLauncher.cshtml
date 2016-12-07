@@ -72,11 +72,16 @@
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
     <script>
-        gdo.updateDisplayCanvas = function () {
-            gdo.management.updateMaintenanceButton();
-        }
-        $(function () {
-            @{
+    /* Enables the redirection to other webpage, useful for scenarios */
+    gdo.goToControlPage = function (instance) {
+        window.location.href = "Instances.cshtml?id=" + instance;
+    }
+
+    gdo.updateDisplayCanvas = function () {
+        gdo.management.updateMaintenanceButton();
+    }
+    $(function () {
+        @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
                         @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
@@ -86,36 +91,36 @@
                         @:gdo.loadScript("@moduleEntry.Value.Name", "@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                                 }
                 }
-            gdo.loadScript("terminal", "management", gdo.SCRIPT_TYPE.CORE);
-            gdo.loadScript('scenarios', 'management', gdo.SCRIPT_TYPE.CORE);
-            $(document).ready(function () {
-                gdo.clientId = 1;
-                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-            });
+        gdo.loadScript("terminal", "management", gdo.SCRIPT_TYPE.CORE);
+        gdo.loadScript('scenarios', 'management', gdo.SCRIPT_TYPE.CORE);
+        $(document).ready(function () {
+            gdo.clientId = 1;
+            gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
         });
-        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-            var space = "<br /> ";
-            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-        }
-        initApp = function () {
-            gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.management.terminal.drawTerminalInput();
-            gdo.updateSelf();
-            gdo.management.scenarios.displayScenariosToLoad("");
+    });
+    window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+        var space = "<br /> ";
+        gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+            + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+    }
+    initApp = function () {
+        gdo.consoleOut('', 1, 'GDO Initialized');
+        gdo.management.terminal.drawTerminalInput();
+        gdo.updateSelf();
+        gdo.management.scenarios.displayScenariosToLoad("");
 
-            @{
+        @{
                 object scenario = Request["scenario"] == null ? "DSIslide" : Request["scenario"];
                 HttpContext.Current.Session["password"] = "5867";
             }
-            gdo.net.server.clearCave();
-            gdo.management.scenarios.loadScenario("@scenario");
-            $("#playButton").click();
-        }
-    </script>
+        gdo.net.server.clearCave();
+        gdo.management.scenarios.loadScenario("@scenario");
+        $("#playButton").click();
+    }
+</script>
 
     
-<h2>@scenario</h2>
+<h3>Please... wait for @scenario</h3>
     <a href="~/Web/Sections.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="4px"><i class="fa fa-desktop fa-fw"></i>&nbsp;Sections</font></button></a>
 
 <div id="wrapper" style="visibility: hidden">

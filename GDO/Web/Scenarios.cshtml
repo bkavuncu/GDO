@@ -107,12 +107,17 @@
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
-    <script>
-        gdo.updateDisplayCanvas = function () {
-            gdo.management.updateMaintenanceButton();
-        }
-        $(function () {
-            @{
+<script>
+    /* Enables the redirection to other webpage, useful for scenarios. It is repeated in ScenariosLauncher */
+    gdo.goToControlPage = function(instance) {
+        window.location.href = "Instances.cshtml?id="+instance;
+    }
+
+    gdo.updateDisplayCanvas = function () {
+        gdo.management.updateMaintenanceButton();
+    }
+    $(function () {
+        @{
                     foreach (KeyValuePair<string, App> appEntry in Cave.Apps)
                     {
                         @:gdo.loadScript("@appEntry.Value.Name", "@appEntry.Value.Name", gdo.SCRIPT_TYPE.APP);
@@ -122,25 +127,25 @@
                         @:gdo.loadScript("@moduleEntry.Value.Name", "@moduleEntry.Value.Name", gdo.SCRIPT_TYPE.MODULE);
                                 }
                 }
-            gdo.loadScript("terminal", "management", gdo.SCRIPT_TYPE.CORE);
-            gdo.loadScript('scenarios', 'management', gdo.SCRIPT_TYPE.CORE);
-            $(document).ready(function () {
-                gdo.clientId = 1;
-                gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
-            });
+        gdo.loadScript("terminal", "management", gdo.SCRIPT_TYPE.CORE);
+        gdo.loadScript('scenarios', 'management', gdo.SCRIPT_TYPE.CORE);
+        $(document).ready(function () {
+            gdo.clientId = 1;
+            gdo.initGDO(gdo.CLIENT_MODE.CONTROL);
         });
-        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-            var space = "<br /> ";
-            gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
-                + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
-        }
-        initApp = function () {
-            gdo.consoleOut('', 1, 'GDO Initialized');
-            gdo.management.terminal.drawTerminalInput();
-            gdo.updateSelf();
-            gdo.management.scenarios.displayScenariosToLoad("");
-        }
-    </script>
+    });
+    window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+        var space = "<br /> ";
+        gdo.consoleOut("", 5, errorMsg + space + 'Script: ' + url + space + 'Line: ' + lineNumber
+            + space + 'Column: ' + column + space + 'StackTrace: ' + errorObj);
+    }
+    initApp = function () {
+        gdo.consoleOut('', 1, 'GDO Initialized');
+        gdo.management.terminal.drawTerminalInput();
+        gdo.updateSelf();
+        gdo.management.scenarios.displayScenariosToLoad("");
+    }
+</script>
 
 @{
     object sessionpassword  = HttpContext.Current.Session["password"];
