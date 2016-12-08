@@ -1,1 +1,30 @@
-{"Name":"sec2","CurrentElement":0,"Elements":[{"IsLoop":false,"Id":0,"Mod":"gdo.net.server","Func":"createSection","Params":["0,0,1,1"],"DefaultWait":0},{"IsLoop":false,"Id":1,"Mod":"gdo.net.server","Func":"createSection","Params":["1,1,2,2"],"DefaultWait":0},{"IsLoop":false,"Id":2,"Mod":"gdo.net.server","Func":"closeSection","Params":["0"],"DefaultWait":0}]}
+{
+  "Name": "sec2",
+  "CurrentElement": 0,
+  "Elements": [
+    {
+      "IsLoop": false,
+      "Id": 0,
+      "Mod": "gdo.net.server",
+      "Func": "createSection",
+      "Params": [ "0,0,1,1" ],
+      "DefaultWait": 0
+    },
+    {
+      "IsLoop": false,
+      "Id": 1,
+      "Mod": "gdo.net.server",
+      "Func": "createSection",
+      "Params": [ "1,1,2,2" ],
+      "DefaultWait": 0
+    },
+    {
+      "IsLoop": false,
+      "Id": 2,
+      "Mod": "gdo.net.server",
+      "Func": "closeSection",
+      "Params": [ "0" ],
+      "DefaultWait": 0
+    }
+  ]
+}

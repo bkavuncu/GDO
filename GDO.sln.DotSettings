@@ -42,6 +42,8 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A7A00D99_002D5A23_002D40F7_002D8ABC_002DA0B6B215282D_002Fd_003AScripts_002Fd_003ABasicMaps_002Ff_003Aol_002Ecss/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=CA9584C6_002D6400_002D4EEF_002DBA2C_002D30E619F90D13_002Fd_003AScripts_002Fd_003ALeeds_002Fd_003ACesium/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=CA9584C6_002D6400_002D4EEF_002DBA2C_002D30E619F90D13_002Fd_003AScripts_002Fd_003ALeeds_002Fd_003Aol3/@EntryIndexedValue">ExplicitlyExcluded</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=GDO/@EntryIndexedValue">GDO</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=GDOAPI/@EntryIndexedValue">GDOAPI</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=ID/@EntryIndexedValue">ID</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=JSON/@EntryIndexedValue">JSON</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=P/@EntryIndexedValue">P</s:String>

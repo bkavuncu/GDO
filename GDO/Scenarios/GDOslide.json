@@ -1,1 +1,46 @@
-{"Name":"DSI_slide","CurrentElement":-1,"Elements":[{"IsLoop":false,"Id":0,"Mod":"gdo.net.server","Func":"createSection","Params":["0,0,15,3"],"DefaultWait":0.0},{"IsLoop":false,"Id":1,"Mod":"gdo.net.server","Func":"deployBaseApp","Params":["1,\"Images\",\"Default\""],"DefaultWait":0.0},{"IsLoop":false,"Id":2,"Mod":"gdo.net.app.Images.server","Func":"findDigits","Params":["0,00002"],"DefaultWait":0.0},{"IsLoop":false,"Id":3,"Mod":"gdo.net.app.Images.server","Func":"displayImageByDigit","Params":["0,00002,0"],"DefaultWait":0.0},{"IsLoop":false,"Id":4,"Mod":"gdo","Func":"goToControlPage","Params":["0"],"DefaultWait":0.0}]}
+{
+  "Name": "DSI_slide",
+  "CurrentElement": -1,
+  "Elements": [
+    {
+      "IsLoop": false,
+      "Id": 0,
+      "Mod": "gdo.net.server",
+      "Func": "createSection",
+      "Params": [ "0,0,15,3" ],
+      "DefaultWait": 0.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 1,
+      "Mod": "gdo.net.server",
+      "Func": "deployBaseApp",
+      "Params": [ "1,\"Images\",\"Default\"" ],
+      "DefaultWait": 0.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 2,
+      "Mod": "gdo.net.app.Images.server",
+      "Func": "findDigits",
+      "Params": [ "0,00002" ],
+      "DefaultWait": 0.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 3,
+      "Mod": "gdo.net.app.Images.server",
+      "Func": "displayImageByDigit",
+      "Params": [ "0,00002,0" ],
+      "DefaultWait": 0.0
+    },
+    {
+      "IsLoop": false,
+      "Id": 4,
+      "Mod": "gdo",
+      "Func": "goToControlPage",
+      "Params": [ "0" ],
+      "DefaultWait": 0.0
+    }
+  ]
+}

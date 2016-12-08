@@ -623,8 +623,11 @@
     <Content Include="Bootstrap\index.html" />
     <Content Include="Bootstrap\js\flot-data.js" />
     <Content Include="Bootstrap\js\morris-data.js" />
+    <Content Include="CSS\keyboard-basic.min.css" />
     <Content Include="CSS\keyboard-dark.min.css" />
     <Content Include="CSS\keyboard.min.css" />
+    <Content Include="Scripts\babylon.js" />
+    <Content Include="Scripts\babylon.objFileLoader.js" />
     <Content Include="Scripts\jquery.keyboard.js" />
     <Content Include="Scripts\jquery.mousewheel.min.js" />
     <Content Include="Bootstrap\pages\blank.html" />
@@ -984,6 +987,9 @@
     <Content Include="Scenarios\testyoutube.json" />
     <Content Include="Scenarios\Tfl bikes.json" />
     <Content Include="Scenarios\ukTravel.json" />
+    <Content Include="Scenarios\DSIslide.json" />
+    <Content Include="Scenarios\GDOslide.json" />
+    <Content Include="Scenarios\LondonMap.json" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\heatmap.js" />
     <Content Include="Scripts\heatmap.min.js" />
