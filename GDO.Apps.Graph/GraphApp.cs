@@ -2,13 +2,13 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using GDO.Core;
 using Newtonsoft.Json;
 using GDO.Apps.Graph.Domain;
 using GDO.Core.Apps;
 using log4net;
-using Microsoft.AspNet.SignalR;
 
 namespace GDO.Apps.Graph
 {
@@ -49,10 +49,32 @@ namespace GDO.Apps.Graph
 
         // @param: name of data file (TODO: change it to folder name, that stores nodes and links files)
         // return name of folder that stores processed data
-        public string ProcessGraph(string filename, bool zoomed, string folderName)
+        public string ProcessGraph(string filename, bool zoomed, string folderName, int sectionWidth, int sectionHeight)
         {
             string graphMLfile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graphmls/" + filename );
             GraphDataReader.ReadGraphMLData(graphMLfile, out graphinfo, out Links, out Nodes, out rectDim);
+
+
+            String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/Database.txt");
+            
+            // see if we have seen this before 
+            if (File.Exists(indexFile)) {
+                try {
+                    var digitsdict = File.ReadAllLines(indexFile).Where(s => !string.IsNullOrWhiteSpace(s))
+                        .Select(l => l.Split(new[] {"|"}, StringSplitOptions.None))
+                        .Where(l => l.Length == 4)
+                        .ToDictionary(l => l[0], l => new {id = l[1], width = int.Parse(l[2]), height = int.Parse(l[3])});
+
+                    if (digitsdict.ContainsKey(filename) && digitsdict[filename].width == sectionWidth
+                        && digitsdict[filename].height == sectionHeight) {
+                        FolderNameDigit = digitsdict[filename].id;
+                        return this.FolderNameDigit;
+                    }
+                }
+                catch (Exception e) {
+                    Log.Error("graph app failed to parse its database file " + e);
+                }
+            }
 
             //create Dictionary for quick search of Nodes by ID
             SetupNodesDictionary();
@@ -158,8 +180,7 @@ namespace GDO.Apps.Graph
             CreateTempFolder(folderName, basePath);
 
             // log to index file  
-            String indexFile = System.Web.HttpContext.Current.Server.MapPath("~/Web/Graph/graph/Database.txt");
-            File.AppendAllLines(indexFile, new[] { filename + "|" + FolderNameDigit });
+            File.AppendAllLines(indexFile, new[] { filename + "|" + FolderNameDigit +"|"+sectionWidth +"|"+ sectionHeight });
 
             string nodesPath, linksPath;
 
@@ -169,8 +190,8 @@ namespace GDO.Apps.Graph
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\nodes");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\normal\links");
 
-                nodesPath = basePath + FolderNameDigit + @"\normal\nodes\\";
-                linksPath = basePath + FolderNameDigit + @"\normal\links\\";
+                nodesPath = basePath + FolderNameDigit + @"\normal\nodes\";
+                linksPath = basePath + FolderNameDigit + @"\normal\links\";
             }
             else
             {
@@ -179,8 +200,8 @@ namespace GDO.Apps.Graph
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\links");
                 Directory.CreateDirectory(basePath + FolderNameDigit + @"\zoomed\labels");
 
-                nodesPath = basePath + FolderNameDigit + @"\zoomed\nodes\\";
-                linksPath = basePath + FolderNameDigit + @"\zoomed\links\\";
+                nodesPath = basePath + FolderNameDigit + @"\zoomed\nodes\";
+                linksPath = basePath + FolderNameDigit + @"\zoomed\links\";
             }
 
 
