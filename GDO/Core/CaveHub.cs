@@ -15,6 +15,10 @@ namespace GDO.Core
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CaveHub));
 
+        public void LogCall(string message) {
+            Log.Info("CAVE HUB CAlled"+message);
+        }
+
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
             lock (Cave.ServerLock)
@@ -292,8 +296,10 @@ namespace GDO.Core
         /// <param name="isConnectedToPeerServer">whether the peer is connected to a server or not</param>
         public void UploadNodeInfo(int nodeId, string connectionId, string connectedNodes, string peerId, bool isConnectedToPeerServer)
         {
-            lock (Cave.ServerLock)
-            {
+            lock (Cave.ServerLock) {
+
+                GDOAPISingleton.Instance.Hub = this;// GDO API
+
                 Node node;
                 Cave.Nodes.TryGetValue(nodeId, out node);
                 if (node != null) {

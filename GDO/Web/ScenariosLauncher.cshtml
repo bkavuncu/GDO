@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>GDO Scenarios</title>
+    <title>GDO Scenario Launcher</title>
     <!-- Bootstrap Core CSS -->
     <link href="../Bootstrap/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
@@ -30,42 +30,6 @@
     <link href="../CSS/gdo.management.css" rel="stylesheet">
     <link href="../CSS/jquery-ui.min.css" rel="stylesheet">
 
-    <style>
-        .input_field_div {
-            margin: 0px;
-            padding: 0px;
-        }
-
-        .input_field {
-            width: 100%;
-            background: transparent;
-            color: #FFF;
-            padding: 0px;
-            display: inline-block;
-            position: relative;
-            text-align: center;
-        }
-        .ui-autocomplete {
-            background: #222;
-            color: #AAA;
-            border-radius: 0px;
-            height: 21vh;
-            overflow-y: scroll;
-            overflow-x: hidden ;
-        }
-        .ui-autocomplete.source:hover {
-            background: #454545;
-            color: #FFF;
-        }
-        body {
-            height: 100%;
-            width: 100%;
-            max-height: 100%;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-    </style>
     <script>
         var gdo = {};
         gdo.net = {};
@@ -107,10 +71,10 @@
     <script type="text/javascript" src="../Scripts/gdo.js"></script>
     <script src="../signalr/hubs"></script>
     <script type="text/javascript" src="../Scripts/peer.js"></script>
-<script>
-    /* Enables the redirection to other webpage, useful for scenarios. It is repeated in ScenariosLauncher */
-    gdo.goToControlPage = function(instance) {
-        window.location.href = "Instances.cshtml?id="+instance;
+    <script>
+    /* Enables the redirection to other webpage, useful for scenarios */
+    gdo.goToControlPage = function (instance) {
+        window.location.href = "Instances.cshtml?id=" + instance;
     }
 
     gdo.updateDisplayCanvas = function () {
@@ -144,142 +108,23 @@
         gdo.management.terminal.drawTerminalInput();
         gdo.updateSelf();
         gdo.management.scenarios.displayScenariosToLoad("");
+
+        @{
+                object scenario = Request["scenario"] == null ? "DSIslide" : Request["scenario"];
+                HttpContext.Current.Session["password"] = "5867";
+            }
+        gdo.net.server.clearCave();
+        gdo.management.scenarios.loadScenario("@scenario");
+        $("#playButton").click();
     }
 </script>
 
-@{
-    object sessionpassword  = HttpContext.Current.Session["password"];
-    string password = IsPost ? Request.Form["password"] : (sessionpassword == null ? "" : sessionpassword.ToString());
-    HttpContext.Current.Session["password"] = password;
+    
+<h3>Please... wait for @scenario</h3>
+    <a href="~/Web/Sections.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="4px"><i class="fa fa-desktop fa-fw"></i>&nbsp;Sections</font></button></a>
 
-    var loginDisplay = "display: block;";
-    var mainVisibility = "visibility: hidden";
-
-    if (password == "5867")
-    {
-        loginDisplay = "display: none;";
-        mainVisibility = "visibility: visible";
-    }
-}
-    <div style="@loginDisplay">
-        <form id="submit_login_form" action="Scenarios.cshtml" method="post">
-            <table style="border-collapse: separate; border-spacing: 1px;">
-                <tr>
-                    <td>&nbsp;Please, enter the password: &nbsp;</td>
-                    <td><input type='password' class='form-control' name='password' placeholder='pass' spellcheck='false' style='width: 70%; height: 100%;' /></td>
-                    <td><input id="submit_password" class="btn btn-primary btn-block" style="border-color: transparent;" type="submit" value="&nbsp;Submit password" /></td>
-                </tr>
-            </table>
-        </form>
-    </div>
-
-<div id="wrapper" style="@mainVisibility">
-    <div style="position: absolute; top: 7px; right: 14px; z-index: 1000">
-        <table id="nav_buttons" unselectable="on" class="unselectable" style="border-collapse: separate; border-spacing: 1px;">
-            <tr>
-                <td>
-                    <button type="button" id="blankButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-square fa-fw'></i>&nbsp;Blank Mode</font></font></button>
-                </td>
-                <td>
-                    <button type="button" id="maintenanceButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-gear fa-fw'></i>&nbsp;Maintenance Mode</font></button>
-                </td>
-                <td>
-                    <a href="~/Web/Console.cshtml"><button type="button" id="consoleButton" class="btn btn-primary"><font color="#fff" size="3.5px"><i class='fa  fa-desktop fa-fw'></i>&nbsp;Console Mode</font></button></a>
-                </td>
-                <td>
-                    <div style="width:14px"></div>
-                </td>
-                <td>
-                    <div id="connection_status" class="img-circle circle" style='width:45px;height:45px; background: #2A9FD6;display: table;'><i id="connection_icon" class='fa  fa-arrow-right fa-lg' style="display: table-cell; vertical-align: middle; text-align: center"></i></div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <nav class="navbar navbar-left navbar-inverse" role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <div class="row" style="width: 90%">
-                <a class="navbar-brand" href="~/Web/Management.cshtml">
-                    <div class="col-md-5">
-                        <img src="~/Img/logo.png" width="49" height="49">
-                    </div>
-                    <div class="col-md-1">
-
-                    </div>
-                    <div class="col-md-7">
-                        <div class="row" style="width: 90%">
-                            <font color="#fff" size="5.5px"><b>GDO</b></font>
-                        </div>
-                        <div class="row" style="width: 90%">
-                            <font color="#fff" size="5.5px">Management</font>
-                        </div>
-                    </div>
-                    <!-- /.col-lg-12 -->
-                </a>
-            </div>
-        </div>
-        <!-- /.navbar-header -->
-        <!-- /.navbar-top-links -->
-        <ul class="nav navbar-top-links navbar-right">
-            <li class="divider"></li>
-            <li>
-
-
-            </li>
-        </ul>
-        <div class="navbar-default sidebar" role="navigation">
-            <div class="sidebar-nav navbar-collapse">
-                <ul class="nav" id="side-menu">
-
-                    <li>
-                        <a href="~/Web/Nodes.cshtml"><i class="fa fa-th fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Nodes</font></a>
-                    </li>
-                    <li>
-                        <a href="~/Web/Sections.cshtml"><i class="fa fa-th-large fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Sections</font></a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-cubes  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Instances</font><span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level" id="nav_instances"></ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-codepen  fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;Modules</font><span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level" id="nav_modules"></ul>
-                        <!-- /.nav-second-level -->
-                    </li>
-                    <li>
-                        <a href="~/Web/States.cshtml"><i class="fa fa-save fa-fw"></i> <font color="#fff" size="3.5px">&nbsp;&nbsp;States</font></a>
-                    </li>
-                    <li>
-                        <a href="~/Web/Scenarios.cshtml"><i class="fa fa-play-circle fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Scenarios</font></a>
-                    </li>
-                    <li>
-                        <a href="https://wiki.imperial.ac.uk/display/DG/DSI+-+GDO+Home"><i class="fa fa-file-text fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Wiki</font></a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/bkavuncu/GDO"><i class="fa fa-github fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Github</font></a>
-                    </li>
-                    <li>
-                        <a href="https://trello.com/gdo6"><i class="fa fa-trello fa-fw"></i><font color="#fff" size="3.5px">&nbsp;&nbsp;Trello</font></a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.sidebar-collapse -->
-        </div>
-        <!-- /.navbar-static-side -->
-    </nav>
+<div id="wrapper" style="visibility: hidden">
     <div id="page-wrapper">
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Scenarios</h3>
-            </div>
-            <!-- /.col-lg-12 -->
-        </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h6><span class="glyphicon glyphicon-console"></span>&nbsp;&nbsp;Console</h6>
@@ -461,7 +306,6 @@
         </div>
     </div>
 <!-- /#wrapper -->
-    <!--<script src="..//Bootstrap/bower_components/jquery/dist/jquery.min.js"></script>-->
     <!-- Bootstrap Core JavaScript -->
     <script src="../Bootstrap/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- Metis Menu Plugin JavaScript -->
