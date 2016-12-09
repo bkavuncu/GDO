@@ -1,5 +1,5 @@
 {
-  "Name": "DSI_slide",
+  "Name": "GDOSlide",
   "CurrentElement": -1,
   "Elements": [
     {
@@ -23,7 +23,7 @@
       "Id": 2,
       "Mod": "gdo.net.app.Images.server",
       "Func": "findDigits",
-      "Params": [ "0,00002" ],
+      "Params": [ "0,\"00002\"" ],
       "DefaultWait": 0.0
     },
     {
@@ -31,7 +31,7 @@
       "Id": 3,
       "Mod": "gdo.net.app.Images.server",
       "Func": "displayImageByDigit",
-      "Params": [ "0,00002,0" ],
+      "Params": [ "0,\"00002\",0" ],
       "DefaultWait": 0.0
     },
     {
