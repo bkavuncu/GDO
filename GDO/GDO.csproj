@@ -985,7 +985,7 @@
     <Content Include="Scenarios\ShangaiMetro.json" />
     <Content Include="Scenarios\testweb.json" />
     <Content Include="Scenarios\testyoutube.json" />
-    <Content Include="Scenarios\Tfl bikes.json" />
+    <Content Include="Scenarios\Tflbikes.json" />
     <Content Include="Scenarios\ukTravel.json" />
     <Content Include="Scenarios\DSIslide.json" />
     <Content Include="Scenarios\GDOslide.json" />
