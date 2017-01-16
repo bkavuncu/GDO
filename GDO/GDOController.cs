@@ -50,6 +50,7 @@ namespace GDO
 
         // http://localhost:12332/api/gdo/
         // GET api/<controller>/5
+        [Route("api/GDO/ClearCave")]
         public string ClearCave()
         {
             //Cave.ClearCave();
@@ -58,9 +59,21 @@ namespace GDO
             //cavehub.ClearCave();
 
             GDOAPISingleton.Instance.Hub.ClearCave();
-
+            
             return GDOAPISingleton.Instance.Hub == null ? "hub Conected " : "hub not connected";
            
+        }
+
+        [Route("api/GDO/MaintainenceModeClear")]
+        public string MaintainenceModeClear() {
+            GDOAPISingleton.Instance.Hub.SetMaintenanceMode(false);
+            return GDOAPISingleton.Instance.Hub == null ? "hub Conected " : "hub not connected";
+        }
+
+        [Route("api/GDO/MaintainenceModeSet")]
+        public string MaintainenceModeSet() {
+            GDOAPISingleton.Instance.Hub.SetMaintenanceMode(true);
+            return GDOAPISingleton.Instance.Hub == null ? "hub Conected " : "hub not connected";
         }
     }
 }
