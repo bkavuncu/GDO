@@ -162,10 +162,7 @@
     <Content Include="Web\Twitter\Control.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\PseudoCave.cs" />
-    <Compile Include="Core\APIObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\RestController.cs" />
     <Compile Include="TwitterApp.cs" />
     <Compile Include="TwitterAppHub.cs" />
   </ItemGroup>

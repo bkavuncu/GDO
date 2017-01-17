@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using GDO.Core;
 using Newtonsoft.Json;
 
-namespace GDO.Apps.Twitter.Core
+namespace GDO.Core.Psedo
 {
     public class PseudoCave
     {
