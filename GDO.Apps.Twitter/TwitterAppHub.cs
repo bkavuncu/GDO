@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using GDO.Apps.Twitter.Core;
 using GDO.Core;
 using GDO.Core.Apps;
+using GDO.Core.Psedo;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 
