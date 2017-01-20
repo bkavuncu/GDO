@@ -19,6 +19,7 @@ namespace GDO.Apps.ShanghaiMetro
         public Type InstanceType { get; set; } = new ShanghaiMetroApp().GetType();
         public void JoinGroup(string groupId)
         {
+            Cave.Apps[Name].Hub.Clients = Clients;
             Groups.Add(Context.ConnectionId, "" + groupId);
         }
         public void ExitGroup(string groupId)

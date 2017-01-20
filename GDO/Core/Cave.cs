@@ -460,6 +460,7 @@ namespace GDO.Core
                     Log.Info("registering an app configuration for app " + name + " called " + configuration.Name);
                     Apps[name].Configurations.TryAdd(configuration.Name, configuration);
                 }
+                Apps[name].Hub = appHub;
                 return true;
             }
             return false;
