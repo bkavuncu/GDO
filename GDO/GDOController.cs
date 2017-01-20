@@ -9,9 +9,9 @@ namespace GDO
 {
 
     public sealed class GDOAPISingleton {
-
+     
         public CaveHub Hub;
-    
+
 
         private static GDOAPISingleton _instance;
         private static readonly object Padlock = new object();
@@ -50,6 +50,7 @@ namespace GDO
 
         // http://localhost:12332/api/gdo/
         // GET api/<controller>/5
+        [HttpGet]
         [Route("api/GDO/ClearCave")]
         public string ClearCave()
         {
@@ -58,22 +59,35 @@ namespace GDO
             // cavehub.Clients.All.SetMaintenanceMode(true);
             //cavehub.ClearCave();
 
-            GDOAPISingleton.Instance.Hub.ClearCave();
-            
-            return GDOAPISingleton.Instance.Hub == null ? "hub Conected " : "hub not connected";
-           
+
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return "hub not initialise launch a client to set";
+            hub.ClearCave();
+
+            return "Cave Cleared ";
+
         }
 
+        [HttpGet]
         [Route("api/GDO/MaintainenceModeClear")]
         public string MaintainenceModeClear() {
-            GDOAPISingleton.Instance.Hub.SetMaintenanceMode(false);
-            return GDOAPISingleton.Instance.Hub == null ? "hub Conected " : "hub not connected";
+            
+
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return "hub not initialise launch a client to set";
+            hub.SetMaintenanceMode(false);
+
+            return "Turned off maintainence mode";
         }
 
+        [HttpGet]
         [Route("api/GDO/MaintainenceModeSet")]
         public string MaintainenceModeSet() {
-            GDOAPISingleton.Instance.Hub.SetMaintenanceMode(true);
-            return GDOAPISingleton.Instance.Hub == null ? "hub Conected " : "hub not connected";
+            var hub = GDOAPISingleton.Instance.Hub;
+            if (hub == null) return "hub not initialise launch a client to set";
+            hub.SetMaintenanceMode(false);
+
+            return "Turned on maintainence mode";
         }
     }
 }
