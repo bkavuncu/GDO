@@ -143,6 +143,11 @@
     <Content Include="Web\DD3\Scripts\lines.js" />
     <Content Include="Web\DD3\Scripts\map.js" />
     <Content Include="Web\DD3\Scripts\stations.js" />
+    <Content Include="Web\DD3\Scripts\tube_viz\animation.js" />
+    <Content Include="Web\DD3\Scripts\tube_viz\animationLines.js" />
+    <Content Include="Web\DD3\Scripts\tube_viz\lines.js" />
+    <Content Include="Web\DD3\Scripts\tube_viz\map.js" />
+    <Content Include="Web\DD3\Scripts\tube_viz\stations.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configurations\DD3\Transitions.json" />
